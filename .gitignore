@@ -67,3 +67,6 @@ yarn-debug.log*
 /storage/*
 !/storage/.keep
 /public/uploads
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
