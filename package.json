@@ -1,0 +1,30 @@
+{
+  "name": "govuk-chat",
+  "description": "A chat application for GOV.UK",
+  "private": true,
+  "author": "Government Digital Service",
+  "license": "MIT",
+  "scripts": {
+    "lint": "yarn run lint:js && yarn run lint:scss",
+    "lint:js": "standard 'app/assets/javascripts/**/*.js' 'spec/javascripts/**/*.js'",
+    "lint:scss": "stylelint app/assets/stylesheets/"
+  },
+  "standardx": {
+    "env": {
+      "browser": true
+    }
+  },
+  "eslintConfig": {
+    "rules": {
+      "no-var": 0
+    }
+  },
+  "stylelint": {
+    "extends": "stylelint-config-gds/scss"
+  },
+  "devDependencies": {
+    "standardx": "^7.0.0",
+    "stylelint": "^16.2.1",
+    "stylelint-config-gds": "^2.0.0"
+  }
+}
