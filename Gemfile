@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-gem "rails", "7.1.3"
+gem "rails", "7.1.3.1"
 
 gem "bootsnap"
 gem "dartsass-rails"
