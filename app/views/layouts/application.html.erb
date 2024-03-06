@@ -1,15 +1,40 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>GovukChat</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+<%= render 'govuk_publishing_components/components/layout_for_public',
+  product_name: "Chat",
+  environment: Rails.env,
+  show_search: false,
+  omit_feedback_form: true,
+  omit_footer_border: true,
+  hide_footer_links: true do %>
+  <%= render "govuk_publishing_components/components/skip_link" %>
 
-    <%= stylesheet_link_tag "application" %>
-  </head>
+  <div class="govuk-width-container">
+    <%= yield(:back_link) %>
 
-  <body>
-    <%= yield %>
-  </body>
-</html>
+    <main class="govuk-main-wrapper<%= " govuk-main-wrapper--l" if yield(:back_link).blank? %>" id="main-content" role="main">
+      <% if flash["notice"].present? %>
+        <%= render "govuk_publishing_components/components/success_alert", {
+          message: flash["notice"]
+        } %>
+      <% end %>
+
+      <% if flash["alert"].present? %>
+        <%= render "govuk_publishing_components/components/error_alert", {
+          message: flash["alert"]
+        } %>
+      <% end %>
+
+      <% if yield(:title).present? %>
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+            <%= render "govuk_publishing_components/components/title", {
+              context: yield(:title_context),
+              title: yield(:title),
+            } %>
+          </div>
+        </div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+  </div>
+<% end %>
