@@ -1,1 +1,2 @@
-// Adding so linter passes on CI build.
+//= require govuk_publishing_components/dependencies
+//= require govuk_publishing_components/lib
