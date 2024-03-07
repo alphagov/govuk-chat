@@ -1,0 +1,43 @@
+<%= content_for :title, "GOV.UK Chat" %>
+<%= content_for :error_summary do %>
+  <% if @create_question.errors.any? %>
+    <%
+      error_items = @create_question.errors.map do |error|
+        href = error.attribute == :user_question ? "#create_question_user_question" : nil
+        { text: error.message, href: }
+      end
+    %>
+    <%= render "govuk_publishing_components/components/error_summary", {
+      title: "There is a problem",
+      items: error_items
+    } %>
+  <% end %>
+<% end %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <%= render "govuk_publishing_components/components/lead_paragraph", {
+      text: "Hello 👋 I'm GOV.UK Chat. I use the guidance on GOV.UK to answer questions."
+    } %>
+
+    <%= form_with url: create_conversation_path do |f| %>
+      <%= render "govuk_publishing_components/components/character_count", {
+        textarea: {
+          label: {
+            text: "Enter a question",
+            heading_size: "l",
+          },
+          name: "create_question[user_question]",
+          value: @create_question.user_question,
+          error_items: @create_question.errors[:user_question].map { |message| { text: message } }
+        },
+        id: "create_question_user_question",
+        maxlength: 300
+      } %>
+
+      <%= render "govuk_publishing_components/components/button", {
+        text: "Submit"
+      } %>
+    </div>
+  <% end %>
+</div>
