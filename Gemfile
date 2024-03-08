@@ -8,7 +8,9 @@ gem "bootsnap"
 gem "dartsass-rails"
 gem "govuk_app_config"
 gem "govuk_publishing_components"
+gem "govuk_sidekiq"
 gem "pg"
+gem "sentry-sidekiq"
 gem "sprockets-rails"
 
 group :development do

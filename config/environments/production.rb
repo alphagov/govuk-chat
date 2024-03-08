@@ -70,6 +70,10 @@ Rails.application.configure do
   # config.active_job.queue_adapter = :resque
   # config.active_job.queue_name_prefix = "govuk_chat_production"
 
+  # Send log notifications to the Sidekiq logger rather than using the Rails
+  # default
+  config.active_job.logger = Sidekiq.logger
+
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
