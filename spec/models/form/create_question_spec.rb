@@ -21,17 +21,42 @@ RSpec.describe Form::CreateQuestion do
   end
 
   describe "#submit" do
-    it "creates a conversation and question with the user_question as the message when valid" do
-      form = described_class.new(user_question: "How much tax should I be paying?")
-
-      expect { form.submit }.to change(Question, :count).by(1)
-      expect(Question.last.message).to eq("How much tax should I be paying?")
-    end
-
     it "raises an error when the form object is invalid" do
       form = described_class.new
 
       expect { form.submit }.to raise_error(ActiveModel::ValidationError)
+    end
+
+    context "when a conversation is passed in on initialisation" do
+      it "adds a new question to the conversation" do
+        existing_question = build(:question, :with_answer)
+        conversation = create(:conversation, questions: [existing_question])
+
+        described_class.new(
+          user_question: "How much tax should I be paying?",
+          conversation:,
+        ).submit
+
+        expect(conversation.reload.questions.count).to eq 2
+        expect(conversation.questions.last.message).to eq "How much tax should I be paying?"
+      end
+    end
+
+    context "when no conversation is passed in on initialisation" do
+      it "creates a new conversation and question" do
+        form = described_class.new(user_question: "How much tax should I be paying?")
+
+        expect { form.submit }
+          .to change(Conversation, :count).by(1)
+          .and change(Question, :count).by(1)
+      end
+
+      it "returns the created question with the correct message" do
+        form = described_class.new(user_question: "How much tax should I be paying?")
+        question = form.submit
+
+        expect(question.message).to eq("How much tax should I be paying?")
+      end
     end
   end
 end
