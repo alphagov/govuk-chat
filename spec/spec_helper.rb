@@ -19,4 +19,23 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
   config.include FactoryBot::Syntax::Methods
   config.include StubFeatureFlags
+
+  # configure system specs
+  # TODO: open PR on govuk_test to configure drivers for
+  # system specs then remove from here when dependency is bumped
+  config.before(:each, type: :system) do
+    driven_by :rack_test
+  end
+
+  config.before(:each, type: :system, js: true) do
+    driven_by :selenium_chrome_headless
+  end
+
+  config.around do |example|
+    if example.metadata[:sidekiq_inline] == true
+      Sidekiq::Testing.inline! { example.run }
+    else
+      example.run
+    end
+  end
 end
