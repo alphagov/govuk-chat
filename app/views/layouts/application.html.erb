@@ -11,17 +11,25 @@
     <%= yield(:back_link) %>
 
     <main class="govuk-main-wrapper<%= " govuk-main-wrapper--l" if yield(:back_link).blank? %>" id="main-content" role="main">
-      <% if flash["notice"].present? %>
-        <%= render "govuk_publishing_components/components/success_alert", {
-          message: flash["notice"]
-        } %>
-      <% end %>
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full-width">
+          <% if yield(:error_summary).blank? %>
+            <% if flash["notice"].present? %>
+              <%= render "govuk_publishing_components/components/success_alert", {
+                message: flash["notice"]
+              } %>
+            <% end %>
 
-      <% if flash["alert"].present? %>
-        <%= render "govuk_publishing_components/components/error_alert", {
-          message: flash["alert"]
-        } %>
-      <% end %>
+            <% if flash["alert"].present? %>
+              <%= render "govuk_publishing_components/components/error_alert", {
+                message: flash["alert"]
+              } %>
+            <% end %>
+          <% end %>
+
+          <%= yield(:error_summary) %>
+        </div>
+      </div>
 
       <% if yield(:title).present? %>
         <div class="govuk-grid-row">
