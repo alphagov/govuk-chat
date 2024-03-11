@@ -7,6 +7,7 @@ gem "rails", "7.1.3.2"
 gem "bootsnap"
 gem "dartsass-rails"
 gem "govuk_app_config"
+gem "govuk_publishing_components"
 gem "pg"
 gem "sprockets-rails"
 
