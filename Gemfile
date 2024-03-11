@@ -22,6 +22,7 @@ group :test do
 end
 
 group :development, :test do
+  gem "factory_bot_rails"
   gem "govuk_test"
   gem "pry-rails"
   gem "rspec-rails"
