@@ -18,6 +18,16 @@ RSpec.describe Form::CreateQuestion do
 
       expect(form.errors.messages[:user_question]).to eq(["Enter a question"])
     end
+
+    it "is invalid when the conversation passed in has an unanswered question" do
+      pending_question = build(:question)
+      conversation = create(:conversation, questions: [pending_question])
+
+      form = described_class.new(user_question: "How much tax should I be paying?", conversation:)
+      form.validate
+
+      expect(form.errors.messages[:base]).to eq(["Previous question pending. Please wait for a response"])
+    end
   end
 
   describe "#submit" do
