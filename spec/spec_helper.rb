@@ -19,4 +19,3 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include StubFeatureFlags
 end
-ActiveJob::Base.queue_adapter = :test
