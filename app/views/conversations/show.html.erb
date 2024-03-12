@@ -27,13 +27,18 @@
     } %>
 
     <%= render "govuk_publishing_components/components/list", {
-      items: @create_question.conversation.questions.each_with_index.map do |question, index|
+      items: @conversation.questions.each_with_index.map do |question, index|
         answer = question.answer
         render "question_and_answer", question:, index:, answer:
       end
     } %>
 
-    <%= form_with url: create_conversation_path do |f| %>
+    <%
+      form_url = @conversation.persisted? ? update_conversation_path(@conversation) : create_conversation_path
+      http_method = @conversation.persisted? ? :patch : :post
+    %>
+
+    <%= form_with url: form_url, method: http_method do |f| %>
       <%= render "govuk_publishing_components/components/character_count", {
         textarea: {
           label: {

@@ -8,6 +8,10 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
     and_they_enter_a_question
     then_they_see_their_question_on_the_page
     and_they_can_see_the_answer
+
+    when_they_enter_a_second_question
+    then_they_see_their_second_question_on_the_page
+    and_they_can_see_the_answer
   end
 
   def stub_open_ai_flag_active
@@ -34,5 +38,14 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
 
   def and_they_can_see_the_answer
     expect(page).to have_content("Answer from OpenAI")
+  end
+
+  def when_they_enter_a_second_question
+    fill_in "Enter a question", with: "Are you sure?"
+    click_on "Submit"
+  end
+
+  def then_they_see_their_second_question_on_the_page
+    expect(page).to have_content("Are you sure?")
   end
 end
