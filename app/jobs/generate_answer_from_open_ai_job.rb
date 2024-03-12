@@ -1,4 +1,4 @@
-class OpenAiRequestJob < ApplicationJob
+class GenerateAnswerFromOpenAiJob < ApplicationJob
   queue_as :default
 
   def perform(question_id:)
