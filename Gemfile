@@ -6,6 +6,8 @@ gem "rails", "7.1.3.2"
 
 gem "bootsnap"
 gem "dartsass-rails"
+gem "flipper"
+gem "flipper-active_record"
 gem "govuk_app_config"
 gem "govuk_publishing_components"
 gem "govuk_sidekiq"

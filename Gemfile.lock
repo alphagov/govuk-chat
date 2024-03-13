@@ -107,6 +107,11 @@ GEM
     domain_name (0.6.20240107)
     drb (2.2.1)
     erubi (1.12.0)
+    flipper (1.2.2)
+      concurrent-ruby (< 2)
+    flipper-active_record (1.2.2)
+      activerecord (>= 4.2, < 8)
+      flipper (~> 1.2.2)
     gds-api-adapters (93.0.0)
       addressable
       link_header
@@ -628,6 +633,8 @@ DEPENDENCIES
   brakeman
   dartsass-rails
   factory_bot_rails
+  flipper
+  flipper-active_record
   govuk_app_config
   govuk_publishing_components
   govuk_sidekiq
