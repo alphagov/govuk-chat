@@ -56,6 +56,10 @@ Rails.application.configure do
   # Highlight code that enqueued background job in logs.
   config.active_job.verbose_enqueue_logs = true
 
+  # Send log notifications to the Sidekiq logger rather than using the Rails
+  # default
+  config.active_job.logger = Sidekiq.logger
+
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
