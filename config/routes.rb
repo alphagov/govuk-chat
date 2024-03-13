@@ -13,5 +13,7 @@ Rails.application.routes.draw do
     post "/conversations", to: "conversations#create", as: :create_conversation
   end
 
+  flipper_app = Flipper::UI.app
+  mount flipper_app, at: "/flipper"
   mount GovukPublishingComponents::Engine, at: "/component-guide" if Rails.env.development?
 end
