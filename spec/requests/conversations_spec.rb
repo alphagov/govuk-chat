@@ -1,6 +1,8 @@
 RSpec.describe "ConversationsController" do
   include ActiveJob::TestHelper
 
+  delegate :helpers, to: ConversationsController
+
   describe "GET :new" do
     it "renders the correct fields" do
       get new_conversation_path
@@ -11,13 +13,12 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "POST :create" do
-    it "saves the question and renders the new conversation page with valid params" do
+    it "saves the question and renders pending page with valid params" do
       post create_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
 
       assert_response :redirect
       follow_redirect!
-      assert_select ".gem-c-success-alert__message", text: "Your question has been submitted"
-      renders_the_create_question_form
+      assert_select ".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer"
     end
 
     it "renders the new conversation page with an error when the params are invalid" do
@@ -41,11 +42,13 @@ RSpec.describe "ConversationsController" do
     context "when the conversation has a question with an answer" do
       it "renders the question and the answer" do
         question = create(:question, :with_answer)
+        answer = question.answer
+
         get show_conversation_path(question.conversation)
 
         assert_response :success
-        assert_select "#question-#{question.id}", text: /#{question.message}/
-        assert_select "#answer-#{question.answer.id}", text: /#{question.answer.message}/
+        assert_select "##{helpers.dom_id(question)}", text: /#{question.message}/
+        assert_select "##{helpers.dom_id(answer)}", text: /#{answer.message}/
       end
     end
 
@@ -55,7 +58,7 @@ RSpec.describe "ConversationsController" do
         get show_conversation_path(question.conversation)
 
         assert_response :success
-        assert_select "#question-#{question.id}", text: /#{question.message}/
+        assert_select "##{helpers.dom_id(question)}", text: /#{question.message}/
       end
     end
   end
@@ -68,9 +71,7 @@ RSpec.describe "ConversationsController" do
 
       assert_response :redirect
       follow_redirect!
-      assert_select ".gem-c-success-alert__message", text: "Your question has been submitted"
-      assert_select "#question-#{conversation.reload.questions.last.id}", text: /How much tax should I be paying?/
-      assert_select ".gem-c-label", text: "Enter a question"
+      assert_select ".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer"
     end
 
     it "renders the conversation with an error when the params are invalid" do

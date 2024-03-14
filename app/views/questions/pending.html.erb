@@ -1,0 +1,17 @@
+<% description_govspeak_block = capture do %>
+  <% if params[:refresh] %>
+    <p>Thanks for your patience. Check again to find out if your answer is ready.</p>
+  <% end %>
+
+  <%= render("govuk_publishing_components/components/button", {
+    text: "Check if an answer has been generated",
+    href: answer_question_path(@conversation, @question, refresh: true),
+  }) %>
+<% end %>
+
+<%= render "govuk_publishing_components/components/notice", {
+  title: "GOV.UK Chat is generating an answer",
+  description_govspeak: description_govspeak_block,
+  show_banner_title: true,
+  banner_title: "Your question has been received"
+} %>
