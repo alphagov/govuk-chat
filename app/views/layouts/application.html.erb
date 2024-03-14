@@ -5,12 +5,11 @@
   omit_feedback_form: true,
   omit_footer_border: true,
   hide_footer_links: true do %>
-  <%= render "govuk_publishing_components/components/skip_link" %>
 
   <div class="govuk-width-container">
     <%= yield(:back_link) %>
 
-    <main class="govuk-main-wrapper<%= " govuk-main-wrapper--l" if yield(:back_link).blank? %>" id="main-content" role="main">
+    <main class="govuk-main-wrapper<%= " govuk-main-wrapper--l" if yield(:back_link).blank? %>" id="content" role="main">
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-full-width">
           <% if yield(:error_summary).blank? %>
