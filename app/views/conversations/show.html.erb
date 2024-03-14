@@ -16,9 +16,32 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <%= render "govuk_publishing_components/components/lead_paragraph", {
-      text: "Hello 👋 I'm GOV.UK Chat. I use the guidance on GOV.UK to answer questions."
+
+    <%= render "components/answer", {
+      id: "initial-message",
+      message: tag.p("Hello 👋 I'm GOV.UK Chat. I use the guidance on GOV.UK to answer questions.", class: "govuk-body") +
+      tag.p(
+        "You can ask me anything about business or trade - just don't include personal or sensitive data and please limit your question to 300 characters or less.",
+        class: "govuk-body govuk-!-margin-bottom-0"
+      ),
     } %>
+
+    <% @create_question.conversation.questions.each_with_index do |question, index| %>
+      <% answer = question.answer %>
+
+      <%= render "components/question", {
+        id: "question-#{question.id}",
+        message: question.message,
+      } %>
+
+      <% if answer.present? %>
+        <%= render "components/answer", {
+          id: "answer-#{answer.id}",
+          sources: answer.sources.map(&:url),
+          message: answer.message,
+        } %>
+      <% end %>
+    <% end %>
 
     <%= form_with url: create_conversation_path do |f| %>
       <%= render "govuk_publishing_components/components/character_count", {

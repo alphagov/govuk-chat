@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   scope :chat do
     get "", to: "conversations#new", as: :new_conversation
     post "/conversations", to: "conversations#create", as: :create_conversation
+
+    get ":id", to: "conversations#show", as: :show_conversation
   end
 
   flipper_app = Flipper::UI.app

@@ -1,11 +1,12 @@
 RSpec.describe "ConversationsController" do
   include ActiveJob::TestHelper
+
   describe "GET :new" do
     it "renders the correct fields" do
       get new_conversation_path
 
       assert_response :success
-      assert_select ".gem-c-label", text: "Enter a question"
+      renders_the_create_question_form
     end
   end
 
@@ -15,8 +16,8 @@ RSpec.describe "ConversationsController" do
 
       assert_response :redirect
       follow_redirect!
-      assert_select ".gem-c-success-alert__message", text: "Question saved"
-      assert_select ".gem-c-label", text: "Enter a question"
+      assert_select ".gem-c-success-alert__message", text: "Your question has been submitted"
+      renders_the_create_question_form
     end
 
     it "renders the new conversation page with an error when the params are invalid" do
@@ -24,7 +25,7 @@ RSpec.describe "ConversationsController" do
 
       assert_response :unprocessable_entity
       assert_select ".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question"
-      assert_select ".gem-c-label", text: "Enter a question"
+      renders_the_create_question_form
     end
 
     context "when :open_ai is enabled for an actor only" do
@@ -66,5 +67,40 @@ RSpec.describe "ConversationsController" do
         end
       end
     end
+  end
+
+  describe "GET :show" do
+    it "renders the question form" do
+      question = create(:question, :with_answer)
+      get show_conversation_path(question.conversation)
+
+      assert_response :success
+      renders_the_create_question_form
+    end
+
+    context "when the conversation has a question with an answer" do
+      it "renders the question and the answer" do
+        question = create(:question, :with_answer)
+        get show_conversation_path(question.conversation)
+
+        assert_response :success
+        assert_select "#question-#{question.id}", text: /#{question.message}/
+        assert_select "#answer-#{question.answer.id}", text: /#{question.answer.message}/
+      end
+    end
+
+    context "when the conversation has an unanswered question" do
+      it "only renders a question" do
+        question = create(:question)
+        get show_conversation_path(question.conversation)
+
+        assert_response :success
+        assert_select "#question-#{question.id}", text: /#{question.message}/
+      end
+    end
+  end
+
+  def renders_the_create_question_form
+    assert_select ".gem-c-label", text: "Enter a question"
   end
 end
