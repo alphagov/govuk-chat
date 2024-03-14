@@ -3,10 +3,12 @@
 
 @import "govuk_publishing_components/components/button";
 @import "govuk_publishing_components/components/character-count";
+@import "govuk_publishing_components/components/details";
 @import "govuk_publishing_components/components/error-alert";
 @import "govuk_publishing_components/components/error-summary";
 @import "govuk_publishing_components/components/layout-for-public";
 @import "govuk_publishing_components/components/layout-header";
-@import "govuk_publishing_components/components/lead-paragraph";
 @import "govuk_publishing_components/components/skip-link";
 @import "govuk_publishing_components/components/success-alert";
+
+@import "components/answer";

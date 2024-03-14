@@ -1,0 +1,29 @@
+.app-c-answer {
+  margin-bottom: govuk-spacing(7);
+}
+
+.app-c-answer__message {
+  background-color: govuk-colour("light-grey");
+  margin-bottom: govuk-spacing(2);
+  padding:govuk-spacing(3);
+  display: inline-block;
+}
+
+.app-c-answer__identifier {
+  margin-bottom: govuk-spacing(2);
+}
+
+.app-c-answer__identifier-icon {
+  vertical-align: text-bottom;
+  margin-right: govuk-spacing(1);
+}
+
+.app-c-answer__identifier-heading {
+  @extend %govuk-heading-s;
+  display: inline;
+  position: relative;
+}
+
+.app-c-answer__sources {
+  margin-top: govuk-spacing(4);
+}
