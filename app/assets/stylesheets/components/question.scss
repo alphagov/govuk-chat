@@ -1,0 +1,33 @@
+.app-c-question {
+  margin-bottom: govuk-spacing(7);
+}
+
+.app-c-question__message {
+  background-color: govuk-tint(govuk-colour("light-blue"), 75%);
+  margin-bottom: govuk-spacing(2);
+  padding: govuk-spacing(3);
+  display: inline-block;
+
+  .govuk-body {
+    margin-bottom: 0;
+  }
+}
+
+.app-c-question__message .govuk-body:not(:last-child) {
+  margin-bottom: govuk-spacing(2);
+}
+
+.app-c-question__identifier {
+  margin-bottom: govuk-spacing(2);
+}
+
+.app-c-question__identifier-icon {
+  vertical-align: text-bottom;
+  margin-right: govuk-spacing(1);
+}
+
+.app-c-question__identifier-heading {
+  @extend %govuk-heading-s;
+  display: inline;
+  position: relative;
+}
