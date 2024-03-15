@@ -8,6 +8,7 @@ SimpleCov.start "rails"
 require File.expand_path("../config/environment", __dir__)
 require "govuk_sidekiq/testing"
 require "rspec/rails"
+require "webmock/rspec"
 
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 GovukTest.configure

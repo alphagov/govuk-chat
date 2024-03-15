@@ -6,6 +6,7 @@ gem "rails", "7.1.3.2"
 
 gem "bootsnap"
 gem "dartsass-rails"
+gem "faraday"
 gem "flipper"
 gem "flipper-active_record"
 gem "flipper-ui"
@@ -21,10 +22,13 @@ group :development do
 end
 
 group :test do
+  gem "climate_control"
   gem "simplecov"
+  gem "webmock"
 end
 
 group :development, :test do
+  gem "dotenv"
   gem "factory_bot_rails"
   gem "govuk_test"
   gem "pry-rails"
