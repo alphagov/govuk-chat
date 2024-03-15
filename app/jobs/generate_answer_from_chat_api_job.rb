@@ -7,11 +7,7 @@ class GenerateAnswerFromChatApiJob < ApplicationJob
     return logger.warn("Question #{question_id} has already been answered") if question.answer
 
     response = generate_response(question)
-
-    ActiveRecord::Base.transaction do
-      answer = question.create_answer!(message: response["answer"])
-      response["sources"].each { |url| answer.answer_sources.create!(url:) }
-    end
+    save_response(question, response)
   end
 
 private
@@ -20,6 +16,15 @@ private
     body = { chat_id: question.conversation_id, user_query: question.message }.to_json
     response = http_client.post("/govchat", body)
     JSON.parse(response.body)
+  end
+
+  def save_response(question, response)
+    ActiveRecord::Base.transaction do
+      answer = question.create_answer!(message: response["answer"])
+      response["sources"].each.with_index do |url, index|
+        answer.answer_sources.create!(url:, relevancy: index)
+      end
+    end
   end
 
   def http_client
