@@ -35,6 +35,20 @@ RSpec.describe GenerateAnswerFromChatApiJob do
       expect(sources.map(&:url)).to match_array(sources_list)
     end
 
+    it "stores the answer sources in the correct order of relevancy" do
+      sources_list = %w[https://example.com https://example2.org https://example3.org]
+      chat_api_response = {
+        answer: "Hello, how can I help you?",
+        sources: sources_list,
+      }.to_json
+      stub_chat_api_client(question.conversation_id, user_input, chat_api_response, chat_url)
+
+      described_class.new.perform(question.id)
+
+      sources = AnswerSource.last(3)
+      expect(sources.map(&:relevancy)).to eq([0, 1, 2])
+    end
+
     context "when the question has already been answered" do
       let(:question) { create(:question, :with_answer) }
 
