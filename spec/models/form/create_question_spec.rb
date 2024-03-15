@@ -74,12 +74,12 @@ RSpec.describe Form::CreateQuestion do
           stub_feature_flag(:open_ai, false)
         end
 
-        it "fires a GenerateAnswerFromChatApi" do
+        it "fires a GenerateAnswerFromChatApiJob" do
           form = described_class.new(user_question: "How much tax should I be paying?")
           expect { form.submit }.to change(enqueued_jobs, :size).by(1)
           expect(enqueued_jobs.last)
             .to include(
-              job: GenerateAnswerFromChatApi,
+              job: GenerateAnswerFromChatApiJob,
               args: [Question.last.id],
             )
         end

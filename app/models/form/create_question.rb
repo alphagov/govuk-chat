@@ -16,7 +16,7 @@ class Form::CreateQuestion
     if Feature.enabled?(:open_ai)
       GenerateAnswerFromOpenAiJob.perform_later(question.id)
     else
-      GenerateAnswerFromChatApi.perform_later(question.id)
+      GenerateAnswerFromChatApiJob.perform_later(question.id)
     end
     question
   end
