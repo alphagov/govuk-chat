@@ -1,4 +1,5 @@
 RSpec.describe "ConversationsController" do
+  include ActiveJob::TestHelper
   describe "GET :new" do
     it "renders the correct fields" do
       get new_conversation_path
