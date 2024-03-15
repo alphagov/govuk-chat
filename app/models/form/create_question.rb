@@ -12,7 +12,13 @@ class Form::CreateQuestion
   def submit
     validate!
 
-    Question.create!(message: user_question, conversation:)
+    question = Question.create!(message: user_question, conversation:)
+    if Feature.enabled?(:open_ai)
+      GenerateAnswerFromOpenAiJob.perform_later(question.id)
+    else
+      GenerateAnswerFromChatApi.perform_later(question.id)
+    end
+    question
   end
 
 private

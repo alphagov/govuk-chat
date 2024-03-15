@@ -1,4 +1,6 @@
 RSpec.describe Form::CreateQuestion do
+  include ActiveJob::TestHelper
+
   describe "validations" do
     it "is valid when user_question is present and 300 chars of less" do
       form = described_class.new(user_question: SecureRandom.alphanumeric(300))
@@ -49,6 +51,38 @@ RSpec.describe Form::CreateQuestion do
 
         expect(conversation.reload.questions.count).to eq 2
         expect(conversation.questions.last.message).to eq "How much tax should I be paying?"
+      end
+
+      context "with :open_ai feature flag enabled" do
+        before do
+          stub_feature_flag(:open_ai, true)
+        end
+
+        it "fires a GenerateAnswerFromOpenAiJob" do
+          form = described_class.new(user_question: "How much tax should I be paying?")
+          expect { form.submit }.to change(enqueued_jobs, :size).by(1)
+          expect(enqueued_jobs.last)
+            .to include(
+              job: GenerateAnswerFromOpenAiJob,
+              args: [Question.last.id],
+            )
+        end
+      end
+
+      context "without :open_ai feature flag enabled" do
+        before do
+          stub_feature_flag(:open_ai, false)
+        end
+
+        it "fires a GenerateAnswerFromChatApi" do
+          form = described_class.new(user_question: "How much tax should I be paying?")
+          expect { form.submit }.to change(enqueued_jobs, :size).by(1)
+          expect(enqueued_jobs.last)
+            .to include(
+              job: GenerateAnswerFromChatApi,
+              args: [Question.last.id],
+            )
+        end
       end
     end
 
