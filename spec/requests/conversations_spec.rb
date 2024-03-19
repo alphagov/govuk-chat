@@ -33,35 +33,28 @@ RSpec.describe "ConversationsController" do
         Flipper.enable_actor(:open_ai, AnonymousUser.new("known-user"))
       end
 
-      context "when anonymous user is mapped to a enabled actor" do
-        before do
-          get new_conversation_path(params: { user: "known-user" })
-        end
+      it "enqueues a GenerateAnswerFromChatApi" do
+        expect {
+          post create_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
+        }.to change(enqueued_jobs, :size).by(1)
+        expect(enqueued_jobs.last)
+          .to include(
+            job: GenerateAnswerFromChatApiJob,
+            args: [Question.last.id],
+          )
+      end
 
+      context "when anonymous user is mapped to a enabled actor" do
         it "enqueues a GenerateAnswerFromOpenAiJob" do
           expect {
-            post create_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
+            post create_conversation_path, params: {
+              create_question: { user_question: "How much tax should I be paying?" },
+              user_id: "known-user",
+            }
           }.to change(enqueued_jobs, :size).by(1)
           expect(enqueued_jobs.last)
             .to include(
               job: GenerateAnswerFromOpenAiJob,
-              args: [Question.last.id],
-            )
-        end
-      end
-
-      context "when anonymous user is really unknown" do
-        before do
-          get new_conversation_path
-        end
-
-        it "enqueues a GenerateAnswerFromChatApi" do
-          expect {
-            post create_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
-          }.to change(enqueued_jobs, :size).by(1)
-          expect(enqueued_jobs.last)
-            .to include(
-              job: GenerateAnswerFromChatApiJob,
               args: [Question.last.id],
             )
         end
