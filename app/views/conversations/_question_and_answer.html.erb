@@ -1,0 +1,12 @@
+<%= render "components/question", {
+  id: "question-#{question.id}",
+  message: question.message
+} %>
+
+<% if answer.present? %>
+  <%= render "components/answer", {
+    id: "answer-#{answer.id}",
+    sources: answer.sources.map(&:url),
+    message: answer.message,
+  } %>
+<% end %>

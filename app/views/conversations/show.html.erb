@@ -26,22 +26,12 @@
       ),
     } %>
 
-    <% @create_question.conversation.questions.each_with_index do |question, index| %>
-      <% answer = question.answer %>
-
-      <%= render "components/question", {
-        id: "question-#{question.id}",
-        message: question.message,
-      } %>
-
-      <% if answer.present? %>
-        <%= render "components/answer", {
-          id: "answer-#{answer.id}",
-          sources: answer.sources.map(&:url),
-          message: answer.message,
-        } %>
-      <% end %>
-    <% end %>
+    <%= render "govuk_publishing_components/components/list", {
+      items: @create_question.conversation.questions.each_with_index.map do |question, index|
+        answer = question.answer
+        render "question_and_answer", question:, index:, answer:
+      end
+    } %>
 
     <%= form_with url: create_conversation_path do |f| %>
       <%= render "govuk_publishing_components/components/character_count", {
