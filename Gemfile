@@ -17,6 +17,7 @@ gem "govuk_publishing_components"
 gem "govuk_sidekiq"
 gem "inline_svg"
 gem "pg"
+gem "ruby-openai"
 gem "sentry-sidekiq"
 gem "sprockets-rails"
 
