@@ -3,6 +3,7 @@ class GenerateAnswerFromOpenAiJob < ApplicationJob
 
   def perform(question_id)
     question = Question.find(question_id)
-    question.create_answer!(message: "Answer from OpenAI")
+    answer = AnswerGeneration::OpenaiRagCompletion.call(question)
+    question.create_answer!(message: answer)
   end
 end
