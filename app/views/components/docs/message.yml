@@ -1,0 +1,41 @@
+name: Message
+description: Displays a users question (if `is_question` is `true`) or a system generated message
+examples:
+  default:
+    data:
+      id: some-id-1
+      message: |
+        <p class="govuk-body">
+          This is a system generated message
+        <p>
+  with_data_attributes:
+    data:
+      id: some-id-2
+      data_attributes:
+        tracking: GTM-123AB
+      message: |
+        <p class="govuk-body">
+          This is a system generated message with data attributes
+        <p>
+  with_sources:
+    data:
+      id: some-id-3
+      message: |
+          <p class="govuk-body">
+            This is a system generated message with sources
+          <p>
+      sources:
+        - http://example.com
+        - http://example.gov.uk
+  message_is_a_question:
+    data:
+      id: some-id-4
+      message: This is a user's question
+      is_question: true
+  message_is_a_question_with_data_attributes:
+    data:
+      id: some-id-5
+      data_attributes:
+        tracking: GTM-123AB
+      message: This is a user's question with data attributes
+      is_question: true
