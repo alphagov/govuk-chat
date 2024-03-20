@@ -1,0 +1,17 @@
+<%
+  data_attributes ||= {}
+%>
+
+<%= tag.div id:, class: "app-c-question", data: data_attributes do %>
+  <div class="app-c-question__identifier">
+    <%= inline_svg_tag "components/question/chat-icon.svg", class: "app-c-question__identifier-icon" , aria_hidden: true %>
+
+    <h2 class="app-c-question__identifier-heading">
+      You
+    </h2>
+  </div>
+
+  <div class="app-c-question__message">
+    <%= escaped_simple_format(message, { class: "govuk-body" }) %>
+  </div>
+<% end %>

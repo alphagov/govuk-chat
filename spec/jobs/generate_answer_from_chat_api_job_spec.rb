@@ -16,7 +16,7 @@ RSpec.describe GenerateAnswerFromChatApiJob do
   end
 
   describe "#perform" do
-    it "stores the answer and answer_sources returned from the chat api" do
+    it "stores the answer and sources returned from the chat api" do
       sources_list = %w[https://example.com https://example.org]
       chat_api_response = {
         answer: "Hello, how can I help you?",

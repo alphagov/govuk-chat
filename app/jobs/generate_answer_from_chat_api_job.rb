@@ -22,7 +22,7 @@ private
     ActiveRecord::Base.transaction do
       answer = question.create_answer!(message: response["answer"])
       response["sources"].each.with_index do |url, index|
-        answer.answer_sources.create!(url:, relevancy: index)
+        answer.sources.create!(url:, relevancy: index)
       end
     end
   end
