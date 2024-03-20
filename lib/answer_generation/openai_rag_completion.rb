@@ -2,8 +2,8 @@ module AnswerGeneration
   class OpenaiRagCompletion
     def self.call(...) = new(...).call
 
-    def initialize(question)
-      @question = question
+    def initialize(conversation)
+      @conversation = conversation
     end
 
     def call
@@ -12,9 +12,7 @@ module AnswerGeneration
 
   private
 
-    attr_reader :question
-
-    delegate :conversation, to: :question
+    attr_reader :conversation
 
     def retrieve_response
       JSON.parse(client.chat(
