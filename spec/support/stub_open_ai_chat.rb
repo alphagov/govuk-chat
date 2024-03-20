@@ -1,5 +1,5 @@
 module StubOpenAiChat
-  def stub_openai_chat_response(question, answer)
+  def stub_openai_chat_completion(chat_history, answer)
     stub_request(:post, "https://api.openai.com/v1/chat/completions")
       .with(
         headers: {
@@ -8,7 +8,7 @@ module StubOpenAiChat
         },
         body: {
           model: "gpt-3.5-turbo",
-          messages: [{ role: "user", content: question }],
+          messages: chat_history,
           temperature: 0.0,
         }.to_json,
       )

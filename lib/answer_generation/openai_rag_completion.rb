@@ -25,8 +25,15 @@ module AnswerGeneration
     end
 
     def messages
+      conversation.questions.map(&method(:map_question)).flatten
+    end
+
+    def map_question(question)
+      return [{ role: "user", content: question.message }] if question.answer.nil?
+
       [
         { role: "user", content: question.message },
+        { role: "assistant", content: question.answer.message },
       ]
     end
 
