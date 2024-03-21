@@ -2,8 +2,9 @@ module AnswerGeneration
   class OpenaiRagCompletion
     def self.call(...) = new(...).call
 
-    def initialize(conversation)
+    def initialize(conversation, retriever: Retrieval::SearchApiV1Retriever)
       @conversation = conversation
+      @retriever = retriever
     end
 
     def call
@@ -12,7 +13,7 @@ module AnswerGeneration
 
   private
 
-    attr_reader :conversation
+    attr_reader :conversation, :retriever
 
     def retrieve_response
       JSON.parse(client.chat(
@@ -25,7 +26,28 @@ module AnswerGeneration
     end
 
     def messages
-      conversation.questions.map(&method(:map_question)).flatten
+      mapped_messages.last[:content] = wrap_user_question(mapped_messages.last[:content])
+      mapped_messages
+    end
+
+    def wrap_user_question(question)
+      <<~PROMPT
+        #{Prompts::GOVUK}
+
+        Context:
+        #{context(question)}
+
+        Question:
+        #{question}
+      PROMPT
+    end
+
+    def context(query)
+      retriever.call(query:).join("\n")
+    end
+
+    def mapped_messages
+      @mapped_messages ||= conversation.questions.map(&method(:map_question)).flatten
     end
 
     def map_question(question)
