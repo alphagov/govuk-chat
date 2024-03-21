@@ -679,6 +679,7 @@ DEPENDENCIES
   flipper
   flipper-active_record
   flipper-ui
+  gds-api-adapters
   govuk_app_config
   govuk_publishing_components
   govuk_sidekiq
