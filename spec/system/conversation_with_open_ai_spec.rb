@@ -1,8 +1,19 @@
-RSpec.feature "Conversation with OpenAI" do
+RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
   include ActiveJob::TestHelper
+
+  around do |example|
+    ClimateControl.modify(
+      OPENAI_MODEL: "gpt-3.5-turbo",
+      OPENAI_ACCESS_TOKEN: "open-ai-token",
+    ) do
+      example.run
+    end
+  end
 
   before do
     stub_open_ai_flag_active
+    chat_history = [{ role: "user", content: "How much tax should I be paying?" }]
+    stub_openai_chat_completion(chat_history, "Answer from OpenAI")
   end
 
   scenario do
