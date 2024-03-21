@@ -36,12 +36,11 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
   end
 
   def stub_open_ai_flag_active
-    allow(AnonymousUser).to receive(:new).and_return(AnonymousUser.new("known-user"))
     Flipper.enable_actor(:open_ai, AnonymousUser.new("known-user"))
   end
 
   def when_a_user_visits_conversation_page
-    visit new_conversation_path
+    visit "/chat?user_id=known-user"
   end
 
   def and_they_enter_a_question
