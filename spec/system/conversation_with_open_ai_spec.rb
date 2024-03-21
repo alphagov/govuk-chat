@@ -12,7 +12,8 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
 
   before do
     stub_open_ai_flag_active
-    chat_history = [{ role: "user", content: "How much tax should I be paying?" }]
+    stub_search_api(["Login to your tax account"])
+    chat_history = [{ role: "user", content: format_user_question("How much tax should I be paying?") }]
     stub_openai_chat_completion(chat_history, "Answer from OpenAI")
   end
 
@@ -41,6 +42,11 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
 
   def when_a_user_visits_conversation_page
     visit "/chat?user_id=known-user"
+  end
+
+  # Temp - we will stub the real thing when we've built it
+  def stub_search_api(result = [])
+    allow(Retrieval::SearchApiV1Retriever).to receive(:call).and_return(result)
   end
 
   def and_they_enter_a_question
@@ -75,5 +81,17 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
 
   def then_they_see_their_second_question_on_the_page
     expect(page).to have_content("Are you sure?")
+  end
+
+  def format_user_question(question)
+    <<~OUTPUT
+      #{AnswerGeneration::Prompts::GOVUK}
+
+      Context:
+      Login to your tax account
+
+      Question:
+      #{question}
+    OUTPUT
   end
 end
