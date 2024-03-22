@@ -17,12 +17,12 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
 
-    <%= render "components/message", {
+    <%= render "components/conversation_message", {
       id: "initial-message",
-      message: tag.p("Hello 👋 I'm GOV.UK Chat. I use the guidance on GOV.UK to answer questions.", class: "govuk-body") +
+      message: tag.p("Hello 👋 I'm GOV.UK Chat. I use the guidance on GOV.UK to answer questions.", class: "app-c-conversation-message__p") +
       tag.p(
         "You can ask me anything about business or trade - just don't include personal or sensitive data and please limit your question to 300 characters or less.",
-        class: "govuk-body govuk-!-margin-bottom-0"
+        class: "app-c-conversation-message__p"
       ),
     } %>
 

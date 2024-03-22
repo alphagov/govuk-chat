@@ -1,29 +1,20 @@
-name: Message
-description: Displays a users question (if `is_question` is `true`) or a system generated message
+name: Conversation message
+description: Displays questions (if `is_question` is `true`), answers, and any other messages to the user
 examples:
   default:
     data:
       id: some-id-1
-      message: |
-        <p class="govuk-body">
-          This is a system generated message
-        <p>
+      message: This is a system generated conversation message
   with_data_attributes:
     data:
       id: some-id-2
       data_attributes:
         tracking: GTM-123AB
-      message: |
-        <p class="govuk-body">
-          This is a system generated message with data attributes
-        <p>
+      message: This is a system generated conversation message with data attributes
   with_sources:
     data:
       id: some-id-3
-      message: |
-          <p class="govuk-body">
-            This is a system generated message with sources
-          <p>
+      message: This is a system generated conversation message with sources
       sources:
         - http://example.com
         - http://example.gov.uk
