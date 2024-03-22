@@ -4,7 +4,7 @@ module StubOpenAiChat
       .with(
         headers: {
           "Content-Type" => "application/json",
-          "Authorization" => "Bearer #{ENV['OPENAI_ACCESS_TOKEN']}",
+          "Authorization" => "Bearer #{ENV.fetch('OPENAI_ACCESS_TOKEN', 'no-token-given')}",
         },
         body: {
           model: "gpt-3.5-turbo",

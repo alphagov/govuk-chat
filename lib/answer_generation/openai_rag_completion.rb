@@ -18,7 +18,7 @@ module AnswerGeneration
     def retrieve_response
       JSON.parse(client.chat(
                    parameters: {
-                     model: ENV["OPENAI_MODEL"],
+                     model: ENV.fetch("OPENAI_MODEL", "gpt-3.5-turbo"),
                      messages:,
                      temperature: 0.0,
                    },
@@ -60,7 +60,7 @@ module AnswerGeneration
     end
 
     def client
-      @client ||= OpenAI::Client.new(access_token: ENV["OPENAI_ACCESS_TOKEN"])
+      @client ||= OpenAI::Client.new(access_token: ENV.fetch("OPENAI_ACCESS_TOKEN", "no-token-given"))
     end
   end
 end

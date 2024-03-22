@@ -1,13 +1,4 @@
 RSpec.describe GenerateAnswerFromOpenAiJob do
-  around do |example|
-    ClimateControl.modify(
-      OPENAI_MODEL: "gpt-3.5-turbo",
-      OPENAI_ACCESS_TOKEN: "open-ai-token",
-    ) do
-      example.run
-    end
-  end
-
   describe "#perform" do
     let(:question) { create :question }
     let(:chat_history) { map_chat_history(question.conversation.questions) }
