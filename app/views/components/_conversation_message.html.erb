@@ -1,0 +1,53 @@
+<%
+  data_attributes ||= {}
+  sources ||= []
+  is_question||= false
+  
+  icon = is_question ? "user-icon" : "govuk-chat-icon"
+%>
+
+<%= tag.div id:, class: "app-c-conversation-message", data: data_attributes do %>
+  <div class="app-c-conversation-message__identifier">
+    <%= 
+      inline_svg_tag "components/conversation_message/#{icon}.svg", 
+      class: "app-c-conversation-message__identifier-icon app-c-conversation-message__identifier-icon--#{icon}", 
+      aria_hidden: true 
+    %>
+
+    <h2 class="app-c-conversation-message__identifier-heading">
+      <% if is_question %> 
+        You
+      <% else %> 
+        GOV.UK Chat <span aria-hidden="true">(experimental)</span>
+      <% end %>
+    </h2>
+  </div>
+
+  <% if is_question %>
+    <div class="app-c-conversation-message__body app-c-conversation-message__body--user-message">
+      <%= escaped_simple_format(message, { class: "app-c-conversation-message__p" }) %>
+    </div>
+
+  <% else %>
+    <div class="app-c-conversation-message__body app-c-conversation-message__body--govuk-message">
+      <div class="app-c-conversation-message__answer">
+        <%= message %>
+      </div>
+
+      <% if sources.present? %>
+        <div class="app-c-conversation-message__sources">
+          <%= render "govuk_publishing_components/components/details", {
+            title: "Show pages used to generate this answer"
+          } do %>
+              <%= render "govuk_publishing_components/components/list", {
+                visible_counters: true,
+                items: sources.map do |source|
+                  link_to(source, source, class: "govuk-link", target: "_blank", rel: "noopener noreferrer")
+                end
+              } %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
