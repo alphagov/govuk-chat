@@ -1,12 +1,12 @@
 <%= render "components/conversation_message", {
-  id: "question-#{question.id}",
+  id: dom_id(question),
   message: question.message,
   is_question: true,
 } %>
 
 <% if answer.present? %>
   <%= render "components/conversation_message", {
-    id: "answer-#{answer.id}",
+    id: dom_id(answer),
     sources: answer.sources.map(&:url),
     message: answer.message,
   } %>

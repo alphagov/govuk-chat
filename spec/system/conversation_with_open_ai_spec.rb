@@ -1,4 +1,6 @@
-RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
+RSpec.feature "Conversation with OpenAI" do
+  include ActiveJob::TestHelper
+
   before do
     stub_open_ai_flag_active
   end
@@ -6,10 +8,18 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
   scenario do
     when_a_user_visits_the_homepage
     and_they_enter_a_question
+    then_they_see_the_question_pending_page
+
+    when_the_answer_is_generated
+    and_the_user_clicks_on_the_check_answer_button
     then_they_see_their_question_on_the_page
     and_they_can_see_the_answer
 
     when_they_enter_a_second_question
+    then_they_see_the_question_pending_page
+
+    when_the_answer_is_generated
+    and_the_user_clicks_on_the_check_answer_button
     then_they_see_their_second_question_on_the_page
     and_they_can_see_the_answer
   end
@@ -28,7 +38,15 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
     click_on "Submit"
   end
 
-  def when_the_user_clicks_on_the_check_answer_button
+  def then_they_see_the_question_pending_page
+    expect(page).to have_content("GOV.UK Chat is generating an answer")
+  end
+
+  def when_the_answer_is_generated
+    perform_enqueued_jobs
+  end
+
+  def and_the_user_clicks_on_the_check_answer_button
     click_on "Check if an answer has been generated"
   end
 

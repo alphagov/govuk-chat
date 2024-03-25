@@ -15,6 +15,8 @@ Rails.application.routes.draw do
     patch "/conversations/:id", to: "conversations#update", as: :update_conversation
 
     get ":id", to: "conversations#show", as: :show_conversation
+
+    get ":conversation_id/questions/:id/answer", to: "questions#answer", as: :answer_question
   end
 
   flipper_app = Flipper::UI.app

@@ -18,7 +18,7 @@ class ConversationsController < ApplicationController
     if @create_question.valid?
       question = @create_question.submit
 
-      redirect_to show_conversation_path(question.conversation, anchor: "question-#{question.id}"), flash: { notice: "Your question has been submitted" }
+      redirect_to answer_question_path(question.conversation, question)
     else
       @conversation = @create_question.conversation
 
@@ -32,7 +32,7 @@ class ConversationsController < ApplicationController
     if @create_question.valid?
       question = @create_question.submit
 
-      redirect_to show_conversation_path(@conversation, anchor: "question-#{question.id}"), flash: { notice: "Your question has been submitted" }
+      redirect_to answer_question_path(@conversation, question)
     else
       render :show, status: :unprocessable_entity
     end
