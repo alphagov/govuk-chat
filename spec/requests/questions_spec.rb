@@ -17,7 +17,7 @@ RSpec.describe "QuestionsController" do
       question = create(:question, conversation:)
       get answer_question_path(conversation, question)
 
-      assert_response 202
+      expect(response).to have_http_status(:accepted)
       assert_select ".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer"
       assert_select ".govuk-button[href='#{answer_question_path(conversation, question)}?refresh=true']", text: "Check if an answer has been generated"
     end
@@ -27,7 +27,7 @@ RSpec.describe "QuestionsController" do
         question = create(:question, conversation:)
         get answer_question_path(conversation, question, refresh: true)
 
-        assert_response 202
+        expect(response).to have_http_status(:accepted)
         assert_select ".govuk-govspeak p", text: "Thanks for your patience. Check again to find out if your answer is ready."
       end
     end
