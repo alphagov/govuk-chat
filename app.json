@@ -1,0 +1,53 @@
+{
+  "name": "govuk-chat",
+  "scripts": {
+    "postdeploy": "bundle exec rake db:prepare"
+  },
+  "env": {
+    "GOVUK_APP_DOMAIN": {
+      "value": "www.gov.uk"
+    },
+    "GOVUK_WEBSITE_ROOT": {
+      "value": "https://www.gov.uk"
+    },
+    "MOUNT_COMPONENT_GUIDE": {
+      "value": "true"
+    },
+    "BASIC_AUTH_USERNAME": {
+      "required": true
+    },
+    "BASIC_AUTH_PASSWORD": {
+      "required": true
+    },
+    "CHAT_API_URL": {
+      "required": true
+    },
+    "CHAT_API_USERNAME": {
+      "required": true
+    },
+    "CHAT_API_PASSWORD": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    },
+    "worker": {
+      "quantity": 1
+    }
+  },
+  "addons": [
+    "heroku-postgresql",
+    "heroku-redis",
+    "papertrail"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "heroku/ruby"
+    }
+  ]
+}
