@@ -48,7 +48,7 @@ RSpec.describe "ConversationsController" do
 
         assert_response :success
         assert_select "##{helpers.dom_id(question)}", text: /#{question.message}/
-        assert_select "##{helpers.dom_id(answer)}", text: /#{answer.message}/
+        assert_select "##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message
       end
     end
 

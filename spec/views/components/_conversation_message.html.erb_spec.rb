@@ -41,7 +41,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
       assert_select "div.app-c-conversation-message#answer-2" do
         assert_select ".app-c-conversation-message__identifier .app-c-conversation-message__identifier-icon.app-c-conversation-message__identifier-icon--govuk-chat-icon"
         assert_select ".app-c-conversation-message__identifier .app-c-conversation-message__identifier-heading", text: "GOV.UK Chat (experimental)"
-        assert_select ".app-c-conversation-message__body.app-c-conversation-message__body--govuk-message", text: "message 3"
+        assert_select ".app-c-conversation-message__answer .govuk-govspeak", text: "message 3"
         assert_select ".govuk-details", count: 0
       end
     end
@@ -58,6 +58,15 @@ RSpec.describe "components/_conversation_message.html.erb" do
 
       assert_select ".govuk-details a[href='http://example.com']", text: "http://example.com"
       assert_select ".govuk-details a[href='http://example.gov.uk']", text: "http://example.gov.uk"
+    end
+
+    it "sanitises the message" do
+      render("components/conversation_message", {
+        id: "answer-2",
+        message: "<script>alert('hackerman')</script>",
+      })
+
+      assert_select ".app-c-conversation-message__answer .govuk-govspeak", text: "alert('hackerman')"
     end
   end
 end
