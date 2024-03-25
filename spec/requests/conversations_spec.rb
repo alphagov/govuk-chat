@@ -8,7 +8,7 @@ RSpec.describe "ConversationsController" do
       get new_conversation_path
 
       expect(response).to have_http_status(:ok)
-      renders_the_create_question_form
+      expect(response.body).to render_create_question_form
     end
   end
 
@@ -18,15 +18,18 @@ RSpec.describe "ConversationsController" do
 
       expect(response).to have_http_status(:redirect)
       follow_redirect!
-      assert_select ".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer"
+      expect(response.body)
+        .to have_selector(".govuk-notification-banner__heading",
+                          text: "GOV.UK Chat is generating an answer")
     end
 
     it "renders the new conversation page with an error when the params are invalid" do
       post create_conversation_path, params: { create_question: { user_question: "" } }
 
       expect(response).to have_http_status(:unprocessable_entity)
-      assert_select ".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question"
-      renders_the_create_question_form
+      expect(response.body)
+        .to have_selector(".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question")
+        .and render_create_question_form
     end
   end
 
@@ -36,7 +39,7 @@ RSpec.describe "ConversationsController" do
       get show_conversation_path(question.conversation)
 
       expect(response).to have_http_status(:ok)
-      renders_the_create_question_form
+      expect(response.body).to render_create_question_form
     end
 
     context "when the conversation has a question with an answer" do
@@ -47,8 +50,9 @@ RSpec.describe "ConversationsController" do
         get show_conversation_path(question.conversation)
 
         expect(response).to have_http_status(:success)
-        assert_select "##{helpers.dom_id(question)}", text: /#{question.message}/
-        assert_select "##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message
+        expect(response.body)
+          .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
+          .and have_selector("##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message)
       end
     end
 
@@ -58,7 +62,8 @@ RSpec.describe "ConversationsController" do
         get show_conversation_path(question.conversation)
 
         expect(response).to have_http_status(:ok)
-        assert_select "##{helpers.dom_id(question)}", text: /#{question.message}/
+        expect(response.body)
+          .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
       end
     end
   end
@@ -71,19 +76,21 @@ RSpec.describe "ConversationsController" do
 
       expect(response).to have_http_status(:redirect)
       follow_redirect!
-      assert_select ".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer"
+      expect(response.body)
+        .to have_selector(".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer")
     end
 
     it "renders the conversation with an error when the params are invalid" do
       patch update_conversation_path(conversation), params: { create_question: { user_question: "" } }
 
       expect(response).to have_http_status(:unprocessable_entity)
-      assert_select ".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question"
-      assert_select ".gem-c-label", text: "Enter a question"
+      expect(response.body)
+        .to have_selector(".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question")
+        .and have_selector(".gem-c-label", text: "Enter a question")
     end
   end
 
-  def renders_the_create_question_form
-    assert_select ".gem-c-label", text: "Enter a question"
+  def render_create_question_form
+    have_selector(".gem-c-label", text: "Enter a question")
   end
 end

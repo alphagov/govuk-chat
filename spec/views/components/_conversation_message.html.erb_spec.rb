@@ -10,9 +10,10 @@ RSpec.describe "components/_conversation_message.html.erb" do
       },
     })
 
-    assert_select '.app-c-conversation-message[data-track-category="track-category"]'
-    assert_select '.app-c-conversation-message[data-track-action="track-action"]'
-    assert_select '.app-c-conversation-message[data-track-label="track-label"]'
+    expect(rendered)
+      .to have_selector('.app-c-conversation-message[data-track-category="track-category"]')
+      .and have_selector('.app-c-conversation-message[data-track-action="track-action"]')
+      .and have_selector('.app-c-conversation-message[data-track-label="track-label"]')
   end
 
   context "when is_question is true" do
@@ -23,10 +24,11 @@ RSpec.describe "components/_conversation_message.html.erb" do
         is_question: true,
       })
 
-      assert_select "div.app-c-conversation-message#question-1" do
-        assert_select ".app-c-conversation-message__identifier .app-c-conversation-message__identifier-icon.app-c-conversation-message__identifier-icon--user-icon"
-        assert_select ".app-c-conversation-message__identifier .app-c-conversation-message__identifier-heading", text: "You"
-        assert_select ".app-c-conversation-message__body.app-c-conversation-message__body--user-message", text: "message 2"
+      expect(rendered).to have_selector("div.app-c-conversation-message#question-1") do |rendered_question|
+        expect(rendered_question)
+          .to have_selector(".app-c-conversation-message__identifier .app-c-conversation-message__identifier-icon.app-c-conversation-message__identifier-icon--user-icon")
+          .and have_selector(".app-c-conversation-message__identifier .app-c-conversation-message__identifier-heading", text: "You")
+          .and have_selector(".app-c-conversation-message__body.app-c-conversation-message__body--user-message", text: "message 2")
       end
     end
   end
@@ -38,11 +40,12 @@ RSpec.describe "components/_conversation_message.html.erb" do
         message: "message 3",
       })
 
-      assert_select "div.app-c-conversation-message#answer-2" do
-        assert_select ".app-c-conversation-message__identifier .app-c-conversation-message__identifier-icon.app-c-conversation-message__identifier-icon--govuk-chat-icon"
-        assert_select ".app-c-conversation-message__identifier .app-c-conversation-message__identifier-heading", text: "GOV.UK Chat (experimental)"
-        assert_select ".app-c-conversation-message__answer .govuk-govspeak", text: "message 3"
-        assert_select ".govuk-details", count: 0
+      expect(rendered).to have_selector("div.app-c-conversation-message#answer-2") do |rendered_answer|
+        expect(rendered_answer)
+          .to have_selector(".app-c-conversation-message__identifier .app-c-conversation-message__identifier-icon.app-c-conversation-message__identifier-icon--govuk-chat-icon")
+          .and have_selector(".app-c-conversation-message__identifier .app-c-conversation-message__identifier-heading", text: "GOV.UK Chat (experimental)")
+          .and have_selector(".app-c-conversation-message__answer .govuk-govspeak", text: "message 3")
+          .and have_selector(".govuk-details", count: 0)
       end
     end
 
@@ -56,8 +59,9 @@ RSpec.describe "components/_conversation_message.html.erb" do
         ],
       })
 
-      assert_select ".govuk-details a[href='http://example.com']", text: "http://example.com"
-      assert_select ".govuk-details a[href='http://example.gov.uk']", text: "http://example.gov.uk"
+      expect(rendered)
+        .to have_selector(".govuk-details a[href='http://example.com']", text: "http://example.com", visible: :all)
+        .and have_selector(".govuk-details a[href='http://example.gov.uk']", text: "http://example.gov.uk", visible: :all)
     end
 
     it "sanitises the message" do
@@ -66,7 +70,8 @@ RSpec.describe "components/_conversation_message.html.erb" do
         message: "<script>alert('hackerman')</script>",
       })
 
-      assert_select ".app-c-conversation-message__answer .govuk-govspeak", text: "alert('hackerman')"
+      expect(rendered)
+        .to have_selector(".app-c-conversation-message__answer .govuk-govspeak", text: "alert('hackerman')")
     end
   end
 end

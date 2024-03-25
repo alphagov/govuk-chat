@@ -12,7 +12,8 @@ RSpec.describe "QuestionsController" do
       expect(response).to redirect_to(expected_redirect_destination)
 
       follow_redirect!
-      assert_select ".gem-c-label", text: "Enter a question"
+      expect(response.body)
+        .to have_selector(".gem-c-label", text: "Enter a question")
     end
 
     it "renders the pending page when a question doesn't have an answer" do
@@ -20,8 +21,10 @@ RSpec.describe "QuestionsController" do
       get answer_question_path(conversation, question)
 
       expect(response).to have_http_status(:accepted)
-      assert_select ".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer"
-      assert_select ".govuk-button[href='#{answer_question_path(conversation, question)}?refresh=true']", text: "Check if an answer has been generated"
+      expect(response.body)
+        .to have_selector(".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer")
+        .and have_selector(".govuk-button[href='#{answer_question_path(conversation, question)}?refresh=true']",
+                           text: "Check if an answer has been generated")
     end
 
     context "when the refresh query string is passed" do
@@ -30,7 +33,9 @@ RSpec.describe "QuestionsController" do
         get answer_question_path(conversation, question, refresh: true)
 
         expect(response).to have_http_status(:accepted)
-        assert_select ".govuk-govspeak p", text: "Thanks for your patience. Check again to find out if your answer is ready."
+        expect(response.body)
+          .to have_selector(".govuk-govspeak p",
+                            text: "Thanks for your patience. Check again to find out if your answer is ready.")
       end
     end
   end
