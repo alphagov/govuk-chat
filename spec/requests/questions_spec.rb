@@ -8,7 +8,9 @@ RSpec.describe "QuestionsController" do
       question = create(:question, :with_answer, conversation:)
       get answer_question_path(conversation, question, refresh: true)
 
-      assert_redirected_to show_conversation_path(conversation, anchor: helpers.dom_id(question.answer))
+      expected_redirect_destination = show_conversation_path(conversation, anchor: helpers.dom_id(question.answer))
+      expect(response).to redirect_to(expected_redirect_destination)
+
       follow_redirect!
       assert_select ".gem-c-label", text: "Enter a question"
     end
