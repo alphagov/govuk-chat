@@ -2,18 +2,20 @@ module AnswerGeneration
   class OpenaiRagCompletion
     def self.call(...) = new(...).call
 
-    def initialize(conversation, retriever: Retrieval::SearchApiV1Retriever)
-      @conversation = conversation
+    def initialize(question, retriever: Retrieval::SearchApiV1Retriever)
+      @question = question
+      @conversation = question.conversation
       @retriever = retriever
     end
 
     def call
-      retrieve_response.dig("choices", 0, "message", "content")
+      message = retrieve_response.dig("choices", 0, "message", "content")
+      question.build_answer(message:)
     end
 
   private
 
-    attr_reader :conversation, :retriever
+    attr_reader :question, :conversation, :retriever
 
     def retrieve_response
       JSON.parse(client.chat(

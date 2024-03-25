@@ -6,7 +6,12 @@ RSpec.describe AnswerGeneration::OpenaiRagCompletion do
     it "calls OpenAI chat endpoint and saves result" do
       stub_openai_chat_completion(chat_history, "OpenAI responded with...")
       stub_search_api(%w[some context here])
-      expect(described_class.call(question.conversation)).to eq("OpenAI responded with...")
+      result = described_class.call(question)
+      expect(result).to be_a(Answer)
+      expect(result).to have_attributes(
+        question:,
+        message: "OpenAI responded with...",
+      )
     end
 
     context "with existing chat history" do
@@ -16,7 +21,12 @@ RSpec.describe AnswerGeneration::OpenaiRagCompletion do
       it "calls openai with the chat history including the new question" do
         stub_openai_chat_completion(chat_history, "You can pay your self assessment...")
         stub_search_api(%w[some context here])
-        expect(described_class.call(question.conversation)).to eq("You can pay your self assessment...")
+        result = described_class.call(question)
+        expect(result).to be_a(Answer)
+        expect(result).to have_attributes(
+          question:,
+          message: "You can pay your self assessment...",
+        )
       end
     end
 
