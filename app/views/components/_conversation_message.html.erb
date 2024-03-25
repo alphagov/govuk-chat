@@ -31,7 +31,10 @@
   <% else %>
     <div class="app-c-conversation-message__body app-c-conversation-message__body--govuk-message">
       <div class="app-c-conversation-message__answer">
-        <%= message %>
+        <%= render "govuk_publishing_components/components/govspeak", {
+          } do %>
+            <%= sanitize(message) %>
+        <% end %>
       </div>
 
       <% if sources.present? %>
