@@ -19,6 +19,10 @@ RSpec.feature "Conversation with chat-api", :sidekiq_inline do
     then_they_see_their_question_on_the_page
     and_they_can_see_the_answer
     and_they_can_see_the_sources
+
+    when_they_enter_a_second_question
+    then_they_see_their_second_question_on_the_page
+    and_they_can_see_the_answer
   end
 
   def stub_chat_api
@@ -40,6 +44,14 @@ RSpec.feature "Conversation with chat-api", :sidekiq_inline do
     click_on "Submit"
   end
 
+  def then_they_see_the_question_pending_page
+    expect(page).to have_content("GOV.UK Chat is generating an answer")
+  end
+
+  def when_the_user_clicks_on_the_check_answer_button
+    click_on "Check if an answer has been generated"
+  end
+
   def then_they_see_their_question_on_the_page
     expect(page).to have_content("How much tax should I be paying?")
   end
@@ -51,5 +63,14 @@ RSpec.feature "Conversation with chat-api", :sidekiq_inline do
   def and_they_can_see_the_sources
     expect(page).to have_link("https://example.com", visible: :hidden)
     expect(page).to have_link("https://example.org", visible: :hidden)
+  end
+
+  def when_they_enter_a_second_question
+    fill_in "Enter a question", with: "Are you sure?"
+    click_on "Submit"
+  end
+
+  def then_they_see_their_second_question_on_the_page
+    expect(page).to have_content("Are you sure?")
   end
 end

@@ -27,39 +27,6 @@ RSpec.describe "ConversationsController" do
       assert_select ".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question"
       renders_the_create_question_form
     end
-
-    context "when :open_ai is enabled for an actor only" do
-      before do
-        Flipper.enable_actor(:open_ai, AnonymousUser.new("known-user"))
-      end
-
-      it "enqueues a GenerateAnswerFromChatApi" do
-        expect {
-          post create_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
-        }.to change(enqueued_jobs, :size).by(1)
-        expect(enqueued_jobs.last)
-          .to include(
-            job: GenerateAnswerFromChatApiJob,
-            args: [Question.last.id],
-          )
-      end
-
-      context "when anonymous user is mapped to a enabled actor" do
-        it "enqueues a GenerateAnswerFromOpenAiJob" do
-          expect {
-            post create_conversation_path, params: {
-              create_question: { user_question: "How much tax should I be paying?" },
-              user_id: "known-user",
-            }
-          }.to change(enqueued_jobs, :size).by(1)
-          expect(enqueued_jobs.last)
-            .to include(
-              job: GenerateAnswerFromOpenAiJob,
-              args: [Question.last.id],
-            )
-        end
-      end
-    end
   end
 
   describe "GET :show" do
@@ -90,6 +57,28 @@ RSpec.describe "ConversationsController" do
         assert_response :success
         assert_select "#question-#{question.id}", text: /#{question.message}/
       end
+    end
+  end
+
+  describe "PATCH :update" do
+    let(:conversation) { create(:conversation) }
+
+    it "saves the question and renders the pending page with valid params" do
+      patch update_conversation_path(conversation), params: { create_question: { user_question: "How much tax should I be paying?" } }
+
+      assert_response :redirect
+      follow_redirect!
+      assert_select ".gem-c-success-alert__message", text: "Your question has been submitted"
+      assert_select "#question-#{conversation.reload.questions.last.id}", text: /How much tax should I be paying?/
+      assert_select ".gem-c-label", text: "Enter a question"
+    end
+
+    it "renders the conversation with an error when the params are invalid" do
+      patch update_conversation_path(conversation), params: { create_question: { user_question: "" } }
+
+      assert_response :unprocessable_entity
+      assert_select ".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question"
+      assert_select ".gem-c-label", text: "Enter a question"
     end
   end
 

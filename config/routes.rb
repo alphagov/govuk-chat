@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     get "", to: "conversations#new", as: :new_conversation
     post "/conversations", to: "conversations#create", as: :create_conversation
 
+    patch "/conversations/:id", to: "conversations#update", as: :update_conversation
+
     get ":id", to: "conversations#show", as: :show_conversation
   end
 
