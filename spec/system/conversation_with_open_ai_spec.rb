@@ -85,7 +85,7 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
 
   def format_user_question(question)
     <<~OUTPUT
-      #{AnswerGeneration::Prompts::GOVUK}
+      #{AnswerGeneration::Prompts::GOVUK_DESIGNER}
 
       Context:
       Login to your tax account

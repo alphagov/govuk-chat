@@ -34,7 +34,7 @@ module AnswerGeneration
 
     def wrap_user_question(question)
       <<~PROMPT
-        #{Prompts::GOVUK}
+        #{Prompts::GOVUK_DESIGNER}
 
         Context:
         #{context(question)}
