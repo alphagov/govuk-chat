@@ -18,13 +18,13 @@ module AnswerGeneration
     attr_reader :question, :conversation, :retriever
 
     def retrieve_response
-      JSON.parse(client.chat(
-                   parameters: {
-                     model: ENV.fetch("OPENAI_MODEL", "gpt-3.5-turbo"),
-                     messages:,
-                     temperature: 0.0,
-                   },
-                 ))
+      client.chat(
+        parameters: {
+          model: ENV.fetch("OPENAI_MODEL", "gpt-3.5-turbo"),
+          messages:,
+          temperature: 0.0,
+        },
+      )
     end
 
     def messages

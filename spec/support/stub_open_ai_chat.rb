@@ -5,7 +5,7 @@ module StubOpenAiChat
         headers:,
         body: request_body(chat_history),
       )
-      .to_return(
+      .to_return_json(
         status: 200,
         body: response_body(answer),
         headers: {},
@@ -17,7 +17,7 @@ module StubOpenAiChat
       .with(
         headers:,
       )
-      .to_return(
+      .to_return_json(
         {
           status: 200,
           body: response_body(answer),
@@ -58,7 +58,7 @@ module StubOpenAiChat
           index: 0,
         },
       ],
-    }.to_json
+    }
   end
 
   def headers
