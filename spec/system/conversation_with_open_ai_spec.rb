@@ -6,7 +6,7 @@ RSpec.feature "Conversation with OpenAI" do
   end
 
   scenario do
-    when_a_user_visits_the_homepage
+    when_a_user_visits_conversation_page
     and_they_enter_a_question
     then_they_see_the_question_pending_page
 
@@ -29,8 +29,8 @@ RSpec.feature "Conversation with OpenAI" do
     Flipper.enable_actor(:open_ai, AnonymousUser.new("known-user"))
   end
 
-  def when_a_user_visits_the_homepage
-    visit root_path
+  def when_a_user_visits_conversation_page
+    visit new_conversation_path
   end
 
   def and_they_enter_a_question

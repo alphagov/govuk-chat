@@ -1,0 +1,35 @@
+<div class="govuk-grid-row govuk-width-container">
+  <div class="govuk-grid-column-two-thirds">
+    <%= content_for :title, "Welcome to GOV.UK Chat" %>
+
+    <p class="govuk-body">You can use this service to ask questions about business and trade. For example, you can ask about employing staff, paying tax or finding financial support.</p>
+
+    <p class="govuk-body">GOV.UK Chat uses artificial intelligence to find answers to your questions using GOV.UK guidance. It's an experimental service powered by OpenAI.</p>
+
+    <%= render "govuk_publishing_components/components/warning_text", {
+      text: "Do not share personal or sensitive information in your conversations with GOV.UK Chat."
+    } %>
+
+    <%= render "govuk_publishing_components/components/button", {
+      text: "Continue",
+      disable_ga4: true,
+      href: "/chat/conversations", # TODO: add the correct href
+      start: true,
+      rel: "external"
+    } %>
+
+    <div class="govuk-!-margin-top-4">
+      <p class="govuk-body">
+        <%= link_to(
+          "Read the privacy notice (opens in new tab)",
+          "https://www.gov.uk/government/publications/govuk-chat-privacy-notice",
+          class: "govuk-link",
+          rel: "external",
+          target: "_blank"
+        ) %>
+        to find out how GOV.UK Chat uses your data.
+      </p>
+    </div>
+
+  </div>
+</div>
