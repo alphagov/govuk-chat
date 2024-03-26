@@ -30,6 +30,66 @@ RSpec.describe Form::CreateQuestion do
 
       expect(form.errors.messages[:base]).to eq(["Previous question pending. Please wait for a response"])
     end
+
+    describe "#no_pii_present?" do
+      let(:pii_error_message) do
+        "Personal data has been detected in your question. Please remove it. You can ask another question. " \
+          "But please don’t include personal data in it or in any future questions."
+      end
+
+      it "is invalid when the user_question contains an email address" do
+        email_addresses = [
+          "My email is test@gmail.com",
+          "My email is test@g",
+        ]
+
+        email_addresses.each do |email_address|
+          form = described_class.new(user_question: "My email address is #{email_address}")
+          form.validate
+
+          expect(form.errors.messages[:user_question]).to eq([pii_error_message])
+        end
+      end
+
+      it "is invalid when the user_question contains a credit card number" do
+        credit_card_numbers = %w[1234567890123 12345678901234 123456789012345 1234567890123456]
+
+        credit_card_numbers.each do |credit_card_number|
+          form = described_class.new(user_question: "My credit card number is #{credit_card_number}")
+          form.validate
+
+          expect(form.errors.messages[:user_question]).to eq([pii_error_message])
+        end
+      end
+
+      it "is invalid when the user_question contains a phone number" do
+        phone_numbers = [
+          "+44555666777",
+          "+(445)555666777",
+          "+(445) 555666777",
+          "+(445) 555 66677",
+          "07555666777",
+        ]
+
+        phone_numbers.each do |phone_number|
+          form = described_class.new(user_question: "My phone number is #{phone_number}")
+          form.validate
+
+          expect(form.errors.messages[:user_question]).to eq([pii_error_message])
+        end
+      end
+
+      it "is invalid when the user_question contains a national insurance number" do
+        ni_numbers = ["AB 12 34 56 A", "AB123456A", "AB 123 456 A", "AB 123 456A", "AB123456 A", "AB 123456A"]
+
+        ni_numbers.each do |ni_number|
+          form = described_class.new(user_question: "My ni number is #{ni_number}")
+          form.validate
+
+          expect(form.errors.messages[:user_question]).to eq([pii_error_message])
+        end
+      end
+    end
   end
 
   describe "#submit" do
