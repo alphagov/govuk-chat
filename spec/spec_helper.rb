@@ -19,6 +19,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
   config.include FactoryBot::Syntax::Methods
   config.include StubFeatureFlags
+  config.include Capybara::RSpecMatchers, type: :request
 
   # configure system specs
   # TODO: open PR on govuk_test to configure drivers for

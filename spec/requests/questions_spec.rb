@@ -8,18 +8,23 @@ RSpec.describe "QuestionsController" do
       question = create(:question, :with_answer, conversation:)
       get answer_question_path(conversation, question, refresh: true)
 
-      assert_redirected_to show_conversation_path(conversation, anchor: helpers.dom_id(question.answer))
+      expected_redirect_destination = show_conversation_path(conversation, anchor: helpers.dom_id(question.answer))
+      expect(response).to redirect_to(expected_redirect_destination)
+
       follow_redirect!
-      assert_select ".gem-c-label", text: "Enter a question"
+      expect(response.body)
+        .to have_selector(".gem-c-label", text: "Enter a question")
     end
 
     it "renders the pending page when a question doesn't have an answer" do
       question = create(:question, conversation:)
       get answer_question_path(conversation, question)
 
-      assert_response 202
-      assert_select ".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer"
-      assert_select ".govuk-button[href='#{answer_question_path(conversation, question)}?refresh=true']", text: "Check if an answer has been generated"
+      expect(response).to have_http_status(:accepted)
+      expect(response.body)
+        .to have_selector(".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer")
+        .and have_selector(".govuk-button[href='#{answer_question_path(conversation, question)}?refresh=true']",
+                           text: "Check if an answer has been generated")
     end
 
     context "when the refresh query string is passed" do
@@ -27,8 +32,10 @@ RSpec.describe "QuestionsController" do
         question = create(:question, conversation:)
         get answer_question_path(conversation, question, refresh: true)
 
-        assert_response 202
-        assert_select ".govuk-govspeak p", text: "Thanks for your patience. Check again to find out if your answer is ready."
+        expect(response).to have_http_status(:accepted)
+        expect(response.body)
+          .to have_selector(".govuk-govspeak p",
+                            text: "Thanks for your patience. Check again to find out if your answer is ready.")
       end
     end
   end
