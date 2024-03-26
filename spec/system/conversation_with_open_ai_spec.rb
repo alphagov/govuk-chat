@@ -13,8 +13,7 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
   before do
     stub_open_ai_flag_active
     stub_search_api(["Login to your tax account"])
-    chat_history = [{ role: "user", content: format_user_question("How much tax should I be paying?") }]
-    stub_openai_chat_completion(chat_history, "Answer from OpenAI")
+    stub_any_openai_chat_completion(answer: "Answer from OpenAI")
   end
 
   scenario do
@@ -25,7 +24,7 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
     when_the_answer_is_generated
     and_the_user_clicks_on_the_check_answer_button
     then_they_see_their_question_on_the_page
-    and_they_can_see_the_answer
+    and_they_can_see_the_answer("Answer from OpenAI")
 
     when_they_enter_a_second_question
     then_they_see_the_question_pending_page
@@ -33,7 +32,7 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
     when_the_answer_is_generated
     and_the_user_clicks_on_the_check_answer_button
     then_they_see_their_second_question_on_the_page
-    and_they_can_see_the_answer
+    and_they_can_see_the_answer("Answer from OpenAI 2")
   end
 
   def stub_open_ai_flag_active
@@ -41,7 +40,7 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
   end
 
   def when_a_user_visits_conversation_page
-    visit "/chat?user_id=known-user"
+    visit "/chat/conversations?user_id=known-user"
   end
 
   # Temp - we will stub the real thing when we've built it
@@ -70,8 +69,8 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
     expect(page).to have_content("How much tax should I be paying?")
   end
 
-  def and_they_can_see_the_answer
-    expect(page).to have_content("Answer from OpenAI")
+  def and_they_can_see_the_answer(answer)
+    expect(page).to have_content(answer)
   end
 
   def when_they_enter_a_second_question
@@ -81,17 +80,5 @@ RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
 
   def then_they_see_their_second_question_on_the_page
     expect(page).to have_content("Are you sure?")
-  end
-
-  def format_user_question(question)
-    <<~OUTPUT
-      #{AnswerGeneration::Prompts::GOVUK_DESIGNER}
-
-      Context:
-      Login to your tax account
-
-      Question:
-      #{question}
-    OUTPUT
   end
 end
