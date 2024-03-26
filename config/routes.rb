@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  root to: redirect("/chat/conversations")
+  root to: redirect("/chat")
 
   get "/healthcheck/live", to: proc { [200, {}, %w[OK]] }
   get "/healthcheck/ready", to: GovukHealthcheck.rack_response(
@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   )
 
   scope :chat do
+    get "", to: "chat#index", as: :chat
+
     scope :conversations do
       get "", to: "conversations#new", as: :new_conversation
       post "", to: "conversations#create", as: :create_conversation
