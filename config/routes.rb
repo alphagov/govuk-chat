@@ -25,5 +25,8 @@ Rails.application.routes.draw do
 
   flipper_app = Flipper::UI.app
   mount flipper_app, at: "/flipper"
-  mount GovukPublishingComponents::Engine, at: "/component-guide" if Rails.env.development?
+
+  if Rails.env.development? || ENV["MOUNT_COMPONENT_GUIDE"] == "true"
+    mount GovukPublishingComponents::Engine, at: "/component-guide"
+  end
 end
