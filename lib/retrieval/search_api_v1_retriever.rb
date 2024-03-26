@@ -25,7 +25,7 @@ module Retrieval
 
         Uri: https://www.gov.uk#{result['link']}
 
-        Content: #{result['indexable_content']}
+        Content: #{result['indexable_content'].truncate_words(500, ommision: '')}
       OUTPUT
     end
   end
