@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
   scope :chat do
     get "", to: "chat#index", as: :chat
+    get "/onboarding", to: "chat#onboarding", as: :chat_onboarding
 
     scope :conversations do
       get "", to: "conversations#new", as: :new_conversation

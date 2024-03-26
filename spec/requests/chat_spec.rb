@@ -14,4 +14,14 @@ RSpec.describe "ChatController" do
       expect(response.headers["Cache-Control"]).to eq("max-age=300, public")
     end
   end
+
+  describe "GET :onboarding" do
+    it "renders the onboarding page" do
+      get chat_onboarding_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body)
+        .to have_selector(".gem-c-title__text", text: "Before you start")
+    end
+  end
 end
