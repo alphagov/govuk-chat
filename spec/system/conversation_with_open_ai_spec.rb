@@ -20,7 +20,7 @@ RSpec.feature "Conversation with OpenAI" do
     and_they_enter_a_question
     then_they_see_the_question_pending_page
 
-    when_the_answer_is_generated
+    when_the_first_answer_is_generated
     and_the_user_clicks_on_the_check_answer_button
     then_they_see_their_question_on_the_page
     and_they_can_see_the_first_answer
@@ -28,7 +28,7 @@ RSpec.feature "Conversation with OpenAI" do
     when_they_enter_a_second_question
     then_they_see_the_question_pending_page
 
-    when_the_answer_is_generated
+    when_the_second_answer_is_generated
     and_the_user_clicks_on_the_check_answer_button
     then_they_see_their_second_question_on_the_page
     and_they_can_see_the_second_answer
@@ -56,8 +56,16 @@ RSpec.feature "Conversation with OpenAI" do
     expect(page).to have_content("GOV.UK Chat is generating an answer")
   end
 
-  def when_the_answer_is_generated
-    perform_enqueued_jobs
+  def when_the_first_answer_is_generated
+    stub_any_openai_chat_completion(answer: "First answer from OpenAI") do
+      perform_enqueued_jobs
+    end
+  end
+
+  def when_the_second_answer_is_generated
+    stub_any_openai_chat_completion(answer: "Second answer from OpenAI") do
+      perform_enqueued_jobs
+    end
   end
 
   def and_the_user_clicks_on_the_check_answer_button
@@ -69,11 +77,11 @@ RSpec.feature "Conversation with OpenAI" do
   end
 
   def and_they_can_see_the_first_answer
-    expect(page).to have_content("Answer from OpenAI")
+    expect(page).to have_content("First answer from OpenAI")
   end
 
   def and_they_can_see_the_second_answer
-    expect(page).to have_content("Answer from OpenAI 2")
+    expect(page).to have_content("Second answer from OpenAI")
   end
 
   def when_they_enter_a_second_question

@@ -13,27 +13,24 @@ module StubOpenAiChat
   end
 
   def stub_any_openai_chat_completion(answer:)
-    stub_request(:post, "https://api.openai.com/v1/chat/completions")
+    stub = stub_request(:post, "https://api.openai.com/v1/chat/completions")
       .with(
         headers:,
       )
       .to_return_json(
-        {
-          status: 200,
-          body: response_body(answer),
-          headers: {},
-        },
-        {
-          status: 200,
-          body: response_body("#{answer} 2"),
-          headers: {},
-        },
-        {
-          status: 200,
-          body: response_body("#{answer} 3"),
-          headers: {},
-        },
+
+        status: 200,
+        body: response_body(answer),
+        headers: {},
+
       )
+    return unless block_given?
+
+    begin
+      yield
+    ensure
+      remove_request_stub(stub)
+    end
   end
 
   def response_body(answer)
