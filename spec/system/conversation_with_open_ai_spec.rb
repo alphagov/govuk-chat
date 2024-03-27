@@ -3,7 +3,6 @@ RSpec.feature "Conversation with OpenAI" do
 
   around do |example|
     ClimateControl.modify(
-      OPENAI_MODEL: "gpt-3.5-turbo",
       OPENAI_ACCESS_TOKEN: "real-open-ai-access-token",
     ) do
       example.run

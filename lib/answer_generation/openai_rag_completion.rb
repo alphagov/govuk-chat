@@ -1,5 +1,7 @@
 module AnswerGeneration
   class OpenaiRagCompletion
+    OPENAI_MODEL = "gpt-3.5-turbo".freeze
+
     def self.call(...) = new(...).call
 
     def initialize(question, retriever: Retrieval::SearchApiV1Retriever)
@@ -9,7 +11,7 @@ module AnswerGeneration
     end
 
     def call
-      message = retrieve_response.dig("choices", 0, "message", "content")
+      message = openai_response.dig("choices", 0, "message", "content")
       question.build_answer(message:)
     end
 
@@ -17,10 +19,10 @@ module AnswerGeneration
 
     attr_reader :question, :conversation, :retriever
 
-    def retrieve_response
+    def openai_response
       client.chat(
         parameters: {
-          model: ENV.fetch("OPENAI_MODEL", "gpt-3.5-turbo"),
+          model: OPENAI_MODEL,
           messages:,
           temperature: 0.0,
         },
