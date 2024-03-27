@@ -1,4 +1,4 @@
-RSpec.feature "Conversation with OpenAI", :sidekiq_inline do
+RSpec.feature "Conversation with OpenAI" do
   include ActiveJob::TestHelper
 
   around do |example|
