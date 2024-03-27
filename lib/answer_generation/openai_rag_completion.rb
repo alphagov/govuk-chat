@@ -6,7 +6,6 @@ module AnswerGeneration
 
     def initialize(question)
       @question = question
-      @conversation = question.conversation
       @retriever = Retrieval::SearchApiV1Retriever
     end
 
@@ -17,7 +16,7 @@ module AnswerGeneration
 
   private
 
-    attr_reader :question, :conversation, :retriever
+    attr_reader :question, :retriever
 
     def openai_response
       client.chat(
@@ -30,37 +29,24 @@ module AnswerGeneration
     end
 
     def messages
-      mapped_messages.last[:content] = wrap_user_question(mapped_messages.last[:content])
-      mapped_messages
+      [
+        { role: "system", content: system_prompt },
+        { role: "user", content: question.message },
+      ]
     end
 
-    def wrap_user_question(question)
+    def system_prompt
       <<~PROMPT
         #{Prompts::GOVUK_DESIGNER}
 
         Context:
         #{context(question)}
 
-        Question:
-        #{question}
       PROMPT
     end
 
     def context(query)
       retriever.call(query:).join("\n")
-    end
-
-    def mapped_messages
-      @mapped_messages ||= conversation.questions.map(&method(:map_question)).flatten
-    end
-
-    def map_question(question)
-      return [{ role: "user", content: question.message }] if question.answer.nil?
-
-      [
-        { role: "user", content: question.message },
-        { role: "assistant", content: question.answer.message },
-      ]
     end
 
     def client

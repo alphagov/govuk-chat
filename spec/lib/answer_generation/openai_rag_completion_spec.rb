@@ -9,10 +9,15 @@ RSpec.describe AnswerGeneration::OpenaiRagCompletion do
 
   describe ".call" do
     let(:question) { create :question }
-    let(:chat_history) { map_chat_history(question.conversation.questions) }
+    let(:expected_message_history) do
+      [
+        { role: "system", content: system_prompt },
+        { role: "user", content: question.message },
+      ]
+    end
 
-    it "calls OpenAI chat endpoint and saves result" do
-      stub_openai_chat_completion(chat_history, "OpenAI responded with...")
+    it "calls OpenAI chat endpoint and returns unsaved answer" do
+      stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
       stub_search_api(%w[some context here])
       result = described_class.call(question)
       expect(result).to be_a(Answer)
@@ -20,27 +25,12 @@ RSpec.describe AnswerGeneration::OpenaiRagCompletion do
         question:,
         message: "OpenAI responded with...",
       )
-    end
-
-    context "with existing chat history" do
-      let(:conversation) { create :conversation, :with_history }
-      let(:question) { conversation.questions.last }
-
-      it "calls openai with the chat history including the new question" do
-        stub_openai_chat_completion(chat_history, "You can pay your self assessment...")
-        stub_search_api(%w[some context here])
-        result = described_class.call(question)
-        expect(result).to be_a(Answer)
-        expect(result).to have_attributes(
-          question:,
-          message: "You can pay your self assessment...",
-        )
-      end
+      expect(result.persisted?).to eq(false)
     end
 
   private
 
-    def format_user_question(question)
+    def system_prompt
       <<~OUTPUT
         #{AnswerGeneration::Prompts::GOVUK_DESIGNER}
 
@@ -49,26 +39,7 @@ RSpec.describe AnswerGeneration::OpenaiRagCompletion do
         context
         here
 
-        Question:
-        #{question}
       OUTPUT
-    end
-
-    def map_chat_history(questions)
-      mapped_questions = questions.map(&method(:map_question)).flatten
-      return mapped_questions if mapped_questions.last[:role] == "assistant"
-
-      mapped_questions.last[:content] = format_user_question(mapped_questions.last[:content])
-      mapped_questions
-    end
-
-    def map_question(question)
-      return [{ role: "user", content: question.message }] if question.answer.nil?
-
-      [
-        { role: "user", content: question.message },
-        { role: "assistant", content: question.answer.message },
-      ]
     end
 
     # Temp - we will stub the real thing when we've built it
