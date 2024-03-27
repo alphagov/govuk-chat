@@ -26,7 +26,7 @@ RSpec.describe "ChatController" do
   end
 
   describe "POST :confirmation" do
-    context "when the understand_risk param is present" do
+    context "when the confirm_understand_risk[confirmation] param is present" do
       it "redirects to the new conversation page" do
         post onboarding_confirm_path, params: { confirm_understand_risk: { confirmation: "understand_risk" } }
 
@@ -41,7 +41,10 @@ RSpec.describe "ChatController" do
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body)
-          .to have_selector(".gem-c-error-alert", text: "Check the checkbox to show you understand the guidance")
+          .to have_selector(
+            ".govuk-error-summary a[href='#confirm_understand_risk_confirmation']",
+            text: "Check the checkbox to show you understand the guidance",
+          )
           .and have_selector(".gem-c-title__text", text: "Before you start")
       end
     end

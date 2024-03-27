@@ -3,7 +3,7 @@
   <% if @form.errors.any? %>
     <%= render "govuk_publishing_components/components/error_summary", {
       title: "There is a problem",
-      items: error_items
+      items: error_items(@form, :confirmation, "#confirm_understand_risk_confirmation")
     } %>
   <% end %>
 <% end %>
@@ -23,7 +23,7 @@
         heading: "Confirm you understand the risks",
         visually_hide_heading: true,
         no_hint_text: true,
-        error: @form.errors.map(&:message).join("\n"),
+        error: @form.errors.any? ? @form.errors.map(&:message).join("\n") : nil,
         items: [
           {
             label: "I understand that the answers GOV.UK Chat generates may be inaccurate or inconsistent",
