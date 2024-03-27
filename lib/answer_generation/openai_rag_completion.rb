@@ -7,6 +7,7 @@ module AnswerGeneration
     def initialize(question)
       @question = question
       @retriever = Retrieval::SearchApiV1Retriever
+      @openai_client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_ACCESS_TOKEN"))
     end
 
     def call
@@ -16,10 +17,10 @@ module AnswerGeneration
 
   private
 
-    attr_reader :question, :retriever
+    attr_reader :question, :retriever, :openai_client
 
     def openai_response
-      client.chat(
+      openai_client.chat(
         parameters: {
           model: OPENAI_MODEL,
           messages:,
@@ -47,10 +48,6 @@ module AnswerGeneration
 
     def context(query)
       retriever.call(query:).join("\n")
-    end
-
-    def client
-      @client ||= OpenAI::Client.new(access_token: ENV.fetch("OPENAI_ACCESS_TOKEN"))
     end
   end
 end
