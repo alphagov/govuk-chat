@@ -4,10 +4,10 @@ module AnswerGeneration
 
     def self.call(...) = new(...).call
 
-    def initialize(question, retriever: Retrieval::SearchApiV1Retriever)
+    def initialize(question)
       @question = question
       @conversation = question.conversation
-      @retriever = retriever
+      @retriever = Retrieval::SearchApiV1Retriever
     end
 
     def call
