@@ -64,7 +64,7 @@ module AnswerGeneration
     end
 
     def client
-      @client ||= OpenAI::Client.new(access_token: ENV.fetch("OPENAI_ACCESS_TOKEN", "no-token-given"))
+      @client ||= OpenAI::Client.new(access_token: ENV.fetch("OPENAI_ACCESS_TOKEN"))
     end
   end
 end

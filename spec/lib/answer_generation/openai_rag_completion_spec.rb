@@ -1,4 +1,12 @@
 RSpec.describe AnswerGeneration::OpenaiRagCompletion do
+  around do |example|
+    ClimateControl.modify(
+      OPENAI_ACCESS_TOKEN: "open-ai-access-token",
+    ) do
+      example.run
+    end
+  end
+
   describe ".call" do
     let(:question) { create :question }
     let(:chat_history) { map_chat_history(question.conversation.questions) }
