@@ -23,7 +23,7 @@ RSpec.feature "Conversation with OpenAI" do
     when_the_answer_is_generated
     and_the_user_clicks_on_the_check_answer_button
     then_they_see_their_question_on_the_page
-    and_they_can_see_the_answer("Answer from OpenAI")
+    and_they_can_see_the_first_answer
 
     when_they_enter_a_second_question
     then_they_see_the_question_pending_page
@@ -31,7 +31,7 @@ RSpec.feature "Conversation with OpenAI" do
     when_the_answer_is_generated
     and_the_user_clicks_on_the_check_answer_button
     then_they_see_their_second_question_on_the_page
-    and_they_can_see_the_answer("Answer from OpenAI 2")
+    and_they_can_see_the_second_answer
   end
 
   def stub_open_ai_flag_active
@@ -68,8 +68,12 @@ RSpec.feature "Conversation with OpenAI" do
     expect(page).to have_content("How much tax should I be paying?")
   end
 
-  def and_they_can_see_the_answer(answer)
-    expect(page).to have_content(answer)
+  def and_they_can_see_the_first_answer
+    expect(page).to have_content("Answer from OpenAI")
+  end
+
+  def and_they_can_see_the_second_answer
+    expect(page).to have_content("Answer from OpenAI 2")
   end
 
   def when_they_enter_a_second_question
