@@ -28,7 +28,7 @@ RSpec.feature "Chat Onboarding" do
   end
 
   def when_the_user_checks_the_inaccuracies_check_box
-    check "inaccuracies"
+    check "understand_risk"
   end
 
   def and_the_user_clicks_on_the_start_chatting_button

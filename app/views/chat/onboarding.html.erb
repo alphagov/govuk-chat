@@ -1,4 +1,13 @@
 <%= content_for :title, "Before you start" %>
+<%= content_for :error_summary do %>
+  <% if @form.errors.any? %>
+    <%= render "govuk_publishing_components/components/error_summary", {
+      title: "There is a problem",
+      items: error_items
+    } %>
+  <% end %>
+<% end %>
+
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
@@ -8,23 +17,26 @@
 
     <p class="govuk-body">Check the guidance on GOV.UK before acting on any of the answers given by GOV.UK Chat.</p>
 
-    <%= render "govuk_publishing_components/components/checkboxes", {
-      name: "understand_risk",
-      items: [
-        {
-          label: "I understand that the answers GOV.UK Chat generates may be inaccurate or inconsistent",
-          value: "understand_risk"
-        }
-      ]
-    } %>
+    <%= form_with url: onboarding_confirm_path do |f| %>
+      <%= render "govuk_publishing_components/components/checkboxes", {
+        name: "confirm_understand_risk[confirmation]",
+        heading: "Confirm you understand the risks",
+        visually_hide_heading: true,
+        no_hint_text: true,
+        error: @form.errors.map(&:message).join("\n"),
+        items: [
+          {
+            label: "I understand that the answers GOV.UK Chat generates may be inaccurate or inconsistent",
+            value: "understand_risk",
+            id: "confirm_understand_risk_confirmation",
+          }
+        ]
+      } %>
 
-    <%= render "govuk_publishing_components/components/button", {
-      text: "Start chatting",
-      disable_ga4: true,
-      href: "/chat/conversations",
-      start: true,
-      rel: "external"
-    } %>
-
+      <%= render "govuk_publishing_components/components/button", {
+        text: "Start chatting",
+        start: true,
+      } %>
+    <% end %>
   </div>
 </div>

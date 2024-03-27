@@ -18,7 +18,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_15_101126) do
   create_table "answer_sources", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
     t.string "url", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_atg", null: false
     t.datetime "updated_at", null: false
     t.integer "relevancy"
     t.index ["answer_id", "relevancy"], name: "index_answer_sources_on_answer_id_and_relevancy", unique: true
