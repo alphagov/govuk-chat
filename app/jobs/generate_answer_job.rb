@@ -1,4 +1,4 @@
-class GenerateAnswerFromChatApiJob < ApplicationJob
+class GenerateAnswerJob < ApplicationJob
   queue_as :default
 
   def perform(question_id)

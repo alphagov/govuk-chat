@@ -1,4 +1,4 @@
-RSpec.describe GenerateAnswerFromChatApiJob do
+RSpec.describe GenerateAnswerJob do
   include ActiveJob::TestHelper
   let(:question) { create(:question, message: user_input) }
   let(:user_input) { "hello" }

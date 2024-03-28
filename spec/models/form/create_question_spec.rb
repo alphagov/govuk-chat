@@ -99,7 +99,7 @@ RSpec.describe Form::CreateQuestion do
           expect { form.submit }.to change(enqueued_jobs, :size).by(1)
           expect(enqueued_jobs.last)
             .to include(
-              job: GenerateAnswerFromChatApiJob,
+              job: GenerateAnswerJob,
               args: [Question.last.id],
             )
         end
