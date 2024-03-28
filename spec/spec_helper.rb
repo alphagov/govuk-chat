@@ -20,6 +20,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include StubFeatureFlags
   config.include Capybara::RSpecMatchers, type: :request
+  config.include StubOpenAiChat
 
   # configure system specs
   # TODO: open PR on govuk_test to configure drivers for

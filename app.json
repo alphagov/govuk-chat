@@ -27,6 +27,9 @@
     },
     "CHAT_API_PASSWORD": {
       "required": true
+    },
+    "OPENAI_ACCESS_TOKEN": {
+      "required": true
     }
   },
   "formation": {

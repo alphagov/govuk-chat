@@ -112,6 +112,7 @@ GEM
     dotenv (3.1.0)
     drb (2.2.1)
     erubi (1.12.0)
+    event_stream_parser (1.0.0)
     factory_bot (6.4.6)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.4.3)
@@ -119,6 +120,8 @@ GEM
       railties (>= 5.0.0)
     faraday (2.9.0)
       faraday-net_http (>= 2.0, < 3.2)
+    faraday-multipart (1.0.4)
+      multipart-post (~> 2)
     faraday-net_http (3.1.0)
       net-http
     flipper (1.2.2)
@@ -220,6 +223,7 @@ GEM
     mini_mime (1.1.5)
     minitest (5.22.3)
     msgpack (1.7.2)
+    multipart-post (2.4.0)
     mutex_m (0.2.0)
     net-http (0.4.1)
       uri
@@ -582,6 +586,10 @@ GEM
       rubocop (~> 1.40)
       rubocop-capybara (~> 2.17)
       rubocop-factory_bot (~> 2.22)
+    ruby-openai (6.3.1)
+      event_stream_parser (>= 0.3.0, < 2.0.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
@@ -671,6 +679,7 @@ DEPENDENCIES
   flipper
   flipper-active_record
   flipper-ui
+  gds-api-adapters
   govuk_app_config
   govuk_publishing_components
   govuk_sidekiq
@@ -681,6 +690,7 @@ DEPENDENCIES
   rails (= 7.1.3.2)
   rspec-rails
   rubocop-govuk
+  ruby-openai
   sentry-sidekiq
   simplecov
   sprockets-rails

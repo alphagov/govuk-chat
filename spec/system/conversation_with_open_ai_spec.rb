@@ -1,8 +1,18 @@
 RSpec.feature "Conversation with OpenAI" do
   include ActiveJob::TestHelper
 
+  around do |example|
+    ClimateControl.modify(
+      OPENAI_ACCESS_TOKEN: "real-open-ai-access-token",
+    ) do
+      example.run
+    end
+  end
+
   before do
     stub_open_ai_flag_active
+    stub_search_api(["Login to your tax account"])
+    stub_any_openai_chat_completion(answer: "Answer from OpenAI")
   end
 
   scenario do
@@ -10,27 +20,31 @@ RSpec.feature "Conversation with OpenAI" do
     and_they_enter_a_question
     then_they_see_the_question_pending_page
 
-    when_the_answer_is_generated
+    when_the_first_answer_is_generated
     and_the_user_clicks_on_the_check_answer_button
     then_they_see_their_question_on_the_page
-    and_they_can_see_the_answer
+    and_they_can_see_the_first_answer
 
     when_they_enter_a_second_question
     then_they_see_the_question_pending_page
 
-    when_the_answer_is_generated
+    when_the_second_answer_is_generated
     and_the_user_clicks_on_the_check_answer_button
     then_they_see_their_second_question_on_the_page
-    and_they_can_see_the_answer
+    and_they_can_see_the_second_answer
   end
 
   def stub_open_ai_flag_active
-    allow(AnonymousUser).to receive(:new).and_return(AnonymousUser.new("known-user"))
     Flipper.enable_actor(:open_ai, AnonymousUser.new("known-user"))
   end
 
   def when_a_user_visits_conversation_page
-    visit new_conversation_path
+    visit "/chat/conversations?user_id=known-user"
+  end
+
+  # Temp - we will stub the real thing when we've built it
+  def stub_search_api(result = [])
+    allow(Retrieval::SearchApiV1Retriever).to receive(:call).and_return(result)
   end
 
   def and_they_enter_a_question
@@ -42,8 +56,16 @@ RSpec.feature "Conversation with OpenAI" do
     expect(page).to have_content("GOV.UK Chat is generating an answer")
   end
 
-  def when_the_answer_is_generated
-    perform_enqueued_jobs
+  def when_the_first_answer_is_generated
+    stub_any_openai_chat_completion(answer: "First answer from OpenAI") do
+      perform_enqueued_jobs
+    end
+  end
+
+  def when_the_second_answer_is_generated
+    stub_any_openai_chat_completion(answer: "Second answer from OpenAI") do
+      perform_enqueued_jobs
+    end
   end
 
   def and_the_user_clicks_on_the_check_answer_button
@@ -54,8 +76,12 @@ RSpec.feature "Conversation with OpenAI" do
     expect(page).to have_content("How much tax should I be paying?")
   end
 
-  def and_they_can_see_the_answer
-    expect(page).to have_content("Answer from OpenAI")
+  def and_they_can_see_the_first_answer
+    expect(page).to have_content("First answer from OpenAI")
+  end
+
+  def and_they_can_see_the_second_answer
+    expect(page).to have_content("Second answer from OpenAI")
   end
 
   def when_they_enter_a_second_question
