@@ -73,36 +73,14 @@ RSpec.describe Form::CreateQuestion do
         expect(conversation.questions.last.message).to eq "How much tax should I be paying?"
       end
 
-      context "with :open_ai feature flag enabled" do
-        before do
-          stub_feature_flag(:open_ai, true)
-        end
-
-        it "fires a GenerateAnswerFromOpenAiJob" do
-          form = described_class.new(user_question: "How much tax should I be paying?")
-          expect { form.submit }.to change(enqueued_jobs, :size).by(1)
-          expect(enqueued_jobs.last)
-            .to include(
-              job: GenerateAnswerFromOpenAiJob,
-              args: [Question.last.id],
-            )
-        end
-      end
-
-      context "without :open_ai feature flag enabled" do
-        before do
-          stub_feature_flag(:open_ai, false)
-        end
-
-        it "fires a GenerateAnswerFromChatApiJob" do
-          form = described_class.new(user_question: "How much tax should I be paying?")
-          expect { form.submit }.to change(enqueued_jobs, :size).by(1)
-          expect(enqueued_jobs.last)
-            .to include(
-              job: GenerateAnswerJob,
-              args: [Question.last.id],
-            )
-        end
+      it "enqueues a GenerateAnswerJob" do
+        form = described_class.new(user_question: "How much tax should I be paying?")
+        expect { form.submit }.to change(enqueued_jobs, :size).by(1)
+        expect(enqueued_jobs.last)
+          .to include(
+            job: GenerateAnswerJob,
+            args: [Question.last.id],
+          )
       end
     end
 

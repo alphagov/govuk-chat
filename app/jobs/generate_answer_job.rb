@@ -6,7 +6,7 @@ class GenerateAnswerJob < ApplicationJob
     return logger.warn("No question found for #{question_id}") unless question
     return logger.warn("Question #{question_id} has already been answered") if question.answer
 
-    answer = AnswerGeneration::GovukChatApi.call(question)
+    answer = AnswerGeneration::Composer.call(question)
     answer.save!
   end
 end
