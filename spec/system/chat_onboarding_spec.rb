@@ -4,6 +4,10 @@ RSpec.feature "Chat Onboarding" do
     then_they_see_the_landing_page
 
     when_the_user_clicks_on_the_continue_button
+    then_they_see_the_onboarding_page
+
+    when_the_user_checks_the_inaccuracies_check_box
+    and_the_user_clicks_on_the_start_chatting_button
     then_they_see_the_conversation_page
   end
 
@@ -19,7 +23,18 @@ RSpec.feature "Chat Onboarding" do
     click_on "Continue"
   end
 
-  # TODO: This will change to a different page
+  def then_they_see_the_onboarding_page
+    expect(page).to have_content("Before you start")
+  end
+
+  def when_the_user_checks_the_inaccuracies_check_box
+    check "confirm_understand_risk_confirmation"
+  end
+
+  def and_the_user_clicks_on_the_start_chatting_button
+    click_on "Start chatting"
+  end
+
   def then_they_see_the_conversation_page
     expect(page).to have_content("GOV.UK Chat")
   end

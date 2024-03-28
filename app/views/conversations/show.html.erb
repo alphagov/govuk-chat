@@ -1,15 +1,9 @@
 <%= content_for :title, "GOV.UK Chat" %>
 <%= content_for :error_summary do %>
   <% if @create_question.errors.any? %>
-    <%
-      error_items = @create_question.errors.map do |error|
-        href = error.attribute == :user_question ? "#create_question_user_question" : nil
-        { text: error.message, href: }
-      end
-    %>
     <%= render "govuk_publishing_components/components/error_summary", {
       title: "There is a problem",
-      items: error_items
+      items: error_items(@create_question, :user_question, "#create_question_user_question")
     } %>
   <% end %>
 <% end %>
