@@ -44,6 +44,8 @@ module GovukChat
 
     config.active_job.queue_adapter = :sidekiq
 
+    config.opensearch = config_for(:opensearch)
+
     # List of forbidden words that will prevent a message from being sent to openAI
     config.question_forbidden_words = []
   end
