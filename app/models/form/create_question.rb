@@ -13,7 +13,7 @@ class Form::CreateQuestion
   def submit
     validate!
 
-    question = Question.create!(message: user_question, conversation:)
+    question = Question.create!(message: user_question, conversation:, answer_strategy:)
     if Feature.enabled?(:open_ai)
       GenerateAnswerFromOpenAiJob.perform_later(question.id)
     else
@@ -36,6 +36,14 @@ private
         "But please don’t include personal data in it or in any future questions."
 
       errors.add(:user_question, error_message)
+    end
+  end
+
+  def answer_strategy
+    if Feature.enabled?(:open_ai)
+      :open_ai_rag_completion
+    else
+      :govuk_chat_api
     end
   end
 end
