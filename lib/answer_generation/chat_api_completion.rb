@@ -16,6 +16,8 @@ module AnswerGeneration
 
   private
 
+    attr_reader :question
+
     def response
       @response ||= begin
         body = { chat_id: question.conversation_id, user_query: question.message }.to_json
@@ -31,7 +33,5 @@ module AnswerGeneration
         faraday.set_basic_auth(ENV["CHAT_API_USERNAME"], ENV["CHAT_API_PASSWORD"])
       end
     end
-
-    attr_reader :question
   end
 end

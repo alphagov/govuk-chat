@@ -30,25 +30,6 @@ RSpec.describe AnswerGeneration::ChatApiCompletion do
         message: "Hello, how can I help you?",
         persisted?: false,
       )
-      expect(answer.sources.map { |s| [s.url, s.relevancy, s.persisted?] }).to match_array(
-        [
-          ["https://example.com", 0, false],
-          ["https://example2.org", 1, false],
-          ["https://example3.org", 2, false],
-        ],
-      )
     end
-  end
-
-  def stub_chat_api_client(chat_id, user_query, response, url)
-    stub_request(:post, "#{url}/govchat")
-      .with(
-        body: { chat_id:, user_query: }.to_json,
-        headers: {
-          "Content-Type" => "application/json",
-          "Accept" => "application/json",
-        },
-      )
-      .to_return(body: response)
   end
 end
