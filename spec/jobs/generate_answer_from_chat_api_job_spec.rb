@@ -6,7 +6,7 @@ RSpec.describe GenerateAnswerFromChatApiJob do
   let(:returned_answer) { build :answer, :with_sources, question:, message: "Hello, how can I help you?" }
 
   before do
-    allow(AnswerGeneration::ChatApiCompletion).to receive(:call).and_return(returned_answer)
+    allow(AnswerGeneration::GovukChatApi).to receive(:call).and_return(returned_answer)
   end
 
   describe "#perform" do

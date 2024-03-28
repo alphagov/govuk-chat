@@ -1,5 +1,5 @@
 module AnswerGeneration
-  class ChatApiCompletion
+  class GovukChatApi
     def self.call(...) = new(...).call
 
     def initialize(question)
