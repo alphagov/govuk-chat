@@ -12,7 +12,6 @@ RSpec.describe "Conversation with OpenAI" do
   before do
     stub_open_ai_flag_active
     stub_search_api(["Login to your tax account"])
-    stub_any_openai_chat_completion(answer: "Answer from OpenAI")
   end
 
   scenario do
