@@ -1,4 +1,6 @@
 class QuestionsController < ApplicationController
+  before_action :require_chat_risks_understood
+
   def answer
     @conversation = Conversation.find(params[:conversation_id])
     @question = @conversation.questions.find(params[:id])

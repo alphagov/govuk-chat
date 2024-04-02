@@ -33,6 +33,12 @@ RSpec.describe "ChatController" do
         expect(response).to have_http_status(:redirect)
         expect(response).to redirect_to(new_conversation_path)
       end
+
+      it "sets the session cookie chat_risks_understood to true" do
+        post onboarding_confirm_path, params: { confirm_understand_risk: { confirmation: "understand_risk" } }
+
+        expect(session[:chat_risks_understood]).to eq(true)
+      end
     end
 
     context "when the understand_risk param is not present" do

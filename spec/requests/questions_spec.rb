@@ -1,5 +1,10 @@
 RSpec.describe "QuestionsController" do
+  it_behaves_like "requires user to have accepted chat risks", routes: { answer_question_path: %i[get] } do
+    let(:route_params) { [SecureRandom.uuid, SecureRandom.uuid] }
+  end
+
   describe "GET :answer" do
+    include_context "with chat risks accepted"
     let(:conversation) { create(:conversation) }
 
     delegate :helpers, to: QuestionsController
