@@ -10,6 +10,7 @@ require "govuk_sidekiq/testing"
 require "rspec/rails"
 require "webmock/rspec"
 
+ActiveRecord::Migration.maintain_test_schema! # require all DB migrations to be run
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 GovukTest.configure
 
