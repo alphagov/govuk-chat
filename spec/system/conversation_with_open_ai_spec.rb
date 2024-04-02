@@ -16,29 +16,29 @@ RSpec.feature "Conversation with OpenAI" do
   end
 
   scenario do
-    when_a_user_visits_conversation_page
-    and_they_enter_a_question
-    then_they_see_the_question_pending_page
+    when_i_visit_the_conversation_page
+    and_i_enter_a_question
+    then_i_see_the_answer_is_pending
 
     when_the_first_answer_is_generated
-    and_the_user_clicks_on_the_check_answer_button
-    then_they_see_their_question_on_the_page
-    and_they_can_see_the_first_answer
+    and_i_click_on_the_check_answer_button
+    then_i_see_my_question_on_the_page
+    and_i_can_see_the_first_answer
 
-    when_they_enter_a_second_question
-    then_they_see_the_question_pending_page
+    when_i_enter_a_second_question
+    then_i_see_the_answer_is_pending
 
     when_the_second_answer_is_generated
-    and_the_user_clicks_on_the_check_answer_button
-    then_they_see_their_second_question_on_the_page
-    and_they_can_see_the_second_answer
+    and_i_click_on_the_check_answer_button
+    then_i_see_my_second_question_on_the_page
+    and_i_can_see_the_second_answer
   end
 
   def stub_open_ai_flag_active
     Flipper.enable_actor(:open_ai, AnonymousUser.new("known-user"))
   end
 
-  def when_a_user_visits_conversation_page
+  def when_i_visit_the_conversation_page
     visit "/chat/conversations?user_id=known-user"
   end
 
@@ -47,12 +47,12 @@ RSpec.feature "Conversation with OpenAI" do
     allow(Retrieval::SearchApiV1Retriever).to receive(:call).and_return(result)
   end
 
-  def and_they_enter_a_question
+  def and_i_enter_a_question
     fill_in "Enter a question", with: "How much tax should I be paying?"
     click_on "Submit"
   end
 
-  def then_they_see_the_question_pending_page
+  def then_i_see_the_answer_is_pending
     expect(page).to have_content("GOV.UK Chat is generating an answer")
   end
 
@@ -68,28 +68,28 @@ RSpec.feature "Conversation with OpenAI" do
     end
   end
 
-  def and_the_user_clicks_on_the_check_answer_button
+  def and_i_click_on_the_check_answer_button
     click_on "Check if an answer has been generated"
   end
 
-  def then_they_see_their_question_on_the_page
+  def then_i_see_my_question_on_the_page
     expect(page).to have_content("How much tax should I be paying?")
   end
 
-  def and_they_can_see_the_first_answer
+  def and_i_can_see_the_first_answer
     expect(page).to have_content("First answer from OpenAI")
   end
 
-  def and_they_can_see_the_second_answer
+  def and_i_can_see_the_second_answer
     expect(page).to have_content("Second answer from OpenAI")
   end
 
-  def when_they_enter_a_second_question
+  def when_i_enter_a_second_question
     fill_in "Enter a question", with: "Are you sure?"
     click_on "Submit"
   end
 
-  def then_they_see_their_second_question_on_the_page
+  def then_i_see_my_second_question_on_the_page
     expect(page).to have_content("Are you sure?")
   end
 end
