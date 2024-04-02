@@ -6,6 +6,7 @@ require "simplecov"
 SimpleCov.start "rails"
 
 require File.expand_path("../config/environment", __dir__)
+require "govuk_message_queue_consumer/test_helpers"
 require "govuk_sidekiq/testing"
 require "rspec/rails"
 require "webmock/rspec"
