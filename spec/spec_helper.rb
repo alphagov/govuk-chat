@@ -6,11 +6,13 @@ require "simplecov"
 SimpleCov.start "rails"
 
 require File.expand_path("../config/environment", __dir__)
+require "govuk_message_queue_consumer/test_helpers"
 require "govuk_sidekiq/testing"
 require "rspec/rails"
 require "webmock/rspec"
 
 ActiveRecord::Migration.maintain_test_schema! # require all DB migrations to be run
+Rails.application.load_tasks
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 GovukTest.configure
 
