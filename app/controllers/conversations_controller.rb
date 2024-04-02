@@ -1,5 +1,6 @@
 class ConversationsController < ApplicationController
   before_action :find_conversation, only: %i[show update]
+  before_action :require_chat_risks_understood
 
   def show
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
