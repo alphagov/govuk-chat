@@ -1,4 +1,4 @@
-RSpec.feature "Chat Onboarding" do
+RSpec.describe "Chat Onboarding" do
   scenario do
     when_a_user_visits_root_path
     then_they_see_the_landing_page
