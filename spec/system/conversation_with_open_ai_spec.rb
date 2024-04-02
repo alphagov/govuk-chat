@@ -1,4 +1,4 @@
-RSpec.feature "Conversation with OpenAI" do
+RSpec.describe "Conversation with OpenAI" do
   include ActiveJob::TestHelper
 
   around do |example|

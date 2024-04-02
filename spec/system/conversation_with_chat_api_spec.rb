@@ -1,4 +1,4 @@
-RSpec.feature "Conversation with chat-api" do
+RSpec.describe "Conversation with chat-api" do
   include ActiveJob::TestHelper
 
   around do |example|
