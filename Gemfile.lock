@@ -135,11 +135,12 @@ GEM
       rack (>= 1.4, < 4)
       rack-protection (>= 1.5.3, <= 4.0.0)
       sanitize (< 7)
-    gds-api-adapters (93.0.0)
+    gds-api-adapters (95.0.1)
       addressable
       link_header
       null_logger
       plek (>= 1.9.0)
+      rack (>= 2.2.0)
       rest-client (~> 2.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
@@ -219,7 +220,7 @@ GEM
     method_source (1.0.0)
     mime-types (3.5.2)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2023.1205)
+    mime-types-data (3.2024.0305)
     mini_mime (1.1.5)
     minitest (5.22.3)
     msgpack (1.7.2)
