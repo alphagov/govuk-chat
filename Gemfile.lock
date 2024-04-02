@@ -182,6 +182,8 @@ GEM
       rouge
       sprockets (>= 3)
       sprockets-rails
+    govuk_schemas (4.7.0)
+      json-schema (>= 2.8, < 4.2)
     govuk_sidekiq (7.1.5)
       gds-api-adapters (>= 19.1.0)
       govuk_app_config (>= 1.1)
@@ -206,6 +208,8 @@ GEM
       rdoc
       reline (>= 0.4.2)
     json (2.7.1)
+    json-schema (4.1.1)
+      addressable (>= 2.8)
     kramdown (2.4.0)
       rexml
     language_server-protocol (3.17.0.3)
@@ -695,6 +699,7 @@ DEPENDENCIES
   govuk_app_config
   govuk_message_queue_consumer
   govuk_publishing_components
+  govuk_schemas
   govuk_sidekiq
   govuk_test
   inline_svg
