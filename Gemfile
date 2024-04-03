@@ -29,6 +29,7 @@ end
 
 group :test do
   gem "climate_control"
+  gem "govuk_schemas"
   gem "simplecov"
   gem "webmock"
 end
