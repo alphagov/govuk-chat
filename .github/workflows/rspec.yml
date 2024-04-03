@@ -24,6 +24,9 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          repository: alphagov/govuk-chat
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Checkout Publishing API (for Content Schemas)
         uses: actions/checkout@v3
