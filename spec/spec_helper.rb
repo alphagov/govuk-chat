@@ -24,6 +24,7 @@ RSpec.configure do |config|
   config.include StubFeatureFlags
   config.include Capybara::RSpecMatchers, type: :request
   config.include StubOpenAiChat
+  config.include StubChatApi
   config.include SystemSpecHelpers, type: :system
 
   # configure system specs
