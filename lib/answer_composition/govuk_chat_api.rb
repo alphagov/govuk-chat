@@ -7,7 +7,7 @@ module AnswerComposition
     end
 
     def call
-      answer = question.build_answer(message: response["answer"])
+      answer = question.build_answer(message: response["answer"], status: "success")
       response["sources"].each.with_index do |url, index|
         answer.sources.build(url:, relevancy: index)
       end

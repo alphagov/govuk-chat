@@ -24,6 +24,7 @@ RSpec.describe AnswerComposition::OpenaiRagCompletion do
       expect(result).to have_attributes(
         question:,
         message: "OpenAI responded with...",
+        status: "success",
       )
       expect(result.persisted?).to eq(false)
     end

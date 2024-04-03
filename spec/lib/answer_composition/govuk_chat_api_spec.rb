@@ -28,6 +28,7 @@ RSpec.describe AnswerComposition::GovukChatApi do
       expect(answer).to have_attributes(
         question:,
         message: "Hello, how can I help you?",
+        status: "success",
         persisted?: false,
       )
     end

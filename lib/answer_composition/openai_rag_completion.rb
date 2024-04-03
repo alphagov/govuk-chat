@@ -12,7 +12,7 @@ module AnswerComposition
 
     def call
       message = openai_response.dig("choices", 0, "message", "content")
-      question.build_answer(message:)
+      question.build_answer(message:, status: "success")
     end
 
   private
