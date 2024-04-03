@@ -14,7 +14,7 @@ class Form::CreateQuestion
     validate!
 
     question = Question.create!(message: user_question, conversation:, answer_strategy:)
-    GenerateAnswerJob.perform_later(question.id)
+    ComposeAnswerJob.perform_later(question.id)
     question
   end
 

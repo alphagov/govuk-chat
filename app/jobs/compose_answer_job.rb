@@ -1,4 +1,4 @@
-class GenerateAnswerJob < ApplicationJob
+class ComposeAnswerJob < ApplicationJob
   queue_as :default
 
   def perform(question_id)

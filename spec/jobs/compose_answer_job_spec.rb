@@ -1,4 +1,4 @@
-RSpec.describe GenerateAnswerJob do
+RSpec.describe ComposeAnswerJob do
   include ActiveJob::TestHelper
   let(:question) { create(:question, message: user_input) }
   let(:user_input) { "hello" }

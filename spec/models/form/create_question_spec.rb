@@ -73,12 +73,12 @@ RSpec.describe Form::CreateQuestion do
         expect(conversation.questions.last.message).to eq "How much tax should I be paying?"
       end
 
-      it "enqueues a GenerateAnswerJob" do
+      it "enqueues a ComposeAnswerJob" do
         form = described_class.new(user_question: "How much tax should I be paying?")
         expect { form.submit }.to change(enqueued_jobs, :size).by(1)
         expect(enqueued_jobs.last)
           .to include(
-            job: GenerateAnswerJob,
+            job: ComposeAnswerJob,
             args: [Question.last.id],
           )
       end
