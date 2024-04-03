@@ -1,4 +1,4 @@
-RSpec.describe AnswerGeneration::GovukChatApi do
+RSpec.describe AnswerComposition::GovukChatApi do
   let(:question) { create(:question, message: user_input) }
   let(:user_input) { "hello" }
   let(:chat_url) { "https://chat-api.example.com" }

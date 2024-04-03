@@ -1,4 +1,4 @@
-module AnswerGeneration
+module AnswerComposition
   class OpenaiRagCompletion
     OPENAI_MODEL = "gpt-3.5-turbo".freeze
 

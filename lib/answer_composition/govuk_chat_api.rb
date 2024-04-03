@@ -1,4 +1,4 @@
-module AnswerGeneration
+module AnswerComposition
   class GovukChatApi
     def self.call(...) = new(...).call
 

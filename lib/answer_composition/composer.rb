@@ -1,4 +1,4 @@
-module AnswerGeneration
+module AnswerComposition
   class Composer
     delegate :answer_strategy, to: :question
 

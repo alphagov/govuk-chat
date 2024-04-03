@@ -1,4 +1,4 @@
-RSpec.describe AnswerGeneration::Composer do
+RSpec.describe AnswerComposition::Composer do
   let(:question) { create :question }
   let(:retrieved_answer) { build :answer, question: }
 
@@ -7,11 +7,11 @@ RSpec.describe AnswerGeneration::Composer do
       let(:question) { create :question, answer_strategy: :open_ai_rag_completion }
 
       it "get the result via OpenAiRagCompletion.call(question)" do
-        allow(AnswerGeneration::OpenaiRagCompletion)
+        allow(AnswerComposition::OpenaiRagCompletion)
           .to receive(:call).with(question).and_return(retrieved_answer)
         expect(described_class.call(question)).to eq(retrieved_answer)
 
-        expect(AnswerGeneration::OpenaiRagCompletion).to have_received(:call).with(question)
+        expect(AnswerComposition::OpenaiRagCompletion).to have_received(:call).with(question)
       end
     end
 
@@ -19,11 +19,11 @@ RSpec.describe AnswerGeneration::Composer do
       let(:question) { create :question, answer_strategy: :govuk_chat_api }
 
       it "get the result via ChatApiCompletion.call(question)" do
-        allow(AnswerGeneration::GovukChatApi)
+        allow(AnswerComposition::GovukChatApi)
           .to receive(:call).with(question).and_return(retrieved_answer)
         expect(described_class.call(question)).to eq(retrieved_answer)
 
-        expect(AnswerGeneration::GovukChatApi).to have_received(:call).with(question)
+        expect(AnswerComposition::GovukChatApi).to have_received(:call).with(question)
       end
     end
 

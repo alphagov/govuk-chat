@@ -1,4 +1,4 @@
-RSpec.describe AnswerGeneration::OpenaiRagCompletion do
+RSpec.describe AnswerComposition::OpenaiRagCompletion do
   around do |example|
     ClimateControl.modify(
       OPENAI_ACCESS_TOKEN: "open-ai-access-token",
@@ -32,7 +32,7 @@ RSpec.describe AnswerGeneration::OpenaiRagCompletion do
 
     def system_prompt
       <<~OUTPUT
-        #{AnswerGeneration::Prompts::GOVUK_DESIGNER}
+        #{AnswerComposition::Prompts::GOVUK_DESIGNER}
 
         Context:
         some
