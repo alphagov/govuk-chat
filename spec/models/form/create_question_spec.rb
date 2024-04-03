@@ -30,6 +30,26 @@ RSpec.describe Form::CreateQuestion do
 
       expect(form.errors.messages[:base]).to eq(["Previous question pending. Please wait for a response"])
     end
+
+    describe "#no_pii_present?" do
+      let(:pii_error_message) do
+        "Personal data has been detected in your question. Please remove it. You can ask another question. " \
+          "But please don’t include personal data in it or in any future questions."
+      end
+
+      it "adds an error message when pii is present" do
+        form = described_class.new(user_question: "My email address is email@gmail.com")
+        form.validate
+
+        expect(form.errors.messages[:user_question]).to eq([pii_error_message])
+      end
+
+      it "doesn't add an error message when no pii is present" do
+        form = described_class.new(user_question: "This doesn't have an email address")
+
+        expect(form).to be_valid
+      end
+    end
   end
 
   describe "#submit" do
