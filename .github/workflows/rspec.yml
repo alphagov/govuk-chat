@@ -15,6 +15,22 @@ on:
 
 jobs:
   run-rspec:
+    services:
+      opensearch-2:
+        image: opensearchproject/opensearch:2
+        env:
+          discovery.type: single-node
+          OPENSEARCH_JAVA_OPTS: -Xms2g -Xmx2g
+          DISABLE_INSTALL_DEMO_CONFIG: "true" # Prevents execution of bundled demo script
+          DISABLE_SECURITY_PLUGIN: "true"
+        ports:
+          - 9200:9200
+        options: >-
+          --health-cmd "curl http://localhost:9200/_cluster/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     name: Run RSpec
     runs-on: ubuntu-latest
     steps:
