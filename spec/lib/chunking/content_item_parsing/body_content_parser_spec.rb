@@ -18,12 +18,12 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
       chunk_1, chunk_2 = described_class.call(content_item)
 
       expect(chunk_1).to have_attributes(html_content: "<p>Content 1</p>",
-                                         heading_hierachy: ["Heading 1"],
+                                         heading_hierarchy: ["Heading 1"],
                                          chunk_index: 0,
                                          url: "/path#heading-1")
 
       expect(chunk_2).to have_attributes(html_content: "<p>Content 2</p>",
-                                         heading_hierachy: ["Heading 2"],
+                                         heading_hierarchy: ["Heading 2"],
                                          chunk_index: 1,
                                          url: "/path#heading-2")
     end
@@ -51,7 +51,7 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
       chunk, = described_class.call(content_item)
 
       expect(chunk).to have_attributes(html_content: "<p>Content</p>",
-                                       heading_hierachy: [],
+                                       heading_hierarchy: [],
                                        chunk_index: 0,
                                        url: "/path")
     end
