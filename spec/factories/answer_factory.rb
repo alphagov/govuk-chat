@@ -2,6 +2,7 @@ FactoryBot.define do
   factory :answer do
     question
     sequence(:message) { |n| "Answer #{n}" }
+    status { :success }
 
     trait :with_sources do
       sources do
