@@ -1,10 +1,11 @@
 module Search
   class ChunkedContentRepository
-    attr_reader :index, :client
+    attr_reader :index, :client, :default_refresh_writes
 
     def initialize
       @index = Rails.configuration.opensearch.chunked_content_index!
       @client = OpenSearch::Client.new(url: Rails.configuration.opensearch.url)
+      @default_refresh_writes = Rails.configuration.opensearch.refresh_writes || false
     end
 
     def create_index
@@ -47,6 +48,19 @@ module Search
     def create_index!
       client.indices.delete(index:) if client.indices.exists?(index:)
       create_index
+    end
+
+    def count(query)
+      result = client.count(index:, body: { query: })
+      result["count"]
+    end
+
+    def delete_by_base_path(base_path)
+      client.delete_by_query(
+        index:,
+        body: { query: { term: { base_path: } } },
+        refresh: default_refresh_writes,
+      )
     end
   end
 end
