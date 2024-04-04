@@ -43,5 +43,8 @@ module GovukChat
     config.generators.system_tests = nil
 
     config.active_job.queue_adapter = :sidekiq
+
+    # List of forbidden words that will prevent a message from being sent to openAI
+    config.question_forbidden_words = []
   end
 end
