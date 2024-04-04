@@ -62,5 +62,23 @@ module Search
         refresh: default_refresh_writes,
       )
     end
+
+    def bulk_index(documents_to_index: [], document_ids_to_delete: [])
+      upsert_actions = documents_to_index.map do |document|
+        if document[:_id]
+          { index: { _id: document[:_id], data: document.except(:_id) } }
+        else
+          { create: { data: document } }
+        end
+      end
+
+      delete_actions = document_ids_to_delete.map do |document_id|
+        { delete: { _id: document_id } }
+      end
+
+      client.bulk(index:,
+                  body: upsert_actions + delete_actions,
+                  refresh: default_refresh_writes)
+    end
   end
 end
