@@ -20,7 +20,7 @@ module Chunking
             chunk = ContentItemChunk.new(
               content_item:,
               html_content: html_chunk.html_content,
-              heading_hierachy: [chunked_part[:title]] + html_chunk.headings,
+              heading_hierarchy: [chunked_part[:title]] + html_chunk.headings,
               chunk_index:,
               chunk_url: append_fragment(chunked_part[:url], html_chunk.fragment),
             )

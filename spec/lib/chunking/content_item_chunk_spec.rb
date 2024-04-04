@@ -9,7 +9,7 @@ RSpec.describe Chunking::ContentItemChunk do
       content_item["title"] = "Title"
       instance = described_class.new(content_item:,
                                      html_content: "<p>Content</p>",
-                                     heading_hierachy: ["Heading 1", "Heading 2"],
+                                     heading_hierarchy: ["Heading 1", "Heading 2"],
                                      chunk_index: 0)
 
       expect(instance.plain_content).to eq("Title\nHeading 1\nHeading 2\nContent")
@@ -21,7 +21,7 @@ RSpec.describe Chunking::ContentItemChunk do
       it "returns the chunk_url" do
         instance = described_class.new(content_item:,
                                        html_content: "<p>Content</p>",
-                                       heading_hierachy: ["Heading 1", "Heading 2"],
+                                       heading_hierarchy: ["Heading 1", "Heading 2"],
                                        chunk_index: 0,
                                        chunk_url: "/path")
 
@@ -34,7 +34,7 @@ RSpec.describe Chunking::ContentItemChunk do
         content_item["base_path"] = "/base-path"
         instance = described_class.new(content_item:,
                                        html_content: "<p>Content</p>",
-                                       heading_hierachy: ["Heading 1", "Heading 2"],
+                                       heading_hierarchy: ["Heading 1", "Heading 2"],
                                        chunk_index: 0)
 
         expect(instance.url).to eq("/base-path")
@@ -46,7 +46,7 @@ RSpec.describe Chunking::ContentItemChunk do
     it "returns a 256 bit hex digest that hashs the contents of this chunk" do
       instance = described_class.new(content_item:,
                                      html_content: "<p>Content</p>",
-                                     heading_hierachy: ["Heading 1", "Heading 2"],
+                                     heading_hierarchy: ["Heading 1", "Heading 2"],
                                      chunk_index: 0)
 
       digest = instance.digest
@@ -58,14 +58,14 @@ RSpec.describe Chunking::ContentItemChunk do
     it "returns a string representation of the object" do
       instance = described_class.new(content_item:,
                                      html_content: "<p>Content</p>",
-                                     heading_hierachy: ["Heading 1", "Heading 2"],
+                                     heading_hierarchy: ["Heading 1", "Heading 2"],
                                      chunk_index: 0)
 
       # rstrip to remove the HEREDOC's trailing new line
       expect(instance.inspect).to eq(<<~HEREDOC.rstrip)
         Chunking::ContentItemChunk(
         html_content: "<p>Content</p>"
-        heading_hierachy: ["Heading 1", "Heading 2"]
+        heading_hierarchy: ["Heading 1", "Heading 2"]
         chunk_index: 0
         url: "#{content_item['base_path']}"
         content_id: "#{content_item['content_id']}"

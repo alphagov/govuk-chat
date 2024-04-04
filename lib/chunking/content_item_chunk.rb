@@ -1,11 +1,11 @@
 module Chunking
   class ContentItemChunk
-    attr_reader :content_item, :html_content, :heading_hierachy, :chunk_index, :chunk_url
+    attr_reader :content_item, :html_content, :heading_hierarchy, :chunk_index, :chunk_url
 
-    def initialize(content_item:, html_content:, heading_hierachy:, chunk_index:, chunk_url: nil)
+    def initialize(content_item:, html_content:, heading_hierarchy:, chunk_index:, chunk_url: nil)
       @content_item = content_item
       @html_content = html_content
-      @heading_hierachy = heading_hierachy
+      @heading_hierarchy = heading_hierarchy
       @chunk_index = chunk_index
       @chunk_url = chunk_url
     end
@@ -13,7 +13,7 @@ module Chunking
     def plain_content
       @plain_content ||= begin
         stripped_html = Nokogiri::HTML::DocumentFragment.parse(html_content)
-        values = [title] + heading_hierachy + [stripped_html]
+        values = [title] + heading_hierarchy + [stripped_html]
         values.join("\n")
       end
     end
@@ -45,7 +45,7 @@ module Chunking
     def digest
       @digest ||= begin
         values = [html_content,
-                  heading_hierachy,
+                  heading_hierarchy,
                   chunk_index,
                   url,
                   content_id,
@@ -62,7 +62,7 @@ module Chunking
     def inspect
       values = {
         html_content:,
-        heading_hierachy:,
+        heading_hierarchy:,
         chunk_index:,
         url:,
         content_id:,

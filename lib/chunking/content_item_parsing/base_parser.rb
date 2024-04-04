@@ -33,7 +33,7 @@ module Chunking
           ContentItemChunk.new(
             content_item:,
             html_content: html_chunk.html_content,
-            heading_hierachy: html_chunk.headings,
+            heading_hierarchy: html_chunk.headings,
             chunk_index: index,
             chunk_url: append_fragment(base_path, html_chunk.fragment),
           )

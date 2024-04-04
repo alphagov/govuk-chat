@@ -56,17 +56,17 @@ RSpec.describe Chunking::ContentItemParsing::GuideParser do
       chunk_1, chunk_2, chunk_3 = described_class.call(content_item)
 
       expect(chunk_1).to have_attributes(html_content: "<p>Content 1</p>",
-                                         heading_hierachy: ["Part 1", "Heading 1"],
+                                         heading_hierarchy: ["Part 1", "Heading 1"],
                                          chunk_index: 0,
                                          url: "/my-guide/slug-1#heading-1")
 
       expect(chunk_2).to have_attributes(html_content: "<p>Content 2</p>",
-                                         heading_hierachy: ["Part 1", "Heading 2"],
+                                         heading_hierarchy: ["Part 1", "Heading 2"],
                                          chunk_index: 1,
                                          url: "/my-guide/slug-1#heading-2")
 
       expect(chunk_3).to have_attributes(html_content: "<p>Content</p>",
-                                         heading_hierachy: ["Part 2"],
+                                         heading_hierarchy: ["Part 2"],
                                          chunk_index: 2,
                                          url: "/my-guide/slug-2")
     end
