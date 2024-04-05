@@ -116,6 +116,8 @@ GEM
     dotenv (3.1.0)
     drb (2.2.1)
     erubi (1.12.0)
+    ethon (0.16.0)
+      ffi (>= 1.15.0)
     event_stream_parser (1.0.0)
     factory_bot (6.4.6)
       activesupport (>= 5.0.0)
@@ -128,6 +130,10 @@ GEM
       multipart-post (~> 2)
     faraday-net_http (3.1.0)
       net-http
+    faraday-typhoeus (1.1.0)
+      faraday (~> 2.0)
+      typhoeus (~> 1.4)
+    ffi (1.16.3)
     flipper (1.2.2)
       concurrent-ruby (< 2)
     flipper-active_record (1.2.2)
@@ -234,6 +240,7 @@ GEM
     mini_mime (1.1.5)
     minitest (5.22.3)
     msgpack (1.7.2)
+    multi_json (1.15.0)
     multipart-post (2.4.0)
     mutex_m (0.2.0)
     net-http (0.4.1)
@@ -262,6 +269,9 @@ GEM
     nokogiri (1.16.3-x86_64-linux)
       racc (~> 1.4)
     null_logger (0.0.1)
+    opensearch-ruby (3.1.0)
+      faraday (>= 1.0, < 3)
+      multi_json (>= 1.0)
     opentelemetry-api (1.2.5)
     opentelemetry-common (0.20.1)
       opentelemetry-api (~> 1.0)
@@ -662,6 +672,8 @@ GEM
     stringio (3.1.0)
     thor (1.3.1)
     timeout (0.4.1)
+    typhoeus (1.4.1)
+      ethon (>= 0.9.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
@@ -695,6 +707,7 @@ DEPENDENCIES
   dotenv
   factory_bot_rails
   faraday
+  faraday-typhoeus
   flipper
   flipper-active_record
   flipper-ui
@@ -706,6 +719,7 @@ DEPENDENCIES
   govuk_sidekiq
   govuk_test
   inline_svg
+  opensearch-ruby
   pg
   pry-rails
   rails (= 7.1.3.2)

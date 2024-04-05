@@ -17,6 +17,8 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 GovukTest.configure
 
 RSpec.configure do |config|
+  WebMock.disable_net_connect!(allow: Rails.configuration.opensearch.url)
+
   config.expose_dsl_globally = false
   config.infer_spec_type_from_file_location!
   config.use_transactional_fixtures = true
@@ -26,6 +28,11 @@ RSpec.configure do |config|
   config.include StubOpenAiChat
   config.include StubChatApi
   config.include SystemSpecHelpers, type: :system
+
+  config.before(:each, chunked_content_index: true) do
+    Search::ChunkedContentRepository.new.create_index!
+    config.include SearchChunkedContentHelpers
+  end
 
   # configure system specs
   # TODO: open PR on govuk_test to configure drivers for

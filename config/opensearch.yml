@@ -1,0 +1,16 @@
+default: &default
+  chunked_content_index: govuk_chat_chunked_content
+  url: <%= ENV.fetch("OPENSEARCH_URL", "http://localhost:9200") %>
+  refresh_writes: false
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+  chunked_content_index: govuk_chat_chunked_content_test
+  refresh_writes: true
+
+production:
+  <<: *default
+  url: <%= ENV["OPENSEARCH_URL"] %>
