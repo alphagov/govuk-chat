@@ -28,13 +28,54 @@ RSpec.describe AnswerComposition::Composer do
     end
 
     context "when the question is for an unknown strategy" do
-      let(:question) { build_stubbed(:question) }
+      let(:question) { build_stubbed(:question, answer_strategy: nil) }
+      let(:result) { described_class.call(question) }
 
-      it "raises an error" do
-        allow(question).to receive(:answer_strategy).and_return("unknown")
+      it "builds an answer with the error_non_specific status" do
+        expect(result.persisted?).to eq false
+        expect(result.status).to eq("error_non_specific")
+      end
 
-        expect { described_class.call(question) }
-          .to raise_error("Answer strategy unknown not configured")
+      it "sets the message to a generic failure message" do
+        expect(result.message).to eq(AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE)
+      end
+
+      it "sets the error_message to the class of the error and the message" do
+        expect(result.error_message).to eq("class: RuntimeError message: Answer strategy  not configured")
+      end
+
+      it "notifies sentry" do
+        expect(GovukError).to receive(:notify).with(StandardError)
+        result
+      end
+    end
+
+    context "when an error is returned during answer generation" do
+      let(:question) { create :question, answer_strategy: :open_ai_rag_completion }
+      let(:result) { described_class.call(question) }
+
+      before do
+        allow(AnswerComposition::OpenAIRagCompletion)
+        .to receive(:call).with(question)
+        .and_raise(StandardError, "error message")
+      end
+
+      it "builds an answer with the error_non_specific status" do
+        expect(result.persisted?).to eq false
+        expect(result.status).to eq("error_non_specific")
+      end
+
+      it "sets the message to a generic failure message" do
+        expect(result.message).to eq(AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE)
+      end
+
+      it "sets the error_message to the class of the error and the message" do
+        expect(result.error_message).to eq("class: StandardError message: error message")
+      end
+
+      it "notifies sentry" do
+        expect(GovukError).to receive(:notify).with(StandardError)
+        result
       end
     end
   end
