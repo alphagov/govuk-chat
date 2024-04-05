@@ -39,5 +39,14 @@ RSpec.describe OpenAIClient do # rubocop:disable RSpec/FilePath
       expect { described_class.build.chat(parameters: chat_parameters) }
         .to raise_error(OpenAIClient::RequestError)
     end
+
+    it "raises an OpenAIClient::ContextLengthExceededError when user input exceeds allowed tokens" do
+      stub_openai_chat_completion_error(status: 400,
+                                        type: "invalid_request_error",
+                                        code: "context_length_exceeded")
+
+      expect { described_class.build.chat(parameters: chat_parameters) }
+        .to raise_error(OpenAIClient::ContextLengthExceededError)
+    end
   end
 end

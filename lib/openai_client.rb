@@ -4,16 +4,30 @@ class OpenAIClient
   class RequestError < Faraday::Error; end
   class ClientError < RequestError; end
   class ServerError < RequestError; end
+  class ContextLengthExceededError < ClientError; end
 
   class ErrorMiddleware < Faraday::Middleware
     def call(env)
       @app.call(env)
     rescue Faraday::ClientError => e
-      raise ClientError.new(e, e.response)
+      if error_code(e.response) == "context_length_exceeded"
+        raise ContextLengthExceededError.new(e, e.response)
+      else
+        raise ClientError.new(e, e.response)
+      end
     rescue Faraday::ServerError => e
       raise ServerError.new(e, e.response)
     rescue Faraday::Error => e
       raise RequestError.new(e, e.response)
+    end
+
+    def error_code(response)
+      return unless response.respond_to?(:dig)
+
+      # If any properties aren't nested hashes a TypeError will be raised
+      response.dig(:body, "error", "code")
+    rescue TypeError
+      nil
     end
   end
 

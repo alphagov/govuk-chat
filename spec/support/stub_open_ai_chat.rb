@@ -33,6 +33,25 @@ module StubOpenAiChat
     end
   end
 
+  def stub_openai_chat_completion_error(status: 400, type: "invalid_request_error", code: nil)
+    stub_request(:post, "https://api.openai.com/v1/chat/completions")
+      .with(
+        headers: StubOpenAiChat.headers,
+      )
+      .to_return_json(
+        status:,
+        body: {
+          error: {
+            message: "Error message",
+            type:,
+            param: nil,
+            code:,
+          },
+        }.to_json,
+        headers: {},
+      )
+  end
+
   def self.response_body(answer)
     {
       id: "chatcmpl-abc123",
