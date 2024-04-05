@@ -29,6 +29,21 @@ RSpec.describe AnswerComposition::OpenaiRagCompletion do
       expect(result.persisted?).to eq(false)
     end
 
+    context "when the question contains a forbidden word" do
+      let(:question) { build_stubbed(:question, message: user_input) }
+      let(:user_input) { "I want to know about forbidden_word" }
+
+      it "returns an answer with a forbidden words message" do
+        allow(Rails.configuration).to receive(:question_forbidden_words).and_return(%w[forbidden_word])
+
+        answer = described_class.call(question)
+        expect(answer).to have_attributes(
+          question:,
+          message: described_class::FORBIDDEN_WORDS_RESPONSE,
+        )
+      end
+    end
+
   private
 
     def system_prompt
