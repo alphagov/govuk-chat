@@ -2,6 +2,7 @@ module AnswerComposition
   class OpenAIRagCompletion
     FORBIDDEN_WORDS_RESPONSE = "Sorry, I can't answer that. Ask me a question about " \
       "business or trade and I'll use GOV.UK guidance to answer it.".freeze
+    UNSUCCESSFUL_REQUEST_MESSAGE = "There's been a problem retrieving a response to your question.".freeze
 
     OPENAI_MODEL = "gpt-3.5-turbo".freeze
 
@@ -20,6 +21,13 @@ module AnswerComposition
         message = openai_response.dig("choices", 0, "message", "content")
         question.build_answer(message:, status: "success")
       end
+    rescue OpenAIClient::RequestError => e
+      GovukError.notify(e)
+      question.build_answer(
+        message: UNSUCCESSFUL_REQUEST_MESSAGE,
+        status: "error_answer_service_error",
+        error_message: "class: #{e.class} message: #{e.response[:body].dig("error", "message") || e.message}",
+      )
     end
 
   private
