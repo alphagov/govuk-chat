@@ -40,6 +40,7 @@ RSpec.describe AnswerComposition::OpenaiRagCompletion do
         expect(answer).to have_attributes(
           question:,
           message: described_class::FORBIDDEN_WORDS_RESPONSE,
+          status: "abort_forbidden_words",
         )
       end
     end

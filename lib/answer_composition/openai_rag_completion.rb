@@ -15,8 +15,7 @@ module AnswerComposition
 
     def call
       if question_contains_forbidden_words?
-        # TODO: add the status when we have it in the db
-        question.build_answer(message: FORBIDDEN_WORDS_RESPONSE)
+        question.build_answer(message: FORBIDDEN_WORDS_RESPONSE, status: "abort_forbidden_words")
       else
         message = openai_response.dig("choices", 0, "message", "content")
         question.build_answer(message:, status: "success")
