@@ -2,13 +2,35 @@ RSpec.describe MessageQueue::MessageProcessor do
   it_behaves_like "a message queue processor"
 
   describe "#process" do
-    context "when given a payload we can index" do
-      it "acknowledges the messages" do
-        schema = GovukSchemas::Example.find("guide", example_name: "guide")
-        message = create_mock_message(schema)
+    context "when given a payload we can index", :chunked_content_index do
+      let(:content_item) do
+        schema = GovukSchemas::Schema.find(notification_schema: "news_article")
+        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
+          item["locale"] = "en"
+          item["base_path"] = "/news"
+          item["details"]["body"] = "<p>Content</p>"
+        end
+      end
 
+      let(:chunked_content_repository) { Search::ChunkedContentRepository.new }
+      let(:message) { create_mock_message(content_item) }
+
+      it "acknowledges the messages" do
         expect { described_class.new.process(message) }
           .to change(message, :acked?)
+      end
+
+      it "writes to the search index" do
+        expect { described_class.new.process(message) }
+          .to change { chunked_content_repository.count(term: { base_path: "/news" }) }
+          .by(1)
+      end
+
+      it "writes to the log" do
+        allow(Rails.logger).to receive(:info)
+        described_class.new.process(message)
+        expect(Rails.logger).to have_received(:info)
+          .with("{#{content_item['content_id']}, #{content_item['locale']}} indexed")
       end
     end
 
