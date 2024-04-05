@@ -63,6 +63,23 @@ module Chunking
       end
     end
 
+    def to_opensearch_hash
+      {
+        _id: id,
+        content_id:,
+        locale:,
+        base_path:,
+        document_type:,
+        title:,
+        url:,
+        chunk_index:,
+        heading_hierarchy:,
+        html_content:,
+        plain_content:,
+        digest:,
+      }
+    end
+
     def inspect
       values = {
         html_content:,

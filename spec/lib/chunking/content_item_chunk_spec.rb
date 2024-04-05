@@ -65,6 +65,32 @@ RSpec.describe Chunking::ContentItemChunk do
     end
   end
 
+  describe "#to_opensearch_hash" do
+    it "returns a hash that is structured for the chunked content OpenSearch index" do
+      instance = described_class.new(content_item:,
+                                     html_content: "<p>Content</p>",
+                                     heading_hierarchy: ["Heading 1", "Heading 2"],
+                                     chunk_index: 0,
+                                     chunk_url: "/chunk-url")
+
+      expect(instance.to_opensearch_hash)
+        .to eq({
+          _id: instance.id,
+          content_id: content_item["content_id"],
+          locale: content_item["locale"],
+          base_path: content_item["base_path"],
+          document_type: content_item["document_type"],
+          title: content_item["title"],
+          url: "/chunk-url",
+          chunk_index: 0,
+          heading_hierarchy: ["Heading 1", "Heading 2"],
+          html_content: "<p>Content</p>",
+          plain_content: instance.plain_content,
+          digest: instance.digest,
+        })
+    end
+  end
+
   describe "#inspect" do
     it "returns a string representation of the object" do
       instance = described_class.new(content_item:,
