@@ -16,6 +16,10 @@ Rails.application.load_tasks
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 GovukTest.configure
 
+# Define a mathcher for the inverse of output, so that it can be used in
+# assertion chains
+RSpec::Matchers.define_negated_matcher(:output_nothing, :output)
+
 RSpec.configure do |config|
   WebMock.disable_net_connect!(allow: Rails.configuration.opensearch.url)
 
