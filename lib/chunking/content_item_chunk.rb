@@ -18,6 +18,10 @@ module Chunking
       end
     end
 
+    def id
+      "#{content_id}_#{locale}_#{chunk_index}"
+    end
+
     def content_id
       content_item["content_id"]
     end

@@ -4,6 +4,17 @@ RSpec.describe Chunking::ContentItemChunk do
     GovukSchemas::RandomExample.new(schema:).payload
   end
 
+  describe "#id" do
+    it "returns a deterministic id based on the content_id, locale and chunk_index" do
+      instance = described_class.new(content_item:,
+                                     html_content: "<p>Content</p>",
+                                     heading_hierarchy: [],
+                                     chunk_index: 0)
+
+      expect(instance.id).to eq("#{content_item['content_id']}_#{content_item['locale']}_0")
+    end
+  end
+
   describe "#plain_content" do
     it "combines title, headings and HTML stripped content" do
       content_item["title"] = "Title"
