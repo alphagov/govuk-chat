@@ -1,13 +1,13 @@
-module StubOpenAiChat
+module StubOpenAIChat
   def stub_openai_chat_completion(chat_history, answer)
     stub_request(:post, "https://api.openai.com/v1/chat/completions")
       .with(
-        headers: StubOpenAiChat.headers,
-        body: StubOpenAiChat.request_body(chat_history),
+        headers: StubOpenAIChat.headers,
+        body: StubOpenAIChat.request_body(chat_history),
       )
       .to_return_json(
         status: 200,
-        body: StubOpenAiChat.response_body(answer),
+        body: StubOpenAIChat.response_body(answer),
         headers: {},
       )
   end
@@ -15,12 +15,12 @@ module StubOpenAiChat
   def stub_any_openai_chat_completion(answer:)
     stub = stub_request(:post, "https://api.openai.com/v1/chat/completions")
       .with(
-        headers: StubOpenAiChat.headers,
+        headers: StubOpenAIChat.headers,
       )
       .to_return_json(
 
         status: 200,
-        body: StubOpenAiChat.response_body(answer),
+        body: StubOpenAIChat.response_body(answer),
         headers: {},
 
       )
@@ -36,7 +36,7 @@ module StubOpenAiChat
   def stub_openai_chat_completion_error(status: 400, type: "invalid_request_error", code: nil)
     stub_request(:post, "https://api.openai.com/v1/chat/completions")
       .with(
-        headers: StubOpenAiChat.headers,
+        headers: StubOpenAIChat.headers,
       )
       .to_return_json(
         status:,

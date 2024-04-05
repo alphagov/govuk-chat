@@ -29,7 +29,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include StubFeatureFlags
   config.include Capybara::RSpecMatchers, type: :request
-  config.include StubOpenAiChat
+  config.include StubOpenAIChat
   config.include StubChatApi
   config.include SystemSpecHelpers, type: :system
 

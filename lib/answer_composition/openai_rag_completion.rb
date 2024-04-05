@@ -1,5 +1,5 @@
 module AnswerComposition
-  class OpenaiRagCompletion
+  class OpenAIRagCompletion
     FORBIDDEN_WORDS_RESPONSE = "Sorry, I can't answer that. Ask me a question about " \
       "business or trade and I'll use GOV.UK guidance to answer it.".freeze
 

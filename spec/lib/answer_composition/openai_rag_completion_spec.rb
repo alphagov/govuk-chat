@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition::OpenaiRagCompletion do
+RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec/FilePath
   around do |example|
     ClimateControl.modify(
       OPENAI_ACCESS_TOKEN: "open-ai-access-token",

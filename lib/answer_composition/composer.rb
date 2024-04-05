@@ -11,7 +11,7 @@ module AnswerComposition
     def call
       case answer_strategy
       when "open_ai_rag_completion"
-        OpenaiRagCompletion.call(question)
+        OpenAIRagCompletion.call(question)
       when "govuk_chat_api"
         GovukChatApi.call(question)
       else

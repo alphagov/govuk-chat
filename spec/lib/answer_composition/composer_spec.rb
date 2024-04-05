@@ -6,12 +6,12 @@ RSpec.describe AnswerComposition::Composer do
     context "when the question is for open ai" do
       let(:question) { create :question, answer_strategy: :open_ai_rag_completion }
 
-      it "get the result via OpenAiRagCompletion.call(question)" do
-        allow(AnswerComposition::OpenaiRagCompletion)
+      it "get the result via OpenAIRagCompletion.call(question)" do
+        allow(AnswerComposition::OpenAIRagCompletion)
           .to receive(:call).with(question).and_return(retrieved_answer)
         expect(described_class.call(question)).to eq(retrieved_answer)
 
-        expect(AnswerComposition::OpenaiRagCompletion).to have_received(:call).with(question)
+        expect(AnswerComposition::OpenAIRagCompletion).to have_received(:call).with(question)
       end
     end
 
