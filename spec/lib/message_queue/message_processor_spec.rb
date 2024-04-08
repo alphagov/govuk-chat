@@ -11,6 +11,7 @@ RSpec.describe MessageQueue::MessageProcessor do
           item["locale"] = "en"
           item["base_path"] = "/news"
           item["details"]["body"] = "<p>Content</p>"
+          item.delete("withdrawn_notice")
         end
       end
 

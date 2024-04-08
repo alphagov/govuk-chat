@@ -6,11 +6,18 @@ module MessageQueue
       @content_item = content_item
     end
 
-    # TODO: delete redirects, gone, vanish, withdrawn schemas
     # TODO: check for things already in the index
     def call
-      if content_item["locale"] != "en"
+      if non_english_locale?
         return delete_with_skip_index_reason("has a non-English locale")
+      end
+
+      unless supported_schema?
+        return delete_with_skip_index_reason(%(uses schema "#{schema_name}"))
+      end
+
+      if withdrawn?
+        return delete_with_skip_index_reason("is withdrawn")
       end
 
       chunks = Chunking::ContentItemToChunks.call(content_item)
@@ -28,6 +35,22 @@ module MessageQueue
     def delete_with_skip_index_reason(skip_index_reason)
       chunks_deleted = chunked_content_repository.delete_by_base_path(content_item["base_path"])
       Result.new(chunks_deleted:, skip_index_reason:)
+    end
+
+    def schema_name
+      content_item["schema_name"]
+    end
+
+    def non_english_locale?
+      content_item["locale"] != "en"
+    end
+
+    def supported_schema?
+      Chunking::ContentItemToChunks.supported_schemas.include?(schema_name)
+    end
+
+    def withdrawn?
+      content_item["withdrawn_notice"].present?
     end
 
     def update_opensearch(chunks)

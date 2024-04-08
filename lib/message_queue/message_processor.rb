@@ -11,8 +11,6 @@ module MessageQueue
         return
       end
 
-      # TODO: check acceptable document type / schema
-      # TODO: do something with a payload
       result = ContentSynchroniser.call(payload)
       logger.info("#{content_identifier(payload)} synched: #{result}")
       message.ack
