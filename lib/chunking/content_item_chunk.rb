@@ -65,7 +65,6 @@ module Chunking
 
     def to_opensearch_hash
       {
-        _id: id,
         content_id:,
         locale:,
         base_path:,
