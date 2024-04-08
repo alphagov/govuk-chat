@@ -1,17 +1,5 @@
 module MessageQueue
   class ContentSynchroniser
-    Result = Data.define(:chunks_created, :chunks_updated) do
-      include ActionView::Helpers::TextHelper
-
-      def initialize(chunks_created: 0, chunks_updated: 0)
-        super
-      end
-
-      def to_s
-        "#{pluralize(chunks_created, 'chunk')} newly inserted, #{pluralize(chunks_updated, 'chunk')} updated"
-      end
-    end
-
     def self.call(...) = new(...).call
 
     def initialize(content_item)
@@ -21,6 +9,10 @@ module MessageQueue
     # TODO: delete redirects, gone, vanish, withdrawn schemas
     # TODO: check for things already in the index
     def call
+      if content_item["locale"] != "en"
+        return delete_with_skip_index_reason("has a non-English locale")
+      end
+
       chunks = Chunking::ContentItemToChunks.call(content_item)
       update_opensearch(chunks)
     end
@@ -31,6 +23,11 @@ module MessageQueue
 
     def chunked_content_repository
       @chunked_content_repository ||= Search::ChunkedContentRepository.new
+    end
+
+    def delete_with_skip_index_reason(skip_index_reason)
+      chunks_deleted = chunked_content_repository.delete_by_base_path(content_item["base_path"])
+      Result.new(chunks_deleted:, skip_index_reason:)
     end
 
     def update_opensearch(chunks)

@@ -11,12 +11,6 @@ module MessageQueue
         return
       end
 
-      unless english_locale?(payload)
-        logger.info("#{content_identifier(payload)} ignored due to non-English locale")
-        message.ack
-        return
-      end
-
       # TODO: check acceptable document type / schema
       # TODO: do something with a payload
       result = ContentSynchroniser.call(payload)
@@ -33,10 +27,6 @@ module MessageQueue
 
     def content_identifier(payload)
       "{#{payload['content_id']}, #{payload['locale']}}"
-    end
-
-    def english_locale?(payload)
-      payload["locale"] == "en"
     end
 
     def has_base_path?(payload)
