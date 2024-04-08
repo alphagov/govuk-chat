@@ -44,7 +44,8 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
 
     it "doesn't raise an error if there are no documents to delete" do
       result = nil
-      expect { result = repository.delete_by_id(%w[id4 id5]) }.to_not raise_error
+      expect { result = repository.delete_by_id(%w[id4 id5]) }
+        .not_to raise_error
       expect(result).to eq(0)
     end
   end

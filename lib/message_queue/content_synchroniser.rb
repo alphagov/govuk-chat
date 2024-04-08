@@ -11,8 +11,7 @@ module MessageQueue
     # TODO: create a result object for logging
     def call
       chunks = Chunking::ContentItemToChunks.call(content_item)
-      documents_to_index = prepare_chunks_for_indexing(chunks)
-      chunked_content_repository.bulk_index(documents_to_index:)
+      update_opensearch(chunks)
     end
 
     def chunked_content_repository
@@ -23,11 +22,12 @@ module MessageQueue
 
     attr_reader :content_item
 
-    def prepare_chunks_for_indexing(chunks)
+    def update_opensearch(chunks)
       embeddings = Search::TextToEmbedding.call(chunks.map(&:plain_content))
 
-      chunks.map.with_index do |chunk, index|
-        chunk.to_opensearch_hash.merge(openai_embedding: embeddings[index])
+      chunks.each.with_index do |chunk, index|
+        document = chunk.to_opensearch_hash.merge(openai_embedding: embeddings[index])
+        chunked_content_repository.index_document(chunk.id, document)
       end
     end
   end
