@@ -56,11 +56,13 @@ module Search
     end
 
     def delete_by_base_path(base_path)
-      client.delete_by_query(
+      result = client.delete_by_query(
         index:,
         body: { query: { term: { base_path: } } },
         refresh: default_refresh_writes,
       )
+
+      result["deleted"]
     end
 
     def bulk_index(documents_to_index: [], document_ids_to_delete: [])
