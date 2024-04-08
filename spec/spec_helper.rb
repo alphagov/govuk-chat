@@ -30,6 +30,7 @@ RSpec.configure do |config|
   config.include StubFeatureFlags
   config.include Capybara::RSpecMatchers, type: :request
   config.include StubOpenAIChat
+  config.include StubOpenAIEmbedding
   config.include StubChatApi
   config.include SystemSpecHelpers, type: :system
 
