@@ -19,8 +19,8 @@ module MessageQueue
 
       # TODO: check acceptable document type / schema
       # TODO: do something with a payload
-      ContentSynchroniser.call(payload)
-      logger.info("#{content_identifier(payload)} indexed")
+      result = ContentSynchroniser.call(payload)
+      logger.info("#{content_identifier(payload)} synched: #{result}")
       message.ack
     # This should only be catching exceptions we can't anticipate and not transient errors
     rescue StandardError => e

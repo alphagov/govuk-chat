@@ -32,7 +32,7 @@ RSpec.describe MessageQueue::MessageProcessor do
         allow(Rails.logger).to receive(:info)
         described_class.new.process(message)
         expect(Rails.logger).to have_received(:info)
-          .with("{#{content_item['content_id']}, #{content_item['locale']}} indexed")
+          .with("{#{content_item['content_id']}, #{content_item['locale']}} synched: 1 chunk newly inserted, 0 chunks updated")
       end
     end
 

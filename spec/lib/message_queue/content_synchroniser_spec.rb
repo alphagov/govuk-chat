@@ -34,5 +34,13 @@ RSpec.describe MessageQueue::ContentSynchroniser, :chunked_content_index do
         .to change { repository.count(exists: { field: :openai_embedding }) }
         .by(chunks.length)
     end
+
+    it "returns a MessageQueue::ContentSynchroniser::Result object" do
+      populate_chunked_content_index([{ _id: chunks[0].id, base_path: "/a" }])
+
+      expect(described_class.call(content_item))
+        .to be_an_instance_of(described_class::Result)
+        .and have_attributes(chunks_created: 1, chunks_updated: 1)
+    end
   end
 end
