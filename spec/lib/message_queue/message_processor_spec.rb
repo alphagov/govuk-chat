@@ -3,6 +3,8 @@ RSpec.describe MessageQueue::MessageProcessor do
 
   describe "#process" do
     context "when given a payload we can index", :chunked_content_index do
+      before { stub_any_openai_embedding }
+
       let(:content_item) do
         schema = GovukSchemas::Schema.find(notification_schema: "news_article")
         GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
