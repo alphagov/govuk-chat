@@ -20,6 +20,20 @@ module AnswerComposition
         message = openai_response.dig("choices", 0, "message", "content")
         question.build_answer(message:, status: "success")
       end
+    rescue OpenAIClient::ContextLengthExceededError => e
+      GovukError.notify(e)
+      question.build_answer(
+        message: AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE,
+        status: "error_context_length_exceeded",
+        error_message: error_message(e),
+      )
+    rescue OpenAIClient::RequestError => e
+      GovukError.notify(e)
+      question.build_answer(
+        message: AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE,
+        status: "error_answer_service_error",
+        error_message: error_message(e),
+      )
     end
 
   private
@@ -60,6 +74,10 @@ module AnswerComposition
     def question_contains_forbidden_words?
       words = question.message.downcase.split(/\b/)
       Rails.configuration.question_forbidden_words.intersection(words).any?
+    end
+
+    def error_message(error)
+      "class: #{error.class} message: #{error.response[:body].dig('error', 'message') || error.message}"
     end
   end
 end

@@ -19,14 +19,17 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec
     it "calls OpenAI chat endpoint and returns unsaved answer" do
       stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
       stub_search_api(%w[some context here])
-      result = described_class.call(question)
-      expect(result).to be_a(Answer)
-      expect(result).to have_attributes(
-        question:,
-        message: "OpenAI responded with...",
-        status: "success",
+
+      answer = described_class.call(question)
+
+      expect_unsaved_answer_with_attributes(
+        answer,
+        {
+          question:,
+          message: "OpenAI responded with...",
+          status: "success",
+        },
       )
-      expect(result.persisted?).to eq(false)
     end
 
     context "when the question contains a forbidden word" do
@@ -37,11 +40,57 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec
         allow(Rails.configuration).to receive(:question_forbidden_words).and_return(%w[forbidden_word])
 
         answer = described_class.call(question)
-        expect(answer).to have_attributes(
-          question:,
-          message: described_class::FORBIDDEN_WORDS_RESPONSE,
-          status: "abort_forbidden_words",
+
+        expect_unsaved_answer_with_attributes(
+          answer,
+          {
+            question:,
+            message: described_class::FORBIDDEN_WORDS_RESPONSE,
+            status: "abort_forbidden_words",
+          },
         )
+      end
+    end
+
+    context "when OpenAI raises a ContextLengthExceededError" do
+      it "returns an unsaved answer with the error_context_length_exceeded status" do
+        allow(GovukError).to receive(:notify)
+        stub_openai_chat_completion_error(status: 400, code: "context_length_exceeded")
+        stub_search_api(%w[some context here])
+
+        answer = described_class.call(question)
+
+        expect_unsaved_answer_with_attributes(
+          answer,
+          {
+            question:,
+            message: AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE,
+            status: "error_context_length_exceeded",
+            error_message: "class: OpenAIClient::ContextLengthExceededError message: Error message",
+          },
+        )
+        expect(GovukError).to have_received(:notify).with(OpenAIClient::ContextLengthExceededError)
+      end
+    end
+
+    context "when OpenAIClient raises a RequestError" do
+      it "returns an unsaved answer with a generic unsuccessful request message which captures the error" do
+        allow(GovukError).to receive(:notify)
+        stub_openai_chat_completion_error
+        stub_search_api(%w[some context here])
+
+        answer = described_class.call(question)
+
+        expect_unsaved_answer_with_attributes(
+          answer,
+          {
+            question:,
+            message: AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE,
+            status: "error_answer_service_error",
+            error_message: "class: OpenAIClient::ClientError message: Error message",
+          },
+        )
+        expect(GovukError).to have_received(:notify).with(OpenAIClient::RequestError)
       end
     end
 
@@ -62,6 +111,13 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec
     # Temp - we will stub the real thing when we've built it
     def stub_search_api(result = [])
       allow(Retrieval::SearchApiV1Retriever).to receive(:call).and_return(result)
+    end
+
+    def expect_unsaved_answer_with_attributes(answer, attributes = {})
+      expected_attributes = attributes.merge(persisted?: false)
+
+      expect(answer).to be_a(Answer)
+      expect(answer).to have_attributes(**expected_attributes)
     end
   end
 end
