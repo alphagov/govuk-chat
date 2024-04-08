@@ -52,6 +52,27 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec
       end
     end
 
+    context "when OpenAI raises a ContextLengthExceededError" do
+      it "returns an unsaved answer with the error_context_length_exceeded status" do
+        allow(GovukError).to receive(:notify)
+        stub_openai_chat_completion_error(status: 400, code: "context_length_exceeded")
+        stub_search_api(%w[some context here])
+
+        answer = described_class.call(question)
+
+        expect_unsaved_answer_with_attributes(
+          answer,
+          {
+            question:,
+            message: AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE,
+            status: "error_context_length_exceeded",
+            error_message: "class: OpenAIClient::ContextLengthExceededError message: Error message",
+          },
+        )
+        expect(GovukError).to have_received(:notify).with(OpenAIClient::ContextLengthExceededError)
+      end
+    end
+
     context "when OpenAIClient raises a RequestError" do
       it "returns an unsaved answer with a generic unsuccessful request message which captures the error" do
         allow(GovukError).to receive(:notify)
