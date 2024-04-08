@@ -1,5 +1,5 @@
 module AnswerComposition
-  class OpenaiRagCompletion
+  class OpenAIRagCompletion
     FORBIDDEN_WORDS_RESPONSE = "Sorry, I can't answer that. Ask me a question about " \
       "business or trade and I'll use GOV.UK guidance to answer it.".freeze
 
@@ -10,7 +10,7 @@ module AnswerComposition
     def initialize(question)
       @question = question
       @retriever = Retrieval::SearchApiV1Retriever
-      @openai_client = OpenAI::Client.new(access_token: ENV.fetch("OPENAI_ACCESS_TOKEN"))
+      @openai_client = OpenAIClient.build
     end
 
     def call
