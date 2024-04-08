@@ -14,13 +14,13 @@ module MessageQueue
       update_opensearch(chunks)
     end
 
-    def chunked_content_repository
-      @chunked_content_repository ||= Search::ChunkedContentRepository.new
-    end
-
   private
 
     attr_reader :content_item
+
+    def chunked_content_repository
+      @chunked_content_repository ||= Search::ChunkedContentRepository.new
+    end
 
     def update_opensearch(chunks)
       embeddings = Search::TextToEmbedding.call(chunks.map(&:plain_content))
