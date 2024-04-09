@@ -79,5 +79,34 @@ module Search
       result = client.index(index:, id:, body: document, refresh: default_refresh_writes)
       result["result"].to_sym
     end
+
+    def id_digest_hash(base_path, batch_size: 100)
+      search_body = {
+        query: { term: { base_path: } },
+        sort: { _id: { order: "asc" } },
+        _source: { include: %w[digest] },
+      }
+
+      items = {}
+      search_after = nil
+
+      loop do
+        body = search_after ? search_body.merge(search_after:) : search_body
+        response = client.search(index:, size: batch_size, body:)
+
+        total = response.dig("hits", "total", "value")
+        results = response.dig("hits", "hits")
+
+        results.each do |result|
+          items[result["_id"]] = result.dig("_source", "digest")
+        end
+
+        break if results.empty? || items.count >= total
+
+        search_after = results.last["sort"]
+      end
+
+      items
+    end
   end
 end
