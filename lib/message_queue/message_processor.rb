@@ -11,6 +11,7 @@ module MessageQueue
         return
       end
 
+      # TODO: resolve out of order messages and risks of concurrency
       result = ContentSynchroniser.call(payload)
       logger.info("#{content_identifier(payload)} synched: #{result}")
       message.ack
