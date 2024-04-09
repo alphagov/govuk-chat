@@ -127,6 +127,36 @@ RSpec.describe "ConversationsController" do
         .to have_selector(".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question")
         .and have_selector(".gem-c-label", text: "Enter a question")
     end
+
+    context "when the request format is JSON" do
+      it "saves the question and returns a 201 with the correct body when the params are valid" do
+        patch update_conversation_path(conversation),
+              params: { create_question: { user_question: "How much tax should I be paying?" }, format: :json }
+
+        question = conversation.reload.questions.last
+
+        expect(response).to have_http_status(:created)
+        expect(JSON.parse(response.body)).to match({
+          "question_html" => /app-c-conversation-message/,
+          "answer_url" => answer_question_path(question.conversation, question),
+          "error_messages" => [],
+        })
+      end
+
+      it "returns a 422 and error messages when the user_question is invalid" do
+        patch update_conversation_path(conversation), params: {
+          create_question: { user_question: "" },
+          format: :json,
+        }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)).to eq(
+          "question_html" => nil,
+          "answer_url" => nil,
+          "error_messages" => ["Enter a question"],
+        )
+      end
+    end
   end
 
   def render_create_question_form
