@@ -43,5 +43,26 @@ RSpec.describe "QuestionsController" do
                             text: "Thanks for your patience. Check again to find out if your answer is ready.")
       end
     end
+
+    context "when the request format is JSON" do
+      it "responds with a 200 and answer_html when the question has been answered" do
+        answer = create(:answer)
+        question = answer.question
+        conversation = question.conversation
+
+        get answer_question_path(conversation, question, format: :json)
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)).to match({ "answer_html" => /app-c-conversation-message/ })
+      end
+
+      it "responds with an accepted status code when the question has a pending answer" do
+        question = create(:question, conversation:)
+        get answer_question_path(conversation, question, format: :json)
+
+        expect(response).to have_http_status(:accepted)
+        expect(JSON.parse(response.body)).to eq({ "answer_html" => nil })
+      end
+    end
   end
 end
