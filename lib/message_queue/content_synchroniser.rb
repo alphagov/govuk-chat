@@ -6,29 +6,49 @@ module MessageQueue
       @content_item = content_item
     end
 
-    # TODO: delete redirects, gone, vanish, withdrawn schemas
-    # TODO: check for things already in the index
-    # TODO: create a result object for logging
     def call
-      chunks = Chunking::ContentItemToChunks.call(content_item)
-      documents_to_index = prepare_chunks_for_indexing(chunks)
-      chunked_content_repository.bulk_index(documents_to_index:)
-    end
+      if non_english_locale?
+        return delete_with_skip_index_reason("has a non-English locale")
+      end
 
-    def chunked_content_repository
-      @chunked_content_repository ||= Search::ChunkedContentRepository.new
+      unless supported_schema?
+        return delete_with_skip_index_reason(%(uses schema "#{schema_name}"))
+      end
+
+      if withdrawn?
+        return delete_with_skip_index_reason("is withdrawn")
+      end
+
+      IndexContentItem.call(content_item, chunked_content_repository)
     end
 
   private
 
     attr_reader :content_item
 
-    def prepare_chunks_for_indexing(chunks)
-      embeddings = Search::TextToEmbedding.call(chunks.map(&:plain_content))
+    def chunked_content_repository
+      @chunked_content_repository ||= Search::ChunkedContentRepository.new
+    end
 
-      chunks.map.with_index do |chunk, index|
-        chunk.to_opensearch_hash.merge(openai_embedding: embeddings[index])
-      end
+    def delete_with_skip_index_reason(skip_index_reason)
+      chunks_deleted = chunked_content_repository.delete_by_base_path(content_item["base_path"])
+      Result.new(chunks_deleted:, skip_index_reason:)
+    end
+
+    def schema_name
+      content_item["schema_name"]
+    end
+
+    def non_english_locale?
+      content_item["locale"] != "en"
+    end
+
+    def supported_schema?
+      Chunking::ContentItemToChunks.supported_schemas.include?(schema_name)
+    end
+
+    def withdrawn?
+      content_item["withdrawn_notice"].present?
     end
   end
 end

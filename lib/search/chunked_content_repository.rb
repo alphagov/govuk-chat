@@ -56,29 +56,57 @@ module Search
     end
 
     def delete_by_base_path(base_path)
-      client.delete_by_query(
+      result = client.delete_by_query(
         index:,
         body: { query: { term: { base_path: } } },
         refresh: default_refresh_writes,
       )
+
+      result["deleted"]
     end
 
-    def bulk_index(documents_to_index: [], document_ids_to_delete: [])
-      upsert_actions = documents_to_index.map do |document|
-        if document[:_id]
-          { index: { _id: document[:_id], data: document.except(:_id) } }
-        else
-          { create: { data: document } }
+    def delete_by_id(id_or_ids)
+      result = client.delete_by_query(
+        index:,
+        body: { query: { ids: { values: Array(id_or_ids) } } },
+        refresh: default_refresh_writes,
+      )
+
+      result["deleted"]
+    end
+
+    def index_document(id, document)
+      result = client.index(index:, id:, body: document, refresh: default_refresh_writes)
+      result["result"].to_sym
+    end
+
+    def id_digest_hash(base_path, batch_size: 100)
+      search_body = {
+        query: { term: { base_path: } },
+        sort: { _id: { order: "asc" } },
+        _source: { include: %w[digest] },
+      }
+
+      items = {}
+      search_after = nil
+
+      loop do
+        body = search_after ? search_body.merge(search_after:) : search_body
+        response = client.search(index:, size: batch_size, body:)
+
+        total = response.dig("hits", "total", "value")
+        results = response.dig("hits", "hits")
+
+        results.each do |result|
+          items[result["_id"]] = result.dig("_source", "digest")
         end
+
+        break if results.empty? || items.count >= total
+
+        search_after = results.last["sort"]
       end
 
-      delete_actions = document_ids_to_delete.map do |document_id|
-        { delete: { _id: document_id } }
-      end
-
-      client.bulk(index:,
-                  body: upsert_actions + delete_actions,
-                  refresh: default_refresh_writes)
+      items
     end
   end
 end

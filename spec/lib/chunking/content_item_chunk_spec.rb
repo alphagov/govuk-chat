@@ -55,7 +55,6 @@ RSpec.describe Chunking::ContentItemChunk do
 
       expect(instance.to_opensearch_hash)
         .to eq({
-          _id: instance.id,
           content_id: instance.content_item["content_id"],
           locale: instance.content_item["locale"],
           base_path: instance.content_item["base_path"],

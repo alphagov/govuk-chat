@@ -11,6 +11,7 @@ RSpec.describe MessageQueue::MessageProcessor do
           item["locale"] = "en"
           item["base_path"] = "/news"
           item["details"]["body"] = "<p>Content</p>"
+          item.delete("withdrawn_notice")
         end
       end
 
@@ -31,8 +32,12 @@ RSpec.describe MessageQueue::MessageProcessor do
       it "writes to the log" do
         allow(Rails.logger).to receive(:info)
         described_class.new.process(message)
-        expect(Rails.logger).to have_received(:info)
-          .with("{#{content_item['content_id']}, #{content_item['locale']}} indexed")
+
+        log_message = "{#{content_item['base_path']}, #{content_item['content_id']}, #{content_item['locale']}} " \
+                      "synched: 1 chunk newly inserted, 0 chunks updated, " \
+                      "0 chunks didn't need updating, 0 chunks deleted"
+
+        expect(Rails.logger).to have_received(:info).with(log_message)
       end
     end
 
@@ -56,29 +61,6 @@ RSpec.describe MessageQueue::MessageProcessor do
         described_class.new.process(message)
         expect(Rails.logger).to have_received(:info)
           .with("{#{content_item['content_id']}, #{content_item['locale']}} ignored due to no base_path")
-      end
-    end
-
-    context "when a message payload is in a non-English locale" do
-      let(:content_item) do
-        schema = GovukSchemas::Schema.find(notification_schema: "news_article")
-        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
-          item["locale"] = "cy"
-        end
-      end
-
-      let(:message) { create_mock_message(content_item) }
-
-      it "acknowledges the messages" do
-        expect { described_class.new.process(message) }
-          .to change(message, :acked?)
-      end
-
-      it "writes to the log" do
-        allow(Rails.logger).to receive(:info)
-        described_class.new.process(message)
-        expect(Rails.logger).to have_received(:info)
-          .with("{#{content_item['content_id']}, #{content_item['locale']}} ignored due to non-English locale")
       end
     end
 

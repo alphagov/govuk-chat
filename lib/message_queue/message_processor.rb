@@ -11,16 +11,9 @@ module MessageQueue
         return
       end
 
-      unless english_locale?(payload)
-        logger.info("#{content_identifier(payload)} ignored due to non-English locale")
-        message.ack
-        return
-      end
-
-      # TODO: check acceptable document type / schema
-      # TODO: do something with a payload
-      ContentSynchroniser.call(payload)
-      logger.info("#{content_identifier(payload)} indexed")
+      # TODO: resolve out of order messages and risks of concurrency
+      result = ContentSynchroniser.call(payload)
+      logger.info("#{content_identifier(payload)} synched: #{result}")
       message.ack
     # This should only be catching exceptions we can't anticipate and not transient errors
     rescue StandardError => e
@@ -32,11 +25,9 @@ module MessageQueue
   private
 
     def content_identifier(payload)
-      "{#{payload['content_id']}, #{payload['locale']}}"
-    end
+      data = [payload["base_path"], payload["content_id"], payload["locale"]]
 
-    def english_locale?(payload)
-      payload["locale"] == "en"
+      "{#{data.compact.join(', ')}}"
     end
 
     def has_base_path?(payload)
