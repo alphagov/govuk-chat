@@ -2,19 +2,47 @@ RSpec.describe MessageQueue::MessageProcessor do
   it_behaves_like "a message queue processor"
 
   describe "#process" do
-    context "when given a payload we can index" do
-      it "acknowledges the messages" do
-        schema = GovukSchemas::Example.find("guide", example_name: "guide")
-        message = create_mock_message(schema)
+    context "when given a payload we can index", :chunked_content_index do
+      let(:content_item) do
+        schema = GovukSchemas::Schema.find(notification_schema: "news_article")
+        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
+          item["locale"] = "en"
+          item["base_path"] = "/news"
+          item["details"]["body"] = "<p>Content</p>"
+        end
+      end
 
+      let(:chunked_content_repository) { Search::ChunkedContentRepository.new }
+      let(:message) { create_mock_message(content_item) }
+
+      it "acknowledges the messages" do
         expect { described_class.new.process(message) }
           .to change(message, :acked?)
+      end
+
+      it "writes to the search index" do
+        expect { described_class.new.process(message) }
+          .to change { chunked_content_repository.count(term: { base_path: "/news" }) }
+          .by(1)
+      end
+
+      it "writes to the log" do
+        allow(Rails.logger).to receive(:info)
+        described_class.new.process(message)
+        expect(Rails.logger).to have_received(:info)
+          .with("{#{content_item['content_id']}, #{content_item['locale']}} indexed")
       end
     end
 
     context "when a message payload lacks a base_path" do
-      let(:schema) { GovukSchemas::Example.find("contact", example_name: "contact") }
-      let(:message) { create_mock_message(schema.merge("base_path" => nil)) }
+      let(:content_item) do
+        schema = GovukSchemas::Schema.find(notification_schema: "contact")
+        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
+          item["base_path"] = nil
+        end
+      end
+
+      let(:message) { create_mock_message(content_item) }
 
       it "acknowledges the messages" do
         expect { described_class.new.process(message) }
@@ -25,13 +53,19 @@ RSpec.describe MessageQueue::MessageProcessor do
         allow(Rails.logger).to receive(:info)
         described_class.new.process(message)
         expect(Rails.logger).to have_received(:info)
-          .with("{#{schema['content_id']}, #{schema['locale']}} ignored due to no base_path")
+          .with("{#{content_item['content_id']}, #{content_item['locale']}} ignored due to no base_path")
       end
     end
 
     context "when a message payload is in a non-English locale" do
-      let(:schema) { GovukSchemas::Example.find("news_article", example_name: "news_article_news_story_translated_arabic") }
-      let(:message) { create_mock_message(schema) }
+      let(:content_item) do
+        schema = GovukSchemas::Schema.find(notification_schema: "news_article")
+        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
+          item["locale"] = "cy"
+        end
+      end
+
+      let(:message) { create_mock_message(content_item) }
 
       it "acknowledges the messages" do
         expect { described_class.new.process(message) }
@@ -42,7 +76,7 @@ RSpec.describe MessageQueue::MessageProcessor do
         allow(Rails.logger).to receive(:info)
         described_class.new.process(message)
         expect(Rails.logger).to have_received(:info)
-          .with("{#{schema['content_id']}, #{schema['locale']}} ignored due to non-English locale")
+          .with("{#{content_item['content_id']}, #{content_item['locale']}} ignored due to non-English locale")
       end
     end
 

@@ -18,6 +18,10 @@ module Chunking
       end
     end
 
+    def id
+      "#{content_id}_#{locale}_#{chunk_index}"
+    end
+
     def content_id
       content_item["content_id"]
     end
@@ -57,6 +61,23 @@ module Chunking
 
         Digest::SHA2.new(256).hexdigest(JSON.dump(values))
       end
+    end
+
+    def to_opensearch_hash
+      {
+        _id: id,
+        content_id:,
+        locale:,
+        base_path:,
+        document_type:,
+        title:,
+        url:,
+        chunk_index:,
+        heading_hierarchy:,
+        html_content:,
+        plain_content:,
+        digest:,
+      }
     end
 
     def inspect
