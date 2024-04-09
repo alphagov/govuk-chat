@@ -26,36 +26,14 @@ RSpec.describe MessageQueue::ContentSynchroniser, :chunked_content_index do
     context "when content can be indexed" do
       let(:content_item) { build_content_item(base_path) }
 
-      let(:chunks) do
-        [
-          build(:content_item_chunk, content_item:, chunk_index: 0),
-          build(:content_item_chunk, content_item:, chunk_index: 1),
-        ]
-      end
+      it "delegates to IndexContentItem" do
+        allow(described_class::IndexContentItem).to receive(:call)
 
-      before do
-        stub_any_openai_embedding
-        allow(Chunking::ContentItemToChunks).to receive(:call).with(content_item).and_return(chunks)
-      end
+        described_class.call(content_item)
 
-      it "converts the content item into chunks and inserts these into the chunked content index" do
-        expect { described_class.call(content_item) }
-          .to change { repository.count(term: { base_path: }) }
-          .by(chunks.length)
-      end
-
-      it "applies openai embedding to the data going into the search index" do
-        expect { described_class.call(content_item) }
-          .to change { repository.count(exists: { field: :openai_embedding }) }
-          .by(chunks.length)
-      end
-
-      it "returns a Result object" do
-        populate_chunked_content_index([{ _id: chunks[0].id, base_path: "/a" }])
-
-        expect(described_class.call(content_item))
-          .to be_an_instance_of(described_class::Result)
-          .and have_attributes(chunks_created: 1, chunks_updated: 1)
+        expect(described_class::IndexContentItem)
+          .to have_received(:call)
+          .with(content_item, an_instance_of(Search::ChunkedContentRepository))
       end
     end
 

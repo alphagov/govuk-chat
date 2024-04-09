@@ -1,12 +1,13 @@
 RSpec.describe MessageQueue::ContentSynchroniser::Result do
   describe "#to_s" do
     context "when a skip index reason is not given" do
-      it "returns a sentence explaining the number of chunks created, updated and deleted" do
+      it "returns a sentence explaining the number of chunks created, updated, skipped and deleted" do
         instance = described_class.new(chunks_created: 1,
                                        chunks_updated: 2,
+                                       chunks_skipped: 3,
                                        chunks_deleted: 0)
 
-        expect(instance.to_s).to eq("1 chunk newly inserted, 2 chunks updated, 0 chunks deleted")
+        expect(instance.to_s).to eq("1 chunk newly inserted, 2 chunks updated, 3 chunks didn't need updating, 0 chunks deleted")
       end
     end
 

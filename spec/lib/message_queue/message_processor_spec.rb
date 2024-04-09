@@ -32,8 +32,12 @@ RSpec.describe MessageQueue::MessageProcessor do
       it "writes to the log" do
         allow(Rails.logger).to receive(:info)
         described_class.new.process(message)
-        expect(Rails.logger).to have_received(:info)
-          .with("{#{content_item['content_id']}, #{content_item['locale']}} synched: 1 chunk newly inserted, 0 chunks updated, 0 chunks deleted")
+
+        log_message = "{#{content_item['content_id']}, #{content_item['locale']}} " \
+                      "synched: 1 chunk newly inserted, 0 chunks updated, " \
+                      "0 chunks didn't need updating, 0 chunks deleted"
+
+        expect(Rails.logger).to have_received(:info).with(log_message)
       end
     end
 

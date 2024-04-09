@@ -6,7 +6,6 @@ module MessageQueue
       @content_item = content_item
     end
 
-    # TODO: check for things already in the index
     def call
       if non_english_locale?
         return delete_with_skip_index_reason("has a non-English locale")
@@ -20,8 +19,7 @@ module MessageQueue
         return delete_with_skip_index_reason("is withdrawn")
       end
 
-      chunks = Chunking::ContentItemToChunks.call(content_item)
-      update_opensearch(chunks)
+      IndexContentItem.call(content_item, chunked_content_repository)
     end
 
   private
@@ -51,22 +49,6 @@ module MessageQueue
 
     def withdrawn?
       content_item["withdrawn_notice"].present?
-    end
-
-    def update_opensearch(chunks)
-      embeddings = Search::TextToEmbedding.call(chunks.map(&:plain_content))
-
-      chunks_created = 0
-      chunks_updated = 0
-
-      chunks.each.with_index do |chunk, index|
-        document = chunk.to_opensearch_hash.merge(openai_embedding: embeddings[index])
-        result = chunked_content_repository.index_document(chunk.id, document)
-        chunks_created += 1 if result == :created
-        chunks_updated += 1 if result == :updated
-      end
-
-      Result.new(chunks_created:, chunks_updated:)
     end
   end
 end
