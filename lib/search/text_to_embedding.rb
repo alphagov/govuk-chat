@@ -64,8 +64,7 @@ module Search
     end
 
     def openai_client
-      # TODO: replace with OpenAIClient.new once https://github.com/alphagov/govuk-chat/pull/84 is merged
-      @openai_client ||= OpenAI::Client.new(access_token: ENV.fetch("OPENAI_ACCESS_TOKEN"))
+      @openai_client ||= OpenAIClient.build
     end
   end
 end
