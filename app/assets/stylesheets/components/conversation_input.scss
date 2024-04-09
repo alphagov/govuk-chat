@@ -1,0 +1,54 @@
+.app-c-conversation-input {
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    border-top: 1px solid govuk-colour("mid-grey");
+  }
+}
+
+.app-c-conversation-input__form {
+  display: flex;
+  justify-content: space-between;
+  padding-top: govuk-spacing(6);
+  margin-bottom: govuk-spacing(2);
+
+  @include govuk-media-query($until: desktop) {
+    flex-direction: column;
+  }
+}
+
+.app-c-conversation-input__input {
+  border: 2px solid govuk-colour("black");
+  padding: govuk-spacing(2);
+  width: 80%;
+  @include govuk-font($size: 19);
+
+  &:focus {
+    outline: 3px solid $govuk-focus-colour;
+  }
+
+  @include govuk-media-query($until: desktop) {
+    width: auto;
+    margin-bottom: govuk-spacing(4);
+  }
+}
+
+.app-c-conversation-input__submit {
+  background-color: govuk-colour("blue");
+  color: govuk-colour("white");
+  padding: 8px govuk-spacing(2) 7px;
+  border: 2px solid transparent;
+  @include govuk-font($size: 19, $weight: bold);
+  box-sizing: border-box;
+  cursor: pointer;
+
+  &:hover {
+    background-color: govuk-colour("dark-blue");
+  }
+
+  &:focus {
+    outline: 3px solid $govuk-focus-colour;
+  }
+}
