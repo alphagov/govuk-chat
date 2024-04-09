@@ -24,7 +24,9 @@ module MessageQueue
   private
 
     def content_identifier(payload)
-      "{#{payload['content_id']}, #{payload['locale']}}"
+      data = [payload["base_path"], payload["content_id"], payload["locale"]]
+
+      "{#{data.compact.join(', ')}}"
     end
 
     def has_base_path?(payload)

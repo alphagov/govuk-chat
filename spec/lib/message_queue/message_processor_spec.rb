@@ -33,7 +33,7 @@ RSpec.describe MessageQueue::MessageProcessor do
         allow(Rails.logger).to receive(:info)
         described_class.new.process(message)
 
-        log_message = "{#{content_item['content_id']}, #{content_item['locale']}} " \
+        log_message = "{#{content_item['base_path']}, #{content_item['content_id']}, #{content_item['locale']}} " \
                       "synched: 1 chunk newly inserted, 0 chunks updated, " \
                       "0 chunks didn't need updating, 0 chunks deleted"
 
