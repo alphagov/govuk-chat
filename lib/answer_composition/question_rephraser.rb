@@ -34,7 +34,7 @@ module AnswerComposition
     end
 
     def message_history
-      question.conversation.questions.flat_map(&method(:map_question))
+      question.conversation.questions.last(5).flat_map(&method(:map_question))
     end
 
     def map_question(question)

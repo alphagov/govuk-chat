@@ -26,5 +26,37 @@ RSpec.describe AnswerComposition::QuestionRephraser do
       stub_openai_chat_completion(expected_messages, rephrased)
       expect(described_class.call(question:)).to eq(rephrased)
     end
+
+    context "with a long history" do
+      let(:expected_messages) do
+        [
+          { role: "system", content: AnswerComposition::Prompts::QUESTION_REPHRASER },
+          { role: "user", content: "What types are there" },
+          { role: "assistant", content: "Self-assessment, PAYE, Corporation tax" },
+          { role: "user", content: "corporation tax" },
+          { role: "assistant", content: "You can pay..." },
+          { role: "user", content: "Question 1" },
+          { role: "assistant", content: "Answer 1" },
+          { role: "user", content: "Question 2" },
+          { role: "assistant", content: "Answer 2" },
+          { role: "user", content: "Question 3" },
+          { role: "assistant", content: "Answer 3" },
+        ]
+      end
+
+      before do
+        create :answer, question: conversation.questions.last, message: "You can pay..."
+        (1..3).each do |n|
+          question = create :question, conversation:, message: "Question #{n}"
+          create :answer, question:, message: "Answer #{n}"
+        end
+      end
+
+      it "truncates the history to the last 5 Q/A pairs" do
+        rephrased = "How do I pay my corporation tax"
+        stub_openai_chat_completion(expected_messages, rephrased)
+        expect(described_class.call(question:)).to eq(rephrased)
+      end
+    end
   end
 end
