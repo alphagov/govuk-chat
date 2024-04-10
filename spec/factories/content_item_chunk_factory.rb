@@ -4,20 +4,19 @@ FactoryBot.define do
 
     transient do
       schema_name { "generic" }
-      content_id { nil }
+      content_id { :preserve }
       locale { "en" }
-      base_path { nil }
-      title { nil }
+      base_path { :preserve }
+      title { :preserve }
     end
 
     content_item do
-      schema = GovukSchemas::Schema.find(notification_schema: schema_name)
-      GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
-        item["content_id"] = content_id if content_id
-        item["locale"] = locale if locale
-        item["base_path"] = base_path if base_path
-        item["title"] = title if title
-      end
+      build(:notification_content_item,
+            schema_name:,
+            content_id:,
+            locale:,
+            base_path:,
+            title:)
     end
 
     html_content { "<p>Content</p>" }
