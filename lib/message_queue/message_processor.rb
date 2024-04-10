@@ -32,6 +32,12 @@ module MessageQueue
       logger.warn("#{content_identifier(payload)} scheduled for retry due to this base_path already being synched")
       message.retry
 
+    # Retry when experiencing an error from a supporting service
+    rescue OpenSearch::Transport::Transport::Error, OpenAIClient::RequestError => e
+      logger.error("#{content_identifier(payload)} scheduled for retry due to error: #{e.class} #{e.message}")
+      GovukError.notify(e) # If we experience transient errors we should exclude them from sentry logging
+      message.retry
+
     # This should only be catching exceptions we can't anticipate and not transient errors
     rescue StandardError => e
       log_standard_error(e, message.payload)

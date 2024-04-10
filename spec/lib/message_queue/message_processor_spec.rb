@@ -157,7 +157,73 @@ RSpec.describe MessageQueue::MessageProcessor do
       end
     end
 
-    context "when an exception is raised" do
+    context "when an OpenSearch error is raised" do
+      let(:content_item) do
+        schema = GovukSchemas::Schema.find(notification_schema: "news_article")
+        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
+          item["base_path"] = "/path"
+        end
+      end
+
+      let(:message) { create_mock_message(content_item) }
+
+      before do
+        allow(MessageQueue::ContentSynchroniser)
+          .to receive(:call)
+          .and_raise(OpenSearch::Transport::Transport::Error, "OpenSearch error")
+      end
+
+      it "retries the messages" do
+        expect { described_class.new.process(message) }
+          .to change(message, :retried?)
+      end
+
+      it "writes to the log" do
+        allow(Rails.logger).to receive(:error)
+        described_class.new.process(message)
+
+        log_message = "{#{content_item['base_path']}, #{content_item['content_id']}, #{content_item['locale']}} " \
+                      "scheduled for retry due to error: " \
+                      "OpenSearch::Transport::Transport::Error OpenSearch error"
+
+        expect(Rails.logger).to have_received(:error).with(log_message)
+      end
+    end
+
+    context "when an OpenAIClient error is raised" do
+      let(:content_item) do
+        schema = GovukSchemas::Schema.find(notification_schema: "news_article")
+        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
+          item["base_path"] = "/path"
+        end
+      end
+
+      let(:message) { create_mock_message(content_item) }
+
+      before do
+        allow(MessageQueue::ContentSynchroniser)
+          .to receive(:call)
+          .and_raise(OpenAIClient::RequestError, "OpenAI error")
+      end
+
+      it "retries the messages" do
+        expect { described_class.new.process(message) }
+          .to change(message, :retried?)
+      end
+
+      it "writes to the log" do
+        allow(Rails.logger).to receive(:error)
+        described_class.new.process(message)
+
+        log_message = "{#{content_item['base_path']}, #{content_item['content_id']}, #{content_item['locale']}} " \
+                      "scheduled for retry due to error: " \
+                      "OpenAIClient::RequestError OpenAI error"
+
+        expect(Rails.logger).to have_received(:error).with(log_message)
+      end
+    end
+
+    context "when any other exception is raised" do
       let(:message) { create_mock_message(1) }
 
       it "discards the message" do
