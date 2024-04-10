@@ -1,17 +1,14 @@
 RSpec.describe Chunking::ContentItemToChunks do
   describe ".call" do
     it "returns an array of ContentItemChunk objects for a valid schema" do
-      schema = GovukSchemas::Schema.find(notification_schema: "news_article")
-      content_item = GovukSchemas::RandomExample.new(schema:).payload
+      content_item = build(:notification_content_item, schema_name: "news_article")
       response = described_class.call(content_item)
 
       expect(response).to all(be_a(Chunking::ContentItemChunk))
     end
 
     it "raises an error when given a schema that is not supported" do
-      schema = GovukSchemas::Schema.find(notification_schema: "generic")
-      content_item = GovukSchemas::RandomExample.new(schema:).payload
-      content_item["schema_name"] = "doesnt_exist"
+      content_item = build(:notification_content_item).merge("schema_name" => "doesnt_exist")
 
       expect { described_class.call(content_item) }
         .to raise_error("No content item parser configured for doesnt_exist")

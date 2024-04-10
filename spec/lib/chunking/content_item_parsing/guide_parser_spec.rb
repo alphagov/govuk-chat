@@ -1,28 +1,30 @@
 RSpec.describe Chunking::ContentItemParsing::GuideParser do
   include ContentItemParserExamples
 
-  let(:content_item) do
-    schema = GovukSchemas::Schema.find(notification_schema: "guide")
-    GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
-      item["details"]["parts"] = [
-        "title" => "Part 1",
-        "slug" => "slug-1",
-        "body" => [
-          {
-            "content_type" => "text/html",
-            "content" => "<p>Content</p>",
-          },
-        ],
-      ]
+  it_behaves_like "a chunking content item parser" do
+    let(:content_item) do
+      build(
+        :notification_content_item,
+        schema_name: "guide",
+        details_merge: {
+          "parts" => [
+            "title" => "Part 1",
+            "slug" => "slug-1",
+            "body" => [
+              {
+                "content_type" => "text/html",
+                "content" => "<p>Content</p>",
+              },
+            ],
+          ],
+        },
+      )
     end
   end
 
-  it_behaves_like "a chunking content item parser"
-
   describe ".call" do
     it "converts the array of parts into an array of chunks" do
-      content_item["base_path"] = "/my-guide"
-      content_item["details"]["parts"] = [
+      parts = [
         {
           "title" => "Part 1",
           "slug" => "slug-1",
@@ -52,6 +54,10 @@ RSpec.describe Chunking::ContentItemParsing::GuideParser do
           ],
         },
       ]
+      content_item = build(:notification_content_item,
+                           schema_name: "guide",
+                           base_path: "/my-guide",
+                           details_merge: { "parts" => parts })
 
       chunk_1, chunk_2, chunk_3 = described_class.call(content_item)
 
@@ -72,14 +78,17 @@ RSpec.describe Chunking::ContentItemParsing::GuideParser do
     end
 
     it "raises an error when a details field lacks parts" do
-      content_item["details"] = {}
+      content_item = build(:notification_content_item,
+                           schema_name: "guide",
+                           details: {},
+                           ensure_valid: false)
 
       expect { described_class.call(content_item) }
         .to raise_error("nil value in details hash for parts in schema: guide")
     end
 
     it "raises an error when a part lacks a text/html field" do
-      content_item["details"]["parts"] = [
+      parts = [
         {
           "title" => "Part 1",
           "slug" => "slug-1",
@@ -91,6 +100,10 @@ RSpec.describe Chunking::ContentItemParsing::GuideParser do
           ],
         },
       ]
+
+      content_item = build(:notification_content_item,
+                           schema_name: "guide",
+                           details_merge: { "parts" => parts })
 
       expect { described_class.call(content_item) }
         .to raise_error("content type text/html not found in schema: guide")

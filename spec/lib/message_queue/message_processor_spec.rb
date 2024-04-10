@@ -9,14 +9,11 @@ RSpec.describe MessageQueue::MessageProcessor do
       let(:payload_version) { 20 }
 
       let(:content_item) do
-        schema = GovukSchemas::Schema.find(notification_schema: "news_article")
-        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
-          item["locale"] = "en"
-          item["base_path"] = base_path
-          item["payload_version"] = payload_version
-          item["details"]["body"] = "<p>Content</p>"
-          item.delete("withdrawn_notice")
-        end
+        build(:notification_content_item,
+              schema_name: "news_article",
+              base_path:,
+              payload_version:,
+              body: "<p>Content</p>")
       end
 
       let(:chunked_content_repository) { Search::ChunkedContentRepository.new }
@@ -63,12 +60,7 @@ RSpec.describe MessageQueue::MessageProcessor do
     end
 
     context "when a message payload lacks a base_path" do
-      let(:content_item) do
-        schema = GovukSchemas::Schema.find(notification_schema: "contact")
-        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
-          item["base_path"] = nil
-        end
-      end
+      let(:content_item) { build(:notification_content_item, schema_name: "contact", base_path: nil) }
 
       let(:message) { create_mock_message(content_item) }
 
@@ -89,11 +81,10 @@ RSpec.describe MessageQueue::MessageProcessor do
       let(:base_path) { "/path" }
 
       let(:content_item) do
-        schema = GovukSchemas::Schema.find(notification_schema: "news_article")
-        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
-          item["base_path"] = base_path
-          item["payload_version"] = 1
-        end
+        build(:notification_content_item,
+              schema_name: "news_article",
+              base_path:,
+              payload_version: 1)
       end
 
       let(:message) { create_mock_message(content_item) }
@@ -119,12 +110,7 @@ RSpec.describe MessageQueue::MessageProcessor do
     context "when there is already a base_path being processed" do
       let(:base_path) { "/path" }
 
-      let(:content_item) do
-        schema = GovukSchemas::Schema.find(notification_schema: "news_article")
-        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
-          item["base_path"] = base_path
-        end
-      end
+      let(:content_item) { build(:notification_content_item, schema_name: "news_article", base_path:) }
 
       let(:message) { create_mock_message(content_item) }
 
@@ -158,12 +144,7 @@ RSpec.describe MessageQueue::MessageProcessor do
     end
 
     context "when an OpenSearch error is raised" do
-      let(:content_item) do
-        schema = GovukSchemas::Schema.find(notification_schema: "news_article")
-        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
-          item["base_path"] = "/path"
-        end
-      end
+      let(:content_item) { build(:notification_content_item, schema_name: "news_article", base_path: "/path") }
 
       let(:message) { create_mock_message(content_item) }
 
@@ -191,12 +172,7 @@ RSpec.describe MessageQueue::MessageProcessor do
     end
 
     context "when an OpenAIClient error is raised" do
-      let(:content_item) do
-        schema = GovukSchemas::Schema.find(notification_schema: "news_article")
-        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
-          item["base_path"] = "/path"
-        end
-      end
+      let(:content_item) { build(:notification_content_item, schema_name: "news_article", base_path: "/path") }
 
       let(:message) { create_mock_message(content_item) }
 

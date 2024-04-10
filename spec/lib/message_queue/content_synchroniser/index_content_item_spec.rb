@@ -1,10 +1,7 @@
 RSpec.describe MessageQueue::ContentSynchroniser::IndexContentItem, :chunked_content_index do
   describe ".call" do
     let(:base_path) { "/path" }
-    let(:content_item) do
-      schema = GovukSchemas::Schema.find(notification_schema: "generic")
-      GovukSchemas::RandomExample.new(schema:).payload.merge("base_path" => base_path)
-    end
+    let(:content_item) { build(:notification_content_item, base_path:) }
     let(:repository) { Search::ChunkedContentRepository.new }
 
     let(:chunks) do

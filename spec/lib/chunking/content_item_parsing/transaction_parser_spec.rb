@@ -1,25 +1,26 @@
 RSpec.describe Chunking::ContentItemParsing::TransactionParser do
   include ContentItemParserExamples
 
-  let(:content_item) do
-    schema = GovukSchemas::Schema.find(notification_schema: "transaction")
-    GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
-      item["details"] = {
-        "introductory_paragraph" => [
-          {
-            "content_type" => "text/html",
-            "content" => "<p>Content/p>",
-          },
-        ],
-      }
+  it_behaves_like "a chunking content item parser" do
+    let(:content_item) do
+      build(
+        :notification_content_item,
+        schema_name: "transaction",
+        details: {
+          "introductory_paragraph" => [
+            {
+              "content_type" => "text/html",
+              "content" => "<p>Content/p>",
+            },
+          ],
+        },
+      )
     end
   end
 
-  it_behaves_like "a chunking content item parser"
-
   describe ".call" do
     it "uses the introductory_paragraph, more_information, other_ways_to_apply and what_you_need_to_know fields for chunks" do
-      content_item["details"] = {
+      details = {
         "introductory_paragraph" => [
           {
             "content_type" => "text/html",
@@ -45,6 +46,9 @@ RSpec.describe Chunking::ContentItemParsing::TransactionParser do
           },
         ],
       }
+      content_item = build(:notification_content_item,
+                           schema_name: "transaction",
+                           details:)
 
       chunk_1, chunk_2, chunk_3, chunk_4 = described_class.call(content_item)
 
@@ -55,7 +59,7 @@ RSpec.describe Chunking::ContentItemParsing::TransactionParser do
     end
 
     it "copes if fields are missing" do
-      content_item["details"] = {
+      details = {
         "introductory_paragraph" => [
           {
             "content_type" => "text/html",
@@ -70,6 +74,10 @@ RSpec.describe Chunking::ContentItemParsing::TransactionParser do
         ],
       }
 
+      content_item = build(:notification_content_item,
+                           schema_name: "transaction",
+                           details:)
+
       chunk_1, chunk_2 = described_class.call(content_item)
 
       expect(chunk_1).to have_attributes(html_content: "<p>Content 1</p>")
@@ -77,13 +85,15 @@ RSpec.describe Chunking::ContentItemParsing::TransactionParser do
     end
 
     it "copes if all fields are missing" do
-      content_item["details"] = {}
+      content_item = build(:notification_content_item,
+                           schema_name: "transaction",
+                           details: {})
 
       expect(described_class.call(content_item)).to eq([])
     end
 
     it "raises an error if a field lacks a text/html content type" do
-      content_item["details"] = {
+      details = {
         "introductory_paragraph" => [
           {
             "content_type" => "text/govspeak",
@@ -91,6 +101,10 @@ RSpec.describe Chunking::ContentItemParsing::TransactionParser do
           },
         ],
       }
+
+      content_item = build(:notification_content_item,
+                           schema_name: "transaction",
+                           details:)
 
       expect { described_class.call(content_item) }
         .to raise_error("content type text/html not found in schema: transaction")
