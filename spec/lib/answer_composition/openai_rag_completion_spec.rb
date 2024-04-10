@@ -8,12 +8,17 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec
   end
 
   describe ".call" do
+    let(:rephrased_question) { "Question rephrased by OpenAI" }
     let(:question) { create :question }
     let(:expected_message_history) do
       [
         { role: "system", content: system_prompt },
-        { role: "user", content: question.message },
+        { role: "user", content: rephrased_question },
       ]
+    end
+
+    before do
+      allow(AnswerComposition::QuestionRephraser).to receive(:call).and_return(rephrased_question)
     end
 
     it "calls OpenAI chat endpoint and returns unsaved answer" do
@@ -27,13 +32,15 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec
         {
           question:,
           message: "OpenAI responded with...",
+          rephrased_question:,
           status: "success",
         },
       )
     end
 
-    context "when the question contains a forbidden word" do
+    context "when the rephrased question contains a forbidden word" do
       let(:question) { build_stubbed(:question, message: user_input) }
+      let(:rephrased_question) { "Question about forbidden_word rephrased by OpenAI" }
       let(:user_input) { "I want to know about forbidden_word" }
 
       it "returns an answer with a forbidden words message" do
@@ -46,6 +53,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec
           {
             question:,
             message: described_class::FORBIDDEN_WORDS_RESPONSE,
+            rephrased_question:,
             status: "abort_forbidden_words",
           },
         )
