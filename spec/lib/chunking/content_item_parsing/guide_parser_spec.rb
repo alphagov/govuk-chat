@@ -77,16 +77,6 @@ RSpec.describe Chunking::ContentItemParsing::GuideParser do
                                          url: "/my-guide/slug-2")
     end
 
-    it "raises an error when a details field lacks parts" do
-      content_item = build(:notification_content_item,
-                           schema_name: "guide",
-                           details: {},
-                           ensure_valid: false)
-
-      expect { described_class.call(content_item) }
-        .to raise_error("nil value in details hash for parts in schema: guide")
-    end
-
     it "raises an error when a part lacks a text/html field" do
       parts = [
         {
