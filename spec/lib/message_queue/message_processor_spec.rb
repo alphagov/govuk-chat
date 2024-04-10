@@ -5,11 +5,13 @@ RSpec.describe MessageQueue::MessageProcessor do
     context "when given a payload we can index", :chunked_content_index do
       before { stub_any_openai_embedding }
 
+      let(:base_path) { "/news" }
+
       let(:content_item) do
         schema = GovukSchemas::Schema.find(notification_schema: "news_article")
         GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
           item["locale"] = "en"
-          item["base_path"] = "/news"
+          item["base_path"] = base_path
           item["details"]["body"] = "<p>Content</p>"
           item.delete("withdrawn_notice")
         end
@@ -25,7 +27,7 @@ RSpec.describe MessageQueue::MessageProcessor do
 
       it "writes to the search index" do
         expect { described_class.new.process(message) }
-          .to change { chunked_content_repository.count(term: { base_path: "/news" }) }
+          .to change { chunked_content_repository.count(term: { base_path: }) }
           .by(1)
       end
 
@@ -33,11 +35,17 @@ RSpec.describe MessageQueue::MessageProcessor do
         allow(Rails.logger).to receive(:info)
         described_class.new.process(message)
 
-        log_message = "{#{content_item['base_path']}, #{content_item['content_id']}, #{content_item['locale']}} " \
+        log_message = "{#{base_path}, #{content_item['content_id']}, #{content_item['locale']}} " \
                       "synched: 1 chunk newly inserted, 0 chunks updated, " \
                       "0 chunks didn't need updating, 0 chunks deleted"
 
         expect(Rails.logger).to have_received(:info).with(log_message)
+      end
+
+      it "creates a base path version model if one does not exist" do
+        expect { described_class.new.process(message) }
+          .to change(BasePathVersion, :count)
+          .by(1)
       end
     end
 
@@ -61,6 +69,47 @@ RSpec.describe MessageQueue::MessageProcessor do
         described_class.new.process(message)
         expect(Rails.logger).to have_received(:info)
           .with("{#{content_item['content_id']}, #{content_item['locale']}} ignored due to no base_path")
+      end
+    end
+
+    context "when there is already a base_path being processed" do
+      let(:base_path) { "/path" }
+
+      let(:content_item) do
+        schema = GovukSchemas::Schema.find(notification_schema: "news_article")
+        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
+          item["base_path"] = base_path
+        end
+      end
+
+      let(:message) { create_mock_message(content_item) }
+
+      let(:base_path_version) { build(:base_path_version, base_path:) }
+
+      before do
+        allow(BasePathVersion)
+          .to receive(:find_or_create_by!)
+          .and_return(base_path_version)
+
+        allow(base_path_version)
+          .to receive(:with_lock)
+          .with("FOR UPDATE NOWAIT")
+          .and_raise(ActiveRecord::LockWaitTimeout)
+      end
+
+      it "retries the messages" do
+        expect { described_class.new.process(message) }
+          .to change(message, :retried?)
+      end
+
+      it "writes to the log" do
+        allow(Rails.logger).to receive(:warn)
+        described_class.new.process(message)
+
+        log_message = "{#{base_path}, #{content_item['content_id']}, #{content_item['locale']}} " \
+                      "scheduled for retry due to this base_path already being synched"
+
+        expect(Rails.logger).to have_received(:warn).with(log_message)
       end
     end
 
