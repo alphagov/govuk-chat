@@ -12,9 +12,17 @@ module MessageQueue
         return
       end
 
-      lock_for_base_path(base_path) do
-        result = ContentSynchroniser.call(payload)
-        logger.info("#{content_identifier(payload)} synched: #{result}")
+      lock_for_base_path(base_path) do |base_path_version|
+        payload_version = payload["payload_version"].to_i
+
+        if base_path_version.payload_version <= payload_version
+          result = ContentSynchroniser.call(payload)
+          logger.info("#{content_identifier(payload)} synched: #{result}")
+
+          base_path_version.update!(payload_version:)
+        else
+          logger.info("#{content_identifier(payload)} ignored as it's older than the last version synched")
+        end
       end
 
       message.ack
@@ -50,7 +58,7 @@ module MessageQueue
 
     def lock_for_base_path(base_path, &block)
       base_path_version = BasePathVersion.find_or_create_by!(base_path:)
-      base_path_version.with_lock("FOR UPDATE NOWAIT", &block)
+      base_path_version.with_lock("FOR UPDATE NOWAIT") { block.call(base_path_version) }
     end
   end
 end

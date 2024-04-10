@@ -6,12 +6,14 @@ RSpec.describe MessageQueue::MessageProcessor do
       before { stub_any_openai_embedding }
 
       let(:base_path) { "/news" }
+      let(:payload_version) { 20 }
 
       let(:content_item) do
         schema = GovukSchemas::Schema.find(notification_schema: "news_article")
         GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
           item["locale"] = "en"
           item["base_path"] = base_path
+          item["payload_version"] = payload_version
           item["details"]["body"] = "<p>Content</p>"
           item.delete("withdrawn_notice")
         end
@@ -46,6 +48,17 @@ RSpec.describe MessageQueue::MessageProcessor do
         expect { described_class.new.process(message) }
           .to change(BasePathVersion, :count)
           .by(1)
+
+        expect(BasePathVersion.find_by(base_path:).payload_version)
+          .to eq(payload_version)
+      end
+
+      it "updates a base path version model if one exists" do
+        base_path_version = create(:base_path_version, base_path:)
+
+        expect { described_class.new.process(message) }
+          .to change { base_path_version.reload.payload_version }
+          .to(payload_version)
       end
     end
 
@@ -69,6 +82,37 @@ RSpec.describe MessageQueue::MessageProcessor do
         described_class.new.process(message)
         expect(Rails.logger).to have_received(:info)
           .with("{#{content_item['content_id']}, #{content_item['locale']}} ignored due to no base_path")
+      end
+    end
+
+    context "when the message contains a payload version older than what we have stored" do
+      let(:base_path) { "/path" }
+
+      let(:content_item) do
+        schema = GovukSchemas::Schema.find(notification_schema: "news_article")
+        GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
+          item["base_path"] = base_path
+          item["payload_version"] = 1
+        end
+      end
+
+      let(:message) { create_mock_message(content_item) }
+
+      before { create(:base_path_version, base_path:, payload_version: 2) }
+
+      it "acknowledges the messages" do
+        expect { described_class.new.process(message) }
+          .to change(message, :acked?)
+      end
+
+      it "writes to the log" do
+        allow(Rails.logger).to receive(:info)
+        described_class.new.process(message)
+
+        log_message = "{#{base_path}, #{content_item['content_id']}, #{content_item['locale']}} " \
+                      "ignored as it's older than the last version synched"
+
+        expect(Rails.logger).to have_received(:info).with(log_message)
       end
     end
 
