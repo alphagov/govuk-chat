@@ -1,0 +1,1 @@
+class BasePathVersion < ApplicationRecord; end
