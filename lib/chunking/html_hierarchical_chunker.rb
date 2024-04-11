@@ -2,17 +2,15 @@ module Chunking
   # TODO: Iterate this class:
   # - bug, if content starts without a header it seems to mistakenly put the content into the header
   #   (seen with: https://www.gov.uk/api/content/search-house-prices)
-  # - title seems redundant as an input paramater
   # - would be good to preserve header anchor ids so they can be used in urls
   # - it's hard to work with the headers being hash keys - it'd be easier to have an array of headers - I don't think
   #   we care which level they are just the hierarchy
   # - it would be helpful if this class returned an array of data objects rather than an array of hashes
   class HtmlHierarchicalChunker
-    def initialize(title:, html:)
-      @title = title
+    def initialize(html)
       @doc = Nokogiri::HTML::DocumentFragment.parse(html)
+      @headers = {}
       @chunks = []
-      @headers = { "title" => title }
       @content = []
     end
 
@@ -28,7 +26,7 @@ module Chunking
 
   private
 
-    attr_reader :title, :doc, :headers, :content, :chunks
+    attr_reader :doc, :headers, :content, :chunks
 
     def split_nodes(child_nodes)
       child_nodes.each do |node|
@@ -72,7 +70,7 @@ module Chunking
 
     def new_chunk(header_node)
       save_chunk
-      headers_to_keep = headers.keys.select { |h| h == "title" || h < header_node.name }
+      headers_to_keep = headers.keys.select { |h| h < header_node.name }
       @headers = headers.slice(*headers_to_keep)
       add_header(header_node.name, header_node.text)
     end

@@ -1,7 +1,5 @@
 RSpec.describe Chunking::HtmlHierarchicalChunker do
   describe ".call" do
-    let(:title) { "Main title here" }
-
     context "with divs at top level" do
       let(:html) do
         <<~HTML
@@ -16,15 +14,13 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
       end
 
       it "splits HTML into parts based using the title as h1" do
-        output = described_class.call(title:, html:)
+        output = described_class.call(html)
         expect(output).to eq([
           {
-            title: "Main title here",
             h2: "First subheading",
             html_content: "<p>First paragraph under subheading</p>\n<p>Second paragraph under subheading</p>",
           },
           {
-            title: "Main title here",
             h2: "Second subheading",
             html_content: "<p>Another paragraph under the second subheading</p>",
           },
@@ -50,20 +46,17 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
       end
 
       it "ignores the divs and produces the same format" do
-        output = described_class.call(title:, html:)
+        output = described_class.call(html)
         expect(output).to eq([
           {
-            title: "Main title here",
             h2: "First subheading",
             html_content: "<p>First paragraph under subheading</p>\n<p>Second paragraph under subheading</p>",
           },
           {
-            title: "Main title here",
             h2: "Second subheading",
             html_content: "<p>Another paragraph under the second subheading</p>",
           },
           {
-            title: "Main title here",
             h2: "Third subheading",
             html_content: "<p>Paragraph under third subheading</p>",
           },
@@ -84,15 +77,13 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
       end
 
       it "splits HTML into parts ignoring existing h1 tags" do
-        output = described_class.call(title:, html:)
+        output = described_class.call(html)
         expect(output).to eq([
           {
-            title: "Main title here",
             h2: "First subheading",
             html_content: "<p>First paragraph under subheading</p>\n<p>Second paragraph under subheading</p>",
           },
           {
-            title: "Main title here",
             h2: "Second subheading",
             html_content: "<p>Another paragraph under the second subheading</p>",
           },
@@ -118,10 +109,9 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
       end
 
       it "splits HTML into parts ignoring existing h1 tags" do
-        output = described_class.call(title:, html:)
+        output = described_class.call(html)
         expect(output).to eq([
           {
-            title: "Main title here",
             h2: "First subheading",
             h3: "first h3",
             h4: "first h4",
@@ -130,7 +120,6 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
             html_content: "<p>First paragraph under h6</p>\n<p>Second paragraph under h6</p>",
           },
           {
-            title: "Main title here",
             h2: "First subheading",
             h3: "first h3",
             h4: "first h4",
@@ -139,7 +128,6 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
             html_content: "<p>Another paragraph under the second h6</p>",
           },
           {
-            title: "Main title here",
             h2: "Second subheading",
             html_content: "<p>Another paragraph under the second subheading</p>",
           },
@@ -162,10 +150,9 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
       end
 
       it "formats elements separated by single newline" do
-        output = described_class.call(title:, html:)
+        output = described_class.call(html)
         expect(output).to eq([
           {
-            title: "Main title here",
             h2: "First subheading",
             html_content: "<p>First paragraph under subheading</p>\n<p>Second paragraph under subheading</p>",
           },
@@ -186,15 +173,13 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
       end
 
       it "strips out attributes except href from <a> and title from <abbr>" do
-        output = described_class.call(title:, html:)
+        output = described_class.call(html)
         expect(output).to eq([
           {
-            title: "Main title here",
             h2: "First subheading",
             html_content: "<p>First paragraph under subheading <a href=\"https://example.com/path\">Link text</a></p>\n<p>Second paragraph under subheading</p>",
           },
           {
-            title: "Main title here",
             h2: "Second subheading",
             html_content: "<p>paragraph under second subheading</p>\n<abbr title=\"some title\">some content</abbr>",
           },
@@ -215,15 +200,13 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
       end
 
       it "removes the footnotes" do
-        output = described_class.call(title:, html:)
+        output = described_class.call(html)
         expect(output).to eq([
           {
-            title: "Main title here",
             h2: "First subheading",
             html_content: "<p>First paragraph under subheading</p>\n<p>Second paragraph under subheading</p>",
           },
           {
-            title: "Main title here",
             h2: "Heading after footnotes",
             html_content: "<p>Some text after footnotes</p>",
           },
@@ -264,7 +247,7 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
       end
 
       it "renders the table correctly" do
-        output = described_class.call(title:, html:)
+        output = described_class.call(html)
         expected_html = <<~HTML
           <p>First paragraph under subheading</p>
           <table>
@@ -296,12 +279,10 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
         HTML
         expect(output).to eq([
           {
-            title: "Main title here",
             h2: "First subheading",
             html_content: expected_html.chomp,
           },
           {
-            title: "Main title here",
             h2: "Second subheading",
             html_content: expected_ul_html.chomp,
           },
