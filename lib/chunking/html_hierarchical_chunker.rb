@@ -1,7 +1,5 @@
 module Chunking
   # TODO: Iterate this class:
-  # - bug, if content starts without a header it seems to mistakenly put the content into the header
-  #   (seen with: https://www.gov.uk/api/content/search-house-prices)
   # - would be good to preserve header anchor ids so they can be used in urls
   # - it's hard to work with the headers being hash keys - it'd be easier to have an array of headers - I don't think
   #   we care which level they are just the hierarchy
@@ -36,29 +34,22 @@ module Chunking
           next
         end
         if header?(node)
-          if new_header?(node)
-            new_chunk(node)
-          else
-            add_header(node.name, node.text)
-          end
+          save_chunk
+          new_header(node)
         else
           add_content(node.to_html.chomp)
         end
       end
       save_chunk
-      chunks
     end
 
     def header?(node)
       node.element? && node.name.match?(/^h[2-6]$/)
     end
 
-    def new_header?(node)
-      headers[node.name] && headers[node.name] != node.text
-    end
-
-    def add_header(name, html)
-      headers[name] = html
+    def new_header(node)
+      headers_to_keep = headers.keys.select { |h| h < node.name }
+      @headers = headers.slice(*headers_to_keep).merge({ node.name => node.text })
     end
 
     def save_chunk

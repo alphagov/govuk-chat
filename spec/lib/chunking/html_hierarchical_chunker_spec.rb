@@ -91,6 +91,89 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
       end
     end
 
+    context "with content before a heading" do
+      let(:html) do
+        <<~HTML
+          <p>Some content</p>
+          <h2>Heading 2</h2>
+          <p>More content</p>
+        HTML
+      end
+
+      it "splits HTML into parts with the first one missing a header" do
+        output = described_class.call(html)
+        expect(output).to eq([
+          {
+            html_content: "<p>Some content</p>",
+          },
+          {
+            h2: "Heading 2",
+            html_content: "<p>More content</p>",
+          },
+        ].map(&:stringify_keys))
+      end
+    end
+
+    context "with content inbetween headings" do
+      let(:html) do
+        <<~HTML
+          <h2>Heading 2</h2>
+          <p>Some content</p>
+          <h3>Heading 3</h3>
+          <p>More content</p>
+        HTML
+      end
+
+      it "splits the content into chunks that include their content" do
+        output = described_class.call(html)
+        expect(output).to eq([
+          {
+            h2: "Heading 2",
+            html_content: "<p>Some content</p>",
+          },
+          {
+            h2: "Heading 2",
+            h3: "Heading 3",
+            html_content: "<p>More content</p>",
+          },
+        ].map(&:stringify_keys))
+      end
+    end
+
+    context "with headings out of order" do
+      let(:html) do
+        <<~HTML
+          <h5>Heading 5</h5>
+          <p>H5 content</p>
+          <h4>Heading 4</h4>
+          <h3>Heading 3</h3>
+          <p>H3 content</p>
+          <h2>Heading 2</h2>
+          <h4>Heading 4</h4>
+          <p>H2 H4 content</p>
+        HTML
+      end
+
+      it "only pays attention to headers that are of a lower precedence" do
+        output = described_class.call(html)
+        expect(output).to eq([
+          {
+            h5: "Heading 5",
+            html_content: "<p>H5 content</p>",
+          },
+          {
+            h3: "Heading 3",
+            html_content: "<p>H3 content</p>",
+          },
+          {
+            h2: "Heading 2",
+            h4: "Heading 4",
+            html_content: "<p>H2 H4 content</p>",
+          },
+        ].map(&:stringify_keys))
+      end
+    end
+
     context "with content at h6 level" do
       let(:html) do
         <<~HTML
