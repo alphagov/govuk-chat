@@ -1,15 +1,6 @@
 module Chunking
   module ContentItemParsing
     class BaseParser
-      HtmlChunk = Data.define(:headings, :html_content) do
-        # TODO: replace this with data from the HTML
-        def fragment
-          return unless headings.last
-
-          headings.last.downcase.gsub(/[^0-9a-z ]/i, "").gsub("\s", "-")
-        end
-      end
-
       def self.call(...) = new(...).call
 
       def initialize(content_item)
@@ -28,26 +19,15 @@ module Chunking
       # For more complex content types, such as those with parts, they may need
       # to create the chunk objects directly.
       def build_chunks(html)
-        html_chunks = chunk_html(html)
+        html_chunks = Chunking::HtmlHierarchicalChunker.call(html)
         html_chunks.map.with_index do |html_chunk, index|
           ContentItemChunk.new(
             content_item:,
             html_content: html_chunk.html_content,
-            heading_hierarchy: html_chunk.headings,
+            heading_hierarchy: html_chunk.headers.map(&:text_content),
             chunk_index: index,
             chunk_url: append_fragment(base_path, html_chunk.fragment),
           )
-        end
-      end
-
-      def chunk_html(html)
-        # TODO: Have HtmlHierachicalChunker class return an array of objects so we don't need
-        # to process the return value
-        chunks = Chunking::HtmlHierarchicalChunker.call(title: "", html:)
-
-        chunks.map do |chunk|
-          headings = chunk.select { |k, _| k.match?(/\Ah[2-6]\Z/) }.sort.map(&:last)
-          HtmlChunk.new(headings, chunk["html_content"])
         end
       end
 
