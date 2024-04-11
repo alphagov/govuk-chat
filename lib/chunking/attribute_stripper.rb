@@ -12,6 +12,11 @@ module Chunking
     private_class_method :allow_list
 
     ALLOW_LISTS = {
+      "h2" => %w[id],
+      "h3" => %w[id],
+      "h4" => %w[id],
+      "h5" => %w[id],
+      "h6" => %w[id],
       "a" => %w[href],
       "abbr" => %w[title],
     }.freeze

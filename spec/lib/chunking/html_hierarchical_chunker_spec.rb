@@ -15,6 +15,14 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
         .and all(be_a(described_class::HtmlChunk::Header))
     end
 
+    it "uses id values from headers to store a fragment that can be used for deep linking" do
+      html = %(<h2 id="heading-2">Heading 2</h2><p>Content</p>)
+
+      chunks = described_class.call(html)
+      headers = chunks.first.headers
+      expect(headers.first.fragment).to eq("heading-2")
+    end
+
     context "with divs at top level" do
       let(:html) do
         <<~HTML
@@ -393,7 +401,7 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
     described_class::HtmlChunk.new(headers:, html_content:)
   end
 
-  def build_header(element, text_content)
-    described_class::HtmlChunk::Header.new(element:, text_content:)
+  def build_header(element, text_content, fragment = nil)
+    described_class::HtmlChunk::Header.new(element:, text_content:, fragment:)
   end
 end

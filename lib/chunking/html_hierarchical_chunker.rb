@@ -1,10 +1,5 @@
 module Chunking
-  # TODO: Iterate this class:
-  # - would be good to preserve header anchor ids so they can be used in urls
   class HtmlHierarchicalChunker
-    HtmlChunk = Data.define(:headers, :html_content)
-    HtmlChunk::Header = Data.define(:element, :text_content)
-
     def initialize(html)
       @doc = Nokogiri::HTML::DocumentFragment.parse(html)
       @headers = []
@@ -48,7 +43,7 @@ module Chunking
     end
 
     def new_header(node)
-      header = HtmlChunk::Header.new(element: node.name, text_content: node.text)
+      header = HtmlChunk::Header.new(element: node.name, text_content: node.text, fragment: node["id"])
       headers_to_keep = headers.select { |h| h.element < header.element }
       @headers = headers_to_keep.append(header)
     end
