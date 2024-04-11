@@ -1,13 +1,13 @@
 module Chunking
   # TODO: Iterate this class:
   # - would be good to preserve header anchor ids so they can be used in urls
-  # - it's hard to work with the headers being hash keys - it'd be easier to have an array of headers - I don't think
-  #   we care which level they are just the hierarchy
-  # - it would be helpful if this class returned an array of data objects rather than an array of hashes
   class HtmlHierarchicalChunker
+    HtmlChunk = Data.define(:headers, :html_content)
+    HtmlChunk::Header = Data.define(:element, :text_content)
+
     def initialize(html)
       @doc = Nokogiri::HTML::DocumentFragment.parse(html)
-      @headers = {}
+      @headers = []
       @chunks = []
       @content = []
     end
@@ -48,14 +48,16 @@ module Chunking
     end
 
     def new_header(node)
-      headers_to_keep = headers.keys.select { |h| h < node.name }
-      @headers = headers.slice(*headers_to_keep).merge({ node.name => node.text })
+      header = HtmlChunk::Header.new(element: node.name, text_content: node.text)
+      headers_to_keep = headers.select { |h| h.element < header.element }
+      @headers = headers_to_keep.append(header)
     end
 
     def save_chunk
-      return if current_chunk["html_content"].empty?
+      return if content.empty?
 
-      chunks.append(current_chunk)
+      chunk = HtmlChunk.new(headers:, html_content: content.join("\n"))
+      chunks.append(chunk)
       @content = []
     end
 
@@ -70,12 +72,6 @@ module Chunking
       return if html.strip.empty?
 
       content.append(html.strip)
-    end
-
-    def current_chunk
-      headers.merge({
-        "html_content" => content.join("\n"),
-      })
     end
 
     def clean_attributes
