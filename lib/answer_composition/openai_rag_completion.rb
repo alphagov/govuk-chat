@@ -9,12 +9,12 @@ module AnswerComposition
 
     def initialize(question)
       @question = question
-      @rephrased_question = QuestionRephraser.call(question:)
       @retriever = Retrieval::SearchApiV1Retriever
       @openai_client = OpenAIClient.build
     end
 
     def call
+      @rephrased_question = QuestionRephraser.call(question:)
       if question_contains_forbidden_words?
         question.build_answer(message: FORBIDDEN_WORDS_RESPONSE, rephrased_question:, status: "abort_forbidden_words")
       else
