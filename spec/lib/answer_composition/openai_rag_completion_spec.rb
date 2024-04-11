@@ -102,6 +102,32 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec
       end
     end
 
+    context "when QuestionRephraser throws a RephrasingError" do
+      let(:expected_error) do
+        AnswerComposition::QuestionRephraser::RephrasingError.new("couldn't rephrase", { body: { "error" => { "message" => "openai error" } } })
+      end
+
+      before do
+        allow(AnswerComposition::QuestionRephraser).to receive(:call).and_raise(expected_error)
+        allow(GovukError).to receive(:notify)
+      end
+
+      it "returns an unsaved answer with a generic unsuccessful message which captures the rephrasing error" do
+        answer = described_class.call(question)
+
+        expect_unsaved_answer_with_attributes(
+          answer,
+          {
+            question:,
+            message: AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE,
+            status: "error_answer_service_error",
+            error_message: "class: AnswerComposition::QuestionRephraser::RephrasingError message: openai error",
+          },
+        )
+        expect(GovukError).to have_received(:notify).with(OpenAIClient::RequestError)
+      end
+    end
+
   private
 
     def system_prompt

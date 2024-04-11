@@ -27,6 +27,15 @@ RSpec.describe AnswerComposition::QuestionRephraser do
       expect(described_class.call(question:)).to eq(rephrased)
     end
 
+    context "when there is an OpenAI error" do
+      it "raises a RephrasingError" do
+        stub_openai_chat_completion_error
+        expect { described_class.call(question:) }
+          .to raise_error(an_instance_of(described_class::RephrasingError)
+            .and(having_attributes(response: an_instance_of(Hash))))
+      end
+    end
+
     context "with a long history" do
       let(:expected_messages) do
         [

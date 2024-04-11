@@ -1,5 +1,8 @@
 module AnswerComposition
   class QuestionRephraser
+    class RephrasingError < OpenAIClient::RequestError
+    end
+
     OPENAI_MODEL = "gpt-3.5-turbo".freeze
 
     def self.call(...) = new(...).call
@@ -13,9 +16,13 @@ module AnswerComposition
       return question.message if first_question?
 
       openai_response.dig("choices", 0, "message", "content")
+    rescue OpenAIClient::RequestError => e
+      raise RephrasingError.new("could not rephrase #{question.message}", e.response)
     end
 
   private
+
+    attr_reader :question, :openai_client
 
     def openai_response
       openai_client.chat(
@@ -49,7 +56,5 @@ module AnswerComposition
     def first_question?
       question.conversation.questions.to_a == [question]
     end
-
-    attr_reader :question, :openai_client
   end
 end
