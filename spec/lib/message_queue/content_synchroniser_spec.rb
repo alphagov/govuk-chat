@@ -24,7 +24,7 @@ RSpec.describe MessageQueue::ContentSynchroniser, :chunked_content_index do
     let(:base_path) { "/path" }
 
     context "when content can be indexed" do
-      let(:content_item) { build_content_item(base_path) }
+      let(:content_item) { build(:notification_content_item, base_path:, schema_name: "news_article") }
 
       it "delegates to IndexContentItem" do
         allow(described_class::IndexContentItem).to receive(:call)
@@ -39,36 +39,23 @@ RSpec.describe MessageQueue::ContentSynchroniser, :chunked_content_index do
 
     context "when content is in a non-English locale" do
       include_examples "deletes with a skip index reason", "has a non-English locale" do
-        let(:content_item) { build_content_item(base_path, locale: "cy") }
+        let(:content_item) do
+          build(:notification_content_item, base_path:, schema_name: "news_article", locale: "cy")
+        end
       end
     end
 
     context "when content uses a schema that isn't supported" do
       include_examples "deletes with a skip index reason", %(uses schema "gone") do
-        let(:content_item) { build_content_item(base_path, schema_name: "gone") }
+        let(:content_item) { build(:notification_content_item, schema_name: "gone", base_path:) }
       end
     end
 
     context "when content is withdrawn" do
       include_examples "deletes with a skip index reason", "is withdrawn" do
-        let(:content_item) { build_content_item(base_path, withdrawn: true) }
-      end
-    end
-  end
-
-  def build_content_item(base_path, locale: "en", withdrawn: false, schema_name: "news_article")
-    schema = GovukSchemas::Schema.find(notification_schema: schema_name)
-    GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
-      item["base_path"] = base_path
-      item["locale"] = locale
-
-      if withdrawn
-        item["withdrawn_notice"] = {
-          "explanation" => "Reason why this was withdrawn",
-          "withdrawn_at": "2023-02-03T07:35:00Z",
-        }
-      else
-        item.delete("withdrawn_notice")
+        let(:content_item) do
+          build(:notification_content_item, schema_name: "news_article", base_path:, withdrawn: true)
+        end
       end
     end
   end
