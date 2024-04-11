@@ -54,7 +54,7 @@ module AnswerComposition
     end
 
     def first_question?
-      question.conversation.questions.to_a == [question]
+      question.conversation.questions.count == 1
     end
   end
 end
