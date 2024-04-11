@@ -1,4 +1,4 @@
-module Chunking
+class Chunking::HtmlHierarchicalChunker
   class AttributeStripper
     def self.call(node)
       node.attributes.each_key do |name|

@@ -1,4 +1,4 @@
-RSpec.describe Chunking::AttributeStripper do
+RSpec.describe Chunking::HtmlHierarchicalChunker::AttributeStripper do
   describe ".call" do
     %w[h2 h3 h4 h5 h6].each do |element|
       it "strips out everything but id for a <#{element}>" do
