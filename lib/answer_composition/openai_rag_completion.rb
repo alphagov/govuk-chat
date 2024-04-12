@@ -14,7 +14,7 @@ module AnswerComposition
     end
 
     def call
-      @rephrased_question = QuestionRephraser.call(question:)
+      @question_message = QuestionRephraser.call(question:)
       if question_contains_forbidden_words?
         question.build_answer(message: FORBIDDEN_WORDS_RESPONSE, rephrased_question:, status: "abort_forbidden_words")
       else
@@ -39,7 +39,7 @@ module AnswerComposition
 
   private
 
-    attr_reader :question, :retriever, :openai_client, :rephrased_question
+    attr_reader :question, :retriever, :openai_client, :question_message
 
     def openai_response
       openai_client.chat(
@@ -54,7 +54,7 @@ module AnswerComposition
     def messages
       [
         { role: "system", content: system_prompt },
-        { role: "user", content: rephrased_question },
+        { role: "user", content: question_message },
       ]
     end
 
@@ -63,9 +63,13 @@ module AnswerComposition
         #{Prompts::GOVUK_DESIGNER}
 
         Context:
-        #{context(rephrased_question)}
+        #{context(question_message)}
 
       PROMPT
+    end
+
+    def rephrased_question
+      question_message unless question_message == question.message
     end
 
     def context(query)
@@ -73,7 +77,7 @@ module AnswerComposition
     end
 
     def question_contains_forbidden_words?
-      words = rephrased_question.downcase.split(/\b/)
+      words = question_message.downcase.split(/\b/)
       Rails.configuration.question_forbidden_words.intersection(words).any?
     end
 
