@@ -16,6 +16,8 @@ module AnswerComposition
       return question.message if first_question?
 
       openai_response.dig("choices", 0, "message", "content")
+    rescue OpenAIClient::ContextLengthExceededError => e
+      raise RephrasingError.new("Exceeded context length rephrasing #{question.message}", e.response)
     rescue OpenAIClient::RequestError => e
       raise RephrasingError.new("could not rephrase #{question.message}", e.response)
     end

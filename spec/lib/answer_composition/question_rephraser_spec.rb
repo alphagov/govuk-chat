@@ -27,12 +27,35 @@ RSpec.describe AnswerComposition::QuestionRephraser do
       expect(described_class.call(question:)).to eq(rephrased)
     end
 
-    context "when there is an OpenAI error" do
-      it "raises a RephrasingError" do
+    context "when there is an OpenAIClient::ClientError" do
+      before do
         stub_openai_chat_completion_error
+      end
+
+      it "raises a RephrasingError" do
         expect { described_class.call(question:) }
           .to raise_error(an_instance_of(described_class::RephrasingError)
-            .and(having_attributes(response: an_instance_of(Hash))))
+            .and(having_attributes(
+                   response: an_instance_of(Hash),
+                   message: "could not rephrase #{question.message}",
+                   cause: an_instance_of(OpenAIClient::ClientError),
+                 )))
+      end
+    end
+
+    context "when there is an OpenAIClient::ContextLengthExceededError" do
+      before do
+        stub_openai_chat_completion_error(code: "context_length_exceeded")
+      end
+
+      it "raises a RephrasingError" do
+        expect { described_class.call(question:) }
+          .to raise_error(an_instance_of(described_class::RephrasingError)
+            .and(having_attributes(
+                   response: an_instance_of(Hash),
+                   message: "Exceeded context length rephrasing #{question.message}",
+                   cause: an_instance_of(OpenAIClient::ContextLengthExceededError),
+                 )))
       end
     end
 
