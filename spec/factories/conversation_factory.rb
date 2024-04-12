@@ -12,8 +12,8 @@ FactoryBot.define do
             answer: "Self-assessment, PAYE, Corporation tax",
           },
         ].each do |msg|
-          question = create :question, conversation:, message: msg[:question]
-          create :answer, question:, message: msg[:answer]
+          answer = build :answer, message: msg[:answer]
+          create :question, conversation:, answer:, message: msg[:question]
         end
         create :question, conversation:, message: "corporation tax"
       end

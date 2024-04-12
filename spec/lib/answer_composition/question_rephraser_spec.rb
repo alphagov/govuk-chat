@@ -77,24 +77,24 @@ RSpec.describe AnswerComposition::QuestionRephraser do
       let(:expected_messages) do
         [
           { role: "system", content: AnswerComposition::Prompts::QUESTION_REPHRASER },
-          { role: "user", content: "What types are there" },
-          { role: "assistant", content: "Self-assessment, PAYE, Corporation tax" },
-          { role: "user", content: "corporation tax" },
-          { role: "assistant", content: "You can pay..." },
-          { role: "user", content: "Question 1" },
-          { role: "assistant", content: "Answer 1" },
           { role: "user", content: "Question 2" },
           { role: "assistant", content: "Answer 2" },
           { role: "user", content: "Question 3" },
           { role: "assistant", content: "Answer 3" },
+          { role: "user", content: "Question 4" },
+          { role: "assistant", content: "Answer 4" },
+          { role: "user", content: "Question 5" },
+          { role: "assistant", content: "Answer 5" },
+          { role: "user", content: "Question 6" },
+          { role: "assistant", content: "Answer 6" },
         ]
       end
 
       before do
         create :answer, question: conversation.questions.last, message: "You can pay..."
-        (1..3).each do |n|
-          question = create :question, conversation:, message: "Question #{n}"
-          create :answer, question:, message: "Answer #{n}"
+        (1..6).each do |n|
+          answer = build :answer, question:, message: "Answer #{n}"
+          create :question, answer:, conversation:, message: "Question #{n}"
         end
       end
 
