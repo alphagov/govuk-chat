@@ -24,6 +24,7 @@ gem "pg"
 gem "ruby-openai"
 gem "sentry-sidekiq"
 gem "sprockets-rails"
+gem "tiktoken_ruby"
 
 group :development do
   gem "brakeman"
