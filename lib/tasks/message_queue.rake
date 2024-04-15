@@ -12,6 +12,7 @@ namespace :message_queue do
     GovukMessageQueueConsumer::Consumer.new(
       queue_name: ENV.fetch("PUBLISHED_DOCUMENTS_MESSAGE_QUEUE_NAME", "govuk_chat_published_documents"),
       processor: MessageQueue::MessageProcessor.new,
+      logger: Rails.logger,
     ).run
   end
 end
