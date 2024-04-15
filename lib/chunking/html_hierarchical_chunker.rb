@@ -1,18 +1,9 @@
 module Chunking
-  # TODO: Iterate this class:
-  # - bug, if content starts without a header it seems to mistakenly put the content into the header
-  #   (seen with: https://www.gov.uk/api/content/search-house-prices)
-  # - title seems redundant as an input paramater
-  # - would be good to preserve header anchor ids so they can be used in urls
-  # - it's hard to work with the headers being hash keys - it'd be easier to have an array of headers - I don't think
-  #   we care which level they are just the hierarchy
-  # - it would be helpful if this class returned an array of data objects rather than an array of hashes
   class HtmlHierarchicalChunker
-    def initialize(title:, html:)
-      @title = title
+    def initialize(html)
       @doc = Nokogiri::HTML::DocumentFragment.parse(html)
+      @headers = []
       @chunks = []
-      @headers = { "title" => title }
       @content = []
     end
 
@@ -28,7 +19,7 @@ module Chunking
 
   private
 
-    attr_reader :title, :doc, :headers, :content, :chunks
+    attr_reader :doc, :headers, :content, :chunks
 
     def split_nodes(child_nodes)
       child_nodes.each do |node|
@@ -38,41 +29,36 @@ module Chunking
           next
         end
         if header?(node)
-          if new_header?(node)
-            new_chunk(node)
-          else
-            add_header(node.name, node.text)
-          end
+          save_chunk
+          new_header(node)
         else
           add_content(node.to_html.chomp)
         end
       end
       save_chunk
-      chunks
     end
 
     def header?(node)
       node.element? && node.name.match?(/^h[2-6]$/)
     end
 
-    def new_header?(node)
-      headers[node.name] && headers[node.name] != node.text
-    end
-
-    def add_header(name, html)
-      headers[name] = html
+    def new_header(node)
+      header = HtmlChunk::Header.new(element: node.name, text_content: node.text, fragment: node["id"])
+      headers_to_keep = headers.select { |h| h.element < header.element }
+      @headers = headers_to_keep.append(header)
     end
 
     def save_chunk
-      return if current_chunk["html_content"].empty?
+      return if content.empty?
 
-      chunks.append(current_chunk)
+      chunk = HtmlChunk.new(headers:, html_content: content.join("\n"))
+      chunks.append(chunk)
       @content = []
     end
 
     def new_chunk(header_node)
       save_chunk
-      headers_to_keep = headers.keys.select { |h| h == "title" || h < header_node.name }
+      headers_to_keep = headers.keys.select { |h| h < header_node.name }
       @headers = headers.slice(*headers_to_keep)
       add_header(header_node.name, header_node.text)
     end
@@ -81,12 +67,6 @@ module Chunking
       return if html.strip.empty?
 
       content.append(html.strip)
-    end
-
-    def current_chunk
-      headers.merge({
-        "html_content" => content.join("\n"),
-      })
     end
 
     def clean_attributes

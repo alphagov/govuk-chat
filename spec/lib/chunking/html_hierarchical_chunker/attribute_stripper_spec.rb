@@ -1,5 +1,14 @@
-RSpec.describe Chunking::AttributeStripper do
+RSpec.describe Chunking::HtmlHierarchicalChunker::AttributeStripper do
   describe ".call" do
+    %w[h2 h3 h4 h5 h6].each do |element|
+      it "strips out everything but id for a <#{element}>" do
+        html = %(<#{element} class="something" id="some-id">Heading</#{element}>)
+        node = Nokogiri::HTML::DocumentFragment.parse(html).children.first
+        described_class.call(node)
+        expect(node.to_html).to eq(%(<#{element} id="some-id">Heading</#{element}>))
+      end
+    end
+
     it "strips out everything but href for a <a>" do
       html = '<a href="/about" class="something" id="some-id">Link text</a>'
       node = Nokogiri::HTML::DocumentFragment.parse(html).children.first
