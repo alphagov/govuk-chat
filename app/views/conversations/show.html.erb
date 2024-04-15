@@ -7,6 +7,10 @@
     } %>
   <% end %>
 <% end %>
+<%
+  form_url = @conversation.persisted? ? update_conversation_path(@conversation) : create_conversation_path
+  http_method = @conversation.persisted? ? :patch : :post
+%>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
@@ -27,17 +31,17 @@
       end
     } %>
 
-    <%= render "components/conversation_input", {
-      form_url: @conversation.persisted? ? update_conversation_path(@conversation) : create_conversation_path,
-      http_method: @conversation.persisted? ? :patch : :post,
-      label: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
-      name: "create_question[user_question]",
-      value: @create_question.user_question,
-      hint: "Please limit your question to 300 characters.",
-      maxlength: 300,
-      character_threshold: 50,
-      spellcheck: true,
-      error_items: @create_question.errors[:user_question].map { |message| { text: message } },
-    } %>
+    <%= form_with url: form_url, method: http_method do |f| %>
+      <%= render "components/conversation_input", {
+        label: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
+        name: "create_question[user_question]",
+        value: @create_question.user_question,
+        hint: "Please limit your question to 300 characters.",
+        maxlength: 300,
+        character_threshold: 50,
+        spellcheck: true,
+        error_items: @create_question.errors[:user_question].map { |message| { text: message } },
+      } %>
+    <% end %>
   </div>
 </div>

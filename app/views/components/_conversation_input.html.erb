@@ -8,9 +8,8 @@
   hint_id ||= "hint-#{SecureRandom.hex(4)}"
   spellcheck ||= "true"
 
-  error_message ||= nil
   error_items ||= []
-  has_error ||= error_message || error_items.any?
+  has_error ||= error_items.any?
   error_id ||= "error-#{SecureRandom.hex(4)}"
 
   describedby ||= nil
@@ -32,7 +31,7 @@
     character_threshold: character_threshold,
   }.merge(data_attributes) do %>
 
-  <%= form_with url: form_url, method: http_method, class: "app-c-conversation-input__form" do |f| %>
+  <%= content_tag :div, class: "app-c-conversation-input__wrapper" do %>
     <%= label_tag(
       :create_question_user_question,
       label,
@@ -61,7 +60,6 @@
   <% if has_error %>
     <%= render "govuk_publishing_components/components/error_message", {
       id: error_id,
-      text: error_message,
       items: error_items,
     } %>
   <% end %>

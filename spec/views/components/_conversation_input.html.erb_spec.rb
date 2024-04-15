@@ -1,8 +1,6 @@
 RSpec.describe "components/_conversation_input.html.erb" do
   it "renders the conversation input component correctly" do
     render("components/conversation_input", {
-      form_url: "/",
-      http_method: "post",
       label: "Label",
       name: "Name",
       value: "Value",
@@ -36,8 +34,6 @@ RSpec.describe "components/_conversation_input.html.erb" do
         track_action: "track-action",
         track_label: "track-label",
       },
-      form_url: "/",
-      http_method: "post",
       label: "Label",
       name: "Name",
       value: "Value",
@@ -54,8 +50,6 @@ RSpec.describe "components/_conversation_input.html.erb" do
 
   it "renders error messages when there is a problem" do
     render("components/conversation_input", {
-      form_url: "/",
-      http_method: "post",
       label: "Label",
       name: "Name",
       value: "Value",
@@ -76,8 +70,6 @@ RSpec.describe "components/_conversation_input.html.erb" do
 
   it "matches the input's aria-describedby attribute with a hint id when a hint is provided" do
     render("components/conversation_input", {
-      form_url: "/",
-      http_method: "post",
       label: "Label",
       name: "Name",
       value: "Value",
@@ -96,8 +88,6 @@ RSpec.describe "components/_conversation_input.html.erb" do
 
   it "matches the input's aria-describedby attribute with an error id when there are errors" do
     render("components/conversation_input", {
-      form_url: "/",
-      http_method: "post",
       label: "Label",
       name: "Name",
       value: "Value",
