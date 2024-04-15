@@ -2,11 +2,15 @@
 
 **⚠️ Experimental application in early stages of development ⚠️**
 
-An web based AI assistant to integrate into GOV.UK.
+A web application that provides a [LLM](https://en.wikipedia.org/wiki/Large_language_model) powered chat experience based on GOV.UK content.
 
 ## Nomenclature
 
-Todo
+- Question - an individual query from an end user
+- Answer - a LLM generated response to a user's question
+- Source - a reference to a chunk of GOV.UK content that was used as the supporting content for an Answer
+- Conversation - a collection of questions and answers that represent a user's particular interaction with this application
+- Chunk - a portion of a GOV.UK Content Item, which tends to be of the granularity of a particular heading and related content
 
 ## Technical documentation
 
