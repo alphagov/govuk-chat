@@ -34,6 +34,10 @@ cp .env.example .env
 bundle exec rake
 ```
 
+### Further documentation
+
+- [Message queue consumption](docs/message-queue-consumption.md)
+
 ## Licence
 
 [MIT License](LICENCE)
