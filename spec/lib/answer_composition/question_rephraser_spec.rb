@@ -36,10 +36,10 @@ RSpec.describe AnswerComposition::QuestionRephraser do
         stub_openai_chat_completion_error
       end
 
-      it "raises a RephrasingError" do
+      it "raises a OpenAIClient::RequestError with a modified message" do
         expect { described_class.call(question:) }
           .to raise_error(
-            an_instance_of(described_class::RephrasingError)
+            an_instance_of(OpenAIClient::RequestError)
             .and(having_attributes(response: an_instance_of(Hash),
                                    message: "could not rephrase #{question.message}",
                                    cause: an_instance_of(OpenAIClient::ClientError))),
@@ -47,7 +47,7 @@ RSpec.describe AnswerComposition::QuestionRephraser do
       end
 
       it "Logs the error" do
-        expect { described_class.call(question:) }.to raise_error(described_class::RephrasingError)
+        expect { described_class.call(question:) }.to raise_error(OpenAIClient::RequestError)
         expect(Rails.logger).to have_received(:error).with("OpenAI error rephrasing question: the server responded with status 400")
       end
     end
@@ -57,10 +57,10 @@ RSpec.describe AnswerComposition::QuestionRephraser do
         stub_openai_chat_completion_error(code: "context_length_exceeded")
       end
 
-      it "raises a RephrasingError" do
+      it "raises a OpenAIClient::ContextLengthExceededError with a modified message" do
         expect { described_class.call(question:) }
           .to raise_error(
-            an_instance_of(described_class::RephrasingError)
+            an_instance_of(OpenAIClient::ContextLengthExceededError)
               .and(having_attributes(response: an_instance_of(Hash),
                                      message: "Exceeded context length rephrasing #{question.message}",
                                      cause: an_instance_of(OpenAIClient::ContextLengthExceededError))),
@@ -68,7 +68,7 @@ RSpec.describe AnswerComposition::QuestionRephraser do
       end
 
       it "Logs the error" do
-        expect { described_class.call(question:) }.to raise_error(described_class::RephrasingError)
+        expect { described_class.call(question:) }.to raise_error(OpenAIClient::ContextLengthExceededError)
         expect(Rails.logger).to have_received(:error).with("Exceeded context length rephrasing question: the server responded with status 400")
       end
     end

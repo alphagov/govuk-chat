@@ -1,8 +1,5 @@
 module AnswerComposition
   class QuestionRephraser
-    class RephrasingError < OpenAIClient::RequestError
-    end
-
     OPENAI_MODEL = "gpt-3.5-turbo".freeze
 
     def self.call(...) = new(...).call
@@ -18,10 +15,10 @@ module AnswerComposition
       openai_response.dig("choices", 0, "message", "content")
     rescue OpenAIClient::ContextLengthExceededError => e
       Rails.logger.error("Exceeded context length rephrasing question: #{e.message}")
-      raise RephrasingError.new("Exceeded context length rephrasing #{question.message}", e.response)
+      raise OpenAIClient::ContextLengthExceededError.new("Exceeded context length rephrasing #{question.message}", e.response)
     rescue OpenAIClient::RequestError => e
       Rails.logger.error("OpenAI error rephrasing question: #{e.message}")
-      raise RephrasingError.new("could not rephrase #{question.message}", e.response)
+      raise OpenAIClient::RequestError.new("could not rephrase #{question.message}", e.response)
     end
 
   private
