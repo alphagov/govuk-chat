@@ -61,6 +61,14 @@ RSpec.describe "rake message_queue tasks" do
       expect(queue_consumer).to have_received(:run)
     end
 
+    it "delegates the Rails logger to the queue consumer" do
+      Rake::Task[task_name].invoke
+
+      expect(GovukMessageQueueConsumer::Consumer)
+        .to have_received(:new)
+        .with(hash_including(logger: Rails.logger))
+    end
+
     it "defaults to a queue named 'govuk_chat_published_documents'" do
       ClimateControl.modify PUBLISHED_DOCUMENTS_MESSAGE_QUEUE_NAME: nil do
         Rake::Task[task_name].invoke
