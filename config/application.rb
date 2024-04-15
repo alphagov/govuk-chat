@@ -48,5 +48,7 @@ module GovukChat
 
     # List of forbidden words that will prevent a message from being sent to openAI
     config.question_forbidden_words = []
+
+    config.exceptions_app = routes
   end
 end
