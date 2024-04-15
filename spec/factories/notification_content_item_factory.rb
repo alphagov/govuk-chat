@@ -37,7 +37,7 @@ FactoryBot.define do
             "withdrawn_at": "2023-02-03T07:35:00Z",
           }
         elsif withdrawn != :preserve
-          item.delete("withrawn_notice")
+          item.delete("withdrawn_notice")
         end
 
         if [body, details, details_merge].compact.length > 1
