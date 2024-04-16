@@ -47,7 +47,7 @@ module StubOpenAIChat
             param: nil,
             code:,
           },
-        }.to_json,
+        },
         headers: {},
       )
   end
@@ -89,6 +89,6 @@ module StubOpenAIChat
       model: "gpt-3.5-turbo",
       messages:,
       temperature: 0.0,
-    }.to_json
+    }
   end
 end
