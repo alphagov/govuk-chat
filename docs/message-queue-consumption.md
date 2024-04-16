@@ -53,7 +53,7 @@ You can check on the progress of the queue consumption by following the Rails lo
 
 ## Adding a new schema for indexing
 
-For a schema to be supported by GOV.UK Chat it needs to be registered with a corresponding Parser class. These are registered in [`Chunking::ContentItemToChunks::PARSERS_FOR_SCHEMAS](../lib/chunking/content_item_to_chunks.rb). The Parser class has the responsibility of converting the Content Item into a number of chunks.
+For a schema to be supported by GOV.UK Chat it needs to be registered with a corresponding Parser class. These are registered in [`Chunking::ContentItemToChunks::PARSERS_FOR_SCHEMAS`](../lib/chunking/content_item_to_chunks.rb). The Parser class has the responsibility of converting the Content Item into a number of chunks.
 
 To add a new schema you will have to establish what HTML from the Content Item is appropriate to be indexed into search for GOV.UK Chat. If there isn't any, then it probably shouldn't be added.
 
