@@ -12,27 +12,6 @@ module StubOpenAIChat
       )
   end
 
-  def stub_any_openai_chat_completion(answer:)
-    stub = stub_request(:post, "https://api.openai.com/v1/chat/completions")
-      .with(
-        headers: StubOpenAIChat.headers,
-      )
-      .to_return_json(
-
-        status: 200,
-        body: StubOpenAIChat.response_body(answer),
-        headers: {},
-
-      )
-    return unless block_given?
-
-    begin
-      yield
-    ensure
-      remove_request_stub(stub)
-    end
-  end
-
   def stub_openai_chat_completion_error(status: 400, type: "invalid_request_error", code: nil)
     stub_request(:post, "https://api.openai.com/v1/chat/completions")
       .with(
@@ -47,7 +26,7 @@ module StubOpenAIChat
             param: nil,
             code:,
           },
-        }.to_json,
+        },
         headers: {},
       )
   end
@@ -89,6 +68,6 @@ module StubOpenAIChat
       model: "gpt-3.5-turbo",
       messages:,
       temperature: 0.0,
-    }.to_json
+    }
   end
 end

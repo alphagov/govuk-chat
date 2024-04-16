@@ -57,15 +57,24 @@ RSpec.describe "Conversation with OpenAI" do
   end
 
   def when_the_first_answer_is_generated
-    stub_any_openai_chat_completion(answer: "First answer from OpenAI") do
-      perform_enqueued_jobs
-    end
+    stub_openai_chat_completion(
+      array_including({ "role" => "user", "content" => "How much tax should I be paying?" }),
+      "First answer from OpenAI",
+    )
+
+    perform_enqueued_jobs
   end
 
   def when_the_second_answer_is_generated
-    stub_any_openai_chat_completion(answer: "Second answer from OpenAI") do
-      perform_enqueued_jobs
-    end
+    stub_openai_chat_completion(
+      array_including({ "role" => "user", "content" => "Are you sure?" }),
+      "Rephrased How much tax should I be paying?",
+    )
+    stub_openai_chat_completion(
+      array_including({ "role" => "user", "content" => "Rephrased How much tax should I be paying?" }),
+      "Second answer from OpenAI",
+    )
+    perform_enqueued_jobs
   end
 
   def and_i_click_on_the_check_answer_button
