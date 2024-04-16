@@ -14,11 +14,12 @@ module AnswerComposition
     end
 
     def call
+      @question_message = QuestionRephraser.call(question:)
       if question_contains_forbidden_words?
-        question.build_answer(message: FORBIDDEN_WORDS_RESPONSE, status: "abort_forbidden_words")
+        question.build_answer(message: FORBIDDEN_WORDS_RESPONSE, rephrased_question:, status: "abort_forbidden_words")
       else
         message = openai_response.dig("choices", 0, "message", "content")
-        question.build_answer(message:, status: "success")
+        question.build_answer(message:, rephrased_question:, status: "success")
       end
     rescue OpenAIClient::ContextLengthExceededError => e
       GovukError.notify(e)
@@ -38,7 +39,7 @@ module AnswerComposition
 
   private
 
-    attr_reader :question, :retriever, :openai_client
+    attr_reader :question, :retriever, :openai_client, :question_message
 
     def openai_response
       openai_client.chat(
@@ -53,7 +54,7 @@ module AnswerComposition
     def messages
       [
         { role: "system", content: system_prompt },
-        { role: "user", content: question.message },
+        { role: "user", content: question_message },
       ]
     end
 
@@ -62,9 +63,13 @@ module AnswerComposition
         #{Prompts::GOVUK_DESIGNER}
 
         Context:
-        #{context(question)}
+        #{context(question_message)}
 
       PROMPT
+    end
+
+    def rephrased_question
+      question_message unless question_message == question.message
     end
 
     def context(query)
@@ -72,7 +77,7 @@ module AnswerComposition
     end
 
     def question_contains_forbidden_words?
-      words = question.message.downcase.split(/\b/)
+      words = question_message.downcase.split(/\b/)
       Rails.configuration.question_forbidden_words.intersection(words).any?
     end
 
