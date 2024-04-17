@@ -63,7 +63,7 @@ module AnswerComposition
         #{Prompts::GOVUK_DESIGNER}
 
         Context:
-        #{context(question_message)}
+        #{context}
 
       PROMPT
     end
@@ -72,8 +72,8 @@ module AnswerComposition
       question_message unless question_message == question.message
     end
 
-    def context(query)
-      retriever.call(query:).join("\n")
+    def context
+      search_results.map(&:html_content).join("\n")
     end
 
     def question_contains_forbidden_words?
@@ -83,6 +83,10 @@ module AnswerComposition
 
     def error_message(error)
       "class: #{error.class} message: #{error.response[:body].dig('error', 'message') || error.message}"
+    end
+
+    def search_results
+      @search_results ||= Search::ResultsForQuestion.call(question_message)
     end
   end
 end

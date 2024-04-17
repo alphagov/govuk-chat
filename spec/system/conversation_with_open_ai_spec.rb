@@ -1,4 +1,4 @@
-RSpec.describe "Conversation with OpenAI" do
+RSpec.describe "Conversation with OpenAI", :chunked_content_index do
   include ActiveJob::TestHelper
 
   around do |example|
@@ -11,7 +11,8 @@ RSpec.describe "Conversation with OpenAI" do
 
   before do
     stub_open_ai_flag_active
-    stub_search_api(["Login to your tax account"])
+    stub_text_to_embedding
+    populate_opensearch
   end
 
   scenario do
@@ -38,13 +39,21 @@ RSpec.describe "Conversation with OpenAI" do
     Flipper.enable_actor(:open_ai, AnonymousUser.new("known-user"))
   end
 
-  def when_i_visit_the_conversation_page
-    visit "/chat/conversations?user_id=known-user"
+  def stub_text_to_embedding
+    @openai_embedding = mock_openai_embedding("How much tax should i pay?")
+    allow(Search::TextToEmbedding)
+    .to receive(:call)
+    .and_return(@openai_embedding)
   end
 
-  # Temp - we will stub the real thing when we've built it
-  def stub_search_api(result = [])
-    allow(Retrieval::SearchApiV1Retriever).to receive(:call).and_return(result)
+  def populate_opensearch
+    populate_chunked_content_index([
+      build(:chunked_content_record, openai_embedding: @openai_embedding),
+    ])
+  end
+
+  def when_i_visit_the_conversation_page
+    visit "/chat/conversations?user_id=known-user"
   end
 
   def and_i_enter_a_question

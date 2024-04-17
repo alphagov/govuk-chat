@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec/FilePath
+RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do # rubocop:disable RSpec/FilePath
   around do |example|
     ClimateControl.modify(
       OPENAI_ACCESS_TOKEN: "open-ai-access-token",
@@ -16,15 +16,17 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec
         { role: "user", content: rephrased_question },
       ]
     end
+    let(:opensearch_chunk) { build(:chunked_content_record).except(:openai_embedding).merge(_id: "1", score: 1.0) }
+    let(:chunk_result) { Search::ChunkedContentRepository::Result.new(**opensearch_chunk) }
 
     before do
       allow(AnswerComposition::QuestionRephraser).to receive(:call).and_return(rephrased_question)
+      allow(Search::ResultsForQuestion).to receive(:call).and_return([chunk_result])
     end
 
     context "when the question has been rephrased" do
       it "calls OpenAI chat endpoint and returns unsaved answer" do
         stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
-        stub_search_api(%w[some context here])
 
         answer = described_class.call(question)
 
@@ -54,7 +56,6 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec
 
       it "calls OpenAI chat endpoint and returns unsaved answer with rephrased_question: nil" do
         stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
-        stub_search_api(%w[some context here])
 
         answer = described_class.call(question)
 
@@ -96,7 +97,6 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec
       it "returns an unsaved answer with the error_context_length_exceeded status" do
         allow(GovukError).to receive(:notify)
         stub_openai_chat_completion_error(status: 400, code: "context_length_exceeded")
-        stub_search_api(%w[some context here])
 
         answer = described_class.call(question)
 
@@ -117,7 +117,6 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec
       it "returns an unsaved answer with a generic unsuccessful request message which captures the error" do
         allow(GovukError).to receive(:notify)
         stub_openai_chat_completion_error
-        stub_search_api(%w[some context here])
 
         answer = described_class.call(question)
 
@@ -141,16 +140,9 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion do # rubocop:disable RSpec
         #{AnswerComposition::Prompts::GOVUK_DESIGNER}
 
         Context:
-        some
-        context
-        here
+        <p>Some content</p>
 
       OUTPUT
-    end
-
-    # Temp - we will stub the real thing when we've built it
-    def stub_search_api(result = [])
-      allow(Retrieval::SearchApiV1Retriever).to receive(:call).and_return(result)
     end
 
     def expect_unsaved_answer_with_attributes(answer, attributes = {})
