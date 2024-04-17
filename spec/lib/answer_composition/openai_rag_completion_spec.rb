@@ -93,6 +93,31 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
       end
     end
 
+    context "when OpenSearch returns no results" do
+      let(:question) { build_stubbed(:question, message: "I want to know about something that isn't on GOV.UK") }
+      let(:rephrased_question) { "Question where no content is found on GOV.UK" }
+
+      before do
+        allow(Search::ResultsForQuestion).to receive(:call).and_return([])
+      end
+
+      it "returns an answer with a no content found message and an 'abort_no_govuk_content' status" do
+        stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
+
+        answer = described_class.call(question)
+
+        expect_unsaved_answer_with_attributes(
+          answer,
+          {
+            question:,
+            message: described_class::NO_CONTENT_FOUND_REPONSE,
+            rephrased_question:,
+            status: "abort_no_govuk_content",
+          },
+        )
+      end
+    end
+
     context "when OpenAI raises a ContextLengthExceededError" do
       it "returns an unsaved answer with the error_context_length_exceeded status" do
         allow(GovukError).to receive(:notify)
