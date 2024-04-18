@@ -1,5 +1,21 @@
 module Search
   class ChunkedContentRepository
+    Result = Data.define(
+      :_id,
+      :score,
+      :chunk_index,
+      :html_content,
+      :content_id,
+      :heading_hierarchy,
+      :digest,
+      :base_path,
+      :locale,
+      :document_type,
+      :title,
+      :url,
+      :plain_content,
+    )
+
     attr_reader :index, :client, :default_refresh_writes
 
     def initialize
@@ -107,6 +123,31 @@ module Search
       end
 
       items
+    end
+
+    def search_by_embedding(embedding)
+      response = client.search(
+        index:,
+        body: {
+          size: 20,
+          min_score: 0.5,
+          query: {
+            knn: {
+              openai_embedding: {
+                vector: embedding,
+                k: 20,
+              },
+            },
+          },
+          _source: { exclude: %w[openai_embedding] },
+        },
+      )
+
+      results = response.dig("hits", "hits")
+      results.map do |result|
+        data = { "_id" => result["_id"], "score" => result["_score"] }.merge(result["_source"])
+        Result.new(**data.symbolize_keys)
+      end
     end
   end
 end

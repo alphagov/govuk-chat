@@ -1,14 +1,13 @@
 module SearchChunkedContentHelpers
-  def populate_chunked_content_index(record_or_records)
-    actions = Array(record_or_records).map do |record|
-      id = record.delete(:_id)
-      create = { data: record }
-      create[:_id] = id if id
-      { create: }
-    end
+  def populate_chunked_content_index(chunks)
+    body = if chunks.is_a?(Array)
+             chunks.map { |chunk| { create: { data: chunk } } }
+           else
+             chunks.map { |id, chunk| { create: { _id: id, data: chunk } } }
+           end
 
     chunked_content_search_client.bulk(index: chunked_content_index,
-                                       body: actions,
+                                       body:,
                                        refresh: true)
   end
 

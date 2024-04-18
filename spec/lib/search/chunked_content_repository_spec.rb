@@ -3,9 +3,11 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
 
   describe "#delete_by_base_path" do
     before do
-      populate_chunked_content_index([{ base_path: "/a" },
-                                      { base_path: "/a" },
-                                      { base_path: "/b" }])
+      populate_chunked_content_index([
+        build(:chunked_content_record, base_path: "/a"),
+        build(:chunked_content_record, base_path: "/a"),
+        build(:chunked_content_record, base_path: "/b"),
+      ])
     end
 
     it "deletes all items of a particular base_path" do
@@ -21,9 +23,11 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
 
   describe "#delete_by_id" do
     before do
-      populate_chunked_content_index([{ _id: "id1", base_path: "/a" },
-                                      { _id: "id2", base_path: "/a" },
-                                      { _id: "id3", base_path: "/b" }])
+      populate_chunked_content_index(
+        "id1" => build(:chunked_content_record, base_path: "/a"),
+        "id2" => build(:chunked_content_record, base_path: "/a"),
+        "id3" => build(:chunked_content_record, base_path: "/b"),
+      )
     end
 
     it "can delete a single document by id" do
@@ -58,7 +62,7 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
     end
 
     it "can replace an existing document in the index" do
-      populate_chunked_content_index([{ _id: "id1", base_path: "/a", document_type: "news_story" }])
+      populate_chunked_content_index("id1" => build(:chunked_content_record, base_path: "/a", document_type: "news_story"))
 
       expect { repository.index_document("id1", { base_path: "/b" }) }
         .to change { repository.count(term: { base_path: "/b" }) }
@@ -72,18 +76,20 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
     end
 
     it "returns :updated when updating content" do
-      populate_chunked_content_index([{ _id: "id1", base_path: "/a" }])
+      populate_chunked_content_index("id1" => build(:chunked_content_record, base_path: "/a"))
       expect(repository.index_document("id1", { base_path: "/b" })).to eq(:updated)
     end
   end
 
   describe "#id_digest_hash" do
     before do
-      populate_chunked_content_index([{ _id: "id1", base_path: "/a", digest: "000" },
-                                      { _id: "id2", base_path: "/a", digest: "111" },
-                                      { _id: "id3", base_path: "/a", digest: "222" },
-                                      { _id: "id4", base_path: "/b", digest: "333" },
-                                      { _id: "id5", base_path: "/b", digest: "444" }])
+      populate_chunked_content_index(
+        "id1" => build(:chunked_content_record, base_path: "/a", digest: "000"),
+        "id2" => build(:chunked_content_record, base_path: "/a", digest: "111"),
+        "id3" => build(:chunked_content_record, base_path: "/a", digest: "222"),
+        "id4" => build(:chunked_content_record, base_path: "/b", digest: "333"),
+        "id5" => build(:chunked_content_record, base_path: "/b", digest: "444"),
+      )
     end
 
     it "returns a hash of items matching a particular base_path" do
@@ -99,6 +105,39 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
         "id2" => "111",
         "id3" => "222",
       })
+    end
+  end
+
+  describe "#search_by_embedding" do
+    let(:openai_embedding) { mock_openai_embedding("How do i pay my tax?") }
+    let(:chunked_content_records) do
+      [
+        build(:chunked_content_record, openai_embedding:),
+        build(:chunked_content_record),
+        build(:chunked_content_record),
+      ]
+    end
+
+    before do
+      populate_chunked_content_index(chunked_content_records)
+    end
+
+    it "returns an array of Result objects where the score is over 0.5" do
+      result = repository.search_by_embedding(openai_embedding)
+      expected_attributes = chunked_content_records.first.except(:openai_embedding).merge(score: 1)
+
+      expect(result).to all be_a(Search::ChunkedContentRepository::Result)
+      expect(result).to all have_attributes(score: a_value > 0.5)
+      expect(result.first).to have_attributes(**expected_attributes)
+    end
+
+    context "when there are more then the maxiumum number of results" do
+      let(:chunked_content_records) { build_list(:chunked_content_record, 21, openai_embedding:) }
+
+      it "only returns the first 20" do
+        result = repository.search_by_embedding(openai_embedding)
+        expect(result.count).to eq 20
+      end
     end
   end
 end
