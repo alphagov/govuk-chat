@@ -65,9 +65,11 @@
   <% end %>
 
   <% if hint %>
-    <%= render "govuk_publishing_components/components/hint", {
-      id: hint_id,
-      text: hint,
-    } %>
+    <div class="govuk-visually-hidden">
+      <%= render "govuk_publishing_components/components/hint", {
+        id: hint_id,
+        text: hint,
+      } %>
+    </div>
   <% end %>
 <% end %>
