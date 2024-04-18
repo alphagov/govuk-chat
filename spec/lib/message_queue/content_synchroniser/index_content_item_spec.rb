@@ -45,7 +45,9 @@ RSpec.describe MessageQueue::ContentSynchroniser::IndexContentItem, :chunked_con
 
     context "when the index already has items that match the digest" do
       it "skips updating them" do
-        documents = chunks.map { |c| { _id: c.id, base_path:, digest: c.digest } }
+        documents = chunks.each_with_object({}) do |c, memo|
+          memo[c.id] = build(:chunked_content_record, base_path:, digest: c.digest)
+        end
         populate_chunked_content_index(documents)
 
         result = nil
@@ -59,7 +61,7 @@ RSpec.describe MessageQueue::ContentSynchroniser::IndexContentItem, :chunked_con
 
     context "when the index has existing items that don't match the digest" do
       it "updates them" do
-        populate_chunked_content_index([{ _id: chunks[0].id, base_path:, digest: "111" }])
+        populate_chunked_content_index(chunks[0].id => build(:chunked_content_record, base_path:, digest: "111"))
 
         result = nil
 
@@ -75,11 +77,13 @@ RSpec.describe MessageQueue::ContentSynchroniser::IndexContentItem, :chunked_con
 
     context "when the index has extra items at the base path" do
       it "deletes them" do
-        documents = chunks.map { |c| { _id: c.id, base_path:, digest: c.digest } }
+        documents = chunks.each_with_object({}) do |c, memo|
+          memo[c.id] = build(:chunked_content_record, base_path:, digest: c.digest)
+        end
         populate_chunked_content_index(documents)
 
         # extra items
-        populate_chunked_content_index([{ base_path:, digest: "111" }, { base_path:, digest: "222" }])
+        populate_chunked_content_index([build(:chunked_content_record, base_path:, digest: "111"), build(:chunked_content_record, base_path:, digest: "222")])
 
         result = nil
 

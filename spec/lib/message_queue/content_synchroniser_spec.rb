@@ -9,7 +9,7 @@ RSpec.describe MessageQueue::ContentSynchroniser, :chunked_content_index do
     end
 
     it "deletes any content that is indexed at the content's base_path" do
-      populate_chunked_content_index([{ base_path: }])
+      populate_chunked_content_index([build(:chunked_content_record, base_path:)])
 
       result = nil
       expect { result = described_class.call(content_item) }
