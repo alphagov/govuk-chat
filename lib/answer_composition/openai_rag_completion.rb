@@ -2,6 +2,8 @@ module AnswerComposition
   class OpenAIRagCompletion
     FORBIDDEN_WORDS_RESPONSE = "Sorry, I can't answer that. Ask me a question about " \
       "business or trade and I'll use GOV.UK guidance to answer it.".freeze
+    NO_CONTENT_FOUND_REPONSE = "Sorry, I can't find anything on GOV.UK to help me answer your question. " \
+      "Could you rewrite it so I can try answering again?".freeze
 
     OPENAI_MODEL = "gpt-3.5-turbo".freeze
 
@@ -15,12 +17,12 @@ module AnswerComposition
 
     def call
       @question_message = QuestionRephraser.call(question:)
-      if question_contains_forbidden_words?
-        question.build_answer(message: FORBIDDEN_WORDS_RESPONSE, rephrased_question:, status: "abort_forbidden_words")
-      else
-        message = openai_response.dig("choices", 0, "message", "content")
-        question.build_answer(message:, rephrased_question:, status: "success")
-      end
+
+      return build_answer(FORBIDDEN_WORDS_RESPONSE, "abort_forbidden_words") if question_contains_forbidden_words?
+      return build_answer(NO_CONTENT_FOUND_REPONSE, "abort_no_govuk_content") if search_results.blank?
+
+      message = openai_response.dig("choices", 0, "message", "content")
+      build_answer(message, "success", build_sources)
     rescue OpenAIClient::ContextLengthExceededError => e
       GovukError.notify(e)
       question.build_answer(
@@ -63,7 +65,7 @@ module AnswerComposition
         #{Prompts::GOVUK_DESIGNER}
 
         Context:
-        #{context(question_message)}
+        #{context}
 
       PROMPT
     end
@@ -72,8 +74,8 @@ module AnswerComposition
       question_message unless question_message == question.message
     end
 
-    def context(query)
-      retriever.call(query:).join("\n")
+    def context
+      search_results.map(&:html_content).join("\n")
     end
 
     def question_contains_forbidden_words?
@@ -83,6 +85,22 @@ module AnswerComposition
 
     def error_message(error)
       "class: #{error.class} message: #{error.response[:body].dig('error', 'message') || error.message}"
+    end
+
+    def search_results
+      @search_results ||= Search::ResultsForQuestion.call(question_message)
+    end
+
+    def build_answer(message, status, sources = nil)
+      question.build_answer(message:, rephrased_question:, status:, sources:)
+    end
+
+    def build_sources
+      result_by_base_path = search_results.group_by(&:base_path)
+      result_by_base_path.map.with_index do |(base_path, group), relevancy|
+        url = group.count == 1 ? group.first.url : base_path
+        AnswerSource.new(url:, relevancy:)
+      end
     end
   end
 end
