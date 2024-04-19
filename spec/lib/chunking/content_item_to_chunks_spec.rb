@@ -25,4 +25,16 @@ RSpec.describe Chunking::ContentItemToChunks do
       expect(unknown_schemas).to be_empty, "Schemas not in Publishing API: #{unknown_schemas.join(', ')}"
     end
   end
+
+  describe ".supported_schema_and_document_type??" do
+    it "returns true for schemas that don't care about document type" do
+      %w[answer news_article guide transaction].each do |schema|
+        expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
+      end
+    end
+
+    it "returns false for unsupported schemas" do
+      expect(described_class.supported_schema_and_document_type?("unknown", "anything")).to eq(false)
+    end
+  end
 end

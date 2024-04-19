@@ -18,6 +18,10 @@ module Chunking
       parser_class.call(content_item)
     end
 
+    def self.supported_schema_and_document_type?(schema, _document_type)
+      supported_schemas.include?(schema)
+    end
+
     def self.supported_schemas
       PARSERS_FOR_SCHEMAS.values.flatten
     end
