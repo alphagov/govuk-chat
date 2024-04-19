@@ -11,7 +11,6 @@ module AnswerComposition
 
     def initialize(question)
       @question = question
-      @retriever = Retrieval::SearchApiV1Retriever
       @openai_client = OpenAIClient.build
     end
 
