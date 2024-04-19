@@ -59,7 +59,7 @@ module StubOpenAIChat
   def self.headers
     {
       "Content-Type" => "application/json",
-      "Authorization" => "Bearer #{ENV.fetch('OPENAI_ACCESS_TOKEN', 'no-token-given')}",
+      "Authorization" => "Bearer #{Rails.configuration.openai_access_token}",
     }
   end
 

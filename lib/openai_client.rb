@@ -32,7 +32,7 @@ class OpenAIClient
   end
 
   def self.build
-    OpenAI::Client.new(access_token: ENV.fetch("OPENAI_ACCESS_TOKEN")) do |faraday|
+    OpenAI::Client.new(access_token: Rails.configuration.openai_access_token) do |faraday|
       # We don't want to use this middleware because it adds extra logging to stdout
       # It should be removed by default from OpenAI Ruby when https://github.com/alexrudall/ruby-openai/pull/406
       # is released

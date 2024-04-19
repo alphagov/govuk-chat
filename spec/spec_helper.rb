@@ -49,10 +49,4 @@ RSpec.configure do |config|
   config.before(:each, type: :system, js: true) do
     driven_by :selenium_chrome_headless
   end
-
-  config.around(:each) do |example|
-    ClimateControl.modify(OPENAI_ACCESS_TOKEN: "openai-access-token") do
-      example.run
-    end
-  end
 end
