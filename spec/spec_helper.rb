@@ -26,6 +26,9 @@ RSpec.configure do |config|
   config.expose_dsl_globally = false
   config.infer_spec_type_from_file_location!
   config.use_transactional_fixtures = true
+  config.order = :random
+  Kernel.srand(config.seed)
+
   config.include FactoryBot::Syntax::Methods
   config.include StubFeatureFlags
   config.include Capybara::RSpecMatchers, type: :request
