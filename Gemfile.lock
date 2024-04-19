@@ -153,6 +153,14 @@ GEM
       plek (>= 1.9.0)
       rack (>= 2.2.0)
       rest-client (~> 2.0)
+    gds-sso (19.1.0)
+      oauth2 (~> 2.0)
+      omniauth (~> 2.1)
+      omniauth-oauth2 (~> 1.8)
+      plek (>= 5)
+      rails (>= 7)
+      warden (~> 1.2)
+      warden-oauth2 (~> 0.0.1)
     globalid (1.2.1)
       activesupport (>= 6.1)
     google-protobuf (3.25.3)
@@ -202,6 +210,7 @@ GEM
       puma
       selenium-webdriver (>= 4.0)
     hashdiff (1.1.0)
+    hashie (5.0.0)
     http-accept (1.7.0)
     http-cookie (1.0.5)
       domain_name (~> 0.5)
@@ -217,6 +226,8 @@ GEM
     json (2.7.1)
     json-schema (4.3.0)
       addressable (>= 2.8)
+    jwt (2.8.1)
+      base64
     kramdown (2.4.0)
       rexml
     language_server-protocol (3.17.0.3)
@@ -242,6 +253,7 @@ GEM
     minitest (5.22.3)
     msgpack (1.7.2)
     multi_json (1.15.0)
+    multi_xml (0.6.0)
     multipart-post (2.4.0)
     mutex_m (0.2.0)
     net-http (0.4.1)
@@ -270,6 +282,20 @@ GEM
     nokogiri (1.16.4-x86_64-linux)
       racc (~> 1.4)
     null_logger (0.0.1)
+    oauth2 (2.0.9)
+      faraday (>= 0.17.3, < 3.0)
+      jwt (>= 1.0, < 3.0)
+      multi_xml (~> 0.5)
+      rack (>= 1.2, < 4)
+      snaky_hash (~> 2.0)
+      version_gem (~> 1.1)
+    omniauth (2.1.2)
+      hashie (>= 3.4.6)
+      rack (>= 2.2.3)
+      rack-protection
+    omniauth-oauth2 (1.8.0)
+      oauth2 (>= 1.4, < 3)
+      omniauth (~> 2.0)
     opensearch-ruby (3.2.0)
       faraday (>= 1.0, < 3)
       multi_json (>= 1.0)
@@ -547,7 +573,7 @@ GEM
     redis-namespace (1.11.0)
       redis (>= 4)
     regexp_parser (2.9.0)
-    reline (0.5.2)
+    reline (0.5.3)
       io-console (~> 0.5)
     request_store (1.6.0)
       rack (>= 1.4)
@@ -658,6 +684,9 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
+    snaky_hash (2.0.1)
+      hashie
+      version_gem (~> 1.1, >= 1.1.1)
     sorted_set (1.0.3)
       rbtree
       set (~> 1.0)
@@ -685,6 +714,11 @@ GEM
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
     uri (0.13.0)
+    version_gem (1.1.4)
+    warden (1.2.9)
+      rack (>= 2.0.9)
+    warden-oauth2 (0.0.1)
+      warden
     webmock (3.23.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
@@ -719,6 +753,7 @@ DEPENDENCIES
   flipper-active_record
   flipper-ui
   gds-api-adapters
+  gds-sso
   govuk_app_config
   govuk_message_queue_consumer
   govuk_publishing_components
