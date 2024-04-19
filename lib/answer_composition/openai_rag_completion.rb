@@ -22,7 +22,7 @@ module AnswerComposition
       return build_answer(NO_CONTENT_FOUND_REPONSE, "abort_no_govuk_content") if search_results.blank?
 
       message = openai_response.dig("choices", 0, "message", "content")
-      question.build_answer(message:, rephrased_question:, status: "success")
+      build_answer(message, "success", build_sources)
     rescue OpenAIClient::ContextLengthExceededError => e
       GovukError.notify(e)
       question.build_answer(
@@ -93,6 +93,14 @@ module AnswerComposition
 
     def build_answer(message, status, sources = nil)
       question.build_answer(message:, rephrased_question:, status:, sources:)
+    end
+
+    def build_sources
+      result_by_base_path = search_results.group_by(&:base_path)
+      result_by_base_path.map.with_index do |(base_path, group), relevancy|
+        url = group.count == 1 ? group.first.url : base_path
+        AnswerSource.new(url:, relevancy:)
+      end
     end
   end
 end

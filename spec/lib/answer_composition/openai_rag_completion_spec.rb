@@ -25,9 +25,11 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
     end
 
     context "when the question has been rephrased" do
-      it "calls OpenAI chat endpoint and returns unsaved answer" do
+      before do
         stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
+      end
 
+      it "calls OpenAI chat endpoint and returns unsaved answer with sources" do
         answer = described_class.call(question)
 
         expect_unsaved_answer_with_attributes(
@@ -39,6 +41,27 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
             status: "success",
           },
         )
+        expect(answer.sources.first.url).to eq(chunk_result.url)
+      end
+
+      context "with multiple chunks from the same document" do
+        let(:expected_message_history) do
+          [
+            { role: "system", content: system_prompt("<p>Some content</p>\n<p>Some content</p>") },
+            { role: "user", content: rephrased_question },
+          ]
+        end
+
+        before do
+          allow(Search::ResultsForQuestion).to receive(:call).and_return([chunk_result, chunk_result])
+        end
+
+        it "only builds one source and uses the base path" do
+          answer = described_class.call(question)
+
+          expect(answer.sources.length).to eq(1)
+          expect(answer.sources.first.url).to eq(chunk_result.base_path)
+        end
       end
     end
 
@@ -160,12 +183,12 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
 
   private
 
-    def system_prompt
+    def system_prompt(context = "<p>Some content</p>")
       <<~OUTPUT
         #{AnswerComposition::Prompts::GOVUK_DESIGNER}
 
         Context:
-        <p>Some content</p>
+        #{context}
 
       OUTPUT
     end
