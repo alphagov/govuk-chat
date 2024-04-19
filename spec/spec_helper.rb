@@ -42,6 +42,10 @@ RSpec.configure do |config|
     config.include SearchChunkedContentHelpers
   end
 
+  config.before :suite do
+    Rails.application.load_seed
+  end
+
   # configure system specs
   # TODO: open PR on govuk_test to configure drivers for
   # system specs then remove from here when dependency is bumped

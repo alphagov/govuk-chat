@@ -37,10 +37,10 @@ Rails.application.routes.draw do
     match "/500" => "errors#internal_server_error"
   end
 
-  flipper_app = Flipper::UI.app
-  mount flipper_app, at: "/flipper"
-
-  mount Sidekiq::Web => "/sidekiq"
+  constraints(GDS::SSO::AuthorisedUserConstraint.new(User::Permissions::DEVELOPER_TOOLS)) do
+    mount Flipper::UI.app(Flipper) => "/flipper"
+    mount Sidekiq::Web => "/sidekiq"
+  end
 
   if Rails.env.development? || ENV["MOUNT_COMPONENT_GUIDE"] == "true"
     mount GovukPublishingComponents::Engine, at: "/component-guide"
