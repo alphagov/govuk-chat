@@ -9,9 +9,20 @@ RSpec.describe Chunking::ContentItemChunk do
   end
 
   describe "#plain_content" do
-    it "combines title, headings and HTML stripped content" do
+    it "combines title, description, headings and HTML stripped content" do
       instance = build(:content_item_chunk,
                        title: "Title",
+                       description: "Description",
+                       html_content: "<p>Content</p>",
+                       heading_hierarchy: ["Heading 1", "Heading 2"])
+
+      expect(instance.plain_content).to eq("Title\nDescription\nHeading 1\nHeading 2\nContent")
+    end
+
+    it "copes with a nil description" do
+      instance = build(:content_item_chunk,
+                       title: "Title",
+                       description: nil,
                        html_content: "<p>Content</p>",
                        heading_hierarchy: ["Heading 1", "Heading 2"])
 
@@ -60,6 +71,7 @@ RSpec.describe Chunking::ContentItemChunk do
           base_path: instance.content_item["base_path"],
           document_type: instance.content_item["document_type"],
           title: instance.content_item["title"],
+          description: instance.content_item["description"],
           url: "/chunk-url",
           chunk_index: 0,
           heading_hierarchy: ["Heading 1", "Heading 2"],
@@ -75,7 +87,8 @@ RSpec.describe Chunking::ContentItemChunk do
       instance = build(:content_item_chunk,
                        html_content: "<p>Content</p>",
                        heading_hierarchy: ["Heading 1", "Heading 2"],
-                       chunk_index: 0)
+                       chunk_index: 0,
+                       description: "Description")
 
       # rstrip to remove the HEREDOC's trailing new line
       expect(instance.inspect).to eq(<<~HEREDOC.rstrip)
@@ -87,6 +100,7 @@ RSpec.describe Chunking::ContentItemChunk do
         content_id: "#{instance.content_item['content_id']}"
         locale: "#{instance.content_item['locale']}"
         title: "#{instance.content_item['title']}"
+        description: "Description"
         base_path: "#{instance.content_item['base_path']}"
         document_type: "#{instance.content_item['document_type']}"
         )

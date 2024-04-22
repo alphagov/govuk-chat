@@ -8,6 +8,7 @@ FactoryBot.define do
       locale { "en" }
       base_path { :preserve }
       title { :preserve }
+      description { :preserve }
     end
 
     content_item do
@@ -16,7 +17,8 @@ FactoryBot.define do
             content_id:,
             locale:,
             base_path:,
-            title:)
+            title:,
+            description:)
     end
 
     html_content { "<p>Content</p>" }

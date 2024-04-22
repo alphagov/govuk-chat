@@ -13,8 +13,8 @@ module Chunking
     def plain_content
       @plain_content ||= begin
         stripped_html = Nokogiri::HTML::DocumentFragment.parse(html_content)
-        values = [title] + heading_hierarchy + [stripped_html]
-        values.join("\n")
+        values = [title, description] + heading_hierarchy + [stripped_html]
+        values.compact.join("\n")
       end
     end
 
@@ -32,6 +32,10 @@ module Chunking
 
     def title
       content_item["title"]
+    end
+
+    def description
+      content_item["description"]
     end
 
     def base_path
@@ -55,6 +59,7 @@ module Chunking
                   content_id,
                   locale,
                   title,
+                  description,
                   base_path,
                   document_type,
                   plain_content]
@@ -70,6 +75,7 @@ module Chunking
         base_path:,
         document_type:,
         title:,
+        description:,
         url:,
         chunk_index:,
         heading_hierarchy:,
@@ -88,6 +94,7 @@ module Chunking
         content_id:,
         locale:,
         title:,
+        description:,
         base_path:,
         document_type:,
       }
