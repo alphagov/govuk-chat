@@ -3,6 +3,8 @@ module Chunking
     PARSERS_FOR_SCHEMAS = {
       ContentItemParsing::BodyContentParser => %w[answer
                                                   detailed_guide
+                                                  manual
+                                                  manual_section
                                                   news_article
                                                   publication],
       ContentItemParsing::GuideParser => %w[guide],
