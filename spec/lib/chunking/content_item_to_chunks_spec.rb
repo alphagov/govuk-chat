@@ -31,6 +31,7 @@ RSpec.describe Chunking::ContentItemToChunks do
       %w[answer
          detailed_guide
          help_page
+         history
          manual
          manual_section
          news_article

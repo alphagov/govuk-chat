@@ -4,6 +4,7 @@ module Chunking
       ContentItemParsing::BodyContentParser => %w[answer
                                                   detailed_guide
                                                   help_page
+                                                  history
                                                   manual
                                                   manual_section
                                                   news_article
