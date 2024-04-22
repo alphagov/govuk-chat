@@ -2,7 +2,6 @@ RSpec.describe "Conversation with OpenAI", :chunked_content_index do
   include ActiveJob::TestHelper
 
   before do
-    stub_open_ai_flag_active
     stub_text_to_embedding
     populate_opensearch
   end
@@ -27,10 +26,6 @@ RSpec.describe "Conversation with OpenAI", :chunked_content_index do
     and_i_can_see_the_second_answer
   end
 
-  def stub_open_ai_flag_active
-    Flipper.enable_actor(:open_ai, AnonymousUser.new("known-user"))
-  end
-
   def stub_text_to_embedding
     @openai_embedding = mock_openai_embedding("How much tax should i pay?")
     allow(Search::TextToEmbedding)
@@ -45,7 +40,7 @@ RSpec.describe "Conversation with OpenAI", :chunked_content_index do
   end
 
   def when_i_visit_the_conversation_page
-    visit "/chat/conversations?user_id=known-user"
+    visit new_conversation_path
   end
 
   def and_i_enter_a_question
