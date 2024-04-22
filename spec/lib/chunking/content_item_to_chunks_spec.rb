@@ -30,6 +30,7 @@ RSpec.describe Chunking::ContentItemToChunks do
     it "returns true for schemas that don't care about document type" do
       %w[answer
          call_for_evidence
+         consultation
          detailed_guide
          help_page
          history
@@ -39,7 +40,7 @@ RSpec.describe Chunking::ContentItemToChunks do
          guide
          service_manual_guide
          transaction].each do |schema|
-       expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
+        expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
       end
     end
 

@@ -3,6 +3,7 @@ module Chunking
     PARSERS_FOR_SCHEMAS = {
       ContentItemParsing::BodyContentParser => %w[answer
                                                   call_for_evidence
+                                                  consultation
                                                   detailed_guide
                                                   help_page
                                                   history
