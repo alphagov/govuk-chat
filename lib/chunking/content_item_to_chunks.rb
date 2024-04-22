@@ -2,7 +2,8 @@ module Chunking
   class ContentItemToChunks
     PARSERS_FOR_SCHEMAS = {
       ContentItemParsing::BodyContentParser => %w[answer
-                                                  news_article],
+                                                  news_article
+                                                  publication],
       ContentItemParsing::GuideParser => %w[guide],
       ContentItemParsing::TransactionParser => %w[transaction],
       # TODO: establish all supported schemas and add parsers for them
@@ -10,16 +11,20 @@ module Chunking
 
     def self.call(content_item)
       schema_name = content_item["schema_name"]
-      parser_class = PARSERS_FOR_SCHEMAS.find { |_, v| v.include?(schema_name) }
-                                        &.first
+      parser_class = PARSERS_FOR_SCHEMAS.find { |_, v| v.include?(schema_name) }&.first
 
       raise "No content item parser configured for #{schema_name}" unless parser_class
 
       parser_class.call(content_item)
     end
 
-    def self.supported_schema_and_document_type?(schema, _document_type)
-      supported_schemas.include?(schema)
+    def self.supported_schema_and_document_type?(schema_name, document_type)
+      case schema_name
+      when "publication"
+        %w[correspondence decision].exclude?(document_type)
+      else
+        supported_schemas.include?(schema_name)
+      end
     end
 
     def self.supported_schemas
