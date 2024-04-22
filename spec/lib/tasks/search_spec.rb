@@ -37,9 +37,14 @@ RSpec.describe "rake search tasks" do
       repo = instance_double(Search::ChunkedContentRepository, create_index!: nil)
       allow(Search::ChunkedContentRepository).to receive(:new).and_return(repo)
 
-      Rake::Task[task_name].invoke
+      expect { Rake::Task[task_name].invoke }.to output.to_stdout
 
       expect(repo).to have_received(:create_index!)
+    end
+
+    it "outputs progress information to stdout" do
+      expect { Rake::Task[task_name].invoke }
+        .to output("Recreating chunked content index\nIndex created\n").to_stdout
     end
 
     it "is prevented from running in Rails.env.production?" do

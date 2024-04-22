@@ -18,6 +18,8 @@ namespace :search do
       exit 1
     end
 
+    puts "Recreating chunked content index"
     Search::ChunkedContentRepository.new.create_index!
+    puts "Index created"
   end
 end
