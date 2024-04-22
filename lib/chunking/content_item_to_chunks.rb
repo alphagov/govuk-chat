@@ -13,6 +13,7 @@ module Chunking
                                                   news_article
                                                   publication
                                                   service_manual_guide
+                                                  statistical_data_set
                                                   statistics_announcement],
       ContentItemParsing::GuideParser => %w[guide],
       ContentItemParsing::TransactionParser => %w[transaction],
