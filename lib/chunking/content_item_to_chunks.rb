@@ -12,7 +12,8 @@ module Chunking
                                                   manual_section
                                                   news_article
                                                   publication
-                                                  service_manual_guide],
+                                                  service_manual_guide
+                                                  statistics_announcement],
       ContentItemParsing::GuideParser => %w[guide],
       ContentItemParsing::TransactionParser => %w[transaction],
       # TODO: establish all supported schemas and add parsers for them
