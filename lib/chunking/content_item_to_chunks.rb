@@ -6,6 +6,7 @@ module Chunking
                                                   consultation
                                                   detailed_guide
                                                   help_page
+                                                  hmrc_manual_section
                                                   history
                                                   manual
                                                   manual_section
