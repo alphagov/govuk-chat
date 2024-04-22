@@ -36,10 +36,10 @@ private
   end
 
   def answer_strategy
-    if Feature.enabled?(:open_ai)
-      :open_ai_rag_completion
-    else
+    if Feature.enabled?(:chat_api)
       :govuk_chat_api
+    else
+      :open_ai_rag_completion
     end
   end
 end

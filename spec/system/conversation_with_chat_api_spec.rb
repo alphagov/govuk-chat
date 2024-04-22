@@ -12,6 +12,7 @@ RSpec.describe "Conversation with chat-api" do
   end
 
   before do
+    stub_chat_api_flag_active
     stub_chat_api
   end
 
@@ -36,6 +37,10 @@ RSpec.describe "Conversation with chat-api" do
     and_i_can_see_the_answer
   end
 
+  def stub_chat_api_flag_active
+    stub_feature_flag_for_actor(:chat_api, AnonymousUser.new("known-user"), true)
+  end
+
   def stub_chat_api
     stub_request(:post, "#{ENV['CHAT_API_URL']}/govchat")
     .to_return({
@@ -47,7 +52,7 @@ RSpec.describe "Conversation with chat-api" do
   end
 
   def when_i_visit_the_conversation_page
-    visit new_conversation_path
+    visit new_conversation_path(user_id: "known-user")
   end
 
   def and_i_enter_a_question
