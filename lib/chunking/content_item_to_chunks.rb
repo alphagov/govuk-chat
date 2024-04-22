@@ -2,6 +2,7 @@ module Chunking
   class ContentItemToChunks
     PARSERS_FOR_SCHEMAS = {
       ContentItemParsing::BodyContentParser => %w[answer
+                                                  detailed_guide
                                                   news_article
                                                   publication],
       ContentItemParsing::GuideParser => %w[guide],
