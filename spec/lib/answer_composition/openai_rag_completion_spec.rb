@@ -1,12 +1,4 @@
 RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do # rubocop:disable RSpec/FilePath
-  around do |example|
-    ClimateControl.modify(
-      OPENAI_ACCESS_TOKEN: "open-ai-access-token",
-    ) do
-      example.run
-    end
-  end
-
   describe ".call" do
     let(:rephrased_question) { "Question rephrased by OpenAI" }
     let(:question) { create :question }

@@ -46,6 +46,8 @@ module GovukChat
 
     config.opensearch = config_for(:opensearch)
 
+    config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]
+
     # List of forbidden words that will prevent a message from being sent to openAI
     config.question_forbidden_words = []
 

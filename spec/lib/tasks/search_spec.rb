@@ -32,8 +32,8 @@ RSpec.describe "rake search tasks" do
       allow(Rails.env).to receive(:production?).and_return(true)
 
       expect { Rake::Task[task_name].invoke }
-        .to output("This task has been disabled for production environments").to_stdout
-        .and raise(SystemExit)
+        .to output("This task has been disabled for production environments\n").to_stdout
+        .and raise_error(SystemExit)
     end
   end
 end

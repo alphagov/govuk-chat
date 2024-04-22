@@ -11,7 +11,6 @@ module AnswerComposition
 
     def initialize(question)
       @question = question
-      @retriever = Retrieval::SearchApiV1Retriever
       @openai_client = OpenAIClient.build
     end
 
@@ -91,7 +90,7 @@ module AnswerComposition
       @search_results ||= Search::ResultsForQuestion.call(question_message)
     end
 
-    def build_answer(message, status, sources = nil)
+    def build_answer(message, status, sources = [])
       question.build_answer(message:, rephrased_question:, status:, sources:)
     end
 

@@ -1,14 +1,6 @@
 RSpec.describe "Conversation with OpenAI", :chunked_content_index do
   include ActiveJob::TestHelper
 
-  around do |example|
-    ClimateControl.modify(
-      OPENAI_ACCESS_TOKEN: "real-open-ai-access-token",
-    ) do
-      example.run
-    end
-  end
-
   before do
     stub_open_ai_flag_active
     stub_text_to_embedding
