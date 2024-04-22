@@ -36,6 +36,7 @@ RSpec.describe Chunking::ContentItemToChunks do
          manual_section
          news_article
          guide
+         service_manual_guide
          transaction].each do |schema|
        expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
       end

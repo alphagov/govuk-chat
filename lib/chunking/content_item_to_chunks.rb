@@ -8,7 +8,8 @@ module Chunking
                                                   manual
                                                   manual_section
                                                   news_article
-                                                  publication],
+                                                  publication
+                                                  service_manual_guide],
       ContentItemParsing::GuideParser => %w[guide],
       ContentItemParsing::TransactionParser => %w[transaction],
       # TODO: establish all supported schemas and add parsers for them
