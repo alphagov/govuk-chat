@@ -29,6 +29,7 @@ RSpec.describe Chunking::ContentItemToChunks do
   describe ".supported_schema_and_document_type??" do
     it "returns true for schemas that don't care about document type" do
       %w[answer
+         call_for_evidence
          detailed_guide
          help_page
          history
