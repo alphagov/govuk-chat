@@ -18,7 +18,7 @@ RSpec.describe "QuestionsController" do
 
       follow_redirect!
       expect(response.body)
-        .to have_selector(".gem-c-label", text: "Enter a question")
+        .to have_selector(".app-c-conversation-input__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
     end
 
     it "renders the pending page when a question doesn't have an answer" do

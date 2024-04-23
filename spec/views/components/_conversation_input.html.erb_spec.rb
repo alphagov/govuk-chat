@@ -11,16 +11,16 @@ RSpec.describe "components/_conversation_input.html.erb" do
     })
 
     assert_select ".app-c-conversation-input" do
-      assert_select ".app-c-conversation-input__form"
-      assert_select ".app-c-conversation-input__form .app-c-conversation-input__label.govuk-visually-hidden", text: "Label"
-      assert_select ".app-c-conversation-input__form .app-c-conversation-input__input"
-      assert_select ".app-c-conversation-input__form .app-c-conversation-input__submit", text: "Send"
+      assert_select ".app-c-conversation-input__wrapper"
+      assert_select ".app-c-conversation-input__wrapper .app-c-conversation-input__label.govuk-visually-hidden", text: "Label"
+      assert_select ".app-c-conversation-input__wrapper .app-c-conversation-input__input"
+      assert_select ".app-c-conversation-input__wrapper .app-c-conversation-input__submit", text: "Send"
       assert_select ".gem-c-hint.govuk-hint", text: "Hint"
       assert_select "[data-maxlength=?]", 300
       assert_select "[data-character-threshold=?]", 50
     end
 
-    assert_select ".app-c-conversation-input__form .app-c-conversation-input__input" do
+    assert_select ".app-c-conversation-input__wrapper .app-c-conversation-input__input" do
       assert_select "[name=?]", "Name"
       assert_select "[value=?]", "Value"
       assert_select "[aria-describedby]"
@@ -81,7 +81,7 @@ RSpec.describe "components/_conversation_input.html.erb" do
     })
 
     assert_select ".gem-c-hint.govuk-hint[id=hint-id]"
-    assert_select ".app-c-conversation-input__form .app-c-conversation-input__input" do
+    assert_select ".app-c-conversation-input__wrapper .app-c-conversation-input__input" do
       assert_select "[aria-describedby=?]", "hint-id"
     end
   end
@@ -109,7 +109,7 @@ RSpec.describe "components/_conversation_input.html.erb" do
 
     assert_select ".gem-c-error-message.govuk-error-message[id=error-id]"
     assert_select ".gem-c-error-message.govuk-error-message[id=error-id]", text: "Error: Error 1Error 2"
-    assert_select ".app-c-conversation-input__form .app-c-conversation-input__input" do
+    assert_select ".app-c-conversation-input__wrapper .app-c-conversation-input__input" do
       assert_select "[aria-describedby=?]", "hint-id error-id"
     end
   end

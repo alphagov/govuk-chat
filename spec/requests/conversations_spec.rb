@@ -125,7 +125,7 @@ RSpec.describe "ConversationsController" do
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body)
         .to have_selector(".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question")
-        .and have_selector(".gem-c-label", text: "Enter a question")
+        .and have_selector(".app-c-conversation-input__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
     end
 
     context "when the request format is JSON" do
@@ -160,6 +160,6 @@ RSpec.describe "ConversationsController" do
   end
 
   def render_create_question_form
-    have_selector(".gem-c-label", text: "Enter a question")
+    have_selector(".app-c-conversation-input__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
   end
 end
