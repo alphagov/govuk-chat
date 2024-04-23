@@ -30,6 +30,7 @@ RSpec.describe Chunking::ContentItemToChunks do
     it "returns true for schemas that don't care about document type" do
       %w[answer
          call_for_evidence
+         case_study
          consultation
          detailed_guide
          help_page
