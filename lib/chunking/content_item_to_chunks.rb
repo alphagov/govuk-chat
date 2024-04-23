@@ -2,8 +2,20 @@ module Chunking
   class ContentItemToChunks
     PARSERS_FOR_SCHEMAS = {
       ContentItemParsing::BodyContentParser => %w[answer
+                                                  call_for_evidence
+                                                  case_study
+                                                  consultation
+                                                  detailed_guide
+                                                  help_page
+                                                  hmrc_manual_section
+                                                  history
+                                                  manual
+                                                  manual_section
                                                   news_article
-                                                  publication],
+                                                  publication
+                                                  service_manual_guide
+                                                  statistical_data_set
+                                                  statistics_announcement],
       ContentItemParsing::GuideParser => %w[guide],
       ContentItemParsing::TransactionParser => %w[transaction],
       # TODO: establish all supported schemas and add parsers for them
