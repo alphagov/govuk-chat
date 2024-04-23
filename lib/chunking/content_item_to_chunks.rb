@@ -31,9 +31,5 @@ module Chunking
       end
       parser_list.to_h
     end
-
-    def self.supported_schemas
-      parser_map.keys
-    end
   end
 end
