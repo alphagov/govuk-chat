@@ -1,29 +1,15 @@
 module Chunking
   class ContentItemToChunks
-    PARSERS_FOR_SCHEMAS = {
-      ContentItemParsing::BodyContentParser => %w[answer
-                                                  call_for_evidence
-                                                  case_study
-                                                  consultation
-                                                  detailed_guide
-                                                  help_page
-                                                  hmrc_manual_section
-                                                  history
-                                                  manual
-                                                  manual_section
-                                                  news_article
-                                                  publication
-                                                  service_manual_guide
-                                                  statistical_data_set
-                                                  statistics_announcement],
-      ContentItemParsing::GuideParser => %w[guide],
-      ContentItemParsing::TransactionParser => %w[transaction],
+    PARSERS_FOR_SCHEMAS = [
+      ContentItemParsing::BodyContentParser,
+      ContentItemParsing::GuideParser,
+      ContentItemParsing::TransactionParser,
       # TODO: establish all supported schemas and add parsers for them
-    }.freeze
+    ].freeze
 
     def self.call(content_item)
       schema_name = content_item["schema_name"]
-      parser_class = PARSERS_FOR_SCHEMAS.find { |_, v| v.include?(schema_name) }&.first
+      parser_class = parser_map[schema_name]
 
       raise "No content item parser configured for #{schema_name}" unless parser_class
 
@@ -35,12 +21,20 @@ module Chunking
       when "publication"
         %w[correspondence decision].exclude?(document_type)
       else
-        supported_schemas.include?(schema_name)
+        parser_map[schema_name].present?
       end
     end
 
+    def self.parser_map
+      parser_list = []
+      PARSERS_FOR_SCHEMAS.each do |parser|
+        parser_list += parser::ALLOWED_SCHEMAS.map { |schema| [schema, parser] }
+      end
+      parser_list.to_h
+    end
+
     def self.supported_schemas
-      PARSERS_FOR_SCHEMAS.values.flatten
+      parser_map.keys
     end
   end
 end

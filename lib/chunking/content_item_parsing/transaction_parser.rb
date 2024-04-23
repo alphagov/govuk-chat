@@ -1,5 +1,7 @@
 module Chunking::ContentItemParsing
   class TransactionParser < BaseParser
+    ALLOWED_SCHEMAS = %w[transaction].freeze
+
     def call
       multiple_content_type_fields = %w[introductory_paragraph
                                         more_information

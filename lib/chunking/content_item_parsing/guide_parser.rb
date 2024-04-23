@@ -1,6 +1,8 @@
 module Chunking
   module ContentItemParsing
     class GuideParser < BaseParser
+      ALLOWED_SCHEMAS = %w[guide].freeze
+
       def call
         parts = details_field!("parts")
 
