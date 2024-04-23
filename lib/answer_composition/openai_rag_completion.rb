@@ -55,8 +55,10 @@ module AnswerComposition
     def messages
       [
         { role: "system", content: system_prompt },
+        AnswerComposition::FewShots::FEW_SHOTS,
         { role: "user", content: question_message },
       ]
+      .flatten
     end
 
     def system_prompt
