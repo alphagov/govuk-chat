@@ -30,6 +30,9 @@
     },
     "OPENAI_ACCESS_TOKEN": {
       "required": true
+    },
+    "OPENSEARCH_URL": {
+      "required": true
     }
   },
   "formation": {
