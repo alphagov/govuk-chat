@@ -70,4 +70,28 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
         .to raise_error("content type text/html not found in schema: generic")
     end
   end
+
+  describe ".supported_schema_and_document_type?" do
+    it "returns true for schemas that don't care about document type" do
+      described_class::ALLOWED_SCHEMAS.each do |schema|
+        expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
+      end
+    end
+
+    it "returns false for unsupported schemas" do
+      expect(described_class.supported_schema_and_document_type?("unknown", "anything")).to eq(false)
+    end
+
+    %w[correspondence decision].each do |document_type|
+      it "rejects '#{document_type}' document type for 'publication' schema" do
+        expect(described_class.supported_schema_and_document_type?("publication", document_type)).to eq(false)
+      end
+    end
+
+    it "allows other document types for 'publication' schema" do
+      %w[anything anything_else].each do |document_type|
+        expect(described_class.supported_schema_and_document_type?("publication", document_type)).to eq(true)
+      end
+    end
+  end
 end

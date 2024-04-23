@@ -32,6 +32,10 @@ module Chunking
           end
         end
       end
+
+      def self.supported_schema_and_document_type?(schema_name, _document_type)
+        ALLOWED_SCHEMAS.include?(schema_name)
+      end
     end
   end
 end

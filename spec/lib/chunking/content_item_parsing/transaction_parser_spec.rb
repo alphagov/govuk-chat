@@ -110,4 +110,16 @@ RSpec.describe Chunking::ContentItemParsing::TransactionParser do
         .to raise_error("content type text/html not found in schema: transaction")
     end
   end
+
+  describe ".supported_schema_and_document_type?" do
+    it "returns true for ALLOWED_SCHEMAS" do
+      described_class::ALLOWED_SCHEMAS.each do |schema|
+        expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
+      end
+    end
+
+    it "returns false for unsupported schemas" do
+      expect(described_class.supported_schema_and_document_type?("unknown", "anything")).to eq(false)
+    end
+  end
 end
