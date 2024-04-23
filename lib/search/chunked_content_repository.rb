@@ -1,5 +1,8 @@
 module Search
   class ChunkedContentRepository
+    MAX_CHUNKS = 5
+    MIN_SCORE = 0.5
+
     Result = Data.define(
       :_id,
       :score,
@@ -131,13 +134,13 @@ module Search
       response = client.search(
         index:,
         body: {
-          size: 20,
-          min_score: 0.5,
+          size: MAX_CHUNKS,
+          min_score: MIN_SCORE,
           query: {
             knn: {
               openai_embedding: {
                 vector: embedding,
-                k: 20,
+                k: MAX_CHUNKS,
               },
             },
           },
