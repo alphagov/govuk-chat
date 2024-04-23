@@ -4,10 +4,11 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
     let(:question) { create :question }
     let(:expected_message_history) do
       [
-        { role: "system", content: system_prompt },
+        { role: "system", content: system_prompt(system_prompt_context) },
         { role: "user", content: rephrased_question },
       ]
     end
+    let(:system_prompt_context) { "Title\nHeading 1\nHeading 2\nDescription\n<p>Some content</p>" }
     let(:opensearch_chunk) { build(:chunked_content_record).except(:openai_embedding).merge(_id: "1", score: 1.0) }
     let(:chunk_result) { Search::ChunkedContentRepository::Result.new(**opensearch_chunk) }
 
@@ -37,9 +38,13 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
       end
 
       context "with multiple chunks from the same document" do
+        let(:system_prompt_context) do
+          "Title\nHeading 1\nHeading 2\nDescription\n<p>Some content</p>\n\n" \
+          "Title\nHeading 1\nHeading 2\nDescription\n<p>Some content</p>"
+        end
         let(:expected_message_history) do
           [
-            { role: "system", content: system_prompt("<p>Some content</p>\n<p>Some content</p>") },
+            { role: "system", content: system_prompt(system_prompt_context) },
             { role: "user", content: rephrased_question },
           ]
         end
@@ -60,7 +65,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
     context "when rephrasing produces the same question" do
       let(:expected_message_history) do
         [
-          { role: "system", content: system_prompt },
+          { role: "system", content: system_prompt(system_prompt_context) },
           { role: "user", content: question.message },
         ]
       end
@@ -175,7 +180,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
 
   private
 
-    def system_prompt(context = "<p>Some content</p>")
+    def system_prompt(context)
       <<~OUTPUT
         #{AnswerComposition::Prompts::GOVUK_DESIGNER}
 
