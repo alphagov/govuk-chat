@@ -1,0 +1,59 @@
+.app-c-conversation-input {
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    border-top: 1px solid govuk-colour("mid-grey");
+  }
+}
+
+.app-c-conversation-input__wrapper {
+  display: flex;
+  justify-content: space-between;
+  padding-top: govuk-spacing(6);
+  margin-bottom: govuk-spacing(2);
+}
+
+.app-c-conversation-input__input {
+  border: 2px solid govuk-colour("black");
+  padding: govuk-spacing(2);
+  @include govuk-font($size: 19);
+  width: 100%;
+  margin-right: govuk-spacing(1);
+
+  &:focus {
+    outline: $govuk-focus-width solid $govuk-focus-colour;
+    outline-offset: 0;
+    box-shadow: inset 0 0 0 $govuk-border-width-form-element;
+  }
+}
+
+.app-c-conversation-input__submit {
+  background-color: govuk-colour("blue");
+  color: govuk-colour("white");
+  padding: 8px govuk-spacing(2) 7px;
+  border: none;
+  border-radius: 0;
+  box-shadow: inset 0 -2px 0 #002d18;
+  @include govuk-font($size: 19, $weight: bold);
+  box-sizing: border-box;
+  cursor: pointer;
+
+  &:hover {
+    background-color: govuk-colour("dark-blue");
+  }
+
+  &:focus {
+    border-color: $govuk-focus-colour;
+    outline: $govuk-focus-width solid transparent;
+    box-shadow: inset 0 0 0 1px $govuk-focus-colour;
+  }
+
+  &:focus:not(:active):not(:hover) {
+    border-color: $govuk-focus-colour;
+    color: $govuk-focus-text-colour;
+    background-color: $govuk-focus-colour;
+    box-shadow: inset 0 -2px 0 $govuk-focus-text-colour;
+  }
+}

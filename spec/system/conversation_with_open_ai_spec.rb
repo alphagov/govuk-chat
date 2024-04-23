@@ -44,8 +44,8 @@ RSpec.describe "Conversation with OpenAI", :chunked_content_index do
   end
 
   def and_i_enter_a_question
-    fill_in "Enter a question", with: "How much tax should I be paying?"
-    click_on "Submit"
+    fill_in "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)", with: "How much tax should I be paying?"
+    click_on "Send"
   end
 
   def then_i_see_the_answer_is_pending
@@ -90,8 +90,8 @@ RSpec.describe "Conversation with OpenAI", :chunked_content_index do
   end
 
   def when_i_enter_a_second_question
-    fill_in "Enter a question", with: "Are you sure?"
-    click_on "Submit"
+    fill_in "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)", with: "Are you sure?"
+    click_on "Send"
   end
 
   def then_i_see_my_second_question_on_the_page

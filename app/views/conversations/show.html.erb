@@ -7,6 +7,10 @@
     } %>
   <% end %>
 <% end %>
+<%
+  form_url = @conversation.persisted? ? update_conversation_path(@conversation) : create_conversation_path
+  http_method = @conversation.persisted? ? :patch : :post
+%>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
@@ -27,29 +31,17 @@
       end
     } %>
 
-    <%
-      form_url = @conversation.persisted? ? update_conversation_path(@conversation) : create_conversation_path
-      http_method = @conversation.persisted? ? :patch : :post
-    %>
-
     <%= form_with url: form_url, method: http_method do |f| %>
-      <%= render "govuk_publishing_components/components/character_count", {
-        textarea: {
-          label: {
-            text: "Enter a question",
-            heading_size: "l",
-          },
-          name: "create_question[user_question]",
-          value: @create_question.user_question,
-          error_items: @create_question.errors[:user_question].map { |message| { text: message } }
-        },
-        id: "create_question_user_question",
-        maxlength: 300
+      <%= render "components/conversation_input", {
+        label: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
+        name: "create_question[user_question]",
+        value: @create_question.user_question,
+        hint: "Please limit your question to 300 characters.",
+        maxlength: 300,
+        character_threshold: 50,
+        spellcheck: true,
+        error_items: @create_question.errors[:user_question].map { |message| { text: message } },
       } %>
-
-      <%= render "govuk_publishing_components/components/button", {
-        text: "Submit"
-      } %>
-    </div>
-  <% end %>
+    <% end %>
+  </div>
 </div>
