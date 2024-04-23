@@ -37,6 +37,7 @@ bundle exec rake
 ### Further documentation
 
 - [Message queue consumption](docs/message-queue-consumption.md)
+- [Populating search](docs/populating-search.md)
 
 ## Licence
 

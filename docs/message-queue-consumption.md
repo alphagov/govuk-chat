@@ -36,7 +36,7 @@ and then start it with:
 govuk-docker-up queue-consumer
 ```
 
-## Populating the search index in development
+## Consuming queues in a development environment
 
 It can take a long time to index all GOV.UK content, so just indexing the subset of content from Mainstream Publisher is recommended.
 
