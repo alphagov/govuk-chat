@@ -15,53 +15,35 @@ RSpec.describe Chunking::ContentItemToChunks do
     end
   end
 
-  describe ".supported_schemas" do
-    it "returns a list of schema names that are all valid Publishing API ones" do
-      schemas = described_class.supported_schemas
+  describe ".parser_map" do
+    it "returns a hash of schema names that are all valid Publishing API ones" do
+      schemas = described_class.parser_map.keys
       all_valid_schema_names = GovukSchemas::Schema.schema_names
 
       unknown_schemas = schemas - all_valid_schema_names
 
       expect(unknown_schemas).to be_empty, "Schemas not in Publishing API: #{unknown_schemas.join(', ')}"
     end
+
+    it "maps schemas defined in all parser classes" do
+      map = described_class.parser_map
+      expect(map).to include(
+        "answer" => Chunking::ContentItemParsing::BodyContentParser,
+        "guide" => Chunking::ContentItemParsing::GuideParser,
+        "transaction" => Chunking::ContentItemParsing::TransactionParser,
+      )
+    end
   end
 
-  describe ".supported_schema_and_document_type??" do
-    it "returns true for schemas that don't care about document type" do
-      %w[answer
-         call_for_evidence
-         case_study
-         consultation
-         detailed_guide
-         help_page
-         hmrc_manual_section
-         history
-         manual
-         manual_section
-         news_article
-         guide
-         service_manual_guide
-         statistical_data_set
-         statistics_announcement
-         transaction].each do |schema|
+  describe ".supported_schema_and_document_type?" do
+    it "returns true for schemas that can be handled by a parser" do
+      %w[answer guide transaction].each do |schema|
         expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
       end
     end
 
     it "returns false for unsupported schemas" do
       expect(described_class.supported_schema_and_document_type?("unknown", "anything")).to eq(false)
-    end
-
-    %w[correspondence decision].each do |document_type|
-      it "rejects '#{document_type}' document type for 'publication' schema" do
-        expect(described_class.supported_schema_and_document_type?("publication", document_type)).to eq(false)
-      end
-    end
-
-    it "allows other document types for 'publication' schema" do
-      %w[anything anything_else].each do |document_type|
-        expect(described_class.supported_schema_and_document_type?("publication", document_type)).to eq(true)
-      end
     end
   end
 end

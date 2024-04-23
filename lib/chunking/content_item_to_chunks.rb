@@ -17,12 +17,11 @@ module Chunking
     end
 
     def self.supported_schema_and_document_type?(schema_name, document_type)
-      case schema_name
-      when "publication"
-        %w[correspondence decision].exclude?(document_type)
-      else
-        parser_map[schema_name].present?
-      end
+      parser = parser_map[schema_name]
+
+      return false if parser.nil?
+
+      parser.supported_schema_and_document_type?(schema_name, document_type)
     end
 
     def self.parser_map
