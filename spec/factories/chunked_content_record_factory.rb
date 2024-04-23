@@ -11,6 +11,7 @@ FactoryBot.define do
     locale { "en" }
     document_type { "guide" }
     title { "Title" }
+    description { "Description" }
     url { "/base-path#anchor" }
     plain_content { "Some content" }
     openai_embedding { [rand(-0.9...0.9)] * 1536 }

@@ -12,6 +12,7 @@ module Search
       :locale,
       :document_type,
       :title,
+      :description,
       :url,
       :plain_content,
     )
@@ -40,6 +41,7 @@ module Search
               base_path: { type: "keyword" },
               document_type: { type: "keyword" },
               title: { type: "text" },
+              description: { type: "text" },
               url: { type: "keyword" },
               chunk_index: { type: "keyword" },
               heading_hierarchy: { type: "text" },
