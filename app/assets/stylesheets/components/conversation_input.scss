@@ -33,7 +33,7 @@
   background-color: govuk-colour("blue");
   color: govuk-colour("white");
   padding: 8px govuk-spacing(2) 7px;
-  border: 0px;
+  border: none;
   border-radius: 0;
   box-shadow: inset 0 -2px 0 #002d18;
   @include govuk-font($size: 19, $weight: bold);
