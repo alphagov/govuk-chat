@@ -3,10 +3,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
     let(:rephrased_question) { "Question rephrased by OpenAI" }
     let(:question) { create :question }
     let(:expected_message_history) do
-      [
-        { role: "system", content: system_prompt(system_prompt_context) },
-        { role: "user", content: rephrased_question },
-      ]
+      array_including({ "role" => "user", "content" => rephrased_question })
     end
     let(:system_prompt_context) { "Title\nHeading 1\nHeading 2\nDescription\n<p>Some content</p>" }
     let(:opensearch_chunk) { build(:chunked_content_record).except(:openai_embedding).merge(_id: "1", score: 1.0) }
@@ -15,6 +12,21 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
     before do
       allow(AnswerComposition::QuestionRephraser).to receive(:call).and_return(rephrased_question)
       allow(Search::ResultsForQuestion).to receive(:call).and_return([chunk_result])
+    end
+
+    it "sends OpenAI a series of messages combining system prompt, few shot messages and the user question" do
+      expected_message_history = [
+        { role: "system", content: system_prompt("Title\nHeading 1\nHeading 2\nDescription\n<p>Some content</p>") },
+        AnswerComposition::FewShots::FEW_SHOTS,
+        { role: "user", content: rephrased_question },
+      ]
+      .flatten
+
+      request = stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
+
+      described_class.call(question)
+
+      expect(request).to have_been_made
     end
 
     context "when the question has been rephrased" do
@@ -43,10 +55,9 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           "Title\nHeading 1\nHeading 2\nDescription\n<p>Some content</p>"
         end
         let(:expected_message_history) do
-          [
-            { role: "system", content: system_prompt(system_prompt_context) },
-            { role: "user", content: rephrased_question },
-          ]
+          array_including(
+            { "role" => "system", "content" => system_prompt(system_prompt_context) },
+          )
         end
 
         before do
@@ -64,10 +75,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
 
     context "when rephrasing produces the same question" do
       let(:expected_message_history) do
-        [
-          { role: "system", content: system_prompt(system_prompt_context) },
-          { role: "user", content: question.message },
-        ]
+        array_including({ "role" => "user", "content" => question.message })
       end
 
       before do
