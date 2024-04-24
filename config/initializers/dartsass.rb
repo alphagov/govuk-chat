@@ -1,5 +1,6 @@
 APP_STYLESHEETS = {
   "application.scss" => "application.css",
+  "admin.scss" => "admin.css",
 }.freeze
 
 all_stylesheets = APP_STYLESHEETS.merge(GovukPublishingComponents::Config.all_stylesheets)

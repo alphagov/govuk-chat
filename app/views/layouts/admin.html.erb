@@ -1,0 +1,38 @@
+<%= render "govuk_publishing_components/components/layout_for_admin", {
+  environment: GovukPublishingComponents::AppHelpers::Environment.current_acceptance_environment,
+  product_name: "Chat Admin",
+  browser_title: "Chat Admin",
+  js_filename: "admin",
+  css_filename: "admin"
+} do %>
+  <%= render "govuk_publishing_components/components/layout_header", {
+    environment: GovukPublishingComponents::AppHelpers::Environment.current_acceptance_environment,
+    product_name: "Chat Admin",
+    logo_link: admin_homepage_path,
+    navigation_items: [
+      { text: "Visit chat", href: chat_path },
+      { text: Current.user.name, href: Plek.external_url_for("signon") },
+      { text: "Log out", href: gds_sign_out_path },
+    ]
+  } %>
+  <%= render "govuk_publishing_components/components/skip_link" %>
+
+  <div class="govuk-width-container">
+    <%= yield(:breadcrumbs) %>
+
+    <main class="govuk-main-wrapper<%= " govuk-main-wrapper--l" if yield(:back_link).blank? %>" id="content" role="main">
+      <% if yield(:title).present? %>
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+            <%= render "govuk_publishing_components/components/title", {
+              context: yield(:title_context),
+              title: yield(:title),
+            } %>
+          </div>
+        </div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+  </div>
+<% end %>
