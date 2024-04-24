@@ -74,7 +74,18 @@ module AnswerComposition
     end
 
     def context
-      search_results.map(&:html_content).join("\n")
+      search_results.map { |result|
+        [
+          result.title,
+          result.heading_hierarchy,
+          result.description,
+          result.html_content,
+        ]
+        .flatten
+        .compact
+        .join("\n")
+      }
+      .join("\n\n")
     end
 
     def question_contains_forbidden_words?
