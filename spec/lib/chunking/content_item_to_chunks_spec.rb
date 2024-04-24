@@ -39,11 +39,11 @@ RSpec.describe Chunking::ContentItemToChunks do
 
   describe ".supported_schema_and_document_type?" do
     it "delegates to the method on the mapped parser" do
-      allow(Chunking::ContentItemParsing::BodyContentArrayParser)
+      allow(Chunking::ContentItemParsing::BodyContentParser)
         .to receive(:supported_schema_and_document_type?)
         .and_return(true)
       expect(described_class.supported_schema_and_document_type?("answer", "anything")).to eq(true)
-      expect(Chunking::ContentItemParsing::BodyContentArrayParser)
+      expect(Chunking::ContentItemParsing::BodyContentParser)
         .to have_received(:supported_schema_and_document_type?).with("answer", "anything")
     end
 

@@ -1,20 +1,21 @@
 module Chunking::ContentItemParsing
   class BodyContentParser < BaseParser
-    SCHEMAS_TO_DISALLOWED_DOCUMENT_TYPES = {
-      "call_for_evidence" => [],
-      "case_study" => [],
-      "consultation" => [],
-      "detailed_guide" => [],
-      "help_page" => [],
-      "hmrc_manual_section" => [],
-      "history" => [],
-      "manual" => [],
-      "manual_section" => [],
-      "news_article" => [],
-      "publication" => %w[correspondence decision],
-      "service_manual_guide" => [],
-      "statistical_data_set" => [],
-      "statistics_announcement" => [],
+    SCHEMAS_TO_DOCUMENT_CHECK = {
+      "answer" => ->(_) { true },
+      "call_for_evidence" => ->(_) { true },
+      "case_study" => ->(_) { true },
+      "consultation" => ->(_) { true },
+      "detailed_guide" => ->(_) { true },
+      "help_page" => ->(_) { true },
+      "hmrc_manual_section" => ->(_) { true },
+      "history" => ->(_) { true },
+      "manual" => ->(_) { true },
+      "manual_section" => ->(_) { true },
+      "news_article" => ->(_) { true },
+      "publication" => ->(document_type) { %w[correspondence decision].exclude?(document_type) },
+      "service_manual_guide" => ->(_) { true },
+      "statistical_data_set" => ->(_) { true },
+      "statistics_announcement" => ->(_) { true },
     }.freeze
 
     def call
@@ -30,14 +31,14 @@ module Chunking::ContentItemParsing
     end
 
     def self.supported_schema_and_document_type?(schema_name, document_type)
-      disallowed_document_types = SCHEMAS_TO_DISALLOWED_DOCUMENT_TYPES[schema_name]
-      return false unless disallowed_document_types
+      document_type_check = SCHEMAS_TO_DOCUMENT_CHECK[schema_name]
+      return false unless document_type_check
 
-      disallowed_document_types.exclude?(document_type)
+      document_type_check.call(document_type)
     end
 
     def self.allowed_schemas
-      SCHEMAS_TO_DISALLOWED_DOCUMENT_TYPES.keys
+      SCHEMAS_TO_DOCUMENT_CHECK.keys
     end
   end
 end
