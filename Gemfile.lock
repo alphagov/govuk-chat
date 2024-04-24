@@ -202,6 +202,7 @@ GEM
       puma
       selenium-webdriver (>= 4.0)
     hashdiff (1.1.0)
+    hashie (5.0.0)
     http-accept (1.7.0)
     http-cookie (1.0.5)
       domain_name (~> 0.5)
@@ -725,6 +726,7 @@ DEPENDENCIES
   govuk_schemas
   govuk_sidekiq
   govuk_test
+  hashie
   inline_svg
   opensearch-ruby
   pg
