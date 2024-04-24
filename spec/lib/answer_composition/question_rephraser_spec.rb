@@ -16,7 +16,7 @@ RSpec.describe AnswerComposition::QuestionRephraser do
     let(:question) { conversation.questions.last }
     let(:expected_messages) do
       [
-        { role: "system", content: AnswerComposition::Prompts::QUESTION_REPHRASER },
+        { role: "system", content: system_prompt },
         { role: "user", content: "How do I pay my tax" },
         { role: "assistant", content:  "What type of tax" },
         { role: "user", content: "What types are there" },
@@ -76,7 +76,7 @@ RSpec.describe AnswerComposition::QuestionRephraser do
     context "with a long history" do
       let(:expected_messages) do
         [
-          { role: "system", content: AnswerComposition::Prompts::QUESTION_REPHRASER },
+          { role: "system", content: system_prompt },
           { role: "user", content: "Question 2" },
           { role: "assistant", content: "Answer 2" },
           { role: "user", content: "Question 3" },
@@ -104,5 +104,9 @@ RSpec.describe AnswerComposition::QuestionRephraser do
         expect(described_class.call(question:)).to eq(rephrased)
       end
     end
+  end
+
+  def system_prompt
+    Rails.configuration.llm_prompts.rephrase_question.system_prompt
   end
 end
