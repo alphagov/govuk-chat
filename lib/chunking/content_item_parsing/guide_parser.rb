@@ -1,8 +1,6 @@
 module Chunking
   module ContentItemParsing
     class GuideParser < BaseParser
-      ALLOWED_SCHEMAS = %w[guide].freeze
-
       def call
         parts = details_field!("parts")
 
@@ -33,8 +31,8 @@ module Chunking
         end
       end
 
-      def self.supported_schema_and_document_type?(schema_name, _document_type)
-        ALLOWED_SCHEMAS.include?(schema_name)
+      def self.allowed_schemas
+        %w[guide]
       end
     end
   end

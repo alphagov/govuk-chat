@@ -101,8 +101,8 @@ RSpec.describe Chunking::ContentItemParsing::GuideParser do
   end
 
   describe ".supported_schema_and_document_type?" do
-    it "returns true for ALLOWED_SCHEMAS" do
-      described_class::ALLOWED_SCHEMAS.each do |schema|
+    it "returns true for allowed_schemas" do
+      described_class.allowed_schemas.each do |schema|
         expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
       end
     end

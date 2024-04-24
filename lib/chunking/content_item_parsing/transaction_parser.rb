@@ -1,7 +1,5 @@
 module Chunking::ContentItemParsing
   class TransactionParser < BaseParser
-    ALLOWED_SCHEMAS = %w[transaction].freeze
-
     def call
       multiple_content_type_fields = %w[introductory_paragraph
                                         more_information
@@ -16,8 +14,8 @@ module Chunking::ContentItemParsing
       build_chunks(html)
     end
 
-    def self.supported_schema_and_document_type?(schema_name, _document_type)
-      ALLOWED_SCHEMAS.include?(schema_name)
+    def self.allowed_schemas
+      %w[transaction]
     end
   end
 end

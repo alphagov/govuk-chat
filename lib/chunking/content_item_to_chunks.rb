@@ -27,7 +27,7 @@ module Chunking
     def self.parser_map
       parser_list = []
       PARSERS_FOR_SCHEMAS.each do |parser|
-        parser_list += parser::ALLOWED_SCHEMAS.map { |schema| [schema, parser] }
+        parser_list += parser.allowed_schemas.map { |schema| [schema, parser] }
       end
       parser_list.to_h
     end
