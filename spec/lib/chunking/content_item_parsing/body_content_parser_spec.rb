@@ -73,7 +73,7 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
 
   describe ".supported_schema_and_document_type?" do
     it "returns true for schemas that don't care about document type" do
-      described_class.allowed_schemas.each do |schema|
+      described_class.allowed_schemas.reject { |s| %w[correspondence decision].include?(s) }.each do |schema|
         expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
       end
     end
@@ -85,6 +85,10 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
     %w[correspondence decision].each do |document_type|
       it "rejects '#{document_type}' document type for 'publication' schema" do
         expect(described_class.supported_schema_and_document_type?("publication", document_type)).to eq(false)
+      end
+
+      it "allows '#{document_type}' document type for other schemas" do
+        expect(described_class.supported_schema_and_document_type?("consultation", document_type)).to eq(true)
       end
     end
 
