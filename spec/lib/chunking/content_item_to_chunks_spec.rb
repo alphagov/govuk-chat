@@ -15,9 +15,9 @@ RSpec.describe Chunking::ContentItemToChunks do
     end
   end
 
-  describe ".parser_map" do
+  describe ".parsers_by_schema_name" do
     it "returns a hash of schema names that are all valid Publishing API ones" do
-      schemas = described_class.parser_map.keys
+      schemas = described_class.parsers_by_schema_name.keys
       all_valid_schema_names = GovukSchemas::Schema.schema_names
 
       unknown_schemas = schemas - all_valid_schema_names
@@ -26,7 +26,7 @@ RSpec.describe Chunking::ContentItemToChunks do
     end
 
     it "maps schemas defined in all parser classes" do
-      map = described_class.parser_map
+      map = described_class.parsers_by_schema_name
       expect(map).to include(
         "answer" => Chunking::ContentItemParsing::BodyContentParser,
         "guide" => Chunking::ContentItemParsing::GuideParser,

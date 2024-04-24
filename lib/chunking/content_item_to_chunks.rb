@@ -9,7 +9,7 @@ module Chunking
 
     def self.call(content_item)
       schema_name = content_item["schema_name"]
-      parser_class = parser_map[schema_name]
+      parser_class = parsers_by_schema_name[schema_name]
 
       raise "No content item parser configured for #{schema_name}" unless parser_class
 
@@ -17,14 +17,14 @@ module Chunking
     end
 
     def self.supported_schema_and_document_type?(schema_name, document_type)
-      parser = parser_map[schema_name]
+      parser = parsers_by_schema_name[schema_name]
 
       return false if parser.nil?
 
       parser.supported_schema_and_document_type?(schema_name, document_type)
     end
 
-    def self.parser_map
+    def self.parsers_by_schema_name
       parser_list = []
       PARSERS_FOR_SCHEMAS.each do |parser|
         parser_list += parser.allowed_schemas.map { |schema| [schema, parser] }
