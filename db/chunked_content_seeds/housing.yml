@@ -1,0 +1,59 @@
+- base_path: "/apply-for-council-housing"
+  document_type: "guide"
+  title: "How to Apply for Council Housing"
+  description: "Learn how to apply for council housing, including eligibility and the application process."
+  chunks:
+    - html_content: "<p>Applying for council housing involves checking your eligibility based on local council criteria, which often includes residency duration and financial need. Ensure you gather all necessary documentation before applying.</p>"
+      heading_hierarchy: ["Eligibility", "Application Process"]
+      url: "/apply-for-council-housing#application-process"
+    - html_content: "<p>Once you've submitted your application, the waiting time can vary significantly. Stay updated by regularly checking with your local council office.</p>"
+      heading_hierarchy: ["After Submission"]
+      url: "/apply-for-council-housing#after-submission"
+
+- base_path: "/renting-rights"
+  document_type: "guide"
+  title: "Understanding Your Rights as a Tenant"
+  description: "A guide to understanding the rights and responsibilities of tenants in rented properties."
+  chunks:
+    - html_content: "<p>As a tenant, you have the right to a safe and well-maintained living environment. Ensure your landlord is aware of any necessary repairs.</p>"
+      heading_hierarchy: ["Tenant Rights", "Repairs"]
+      url: "/renting-rights#repairs"
+    - html_content: "<p>Know your rights regarding eviction and rent increases. Legislation protects tenants from unfair treatment, so familiarize yourself with these laws.</p>"
+      heading_hierarchy: ["Tenant Rights", "Eviction"]
+      url: "/renting-rights#eviction"
+
+- base_path: "/buying-your-first-home"
+  document_type: "guide"
+  title: "Guide to Buying Your First Home"
+  description: "Essential tips and steps for first-time home buyers."
+  chunks:
+    - html_content: "<p>Start by assessing your financial readiness. This includes understanding your credit score, available savings for a down payment, and your overall budget for a new home.</p>"
+      heading_hierarchy: ["Getting Started", "Financial Readiness"]
+      url: "/buying-your-first-home#financial-readiness"
+    - html_content: "<p>Explore different mortgage options available for first-time buyers, including fixed-rate and adjustable-rate mortgages, to find what best suits your financial situation.</p>"
+      heading_hierarchy: ["Mortgage Options"]
+      url: "/buying-your-first-home#mortgage-options"
+
+- base_path: "/home-energy-grants"
+  document_type: "guide"
+  title: "Applying for Home Energy Grants"
+  description: "Find out how to apply for grants to improve the energy efficiency of your home."
+  chunks:
+    - html_content: "<p>Government grants for home energy improvements can help reduce your bills and increase your property's value. Check eligibility criteria on the official website.</p>"
+      heading_hierarchy: ["Overview", "Eligibility"]
+      url: "/home-energy-grants#eligibility"
+    - html_content: "<p>Application processes for energy grants may vary by region; always use official channels to submit your application to avoid scams.</p>"
+      heading_hierarchy: ["Application Process"]
+      url: "/home-energy-grants#application-process"
+
+- base_path: "/landlord-responsibilities"
+  document_type: "guide"
+  title: "Landlord Responsibilities and Duties"
+  description: "A comprehensive guide on what responsibilities landlords have towards their tenants."
+  chunks:
+    - html_content: "<p>Landlords must ensure that their properties meet safety standards and that all appliances are in good working order. Regular inspections are a key part of this responsibility.</p>"
+      heading_hierarchy: ["Safety Standards", "Inspections"]
+      url: "/landlord-responsibilities#inspections"
+    - html_content: "<p>Understanding legal obligations, including deposit protection and proper tenant communication, is crucial for maintaining a good landlord-tenant relationship.</p>"
+      heading_hierarchy: ["Legal Obligations"]
+      url: "/landlord-responsibilities#legal-obligations"

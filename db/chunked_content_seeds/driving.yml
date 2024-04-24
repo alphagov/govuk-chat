@@ -1,0 +1,59 @@
+- base_path: "/apply-for-a-driving-license"
+  document_type: "transaction"
+  title: "Apply for Your First Driving License"
+  description: "Learn how to apply for your first driving license, including the documents required and the application process."
+  chunks:
+    - html_content: "<p>Applying for your first driving license involves several steps including passing your theory test. Ensure you have all the necessary identification documents ready before you start the application process.</p>"
+      heading_hierarchy: ["Applying for a License", "First Time Application"]
+      url: "/apply-for-a-driving-license#first-time-application"
+    - html_content: "<p>Once you have passed your theory test, you can book your practical driving test. It's important to choose a time when you feel confident and ready to demonstrate your driving skills.</p>"
+      heading_hierarchy: ["Booking Your Test"]
+      url: "/apply-for-a-driving-license#booking-your-test"
+
+- base_path: "/renew-driving-license"
+  document_type: "transaction"
+  title: "Renew Your Driving License"
+  description: "Guidance on how to renew your driving license online or by post, including fees and required documents."
+  chunks:
+    - html_content: "<p>Renewing your driving license before it expires is crucial to ensure you're legally allowed to drive. Check the expiration date on your license and apply for renewal at least a week in advance.</p>"
+      heading_hierarchy: ["Renewal Process"]
+      url: "/renew-driving-license#renewal-process"
+    - html_content: "<p>You can renew your driving license online through the DVLA website. This method is faster and you can track the status of your application in real-time.</p>"
+      heading_hierarchy: ["Online Renewal"]
+      url: "/renew-driving-license#online-renewal"
+
+- base_path: "/change-address-driving-license"
+  document_type: "transaction"
+  title: "Change Address on Driving License"
+  description: "How to update your address on your driving license, which is a legal requirement if you move."
+  chunks:
+    - html_content: "<p>If you move to a new address, it is legally required to update this information on your driving license. Failing to do so can result in fines.</p>"
+      heading_hierarchy: ["Legal Requirements"]
+      url: "/change-address-driving-license#legal-requirements"
+    - html_content: "<p>The process to change your address on your driving license is straightforward. You can do it online via the DVLA website, or by post if you prefer.</p>"
+      heading_hierarchy: ["Change Process", "Online Update"]
+      url: "/change-address-driving-license#online-update"
+
+- base_path: "/check-driving-license"
+  document_type: "guide"
+  title: "Check Your Driving License Information"
+  description: "A guide on how to check the details on your driving license, including endorsements and points."
+  chunks:
+    - html_content: "<p>It's important to regularly check the details on your driving license, especially if you have endorsements or points that may affect your driving privileges.</p>"
+      heading_hierarchy: ["Checking License Details"]
+      url: "/check-driving-license#checking-license-details"
+    - html_content: "<p>You can view your driving license information, including any penalties or suspensions, by logging into the DVLA's online service.</p>"
+      heading_hierarchy: ["Online Services"]
+      url: "/check-driving-license#online-services"
+
+- base_path: "/report-lost-driving-license"
+  document_type: "transaction"
+  title: "Report a Lost or Stolen Driving License"
+  description: "Steps to take if your driving license is lost or stolen, to prevent identity theft and unauthorized use."
+  chunks:
+    - html_content: "<p>If your driving license is lost or stolen, report it immediately to prevent any potential misuse or identity theft.</p>"
+      heading_hierarchy: ["Immediate Actions"]
+      url: "/report-lost-driving-license#immediate-actions"
+    - html_content: "<p>After reporting the loss, you can apply for a replacement license through the DVLA website, ensuring you have all necessary documents to verify your identity.</p>"
+      heading_hierarchy: ["Replacement Process"]
+      url: "/report-lost-driving-license#replacement-process"
