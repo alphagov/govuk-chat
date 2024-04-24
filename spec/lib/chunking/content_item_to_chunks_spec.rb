@@ -1,4 +1,10 @@
 RSpec.describe Chunking::ContentItemToChunks do
+  describe "PARSERS_FOR_SCHEMAS" do
+    it "contains all BaseParser descendants" do
+      expect(described_class::PARSERS_FOR_SCHEMAS).to match_array(Chunking::ContentItemParsing::BaseParser.descendants)
+    end
+  end
+
   describe ".call" do
     it "returns an array of ContentItemChunk objects for a valid schema" do
       content_item = build(:notification_content_item, schema_name: "news_article")
@@ -27,19 +33,18 @@ RSpec.describe Chunking::ContentItemToChunks do
 
     it "maps schemas defined in all parser classes" do
       map = described_class.parsers_by_schema_name
-      expect(map).to include(
-        "answer" => Chunking::ContentItemParsing::BodyContentParser,
-        "guide" => Chunking::ContentItemParsing::GuideParser,
-        "transaction" => Chunking::ContentItemParsing::TransactionParser,
-      )
+      expect(map.values.uniq).to match_array(described_class::PARSERS_FOR_SCHEMAS)
     end
   end
 
   describe ".supported_schema_and_document_type?" do
-    it "returns true for schemas that can be handled by a parser" do
-      %w[answer guide transaction].each do |schema|
-        expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
-      end
+    it "delegates to the method on the mapped parser" do
+      allow(Chunking::ContentItemParsing::BodyContentArrayParser)
+        .to receive(:supported_schema_and_document_type?)
+        .and_return(true)
+      expect(described_class.supported_schema_and_document_type?("answer", "anything")).to eq(true)
+      expect(Chunking::ContentItemParsing::BodyContentArrayParser)
+        .to have_received(:supported_schema_and_document_type?).with("answer", "anything")
     end
 
     it "returns false for unsupported schemas" do
