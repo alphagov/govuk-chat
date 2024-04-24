@@ -1,4 +1,4 @@
-class ErrorsController < ApplicationController
+class ErrorsController < BaseController
   skip_before_action :verify_authenticity_token
 
   def bad_request

@@ -1,4 +1,4 @@
-class ChatController < ApplicationController
+class ChatController < BaseController
   rescue_from ActionController::Redirecting::UnsafeRedirectError do |e|
     logger.error("Unsuccessful unsafe redirect: #{e.message}")
     redirect_to chat_path

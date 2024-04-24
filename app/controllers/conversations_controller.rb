@@ -1,4 +1,4 @@
-class ConversationsController < ApplicationController
+class ConversationsController < BaseController
   before_action :require_chat_risks_understood
   before_action :find_conversation, only: %i[show update]
 
