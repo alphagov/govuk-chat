@@ -7,7 +7,6 @@ module Chunking::ContentItemParsing
       "case_study" => ANY_DOCUMENT_TYPE,
       "consultation" => ANY_DOCUMENT_TYPE,
       "detailed_guide" => ANY_DOCUMENT_TYPE,
-      "help_page" => ANY_DOCUMENT_TYPE,
       "hmrc_manual_section" => ANY_DOCUMENT_TYPE,
       "history" => ANY_DOCUMENT_TYPE,
       "manual" => ANY_DOCUMENT_TYPE,
