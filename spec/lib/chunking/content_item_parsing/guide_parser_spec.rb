@@ -22,6 +22,8 @@ RSpec.describe Chunking::ContentItemParsing::GuideParser do
     end
   end
 
+  it_behaves_like "a parser that allows .allowed_schemas"
+
   describe ".call" do
     it "converts the array of parts into an array of chunks" do
       parts = [
@@ -97,18 +99,6 @@ RSpec.describe Chunking::ContentItemParsing::GuideParser do
 
       expect { described_class.call(content_item) }
         .to raise_error("content type text/html not found in schema: guide")
-    end
-  end
-
-  describe ".supported_schema_and_document_type?" do
-    it "returns true for allowed_schemas" do
-      described_class.allowed_schemas.each do |schema|
-        expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
-      end
-    end
-
-    it "returns false for unsupported schemas" do
-      expect(described_class.supported_schema_and_document_type?("unknown", "anything")).to eq(false)
     end
   end
 end

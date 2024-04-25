@@ -18,6 +18,8 @@ RSpec.describe Chunking::ContentItemParsing::TransactionParser do
     end
   end
 
+  it_behaves_like "a parser that allows .allowed_schemas"
+
   describe ".call" do
     it "uses the introductory_paragraph, more_information, other_ways_to_apply and what_you_need_to_know fields for chunks" do
       details = {
@@ -108,18 +110,6 @@ RSpec.describe Chunking::ContentItemParsing::TransactionParser do
 
       expect { described_class.call(content_item) }
         .to raise_error("content type text/html not found in schema: transaction")
-    end
-  end
-
-  describe ".supported_schema_and_document_type?" do
-    it "returns true for allowed_schemas" do
-      described_class.allowed_schemas.each do |schema|
-        expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
-      end
-    end
-
-    it "returns false for unsupported schemas" do
-      expect(described_class.supported_schema_and_document_type?("unknown", "anything")).to eq(false)
     end
   end
 end
