@@ -1,0 +1,32 @@
+<%= content_for :title, "Questions" %>
+
+<%= render "govuk_publishing_components/components/table", {
+  head: [
+    {
+      text: "Question"
+    },
+    {
+      text: "Answer status",
+    },
+    {
+      text: "Actions",
+    }
+  ],
+  rows: @questions.map do |question|
+    answer = question.answer
+    [
+      {
+        text: question.message.truncate(100)
+      },
+      {
+        text: question.answer&.status,
+      },
+      {
+        text: link_to("View question", "#", class: "govuk-link") +
+          tag.br +
+          link_to("View conversation", "#", class: "govuk-link")
+      }
+    ]
+  end
+} %>
+
