@@ -30,6 +30,10 @@ module Chunking
           end
         end
       end
+
+      def self.allowed_schemas
+        %w[guide]
+      end
     end
   end
 end

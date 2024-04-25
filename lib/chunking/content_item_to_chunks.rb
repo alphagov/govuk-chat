@@ -1,46 +1,38 @@
 module Chunking
   class ContentItemToChunks
-    PARSERS_FOR_SCHEMAS = {
-      ContentItemParsing::BodyContentParser => %w[answer
-                                                  call_for_evidence
-                                                  case_study
-                                                  consultation
-                                                  detailed_guide
-                                                  help_page
-                                                  hmrc_manual_section
-                                                  history
-                                                  manual
-                                                  manual_section
-                                                  news_article
-                                                  publication
-                                                  service_manual_guide
-                                                  statistical_data_set
-                                                  statistics_announcement],
-      ContentItemParsing::GuideParser => %w[guide],
-      ContentItemParsing::TransactionParser => %w[transaction],
+    PARSERS_FOR_SCHEMAS = [
+      ContentItemParsing::BodyContentParser,
+      ContentItemParsing::GuideParser,
+      ContentItemParsing::TransactionParser,
       # TODO: establish all supported schemas and add parsers for them
-    }.freeze
+    ].freeze
 
     def self.call(content_item)
       schema_name = content_item["schema_name"]
-      parser_class = PARSERS_FOR_SCHEMAS.find { |_, v| v.include?(schema_name) }&.first
+      document_type = content_item["document_type"]
 
-      raise "No content item parser configured for #{schema_name}" unless parser_class
+      unless supported_schema_and_document_type?(schema_name, document_type)
+        raise "schema #{schema_name} with document_type #{document_type} is not supported for parsing"
+      end
 
+      parser_class = parsers_by_schema_name[schema_name]
       parser_class.call(content_item)
     end
 
     def self.supported_schema_and_document_type?(schema_name, document_type)
-      case schema_name
-      when "publication"
-        %w[correspondence decision].exclude?(document_type)
-      else
-        supported_schemas.include?(schema_name)
-      end
+      parser = parsers_by_schema_name[schema_name]
+
+      return false if parser.nil?
+
+      parser.supported_schema_and_document_type?(schema_name, document_type)
     end
 
-    def self.supported_schemas
-      PARSERS_FOR_SCHEMAS.values.flatten
+    def self.parsers_by_schema_name
+      parser_list = []
+      PARSERS_FOR_SCHEMAS.each do |parser|
+        parser_list += parser.allowed_schemas.map { |schema| [schema, parser] }
+      end
+      parser_list.to_h
     end
   end
 end
