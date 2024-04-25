@@ -7,10 +7,6 @@ module Chunking
         @content_item = content_item
       end
 
-      def call
-        raise "To be implemented in subclass"
-      end
-
       def self.supported_schema_and_document_type?(schema_name, _document_type)
         allowed_schemas.include?(schema_name)
       end
