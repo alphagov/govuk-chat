@@ -9,7 +9,6 @@ module Chunking::ContentItemParsing
       "detailed_guide" => ANY_DOCUMENT_TYPE,
       "hmrc_manual_section" => ANY_DOCUMENT_TYPE,
       "history" => ANY_DOCUMENT_TYPE,
-      "manual" => ANY_DOCUMENT_TYPE,
       "manual_section" => ANY_DOCUMENT_TYPE,
       "news_article" => ANY_DOCUMENT_TYPE,
       "publication" => ->(document_type) { %w[correspondence decision].exclude?(document_type) },
