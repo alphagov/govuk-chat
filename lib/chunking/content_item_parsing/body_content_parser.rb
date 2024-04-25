@@ -2,7 +2,7 @@ module Chunking::ContentItemParsing
   class BodyContentParser < BaseParser
     ANY_DOCUMENT_TYPE = ->(_) { true }.freeze
 
-    SCHEMAS_TO_DOCUMENT_CHECK = {
+    SCHEMAS_TO_DOCUMENT_TYPE_CHECK = {
       "answer" => ANY_DOCUMENT_TYPE,
       "call_for_evidence" => ANY_DOCUMENT_TYPE,
       "case_study" => ANY_DOCUMENT_TYPE,
@@ -33,14 +33,14 @@ module Chunking::ContentItemParsing
     end
 
     def self.supported_schema_and_document_type?(schema_name, document_type)
-      document_type_check = SCHEMAS_TO_DOCUMENT_CHECK[schema_name]
+      document_type_check = SCHEMAS_TO_DOCUMENT_TYPE_CHECK[schema_name]
       return false unless document_type_check
 
       document_type_check.call(document_type)
     end
 
     def self.allowed_schemas
-      SCHEMAS_TO_DOCUMENT_CHECK.keys
+      SCHEMAS_TO_DOCUMENT_TYPE_CHECK.keys
     end
   end
 end
