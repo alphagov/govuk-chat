@@ -30,3 +30,18 @@
   end
 } %>
 
+<%
+  pages = { }
+
+  pages[:previous_page] = {
+  url: admin_questions_path(page: @questions.prev_page),
+  label: "#{@questions.current_page - 1} of #{@questions.total_pages}",
+  title: "Previous page" } if @questions.prev_page
+
+  pages[:next_page] = {
+  url: admin_questions_path(page: @questions.next_page),
+  label: "#{@questions.current_page + 1} of #{@questions.total_pages}",
+  title: "Next page" } if @questions.next_page
+%>
+
+<%= render "govuk_publishing_components/components/previous_and_next_navigation", pages %>

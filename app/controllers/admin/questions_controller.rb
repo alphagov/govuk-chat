@@ -1,5 +1,7 @@
 class Admin::QuestionsController < Admin::BaseController
   def index
-    @questions = Question.includes(:answer).order(created_at: :desc)
+    @questions = Question.includes(:answer)
+                         .order(created_at: :desc)
+                         .page(params[:page])
   end
 end
