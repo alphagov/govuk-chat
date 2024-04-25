@@ -55,9 +55,9 @@ RSpec.describe Chunking::ContentItemToChunks do
       allow(Chunking::ContentItemParsing::BodyContentParser)
         .to receive(:supported_schema_and_document_type?)
         .and_return(true)
-      expect(described_class.supported_schema_and_document_type?("answer", "anything")).to eq(true)
+      expect(described_class.supported_schema_and_document_type?("consultation", "anything")).to eq(true)
       expect(Chunking::ContentItemParsing::BodyContentParser)
-        .to have_received(:supported_schema_and_document_type?).with("answer", "anything")
+        .to have_received(:supported_schema_and_document_type?).with("consultation", "anything")
     end
 
     it "returns false for unsupported schemas" do
