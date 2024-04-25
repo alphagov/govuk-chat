@@ -1,0 +1,59 @@
+- base_path: "/vat-rates"
+  document_type: "guide"
+  title: "VAT Rates"
+  description: "Learn about the different VAT rates applicable to various goods and services in the UK."
+  chunks:
+    - html_content: "<p>Understanding VAT (Value Added Tax) rates is crucial for businesses and consumers. The standard rate, reduced rate, and zero rate affect how much tax is applied to goods and services.</p>"
+      heading_hierarchy: ["VAT Basics"]
+      url: "/vat-rates#vat-basics"
+    - html_content: "<p>Each category of goods and services falls under specific VAT rates. Knowing these can help businesses charge the correct amount and avoid penalties.</p>"
+      heading_hierarchy: ["VAT Categories"]
+      url: "/vat-rates#vat-categories"
+
+- base_path: "/register-for-vat"
+  document_type: "transaction"
+  title: "Register for VAT"
+  description: "Steps to register your business for VAT in the UK."
+  chunks:
+    - html_content: "<p>Registering for VAT is a necessary step for businesses reaching the VAT threshold. This registration can be done online through the HMRC website.</p>"
+      heading_hierarchy: ["Registration Process"]
+      url: "/register-for-vat#registration-process"
+    - html_content: "<p>Once registered, businesses must comply with VAT reporting and payment requirements. Regular VAT returns keep your business in good standing with HMRC.</p>"
+      heading_hierarchy: ["After Registration"]
+      url: "/register-for-vat#after-registration"
+
+- base_path: "/vat-returns"
+  document_type: "guide"
+  title: "Filing VAT Returns"
+  description: "Guide on how to file VAT returns electronically."
+  chunks:
+    - html_content: "<p>Filing VAT returns accurately is essential for compliance. Electronic submissions through the HMRC portal are not only mandatory but also streamline the process.</p>"
+      heading_hierarchy: ["Filing Online"]
+      url: "/vat-returns#filing-online"
+    - html_content: "<p>Ensure all sales and purchases records are accurate before filing. Discrepancies can lead to audits and penalties.</p>"
+      heading_hierarchy: ["Record Keeping"]
+      url: "/vat-returns#record-keeping"
+
+- base_path: "/vat-reliefs"
+  document_type: "guide"
+  title: "VAT Reliefs"
+  description: "Understanding VAT reliefs available for businesses and individuals."
+  chunks:
+    - html_content: "<p>Certain goods, services, and individuals qualify for VAT reliefs, reducing the amount of VAT payable. These reliefs are designed to help specific sectors and activities.</p>"
+      heading_hierarchy: ["Eligibility for VAT Relief"]
+      url: "/vat-reliefs#eligibility-for-vat-relief"
+    - html_content: "<p>Applying for VAT relief involves specific criteria and documentation. Ensure you meet the requirements to benefit from these reliefs.</p>"
+      heading_hierarchy: ["Applying for Relief"]
+      url: "/vat-reliefs#applying-for-relief"
+
+- base_path: "/vat-exemptions"
+  document_type: "guide"
+  title: "VAT Exemptions"
+  description: "Explore the list of goods and services exempt from VAT in the UK."
+  chunks:
+    - html_content: "<p>Some goods and services are exempt from VAT, meaning no VAT is charged on them. This includes certain types of education, health services, and insurance.</p>"
+      heading_hierarchy: ["What is Exempt"]
+      url: "/vat-exemptions#what-is-exempt"
+    - html_content: "<p>Understanding exemptions is crucial for businesses to apply them correctly and avoid unnecessary VAT charges.</p>"
+      heading_hierarchy: ["Understanding Exemptions"]
+      url: "/vat-exemptions#understanding-exemptions"

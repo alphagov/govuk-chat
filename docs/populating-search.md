@@ -4,7 +4,15 @@ We use [OpenSearch](https://opensearch.org/) to store an index of GOV.UK content
 
 ## In development
 
-TODO
+This repo contains a number of seed files that can be used to populate a small search index of chunked content. These are stored in [db/chunked_content_seeds/](../db/chunked_content_seeds/) with a [README](../db/chunked_content_seeds/README.md) to explain how they are generated.
+
+These can be populated by running:
+
+```
+bundle exec rake search:populate_chunked_content_index_from_seeds
+```
+
+If you need to populate a development instance with actual GOV.UK content, for a more representative search experience there are [steps documented](./message-queue-consumption.md#consuming-queues-in-a-development-environment).
 
 ## In Heroku
 

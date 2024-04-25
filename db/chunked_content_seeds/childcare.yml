@@ -1,0 +1,59 @@
+- base_path: "/apply-for-childcare-support"
+  document_type: "transaction"
+  title: "Apply for Childcare Support"
+  description: "Learn how to apply for financial support for childcare, including eligibility and application process."
+  chunks:
+    - html_content: "<p>Applying for childcare support can significantly reduce your expenses. Ensure you meet the eligibility criteria, which include income level and child's age, before applying.</p>"
+      heading_hierarchy: ["Childcare Support", "Eligibility"]
+      url: "/apply-for-childcare-support/eligibility"
+    - html_content: "<p>Once you've confirmed your eligibility, gather necessary documents such as income statements and child's birth certificate. Submit your application through the designated online portal.</p>"
+      heading_hierarchy: ["Childcare Support", "Application Process"]
+      url: "/apply-for-childcare-support/application-process"
+
+- base_path: "/childcare-choices"
+  document_type: "guide"
+  title: "Explore Childcare Choices"
+  description: "A comprehensive guide to understanding different childcare options available to parents."
+  chunks:
+    - html_content: "<p>Understanding the various childcare options is crucial for making an informed decision. Options range from nurseries to private childminders, each with different benefits.</p>"
+      heading_hierarchy: ["Childcare Options"]
+      url: "/childcare-choices/childcare-options"
+    - html_content: "<p>Consider factors such as cost, location, and the type of care environment you prefer for your child. Visit local childcare providers to observe their facilities and programs.</p>"
+      heading_hierarchy: ["Choosing Childcare"]
+      url: "/childcare-choices/choosing-childcare"
+
+- base_path: "/free-childcare-entitlement"
+  document_type: "answer"
+  title: "Free Childcare Entitlement"
+  description: "Find out if you are eligible for free childcare and how to claim it."
+  chunks:
+    - html_content: "<p>Eligible families can receive free childcare for children aged 2 to 4 years. Check your eligibility based on your income and child's age.</p>"
+      heading_hierarchy: ["Eligibility"]
+      url: "/free-childcare-entitlement/eligibility"
+    - html_content: "<p>To claim your free childcare entitlement, contact your local council or visit their website for application details and required documentation.</p>"
+      heading_hierarchy: ["How to Claim"]
+      url: "/free-childcare-entitlement/how-to-claim"
+
+- base_path: "/childcare-safety-regulations"
+  document_type: "guide"
+  title: "Childcare Safety Regulations"
+  description: "Understand the safety regulations that childcare providers must adhere to."
+  chunks:
+    - html_content: "<p>Childcare providers are required to follow strict safety regulations to ensure a secure environment for children. These include staff-to-child ratios and facility safety standards.</p>"
+      heading_hierarchy: ["Safety Standards"]
+      url: "/childcare-safety-regulations/safety-standards"
+    - html_content: "<p>Regular inspections are conducted to ensure compliance with these regulations. As a parent, you have the right to request inspection reports from your childcare provider.</p>"
+      heading_hierarchy: ["Inspections and Compliance"]
+      url: "/childcare-safety-regulations/inspections-and-compliance"
+
+- base_path: "/childcare-provider-registration"
+  document_type: "transaction"
+  title: "Register as a Childcare Provider"
+  description: "Steps to register as a childcare provider in the UK."
+  chunks:
+    - html_content: "<p>To become a registered childcare provider, you must complete required training and certifications. These ensure you are prepared to offer safe and effective care.</p>"
+      heading_hierarchy: ["Training and Certification"]
+      url: "/childcare-provider-registration/training-and-certification"
+    - html_content: "<p>After completing your training, submit your registration application to the appropriate regulatory body. This process includes background checks and facility inspections.</p>"
+      heading_hierarchy: ["Registration Process"]
+      url: "/childcare-provider-registration/registration-process"
