@@ -1,21 +1,23 @@
 module Chunking::ContentItemParsing
   class BodyContentParser < BaseParser
+    ANY_DOCUMENT_TYPE = ->(_) { true }.freeze
+
     SCHEMAS_TO_DOCUMENT_CHECK = {
-      "answer" => ->(_) { true },
-      "call_for_evidence" => ->(_) { true },
-      "case_study" => ->(_) { true },
-      "consultation" => ->(_) { true },
-      "detailed_guide" => ->(_) { true },
-      "help_page" => ->(_) { true },
-      "hmrc_manual_section" => ->(_) { true },
-      "history" => ->(_) { true },
-      "manual" => ->(_) { true },
-      "manual_section" => ->(_) { true },
-      "news_article" => ->(_) { true },
+      "answer" => ANY_DOCUMENT_TYPE,
+      "call_for_evidence" => ANY_DOCUMENT_TYPE,
+      "case_study" => ANY_DOCUMENT_TYPE,
+      "consultation" => ANY_DOCUMENT_TYPE,
+      "detailed_guide" => ANY_DOCUMENT_TYPE,
+      "help_page" => ANY_DOCUMENT_TYPE,
+      "hmrc_manual_section" => ANY_DOCUMENT_TYPE,
+      "history" => ANY_DOCUMENT_TYPE,
+      "manual" => ANY_DOCUMENT_TYPE,
+      "manual_section" => ANY_DOCUMENT_TYPE,
+      "news_article" => ANY_DOCUMENT_TYPE,
       "publication" => ->(document_type) { %w[correspondence decision].exclude?(document_type) },
-      "service_manual_guide" => ->(_) { true },
-      "statistical_data_set" => ->(_) { true },
-      "statistics_announcement" => ->(_) { true },
+      "service_manual_guide" => ANY_DOCUMENT_TYPE,
+      "statistical_data_set" => ANY_DOCUMENT_TYPE,
+      "statistics_announcement" => ANY_DOCUMENT_TYPE,
     }.freeze
 
     def call
