@@ -3,7 +3,6 @@ module Chunking::ContentItemParsing
     ANY_DOCUMENT_TYPE = ->(_) { true }.freeze
 
     SCHEMAS_TO_DOCUMENT_TYPE_CHECK = {
-      "answer" => ANY_DOCUMENT_TYPE,
       "call_for_evidence" => ANY_DOCUMENT_TYPE,
       "case_study" => ANY_DOCUMENT_TYPE,
       "consultation" => ANY_DOCUMENT_TYPE,

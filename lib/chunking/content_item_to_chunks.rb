@@ -1,6 +1,7 @@
 module Chunking
   class ContentItemToChunks
     PARSERS_FOR_SCHEMAS = [
+      ContentItemParsing::BodyContentArrayParser,
       ContentItemParsing::BodyContentParser,
       ContentItemParsing::GuideParser,
       ContentItemParsing::TransactionParser,
