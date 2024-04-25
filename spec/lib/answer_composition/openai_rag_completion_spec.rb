@@ -5,7 +5,6 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
     let(:expected_message_history) do
       array_including({ "role" => "user", "content" => rephrased_question })
     end
-    let(:system_prompt_context) { "Title\nHeading 1\nHeading 2\nDescription\n<p>Some content</p>" }
     let(:opensearch_chunk) { build(:chunked_content_record).except(:openai_embedding).merge(_id: "1", score: 1.0) }
     let(:chunk_result) { Search::ChunkedContentRepository::Result.new(**opensearch_chunk) }
 
@@ -15,9 +14,15 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
     end
 
     it "sends OpenAI a series of messages combining system prompt, few shot messages and the user question" do
+      few_shots = llm_prompts.compose_answer.few_shots
       expected_message_history = [
         { role: "system", content: system_prompt("Title\nHeading 1\nHeading 2\nDescription\n<p>Some content</p>") },
-        AnswerComposition::FewShots::FEW_SHOTS,
+        { role: "user", content: few_shots.first.user },
+        { role: "assistant", content: few_shots.first.assistant },
+        { role: "user", content: few_shots.second.user },
+        { role: "assistant", content: few_shots.second.assistant },
+        { role: "user", content: few_shots.third.user },
+        { role: "assistant", content: few_shots.third.assistant },
         { role: "user", content: rephrased_question },
       ]
       .flatten
@@ -189,13 +194,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
   private
 
     def system_prompt(context)
-      <<~OUTPUT
-        #{AnswerComposition::Prompts::GOVUK_DESIGNER}
-
-        Context:
-        #{context}
-
-      OUTPUT
+      sprintf(llm_prompts.compose_answer.system_prompt, context:)
     end
 
     def expect_unsaved_answer_with_attributes(answer, attributes = {})
@@ -203,6 +202,10 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
 
       expect(answer).to be_a(Answer)
       expect(answer).to have_attributes(**expected_attributes)
+    end
+
+    def llm_prompts
+      Rails.configuration.llm_prompts
     end
   end
 end

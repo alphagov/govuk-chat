@@ -18,6 +18,7 @@ gem "govuk_app_config"
 gem "govuk_message_queue_consumer"
 gem "govuk_publishing_components"
 gem "govuk_sidekiq"
+gem "hashie"
 gem "inline_svg"
 gem "opensearch-ruby" # may need opensearch-aws-sigv4 for prod
 gem "pg"

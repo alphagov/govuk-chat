@@ -37,7 +37,7 @@ module AnswerComposition
 
     def messages
       [
-        { role: "system", content: AnswerComposition::Prompts::QUESTION_REPHRASER },
+        { role: "system", content: system_prompt },
       ] + message_history
     end
 
@@ -56,6 +56,10 @@ module AnswerComposition
 
     def first_question?
       question.conversation.questions.count == 1
+    end
+
+    def system_prompt
+      Rails.configuration.llm_prompts.rephrase_question.system_prompt
     end
   end
 end

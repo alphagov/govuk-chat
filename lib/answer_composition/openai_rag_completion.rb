@@ -55,20 +55,14 @@ module AnswerComposition
     def messages
       [
         { role: "system", content: system_prompt },
-        AnswerComposition::FewShots::FEW_SHOTS,
+        few_shots,
         { role: "user", content: question_message },
       ]
       .flatten
     end
 
     def system_prompt
-      <<~PROMPT
-        #{Prompts::GOVUK_DESIGNER}
-
-        Context:
-        #{context}
-
-      PROMPT
+      sprintf(llm_prompts.compose_answer.system_prompt, context:)
     end
 
     def rephrased_question
@@ -113,6 +107,19 @@ module AnswerComposition
         url = group.count == 1 ? group.first.url : base_path
         AnswerSource.new(url:, relevancy:)
       end
+    end
+
+    def few_shots
+      llm_prompts.compose_answer.few_shots.flat_map do |few_shot|
+        [
+          { role: "user", content: few_shot.user },
+          { role: "assistant", content: few_shot.assistant },
+        ]
+      end
+    end
+
+    def llm_prompts
+      Rails.configuration.llm_prompts
     end
   end
 end
