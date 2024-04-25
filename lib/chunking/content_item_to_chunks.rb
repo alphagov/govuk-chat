@@ -9,10 +9,10 @@ module Chunking
 
     def self.call(content_item)
       schema_name = content_item["schema_name"]
-      document_type = content_item["document_typ"]
+      document_type = content_item["document_type"]
 
       unless supported_schema_and_document_type?(schema_name, document_type)
-        raise "No content item parser configured for #{schema_name}"
+        raise "schema #{schema_name} with document_type #{document_type} is not supported for parsing"
       end
 
       parser_class = parsers_by_schema_name[schema_name]
