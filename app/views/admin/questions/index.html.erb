@@ -19,7 +19,7 @@
         text: question.message.truncate(100)
       },
       {
-        text: question.answer&.status,
+        text: format_answer_status_as_tag(question.answer&.status)
       },
       {
         text: link_to("View question", "#", class: "govuk-link") +
