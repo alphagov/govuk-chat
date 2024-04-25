@@ -9,7 +9,7 @@ module Chunking::ContentItemParsing
     end
 
     def self.allowed_schemas
-      %w[answer help_page manual]
+      %w[answer help_page manual manual_section]
     end
   end
 end
