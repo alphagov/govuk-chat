@@ -18,13 +18,7 @@ module Chunking::ContentItemParsing
     def call
       content = details_field!("body")
 
-      html = if content.is_a?(Array)
-               extract_html_from_multiple_content_types!(content)
-             else
-               content
-             end
-
-      build_chunks(html)
+      build_chunks(content)
     end
 
     def self.supported_schema_and_document_type?(schema_name, document_type)
