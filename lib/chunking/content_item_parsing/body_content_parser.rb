@@ -14,6 +14,7 @@ module Chunking::ContentItemParsing
       "news_article" => ANY_DOCUMENT_TYPE,
       "publication" => ->(document_type) { %w[correspondence decision].exclude?(document_type) },
       "service_manual_guide" => ANY_DOCUMENT_TYPE,
+      "speech" => ->(document_type) { %w[oral_statement written_statement].include?(document_type) },
       "statistical_data_set" => ANY_DOCUMENT_TYPE,
     }.freeze
 
