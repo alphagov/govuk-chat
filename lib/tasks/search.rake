@@ -22,4 +22,48 @@ namespace :search do
     Search::ChunkedContentRepository.new.create_index!
     puts "Index created"
   end
+
+  desc "Populate the Chunked Content OpenSearchIndex with data from seed files"
+  task populate_chunked_content_index_from_seeds: %i[environment create_chunked_content_index] do
+    if Rails.env.production?
+      puts "This task has been disabled for production environments"
+      exit 1
+    end
+
+    content = Dir["db/chunked_content_seeds/*.yml"].flat_map { |file| YAML.load_file(file) }
+
+    chunks = content.flat_map do |item|
+      faux_content_item = item.except("chunks").merge(
+        "content_id" => SecureRandom.uuid,
+        "locale" => "en",
+      )
+
+      item["chunks"].map.with_index do |chunk, index|
+        Chunking::ContentItemChunk.new(content_item: faux_content_item,
+                                       html_content: chunk["html_content"],
+                                       heading_hierarchy: chunk["heading_hierarchy"],
+                                       chunk_index: index,
+                                       chunk_url: chunk["url"])
+      end
+    end
+
+    embeddings = Search::TextToEmbedding.call(chunks.map(&:plain_content))
+    repository = Search::ChunkedContentRepository.new
+    indexed = 0
+
+    base_paths = chunks.map(&:base_path).uniq
+    deleted = base_paths.inject(0) do |memo, base_path|
+      memo + repository.delete_by_base_path(base_path)
+    end
+
+    puts "#{deleted} conflicting chunks deleted"
+
+    chunks.each.with_index do |chunk, index|
+      document = chunk.to_opensearch_hash.merge(openai_embedding: embeddings[index])
+      repository.index_document(chunk.id, document)
+      indexed += 1
+    end
+
+    puts "#{indexed} chunks indexed"
+  end
 end
