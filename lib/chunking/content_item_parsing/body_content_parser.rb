@@ -6,6 +6,8 @@ module Chunking::ContentItemParsing
       "call_for_evidence" => ANY_DOCUMENT_TYPE,
       "case_study" => ANY_DOCUMENT_TYPE,
       "consultation" => ANY_DOCUMENT_TYPE,
+      "corporate_information_page" => ANY_DOCUMENT_TYPE,
+      "worldwide_corporate_information_page" => ANY_DOCUMENT_TYPE,
       "detailed_guide" => ANY_DOCUMENT_TYPE,
       "hmrc_manual_section" => ANY_DOCUMENT_TYPE,
       "history" => ANY_DOCUMENT_TYPE,
