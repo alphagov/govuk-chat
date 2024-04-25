@@ -13,7 +13,6 @@ module Chunking::ContentItemParsing
       "publication" => ->(document_type) { %w[correspondence decision].exclude?(document_type) },
       "service_manual_guide" => ANY_DOCUMENT_TYPE,
       "statistical_data_set" => ANY_DOCUMENT_TYPE,
-      "statistics_announcement" => ANY_DOCUMENT_TYPE,
     }.freeze
 
     def call
