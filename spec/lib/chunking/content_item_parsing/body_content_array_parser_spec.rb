@@ -82,6 +82,7 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
          cma_case
          drcf_digital_markets_research
          drug_safety_update
+         flood_and_coastal_erosion_risk_management_research_report
          esi_fund
          export_health_certificate
          international_development_fund

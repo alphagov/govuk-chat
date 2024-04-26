@@ -10,6 +10,7 @@ module Chunking::ContentItemParsing
            drug_safety_update
            esi_fund
            export_health_certificate
+           flood_and_coastal_erosion_risk_management_research_report
            international_development_fund
            product_safety_alert_report_recall
            research_for_development_output].include?(document_type)
