@@ -77,7 +77,9 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
         expect(described_class.supported_schema_and_document_type?("unknown", "anything")).to eq(false)
       end
 
-      %w[business_finance_support_scheme ai_assurance_portfolio_technique].each do |document_type|
+      %w[ai_assurance_portfolio_technique
+         business_finance_support_scheme
+         esi_fund].each do |document_type|
         it "allows #{document_type} document type for 'specialist_document' schema" do
           expect(described_class.supported_schema_and_document_type?("specialist_document", document_type)).to eq(true)
         end
