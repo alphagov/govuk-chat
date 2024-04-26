@@ -6,7 +6,8 @@ module Chunking::ContentItemParsing
         %w[ai_assurance_portfolio_technique
            business_finance_support_scheme
            esi_fund
-           export_health_certificate].include?(document_type)
+           export_health_certificate
+           international_development_fund].include?(document_type)
       },
       "help_page" => ANY_DOCUMENT_TYPE,
       "manual" => ANY_DOCUMENT_TYPE,
