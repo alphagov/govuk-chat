@@ -2,6 +2,7 @@ module Chunking::ContentItemParsing
   class BodyContentArrayParser < BaseParser
     SCHEMAS_TO_DOCUMENT_TYPE_CHECK = {
       "answer" => ANY_DOCUMENT_TYPE,
+      "specialist_document" => ->(document_type) { %w[business_finance_support_scheme].include?(document_type) },
       "help_page" => ANY_DOCUMENT_TYPE,
       "manual" => ANY_DOCUMENT_TYPE,
       "manual_section" => ANY_DOCUMENT_TYPE,
