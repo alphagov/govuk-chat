@@ -7,7 +7,8 @@ module Chunking::ContentItemParsing
            business_finance_support_scheme
            esi_fund
            export_health_certificate
-           international_development_fund].include?(document_type)
+           international_development_fund
+           product_safety_alert_report_recall].include?(document_type)
       },
       "help_page" => ANY_DOCUMENT_TYPE,
       "manual" => ANY_DOCUMENT_TYPE,
