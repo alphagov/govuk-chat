@@ -1,5 +1,12 @@
 module Chunking::ContentItemParsing
   class BodyContentArrayParser < BaseParser
+    SCHEMAS_TO_DOCUMENT_TYPE_CHECK = {
+      "answer" => ANY_DOCUMENT_TYPE,
+      "help_page" => ANY_DOCUMENT_TYPE,
+      "manual" => ANY_DOCUMENT_TYPE,
+      "manual_section" => ANY_DOCUMENT_TYPE,
+    }.freeze
+
     def call
       content = details_field!("body")
 
@@ -8,8 +15,15 @@ module Chunking::ContentItemParsing
       build_chunks(html)
     end
 
+    def self.supported_schema_and_document_type?(schema_name, document_type)
+      document_type_check = SCHEMAS_TO_DOCUMENT_TYPE_CHECK[schema_name]
+      return false unless document_type_check
+
+      document_type_check.call(document_type)
+    end
+
     def self.allowed_schemas
-      %w[answer help_page manual manual_section]
+      SCHEMAS_TO_DOCUMENT_TYPE_CHECK.keys
     end
   end
 end
