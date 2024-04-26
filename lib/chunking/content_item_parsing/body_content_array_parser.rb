@@ -8,7 +8,8 @@ module Chunking::ContentItemParsing
            esi_fund
            export_health_certificate
            international_development_fund
-           product_safety_alert_report_recall].include?(document_type)
+           product_safety_alert_report_recall
+           research_for_development_output].include?(document_type)
       },
       "help_page" => ANY_DOCUMENT_TYPE,
       "manual" => ANY_DOCUMENT_TYPE,

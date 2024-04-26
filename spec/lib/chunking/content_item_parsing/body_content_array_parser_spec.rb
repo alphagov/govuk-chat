@@ -82,7 +82,8 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
          esi_fund
          export_health_certificate
          international_development_fund
-         product_safety_alert_report_recall].each do |document_type|
+         product_safety_alert_report_recall
+         research_for_development_output].each do |document_type|
         it "allows '#{document_type}' document type for 'specialist_document' schema" do
           expect(described_class.supported_schema_and_document_type?("specialist_document", document_type)).to eq(true)
         end
