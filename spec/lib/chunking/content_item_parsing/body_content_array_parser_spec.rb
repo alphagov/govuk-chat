@@ -79,6 +79,7 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
 
       %w[ai_assurance_portfolio_technique
          business_finance_support_scheme
+         cma_case
          esi_fund
          export_health_certificate
          international_development_fund
