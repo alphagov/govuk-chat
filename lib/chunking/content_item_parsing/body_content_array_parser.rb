@@ -7,6 +7,7 @@ module Chunking::ContentItemParsing
            business_finance_support_scheme
            cma_case
            drcf_digital_markets_research
+           drug_safety_update
            esi_fund
            export_health_certificate
            international_development_fund
