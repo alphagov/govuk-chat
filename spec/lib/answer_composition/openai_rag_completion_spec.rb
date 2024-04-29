@@ -162,7 +162,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           answer,
           {
             question:,
-            message: AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE,
+            message: described_class::CONTEXT_LENGTH_EXCEEDED_RESPONSE,
             status: "error_context_length_exceeded",
             error_message: "class: OpenAIClient::ContextLengthExceededError message: Error message",
           },
@@ -182,7 +182,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           answer,
           {
             question:,
-            message: AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE,
+            message: described_class::OPENAI_CLIENT_ERROR_RESPONSE,
             status: "error_answer_service_error",
             error_message: "class: OpenAIClient::ClientError message: Error message",
           },
