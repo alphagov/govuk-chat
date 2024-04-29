@@ -88,5 +88,45 @@ RSpec.describe "rake message_queue tasks" do
           .with(hash_including(queue_name: "custom_queue_name"))
       end
     end
+
+    it "defaults to 10 worker threads" do
+      ClimateControl.modify PUBLISHED_DOCUMENTS_MESSAGE_QUEUE_THREADS: nil do
+        Rake::Task[task_name].invoke
+
+        expect(GovukMessageQueueConsumer::Consumer)
+          .to have_received(:new)
+          .with(hash_including(worker_threads: 10))
+      end
+    end
+
+    it "configures the worker threads based on an env var" do
+      ClimateControl.modify PUBLISHED_DOCUMENTS_MESSAGE_QUEUE_THREADS: "1" do
+        Rake::Task[task_name].invoke
+
+        expect(GovukMessageQueueConsumer::Consumer)
+          .to have_received(:new)
+          .with(hash_including(worker_threads: 1))
+      end
+    end
+
+    it "defaults to prefetching 10 messages" do
+      ClimateControl.modify PUBLISHED_DOCUMENTS_MESSAGE_QUEUE_MAX_UNACKED: nil do
+        Rake::Task[task_name].invoke
+
+        expect(GovukMessageQueueConsumer::Consumer)
+          .to have_received(:new)
+          .with(hash_including(prefetch: 10))
+      end
+    end
+
+    it "configures the prefetching based on an env var" do
+      ClimateControl.modify PUBLISHED_DOCUMENTS_MESSAGE_QUEUE_MAX_UNACKED: "1" do
+        Rake::Task[task_name].invoke
+
+        expect(GovukMessageQueueConsumer::Consumer)
+          .to have_received(:new)
+          .with(hash_including(prefetch: 1))
+      end
+    end
   end
 end
