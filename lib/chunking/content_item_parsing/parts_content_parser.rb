@@ -1,6 +1,6 @@
 module Chunking
   module ContentItemParsing
-    class GuideParser < BaseParser
+    class PartsContentParser < BaseParser
       def call
         parts = details_field!("parts")
 

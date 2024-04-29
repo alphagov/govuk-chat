@@ -1,4 +1,4 @@
-RSpec.describe Chunking::ContentItemParsing::GuideParser do
+RSpec.describe Chunking::ContentItemParsing::PartsContentParser do
   include ContentItemParserExamples
 
   it_behaves_like "a chunking content item parser" do
