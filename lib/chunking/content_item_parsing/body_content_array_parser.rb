@@ -13,6 +13,7 @@ module Chunking::ContentItemParsing
            flood_and_coastal_erosion_risk_management_research_report
            international_development_fund
            marine_equipment_approved_recommendation
+           marine_notice
            product_safety_alert_report_recall
            research_for_development_output].include?(document_type)
       },

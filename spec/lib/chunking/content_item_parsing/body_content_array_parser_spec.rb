@@ -87,6 +87,7 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
          export_health_certificate
          international_development_fund
          marine_equipment_approved_recommendation
+         marine_notice
          product_safety_alert_report_recall
          research_for_development_output].each do |document_type|
         it "allows '#{document_type}' document type for 'specialist_document' schema" do
