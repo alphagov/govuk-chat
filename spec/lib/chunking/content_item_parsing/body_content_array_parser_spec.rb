@@ -87,6 +87,7 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
          esi_fund
          export_health_certificate
          international_development_fund
+         licence_transaction
          marine_equipment_approved_recommendation
          marine_notice
          product_safety_alert_report_recall
