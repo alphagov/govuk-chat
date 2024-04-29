@@ -6,12 +6,15 @@ module Chunking::ContentItemParsing
       "call_for_evidence" => ANY_DOCUMENT_TYPE,
       "case_study" => ANY_DOCUMENT_TYPE,
       "consultation" => ANY_DOCUMENT_TYPE,
+      "corporate_information_page" => ANY_DOCUMENT_TYPE,
+      "worldwide_corporate_information_page" => ANY_DOCUMENT_TYPE,
       "detailed_guide" => ANY_DOCUMENT_TYPE,
       "hmrc_manual_section" => ANY_DOCUMENT_TYPE,
       "history" => ANY_DOCUMENT_TYPE,
       "news_article" => ANY_DOCUMENT_TYPE,
       "publication" => ->(document_type) { %w[correspondence decision].exclude?(document_type) },
       "service_manual_guide" => ANY_DOCUMENT_TYPE,
+      "speech" => ->(document_type) { %w[oral_statement written_statement].include?(document_type) },
       "statistical_data_set" => ANY_DOCUMENT_TYPE,
     }.freeze
 
