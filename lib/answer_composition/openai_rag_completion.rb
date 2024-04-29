@@ -1,9 +1,16 @@
 module AnswerComposition
   class OpenAIRagCompletion
-    FORBIDDEN_WORDS_RESPONSE = "Sorry, I can't answer that. Ask me a question about " \
-      "business or trade and I'll use GOV.UK guidance to answer it.".freeze
-    NO_CONTENT_FOUND_REPONSE = "Sorry, I can't find anything on GOV.UK to help me answer your question. " \
-      "Could you rewrite it so I can try answering again?".freeze
+    FORBIDDEN_WORDS_RESPONSE = "<p>Sorry, I can't answer that. Ask me a question about " \
+      "business or trade and I'll use GOV.UK guidance to answer it.</p>".freeze
+    NO_CONTENT_FOUND_REPONSE = "<p>Sorry, I can't find anything on GOV.UK to help me answer your question. " \
+      "Could you rewrite it so I can try answering again?</p>".freeze
+    CONTEXT_LENGTH_EXCEEDED_RESPONSE = "Sorry, I can't answer that in one go. Could you make your question " \
+      "simpler or more specific, or ask each part separately?".freeze
+    OPENAI_CLIENT_ERROR_RESPONSE = <<~MESSAGE.freeze
+      <p>Sorry, there is a problem with OpenAI's API. Try again later.</p>
+      <p>We saved your conversation.</p>
+      <p>Check <a href="https://www.gov.uk/browse/business">GOV.UK guidance for businesses</a> if you need information now.</p>
+    MESSAGE
 
     OPENAI_MODEL = "gpt-3.5-turbo".freeze
 
@@ -25,14 +32,14 @@ module AnswerComposition
     rescue OpenAIClient::ContextLengthExceededError => e
       GovukError.notify(e)
       question.build_answer(
-        message: AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE,
+        message: CONTEXT_LENGTH_EXCEEDED_RESPONSE,
         status: "error_context_length_exceeded",
         error_message: error_message(e),
       )
     rescue OpenAIClient::RequestError => e
       GovukError.notify(e)
       question.build_answer(
-        message: AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE,
+        message: OPENAI_CLIENT_ERROR_RESPONSE,
         status: "error_answer_service_error",
         error_message: error_message(e),
       )

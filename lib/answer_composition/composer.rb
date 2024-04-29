@@ -1,6 +1,6 @@
 module AnswerComposition
   class Composer
-    UNSUCCESSFUL_REQUEST_MESSAGE = "There's been a problem retrieving a response to your question.".freeze
+    UNSUCCESSFUL_REQUEST_MESSAGE = "<p>There's been a problem retrieving a response to your question.</p>".freeze
 
     delegate :answer_strategy, to: :question
 
