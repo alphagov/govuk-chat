@@ -6,6 +6,7 @@ module Chunking::ContentItemParsing
         %w[ai_assurance_portfolio_technique
            business_finance_support_scheme
            cma_case
+           countryside_stewardship_grant
            drcf_digital_markets_research
            drug_safety_update
            esi_fund

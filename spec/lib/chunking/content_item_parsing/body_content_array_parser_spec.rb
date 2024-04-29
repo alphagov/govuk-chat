@@ -80,6 +80,7 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
       %w[ai_assurance_portfolio_technique
          business_finance_support_scheme
          cma_case
+         countryside_stewardship_grant
          drcf_digital_markets_research
          drug_safety_update
          flood_and_coastal_erosion_risk_management_research_report
