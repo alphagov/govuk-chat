@@ -32,7 +32,7 @@ module Chunking
       end
 
       def self.allowed_schemas
-        %w[guide]
+        %w[guide travel_advice]
       end
     end
   end
