@@ -15,7 +15,8 @@ module Chunking::ContentItemParsing
            marine_equipment_approved_recommendation
            marine_notice
            product_safety_alert_report_recall
-           research_for_development_output].include?(document_type)
+           research_for_development_output
+           service_standard_report].include?(document_type)
       },
       "help_page" => ANY_DOCUMENT_TYPE,
       "manual" => ANY_DOCUMENT_TYPE,

@@ -89,7 +89,8 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
          marine_equipment_approved_recommendation
          marine_notice
          product_safety_alert_report_recall
-         research_for_development_output].each do |document_type|
+         research_for_development_output
+         service_standard_report].each do |document_type|
         it "allows '#{document_type}' document type for 'specialist_document' schema" do
           expect(described_class.supported_schema_and_document_type?("specialist_document", document_type)).to eq(true)
         end
