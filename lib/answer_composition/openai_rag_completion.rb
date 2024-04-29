@@ -1,9 +1,9 @@
 module AnswerComposition
   class OpenAIRagCompletion
-    FORBIDDEN_WORDS_RESPONSE = "Sorry, I can't answer that. Ask me a question about " \
-      "business or trade and I'll use GOV.UK guidance to answer it.".freeze
-    NO_CONTENT_FOUND_REPONSE = "Sorry, I can't find anything on GOV.UK to help me answer your question. " \
-      "Could you rewrite it so I can try answering again?".freeze
+    FORBIDDEN_WORDS_RESPONSE = "<p>Sorry, I can't answer that. Ask me a question about " \
+      "business or trade and I'll use GOV.UK guidance to answer it.</p>".freeze
+    NO_CONTENT_FOUND_REPONSE = "<p>Sorry, I can't find anything on GOV.UK to help me answer your question. " \
+      "Could you rewrite it so I can try answering again?</p>".freeze
     CONTEXT_LENGTH_EXCEEDED_RESPONSE = "Sorry, I can't answer that in one go. Could you make your question " \
       "simpler or more specific, or ask each part separately?".freeze
     OPENAI_CLIENT_ERROR_RESPONSE = <<~MESSAGE.freeze
