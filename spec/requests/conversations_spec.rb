@@ -41,6 +41,29 @@ RSpec.describe "ConversationsController" do
         .and render_create_question_form
     end
 
+    context "when the chat API feature is enabled for specific users" do
+      let(:params) { { create_question: { user_question: "How much tax should I be paying?" } } }
+      let(:user_with_feature) { create(:user) }
+
+      before { Flipper.enable(:chat_api, user_with_feature) }
+
+      it "creates a question with the govuk_chat_api answer strategy for the specific user" do
+        login_as(user_with_feature)
+
+        expect { post create_conversation_path, params: }
+          .to change { Question.answer_strategy_govuk_chat_api.count }
+          .by(1)
+      end
+
+      it "creates a question with the open_ai_rag_completion strategy for a different user" do
+        login_as(create(:user))
+
+        expect { post create_conversation_path, params: }
+          .to change { Question.answer_strategy_open_ai_rag_completion.count }
+          .by(1)
+      end
+    end
+
     context "when the request format is JSON" do
       it "saves the question and returns a 201 with the correct body when the params are valid" do
         post create_conversation_path,
