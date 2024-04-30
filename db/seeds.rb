@@ -1,1 +1,1 @@
-User.find_or_create_by!(name: "chat_user", permissions: %w[developer-tools])
+User.find_or_create_by!(uid: SecureRandom.uuid, name: "chat_user", email: "chat.user@dev.gov.uk", permissions: %w[developer-tools])
