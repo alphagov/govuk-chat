@@ -77,22 +77,7 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
         expect(described_class.supported_schema_and_document_type?("unknown", "anything")).to eq(false)
       end
 
-      %w[ai_assurance_portfolio_technique
-         business_finance_support_scheme
-         cma_case
-         countryside_stewardship_grant
-         drcf_digital_markets_research
-         drug_safety_update
-         flood_and_coastal_erosion_risk_management_research_report
-         esi_fund
-         export_health_certificate
-         international_development_fund
-         licence_transaction
-         marine_equipment_approved_recommendation
-         marine_notice
-         product_safety_alert_report_recall
-         research_for_development_output
-         service_standard_report].each do |document_type|
+      described_class::ALLOWED_SPECIALIST_DOCUMENT_TYPES.each do |document_type|
         it "allows '#{document_type}' document type for 'specialist_document' schema" do
           expect(described_class.supported_schema_and_document_type?("specialist_document", document_type)).to eq(true)
         end
