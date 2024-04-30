@@ -1,6 +1,6 @@
 RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
   include ContentItemParserExamples
-  it_behaves_like "a chunking content item parser" do
+  it_behaves_like "a chunking content item parser", described_class.allowed_schemas do
     let(:body) do
       [
         {

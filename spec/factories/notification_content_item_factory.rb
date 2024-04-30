@@ -11,6 +11,7 @@ FactoryBot.define do
     content_id { :preserve }
     locale { "en" }
     base_path { :preserve }
+    document_type { :preserve }
     title { :preserve }
     description { :preserve }
     withdrawn { false }
@@ -28,7 +29,7 @@ FactoryBot.define do
     initialize_with do
       schema = GovukSchemas::Schema.find(notification_schema: schema_name)
       GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
-        %i[content_id locale base_path title description payload_version].each do |field|
+        %i[content_id locale base_path document_type title description payload_version].each do |field|
           item[field.to_s] = attributes[field] unless attributes[field] == :preserve
         end
 

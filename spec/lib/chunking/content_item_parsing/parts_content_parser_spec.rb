@@ -1,11 +1,11 @@
 RSpec.describe Chunking::ContentItemParsing::PartsContentParser do
   include ContentItemParserExamples
 
-  it_behaves_like "a chunking content item parser" do
+  it_behaves_like "a chunking content item parser", described_class.allowed_schemas do
     let(:content_item) do
       build(
         :notification_content_item,
-        schema_name: "guide",
+        schema_name:,
         details_merge: {
           "parts" => [
             "title" => "Part 1",
