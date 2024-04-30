@@ -30,7 +30,7 @@ RSpec.configure do |config|
   Kernel.srand(config.seed)
 
   config.include FactoryBot::Syntax::Methods
-  config.include StubFeatureFlags
+  config.include AuthenticationHelpers, type: :request
   config.include Capybara::RSpecMatchers, type: :request
   config.include StubOpenAIChat
   config.include StubOpenAIEmbedding
