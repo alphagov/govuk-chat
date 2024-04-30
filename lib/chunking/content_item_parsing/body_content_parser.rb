@@ -15,6 +15,7 @@ module Chunking::ContentItemParsing
       "service_manual_guide" => ANY_DOCUMENT_TYPE,
       "speech" => ->(document_type) { %w[oral_statement written_statement].include?(document_type) },
       "statistical_data_set" => ANY_DOCUMENT_TYPE,
+      "take_part" => ANY_DOCUMENT_TYPE,
     }.freeze
 
     def call
