@@ -146,7 +146,7 @@ GEM
       rack-protection (>= 1.5.3, < 5.0.0)
       rack-session (>= 1.0.2, < 3.0.0)
       sanitize (< 7)
-    gds-api-adapters (95.0.1)
+    gds-api-adapters (95.1.0)
       addressable
       link_header
       null_logger
