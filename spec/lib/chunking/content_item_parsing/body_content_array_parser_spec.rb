@@ -17,8 +17,6 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
     let(:content_item) { build(:notification_content_item, body:, ensure_valid: false) }
   end
 
-  it_behaves_like "a parser that allows .allowed_schemas"
-
   describe ".call" do
     it "raises an error if there is not a body field in the details hash" do
       content_item = build(:notification_content_item, details: {}, ensure_valid: false)
@@ -66,6 +64,28 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
 
       expect { described_class.call(content_item) }
         .to raise_error("content type text/html not found in schema: generic")
+    end
+
+    describe ".supported_schema_and_document_type?" do
+      described_class.allowed_schemas.without("specialist_document").each do |schema|
+        it "returns true for '#{schema}' schema" do
+          expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
+        end
+      end
+
+      it "returns false for unsupported schemas" do
+        expect(described_class.supported_schema_and_document_type?("unknown", "anything")).to eq(false)
+      end
+
+      described_class::ALLOWED_SPECIALIST_DOCUMENT_TYPES.each do |document_type|
+        it "allows '#{document_type}' document type for 'specialist_document' schema" do
+          expect(described_class.supported_schema_and_document_type?("specialist_document", document_type)).to eq(true)
+        end
+      end
+
+      it "disallows other document types for specialist_document" do
+        expect(described_class.supported_schema_and_document_type?("specialist_document", "anything")).to eq(false)
+      end
     end
   end
 end

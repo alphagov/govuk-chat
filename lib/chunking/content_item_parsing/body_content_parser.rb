@@ -1,7 +1,5 @@
 module Chunking::ContentItemParsing
   class BodyContentParser < BaseParser
-    ANY_DOCUMENT_TYPE = ->(_) { true }.freeze
-
     SCHEMAS_TO_DOCUMENT_TYPE_CHECK = {
       "call_for_evidence" => ANY_DOCUMENT_TYPE,
       "case_study" => ANY_DOCUMENT_TYPE,
