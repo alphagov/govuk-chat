@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_17_081500) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_22_125325) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -80,6 +80,20 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_17_081500) do
     t.string "answer_strategy", null: false
     t.index ["conversation_id"], name: "index_questions_on_conversation_id"
     t.index ["created_at"], name: "index_questions_on_created_at"
+  end
+
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "uid"
+    t.string "organisation_slug"
+    t.string "organisation_content_id"
+    t.string "app_name"
+    t.string "permissions", default: [], array: true
+    t.boolean "remotely_signed_out", default: false
+    t.boolean "disabled", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "answer_sources", "answers"

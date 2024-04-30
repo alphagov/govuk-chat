@@ -38,6 +38,9 @@ jobs:
         id: setup-postgres
         uses: alphagov/govuk-infrastructure/.github/actions/setup-postgres@main
 
+      - name: Setup Redis
+        uses: alphagov/govuk-infrastructure/.github/actions/setup-redis@main
+
       - name: Checkout repository
         uses: actions/checkout@v3
         with:

@@ -10,6 +10,9 @@
     "GOVUK_WEBSITE_ROOT": {
       "value": "https://www.gov.uk"
     },
+    "GDS_SSO_STRATEGY": {
+      "value": "mock"
+    },
     "MOUNT_COMPONENT_GUIDE": {
       "value": "true"
     },
