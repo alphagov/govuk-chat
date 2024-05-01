@@ -31,36 +31,37 @@ module Admin
         },
       ]
 
-      if answer.present?
-        rows << {
-          field: "Rephrased question",
-          value: answer&.rephrased_question,
-        }
-      end
-
-      rows << {
-        field: "Status",
-        value: format_answer_status_as_tag(answer&.status),
-      }
-
-      if answer.present?
-        rows << [
-          {
-            field: "Answer created at",
-            value: answer.created_at.to_fs(:time_and_date),
-          },
-          {
-            field: "Answer",
-            value: render_answer_message(answer.message) +
-              (render "govuk_publishing_components/components/details", {
-                title: "Raw response",
-              } do
-                 render("components/code_snippet", content: answer.message)
-               end
-              ),
-          },
-        ]
-      end
+      rows << if answer.present?
+                [
+                  {
+                    field: "Rephrased question",
+                    value: answer&.rephrased_question,
+                  },
+                  {
+                    field: "Status",
+                    value: format_answer_status_as_tag(answer.status),
+                  },
+                  {
+                    field: "Answer created at",
+                    value: answer.created_at.to_fs(:time_and_date),
+                  },
+                  {
+                    field: "Answer",
+                    value: render_answer_message(answer.message) +
+                      (render "govuk_publishing_components/components/details", {
+                        title: "Raw response",
+                      } do
+                         render("components/code_snippet", content: answer.message)
+                       end
+                      ),
+                  },
+                ]
+              else
+                {
+                  field: "Status",
+                  value: format_answer_status_as_tag(nil),
+                }
+              end
 
       if answer&.error_message.present?
         rows << {
