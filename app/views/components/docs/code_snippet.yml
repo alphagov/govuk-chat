@@ -1,0 +1,6 @@
+name: Code snippet
+description: Renders a code snippet
+examples:
+  default:
+    data:
+      content: This gets rendered inside the code tag in the pre.

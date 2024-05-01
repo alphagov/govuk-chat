@@ -55,7 +55,7 @@ module Admin
               (render "govuk_publishing_components/components/details", {
                 title: "Raw response",
               } do
-                 answer.message
+                 render("components/code_snippet", content: answer.message)
                end
               ),
           },
@@ -65,7 +65,8 @@ module Admin
       if answer&.error_message.present?
         rows << {
           field: "Error message",
-          value: answer.error_message,
+          value: render("components/code_snippet", content: answer.error_message),
+
         }
       end
 
