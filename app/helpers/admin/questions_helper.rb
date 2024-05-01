@@ -51,7 +51,7 @@ module Admin
           },
           {
             field: "Answer",
-            value: render_govspeak_component_for_answer_message(answer.message) +
+            value: render_answer_message(answer.message) +
               (render "govuk_publishing_components/components/details", {
                 title: "Raw response",
               } do
