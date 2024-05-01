@@ -1,6 +1,6 @@
 <%= render 'govuk_publishing_components/components/layout_for_public',
   product_name: "Chat",
-  environment: Rails.env,
+  environment: GovukPublishingComponents::AppHelpers::Environment.current_acceptance_environment,
   show_search: false,
   omit_feedback_form: true,
   omit_footer_border: true,

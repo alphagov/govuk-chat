@@ -29,6 +29,10 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :admin do
+    get "", to: "homepage#index", as: :homepage
+  end
+
   scope via: :all do
     match "/400" => "errors#bad_request"
     match "/403" => "errors#forbidden"

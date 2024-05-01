@@ -1,4 +1,4 @@
-class QuestionsController < ApplicationController
+class QuestionsController < BaseController
   before_action :require_chat_risks_understood
 
   def answer
