@@ -21,6 +21,7 @@ gem "govuk_publishing_components"
 gem "govuk_sidekiq"
 gem "hashie"
 gem "inline_svg"
+gem "kaminari"
 gem "opensearch-ruby" # may need opensearch-aws-sigv4 for prod
 gem "pg"
 gem "ruby-openai"
