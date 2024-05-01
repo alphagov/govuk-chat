@@ -3,7 +3,7 @@ module Chunking
     PARSERS_FOR_SCHEMAS = [
       ContentItemParsing::BodyContentArrayParser,
       ContentItemParsing::BodyContentParser,
-      ContentItemParsing::GuideParser,
+      ContentItemParsing::PartsContentParser,
       ContentItemParsing::TransactionParser,
       # TODO: establish all supported schemas and add parsers for them
     ].freeze

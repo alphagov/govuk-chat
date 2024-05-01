@@ -1,6 +1,6 @@
 module Chunking
   module ContentItemParsing
-    class GuideParser < BaseParser
+    class PartsContentParser < BaseParser
       def call
         parts = details_field!("parts")
 
@@ -32,7 +32,7 @@ module Chunking
       end
 
       def self.allowed_schemas
-        %w[guide]
+        %w[guide travel_advice]
       end
     end
   end
