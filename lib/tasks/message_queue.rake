@@ -13,6 +13,8 @@ namespace :message_queue do
       queue_name: ENV.fetch("PUBLISHED_DOCUMENTS_MESSAGE_QUEUE_NAME", "govuk_chat_published_documents"),
       processor: MessageQueue::MessageProcessor.new,
       logger: Rails.logger,
+      worker_threads: ENV.fetch("PUBLISHED_DOCUMENTS_MESSAGE_QUEUE_THREADS", "10").to_i,
+      prefetch: ENV.fetch("PUBLISHED_DOCUMENTS_MESSAGE_QUEUE_MAX_UNACKED", "10").to_i,
     ).run
   end
 end
