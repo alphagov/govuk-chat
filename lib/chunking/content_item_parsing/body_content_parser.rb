@@ -11,11 +11,13 @@ module Chunking::ContentItemParsing
       "html_publication" => ANY_DOCUMENT_TYPE,
       "history" => ANY_DOCUMENT_TYPE,
       "news_article" => ANY_DOCUMENT_TYPE,
+      "organisation" => ANY_DOCUMENT_TYPE,
       "publication" => ->(document_type) { %w[correspondence decision].exclude?(document_type) },
       "service_manual_guide" => ANY_DOCUMENT_TYPE,
       "speech" => ->(document_type) { %w[oral_statement written_statement].include?(document_type) },
       "statistical_data_set" => ANY_DOCUMENT_TYPE,
       "take_part" => ANY_DOCUMENT_TYPE,
+      "worldwide_organisation" => ANY_DOCUMENT_TYPE,
     }.freeze
 
     def call
