@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   namespace :admin do
     get "", to: "homepage#index", as: :homepage
     get "/questions", to: "questions#index", as: :questions
+    get "/questions/:id", to: "questions#show", as: :show_question
   end
 
   scope via: :all do

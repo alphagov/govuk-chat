@@ -38,4 +38,54 @@ RSpec.describe Admin::QuestionsHelper do
       end
     end
   end
+
+  describe "#question_show_summary_list_rows" do
+    let(:question) { build_stubbed(:question) }
+
+    it "returns the correct rows when question is unanswered" do
+      result = helper.question_show_summary_list_rows(question, nil)
+      expected_keys = [
+        "Question id",
+        "Question created at",
+        "Question",
+        "Status",
+      ]
+
+      expect(returned_keys(result)).to match_array(expected_keys)
+    end
+
+    it "returns the correct rows when the question has an answer" do
+      answer = build_stubbed(:answer)
+      result = helper.question_show_summary_list_rows(question, answer)
+      expected_keys = [
+        "Question id",
+        "Question created at",
+        "Question",
+        "Rephrased question",
+        "Status",
+        "Answer created at",
+        "Answer",
+      ]
+
+      expect(returned_keys(result)).to match_array(expected_keys)
+    end
+
+    it "returns an error message row if the answer has an error message" do
+      answer = build_stubbed(:answer, error_message: "An error message")
+      result = helper.question_show_summary_list_rows(question, answer)
+
+      expect(returned_keys(result)).to include("Error message")
+    end
+
+    it "returns a sources row when the question has sources" do
+      answer = build_stubbed(:answer, sources: [build_stubbed(:answer_source)])
+      result = helper.question_show_summary_list_rows(question, answer)
+
+      expect(returned_keys(result)).to include("Sources")
+    end
+  end
+
+  def returned_keys(result)
+    result.map { |row| row[:field] }
+  end
 end

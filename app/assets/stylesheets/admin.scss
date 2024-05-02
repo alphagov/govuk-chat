@@ -1,8 +1,12 @@
 @import "govuk_publishing_components/govuk_frontend_support";
 @import "govuk_publishing_components/component_support";
 
+@import "govuk_publishing_components/components/breadcrumbs";
+@import "govuk_publishing_components/components/details";
+@import "govuk_publishing_components/components/govspeak";
 @import "govuk_publishing_components/components/layout-for-admin";
 @import "govuk_publishing_components/components/layout-header";
 @import "govuk_publishing_components/components/previous-and-next-navigation";
 @import "govuk_publishing_components/components/skip-link";
+@import "govuk_publishing_components/components/summary-list";
 @import "govuk_publishing_components/components/table";
