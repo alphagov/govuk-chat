@@ -14,5 +14,76 @@ module Admin
         raise "Unknown status: #{status}"
       end
     end
+
+    def question_show_summary_list_rows(question, answer)
+      rows = [
+        {
+          field: "Question id",
+          value: question.id,
+        },
+        {
+          field: "Question created at",
+          value: question.created_at.to_fs(:time_and_date),
+        },
+        {
+          field: "Question",
+          value: question.message,
+        },
+      ]
+
+      rows << if answer.present?
+                [
+                  {
+                    field: "Rephrased question",
+                    value: answer&.rephrased_question,
+                  },
+                  {
+                    field: "Status",
+                    value: format_answer_status_as_tag(answer.status),
+                  },
+                  {
+                    field: "Answer created at",
+                    value: answer.created_at.to_fs(:time_and_date),
+                  },
+                  {
+                    field: "Answer",
+                    value: render_answer_message(answer.message) +
+                      (render "govuk_publishing_components/components/details", {
+                        title: "Raw response",
+                      } do
+                         render("components/code_snippet", content: answer.message)
+                       end
+                      ),
+                  },
+                ]
+              else
+                {
+                  field: "Status",
+                  value: format_answer_status_as_tag(nil),
+                }
+              end
+
+      if answer&.error_message.present?
+        rows << {
+          field: "Error message",
+          value: render("components/code_snippet", content: answer.error_message),
+
+        }
+      end
+
+      if answer&.sources.present?
+        source_links = answer.sources.map do |source|
+          url = "#{Plek.website_root}#{source.url}"
+          tag.a(url, href: url, class: "govuk-link")
+        end
+
+        rows << {
+          field: "Sources",
+          value: safe_join(source_links, tag.br),
+        }
+      end
+
+      rows.flatten
+    end
   end
 end

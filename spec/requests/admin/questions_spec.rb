@@ -36,4 +36,14 @@ RSpec.describe "Admin::QuestionsController" do
       end
     end
   end
+
+  describe "GET :show" do
+    it "renders the page successfully" do
+      question = create(:question)
+      get admin_show_question_path(question)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to have_content(question.message)
+    end
+  end
 end

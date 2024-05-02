@@ -9,22 +9,23 @@
       text: "Answer status",
     },
     {
-      text: "Actions",
+      text: "Created at"
     }
   ],
   rows: @questions.map do |question|
-    answer = question.answer
     [
       {
-        text: question.message.truncate(100)
+        text: link_to(
+          question.message.truncate(100),
+          admin_show_question_path(question),
+          class: "govuk-link"
+        )
       },
       {
         text: format_answer_status_as_tag(question.answer&.status)
       },
       {
-        text: link_to("View question", "#", class: "govuk-link") +
-          tag.br +
-          link_to("View conversation", "#", class: "govuk-link")
+        text: question.created_at.to_fs(:time_and_date)
       }
     ]
   end
