@@ -19,14 +19,14 @@ RSpec.describe ErrorsHelper do
 
       context "when the attribute matches the error attribute" do
         it "returns an array of error hashes, each href key will anchor to the target_id" do
-          expect(error_items(model, :required, "#target_id"))
+          expect(helper.error_items(model, :required, "#target_id"))
             .to eq([{ text: validation_error, href: "#target_id" }])
         end
       end
 
       context "when the attribute doesn't match the error attribute" do
         it "returns an array of error hashes, each href key will be nil" do
-          expect(error_items(model, :other_attr, "#target_id"))
+          expect(helper.error_items(model, :other_attr, "#target_id"))
             .to eq([{ text: validation_error, href: nil }])
         end
       end
@@ -36,7 +36,7 @@ RSpec.describe ErrorsHelper do
       it "returns an empty array" do
         model = model_klass.new(required: true).tap(&:validate)
 
-        expect(error_items(model, :confirmation, "#target_id")).to eq([])
+        expect(helper.error_items(model, :confirmation, "#target_id")).to eq([])
       end
     end
   end
