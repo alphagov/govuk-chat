@@ -1,48 +1,8 @@
 <%= content_for :title, "Questions" %>
 
-<%= render "govuk_publishing_components/components/table", {
-  head: [
-    {
-      text: "Question"
-    },
-    {
-      text: "Answer status",
-    },
-    {
-      text: "Created at"
-    }
-  ],
-  rows: @questions.map do |question|
-    [
-      {
-        text: link_to(
-          question.message.truncate(100),
-          admin_show_question_path(question),
-          class: "govuk-link"
-        )
-      },
-      {
-        text: format_answer_status_as_tag(question.answer&.status)
-      },
-      {
-        text: question.created_at.to_fs(:time_and_date)
-      }
-    ]
-  end
-} %>
 
-<%
-  pages = { }
-
-  pages[:previous_page] = {
-  url: admin_questions_path(page: @questions.prev_page),
-  label: "#{@questions.current_page - 1} of #{@questions.total_pages}",
-  title: "Previous page" } if @questions.prev_page
-
-  pages[:next_page] = {
-  url: admin_questions_path(page: @questions.next_page),
-  label: "#{@questions.current_page + 1} of #{@questions.total_pages}",
-  title: "Next page" } if @questions.next_page
-%>
-
-<%= render "govuk_publishing_components/components/previous_and_next_navigation", pages %>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <%= render "admin/shared/questions_table", questions: @questions %>
+  </div>
+</div>

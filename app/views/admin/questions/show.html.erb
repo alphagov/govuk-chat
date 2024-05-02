@@ -21,7 +21,7 @@
       heading_size: "xl",
       items: question_show_summary_list_rows(@question, @answer),
       edit: {
-        href: "#",
+        href: admin_show_conversation_path(@question.conversation),
         link_text: "View conversation",
       }
     } %>
