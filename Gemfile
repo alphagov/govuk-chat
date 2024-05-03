@@ -44,6 +44,7 @@ group :development, :test do
   gem "dotenv"
   gem "factory_bot_rails"
   gem "govuk_test"
+  gem "pry-byebug"
   gem "pry-rails"
   gem "rspec-rails"
   gem "rubocop-govuk", require: false
