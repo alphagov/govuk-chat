@@ -1,3 +1,13 @@
+.govuk-template {
+  overflow-y: hidden;
+}
+
+.gem-c-layout-for-public {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .gem-c-layout-header--experimental {
   .govuk-header__container {
     border-bottom: govuk-spacing(2) solid govuk-colour("yellow");
