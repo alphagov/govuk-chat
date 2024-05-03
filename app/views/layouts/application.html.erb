@@ -1,11 +1,33 @@
+<% content_for :custom_header do %>
+  <%= render "govuk_publishing_components/components/layout_header", {
+    environment: "experimental",
+    product_name: "Chat",
+    navigation_items: [
+      {
+        text: "About",
+        href: "/about"
+      },
+      {
+        text: "Privacy",
+        href: "/privacy"
+      },
+      {
+        text: "Support",
+        href: "/support"
+      }
+    ],
+  } %>
+<% end %>
+
 <%= render 'govuk_publishing_components/components/layout_for_public',
   product_name: "Chat",
   environment: GovukPublishingComponents::AppHelpers::Environment.current_acceptance_environment,
   show_search: false,
   omit_feedback_form: true,
   omit_footer_border: true,
-  hide_footer_links: true do %>
-
+  hide_footer_links: true,
+  blue_bar: false do 
+%>
   <div class="govuk-width-container">
     <%= yield(:back_link) %>
 

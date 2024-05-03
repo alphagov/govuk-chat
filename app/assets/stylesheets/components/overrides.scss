@@ -1,0 +1,35 @@
+.gem-c-layout-header--experimental {
+  .govuk-header__container {
+    border-bottom: govuk-spacing(2) solid govuk-colour("yellow");
+  }
+
+  .govuk-tag {
+    background-color: govuk-tint(govuk-colour("yellow"), 75%);
+    color: govuk-colour("black");
+  }
+
+  .govuk-header__content {
+    @include govuk-media-query($until: desktop) {
+      float: none;
+      display: block;
+    }
+  }
+
+  .govuk-header__navigation-item {
+    @include govuk-media-query($until: desktop) {
+      display: inline-block;
+      margin-right: govuk-spacing(4);
+    }
+  }
+
+  .govuk-header__product-name.gem-c-header__product-name {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 1.5rem;
+  }
+
+  .govuk-header__menu-button.gem-c-header__menu-button {
+    top: govuk-spacing(5);
+    padding-left: govuk-spacing(2);
+  }
+}
