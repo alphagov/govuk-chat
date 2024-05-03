@@ -1,0 +1,24 @@
+.app-c-conversation-layout--chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-x: hidden;
+}
+
+.app-c-conversation-layout__wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  padding-top: govuk-spacing(8);
+  min-height: 300px;
+}
+
+.app-c-conversation-layout__message-container {
+  overflow-y: auto;
+}
+
+.app-c-conversation-layout__flex-container {
+  display: flex;
+  justify-content: center;
+}
