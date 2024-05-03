@@ -44,7 +44,13 @@ Rails.application.routes.draw do
   end
 
   constraints(GDS::SSO::AuthorisedUserConstraint.new(User::Permissions::DEVELOPER_TOOLS)) do
-    mount Flipper::UI.app(Flipper) => "/flipper"
+    mount Flipper::UI.app(Flipper, {
+      # GOV.UK infrastructure causes false positives on IP spoofing
+      # We can remove this when X-Real-IP reflects the user client IP and the following is changed:
+      # https://github.com/alphagov/govuk-helm-charts/blob/75c809ab1dda3039299ef477f59d576ff96d2463/charts/generic-govuk-app/templates/nginx-configmap.yaml#L110
+      rack_protection: { except: %i[ip_spoofing] },
+    }) => "/flipper"
+
     mount Sidekiq::Web => "/sidekiq"
   end
 
