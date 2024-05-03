@@ -1,5 +1,6 @@
 <%= content_for :title, "GOV.UK Chat" %>
 <%= content_for :main_class, "app-c-conversation-layout app-c-conversation-layout--chat" %>
+<%= content_for :visually_hidden_class, "govuk-visually-hidden" %>
 <%= content_for :error_summary do %>
   <% if @create_question.errors.any? %>
     <%= render "govuk_publishing_components/components/error_summary", {
