@@ -77,6 +77,24 @@ RSpec.describe MessageQueue::MessageProcessor do
       end
     end
 
+    context "when a message payload is a substitute" do
+      let(:content_item) { build(:notification_content_item, schema_name: "substitute") }
+
+      let(:message) { create_mock_message(content_item) }
+
+      it "acknowledges the messages" do
+        expect { described_class.new.process(message) }
+          .to change(message, :acked?)
+      end
+
+      it "writes to the log" do
+        allow(Rails.logger).to receive(:info)
+        described_class.new.process(message)
+        expect(Rails.logger).to have_received(:info)
+          .with("{#{content_item['base_path']}, #{content_item['content_id']}, #{content_item['locale']}} ignored as a substitute")
+      end
+    end
+
     context "when the message contains a payload version older than what we have stored" do
       let(:base_path) { "/path" }
 

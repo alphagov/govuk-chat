@@ -12,6 +12,12 @@ module MessageQueue
         return
       end
 
+      if payload["schema_name"] == "substitute"
+        logger.info("#{content_identifier(payload)} ignored as a substitute")
+        message.ack
+        return
+      end
+
       lock_for_base_path(base_path) do |base_path_version|
         payload_version = payload["payload_version"].to_i
 
