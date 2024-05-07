@@ -1,17 +1,32 @@
 module Admin
   module QuestionsHelper
-    def format_answer_status_as_tag(status)
-      case status
-      when "success"
-        tag.span("Success", class: "govuk-tag govuk-tag--green")
-      when "abort_forbidden_words", "abort_no_govuk_content"
-        tag.span("Abort", class: "govuk-tag govuk-tag--orange")
-      when "error_answer_service_error", "error_context_length_exceeded", "error_non_specific"
-        tag.span("Error", class: "govuk-tag govuk-tag--red")
-      when nil
-        tag.span("Pending", class: "govuk-tag govuk-tag--yellow")
+    def format_answer_status_as_tag(status, with_description_suffix: false)
+      label, colour, description = case status
+                                   when "success"
+                                     %w[Success green]
+                                   when "abort_forbidden_words"
+                                     ["Abort", "orange", "forbidden words in question"]
+                                   when "abort_no_govuk_content"
+                                     ["Abort", "orange", "no GOV.UK content found"]
+                                   when "error_answer_service_error"
+                                     ["Error", "red", "received error from LLM"]
+                                   when "error_context_length_exceeded"
+                                     ["Error", "red", "too many tokens sent to LLM"]
+                                   when "error_non_specific"
+                                     ["Error", "red", "unexpected system error"]
+                                   when nil
+                                     %w[Pending yellow]
+                                   else
+                                     raise "Unknown status: #{status}"
+                                   end
+
+      tag_title = description ? "#{label} - #{description}" : label.to_s
+      tag_el = tag.span(label, title: tag_title, class: "govuk-tag govuk-tag--#{colour}")
+
+      if description && with_description_suffix
+        safe_join([tag_el, " - #{description}"])
       else
-        raise "Unknown status: #{status}"
+        tag_el
       end
     end
 
@@ -39,7 +54,7 @@ module Admin
                   },
                   {
                     field: "Status",
-                    value: format_answer_status_as_tag(answer.status),
+                    value: format_answer_status_as_tag(answer.status, with_description_suffix: true),
                   },
                   {
                     field: "Answer created at",
@@ -59,7 +74,7 @@ module Admin
               else
                 {
                   field: "Status",
-                  value: format_answer_status_as_tag(nil),
+                  value: format_answer_status_as_tag(nil, with_description_suffix: true),
                 }
               end
 
