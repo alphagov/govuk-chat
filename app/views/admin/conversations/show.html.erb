@@ -1,0 +1,22 @@
+<%= content_for :breadcrumbs do %>
+  <%= render "govuk_publishing_components/components/breadcrumbs", {
+    collapse_on_mobile: true,
+    breadcrumbs: [
+      {
+        title: "Questions",
+        url: admin_questions_path
+      },
+      {
+        title: "Conversation",
+      }
+    ]
+  } %>
+<% end %>
+
+<%= content_for :title, "Conversation" %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <%= render "admin/shared/questions_table", questions: @questions %>
+  </div>
+</div>

@@ -8,7 +8,7 @@ RSpec.describe "Admin user views conversation history" do
     when_i_click_to_view_a_question
     then_i_see_that_questions_answer
     when_i_click_to_view_conversation
-    # then_i_see_the_other_questions_for_this_conversation
+    then_i_see_the_other_questions_for_this_conversation
   end
 
   def given_i_am_an_admin
@@ -19,6 +19,7 @@ RSpec.describe "Admin user views conversation history" do
     conversation = build(:conversation)
     @question1 = create(:question, conversation:)
     @question2 = create(:question, :with_answer, conversation:)
+    @question3 = create(:question)
   end
 
   def when_i_visit_the_admin_area
@@ -32,6 +33,7 @@ RSpec.describe "Admin user views conversation history" do
   def then_i_see_the_most_recent_questions
     expect(page).to have_content(@question1.message)
     expect(page).to have_content(@question2.message)
+    expect(page).to have_content(@question3.message)
   end
 
   def when_i_click_to_view_a_question
@@ -44,5 +46,11 @@ RSpec.describe "Admin user views conversation history" do
 
   def when_i_click_to_view_conversation
     click_link "View conversation"
+  end
+
+  def then_i_see_the_other_questions_for_this_conversation
+    expect(page).to have_content(@question1.message)
+    expect(page).to have_content(@question2.message)
+    expect(page).not_to have_content(@question3.message)
   end
 end
