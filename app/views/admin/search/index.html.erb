@@ -1,0 +1,17 @@
+<%= content_for :title, "Search RAG index" %>
+
+
+<%= form_with url: admin_search_url, method: :get do |f| %>
+    <%= render "govuk_publishing_components/components/search", {
+        label_text: "Text to search for",
+        inline_label: false,
+        name: "search_text",
+        value: @search_text,
+      } %>
+<% end %>
+
+<%= render "govuk_publishing_components/components/table", {
+    head: [{ text: "Title" }, { text: "Score" }],
+    rows: @search_results,
+} %>
+
