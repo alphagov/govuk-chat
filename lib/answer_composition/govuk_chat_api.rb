@@ -9,7 +9,7 @@ module AnswerComposition
     def call
       answer = question.build_answer(message: response["answer"], status: "success")
       response["sources"].each.with_index do |url, index|
-        answer.sources.build(url:, relevancy: index)
+        answer.sources.build(url: return_base_path(url), relevancy: index)
       end
       answer
     end
@@ -32,6 +32,10 @@ module AnswerComposition
         faraday.headers["Accept"] = "application/json"
         faraday.set_basic_auth(ENV["CHAT_API_USERNAME"], ENV["CHAT_API_PASSWORD"])
       end
+    end
+
+    def return_base_path(url)
+      URI.parse(url).path
     end
   end
 end

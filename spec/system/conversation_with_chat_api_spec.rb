@@ -46,7 +46,7 @@ RSpec.describe "Conversation with chat-api" do
     .to_return({
       body: {
         answer: "This is a response from chat-api",
-        sources: ["https://example.com", "https://example.org"],
+        sources: ["https://gov.uk/taxes", "https://gov.uk/vat"],
       }.to_json,
     })
   end
@@ -81,8 +81,8 @@ RSpec.describe "Conversation with chat-api" do
   end
 
   def and_i_can_see_the_sources
-    expect(page).to have_link("https://example.com", visible: :hidden)
-    expect(page).to have_link("https://example.org", visible: :hidden)
+    expect(page).to have_link("#{Plek.website_root}/taxes", visible: :hidden)
+    expect(page).to have_link("#{Plek.website_root}/vat", visible: :hidden)
   end
 
   def when_i_enter_a_second_question
