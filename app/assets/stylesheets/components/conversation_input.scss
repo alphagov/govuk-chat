@@ -41,7 +41,7 @@
   cursor: pointer;
 
   &:hover {
-    background-color: govuk-colour("dark-blue");
+    background-color: govuk-shade(govuk-colour("blue"), 20%);
   }
 
   &:focus {
