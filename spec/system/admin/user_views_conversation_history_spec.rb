@@ -45,7 +45,7 @@ RSpec.describe "Admin user views conversation history" do
   end
 
   def when_i_click_to_view_conversation
-    click_link "View conversation"
+    click_link @question2.conversation_id
   end
 
   def then_i_see_the_other_questions_for_this_conversation

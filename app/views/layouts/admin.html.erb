@@ -1,7 +1,7 @@
 <%= render "govuk_publishing_components/components/layout_for_admin", {
   environment: GovukPublishingComponents::AppHelpers::Environment.current_acceptance_environment,
   product_name: "Chat Admin",
-  browser_title: "Chat Admin",
+  browser_title: yield(:title),
   js_filename: "admin",
   css_filename: "admin"
 } do %>

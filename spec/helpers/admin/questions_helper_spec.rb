@@ -39,11 +39,13 @@ RSpec.describe Admin::QuestionsHelper do
   end
 
   describe "#question_show_summary_list_rows" do
-    let(:question) { build_stubbed(:question) }
+    let(:question) { create(:question) }
 
     it "returns the correct rows when question is unanswered" do
       result = helper.question_show_summary_list_rows(question, nil)
       expected_keys = [
+        "Conversation id",
+        "Question number",
         "Question id",
         "Question created at",
         "Question",
@@ -57,6 +59,8 @@ RSpec.describe Admin::QuestionsHelper do
       answer = build_stubbed(:answer)
       result = helper.question_show_summary_list_rows(question, answer)
       expected_keys = [
+        "Conversation id",
+        "Question number",
         "Question id",
         "Question created at",
         "Question",
