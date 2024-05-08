@@ -12,6 +12,7 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
     context "with search_text in params" do
       let(:search_text) { "how do I pay tax" }
       let(:openai_embedding) { mock_openai_embedding(search_text) }
+      let(:chunk_to_find) { build(:chunked_content_record, title: "Looking for this one", heading_hierarchy: ["Main header", "Sub header"], openai_embedding:) }
 
       before do
         allow(Search::TextToEmbedding)
@@ -20,7 +21,7 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
           .and_return(openai_embedding)
 
         populate_chunked_content_index([
-          build(:chunked_content_record, title: "Looking for this one", openai_embedding:),
+          chunk_to_find,
           build(:chunked_content_record, title: "Shouldn't find this"),
         ])
       end
@@ -35,7 +36,12 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
       it "renders a list of search results" do
         get admin_search_path, params: { search_text: }
 
-        expect(response.body).to include_search_result(text: "Looking for this one", score: 1.0)
+        expect(response.body).to include_search_result(
+          title: "Looking for this one",
+          heading: "Sub header",
+          text: chunk_to_find[:plain_content].truncate(100),
+          score: 1.0,
+        )
       end
     end
 
@@ -45,8 +51,11 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
       have_selector("input[name='search_text'][value='#{value}']")
     end
 
-    def include_search_result(text:, score:)
-      have_selector("td", text:).and have_selector("td", text: score)
+    def include_search_result(title:, heading:, text:, score:)
+      have_selector("td", text: title)
+        .and have_selector("td", text: heading)
+        .and have_selector("td", text:)
+        .and have_selector("td", text: score)
     end
   end
 end
