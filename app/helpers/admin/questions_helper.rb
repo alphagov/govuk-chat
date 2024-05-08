@@ -31,7 +31,16 @@ module Admin
     end
 
     def question_show_summary_list_rows(question, answer)
+      conversation = question.conversation
       rows = [
+        {
+          field: "Conversation id",
+          value: link_to(conversation.id, admin_show_conversation_path(conversation), title: "View whole conversation", class: "govuk-link"),
+        },
+        {
+          field: "Question number",
+          value: "#{conversation.questions.find_index(question) + 1} of #{conversation.questions.count}",
+        },
         {
           field: "Question id",
           value: question.id,
