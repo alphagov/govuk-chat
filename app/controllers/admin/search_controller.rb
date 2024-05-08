@@ -13,6 +13,17 @@ private
   end
 
   def map_result(result)
-    [{ text: result.title }, { text: result.score, format: "numeric" }]
+    [
+      { text: result.title },
+      { text: result.base_path },
+      { text: format_content(result.plain_content) },
+      { text: result.score, format: "numeric" },
+    ]
+  end
+
+  def format_content(content)
+    return content if content.length < 50
+
+    "#{content.truncate_words(10)}#{content.last(50)}"
   end
 end

@@ -11,7 +11,10 @@
 <% end %>
 
 <%= render "govuk_publishing_components/components/table", {
-    head: [{ text: "Title" }, { text: "Score" }],
+    head: [{ text: "Title" },
+           { text: "Base path"},
+           { text: "Text" },
+           { text: "Score", format: "numeric" },],
     rows: @search_results,
 } %>
 
