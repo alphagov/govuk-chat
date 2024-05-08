@@ -15,6 +15,11 @@
            { text: "Base path"},
            { text: "Text" },
            { text: "Score", format: "numeric" },],
-    rows: @search_results,
+    rows: @search_results.map do |result|
+            [{ text: result.title },
+             { text: result.base_path },
+             { text: result.plain_content.truncate(100) },
+             { text: result.score, format: "numeric" },]
+          end
 } %>
 
