@@ -16,6 +16,9 @@
   .govuk-tag {
     background-color: govuk-tint(govuk-colour("yellow"), 75%);
     color: govuk-colour("black");
+    text-transform: capitalize;
+    @include govuk-font($size: 19, $weight: regular);
+    letter-spacing: 0;
   }
 
   .govuk-header__content {
