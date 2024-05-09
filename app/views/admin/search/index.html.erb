@@ -9,12 +9,7 @@
         value: @search_text,
     } %>
 <% end %>
-<% if @search_text.blank? %>
-    <%= render "govuk_publishing_components/components/notice", {
-        title: "No search performed",
-        description: "Please use the search box above to display results"
-    } %>
-<% else %>
+<% if @search_text.present? %>
     <% if @search_results.empty? %>
         <%= render "govuk_publishing_components/components/notice", {
             title: "No results have been found for your query",
