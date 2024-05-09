@@ -22,6 +22,9 @@
     "BASIC_AUTH_PASSWORD": {
       "required": true
     },
+    "AVAILABLE_WITHOUT_SIGNON_AUTHENTICATION": {
+      "value": "true"
+    },
     "CHAT_API_URL": {
       "required": true
     },

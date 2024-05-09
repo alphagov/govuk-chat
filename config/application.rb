@@ -58,5 +58,7 @@ module GovukChat
     config.question_forbidden_words = []
 
     config.exceptions_app = routes
+
+    config.available_without_signon_authentication = ENV["AVAILABLE_WITHOUT_SIGNON_AUTHENTICATION"]
   end
 end
