@@ -154,5 +154,10 @@ module Search
         Result.new(**data.symbolize_keys)
       end
     end
+
+    def get_by_id(id)
+      response = client.get(index:, id:, _source_excludes: %w[openai_embedding])
+      Result.new(**response["_source"].symbolize_keys.merge(_id: id, score: nil))
+    end
   end
 end

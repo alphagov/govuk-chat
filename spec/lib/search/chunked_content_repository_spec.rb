@@ -140,4 +140,20 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
       end
     end
   end
+
+  describe "#get_by_id" do
+    let(:content_chunk) { build :chunked_content_record }
+    let(:chunk_id) { "chunk_id" }
+
+    before do
+      populate_chunked_content_index({ chunk_id => content_chunk })
+    end
+
+    it "returns the correct chunk as a ChunkedContentRepository::Result" do
+      chunk_result = repository.get_by_id(chunk_id)
+      expect(chunk_result).to be_a(Search::ChunkedContentRepository::Result)
+        .and have_attributes(content_chunk.except(:openai_embedding))
+        .and have_attributes(_id: chunk_id)
+    end
+  end
 end
