@@ -12,18 +12,15 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
     context "with search_text in params" do
       let(:search_text) { "how do I pay tax" }
       let(:openai_embedding) { mock_openai_embedding(search_text) }
-      let(:chunk_to_find) { build(:chunked_content_record, title: "Looking for this one", heading_hierarchy: ["Main header", "Sub header"], openai_embedding:) }
+      let(:chunk_to_find) do
+        build(:chunked_content_record,
+              title: "Looking for this one",
+              heading_hierarchy: ["Main header", "Sub header"],
+              openai_embedding:)
+      end
 
       before do
-        allow(Search::TextToEmbedding)
-          .to receive(:call)
-          .with(search_text)
-          .and_return(openai_embedding)
-
-        populate_chunked_content_index([
-          chunk_to_find,
-          build(:chunked_content_record, title: "Shouldn't find this"),
-        ])
+        stub_openai_embedding(search_text)
       end
 
       it "renders a search box populated with search text" do
@@ -33,15 +30,24 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
         expect(response.body).to render_search_box(value: "how do I pay tax")
       end
 
-      it "renders a list of search results" do
-        get admin_search_path, params: { search_text: }
+      context "when there are chunks found" do
+        before do
+          populate_chunked_content_index([
+            chunk_to_find,
+            build(:chunked_content_record, title: "Shouldn't find this"),
+          ])
+        end
 
-        expect(response.body).to include_search_result(
-          title: "Looking for this one",
-          heading: "Sub header",
-          text: chunk_to_find[:plain_content].truncate(100),
-          score: 1.0,
-        )
+        it "renders a list of search results" do
+          get admin_search_path, params: { search_text: }
+
+          expect(response.body).to include_search_result(
+            title: "Looking for this one",
+            heading: "Sub header",
+            text: chunk_to_find[:plain_content].truncate(100),
+            score: 1.0,
+          )
+        end
       end
     end
 
