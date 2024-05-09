@@ -155,5 +155,13 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
         .and have_attributes(content_chunk.except(:openai_embedding))
         .and have_attributes(_id: chunk_id)
     end
+
+    it "raises ChunkedContentRepository::NotFound when the id does not exist in the index" do
+      expect { repository.chunk("does not exist") }.to raise_error(
+        an_instance_of(Search::ChunkedContentRepository::NotFound)
+          .and(having_attributes(message: "_id: 'does not exist' is not in the 'govuk_chat_chunked_content_test' index",
+                                 cause: an_instance_of(OpenSearch::Transport::Transport::Errors::NotFound))),
+      )
+    end
   end
 end

@@ -20,6 +20,9 @@ module Search
       :plain_content,
     )
 
+    class NotFound < StandardError
+    end
+
     attr_reader :index, :client, :default_refresh_writes
 
     def initialize
@@ -158,6 +161,8 @@ module Search
     def chunk(id)
       response = client.get(index:, id:, _source_excludes: %w[openai_embedding])
       Result.new(**response["_source"].symbolize_keys.merge(_id: id, score: nil))
+    rescue OpenSearch::Transport::Transport::Errors::NotFound
+      raise NotFound, "_id: '#{id}' is not in the '#{index}' index"
     end
   end
 end
