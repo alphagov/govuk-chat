@@ -187,6 +187,15 @@ RSpec.describe MessageQueue::MessageProcessor do
 
         expect(Rails.logger).to have_received(:error).with(log_message)
       end
+
+      it "sets the context and tags correctly for Sentry" do
+        sentry_scope = Sentry::Scope.new
+        allow(Sentry).to receive(:with_scope).and_yield(sentry_scope)
+
+        described_class.new.process(message)
+
+        expect_sentry_scope_to_be_configured(sentry_scope, message.payload)
+      end
     end
 
     context "when an OpenAIClient error is raised" do
@@ -215,6 +224,15 @@ RSpec.describe MessageQueue::MessageProcessor do
 
         expect(Rails.logger).to have_received(:error).with(log_message)
       end
+
+      it "sets the context and tags correctly for Sentry" do
+        sentry_scope = Sentry::Scope.new
+        allow(Sentry).to receive(:with_scope).and_yield(sentry_scope)
+
+        described_class.new.process(message)
+
+        expect_sentry_scope_to_be_configured(sentry_scope, message.payload)
+      end
     end
 
     context "when any other exception is raised" do
@@ -241,6 +259,9 @@ RSpec.describe MessageQueue::MessageProcessor do
       end
 
       context "when the payload is a hash" do
+        let(:content_item) { build(:notification_content_item, schema_name: "news_article", base_path: "/path") }
+        let(:message) { create_mock_message(content_item) }
+
         it "logs the error with identifying information" do
           call_count = 0
           content_id = SecureRandom.uuid
@@ -258,11 +279,34 @@ RSpec.describe MessageQueue::MessageProcessor do
           expect(Rails.logger).to have_received(:error)
             .with("{#{content_id}, en} processing failed with RuntimeError: Contrived error")
         end
+
+        it "sets the context and tags correctly for Sentry" do
+          allow(MessageQueue::ContentSynchroniser).to receive(:call).and_raise(RuntimeError, "Contrived error")
+          sentry_scope = Sentry::Scope.new
+          allow(Sentry).to receive(:with_scope).and_yield(sentry_scope)
+
+          described_class.new.process(message)
+
+          expect_sentry_scope_to_be_configured(sentry_scope, message.payload)
+        end
       end
     end
   end
 
   def create_mock_message(...)
     GovukMessageQueueConsumer::MockMessage.new(...)
+  end
+
+  def expect_sentry_scope_to_be_configured(sentry_scope, payload)
+    context_hash = {
+      content_id: payload["content_id"],
+      locale: payload["locale"],
+      base_path: payload["base_path"],
+      document_type: payload["document_type"],
+      payload_version: payload["payload_version"],
+    }
+
+    expect(sentry_scope.contexts["message processer"]).to eq(context_hash)
+    expect(sentry_scope.tags).to eq(content_id: payload["content_id"], base_path: payload["base_path"])
   end
 end
