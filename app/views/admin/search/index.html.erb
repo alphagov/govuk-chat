@@ -7,19 +7,21 @@
         inline_label: false,
         name: "search_text",
         value: @search_text,
-      } %>
+    } %>
 <% end %>
-
-<%= render "govuk_publishing_components/components/table", {
-    head: [{ text: "Title" },
-           { text: "Heading"},
-           { text: "Text" },
-           { text: "Score", format: "numeric" },],
-    rows: @search_results.map do |result|
-            [{ text: result.title },
-             { text: result.heading_hierarchy.last },
-             { text: result.plain_content.truncate(100) },
-             { text: result.score, format: "numeric" },]
-          end
-} %>
-
+<% if @search_text.blank? %>
+    <p>Please use the search box above to display results</p>
+<% else %>
+    <%= render "govuk_publishing_components/components/table", {
+        head: [{ text: "Title" },
+               { text: "Heading"},
+               { text: "Text" },
+               { text: "Score", format: "numeric" },],
+        rows: @search_results.map do |result|
+        [{ text: result.title },
+         { text: result.heading_hierarchy.last },
+         { text: result.plain_content.truncate(100) },
+         { text: result.score, format: "numeric" },]
+        end
+    } %>
+<% end %>

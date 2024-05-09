@@ -1,11 +1,17 @@
 RSpec.describe "Admin::SearchController", :chunked_content_index do
   describe "GET :index" do
     context "with empty params" do
-      it "renders an empty search box" do
+      before do
         get admin_search_path
+      end
 
+      it "renders an empty search box" do
         expect(response).to have_http_status(:ok)
         expect(response.body).to render_search_box(value: "")
+      end
+
+      it "shows a message prompting to enter a search term" do
+        expect(response.body).to include("Please use the search box above to display results")
       end
     end
 
