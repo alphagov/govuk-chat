@@ -1,0 +1,32 @@
+<%= content_for :title, "Search RAG index" %>
+
+
+<%= form_with url: admin_search_url, method: :get do |f| %>
+    <%= render "govuk_publishing_components/components/search", {
+        label_text: "Text to search for",
+        inline_label: false,
+        name: "search_text",
+        value: @search_text,
+    } %>
+<% end %>
+<% if @search_text.present? %>
+    <% if @search_results.empty? %>
+        <%= render "govuk_publishing_components/components/notice", {
+            title: "No results have been found for your query",
+            description: "Please rephrase and try again"
+        } %>
+    <% else %>
+    <%= render "govuk_publishing_components/components/table", {
+        head: [{ text: "Title" },
+               { text: "Heading"},
+               { text: "Text" },
+               { text: "Score", format: "numeric" },],
+        rows: @search_results.map do |result|
+        [{ text: result.title },
+         { text: result.heading_hierarchy.last },
+         { text: result.plain_content.truncate(100) },
+         { text: result.score, format: "numeric" },]
+        end
+    } %>
+    <% end %>
+<% end %>
