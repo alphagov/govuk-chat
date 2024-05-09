@@ -56,6 +56,14 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
           )
         end
       end
+
+      context "when there are no chunks found" do
+        it "renders a message for no results found" do
+          get admin_search_path, params: { search_text: }
+          expect(response.body).to include("No results have been found for your query")
+            .and include("Please rephrase and try again")
+        end
+      end
     end
 
   private

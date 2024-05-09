@@ -15,6 +15,12 @@
         description: "Please use the search box above to display results"
     } %>
 <% else %>
+    <% if @search_results.empty? %>
+        <%= render "govuk_publishing_components/components/notice", {
+            title: "No results have been found for your query",
+            description: "Please rephrase and try again"
+        } %>
+    <% else %>
     <%= render "govuk_publishing_components/components/table", {
         head: [{ text: "Title" },
                { text: "Heading"},
@@ -27,4 +33,5 @@
          { text: result.score, format: "numeric" },]
         end
     } %>
+    <% end %>
 <% end %>
