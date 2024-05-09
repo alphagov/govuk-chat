@@ -11,7 +11,8 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
       end
 
       it "shows a message prompting to enter a search term" do
-        expect(response.body).to include("Please use the search box above to display results")
+        expect(response.body).to include("No search performed")
+          .and include("Please use the search box above to display results")
       end
     end
 

@@ -10,7 +10,10 @@
     } %>
 <% end %>
 <% if @search_text.blank? %>
-    <p>Please use the search box above to display results</p>
+    <%= render "govuk_publishing_components/components/notice", {
+        title: "No search performed",
+        description: "Please use the search box above to display results"
+    } %>
 <% else %>
     <%= render "govuk_publishing_components/components/table", {
         head: [{ text: "Title" },
