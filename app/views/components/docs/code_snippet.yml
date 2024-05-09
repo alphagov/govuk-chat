@@ -1,5 +1,7 @@
 name: Code snippet
 description: Renders a code snippet
+accessibility_criteria: |
+  All text must have a contrast ratio higher than 4.5:1 against the background colour to meet [WCAG AA](https://www.w3.org/TR/WCAG20/#visual-audio-contrast-contrast)
 examples:
   default:
     data:

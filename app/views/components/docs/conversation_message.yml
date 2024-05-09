@@ -1,5 +1,9 @@
 name: Conversation message
 description: Displays questions (if `is_question` is `true`), answers, and any other messages to the user
+accessibility_criteria: |
+  * All text must have a contrast ratio higher than 4.5:1 against the background colour to meet [WCAG AA](https://www.w3.org/TR/WCAG20/#visual-audio-contrast-contrast)
+shared_accessibility_criteria:
+  - link
 examples:
   default:
     data:
