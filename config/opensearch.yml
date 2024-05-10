@@ -14,3 +14,5 @@ test:
 production:
   <<: *default
   url: <%= ENV["OPENSEARCH_URL"] %>
+  user: <%= ENV["OPENSEARCH_USERNAME"] %>
+  password: <%= ENV["OPENSEARCH_PASSWORD"] %>
