@@ -33,11 +33,13 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
       end
 
       context "when there are chunks found" do
+        let(:chunk_id) { "the-chunk_id" }
+
         before do
-          populate_chunked_content_index([
-            chunk_to_find,
-            build(:chunked_content_record, title: "Shouldn't find this"),
-          ])
+          populate_chunked_content_index({
+            chunk_id => chunk_to_find,
+            "anything" => build(:chunked_content_record, title: "Shouldn't find this"),
+          })
         end
 
         it "renders a list of search results" do
@@ -45,6 +47,7 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
 
           expect(response.body).to include_search_result(
             title: "Looking for this one",
+            id: chunk_id,
             heading: "Sub header",
             text: chunk_to_find[:plain_content].truncate(100),
             score: 1.0,
@@ -67,8 +70,8 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
       have_selector("input[name='search_text'][value='#{value}']")
     end
 
-    def include_search_result(title:, heading:, text:, score:)
-      have_selector("td", text: title)
+    def include_search_result(title:, id:, heading:, text:, score:)
+      have_selector("a[href='#{admin_chunk_path(id:)}']", text: title)
         .and have_selector("td", text: heading)
         .and have_selector("td", text:)
         .and have_selector("td", text: score)

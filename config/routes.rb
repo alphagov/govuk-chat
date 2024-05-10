@@ -35,7 +35,7 @@ Rails.application.routes.draw do
     get "/questions/:id", to: "questions#show", as: :show_question
     get "/conversations/:id", to: "conversations#show", as: :show_conversation
     get "/search", to: "search#index", as: :search
-    get "/search/chunk/:id", to: "chunks#show", as: :chunks
+    get "/search/chunk/:id", to: "chunks#show", as: :chunk
   end
 
   scope via: :all do
