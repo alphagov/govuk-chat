@@ -23,11 +23,10 @@ module Search
     class NotFound < StandardError
     end
 
-    attr_reader :index, :client, :default_refresh_writes
+    attr_reader :index, :default_refresh_writes
 
     def initialize
       @index = Rails.configuration.opensearch.chunked_content_index!
-      @client = OpenSearch::Client.new(url: Rails.configuration.opensearch.url)
       @default_refresh_writes = Rails.configuration.opensearch.refresh_writes || false
     end
 
@@ -163,6 +162,19 @@ module Search
       Result.new(**response["_source"].symbolize_keys.merge(_id: id, score: nil))
     rescue OpenSearch::Transport::Transport::Errors::NotFound
       raise NotFound, "_id: '#{id}' is not in the '#{index}' index"
+    end
+
+    def client
+      @client ||= begin
+        options = { url: Rails.configuration.opensearch.url }
+
+        if Rails.env.production?
+          options[:user] = Rails.configuration.opensearch.user
+          options[:password] = Rails.configuration.opensearch.password
+        end
+
+        OpenSearch::Client.new(**options)
+      end
     end
   end
 end
