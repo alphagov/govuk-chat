@@ -17,41 +17,45 @@
 <div class="app-c-conversation-layout__wrapper">
   <div class="app-c-conversation-layout__message-container">
     <div class="app-c-conversation-layout__flex-container govuk-width-container">
-      <div class="govuk-grid-column-two-thirds">
-        <%= render "components/conversation_message", {
-          id: "initial-message",
-          message: tag.p("Hello 👋 I'm GOV.UK Chat. I use the guidance on GOV.UK to answer questions.", class: "app-c-conversation-message__p") +
-          tag.p(
-            "You can ask me anything about business or trade - just don't include personal or sensitive data and please limit your question to 300 characters or less.",
-            class: "app-c-conversation-message__p"
-          ),
-        } %>
-    
-        <%= render "govuk_publishing_components/components/list", {
-          items: @conversation.questions.each_with_index.map do |question, index|
-            answer = question.answer
-            render "question_and_answer", question:, index:, answer:
-          end
-        } %>
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+          <%= render "components/conversation_message", {
+            id: "initial-message",
+            message: tag.p("Hello 👋 I'm GOV.UK Chat. I use the guidance on GOV.UK to answer questions.", class: "app-c-conversation-message__p") +
+            tag.p(
+              "You can ask me anything about business or trade - just don't include personal or sensitive data and please limit your question to 300 characters or less.",
+              class: "app-c-conversation-message__p"
+            ),
+          } %>
+      
+          <%= render "govuk_publishing_components/components/list", {
+            items: @conversation.questions.each_with_index.map do |question, index|
+              answer = question.answer
+              render "question_and_answer", question:, index:, answer:
+            end
+          } %>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="app-c-conversation-layout__input-container">
     <div class="app-c-conversation-layout__flex-container govuk-width-container">
-      <div class="govuk-grid-column-two-thirds">
-        <%= form_with url: form_url, method: http_method do |f| %>
-          <%= render "components/conversation_input", {
-            label: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
-            name: "create_question[user_question]",
-            value: @create_question.user_question,
-            hint: "Please limit your question to 300 characters.",
-            maxlength: 300,
-            character_threshold: 50,
-            spellcheck: true,
-            error_items: @create_question.errors[:user_question].map { |message| { text: message } },
-          } %>
-        <% end %>
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+          <%= form_with url: form_url, method: http_method do |f| %>
+            <%= render "components/conversation_input", {
+              label: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
+              name: "create_question[user_question]",
+              value: @create_question.user_question,
+              hint: "Please limit your question to 300 characters.",
+              maxlength: 300,
+              character_threshold: 50,
+              spellcheck: true,
+              error_items: @create_question.errors[:user_question].map { |message| { text: message } },
+            } %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>

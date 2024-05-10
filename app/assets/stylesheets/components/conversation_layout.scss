@@ -19,5 +19,7 @@
 
 .app-c-conversation-layout__flex-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  max-width: 585px;
 }
