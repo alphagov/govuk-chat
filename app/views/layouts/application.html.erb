@@ -51,12 +51,14 @@
     </div>
 
     <% if yield(:title).present? %>
-      <div class="govuk-grid-row <%= yield(:visually_hidden_class) || "" %>">
-        <div class="govuk-grid-column-two-thirds">
-          <%= render "govuk_publishing_components/components/title", {
-            context: yield(:title_context),
-            title: yield(:title),
-          } %>
+      <div class="govuk-width-container">
+        <div class="govuk-grid-row <%= yield(:visually_hidden_class) || "" %>">
+          <div class="govuk-grid-column-two-thirds">
+            <%= render "govuk_publishing_components/components/title", {
+              context: yield(:title_context),
+              title: yield(:title),
+            } %>
+          </div>
         </div>
       </div>
     <% end %>
