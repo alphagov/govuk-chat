@@ -30,23 +30,27 @@
   custom_layout: true do 
 %>
   <main class="<%= yield(:main_class) || "govuk-main-wrapper" %>" id="content" role="main">
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-full-width">
-        <% if yield(:error_summary).blank? %>
-          <% if flash["notice"].present? %>
-            <%= render "govuk_publishing_components/components/success_alert", {
-              message: flash["notice"]
-            } %>
-          <% end %>
+    <div>
+      <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-full">
+            <% if yield(:error_summary).blank? %>
+              <% if flash["notice"].present? %>
+                <%= render "govuk_publishing_components/components/success_alert", {
+                  message: flash["notice"]
+                } %>
+              <% end %>
 
-          <% if flash["alert"].present? %>
-            <%= render "govuk_publishing_components/components/error_alert", {
-              message: flash["alert"]
-            } %>
-          <% end %>
-        <% end %>
+              <% if flash["alert"].present? %>
+                <%= render "govuk_publishing_components/components/error_alert", {
+                  message: flash["alert"]
+                } %>
+              <% end %>
+            <% end %>
 
-        <%= yield(:error_summary) %>
+            <%= yield(:error_summary) %>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -62,7 +66,6 @@
         </div>
       </div>
     <% end %>
-
     <%= yield %>
   </main>
 <% end %>
