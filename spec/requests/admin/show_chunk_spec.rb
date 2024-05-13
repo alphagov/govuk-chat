@@ -19,9 +19,9 @@ RSpec.describe "Admin::ChunkController", :chunked_content_index do
       )
     end
 
-    it "redirects to 404 when requesting non-existent chunk" do
+    it "raises Search::ChunkedContentRepository::NotFound when requesting non-existent chunk" do
       get admin_chunk_path(id: "does-not-exist")
-      expect(response).to redirect_to("/404")
+      expect(response).to have_http_status(:not_found)
     end
 
   private
