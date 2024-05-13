@@ -8,6 +8,6 @@
     { field: "Base path", value: @chunk.base_path },
     { field: "Content", value: @chunk.plain_content },
     { field: "Html content", value: @chunk.html_content.html_safe },
-    { field: "On gov.uk", value: link_to("https://www.gov.uk#{@chunk.base_path}", "https://www.gov.uk#{@chunk.base_path}") },
+    { field: "On gov.uk", value: link_to("https://www.gov.uk#{@chunk.base_path}", "https://www.gov.uk#{@chunk.base_path}", class: "govuk-link") },
   ]
 } %>

@@ -22,7 +22,7 @@
                { text: "Text" },
                { text: "Score", format: "numeric" },],
         rows: @search_results.map do |result|
-        [{ text: link_to(result.title, admin_chunk_path(id: result._id)) },
+        [{ text: link_to(result.title, admin_chunk_path(id: result._id), class: "govuk-link") },
          { text: result.heading_hierarchy.last },
          { text: result.plain_content.truncate(100) },
          { text: result.score, format: "numeric" },]
