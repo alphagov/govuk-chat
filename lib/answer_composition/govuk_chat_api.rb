@@ -20,7 +20,7 @@ module AnswerComposition
 
     def response
       @response ||= begin
-        body = { chat_id: question.conversation_id, user_query: question.message }.to_json
+        body = { chat_id: "app_#{question.conversation_id}", user_query: question.message }.to_json
         response = http_client.post("/govchat", body)
         JSON.parse(response.body)
       end
