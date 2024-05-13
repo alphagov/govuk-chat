@@ -39,7 +39,10 @@ class ConversationsController < BaseController
 
     respond_to do |format|
       if answer.present?
-        format.html { redirect_to show_conversation_path(anchor: helpers.dom_id(answer)) }
+        format.html do
+          flash[:notice] = "GOV.UK Chat has answered your question"
+          redirect_to show_conversation_path(anchor: helpers.dom_id(answer))
+        end
         format.json { render json: answer_success_json(answer), status: :ok }
       else
         format.html { render :pending, status: :accepted }

@@ -171,6 +171,7 @@ RSpec.describe "ConversationsController" do
 
       expected_redirect_destination = show_conversation_path(anchor: helpers.dom_id(question.answer))
       expect(response).to redirect_to(expected_redirect_destination)
+      expect(flash[:notice]).to eq("GOV.UK Chat has answered your question")
 
       follow_redirect!
       expect(response.body)
