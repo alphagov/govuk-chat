@@ -20,6 +20,7 @@
   <%= render "govuk_publishing_components/components/skip_link" %>
 
   <div class="govuk-width-container">
+    <%= yield(:back_link) %>
     <%= yield(:breadcrumbs) %>
 
     <main class="govuk-main-wrapper<%= " govuk-main-wrapper--l" if yield(:back_link).blank? %>" id="content" role="main">

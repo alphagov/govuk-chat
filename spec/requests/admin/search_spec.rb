@@ -71,7 +71,9 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
     end
 
     def include_search_result(title:, id:, heading:, text:, score:)
-      have_selector("a.govuk-link[href='#{admin_chunk_path(id:)}']", text: title)
+      back_link = admin_search_path(search_text:)
+      href = admin_chunk_path(id:, params: { back_link: })
+      have_selector("a[href='#{href}']", text: title)
         .and have_selector("td", text: heading)
         .and have_selector("td", text:)
         .and have_selector("td", text: score)
