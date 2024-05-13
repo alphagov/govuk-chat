@@ -1,6 +1,7 @@
+<%= content_for(:title,  "Chunk details: #{@chunk.title}") %>
 <%= render "govuk_publishing_components/components/summary_list", {
-  title: "Chunk details: #{@chunk.title}",
   items: [
+    { field: "Title", value: @chunk.title },
     { field: "Heading hierarchy", value: @chunk.heading_hierarchy.join(" | ") },
     { field: "Description", value: @chunk.description},
     { field: "Document type", value: @chunk.document_type},
@@ -8,6 +9,5 @@
     { field: "Content", value: @chunk.plain_content },
     { field: "Html content", value: @chunk.html_content.html_safe },
     { field: "On gov.uk", value: link_to("https://www.gov.uk#{@chunk.base_path}", "https://www.gov.uk#{@chunk.base_path}") },
-    { field: "In content store", value: link_to("https://www.gov.uk/api/content#{@chunk.base_path}", "https://www.gov.uk/api/content#{@chunk.base_path}") },
   ]
 } %>
