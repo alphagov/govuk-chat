@@ -12,7 +12,11 @@
         { field: "Document type", value: @chunk.document_type},
         { field: "Base path", value: @chunk.base_path },
         { field: "Content", value: @chunk.plain_content },
-        { field: "Html content", value: @chunk.html_content.html_safe },
+        { field: "Html content", value: render_html_content(@chunk.html_content) +
+          render("govuk_publishing_components/components/details", { title: "Raw html" }) do
+            render("components/code_snippet", content: @chunk.html_content)
+        end
+        },
         { field: "Chunk number", value: @chunk.chunk_index },
         { field: "On gov.uk", value: link_to("https://www.gov.uk#{@chunk.base_path}", "https://www.gov.uk#{@chunk.base_path}", class: "govuk-link") },
       ]
