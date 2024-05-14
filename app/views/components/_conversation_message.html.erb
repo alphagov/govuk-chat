@@ -1,31 +1,36 @@
 <%
   data_attributes ||= {}
   sources ||= []
-  is_question||= false
-  
-  icon = is_question ? "user-icon" : "govuk-chat-icon"
+  is_question ||= false
+  classes = %w[app-c-conversation-message]
+  classes << (is_question ? "app-c-conversation-message--user-message"
+  : "app-c-conversation-message--govuk-message")
 %>
 
-<%= tag.div id:, class: "app-c-conversation-message", data: data_attributes do %>
+<%= tag.div id:, class: classes, data: data_attributes do %>
   <div class="app-c-conversation-message__identifier">
-    <%= 
-      inline_svg_tag "components/conversation_message/#{icon}.svg", 
-      class: "app-c-conversation-message__identifier-icon app-c-conversation-message__identifier-icon--#{icon}", 
-      aria_hidden: true 
-    %>
-
-    <h2 class="app-c-conversation-message__identifier-heading">
-      <% if is_question %> 
-        You
-      <% else %> 
-        GOV.UK Chat <span aria-hidden="true">(experimental)</span>
+    <% if !is_question %>
+      <%=
+        inline_svg_tag "components/conversation_message/govuk-chat-icon.svg",
+        class: "app-c-conversation-message__identifier-icon",
+        aria_hidden: true
+      %>
+    <% end %>
+    <span class="govuk-visually-hidden">
+      <% if is_question %>
+        You:
+      <% else %>
+        GOV.UK Chat:
       <% end %>
-    </h2>
+    </span>
   </div>
 
   <% if is_question %>
     <div class="app-c-conversation-message__body app-c-conversation-message__body--user-message">
-      <%= escaped_simple_format(message, { class: "app-c-conversation-message__p" }) %>
+      <%= render "govuk_publishing_components/components/govspeak", {
+      } do %>
+        <%= escaped_simple_format(message) %>
+      <% end %>
     </div>
 
   <% else %>
@@ -36,16 +41,17 @@
 
       <% if sources.present? %>
         <div class="app-c-conversation-message__sources">
-          <%= render "govuk_publishing_components/components/details", {
-            title: "Show pages used to generate this answer"
-          } do %>
-              <%= render "govuk_publishing_components/components/list", {
-                visible_counters: true,
-                items: sources.map do |source|
-                  link_to(source, source, class: "govuk-link", target: "_blank", rel: "noopener noreferrer")
-                end
-              } %>
-          <% end %>
+          <%= render "govuk_publishing_components/components/warning_text", {
+            text_assistive: "Warning",
+            text: "Check this answer (links open in a new tab)",
+          } %>
+
+          <%= render "govuk_publishing_components/components/list", {
+            visible_counters: true,
+            items: sources.map do |source|
+              link_to(source, source, class: "govuk-link", target: "_blank", rel: "noopener noreferrer")
+            end,
+          } %>
         </div>
       <% end %>
     </div>

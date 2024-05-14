@@ -46,3 +46,13 @@
     padding-left: govuk-spacing(2);
   }
 }
+
+.app-c-conversation-message__sources {
+  .gem-c-warning-text {
+    margin-bottom: govuk-spacing(4);
+  }
+
+  .govuk-list--bullet > li {
+    margin-bottom: govuk-spacing(6);
+  }
+}

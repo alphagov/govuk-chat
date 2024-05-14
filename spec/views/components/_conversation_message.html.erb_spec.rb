@@ -26,8 +26,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
 
       expect(rendered).to have_selector("div.app-c-conversation-message#question-1") do |rendered_question|
         expect(rendered_question)
-          .to have_selector(".app-c-conversation-message__identifier .app-c-conversation-message__identifier-icon.app-c-conversation-message__identifier-icon--user-icon")
-          .and have_selector(".app-c-conversation-message__identifier .app-c-conversation-message__identifier-heading", text: "You")
+          .to have_selector(".app-c-conversation-message__identifier .govuk-visually-hidden", text: "You:")
           .and have_selector(".app-c-conversation-message__body.app-c-conversation-message__body--user-message", text: "message 2")
       end
     end
@@ -42,8 +41,8 @@ RSpec.describe "components/_conversation_message.html.erb" do
 
       expect(rendered).to have_selector("div.app-c-conversation-message#answer-2") do |rendered_answer|
         expect(rendered_answer)
-          .to have_selector(".app-c-conversation-message__identifier .app-c-conversation-message__identifier-icon.app-c-conversation-message__identifier-icon--govuk-chat-icon")
-          .and have_selector(".app-c-conversation-message__identifier .app-c-conversation-message__identifier-heading", text: "GOV.UK Chat (experimental)")
+          .to have_selector(".app-c-conversation-message__identifier .app-c-conversation-message__identifier-icon")
+          .and have_selector(".app-c-conversation-message__identifier .govuk-visually-hidden", text: "GOV.UK Chat:")
           .and have_selector(".app-c-conversation-message__answer .govuk-govspeak", text: "message 3")
           .and have_selector(".govuk-details", count: 0)
       end
@@ -60,8 +59,8 @@ RSpec.describe "components/_conversation_message.html.erb" do
       })
 
       expect(rendered)
-        .to have_selector(".govuk-details a[href='http://example.com']", text: "http://example.com", visible: :all)
-        .and have_selector(".govuk-details a[href='http://example.gov.uk']", text: "http://example.gov.uk", visible: :all)
+        .to have_selector(".gem-c-list a[href='http://example.com']", text: "http://example.com", visible: :all)
+        .and have_selector(".gem-c-list a[href='http://example.gov.uk']", text: "http://example.gov.uk", visible: :all)
     end
 
     it "sanitises the message" do
