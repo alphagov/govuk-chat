@@ -1,11 +1,9 @@
 class BaseController < ApplicationController
 private
 
-  def require_chat_risks_understood
-    return if session[:chat_risks_understood]
+  def require_onboarding_completed
+    return if session[:onboarding] == "conversation"
 
-    # truncated to avoid exhausting session capacity with an aspect of user input
-    session[:referrer] = request.original_url.truncate(255, omission: "")
-    redirect_to(chat_onboarding_path, alert: "Check the checkbox to show you understand the guidance")
+    redirect_to(onboarding_limitations_path, alert: "Confirm you understand the limitations of GOV.UK Chat before continuing.")
   end
 end

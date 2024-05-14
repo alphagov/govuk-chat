@@ -1,5 +1,5 @@
 class QuestionsController < BaseController
-  before_action :require_chat_risks_understood
+  before_action :require_onboarding_completed
 
   def answer
     @conversation = Conversation.find(params[:conversation_id])

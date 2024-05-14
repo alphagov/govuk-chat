@@ -3,13 +3,13 @@ RSpec.describe "ConversationsController" do
 
   delegate :helpers, to: ConversationsController
 
-  it_behaves_like "requires user to have accepted chat risks", routes: { new_conversation_path: %i[get], create_conversation_path: %i[post] }
-  it_behaves_like "requires user to have accepted chat risks", routes: { show_conversation_path: %i[get], update_conversation_path: %i[patch] } do
+  it_behaves_like "requires user to have completed onboarding", routes: { new_conversation_path: %i[get], create_conversation_path: %i[post] }
+  it_behaves_like "requires user to have completed onboarding", routes: { show_conversation_path: %i[get], update_conversation_path: %i[patch] } do
     let(:route_params) { [SecureRandom.uuid] }
   end
 
   describe "GET :new" do
-    include_context "with chat risks accepted"
+    include_context "with onboarding completed"
 
     it "renders the correct fields" do
       get new_conversation_path
@@ -20,7 +20,7 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "POST :create" do
-    include_context "with chat risks accepted"
+    include_context "with onboarding completed"
 
     it "saves the question and renders pending page with valid params" do
       post create_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
@@ -93,7 +93,7 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "GET :show" do
-    include_context "with chat risks accepted"
+    include_context "with onboarding completed"
 
     it "renders the question form" do
       question = create(:question, :with_answer)
@@ -130,7 +130,7 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "PATCH :update" do
-    include_context "with chat risks accepted"
+    include_context "with onboarding completed"
     let(:conversation) { create(:conversation) }
 
     it "saves the question and renders the pending page with valid params" do

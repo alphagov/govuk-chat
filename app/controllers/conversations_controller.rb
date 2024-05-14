@@ -1,5 +1,5 @@
 class ConversationsController < BaseController
-  before_action :require_chat_risks_understood
+  before_action :require_onboarding_completed
   before_action :find_conversation, only: %i[show update]
 
   def show
