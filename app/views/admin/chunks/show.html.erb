@@ -13,7 +13,7 @@
         { field: "Heading hierarchy", value: @chunk.heading_hierarchy.join(" | ") },
         { field: "Description", value: @chunk.description},
         { field: "Document type", value: @chunk.document_type},
-        { field: "Base path", value: @chunk.base_path },
+        { field: "URL", value: link_to("#{Plek.website_root}#{@chunk.url}", @chunk.url, class: "govuk-link") },
         { field: "Content", value: @chunk.plain_content },
         { field: "Html content", value: render_html_content(@chunk.html_content) +
           render("govuk_publishing_components/components/details", { title: "Raw html" }) do
