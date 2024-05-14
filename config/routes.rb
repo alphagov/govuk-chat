@@ -12,8 +12,10 @@ Rails.application.routes.draw do
 
   scope :chat do
     get "", to: "chat#index", as: :chat
-    get "/onboarding", to: "chat#onboarding", as: :chat_onboarding
-    post "/onboarding", to: "chat#onboarding_confirm", as: :onboarding_confirm
+    get "/onboarding", to: "chat#onboarding_limitations", as: :onboarding_limitations
+    post "/onboarding", to: "chat#onboarding_limitations_confirm", as: :onboarding_limitations_confirm
+    get "/onboarding/privacy", to: "chat#onboarding_privacy", as: :onboarding_privacy
+    post "/onboarding/privacy", to: "chat#onboarding_privacy_confirm", as: :onboarding_privacy_confirm
 
     scope :conversations do
       get "", to: "conversations#new", as: :new_conversation
