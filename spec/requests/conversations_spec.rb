@@ -30,6 +30,14 @@ RSpec.describe "ConversationsController" do
         .and render_create_question_form
     end
 
+    it "sets the converation_id on the cookie" do
+      freeze_time do
+        post create_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
+        conversation = Conversation.last
+        expect_conversation_id_set_on_cookie(conversation)
+      end
+    end
+
     context "when the chat API feature is enabled for specific users" do
       let(:params) { { create_question: { user_question: "How much tax should I be paying?" } } }
       let(:user_with_feature) { create(:user) }
@@ -99,6 +107,13 @@ RSpec.describe "ConversationsController" do
         cookies[:conversation_id] = conversation.id
       end
 
+      it "refreshes the conversation_id cookie" do
+        freeze_time do
+          get show_conversation_path
+          expect_conversation_id_set_on_cookie(conversation_cookie, conversation)
+        end
+      end
+
       context "when the conversation has a question with an answer" do
         it "renders the question and the answer" do
           question = create(:question, :with_answer, conversation:)
@@ -148,6 +163,13 @@ RSpec.describe "ConversationsController" do
         .and have_selector(".app-c-conversation-input__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
     end
 
+    it "sets the converation_id on the cookie" do
+      freeze_time do
+        patch update_conversation_path(conversation), params: { create_question: { user_question: "How much tax should I be paying?" } }
+        expect_conversation_id_set_on_cookie(conversation)
+      end
+    end
+
     context "when the request format is JSON" do
       it "saves the question and returns a 201 with the correct body when the params are valid" do
         patch update_conversation_path(conversation),
@@ -181,5 +203,11 @@ RSpec.describe "ConversationsController" do
 
   def render_create_question_form
     have_selector(".app-c-conversation-input__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+  end
+
+  def expect_conversation_id_set_on_cookie(conversation)
+    cookie = cookies.get_cookie("conversation_id")
+    expect(cookie.value).to eq(conversation.id)
+    expect(cookie.expires).to eq(7.days.from_now)
   end
 end
