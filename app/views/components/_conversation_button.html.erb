@@ -1,0 +1,41 @@
+<%
+  data_attributes ||= {}
+  start ||= false
+  submit ||= false
+  text ||= nil
+  href ||= nil
+  rel ||= nil
+  aria_describedby ||= nil
+
+  classes = "app-c-conversation-button govuk-button"
+  classes << " govuk-button--start" if start
+  classes << " app-c-conversation-button--submit" if submit
+  
+  options = { class: classes }
+  options[:role] = "button" if href.present?
+  options[:rel] = rel if rel
+  options[:data] = data_attributes if data_attributes
+  options[:aria] = {}
+  options[:aria][:describedby] = aria_describedby if aria_describedby
+%>
+
+<% start_button_text = capture do %>
+  <span>
+    <%= text %>
+  </span>
+  <svg class="govuk-button__start-icon govuk-!-display-none-print" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" focusable="false" aria-hidden="true">
+    <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+  </svg>
+<% end %>
+
+<%
+  if start
+    text = start_button_text
+  end
+%>
+
+<% if href.present? %>
+  <%= link_to text, href, options %>
+<% else %>
+  <%= content_tag :button, text, options %>
+<% end %>

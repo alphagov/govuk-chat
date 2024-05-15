@@ -1,0 +1,35 @@
+name: Conversation button
+description: A blue variant of design system's green button 
+accessibility_criteria: |
+  The button must:
+
+  - accept focus
+  - be focusable with a keyboard
+  - indicate when it has focus
+  - activate when focused and space is pressed
+  - activate when focused and enter is pressed
+  - have a role of button
+  - have an accessible label
+examples:
+  default:
+    data:
+      text: Button
+  start_now_button:
+    data:
+      text: Start button
+      href: '#'
+      start: true
+  submit_button:
+    data:
+      text: Submit button
+      submit: true
+  with_data_attributes:
+    data:
+      data_attributes:
+        tracking: GTM-123AB
+      text: This is a button with data attributes
+  with_aria_describedby:
+    description: Can be used to give context to a button and will be read by a screenreader
+    data:
+      text: Button
+      aria_describedby: with_aria_describedby
