@@ -57,6 +57,8 @@ module GovukChat
     # List of forbidden words that will prevent a message from being sent to openAI
     config.question_forbidden_words = []
 
+    config.action_dispatch.rescue_responses["Search::ChunkedContentRepository::NotFound"] = :not_found
+
     config.exceptions_app = routes
 
     config.available_without_signon_authentication = ENV["AVAILABLE_WITHOUT_SIGNON_AUTHENTICATION"]
