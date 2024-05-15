@@ -4,6 +4,12 @@ class ConversationsController < BaseController
 
   def show
     @conversation = Conversation.find_by(id: cookies["conversation_id"]) || Conversation.new
+
+    if cookies[:conversation_id].present? && @conversation.new_record?
+      cookies.delete(:conversation_id)
+      return redirect_to onboarding_limitations_path
+    end
+
     set_conversation_cookie(@conversation) if @conversation.persisted?
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
   end

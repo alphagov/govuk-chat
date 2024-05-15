@@ -110,32 +110,46 @@ RSpec.describe "ConversationsController" do
       it "refreshes the conversation_id cookie" do
         freeze_time do
           get show_conversation_path
-          expect_conversation_id_set_on_cookie(conversation_cookie, conversation)
+          expect_conversation_id_set_on_cookie(conversation)
         end
       end
 
-      context "when the conversation has a question with an answer" do
-        it "renders the question and the answer" do
-          question = create(:question, :with_answer, conversation:)
-          answer = question.answer
+      it "can render a question with an answer" do
+        question = create(:question, :with_answer, conversation:)
+        answer = question.answer
 
-          get show_conversation_path(question.conversation)
+        get show_conversation_path(question.conversation)
 
-          expect(response).to have_http_status(:success)
-          expect(response.body)
-            .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
-            .and have_selector("##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message)
-        end
+        expect(response).to have_http_status(:success)
+        expect(response.body)
+          .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
+          .and have_selector("##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message)
       end
 
-      context "when the conversation has an unanswered question" do
-        it "only renders a question" do
-          question = create(:question, conversation:)
-          get show_conversation_path(question.conversation)
+      it "can render a question without an answer" do
+        question = create(:question, conversation:)
+        get show_conversation_path(question.conversation)
 
-          expect(response).to have_http_status(:ok)
-          expect(response.body)
-            .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
+        expect(response).to have_http_status(:ok)
+        expect(response.body)
+          .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
+      end
+
+      context "when the conversation cannot be found" do
+        before do
+          conversation.destroy!
+        end
+
+        it "deletes the conversation_id cookie" do
+          get show_conversation_path
+          expect(cookies[:conversation_id]).to be_blank
+        end
+
+        it "redirects to the onboarding limitations page" do
+          get show_conversation_path
+
+          expect(response).to have_http_status(:redirect)
+          expect(response).to redirect_to(onboarding_limitations_path)
         end
       end
     end
