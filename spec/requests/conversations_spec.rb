@@ -3,20 +3,9 @@ RSpec.describe "ConversationsController" do
 
   delegate :helpers, to: ConversationsController
 
-  it_behaves_like "requires user to have completed onboarding", routes: { new_conversation_path: %i[get], create_conversation_path: %i[post] }
-  it_behaves_like "requires user to have completed onboarding", routes: { show_conversation_path: %i[get], update_conversation_path: %i[patch] } do
+  it_behaves_like "requires user to have completed onboarding", routes: { show_conversation_path: %i[get], create_conversation_path: %i[post] }
+  it_behaves_like "requires user to have completed onboarding", routes: { update_conversation_path: %i[patch] } do
     let(:route_params) { [SecureRandom.uuid] }
-  end
-
-  describe "GET :new" do
-    include_context "with onboarding completed"
-
-    it "renders the correct fields" do
-      get new_conversation_path
-
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to render_create_question_form
-    end
   end
 
   describe "POST :create" do
@@ -103,28 +92,36 @@ RSpec.describe "ConversationsController" do
       expect(response.body).to render_create_question_form
     end
 
-    context "when the conversation has a question with an answer" do
-      it "renders the question and the answer" do
-        question = create(:question, :with_answer)
-        answer = question.answer
+    context "when conversation_id is set on the cookie" do
+      let(:conversation) { create(:conversation) }
 
-        get show_conversation_path(question.conversation)
-
-        expect(response).to have_http_status(:success)
-        expect(response.body)
-          .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
-          .and have_selector("##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message)
+      before do
+        cookies[:conversation_id] = conversation.id
       end
-    end
 
-    context "when the conversation has an unanswered question" do
-      it "only renders a question" do
-        question = create(:question)
-        get show_conversation_path(question.conversation)
+      context "when the conversation has a question with an answer" do
+        it "renders the question and the answer" do
+          question = create(:question, :with_answer, conversation:)
+          answer = question.answer
 
-        expect(response).to have_http_status(:ok)
-        expect(response.body)
-          .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
+          get show_conversation_path(question.conversation)
+
+          expect(response).to have_http_status(:success)
+          expect(response.body)
+            .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
+            .and have_selector("##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message)
+        end
+      end
+
+      context "when the conversation has an unanswered question" do
+        it "only renders a question" do
+          question = create(:question, conversation:)
+          get show_conversation_path(question.conversation)
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body)
+            .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
+        end
       end
     end
   end

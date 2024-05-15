@@ -1,16 +1,11 @@
 class ConversationsController < BaseController
   before_action :require_onboarding_completed
-  before_action :find_conversation, only: %i[show update]
+  before_action :find_conversation, only: %i[update]
 
   def show
+    @conversation = Conversation.find_by(id: cookies["conversation_id"]) || Conversation.new
+    set_conversation_cookie(@conversation) if @conversation.persisted?
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
-  end
-
-  def new
-    @create_question = Form::CreateQuestion.new
-    @conversation = @create_question.conversation
-
-    render :show
   end
 
   def create
@@ -36,6 +31,7 @@ private
   def handle_question_submission(create_question)
     if @create_question.valid?
       question = create_question.submit
+      set_conversation_cookie(question.conversation)
 
       respond_to do |format|
         format.html { redirect_to answer_question_path(question.conversation, question) }
@@ -45,6 +41,8 @@ private
       respond_to do |format|
         format.html do
           @conversation = create_question.conversation
+          set_conversation_cookie(@conversation) if @conversation.persisted?
+
           render :show, status: :unprocessable_entity
         end
         format.json { render json: question_error_json(create_question), status: :unprocessable_entity }
@@ -74,5 +72,9 @@ private
       answer_url: nil,
       error_messages: create_question.errors.map(&:message),
     }
+  end
+
+  def set_conversation_cookie(conversation)
+    cookies[:conversation_id] = { value: conversation.id, expires: 7.days.from_now }
   end
 end

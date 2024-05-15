@@ -52,7 +52,7 @@ RSpec.describe "Conversation with chat-api" do
   end
 
   def when_i_visit_the_conversation_page
-    visit new_conversation_path
+    visit show_conversation_path
   end
 
   def and_i_enter_a_question

@@ -20,13 +20,11 @@ Rails.application.routes.draw do
       post "privacy", to: "onboarding#privacy_confirm", as: :onboarding_privacy_confirm
     end
 
-    scope :conversations do
-      get "", to: "conversations#new", as: :new_conversation
+    scope :conversation do
+      get "", to: "conversations#show", as: :show_conversation
       post "", to: "conversations#create", as: :create_conversation
 
       patch "/:id", to: "conversations#update", as: :update_conversation
-
-      get "/:id", to: "conversations#show", as: :show_conversation
 
       scope "/:conversation_id/questions" do
         get "/:id/answer", to: "questions#answer", as: :answer_question
