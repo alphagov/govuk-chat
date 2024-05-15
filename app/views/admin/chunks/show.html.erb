@@ -5,6 +5,16 @@
                                     text: "Back to results",
                                     href: @back_link) ) %>
 <% end %>
+<% html_content = capture do %>
+  <%= render("govuk_publishing_components/components/govspeak") do %>
+    <%= @chunk.html_content.html_safe %>
+  <% end %>
+
+  <%= render("govuk_publishing_components/components/details", { title: "Raw html" }) do %>
+    <%= render("components/code_snippet", content: @chunk.html_content) %>
+  <% end %>
+<% end %>
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-three-quarters">
     <%= render "govuk_publishing_components/components/summary_list", {
@@ -15,11 +25,7 @@
         { field: "Document type", value: @chunk.document_type},
         { field: "URL", value: link_to("#{Plek.website_root}#{@chunk.url}", @chunk.url, class: "govuk-link") },
         { field: "Content", value: @chunk.plain_content },
-        { field: "Html content", value: render_html_content(@chunk.html_content) +
-          render("govuk_publishing_components/components/details", { title: "Raw html" }) do
-            render("components/code_snippet", content: @chunk.html_content)
-        end
-        },
+        { field: "Html content", value: html_content },
         { field: "Chunk number", value: @chunk.chunk_index },
         { field: "On gov.uk", value: link_to("https://www.gov.uk#{@chunk.base_path}", "https://www.gov.uk#{@chunk.base_path}", class: "govuk-link") },
       ]
