@@ -17,6 +17,35 @@ module RequestExamples
                 text: "Confirm you understand the limitations of GOV.UK Chat before continuing.",
               )
           end
+
+          context "when session[:onboarding] is 'conversation'" do
+            include_context "with onboarding completed"
+
+            it "does not redirect to the onboarding flow for #{method} #{path}" do
+              process(method.to_sym, public_send(path.to_sym, *route_params))
+
+              expect(response.body)
+                .not_to have_selector(
+                  ".gem-c-error-alert__message",
+                  text: "Confirm you understand the limitations of GOV.UK Chat before continuing.",
+                )
+            end
+          end
+
+          context "when covnersation_id is set on the cookie" do
+            it "does not redirect to the onboarding flow for #{method} #{path}" do
+              conversation = create(:conversation)
+              cookies[:conversation_id] = conversation.id
+
+              process(method.to_sym, public_send(path.to_sym, *route_params))
+
+              expect(response.body)
+                .not_to have_selector(
+                  ".gem-c-error-alert__message",
+                  text: "Confirm you understand the limitations of GOV.UK Chat before continuing.",
+                )
+            end
+          end
         end
       end
     end
