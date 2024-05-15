@@ -6,6 +6,9 @@ RSpec.describe "Chat Onboarding" do
     when_i_click_on_the_continue_button
     then_i_see_the_onboarding_limitations_page
 
+    when_i_click_tell_me_more
+    then_i_see_additional_information
+
     when_i_click_that_i_understand
     then_i_see_the_onboarding_privacy_page
 
@@ -27,6 +30,14 @@ RSpec.describe "Chat Onboarding" do
 
   def then_i_see_the_onboarding_limitations_page
     expect(page).to have_content("I understand")
+  end
+
+  def when_i_click_tell_me_more
+    click_on "Tell me more"
+  end
+
+  def then_i_see_additional_information
+    expect(page).to have_content("And here's some more information.")
   end
 
   def when_i_click_that_i_understand

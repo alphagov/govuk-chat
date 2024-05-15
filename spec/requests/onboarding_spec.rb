@@ -27,6 +27,29 @@ RSpec.describe "OnboardingController" do
       expect(response.body)
         .to have_selector(".gem-c-button", text: "I understand")
     end
+
+    context "when more_information is true in the query string" do
+      it "sets session[:more_information] to true if params[:more_information] is present" do
+        get onboarding_limitations_path(more_information: true)
+        expect(session[:more_information]).to eq(true)
+      end
+
+      it "renders the tell me more information" do
+        get onboarding_limitations_path(more_information: true)
+        expect(response.body).to have_content "And here's some more information."
+      end
+    end
+
+    context "when session[:more_information] is true" do
+      before do
+        get onboarding_limitations_path(more_information: true)
+      end
+
+      it "renders the tell me more information" do
+        get onboarding_limitations_path
+        expect(response.body).to have_content "And here's some more information."
+      end
+    end
   end
 
   describe "POST :limitations_confirm" do

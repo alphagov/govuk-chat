@@ -1,5 +1,29 @@
+<p class="govuk-body">This is the first message.</p>
+
+<% if @more_information.present? %>
+  <p class="govuk-body">And here's some more information.</p>
+<% end %>
+
 <%= form_with url: onboarding_limitations_confirm_path do |f| %>
-  <%= render "govuk_publishing_components/components/button", {
-    text: "I understand",
-  } %>
+  <% if @more_information.present? %>
+    <div class="govuk-button-group">
+      <%= render "govuk_publishing_components/components/button", {
+        text: "I understand",
+      } %>
+
+      <%= link_to "Take me to GOV.UK", "#", class: "govuk-link" %>
+    </div>
+  <% else %>
+    <div class="govuk-button-group">
+      <%= render "govuk_publishing_components/components/button", {
+        text: "I understand",
+      } %>
+
+      <%= render "govuk_publishing_components/components/button", {
+        text: "Tell me more",
+        href: onboarding_limitations_path(more_information: true),
+        secondary_solid: true
+      } %>
+    </div>
+  <% end %>
 <% end %>
