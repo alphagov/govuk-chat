@@ -1,4 +1,24 @@
 RSpec.describe "OnboardingController" do
+  it_behaves_like "redirects user to the conversation when conversation_id is set on cookie",
+                  routes: {
+                    onboarding_limitations_path: %i[get],
+                    onboarding_limitations_confirm_path: %i[post],
+                    onboarding_privacy_path: %i[get],
+                    onboarding_privacy_confirm_path: %i[post],
+                  }
+  it_behaves_like "redirects user to the new conversation page when onboarded and no conversation cookie",
+                  routes: {
+                    onboarding_limitations_path: %i[get],
+                    onboarding_limitations_confirm_path: %i[post],
+                    onboarding_privacy_path: %i[get],
+                    onboarding_privacy_confirm_path: %i[post],
+                  }
+  it_behaves_like "redirects user to the privacy page when onboarding limitations has been completed",
+                  routes: { onboarding_limitations_path: %i[get], onboarding_limitations_confirm_path: %i[post] }
+
+  it_behaves_like "redirects user to the onboarding limitations page when onboarding not started",
+                  routes: { onboarding_privacy_path: %i[get], onboarding_privacy_confirm_path: %i[post] }
+
   describe "GET :limitations" do
     it "renders the limitations page" do
       get onboarding_limitations_path
@@ -24,6 +44,8 @@ RSpec.describe "OnboardingController" do
   end
 
   describe "GET :privacy" do
+    include_context "with onboarding limitations completed"
+
     it "renders the privacy page" do
       get onboarding_privacy_path
 
@@ -34,6 +56,8 @@ RSpec.describe "OnboardingController" do
   end
 
   describe "POST :privacy_confirm" do
+    include_context "with onboarding limitations completed"
+
     it "sets the session[:onboarding] to 'conversation'" do
       post onboarding_privacy_confirm_path
       expect(session[:onboarding]).to eq("conversation")
