@@ -1,7 +1,9 @@
 class OnboardingController < BaseController
   before_action :ensure_onboarding_flow_position
 
-  def limitations; end
+  def limitations
+    session[:onboarding] = nil
+  end
 
   def limitations_confirm
     session[:onboarding] = "privacy"
