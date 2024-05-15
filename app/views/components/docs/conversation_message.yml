@@ -15,6 +15,14 @@ examples:
       data_attributes:
         tracking: GTM-123AB
       message: This is a system generated conversation message with data attributes
+  with_html_message:
+    description: HTML is rendered as Govspeak
+    data:
+      id: message-html
+      message: |
+        <h2>Heading</h2>
+
+        <p>Content</p>
   with_sources:
     data:
       id: some-id-3
@@ -34,3 +42,4 @@ examples:
         tracking: GTM-123AB
       message: This is a user's question with data attributes
       is_question: true
+
