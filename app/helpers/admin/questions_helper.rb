@@ -32,6 +32,7 @@ module Admin
 
     def question_show_summary_list_rows(question, answer)
       conversation = question.conversation
+      search_text = question.answer&.rephrased_question || question.message
       rows = [
         {
           field: "Conversation id",
@@ -52,6 +53,10 @@ module Admin
         {
           field: "Question",
           value: question.message,
+        },
+        {
+          field: "Show search results",
+          value: link_to(search_text, admin_search_path(params: { search_text: }), class: "govuk-link"),
         },
       ]
 

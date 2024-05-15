@@ -49,6 +49,7 @@ RSpec.describe Admin::QuestionsHelper do
         "Question id",
         "Question created at",
         "Question",
+        "Show search results",
         "Status",
       ]
 
@@ -65,6 +66,7 @@ RSpec.describe Admin::QuestionsHelper do
         "Question created at",
         "Question",
         "Rephrased question",
+        "Show search results",
         "Status",
         "Answer created at",
         "Answer",
