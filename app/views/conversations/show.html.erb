@@ -1,5 +1,5 @@
 <%= content_for :title, "GOV.UK Chat" %>
-<%= content_for :main_class, "app-c-conversation-layout app-c-conversation-layout--chat" %>
+<%= content_for :main_class, "app-conversation-layout app-conversation-layout--chat" %>
 <%= content_for :visually_hidden_class, "govuk-visually-hidden" %>
 <%= content_for :error_summary do %>
   <% if @create_question.errors.any? %>
@@ -14,9 +14,9 @@
   http_method = @conversation.persisted? ? :patch : :post
 %>
 
-<div class="app-c-conversation-layout__wrapper">
-  <div class="app-c-conversation-layout__message-container">
-    <div class="app-c-conversation-layout__flex-container govuk-width-container">
+<div class="app-conversation-layout__wrapper">
+  <div class="app-conversation-layout__message-container">
+    <div class="app-conversation-layout__flex-container govuk-width-container">
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
           <%= render "components/conversation_message", {
@@ -27,7 +27,7 @@
               class: "app-c-conversation-message__p"
             ),
           } %>
-      
+
           <%= render "govuk_publishing_components/components/list", {
             items: @conversation.questions.each_with_index.map do |question, index|
               answer = question.answer
@@ -39,8 +39,8 @@
     </div>
   </div>
 
-  <div class="app-c-conversation-layout__input-container">
-    <div class="app-c-conversation-layout__flex-container govuk-width-container">
+  <div class="app-conversation-layout__input-container">
+    <div class="app-conversation-layout__flex-container govuk-width-container">
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
           <%= form_with url: form_url, method: http_method do |f| %>

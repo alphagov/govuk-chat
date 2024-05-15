@@ -13,8 +13,9 @@
 @import "govuk_publishing_components/components/success-alert";
 @import "govuk_publishing_components/components/warning-text";
 
+@import "objects/conversation_layout";
+
 @import "components/conversation_input";
-@import "components/conversation_layout";
 @import "components/conversation_message";
 
 @import "overrides";
