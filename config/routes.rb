@@ -60,9 +60,7 @@ Rails.application.routes.draw do
     }) => "/flipper"
 
     mount Sidekiq::Web => "/sidekiq"
-  end
 
-  if Rails.env.development? || ENV["MOUNT_COMPONENT_GUIDE"] == "true"
     mount GovukPublishingComponents::Engine, at: "/component-guide"
   end
 end
