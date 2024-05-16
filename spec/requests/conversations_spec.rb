@@ -75,25 +75,17 @@ RSpec.describe "ConversationsController" do
     include_context "with onboarding completed"
     let(:conversation) { create(:conversation) }
 
-    it "refreshes the conversation_id cookie when one is present" do
-      cookies[:conversation_id] = conversation.id
-
-      freeze_time do
-        post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
-        expect_conversation_id_set_on_cookie(conversation)
-      end
-    end
-
-    it "saves the question and renders the pending page with valid params" do
-      post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
-
+    it "saves the conversation & question and renders the pending page with valid params" do
+      expect { post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } } }
+        .to change(Question, :count).by(1)
+        .and change(Conversation, :count).by(1)
       expect(response).to have_http_status(:redirect)
       follow_redirect!
       expect(response.body)
         .to have_selector(".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer")
     end
 
-    it "sets the converation_id cookie when the first question is created with valid params" do
+    it "sets the converation_id cookie with valid params" do
       freeze_time do
         post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
         expect_conversation_id_set_on_cookie(Conversation.last)
@@ -107,6 +99,25 @@ RSpec.describe "ConversationsController" do
       expect(response.body)
         .to have_selector(".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question")
         .and have_selector(".app-c-conversation-input__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+    end
+
+    context "when the converation_id cookie is present" do
+      before do
+        cookies[:conversation_id] = conversation.id
+      end
+
+      it "saves the question on the conversation" do
+        expect { post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } } }
+          .to change(Question, :count).by(1)
+          .and change { conversation.reload.questions.count }.by(1)
+      end
+
+      it "refreshes the conversation_id cookie" do
+        freeze_time do
+          post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
+          expect_conversation_id_set_on_cookie(conversation)
+        end
+      end
     end
 
     context "when the request format is JSON" do
