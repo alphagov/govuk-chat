@@ -41,13 +41,9 @@
         <div class="govuk-grid-column-full">
           <%= form_with url: update_conversation_path do |f| %>
             <%= render "components/conversation_input", {
-              label: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
               name: "create_question[user_question]",
+              id: "create_question_user_question",
               value: @create_question.user_question,
-              hint: "Please limit your question to 300 characters.",
-              maxlength: 300,
-              character_threshold: 50,
-              spellcheck: true,
               error_items: @create_question.errors[:user_question].map { |message| { text: message } },
             } %>
           <% end %>

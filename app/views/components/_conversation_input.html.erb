@@ -1,60 +1,42 @@
 <%
-  data_attributes ||= {}
-
-  maxlength ||= nil
-  character_threshold ||= nil
+  id ||= "#{name.parameterize}-#{SecureRandom.hex(4)}"
   value ||= nil
-  hint ||= nil
-  hint_id ||= "hint-#{SecureRandom.hex(4)}"
-  spellcheck ||= "true"
+
+  maxlength = 300
+  hint = "Please limit your question to #{maxlength} characters."
+  hint_id = "#{id}-hint"
 
   error_items ||= []
   has_error ||= error_items.any?
-  error_id ||= "error-#{SecureRandom.hex(4)}"
+  error_id = "#{id}-error"
 
-  describedby ||= nil
-  aria_described_by ||= nil
-  
-  if hint || has_error || describedby
-    aria_described_by = []
-    aria_described_by << hint_id if hint
-    aria_described_by << error_id if has_error
-    aria_described_by << describedby if describedby
-    aria_described_by = aria_described_by.join(" ")
-  end
+  aria_described_by = []
+  aria_described_by << hint_id
+  aria_described_by << error_id if has_error
+  aria_described_by = aria_described_by.join(" ")
 %>
 
-<%= content_tag :div,
-  class: "app-c-conversation-input",
-  data: {
-    maxlength: maxlength,
-    character_threshold: character_threshold,
-  }.merge(data_attributes) do %>
-
+<%= content_tag :div, class: "app-c-conversation-input" do %>
   <%= content_tag :div, class: "app-c-conversation-input__wrapper" do %>
     <%= label_tag(
-      :create_question_user_question,
-      label,
+      id,
+      "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
       class: "app-c-conversation-input__label govuk-visually-hidden",
     ) %>
 
     <%= text_field_tag(
-      :create_question_user_question,
-      "",
+      id,
+      value,
       class: "app-c-conversation-input__input",
       aria: {
         describedby: aria_described_by
       },
       name: name,
-      value: value,
-      maxlength: maxlength,
+      maxlength:,
       required: true,
     ) %>
 
-    <%= button_tag(
-      "Send", 
-      class: "app-c-conversation-input__submit",
-    ) %>
+    <%= button_tag("Send", class: "app-c-conversation-input__submit") %>
   <% end %>
 
   <% if has_error %>
@@ -64,12 +46,10 @@
     } %>
   <% end %>
 
-  <% if hint %>
-    <div class="govuk-visually-hidden">
-      <%= render "govuk_publishing_components/components/hint", {
-        id: hint_id,
-        text: hint,
-      } %>
-    </div>
-  <% end %>
+  <div class="govuk-visually-hidden">
+    <%= render "govuk_publishing_components/components/hint", {
+      id: hint_id,
+      text: hint,
+    } %>
+  </div>
 <% end %>

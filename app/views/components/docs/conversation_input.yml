@@ -23,39 +23,11 @@ accessibility_criteria: |
 examples:
   default:
     data:
-      label: "Input label"
-      name: "Input name"
+      name: "input[name]"
       value: "Input value"
-  with_data_attributes:
-    data:
-      data_attributes:
-        tracking: GTM-123AB
-      label: "Input label"
-      name: "Input name"
-      value: "Input value"
-  with_hint:
-    data:
-      label: "Input label"
-      name: "Input name"
-      value: "Input value"
-      hint: "A hint"
-  with_maxlength:
-    data:
-      label: "Input label"
-      name: "Input name"
-      value: "Input value"
-      maxlength: 300
-  with_character_threshold:
-    description: The character threshold is used to activate a character counter when the number of characters in the input field are less than or equal to the character threshold. It requires JavaScript to function.
-    data:
-      label: "Input label"
-      name: "Input name"
-      value: "Input value"
-      character_threshold: 50
   with_errors:
     data:
-      label: "Input label"
-      name: "Input name"
+      name: "input[name]"
       value: "Input value"
       error_items:
       - text: Descriptive link to the question with an error 1
