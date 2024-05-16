@@ -18,10 +18,9 @@
 
 .app-c-conversation-message__body {
   padding: govuk-spacing(3);
-}
 
-.gem-c-govspeak.govuk-govspeak {
-  :last-child {
+  // two classes used to increase specificity
+  .gem-c-govspeak.govuk-govspeak :last-child {
     margin-bottom: 0;
   }
 }

@@ -22,4 +22,5 @@ RSpec.describe "Developer Tools Access" do
 
   include_examples "mounted rack app requiring developer-tools permission", "/sidekiq"
   include_examples "mounted rack app requiring developer-tools permission", "/flipper"
+  include_examples "mounted rack app requiring developer-tools permission", "/component-guide"
 end

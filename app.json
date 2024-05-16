@@ -13,9 +13,6 @@
     "GDS_SSO_STRATEGY": {
       "value": "mock"
     },
-    "MOUNT_COMPONENT_GUIDE": {
-      "value": "true"
-    },
     "BASIC_AUTH_USERNAME": {
       "required": true
     },

@@ -1,11 +1,11 @@
-.app-c-conversation-layout--chat {
+.app-conversation-layout--chat {
   display: flex;
   flex-direction: column;
   flex: 1;
   overflow-x: hidden;
 }
 
-.app-c-conversation-layout__wrapper {
+.app-conversation-layout__wrapper {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -13,11 +13,11 @@
   min-height: 300px;
 }
 
-.app-c-conversation-layout__message-container {
+.app-conversation-layout__message-container {
   overflow-y: auto;
 }
 
-.app-c-conversation-layout__flex-container {
+.app-conversation-layout__flex-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
