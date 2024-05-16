@@ -9,10 +9,6 @@
     } %>
   <% end %>
 <% end %>
-<%
-  form_url = @conversation.persisted? ? update_conversation_path(@conversation) : create_conversation_path
-  http_method = @conversation.persisted? ? :patch : :post
-%>
 
 <div class="app-c-conversation-layout__wrapper">
   <div class="app-c-conversation-layout__message-container">
@@ -27,7 +23,7 @@
               class: "app-c-conversation-message__p"
             ),
           } %>
-      
+
           <%= render "govuk_publishing_components/components/list", {
             items: @conversation.questions.each_with_index.map do |question, index|
               answer = question.answer
@@ -43,7 +39,7 @@
     <div class="app-c-conversation-layout__flex-container govuk-width-container">
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-          <%= form_with url: form_url, method: http_method do |f| %>
+          <%= form_with url: update_conversation_path do |f| %>
             <%= render "components/conversation_input", {
               label: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
               name: "create_question[user_question]",

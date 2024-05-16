@@ -22,9 +22,7 @@ Rails.application.routes.draw do
 
     scope :conversation do
       get "", to: "conversations#show", as: :show_conversation
-      post "", to: "conversations#create", as: :create_conversation
-
-      patch "/:id", to: "conversations#update", as: :update_conversation
+      post "", to: "conversations#update", as: :update_conversation
 
       scope "/:conversation_id/questions" do
         get "/:id/answer", to: "questions#answer", as: :answer_question
