@@ -62,14 +62,14 @@ module RequestExamples
             process(method.to_sym, public_send(path.to_sym))
 
             expect(response).to have_http_status(:redirect)
-            expect(response).to redirect_to(show_conversation_path(conversation))
+            expect(response).to redirect_to(show_conversation_path)
           end
         end
       end
     end
   end
 
-  shared_examples "redirects user to the new conversation page when onboarded and no conversation cookie" do |routes:|
+  shared_examples "redirects user to the conversation page when onboarded and no conversation cookie" do |routes:|
     include_context "with onboarding completed"
 
     routes.each do |path, methods|
@@ -79,7 +79,7 @@ module RequestExamples
             process(method.to_sym, public_send(path.to_sym))
 
             expect(response).to have_http_status(:redirect)
-            expect(response).to redirect_to(new_conversation_path)
+            expect(response).to redirect_to(show_conversation_path)
           end
         end
       end

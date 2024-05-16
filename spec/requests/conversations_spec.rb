@@ -3,20 +3,9 @@ RSpec.describe "ConversationsController" do
 
   delegate :helpers, to: ConversationsController
 
-  it_behaves_like "requires user to have completed onboarding", routes: { new_conversation_path: %i[get], create_conversation_path: %i[post] }
-  it_behaves_like "requires user to have completed onboarding", routes: { show_conversation_path: %i[get], update_conversation_path: %i[patch] } do
+  it_behaves_like "requires user to have completed onboarding", routes: { show_conversation_path: %i[get], create_conversation_path: %i[post] }
+  it_behaves_like "requires user to have completed onboarding", routes: { update_conversation_path: %i[patch] } do
     let(:route_params) { [SecureRandom.uuid] }
-  end
-
-  describe "GET :new" do
-    include_context "with onboarding completed"
-
-    it "renders the correct fields" do
-      get new_conversation_path
-
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to render_create_question_form
-    end
   end
 
   describe "POST :create" do
@@ -39,6 +28,14 @@ RSpec.describe "ConversationsController" do
       expect(response.body)
         .to have_selector(".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question")
         .and render_create_question_form
+    end
+
+    it "sets the converation_id on the cookie" do
+      freeze_time do
+        post create_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
+        conversation = Conversation.last
+        expect_conversation_id_set_on_cookie(conversation)
+      end
     end
 
     context "when the chat API feature is enabled for specific users" do
@@ -103,9 +100,22 @@ RSpec.describe "ConversationsController" do
       expect(response.body).to render_create_question_form
     end
 
-    context "when the conversation has a question with an answer" do
-      it "renders the question and the answer" do
-        question = create(:question, :with_answer)
+    context "when conversation_id is set on the cookie" do
+      let(:conversation) { create(:conversation) }
+
+      before do
+        cookies[:conversation_id] = conversation.id
+      end
+
+      it "refreshes the conversation_id cookie" do
+        freeze_time do
+          get show_conversation_path
+          expect_conversation_id_set_on_cookie(conversation)
+        end
+      end
+
+      it "can render a question with an answer" do
+        question = create(:question, :with_answer, conversation:)
         answer = question.answer
 
         get show_conversation_path(question.conversation)
@@ -115,16 +125,32 @@ RSpec.describe "ConversationsController" do
           .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
           .and have_selector("##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message)
       end
-    end
 
-    context "when the conversation has an unanswered question" do
-      it "only renders a question" do
-        question = create(:question)
+      it "can render a question without an answer" do
+        question = create(:question, conversation:)
         get show_conversation_path(question.conversation)
 
         expect(response).to have_http_status(:ok)
         expect(response.body)
           .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
+      end
+
+      context "when the conversation cannot be found" do
+        before do
+          conversation.destroy!
+        end
+
+        it "deletes the conversation_id cookie" do
+          get show_conversation_path
+          expect(cookies[:conversation_id]).to be_blank
+        end
+
+        it "redirects to the onboarding limitations page" do
+          get show_conversation_path
+
+          expect(response).to have_http_status(:redirect)
+          expect(response).to redirect_to(onboarding_limitations_path)
+        end
       end
     end
   end
@@ -149,6 +175,13 @@ RSpec.describe "ConversationsController" do
       expect(response.body)
         .to have_selector(".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question")
         .and have_selector(".app-c-conversation-input__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+    end
+
+    it "sets the converation_id on the cookie" do
+      freeze_time do
+        patch update_conversation_path(conversation), params: { create_question: { user_question: "How much tax should I be paying?" } }
+        expect_conversation_id_set_on_cookie(conversation)
+      end
     end
 
     context "when the request format is JSON" do
@@ -184,5 +217,11 @@ RSpec.describe "ConversationsController" do
 
   def render_create_question_form
     have_selector(".app-c-conversation-input__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+  end
+
+  def expect_conversation_id_set_on_cookie(conversation)
+    cookie = cookies.get_cookie("conversation_id")
+    expect(cookie.value).to eq(conversation.id)
+    expect(cookie.expires).to eq(7.days.from_now)
   end
 end

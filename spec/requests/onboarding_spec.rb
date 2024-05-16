@@ -6,7 +6,7 @@ RSpec.describe "OnboardingController" do
                     onboarding_privacy_path: %i[get],
                     onboarding_privacy_confirm_path: %i[post],
                   }
-  it_behaves_like "redirects user to the new conversation page when onboarded and no conversation cookie",
+  it_behaves_like "redirects user to the conversation page when onboarded and no conversation cookie",
                   routes: {
                     onboarding_limitations_path: %i[get],
                     onboarding_limitations_confirm_path: %i[post],
@@ -86,25 +86,11 @@ RSpec.describe "OnboardingController" do
       expect(session[:onboarding]).to eq("conversation")
     end
 
-    context "when conversation_id is not set on the cookie" do
-      it "redirects to the new conversation page" do
-        post onboarding_privacy_confirm_path
+    it "redirects to the show conversation page" do
+      post onboarding_privacy_confirm_path
 
-        expect(response).to have_http_status(:redirect)
-        expect(response).to redirect_to(new_conversation_path)
-      end
-    end
-
-    context "when conversation_id is set on the cookie" do
-      it "redirects to the conversation show page" do
-        conversation = create(:conversation)
-        cookies[:conversation_id] = conversation.id
-
-        post onboarding_privacy_confirm_path
-
-        expect(response).to have_http_status(:redirect)
-        expect(response).to redirect_to(show_conversation_path(conversation))
-      end
+      expect(response).to have_http_status(:redirect)
+      expect(response).to redirect_to(show_conversation_path)
     end
   end
 end

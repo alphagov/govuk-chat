@@ -16,19 +16,15 @@ class OnboardingController < BaseController
 
   def privacy_confirm
     session[:onboarding] = "conversation"
-
-    if cookies[:conversation_id]
-      redirect_to show_conversation_path(cookies[:conversation_id])
-    else
-      redirect_to new_conversation_path
-    end
+    redirect_to show_conversation_path(cookies[:conversation_id])
   end
 
 private
 
   def ensure_onboarding_flow_position
-    return redirect_to show_conversation_path(cookies[:conversation_id]) if cookies[:conversation_id]
-    return redirect_to new_conversation_path if session[:onboarding] == "conversation"
+    if cookies[:conversation_id].present? || session[:onboarding] == "conversation"
+      return redirect_to show_conversation_path
+    end
 
     if session[:onboarding] == "privacy" && !action_name.match?(/privacy/)
       return redirect_to onboarding_privacy_path

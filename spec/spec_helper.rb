@@ -29,9 +29,10 @@ RSpec.configure do |config|
   config.order = :random
   Kernel.srand(config.seed)
 
-  config.include FactoryBot::Syntax::Methods
+  config.include ActiveSupport::Testing::TimeHelpers
   config.include AuthenticationHelpers, type: ->(spec) { spec.in?(%i[request system]) }
   config.include Capybara::RSpecMatchers, type: :request
+  config.include FactoryBot::Syntax::Methods
   config.include StubOpenAIChat
   config.include StubOpenAIEmbedding
   config.include StubChatApi

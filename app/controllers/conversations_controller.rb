@@ -1,16 +1,10 @@
 class ConversationsController < BaseController
   before_action :require_onboarding_completed
-  before_action :find_conversation, only: %i[show update]
+  before_action :find_conversation, only: %i[show]
 
   def show
+    @conversation ||= Conversation.new
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
-  end
-
-  def new
-    @create_question = Form::CreateQuestion.new
-    @conversation = @create_question.conversation
-
-    render :show
   end
 
   def create
@@ -19,6 +13,7 @@ class ConversationsController < BaseController
   end
 
   def update
+    @conversation = Conversation.find(params[:id])
     @create_question = Form::CreateQuestion.new(user_question_params.merge(conversation: @conversation))
     handle_question_submission(@create_question)
   end
@@ -30,12 +25,19 @@ private
   end
 
   def find_conversation
-    @conversation = Conversation.find(params[:id])
+    return if cookies[:conversation_id].blank?
+
+    @conversation = Conversation.find(cookies[:conversation_id])
+    set_conversation_cookie(@conversation)
+  rescue ActiveRecord::RecordNotFound
+    cookies.delete(:conversation_id)
+    redirect_to onboarding_limitations_path
   end
 
   def handle_question_submission(create_question)
     if @create_question.valid?
       question = create_question.submit
+      set_conversation_cookie(question.conversation)
 
       respond_to do |format|
         format.html { redirect_to answer_question_path(question.conversation, question) }
@@ -45,6 +47,8 @@ private
       respond_to do |format|
         format.html do
           @conversation = create_question.conversation
+          set_conversation_cookie(@conversation) if @conversation.persisted?
+
           render :show, status: :unprocessable_entity
         end
         format.json { render json: question_error_json(create_question), status: :unprocessable_entity }
@@ -74,5 +78,9 @@ private
       answer_url: nil,
       error_messages: create_question.errors.map(&:message),
     }
+  end
+
+  def set_conversation_cookie(conversation)
+    cookies[:conversation_id] = { value: conversation.id, expires: 7.days.from_now }
   end
 end
