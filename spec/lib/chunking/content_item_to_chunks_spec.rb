@@ -20,7 +20,7 @@ RSpec.describe Chunking::ContentItemToChunks do
       )
 
       expect { described_class.call(content_item) }
-        .to raise_error("schema doesnt_exist with document_type any is not supported for parsing")
+        .to raise_error("Content item not supported for parsing: doesnt_exist is not a supported schema")
     end
 
     it "raises an error when given a document_type that is not supported" do
@@ -30,7 +30,7 @@ RSpec.describe Chunking::ContentItemToChunks do
       )
 
       expect { described_class.call(content_item) }
-        .to raise_error("schema publication with document_type decision is not supported for parsing")
+        .to raise_error("Content item not supported for parsing: document type: decision not supported for schema: publication")
     end
   end
 

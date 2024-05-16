@@ -11,8 +11,8 @@ module MessageQueue
         return delete_with_skip_index_reason("has a non-English locale")
       end
 
-      unless supported_schema_and_document_type?
-        return delete_with_skip_index_reason(%(unsupported schema "#{schema_name}" document_type "#{document_type}"))
+      unless supported_content_item?
+        return delete_with_skip_index_reason(non_indexable_content_item_reason)
       end
 
       if withdrawn?
@@ -35,12 +35,12 @@ module MessageQueue
       Result.new(chunks_deleted:, skip_index_reason:)
     end
 
-    def schema_name
-      content_item["schema_name"]
+    def supported_content_item?
+      Chunking::ContentItemToChunks.supported_content_item?(content_item)
     end
 
-    def document_type
-      content_item["document_type"]
+    def non_indexable_content_item_reason
+      Chunking::ContentItemToChunks.non_indexable_content_item_reason(content_item)
     end
 
     def non_english_locale?
