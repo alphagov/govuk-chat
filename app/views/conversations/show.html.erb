@@ -39,14 +39,13 @@
     <div class="app-conversation-layout__flex-container govuk-width-container">
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-          <%= form_with url: update_conversation_path do |f| %>
-            <%= render "components/conversation_input", {
-              name: "create_question[user_question]",
-              id: "create_question_user_question",
-              value: @create_question.user_question,
-              error_items: @create_question.errors[:user_question].map { |message| { text: message } },
-            } %>
-          <% end %>
+          <%= render "components/conversation_form", {
+            url: update_conversation_path,
+            name: "create_question[user_question]",
+            input_id: "create_question_user_question",
+            value: @create_question.user_question,
+            error_items: @create_question.errors[:user_question].map { |message| { text: message } },
+          } %>
         </div>
       </div>
     </div>

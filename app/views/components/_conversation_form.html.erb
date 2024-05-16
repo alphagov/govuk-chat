@@ -1,14 +1,14 @@
 <%
-  id ||= "#{name.parameterize}-#{SecureRandom.hex(4)}"
+  input_id ||= "#{name.parameterize}-#{SecureRandom.hex(4)}"
   value ||= nil
 
   maxlength = 300
   hint = "Please limit your question to #{maxlength} characters."
-  hint_id = "#{id}-hint"
+  hint_id = "#{input_id}-hint"
 
   error_items ||= []
   has_error ||= error_items.any?
-  error_id = "#{id}-error"
+  error_id = "#{input_id}-error"
 
   aria_described_by = []
   aria_described_by << hint_id
@@ -16,18 +16,18 @@
   aria_described_by = aria_described_by.join(" ")
 %>
 
-<%= content_tag :div, class: "app-c-conversation-input" do %>
-  <%= content_tag :div, class: "app-c-conversation-input__wrapper" do %>
+<%= form_with url: url, class: "app-c-conversation-form" do |f| %>
+  <%= content_tag :div, class: "app-c-conversation-form__wrapper" do %>
     <%= label_tag(
-      id,
+      input_id,
       "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
-      class: "app-c-conversation-input__label govuk-visually-hidden",
+      class: "app-c-conversation-form__label govuk-visually-hidden",
     ) %>
 
     <%= text_field_tag(
-      id,
+      input_id,
       value,
-      class: "app-c-conversation-input__input",
+      class: "app-c-conversation-form__input",
       aria: {
         describedby: aria_described_by
       },
@@ -36,7 +36,7 @@
       required: true,
     ) %>
 
-    <%= button_tag("Send", class: "app-c-conversation-input__submit") %>
+    <%= button_tag("Send", class: "app-c-conversation-form__submit") %>
   <% end %>
 
   <% if has_error %>

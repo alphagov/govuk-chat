@@ -1,5 +1,5 @@
-name: Conversation input
-description: A chat input field with a visually hidden label, a submit button, and any accompanying hints and/or error messages
+name: Conversation form
+description: A form that contains an input field with a visually hidden label, a submit button, and any accompanying hints and/or error messages for the input
 accessibility_criteria: |
   Inputs in the component must:
 
@@ -23,10 +23,12 @@ accessibility_criteria: |
 examples:
   default:
     data:
+      url: "/question"
       name: "input[name]"
       value: "Input value"
   with_errors:
     data:
+      url: "/question"
       name: "input[name]"
       value: "Input value"
       error_items:
