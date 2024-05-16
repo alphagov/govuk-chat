@@ -1,16 +1,9 @@
 class ConversationsController < BaseController
   before_action :require_onboarding_completed
-  before_action :find_conversation, only: %i[update]
+  before_action :find_conversation, only: %i[show]
 
   def show
-    @conversation = Conversation.find_by(id: cookies["conversation_id"]) || Conversation.new
-
-    if cookies[:conversation_id].present? && @conversation.new_record?
-      cookies.delete(:conversation_id)
-      return redirect_to onboarding_limitations_path
-    end
-
-    set_conversation_cookie(@conversation) if @conversation.persisted?
+    @conversation ||= Conversation.new
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
   end
 
@@ -20,6 +13,7 @@ class ConversationsController < BaseController
   end
 
   def update
+    @conversation = Conversation.find(params[:id])
     @create_question = Form::CreateQuestion.new(user_question_params.merge(conversation: @conversation))
     handle_question_submission(@create_question)
   end
@@ -31,7 +25,13 @@ private
   end
 
   def find_conversation
-    @conversation = Conversation.find(params[:id])
+    return if cookies[:conversation_id].blank?
+
+    @conversation = Conversation.find(cookies[:conversation_id])
+    set_conversation_cookie(@conversation)
+  rescue ActiveRecord::RecordNotFound
+    cookies.delete(:conversation_id)
+    redirect_to onboarding_limitations_path
   end
 
   def handle_question_submission(create_question)
