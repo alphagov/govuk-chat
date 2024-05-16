@@ -3,7 +3,7 @@ RSpec.describe "Chat Onboarding" do
     when_i_visit_the_root_path
     then_i_see_the_landing_page
 
-    when_i_click_on_the_continue_button
+    when_i_click_on_the_try_govuk_chat_button
     then_i_see_the_onboarding_limitations_page
 
     when_i_click_tell_me_more
@@ -24,8 +24,8 @@ RSpec.describe "Chat Onboarding" do
     expect(page).to have_content("Welcome to GOV.UK Chat")
   end
 
-  def when_i_click_on_the_continue_button
-    click_on "Continue"
+  def when_i_click_on_the_try_govuk_chat_button
+    click_on "Try GOV.UK Chat"
   end
 
   def then_i_see_the_onboarding_limitations_page
