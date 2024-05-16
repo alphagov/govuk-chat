@@ -5,7 +5,7 @@
 
   <%= render("govuk_publishing_components/components/button", {
     text: "Check if an answer has been generated",
-    href: answer_question_path(@conversation, @question, refresh: true),
+    href: answer_question_path(@question, refresh: true),
   }) %>
 <% end %>
 

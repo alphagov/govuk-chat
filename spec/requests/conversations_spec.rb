@@ -4,13 +4,15 @@ RSpec.describe "ConversationsController" do
   delegate :helpers, to: ConversationsController
 
   it_behaves_like "requires user to have completed onboarding", routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+  it_behaves_like "requires user to have completed onboarding", routes: { answer_question_path: %i[get] } do
+    let(:route_params) { [SecureRandom.uuid] }
+  end
 
   describe "GET :show" do
     include_context "with onboarding completed"
 
     it "renders the question form" do
-      question = create(:question, :with_answer)
-      get show_conversation_path(question.conversation)
+      get show_conversation_path
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to render_create_question_form
@@ -34,7 +36,7 @@ RSpec.describe "ConversationsController" do
         question = create(:question, :with_answer, conversation:)
         answer = question.answer
 
-        get show_conversation_path(question.conversation)
+        get show_conversation_path
 
         expect(response).to have_http_status(:success)
         expect(response.body)
@@ -44,7 +46,7 @@ RSpec.describe "ConversationsController" do
 
       it "can render a question without an answer" do
         question = create(:question, conversation:)
-        get show_conversation_path(question.conversation)
+        get show_conversation_path
 
         expect(response).to have_http_status(:ok)
         expect(response.body)
@@ -151,6 +153,69 @@ RSpec.describe "ConversationsController" do
           "answer_url" => nil,
           "error_messages" => ["Enter a question"],
         )
+      end
+    end
+  end
+
+  describe "GET :answer" do
+    include_context "with onboarding completed"
+    let(:conversation) { create(:conversation) }
+
+    before do
+      cookies[:conversation_id] = conversation.id
+    end
+
+    it "redirects to the conversation page when there are no pending answers and the user has clicked on the refresh button" do
+      question = create(:question, :with_answer, conversation:)
+      get answer_question_path(question, refresh: true)
+
+      expected_redirect_destination = show_conversation_path(anchor: helpers.dom_id(question.answer))
+      expect(response).to redirect_to(expected_redirect_destination)
+
+      follow_redirect!
+      expect(response.body)
+        .to have_selector(".app-c-conversation-input__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+    end
+
+    it "renders the pending page when a question doesn't have an answer" do
+      question = create(:question, conversation:)
+      get answer_question_path(question)
+
+      expect(response).to have_http_status(:accepted)
+      expect(response.body)
+        .to have_selector(".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer")
+        .and have_selector(".govuk-button[href='#{answer_question_path(question)}?refresh=true']",
+                           text: "Check if an answer has been generated")
+    end
+
+    context "when the refresh query string is passed" do
+      it "renders the pending page and thanks them for their patience" do
+        question = create(:question, conversation:)
+        get answer_question_path(question, refresh: true)
+
+        expect(response).to have_http_status(:accepted)
+        expect(response.body)
+          .to have_selector(".govuk-govspeak p",
+                            text: "Thanks for your patience. Check again to find out if your answer is ready.")
+      end
+    end
+
+    context "when the request format is JSON" do
+      it "responds with a 200 and answer_html when the question has been answered" do
+        question = create(:question, :with_answer, conversation:)
+
+        get answer_question_path(question, format: :json)
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)).to match({ "answer_html" => /app-c-conversation-message/ })
+      end
+
+      it "responds with an accepted status code when the question has a pending answer" do
+        question = create(:question, conversation:)
+        get answer_question_path(question, format: :json)
+
+        expect(response).to have_http_status(:accepted)
+        expect(JSON.parse(response.body)).to eq({ "answer_html" => nil })
       end
     end
   end
