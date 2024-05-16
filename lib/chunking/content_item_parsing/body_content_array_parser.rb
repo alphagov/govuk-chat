@@ -42,6 +42,16 @@ module Chunking::ContentItemParsing
       document_type_check.call(document_type)
     end
 
+    def self.non_indexable_content_item_reason(content_item)
+      schema_name = content_item["schema_name"]
+      document_type_check = SCHEMAS_TO_DOCUMENT_TYPE_CHECK[schema_name]
+
+      document_type = content_item["document_type"]
+      return if document_type_check&.call(document_type)
+
+      "document type: #{document_type} not supported for schema: #{schema_name}"
+    end
+
     def self.allowed_schemas
       SCHEMAS_TO_DOCUMENT_TYPE_CHECK.keys
     end
