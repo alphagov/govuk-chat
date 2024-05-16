@@ -10,6 +10,7 @@ FactoryBot.define do
     base_path { "/base-path" }
     locale { "en" }
     document_type { "guide" }
+    parent_document_type { nil }
     title { "Title" }
     description { "Description" }
     url { "/base-path#anchor" }

@@ -9,6 +9,7 @@ FactoryBot.define do
       base_path { :preserve }
       title { :preserve }
       description { :preserve }
+      parent_document_type { :preserve }
     end
 
     content_item do
@@ -18,7 +19,8 @@ FactoryBot.define do
             locale:,
             base_path:,
             title:,
-            description:)
+            description:,
+            parent_document_type:)
     end
 
     html_content { "<p>Content</p>" }
