@@ -28,6 +28,16 @@ module Chunking
       parser.supported_schema_and_document_type?(schema_name, document_type)
     end
 
+    def self.non_indexable_content_item_reason(content_item)
+      schema_name = content_item["schema_name"]
+      parser = parsers_by_schema_name[schema_name]
+
+      return "#{schema_name} is not a supported schema" if parser.nil?
+      return unless parser.respond_to?(:non_indexable_content_item_reason)
+
+      parser.non_indexable_content_item_reason(content_item)
+    end
+
     def self.parsers_by_schema_name
       parser_list = []
       PARSERS_FOR_SCHEMAS.each do |parser|
