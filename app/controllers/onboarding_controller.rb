@@ -16,7 +16,7 @@ class OnboardingController < BaseController
 
   def privacy_confirm
     session[:onboarding] = "conversation"
-    redirect_to show_conversation_path(cookies[:conversation_id])
+    redirect_to show_conversation_path
   end
 
 private

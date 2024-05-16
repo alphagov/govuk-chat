@@ -1,6 +1,6 @@
 class ConversationsController < BaseController
   before_action :require_onboarding_completed
-  before_action :find_conversation, only: %i[show update]
+  before_action :find_conversation
 
   def show
     @conversation ||= Conversation.new
@@ -16,7 +16,7 @@ class ConversationsController < BaseController
       set_conversation_cookie(question.conversation) if cookies[:conversation_id].blank?
 
       respond_to do |format|
-        format.html { redirect_to answer_question_path(question.conversation, question) }
+        format.html { redirect_to answer_question_path(question) }
         format.json { render json: question_success_json(question), status: :created }
       end
     else
@@ -27,6 +27,23 @@ class ConversationsController < BaseController
           render :show, status: :unprocessable_entity
         end
         format.json { render json: question_error_json(@create_question), status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def answer
+    return redirect_to onboarding_limitations_path unless @conversation
+
+    @question = @conversation.questions.find(params[:question_id])
+    answer = @question.answer
+
+    respond_to do |format|
+      if answer.present?
+        format.html { redirect_to show_conversation_path(anchor: helpers.dom_id(answer)) }
+        format.json { render json: answer_success_json(answer), status: :ok }
+      else
+        format.html { render :pending, status: :accepted }
+        format.json { render json: { answer_html: nil }, status: :accepted }
       end
     end
   end
@@ -68,6 +85,20 @@ private
       question_html: nil,
       answer_url: nil,
       error_messages: create_question.errors.map(&:message),
+    }
+  end
+
+  def answer_success_json(answer)
+    {
+      answer_html: render_to_string(
+        partial: "components/conversation_message",
+        formats: :html,
+        locals: {
+          id: helpers.dom_id(answer),
+          sources: answer.sources.map(&:url),
+          message: answer.message,
+        },
+      ),
     }
   end
 

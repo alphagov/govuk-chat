@@ -24,9 +24,7 @@ Rails.application.routes.draw do
       get "", to: "conversations#show", as: :show_conversation
       post "", to: "conversations#update", as: :update_conversation
 
-      scope "/:conversation_id/questions" do
-        get "/:id/answer", to: "questions#answer", as: :answer_question
-      end
+      get "/questions/:question_id/answer", to: "conversations#answer", as: :answer_question
     end
   end
 
