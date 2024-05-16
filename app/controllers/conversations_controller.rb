@@ -1,21 +1,34 @@
 class ConversationsController < BaseController
   before_action :require_onboarding_completed
-  before_action :find_conversation, only: %i[show]
+  before_action :find_conversation, only: %i[show update]
 
   def show
     @conversation ||= Conversation.new
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
   end
 
-  def create
-    @create_question = Form::CreateQuestion.new(user_question_params)
-    handle_question_submission(@create_question)
-  end
-
   def update
-    @conversation = Conversation.find(params[:id])
+    @conversation ||= Conversation.new
     @create_question = Form::CreateQuestion.new(user_question_params.merge(conversation: @conversation))
-    handle_question_submission(@create_question)
+
+    if @create_question.valid?
+      question = @create_question.submit
+      set_conversation_cookie(question.conversation) if cookies[:conversation_id].blank?
+
+      respond_to do |format|
+        format.html { redirect_to answer_question_path(question.conversation, question) }
+        format.json { render json: question_success_json(question), status: :created }
+      end
+    else
+      respond_to do |format|
+        format.html do
+          @conversation = @create_question.conversation
+
+          render :show, status: :unprocessable_entity
+        end
+        format.json { render json: question_error_json(@create_question), status: :unprocessable_entity }
+      end
+    end
   end
 
 private
@@ -32,28 +45,6 @@ private
   rescue ActiveRecord::RecordNotFound
     cookies.delete(:conversation_id)
     redirect_to onboarding_limitations_path
-  end
-
-  def handle_question_submission(create_question)
-    if @create_question.valid?
-      question = create_question.submit
-      set_conversation_cookie(question.conversation)
-
-      respond_to do |format|
-        format.html { redirect_to answer_question_path(question.conversation, question) }
-        format.json { render json: question_success_json(question), status: :created }
-      end
-    else
-      respond_to do |format|
-        format.html do
-          @conversation = create_question.conversation
-          set_conversation_cookie(@conversation) if @conversation.persisted?
-
-          render :show, status: :unprocessable_entity
-        end
-        format.json { render json: question_error_json(create_question), status: :unprocessable_entity }
-      end
-    end
   end
 
   def question_success_json(question)
