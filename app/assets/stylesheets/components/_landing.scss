@@ -1,0 +1,18 @@
+.app-c-landing {
+  padding: govuk-spacing(6) govuk-spacing(3);
+}
+
+.app-c-landing__svg-container {
+  @include govuk-media-query($until: 480px) {
+    margin-bottom: govuk-spacing(6);
+  }
+}
+
+.app-c-landing__title {
+  @include govuk-font($size: 48, $weight: bold);
+  margin: govuk-spacing(6) 0;
+}
+
+.app-c-landing__lead-paragraph {
+  @include govuk-font($size: 36, $weight: regular);
+}
