@@ -23,18 +23,4 @@ module ContentItemParserExamples
       end
     end
   end
-
-  shared_examples "a parser that allows .allowed_schemas" do
-    describe ".supported_schema_and_document_type?" do
-      it "returns true for allowed_schemas" do
-        described_class.allowed_schemas.each do |schema|
-          expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
-        end
-      end
-
-      it "returns false for unsupported schemas" do
-        expect(described_class.supported_schema_and_document_type?("unknown", "anything")).to eq(false)
-      end
-    end
-  end
 end

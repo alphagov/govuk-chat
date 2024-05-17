@@ -5,7 +5,6 @@ module Chunking
       ContentItemParsing::BodyContentParser,
       ContentItemParsing::PartsContentParser,
       ContentItemParsing::TransactionParser,
-      # TODO: establish all supported schemas and add parsers for them
     ].freeze
 
     def self.call(content_item)
@@ -15,14 +14,6 @@ module Chunking
 
       parser_class = parsers_by_schema_name[content_item["schema_name"]]
       parser_class.call(content_item)
-    end
-
-    def self.supported_schema_and_document_type?(schema_name, document_type)
-      parser = parsers_by_schema_name[schema_name]
-
-      return false if parser.nil?
-
-      parser.supported_schema_and_document_type?(schema_name, document_type)
     end
 
     def self.supported_content_item?(content_item)

@@ -18,8 +18,6 @@ RSpec.describe Chunking::ContentItemParsing::TransactionParser do
     end
   end
 
-  it_behaves_like "a parser that allows .allowed_schemas"
-
   describe ".call" do
     it "uses the introductory_paragraph, more_information, other_ways_to_apply and what_you_need_to_know fields for chunks" do
       details = {

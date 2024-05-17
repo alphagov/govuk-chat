@@ -37,44 +37,6 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
     end
   end
 
-  describe ".supported_schema_and_document_type?" do
-    it "returns true for schemas that don't care about document type" do
-      described_class.allowed_schemas.without("publication", "speech").each do |schema|
-        expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
-      end
-    end
-
-    it "returns false for unsupported schemas" do
-      expect(described_class.supported_schema_and_document_type?("unknown", "anything")).to eq(false)
-    end
-
-    %w[correspondence decision].each do |document_type|
-      it "rejects '#{document_type}' document type for 'publication' schema" do
-        expect(described_class.supported_schema_and_document_type?("publication", document_type)).to eq(false)
-      end
-
-      it "allows '#{document_type}' document type for other schemas" do
-        expect(described_class.supported_schema_and_document_type?("consultation", document_type)).to eq(true)
-      end
-    end
-
-    %w[oral_statement written_statement].each do |document_type|
-      it "allows #{document_type} document type for 'speech' schema" do
-        expect(described_class.supported_schema_and_document_type?("speech", document_type)).to eq(true)
-      end
-    end
-
-    it "disallows other document types for speech" do
-      expect(described_class.supported_schema_and_document_type?("speech", "anything")).to eq(false)
-    end
-
-    it "allows other document types for 'publication' schema" do
-      %w[anything anything_else].each do |document_type|
-        expect(described_class.supported_schema_and_document_type?("publication", document_type)).to eq(true)
-      end
-    end
-  end
-
   describe ".non_indexable_content_item_reason" do
     it "returns nil for schemas that don't care about document type" do
       described_class.allowed_schemas.without("publication", "speech").each do |schema_name|

@@ -47,10 +47,6 @@ module MessageQueue
       content_item["locale"] != "en"
     end
 
-    def supported_schema_and_document_type?
-      Chunking::ContentItemToChunks.supported_schema_and_document_type?(schema_name, document_type)
-    end
-
     def withdrawn?
       content_item["withdrawn_notice"].present?
     end

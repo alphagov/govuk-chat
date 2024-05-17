@@ -50,21 +50,6 @@ RSpec.describe Chunking::ContentItemToChunks do
     end
   end
 
-  describe ".supported_schema_and_document_type?" do
-    it "delegates to the method on the mapped parser" do
-      allow(Chunking::ContentItemParsing::BodyContentParser)
-        .to receive(:supported_schema_and_document_type?)
-        .and_return(true)
-      expect(described_class.supported_schema_and_document_type?("consultation", "anything")).to eq(true)
-      expect(Chunking::ContentItemParsing::BodyContentParser)
-        .to have_received(:supported_schema_and_document_type?).with("consultation", "anything")
-    end
-
-    it "returns false for unsupported schemas" do
-      expect(described_class.supported_schema_and_document_type?("unknown", "anything")).to eq(false)
-    end
-  end
-
   describe ".non_indexable_content_item_reason" do
     context "when the schema can be handled by one of the parsers" do
       it "returns nil" do
