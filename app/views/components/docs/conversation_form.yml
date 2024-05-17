@@ -1,0 +1,36 @@
+name: Conversation form
+description: A form that contains an input field with a visually hidden label, a submit button, and any accompanying hints and/or error messages for the input
+accessibility_criteria: |
+  Inputs in the component must:
+
+  * accept focus
+  * be focusable with a keyboard
+  * be usable with a keyboard
+  * be usable with touch
+  * indicate when they have focus
+  * be recognisable as form input elements
+  * have correctly associated labels
+
+  Buttons in the component must:
+
+  * accept focus
+  * be focusable with a keyboard
+  * indicate when it has focus
+  * activate when focused and space is pressed
+  * activate when focused and enter is pressed
+  * have a role of button
+  * have an accessible label
+examples:
+  default:
+    data:
+      url: "/question"
+      name: "input[name]"
+      value: "Input value"
+  with_errors:
+    data:
+      url: "/question"
+      name: "input[name]"
+      value: "Input value"
+      error_items:
+      - text: Descriptive link to the question with an error 1
+      - text: Descriptive link to the question with an error 2

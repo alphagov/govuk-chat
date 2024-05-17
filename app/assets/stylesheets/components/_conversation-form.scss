@@ -1,4 +1,4 @@
-.app-c-conversation-input {
+.app-c-conversation-form {
   &::before {
     content: "";
     position: absolute;
@@ -8,14 +8,14 @@
   }
 }
 
-.app-c-conversation-input__wrapper {
+.app-c-conversation-form__wrapper {
   display: flex;
   justify-content: space-between;
   padding-top: govuk-spacing(6);
   margin-bottom: govuk-spacing(2);
 }
 
-.app-c-conversation-input__input {
+.app-c-conversation-form__input {
   border: 2px solid govuk-colour("black");
   padding: govuk-spacing(2);
   @include govuk-font($size: 19);
@@ -29,7 +29,7 @@
   }
 }
 
-.app-c-conversation-input__submit {
+.app-c-conversation-form__submit {
   background-color: govuk-colour("blue");
   color: govuk-colour("white");
   padding: 8px govuk-spacing(2) 7px;

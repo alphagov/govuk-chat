@@ -100,7 +100,7 @@ RSpec.describe "ConversationsController" do
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body)
         .to have_selector(".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question")
-        .and have_selector(".app-c-conversation-input__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+        .and have_selector(".app-c-conversation-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
     end
 
     context "when the converation_id cookie is present" do
@@ -174,7 +174,7 @@ RSpec.describe "ConversationsController" do
 
       follow_redirect!
       expect(response.body)
-        .to have_selector(".app-c-conversation-input__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+        .to have_selector(".app-c-conversation-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
     end
 
     it "renders the pending page when a question doesn't have an answer" do
@@ -221,7 +221,7 @@ RSpec.describe "ConversationsController" do
   end
 
   def render_create_question_form
-    have_selector(".app-c-conversation-input__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+    have_selector(".app-c-conversation-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
   end
 
   def expect_conversation_id_set_on_cookie(conversation)
