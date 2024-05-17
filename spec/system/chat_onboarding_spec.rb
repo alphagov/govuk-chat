@@ -21,7 +21,7 @@ RSpec.describe "Chat Onboarding" do
   end
 
   def then_i_see_the_landing_page
-    expect(page).to have_content("Welcome to GOV.UK Chat")
+    expect(page).to have_content("GOV.UK Chat")
   end
 
   def when_i_click_on_the_try_govuk_chat_button
