@@ -1,19 +1,17 @@
 <%
   data_attributes ||= {}
   start ||= false
-  submit ||= false
+  conversation_form_button ||= false
   text ||= nil
   href ||= nil
-  rel ||= nil
   aria_describedby ||= nil
 
-  classes = "app-c-conversation-button govuk-button"
+  classes = "app-c-blue-button govuk-button"
   classes << " govuk-button--start" if start
-  classes << " app-c-conversation-button--submit" if submit
+  classes << " app-c-blue-button--conversation-form" if conversation_form_button
   
   options = { class: classes }
   options[:role] = "button" if href.present?
-  options[:rel] = rel if rel
   options[:data] = data_attributes if data_attributes
   options[:aria] = {}
   options[:aria][:describedby] = aria_describedby if aria_describedby
@@ -28,11 +26,7 @@
   </svg>
 <% end %>
 
-<%
-  if start
-    text = start_button_text
-  end
-%>
+<% text = start_button_text if start %>
 
 <% if href.present? %>
   <%= link_to text, href, options %>

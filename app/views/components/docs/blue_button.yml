@@ -1,4 +1,4 @@
-name: Conversation button
+name: Blue button
 description: A blue variant of design system's green button 
 accessibility_criteria: |
   The button must:
@@ -19,10 +19,11 @@ examples:
       text: Start button
       href: '#'
       start: true
-  submit_button:
+  conversation_form_button:
+    description: This variant is largely the same as the default, but it has some additional styling for its focus state which keeps it aligned with an adjacent input element
     data:
-      text: Submit button
-      submit: true
+      text: Conversation form button
+      conversation_form_button: true
   with_data_attributes:
     data:
       data_attributes:

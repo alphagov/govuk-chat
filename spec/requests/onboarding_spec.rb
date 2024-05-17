@@ -25,7 +25,7 @@ RSpec.describe "OnboardingController" do
 
       expect(response).to have_http_status(:ok)
       expect(response.body)
-        .to have_selector(".app-c-conversation-button", text: "I understand")
+        .to have_selector(".app-c-blue-button", text: "I understand")
     end
 
     context "when more_information is true in the query string" do
@@ -74,7 +74,7 @@ RSpec.describe "OnboardingController" do
 
       expect(response).to have_http_status(:ok)
       expect(response.body)
-        .to have_selector(".app-c-conversation-button", text: "Okay, start chatting")
+        .to have_selector(".app-c-blue-button", text: "Okay, start chatting")
     end
   end
 

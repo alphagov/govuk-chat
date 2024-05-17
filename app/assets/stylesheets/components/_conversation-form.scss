@@ -21,6 +21,7 @@
   @include govuk-font($size: 19);
   width: 100%;
   margin-right: govuk-spacing(1);
+  flex-grow: 1;
 
   &:focus {
     outline: $govuk-focus-width solid $govuk-focus-colour;
