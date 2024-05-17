@@ -5,6 +5,12 @@
   overflow-x: hidden;
 }
 
+.app-c-conversation-layout--landing {
+  flex: 1;
+  align-content: center;
+  overflow-y: auto;
+}
+
 .app-conversation-layout__wrapper {
   display: flex;
   flex-direction: column;
