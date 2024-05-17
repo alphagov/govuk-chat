@@ -36,7 +36,10 @@
       required: true,
     ) %>
 
-    <%= button_tag("Send", class: "app-c-conversation-form__submit") %>
+    <%= render "components/blue_button", {
+      text: "Send",
+      conversation_form_button: true,
+    } %>
   <% end %>
 
   <% if has_error %>
