@@ -37,40 +37,46 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
     end
   end
 
-  describe ".supported_schema_and_document_type?" do
-    it "returns true for schemas that don't care about document type" do
-      described_class.allowed_schemas.without("publication", "speech").each do |schema|
-        expect(described_class.supported_schema_and_document_type?(schema, "anything")).to eq(true)
+  describe ".non_indexable_content_item_reason" do
+    it "returns nil for schemas that don't care about document type" do
+      described_class.allowed_schemas.without("publication", "speech").each do |schema_name|
+        content_item = build(:notification_content_item, schema_name:)
+        expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
       end
-    end
-
-    it "returns false for unsupported schemas" do
-      expect(described_class.supported_schema_and_document_type?("unknown", "anything")).to eq(false)
     end
 
     %w[correspondence decision].each do |document_type|
       it "rejects '#{document_type}' document type for 'publication' schema" do
-        expect(described_class.supported_schema_and_document_type?("publication", document_type)).to eq(false)
+        content_item = build(:notification_content_item, schema_name: "publication", document_type:, ensure_valid: false)
+        expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
+          "document type: #{document_type} not supported for schema: publication",
+        )
       end
 
       it "allows '#{document_type}' document type for other schemas" do
-        expect(described_class.supported_schema_and_document_type?("consultation", document_type)).to eq(true)
+        content_item = build(:notification_content_item, schema_name: "consultation", document_type:, ensure_valid: false)
+        expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
       end
     end
 
     %w[oral_statement written_statement].each do |document_type|
       it "allows #{document_type} document type for 'speech' schema" do
-        expect(described_class.supported_schema_and_document_type?("speech", document_type)).to eq(true)
+        content_item = build(:notification_content_item, schema_name: "speech", document_type:, ensure_valid: false)
+        expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
       end
     end
 
     it "disallows other document types for speech" do
-      expect(described_class.supported_schema_and_document_type?("speech", "anything")).to eq(false)
+      content_item = build(:notification_content_item, schema_name: "speech", document_type: "anything", ensure_valid: false)
+      expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
+        "document type: anything not supported for schema: speech",
+      )
     end
 
     it "allows other document types for 'publication' schema" do
       %w[anything anything_else].each do |document_type|
-        expect(described_class.supported_schema_and_document_type?("publication", document_type)).to eq(true)
+        content_item = build(:notification_content_item, schema_name: "publication", document_type:, ensure_valid: false)
+        expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
       end
     end
   end

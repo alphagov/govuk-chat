@@ -35,11 +35,14 @@ module Chunking::ContentItemParsing
       build_chunks(html)
     end
 
-    def self.supported_schema_and_document_type?(schema_name, document_type)
+    def self.non_indexable_content_item_reason(content_item)
+      schema_name = content_item["schema_name"]
       document_type_check = SCHEMAS_TO_DOCUMENT_TYPE_CHECK[schema_name]
-      return false unless document_type_check
 
-      document_type_check.call(document_type)
+      document_type = content_item["document_type"]
+      return if document_type_check&.call(document_type)
+
+      "document type: #{document_type} not supported for schema: #{schema_name}"
     end
 
     def self.allowed_schemas

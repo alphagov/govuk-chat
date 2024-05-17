@@ -46,7 +46,7 @@ RSpec.describe MessageQueue::ContentSynchroniser, :chunked_content_index do
     end
 
     context "when content uses a schema that isn't supported" do
-      include_examples "deletes with a skip index reason", %(unsupported schema \"gone\" document_type \"gone\") do
+      include_examples "deletes with a skip index reason", "gone is not a supported schema" do
         let(:content_item) { build(:notification_content_item, schema_name: "gone", base_path:) }
       end
     end

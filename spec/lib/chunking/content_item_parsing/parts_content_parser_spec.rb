@@ -22,8 +22,6 @@ RSpec.describe Chunking::ContentItemParsing::PartsContentParser do
     end
   end
 
-  it_behaves_like "a parser that allows .allowed_schemas"
-
   describe ".call" do
     it "converts the array of parts into an array of chunks" do
       parts = [

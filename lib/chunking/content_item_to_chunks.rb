@@ -5,27 +5,29 @@ module Chunking
       ContentItemParsing::BodyContentParser,
       ContentItemParsing::PartsContentParser,
       ContentItemParsing::TransactionParser,
-      # TODO: establish all supported schemas and add parsers for them
     ].freeze
 
     def self.call(content_item)
-      schema_name = content_item["schema_name"]
-      document_type = content_item["document_type"]
-
-      unless supported_schema_and_document_type?(schema_name, document_type)
-        raise "schema #{schema_name} with document_type #{document_type} is not supported for parsing"
+      unless supported_content_item?(content_item)
+        raise "Content item not supported for parsing: #{non_indexable_content_item_reason(content_item)}"
       end
 
-      parser_class = parsers_by_schema_name[schema_name]
+      parser_class = parsers_by_schema_name[content_item["schema_name"]]
       parser_class.call(content_item)
     end
 
-    def self.supported_schema_and_document_type?(schema_name, document_type)
+    def self.supported_content_item?(content_item)
+      non_indexable_content_item_reason(content_item).nil?
+    end
+
+    def self.non_indexable_content_item_reason(content_item)
+      schema_name = content_item["schema_name"]
       parser = parsers_by_schema_name[schema_name]
 
-      return false if parser.nil?
+      return "#{schema_name} is not a supported schema" if parser.nil?
+      return unless parser.respond_to?(:non_indexable_content_item_reason)
 
-      parser.supported_schema_and_document_type?(schema_name, document_type)
+      parser.non_indexable_content_item_reason(content_item)
     end
 
     def self.parsers_by_schema_name
