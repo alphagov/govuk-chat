@@ -2,7 +2,9 @@ class Admin::ChunksController < Admin::BaseController
   before_action :set_back_link
 
   def show
-    @chunk = Search::ChunkedContentRepository.new.chunk(id)
+    repository = Search::ChunkedContentRepository.new
+    @chunk = repository.chunk(id)
+    @chunks_for_base_path = repository.count(term: { base_path: @chunk.base_path })
   end
 
 private
