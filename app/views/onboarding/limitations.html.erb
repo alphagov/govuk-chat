@@ -7,7 +7,7 @@
 <%= form_with url: onboarding_limitations_confirm_path do |f| %>
   <% if @more_information.present? %>
     <div class="govuk-button-group">
-      <%= render "govuk_publishing_components/components/button", {
+      <%= render "components/blue_button", {
         text: "I understand",
       } %>
 
@@ -15,14 +15,14 @@
     </div>
   <% else %>
     <div class="govuk-button-group">
-      <%= render "govuk_publishing_components/components/button", {
+      <%= render "components/blue_button", {
         text: "I understand",
       } %>
 
       <%= render "govuk_publishing_components/components/button", {
         text: "Tell me more",
         href: onboarding_limitations_path(more_information: true),
-        secondary_solid: true
+        secondary_solid: true,
       } %>
     </div>
   <% end %>
