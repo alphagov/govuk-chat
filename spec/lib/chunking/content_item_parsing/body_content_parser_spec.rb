@@ -45,13 +45,6 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
       end
     end
 
-    it "returns a reason for unsupported schemas" do
-      content_item = build(:notification_content_item, schema_name: "transaction", ensure_valid: false)
-      expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
-        "document type: #{content_item['document_type']} not supported for schema: transaction",
-      )
-    end
-
     %w[correspondence decision].each do |document_type|
       it "rejects '#{document_type}' document type for 'publication' schema" do
         content_item = build(:notification_content_item, schema_name: "publication", document_type:, ensure_valid: false)

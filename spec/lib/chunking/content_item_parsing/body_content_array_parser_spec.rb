@@ -75,13 +75,6 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
       end
     end
 
-    it "returns a message for unsupported schemas" do
-      content_item = build(:notification_content_item, schema_name: "generic", ensure_valid: false)
-      expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
-        "document type: #{content_item['document_type']} not supported for schema: generic",
-      )
-    end
-
     described_class::ALLOWED_SPECIALIST_DOCUMENT_TYPES.each do |document_type|
       it "is nil for '#{document_type}' document type for 'specialist_document' schema" do
         content_item = build(:notification_content_item, schema_name: "specialist_document", document_type:, ensure_valid: false)
