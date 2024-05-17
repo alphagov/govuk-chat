@@ -24,7 +24,7 @@
         { field: "Description", value: @chunk.description},
         { field: "Document type", value: @chunk.document_type},
         { field: "URL", value: link_to("#{Plek.website_root}#{@chunk.url}", @chunk.url, class: "govuk-link") },
-        { field: "Content", value: @chunk.plain_content },
+        { field: "Content", value: render("govuk_publishing_components/components/govspeak") { simple_format(@chunk.plain_content) } },
         { field: "Html content", value: html_content },
         { field: "Chunk number", value: @chunk.chunk_index },
       ]
