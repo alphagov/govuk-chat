@@ -18,12 +18,3 @@ inherit_mode:
 #
 # See https://github.com/alphagov/rubocop-govuk/blob/main/CONTRIBUTING.md
 # **************************************************************
-
-# TODO: open a pull request to rubocop-govuk to add these exclusions.
-# currently they're only exempt for feature specs not system specs.
-RSpec/InstanceVariable:
-  Exclude:
-    - 'spec/system/**/*.rb'
-RSpec/Capybara/FeatureMethods:
-  Exclude:
-    - 'spec/system/**/*.rb'
