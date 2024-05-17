@@ -16,7 +16,7 @@ RSpec.describe Chunking::ContentItemChunk do
                        html_content: "<p>Content</p>",
                        heading_hierarchy: ["Heading 1", "Heading 2"])
 
-      expect(instance.plain_content).to eq("Title\nDescription\nHeading 1\nHeading 2\nContent")
+      expect(instance.plain_content).to eq("Title\nHeading 1\nHeading 2\nContent\nDescription")
     end
 
     it "copes with a nil description" do

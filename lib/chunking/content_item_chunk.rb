@@ -13,7 +13,7 @@ module Chunking
     def plain_content
       @plain_content ||= begin
         stripped_html = Nokogiri::HTML::DocumentFragment.parse(html_content)
-        values = [title, description] + heading_hierarchy + [stripped_html]
+        values = [title] + heading_hierarchy + [stripped_html, description]
         values.compact.join("\n")
       end
     end
