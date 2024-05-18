@@ -32,8 +32,10 @@
   </div>
 
   <% if content_for?(:form) %>
-    <div class="app-conversation-layout__width-container">
-      <%= yield(:form) %>
+    <div class="app-conversation-layout__form-container">
+      <div class="app-conversation-layout__width-container">
+        <%= yield(:form) %>
+      </div>
     </div>
   <% end %>
 <% end %>

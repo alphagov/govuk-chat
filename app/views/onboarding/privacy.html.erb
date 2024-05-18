@@ -1,7 +1,23 @@
+<%= content_for :title, "GOV.UK Chat" %>
+<%= content_for :main_class, "app-conversation-layout app-conversation-layout--chat" %>
+<%= content_for :visually_hidden_class, "govuk-visually-hidden" %>
+
+<% privacy_message_1 = capture do %>
+  <p>Great. You can always find information about my limitations in <a href="/about">about GOV.UK Chat (opens in a new tab)</a>.</p>
+<% end %>
+
+<% privacy_message_2 = capture do %>
+  <p>One more thing - please do not include any sensitive or personal information in your questions.</p>
+  <p>You can read the <a href="/privacy">privacy notice (opens in a new tab)</a> to find out how your data is used.</p>
+<% end %>
+
+<%= render "conversations/onboarding_messages", {
+  messages: [privacy_message_1, privacy_message_2]
+} %>
+
 <% content_for :form do %>
-  <%= form_with url: onboarding_privacy_confirm_path do |f| %>
-    <%= render "components/blue_button", {
-      text: "Okay, start chatting",
-    } %>
-  <% end %>
+  <%= render "components/onboarding_form", {
+    url: onboarding_privacy_confirm_path,
+    privacy_onboarding: true,
+  } %>
 <% end %>

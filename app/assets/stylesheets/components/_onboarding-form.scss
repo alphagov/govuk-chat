@@ -1,0 +1,25 @@
+.app-c-onboarding-form {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: govuk-spacing(2);
+  padding-top: govuk-spacing(3);
+
+  .govuk-button, .govuk-link {
+    flex: 1;
+    margin: govuk-spacing(2);
+
+    @include govuk-media-query($until: tablet) {
+      margin: 0 0 govuk-spacing(4);
+    }
+  }
+
+  .govuk-link {
+    @include govuk-font($size: 19, $weight: regular);
+    text-align: center;
+    margin: auto 0;
+  }
+
+  @include govuk-media-query($until: tablet) {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,5 @@
+<%= render "govuk_publishing_components/components/list", {
+  items: messages.each_with_index.map do |message, index|
+    render "components/conversation_message", id: index, message:
+  end,
+} %>
