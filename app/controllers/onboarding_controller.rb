@@ -5,7 +5,7 @@ class OnboardingController < BaseController
   def limitations
     session[:onboarding] = nil
     session[:more_information] = true if params[:more_information].present?
-    @more_information = session[:more_information].present?
+    render locals: { more_information: session[:more_information].present? }
   end
 
   def limitations_confirm

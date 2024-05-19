@@ -1,5 +1,6 @@
 <%
   privacy_onboarding ||= false
+  more_information ||= false
 %>
 
 <%= form_with url: url, class: "app-c-onboarding-form" do |f| %>
@@ -8,7 +9,7 @@
       text: "Okay, start chatting",
     } %>
   <% else %>
-    <% if @more_information.present? %>
+    <% if more_information %>
       <%= render "components/blue_button", {
         text: "I understand",
       } %>

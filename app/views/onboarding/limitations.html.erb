@@ -17,15 +17,16 @@
 <% end %>
 
 <%= render "conversations/onboarding_messages", {
-  messages: [limitations_message_1, limitations_message_2, limitations_message_3]
+  messages: [limitations_message_1, limitations_message_2, limitations_message_3],
 } %>
 
-<% if @more_information.present? %>
+<% if more_information %>
   <p class="govuk-body">And here's some more information.</p>
 <% end %>
 
 <% content_for :form do %>
   <%= render "components/onboarding_form", {
     url: onboarding_limitations_confirm_path,
+    more_information:,
   } %>
 <% end %>
