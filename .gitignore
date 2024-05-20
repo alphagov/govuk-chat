@@ -61,6 +61,8 @@ node_modules/
 /yarn-error.log
 yarn-debug.log*
 .yarn-integrity
+.yarn/cache
+.yarn/install-state.gz
 
 # Ignore uploaded files in development
 /storage/*
