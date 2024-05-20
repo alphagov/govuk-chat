@@ -1,9 +1,13 @@
 RSpec.describe "Admin::ChunkController", :chunked_content_index do
-  let(:content_chunk) { build :chunked_content_record }
+  let(:base_path) { "/path" }
+  let(:content_chunk) { build(:chunked_content_record, base_path:, chunk_index: 0) }
   let(:chunk_id) { "chunk_id" }
 
   before do
-    populate_chunked_content_index({ chunk_id => content_chunk })
+    populate_chunked_content_index({
+      chunk_id => content_chunk,
+      "another_id" => build(:chunked_content_record, base_path:),
+    })
   end
 
   describe "GET :show" do
@@ -11,6 +15,12 @@ RSpec.describe "Admin::ChunkController", :chunked_content_index do
       get admin_chunk_path(id: chunk_id)
       expect(response).to have_http_status(:ok)
       expect(response.body).to have_displayed_chunk(content_chunk[:title])
+    end
+
+    it "shows a readable chunk number with the number of chunks for this base_path" do
+      get admin_chunk_path(id: chunk_id)
+      expect(response.body)
+        .to have_selector(".govuk-summary-list", text: /Chunk number\s*1 of 2/)
     end
 
     it "returns a 404 when requesting non-existent chunk" do
