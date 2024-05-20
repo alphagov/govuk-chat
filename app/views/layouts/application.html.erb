@@ -29,30 +29,24 @@
   blue_bar: false,
   custom_layout: true do
 %>
-  <main class="<%= yield(:main_class) || "govuk-main-wrapper" %>" id="content" role="main">
-    <div>
-      <div class="govuk-width-container">
-        <div class="govuk-grid-row">
-          <div class="govuk-grid-column-full">
-            <% if yield(:error_summary).blank? %>
-              <% if flash["notice"].present? %>
-                <%= render "govuk_publishing_components/components/success_alert", {
-                  message: sanitize(tag.span(flash["notice"], class: %w(govuk-!-display-block govuk-!-margin-bottom-4)) +
-                    render("govuk_publishing_components/components/button", { text: "Read the answer", href: "#" })),
-                } %>
-              <% end %>
+  <main class="<%= yield(:main_class).presence || "govuk-main-wrapper" %>" id="content" role="main">
+    <div class="app-conversation-layout__width-container">
+      <% if yield(:error_summary).blank? %>
+        <% if flash["notice"].present? %>
+          <%= render "govuk_publishing_components/components/success_alert", {
+            message: sanitize(tag.span(flash["notice"], class: %w(govuk-!-display-block govuk-!-margin-bottom-4)) +
+              render("govuk_publishing_components/components/button", { text: "Read the answer", href: "#" })),
+          } %>
+        <% end %>
 
-              <% if flash["alert"].present? %>
-                <%= render "govuk_publishing_components/components/error_alert", {
-                  message: flash["alert"],
-                } %>
-              <% end %>
-            <% end %>
+        <% if flash["alert"].present? %>
+          <%= render "govuk_publishing_components/components/error_alert", {
+            message: flash["alert"],
+          } %>
+        <% end %>
+      <% end %>
 
-            <%= yield(:error_summary) %>
-          </div>
-        </div>
-      </div>
+      <%= yield(:error_summary) %>
     </div>
 
     <% if yield(:title).present? %>

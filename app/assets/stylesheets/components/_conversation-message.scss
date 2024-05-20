@@ -1,6 +1,10 @@
 .app-c-conversation-message {
   display: flex;
-  margin: govuk-spacing(5) 0;
+  margin: 0 0 govuk-spacing(5);
+
+  &:first-of-type {
+    margin: govuk-spacing(5) 0;
+  }
 }
 
 .app-c-conversation-message--user-message {
