@@ -12,6 +12,7 @@ RSpec.describe "components/_conversation_form.html.erb" do
         .to have_selector(".app-c-conversation-form__label.govuk-visually-hidden", text: /Enter your question/)
         .and have_selector(".app-c-conversation-form__input[id=id][name=name][value=Value]")
         .and have_selector(".gem-c-hint", text: /Please limit your question/)
+        .and have_selector(".app-c-blue-button")
     end
   end
 
