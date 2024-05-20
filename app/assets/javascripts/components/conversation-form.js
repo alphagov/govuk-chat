@@ -31,7 +31,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.enableControls()
     }
 
-    handleAnswerRecieved () {
+    handleAnswerReceived () {
       this.input.value = ''
       this.enableControls()
     }

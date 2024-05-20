@@ -36,14 +36,20 @@ jobs:
     with:
       files: "'app/assets/javascripts/**/*.js'"
 
+  lint-erb:
+    name: Lint ERB
+    uses: ./.github/workflows/linterb.yml
+
   lint-ruby:
     name: Lint Ruby
     uses: alphagov/govuk-infrastructure/.github/workflows/rubocop.yml@main
 
+  test-javascript:
+    name: Test JavaScript
+    uses: alphagov/govuk-infrastructure/.github/workflows/jasmine.yml@main
+    with:
+      useWithRails: true
+
   test-ruby:
     name: Test Ruby
     uses: ./.github/workflows/rspec.yml
-
-  lint-erb:
-    name: Lint ERB
-    uses: ./.github/workflows/linterb.yml

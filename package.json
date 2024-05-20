@@ -7,7 +7,10 @@
   "scripts": {
     "lint": "yarn run lint:js && yarn run lint:scss",
     "lint:js": "standard 'app/assets/javascripts/**/*.js'",
-    "lint:scss": "stylelint app/assets/stylesheets/"
+    "lint:scss": "stylelint app/assets/stylesheets/",
+    "jasmine:prepare": "RAILS_ENV=test bundle exec rails assets:clobber assets:precompile",
+    "jasmine:ci": "yarn run jasmine:prepare && yarn run jasmine-browser-runner runSpecs",
+    "jasmine:browser": "yarn run jasmine:prepare && yarn run jasmine-browser-runner"
   },
   "standardx": {
     "env": {
@@ -23,6 +26,8 @@
     "extends": "stylelint-config-gds/scss"
   },
   "devDependencies": {
+    "jasmine-browser-runner": "^2.4.0",
+    "jasmine-core": "^5.1.2",
     "standardx": "^7.0.0",
     "stylelint": "^16.5.0",
     "stylelint-config-gds": "^2.0.0"
