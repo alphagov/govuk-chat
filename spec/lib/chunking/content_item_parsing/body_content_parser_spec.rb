@@ -39,7 +39,7 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
 
   describe ".non_indexable_content_item_reason" do
     it "returns nil for schemas that don't care about document type" do
-      described_class.allowed_schemas.without("publication", "speech").each do |schema_name|
+      described_class.allowed_schemas.without("publication", "speech", "html_publication").each do |schema_name|
         content_item = build(:notification_content_item, schema_name:)
         expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
       end
@@ -77,6 +77,40 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
       %w[anything anything_else].each do |document_type|
         content_item = build(:notification_content_item, schema_name: "publication", document_type:, ensure_valid: false)
         expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
+      end
+    end
+
+    context "when the schema is html_publication" do
+      context "when the content item has no parent link" do
+        let(:content_item) { build(:notification_content_item, schema_name: "html_publication", ensure_valid: false) }
+
+        before do
+          content_item["links"] = {}
+          # This shouldn't be needed however the GovukSchemas::RandomExample.new in the factory
+          # produces links that are simple strings so links["parent"][0] could be a string and not the
+          # {" document_type" => "something"} we are looking for.
+          # The way the code is written. You can't tell if it conforms to the publishing schema, because you can't see from there, what should be in links > parent[0]
+          # See https://docs.publishing.service.gov.uk/content-schemas/html_publication.html#publisher-content-schema
+          # I'm putting this comment in so we can check that content_item&.dig("links", "parent", 0, "document_type") is actually correct
+          # I'm not sure how we can see the payload of an actual publishing API event to check
+        end
+
+        it "returns error that parent is missing" do
+          expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
+            "HTML publication lacks a parent document_type",
+          )
+        end
+      end
+
+      context "when the content_item has a parent link" do
+        described_class::EXCLUDED_PUBLICATION_DOCUMENT_TYPES.each do |document_type|
+          it "doesn't support parsing a #{document_type} with a message" do
+            content_item = build(:notification_content_item, schema_name: "html_publication", parent_document_type: document_type, ensure_valid: false)
+            expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
+              "html_publication items with parent document type: #{document_type} are not supported",
+            )
+          end
+        end
       end
     end
   end

@@ -24,6 +24,7 @@ FactoryBot.define do
       body { nil }
       details { nil }
       details_merge { nil }
+      parent_document_type { nil }
     end
 
     initialize_with do
@@ -49,6 +50,10 @@ FactoryBot.define do
         item["details"]["body"] = body if body
         item["details"] = details if details
         item["details"] = item["details"].merge(details_merge) if details_merge
+
+        if parent_document_type
+          item["links"] = { "parent" => ["document_type" => parent_document_type] }
+        end
       end
     end
 
