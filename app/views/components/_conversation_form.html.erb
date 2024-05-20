@@ -12,11 +12,16 @@
 
   aria_described_by = []
   aria_described_by << hint_id
-  aria_described_by << error_id if has_error
+  aria_described_by << error_id
   aria_described_by = aria_described_by.join(" ")
+
+  data_attributes = {
+    module: "conversation-form",
+    "presence-error-message": "Enter a question",
+  }
 %>
 
-<%= form_with url: url, class: "app-c-conversation-form", data: { module: "conversation-form" } do |f| %>
+<%= form_with url: url, class: "app-c-conversation-form", data: data_attributes do |f| %>
   <%= content_tag :div, class: "app-c-conversation-form__input-wrapper" do %>
     <%= label_tag(
       input_id,
@@ -33,7 +38,6 @@
       },
       name: name,
       maxlength:,
-      required: true,
     ) %>
 
     <%= render "components/blue_button", {
@@ -42,11 +46,13 @@
     } %>
   <% end %>
 
-  <% if has_error %>
-    <%= render "govuk_publishing_components/components/error_message", {
-      id: error_id,
-      items: error_items,
-    } %>
+  <%= tag.ul(id: error_id, class: %w[govuk-list govuk-error-message js-conversation-form-errors-wrapper], hidden: !has_error) do %>
+    <% error_items.each do |error| %>
+      <li>
+        <span class="govuk-visually-hidden">Error:</span>
+        <%= error[:text] %>
+      </li>
+    <% end %>
   <% end %>
 
   <div class="govuk-visually-hidden">
