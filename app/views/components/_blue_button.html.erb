@@ -9,7 +9,7 @@
   classes = "app-c-blue-button govuk-button"
   classes << " govuk-button--start" if start
   classes << " app-c-blue-button--conversation-form" if conversation_form_button
-  
+
   options = { class: classes }
   options[:role] = "button" if href.present?
   options[:data] = data_attributes if data_attributes
