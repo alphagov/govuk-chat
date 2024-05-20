@@ -1,5 +1,5 @@
-name: Landing
-description: 
+name: Chat Introduction
+description: A branded introduction to GOV.UK Chat for use on the landing page.
 accessibility_criteria: |
   The page title must:
 
@@ -17,11 +17,6 @@ shared_accessibility_criteria:
 examples:
   default:
     data:
-      title_text: Landing page title
-      lead_paragraph_text: Landing page lead paragraph
-  with_info_text:
-    description: Provides any additional information that wouldn't be appropriate to include in the lead paragraph
-    data:
-      title_text: Landing page title
-      lead_paragraph_text: Landing page lead paragraph
-      info_text: Landing page info text
+      title_text: Page title
+      lead_paragraph_text: Lead paragraph
+      info_text: Some additional information

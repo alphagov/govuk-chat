@@ -1,0 +1,18 @@
+<%= content_tag :div, class: "app-c-chat-introduction" do %>
+  <%= content_tag :div, class: "app-c-chat-introduction__svg-container" do %>
+    <%= inline_svg_tag "components/chat_introduction/govuk-chat-chat-introduction-icon.svg", aria_hidden: true %>
+  <% end %>
+
+  <%= content_tag(:h1, "GOV.UK Chat", class: "app-c-chat-introduction__title") %>
+
+  <%= content_tag(:p, "An experimental new way to find answers to your business questions, powered by AI", class: "app-c-chat-introduction__lead-paragraph govuk-body") %>
+
+  <%= render "components/blue_button", {
+    text: "Try GOV.UK Chat",
+    href: "/chat/onboarding",
+    start: true,
+    aria_describedby: "info-text"
+  } %>
+
+  <%= content_tag(:p, "Your chat will be stored on this browser for 7 days after your last message.", {id: "info-text", class: "govuk-body govuk-!-margin-top-4"}) %>
+<% end %>

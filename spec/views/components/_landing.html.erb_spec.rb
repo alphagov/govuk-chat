@@ -1,32 +1,12 @@
-RSpec.describe "components/_landing.html.erb" do
-  it "renders the landing component correctly" do
-    render("components/landing", {
-      title_text: "Title text",
-      lead_paragraph_text: "Lead paragraph text",
-    })
+RSpec.describe "components/_chat_introduction.html.erb" do
+  it "renders the chat introduction component correctly" do
+    render("components/chat_introduction")
 
     expect(rendered)
-      .to have_selector(".app-c-landing")
-      .and have_selector(".app-c-landing__svg-container")
-      .and have_selector(".app-c-landing__title", text: "Title text")
-      .and have_selector(".app-c-landing__lead-paragraph", text: "Lead paragraph text")
-  end
-
-  it "renders additional info text when provided and generates an 'info-text' id" do
-    render("components/landing", {
-      title_text: "Title text",
-      lead_paragraph_text: "Lead paragraph text",
-      info_text: "Info text",
-    })
-
-    expect(rendered)
-      .to have_selector("#info-text")
-  end
-
-  it "does not render the landing component if not provided with title text and lead paragraph text" do
-    render("components/landing")
-
-    expect(rendered)
-      .not_to have_selector(".app-c-landing")
+      .to have_selector(".app-c-chat-introduction")
+      .and have_selector(".app-c-chat-introduction__svg-container")
+      .and have_selector(".app-c-chat-introduction__title", text: "GOV.UK Chat")
+      .and have_selector(".app-c-chat-introduction__lead-paragraph", text: "An experimental new way to find answers to your business questions, powered by AI")
+      .and have_selector("#info-text", text: "Your chat will be stored on this browser for 7 days after your last message.")
   end
 end
