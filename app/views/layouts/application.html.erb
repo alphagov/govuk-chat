@@ -26,8 +26,8 @@
     <meta property="og:image" content="<%= asset_url("govuk-opengraph-image.png", host: Plek.website_root) %>">
   </head>
   <%= tag.body(class: %w[govuk-template__body] + (conversation_layout ? %w[app-conversation-layout__body] : [])) do %>
-    <script nonce="<%= request.content_security_policy_nonce %>">
-      document.body.className += ' js-enabled';
+    <script type="module" nonce="<%= request.content_security_policy_nonce %>">
+      document.body.className += ' js-enabled govuk-frontend-supported';
     </script>
     <%= render "govuk_publishing_components/components/cookie_banner", {} %>
     <%= render "govuk_publishing_components/components/skip_link", {
@@ -94,6 +94,7 @@
       <% end %>
     <% end %>
 
-    <%= javascript_include_tag "application", nonce: true %>
+    <%= javascript_include_tag "application-legacy", nonce: true %>
+    <%= javascript_include_tag "application", type: "module", nonce: true %>
   <% end %>
 <% end %>
