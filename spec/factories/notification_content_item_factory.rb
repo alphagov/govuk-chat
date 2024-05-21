@@ -29,7 +29,7 @@ FactoryBot.define do
 
     initialize_with do
       schema = GovukSchemas::Schema.find(notification_schema: schema_name)
-      GovukSchemas::RandomExample.new(schema:).payload.tap do |item|
+      modify_item = proc do |item|
         %i[content_id locale base_path document_type title description payload_version].each do |field|
           item[field.to_s] = attributes[field] unless attributes[field] == :preserve
         end
@@ -63,19 +63,16 @@ FactoryBot.define do
           ]
         end
         item["expanded_links"].delete("parent") if parent_document_type.nil?
+
+        item
       end
-    end
 
-    after(:build) do |item, evaluator|
-      next unless evaluator.ensure_valid
-
-      validator = GovukSchemas::Validator.new(evaluator.schema_name, "notification", item)
-
-      unless validator.valid?
-        error_message = "Factory bot has produced a content item that is no longer\n" \
-          "if this is intentional pass in ensure_valid: false to the " \
-          "factory\n\n" + validator.error_message
-        raise error_message
+      if ensure_valid
+        # payload implicitly validates the modified content item
+        GovukSchemas::RandomExample.new(schema:).payload(&modify_item)
+      else
+        item = GovukSchemas::RandomExample.new(schema:).payload
+        modify_item.call(item)
       end
     end
   end
