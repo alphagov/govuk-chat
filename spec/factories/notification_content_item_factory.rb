@@ -52,7 +52,15 @@ FactoryBot.define do
         item["details"] = item["details"].merge(details_merge) if details_merge
 
         if parent_document_type
-          item["expanded_links"] = { "parent" => ["document_type" => parent_document_type] }
+          item["expanded_links"]["parent"] = [
+            {
+              "base_path" => "/parent",
+              "content_id" => SecureRandom.uuid,
+              "locale" => "en",
+              "title" => "Parent title",
+              "document_type" => parent_document_type,
+            },
+          ]
         end
       end
     end
