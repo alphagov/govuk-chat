@@ -1,65 +1,95 @@
-<% content_for :custom_header do %>
-  <%= render "govuk_publishing_components/components/layout_header", {
-    environment: "experimental",
-    product_name: "Chat",
-    navigation_items: [
-      {
-        text: "About",
-        href: "/about",
-      },
-      {
-        text: "Privacy",
-        href: "/privacy",
-      },
-      {
-        text: "Support",
-        href: "/support",
-      },
-    ],
-  } %>
-<% end %>
+<%= tag.html(class: %w[govuk-template], lang: "en") do %>
+  <head>
+    <meta charset="utf-8">
+    <title><%= yield(:title) %></title>
 
-<%= render "govuk_publishing_components/components/layout_for_public",
-  product_name: "Chat",
-  environment: GovukPublishingComponents::AppHelpers::Environment.current_acceptance_environment,
-  show_search: false,
-  omit_feedback_form: true,
-  omit_footer_border: true,
-  hide_footer_links: true,
-  blue_bar: false,
-  custom_layout: true do %>
-  <main class="<%= yield(:main_class).presence || "govuk-main-wrapper" %>" id="content" role="main">
-    <div class="app-conversation-layout__width-container">
-      <% if yield(:error_summary).blank? %>
-        <% if flash["notice"].present? %>
-          <%= render "govuk_publishing_components/components/success_alert", {
-            message: sanitize(tag.span(flash["notice"], class: %w(govuk-!-display-block govuk-!-margin-bottom-4)) +
-              render("govuk_publishing_components/components/button", { text: "Read the answer", href: "#" })),
-          } %>
-        <% end %>
+    <%# Used for Google Analytics 4 debugging. Must be placed before load-analytics script. %>
+    <meta name="govuk:components_gem_version" content="<%= GovukPublishingComponents::VERSION %>">
+    <%= javascript_include_tag "govuk_publishing_components/load-analytics", nonce: true %>
 
-        <% if flash["alert"].present? %>
-          <%= render "govuk_publishing_components/components/error_alert", {
-            message: flash["alert"],
-          } %>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag "application", media: "all" %>
+
+    <link rel="shortcut icon" href="<%= asset_path "favicon.ico" %>" type="image/x-icon">
+    <link rel="mask-icon" href="<%= asset_path "govuk-mask-icon.svg" %>" color="#0b0c0c">
+    <link rel="apple-touch-icon" sizes="180x180" href="<%= asset_path "govuk-apple-touch-icon-180x180.png" %>">
+    <link rel="apple-touch-icon" sizes="167x167" href="<%= asset_path "govuk-apple-touch-icon-167x167.png" %>">
+    <link rel="apple-touch-icon" sizes="152x152" href="<%= asset_path "govuk-apple-touch-icon-152x152.png" %>">
+    <link rel="apple-touch-icon" href="<%= asset_path "govuk-apple-touch-icon.png" %>">
+
+    <meta name="theme-color" content="#0b0c0c">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta property="og:image" content="<%= asset_url("govuk-opengraph-image.png", host: Plek.website_root) %>">
+  </head>
+  <%= tag.body(class: %w[govuk-template__body]) do %>
+    <script nonce="<%= request.content_security_policy_nonce %>">
+      document.body.className += ' js-enabled';
+    </script>
+    <%= render "govuk_publishing_components/components/cookie_banner", {} %>
+    <%= render "govuk_publishing_components/components/skip_link", {
+      href: "#content",
+    } %>
+
+    <%= render "govuk_publishing_components/components/layout_header", {
+      environment: "experimental",
+      product_name: "Chat",
+      navigation_items: [
+        {
+          text: "About",
+          href: "/about",
+        },
+        {
+          text: "Privacy",
+          href: "/privacy",
+        },
+        {
+          text: "Support",
+          href: "/support",
+        },
+      ],
+    } %>
+
+    <%= tag.main(class: %w[govuk-main-wrapper], id: "content", role: "main") do %>
+      <%= tag.div(class: %w[govuk-width-container]) do %>
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-full-width">
+            <% unless content_for?(:error_summary) %>
+              <% if flash["notice"].present? %>
+                <%= render "govuk_publishing_components/components/success_alert", {
+                  message: flash["notice"],
+                } %>
+              <% end %>
+
+              <% if flash["alert"].present? %>
+                <%= render "govuk_publishing_components/components/error_alert", {
+                  message: flash["alert"],
+                } %>
+              <% end %>
+            <% end %>
+
+            <%= yield(:error_summary) %>
+          </div>
+        </div>
+
+        <% if content_for?(:title) %>
+          <%= tag.div(class: %w[govuk-grid-row]) do %>
+            <div class="govuk-grid-column-two-thirds">
+              <%= render "govuk_publishing_components/components/title", {
+                context: yield(:title_context),
+                title: yield(:title),
+              } %>
+            </div>
+          <% end %>
         <% end %>
       <% end %>
 
-      <%= yield(:error_summary) %>
-    </div>
-
-    <% if yield(:title).present? %>
-      <div class="govuk-width-container">
-        <div class="govuk-grid-row <%= yield(:visually_hidden_class) || "" %>">
-          <div class="govuk-grid-column-two-thirds">
-            <%= render "govuk_publishing_components/components/title", {
-              context: yield(:title_context),
-              title: yield(:title),
-            } %>
-          </div>
-        </div>
-      </div>
+      <%= tag.div(class: "govuk-width-container") do %>
+        <%= yield %>
+      <% end %>
     <% end %>
-    <%= yield %>
-  </main>
+
+    <%= javascript_include_tag "application", nonce: true %>
+  <% end %>
 <% end %>
