@@ -44,3 +44,6 @@ jobs:
     name: Test Ruby
     uses: ./.github/workflows/rspec.yml
 
+  lint-erb:
+    name: Lint ERB
+    uses: ./.github/workflows/linterb.yml

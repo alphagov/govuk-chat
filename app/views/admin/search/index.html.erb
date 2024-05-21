@@ -1,6 +1,5 @@
 <%= content_for :title, "Search RAG index" %>
 
-
 <%= form_with url: admin_search_url, method: :get do |f| %>
     <%= render "govuk_publishing_components/components/search", {
         label_text: "Text to search for",
@@ -13,22 +12,22 @@
     <% if @search_results.empty? %>
         <%= render "govuk_publishing_components/components/notice", {
             title: "No results have been found for your query",
-            description: "Please rephrase and try again"
+            description: "Please rephrase and try again",
         } %>
     <% else %>
     <%= render "govuk_publishing_components/components/table", {
         head: [{ text: "Title" },
                { text: "Heading"},
                { text: "Text" },
-               { text: "Score", format: "numeric" },],
+               { text: "Score", format: "numeric" }],
         rows: @search_results.map do |result|
       [{ text: link_to(result.title, admin_chunk_path(id: result._id,
                                                       params: { back_link: admin_search_path(search_text: @search_text) }),
                                                       class: "govuk-link") },
          { text: result.heading_hierarchy.last },
          { text: result.plain_content.truncate(100) },
-         { text: result.score, format: "numeric" },]
-        end
+         { text: result.score, format: "numeric" }]
+        end,
     } %>
     <% end %>
 <% end %>

@@ -5,21 +5,21 @@
     navigation_items: [
       {
         text: "About",
-        href: "/about"
+        href: "/about",
       },
       {
         text: "Privacy",
-        href: "/privacy"
+        href: "/privacy",
       },
       {
         text: "Support",
-        href: "/support"
-      }
+        href: "/support",
+      },
     ],
   } %>
 <% end %>
 
-<%= render 'govuk_publishing_components/components/layout_for_public',
+<%= render "govuk_publishing_components/components/layout_for_public",
   product_name: "Chat",
   environment: GovukPublishingComponents::AppHelpers::Environment.current_acceptance_environment,
   show_search: false,
@@ -27,8 +27,7 @@
   omit_footer_border: true,
   hide_footer_links: true,
   blue_bar: false,
-  custom_layout: true do
-%>
+  custom_layout: true do %>
   <main class="<%= yield(:main_class).presence || "govuk-main-wrapper" %>" id="content" role="main">
     <div class="app-conversation-layout__width-container">
       <% if yield(:error_summary).blank? %>

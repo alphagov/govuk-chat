@@ -80,6 +80,13 @@ GEM
     amq-protocol (2.3.2)
     ast (2.4.2)
     base64 (0.2.0)
+    better_html (2.1.1)
+      actionview (>= 6.0)
+      activesupport (>= 6.0)
+      ast (~> 2.0)
+      erubi (~> 1.4)
+      parser (>= 2.4)
+      smart_properties
     bigdecimal (3.1.8)
     bootsnap (1.18.3)
       msgpack (~> 1.2)
@@ -116,6 +123,13 @@ GEM
     domain_name (0.6.20240107)
     dotenv (3.1.2)
     drb (2.2.1)
+    erb_lint (0.5.0)
+      activesupport
+      better_html (>= 2.0.1)
+      parser (>= 2.7.1.4)
+      rainbow
+      rubocop
+      smart_properties
     erubi (1.12.0)
     ethon (0.16.0)
       ffi (>= 1.15.0)
@@ -701,6 +715,7 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
+    smart_properties (1.17.0)
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
@@ -764,6 +779,7 @@ DEPENDENCIES
   climate_control
   dartsass-rails
   dotenv
+  erb_lint
   factory_bot_rails
   faraday
   faraday-typhoeus

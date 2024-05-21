@@ -1,0 +1,33 @@
+---
+glob: "{app/views,config}/**/*.erb"
+linters:
+  # We don't want partials to use ivars and instead have variables passed
+  # in as locals to avoid mystery guests and make testing easier
+  PartialInstanceVariable:
+    enabled: true
+  # Setting the autocomplete attribute (e.g. `off`) is not required when there's
+  # no relevant input purpose https://www.w3.org/TR/WCAG21/#input-purposes
+  RequireInputAutocomplete:
+    enabled: false
+  # We use a CSP and want any script tags to have a nonce
+  RequireScriptNonce:
+    enabled: true
+  # Use our regular Rubocop configuration but
+  # disable specific rules that do not apply to ERB files
+  Rubocop:
+    enabled: true
+    rubocop_config:
+      inherit_from:
+        - .rubocop.yml
+      AllCops:
+        DisabledByDefault: true
+      Layout/InitialIndentation:
+        Enabled: false
+      Layout/TrailingEmptyLines:
+        Enabled: false
+      Layout/TrailingWhitespace:
+        Enabled: false
+      Lint/UselessAssignment:
+        Enabled: false
+      Layout/FirstHashElementIndentation:
+        Enabled: false

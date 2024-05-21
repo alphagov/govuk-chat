@@ -8,6 +8,7 @@ gem "rails", "7.1.3.3"
 
 gem "bootsnap"
 gem "dartsass-rails"
+gem "erb_lint", require: false
 gem "faraday"
 gem "faraday-typhoeus"
 gem "flipper"

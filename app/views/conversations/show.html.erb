@@ -5,7 +5,7 @@
   <% if @create_question.errors.any? %>
     <%= render "govuk_publishing_components/components/error_summary", {
       title: "There is a problem",
-      items: error_items(@create_question, :user_question, "#create_question_user_question")
+      items: error_items(@create_question, :user_question, "#create_question_user_question"),
     } %>
   <% end %>
 <% end %>
@@ -16,17 +16,17 @@
       <%= render "components/conversation_message", {
         id: "initial-message",
         message: tag.p("Hello 👋 I'm GOV.UK Chat. I use the guidance on GOV.UK to answer questions.", class: "app-c-conversation-message__p") +
-        tag.p(
-          "You can ask me anything about business or trade - just don't include personal or sensitive data and please limit your question to 300 characters or less.",
-          class: "app-c-conversation-message__p"
-        ),
+          tag.p(
+            "You can ask me anything about business or trade - just don't include personal or sensitive data and please limit your question to 300 characters or less.",
+            class: "app-c-conversation-message__p",
+          ),
       } %>
 
       <%= render "govuk_publishing_components/components/list", {
         items: @conversation.questions.each_with_index.map do |question, index|
           answer = question.answer
           render "question_and_answer", question:, index:, answer:
-        end
+        end,
       } %>
       </div>
     </div>
