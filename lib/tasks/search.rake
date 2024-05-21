@@ -23,6 +23,19 @@ namespace :search do
     puts "Index created"
   end
 
+  desc "Update the chunked context index mappings"
+  task update_chunked_content_mappings: :environment do
+    puts "Adding missing content mappings"
+
+    mappings = Search::ChunkedContentRepository.new.update_missing_mappings
+
+    if mappings.present?
+      puts "Mapping(s) added for: #{mappings.join(', ')}"
+    else
+      puts "No mappings were added"
+    end
+  end
+
   desc "Populate the Chunked Content OpenSearchIndex with data from seed files"
   task populate_chunked_content_index_from_seeds: %i[environment create_chunked_content_index] do
     if Rails.env.production?
