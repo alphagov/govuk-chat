@@ -27,40 +27,40 @@
   omit_footer_border: true,
   hide_footer_links: true,
   blue_bar: false,
-  custom_layout: true do 
+  custom_layout: true do
 %>
-  <main class="<%= yield(:main_class) || "govuk-main-wrapper" %>" id="content" role="main">
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-full-width">
-        <% if yield(:error_summary).blank? %>
-          <% if flash["notice"].present? %>
-            <%= render "govuk_publishing_components/components/success_alert", {
-              message: flash["notice"]
-            } %>
-          <% end %>
-
-          <% if flash["alert"].present? %>
-            <%= render "govuk_publishing_components/components/error_alert", {
-              message: flash["alert"]
-            } %>
-          <% end %>
+  <main class="<%= yield(:main_class).presence || "govuk-main-wrapper" %>" id="content" role="main">
+    <div class="app-conversation-layout__width-container">
+      <% if yield(:error_summary).blank? %>
+        <% if flash["notice"].present? %>
+          <%= render "govuk_publishing_components/components/success_alert", {
+            message: sanitize(tag.span(flash["notice"], class: %w(govuk-!-display-block govuk-!-margin-bottom-4)) +
+              render("govuk_publishing_components/components/button", { text: "Read the answer", href: "#" })),
+          } %>
         <% end %>
 
-        <%= yield(:error_summary) %>
-      </div>
+        <% if flash["alert"].present? %>
+          <%= render "govuk_publishing_components/components/error_alert", {
+            message: flash["alert"],
+          } %>
+        <% end %>
+      <% end %>
+
+      <%= yield(:error_summary) %>
     </div>
 
     <% if yield(:title).present? %>
-      <div class="govuk-grid-row <%= yield(:visually_hidden_class) || "" %>">
-        <div class="govuk-grid-column-two-thirds">
-          <%= render "govuk_publishing_components/components/title", {
-            context: yield(:title_context),
-            title: yield(:title),
-          } %>
+      <div class="govuk-width-container">
+        <div class="govuk-grid-row <%= yield(:visually_hidden_class) || "" %>">
+          <div class="govuk-grid-column-two-thirds">
+            <%= render "govuk_publishing_components/components/title", {
+              context: yield(:title_context),
+              title: yield(:title),
+            } %>
+          </div>
         </div>
       </div>
     <% end %>
-
     <%= yield %>
   </main>
 <% end %>

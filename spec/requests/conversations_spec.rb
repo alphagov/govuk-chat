@@ -84,7 +84,7 @@ RSpec.describe "ConversationsController" do
       expect(response).to have_http_status(:redirect)
       follow_redirect!
       expect(response.body)
-        .to have_selector(".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer")
+        .to have_selector(".gem-c-title__text", text: "GOV.UK Chat is generating an answer")
     end
 
     it "sets the converation_id cookie with valid params" do
@@ -171,6 +171,7 @@ RSpec.describe "ConversationsController" do
 
       expected_redirect_destination = show_conversation_path(anchor: helpers.dom_id(question.answer))
       expect(response).to redirect_to(expected_redirect_destination)
+      expect(flash[:notice]).to eq("GOV.UK Chat has answered your question")
 
       follow_redirect!
       expect(response.body)
@@ -183,7 +184,7 @@ RSpec.describe "ConversationsController" do
 
       expect(response).to have_http_status(:accepted)
       expect(response.body)
-        .to have_selector(".govuk-notification-banner__heading", text: "GOV.UK Chat is generating an answer")
+        .to have_selector(".gem-c-title__text", text: "GOV.UK Chat is generating an answer")
         .and have_selector(".govuk-button[href='#{answer_question_path(question)}?refresh=true']",
                            text: "Check if an answer has been generated")
     end
@@ -195,7 +196,7 @@ RSpec.describe "ConversationsController" do
 
         expect(response).to have_http_status(:accepted)
         expect(response.body)
-          .to have_selector(".govuk-govspeak p",
+          .to have_selector(".govuk-body",
                             text: "Thanks for your patience. Check again to find out if your answer is ready.")
       end
     end
