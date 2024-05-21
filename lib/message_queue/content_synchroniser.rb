@@ -19,6 +19,10 @@ module MessageQueue
         return delete_with_skip_index_reason("is withdrawn")
       end
 
+      if history_mode?
+        return delete_with_skip_index_reason("is in history mode")
+      end
+
       IndexContentItem.call(content_item, chunked_content_repository)
     end
 
@@ -49,6 +53,12 @@ module MessageQueue
 
     def withdrawn?
       content_item["withdrawn_notice"].present?
+    end
+
+    def history_mode?
+      return unless content_item.dig("details", "political") == true
+
+      content_item.dig("expanded_links", "government", 0, "current") == false
     end
   end
 end
