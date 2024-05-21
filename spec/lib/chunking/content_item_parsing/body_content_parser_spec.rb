@@ -96,7 +96,7 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
 
     context "when the schema is html_publication" do
       context "when the content item has no parent link" do
-        let(:content_item) { build(:notification_content_item, schema_name: "html_publication") }
+        let(:content_item) { build(:notification_content_item, schema_name: "html_publication", parent_document_type: nil) }
 
         it "returns error that parent is missing" do
           expect(described_class.non_indexable_content_item_reason(content_item)).to eq(

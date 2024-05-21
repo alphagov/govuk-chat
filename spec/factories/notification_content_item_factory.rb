@@ -24,7 +24,7 @@ FactoryBot.define do
       body { nil }
       details { nil }
       details_merge { nil }
-      parent_document_type { nil }
+      parent_document_type { :preserve }
     end
 
     initialize_with do
@@ -51,7 +51,7 @@ FactoryBot.define do
         item["details"] = details if details
         item["details"] = item["details"].merge(details_merge) if details_merge
 
-        if parent_document_type
+        if parent_document_type && parent_document_type != :preserve
           item["expanded_links"]["parent"] = [
             {
               "base_path" => "/parent",
@@ -62,6 +62,7 @@ FactoryBot.define do
             },
           ]
         end
+        item["expanded_links"].delete("parent") if parent_document_type.nil?
       end
     end
 
@@ -71,9 +72,9 @@ FactoryBot.define do
       validator = GovukSchemas::Validator.new(evaluator.schema_name, "notification", item)
 
       unless validator.valid?
-        error_message =  "Factory bot has produced a content item that is no longer\n" \
-                         "if this is intentional pass in ensure_valid: false to the " \
-                         "factory\n\n" + validator.error_message
+        error_message = "Factory bot has produced a content item that is no longer\n" \
+          "if this is intentional pass in ensure_valid: false to the " \
+          "factory\n\n" + validator.error_message
         raise error_message
       end
     end
