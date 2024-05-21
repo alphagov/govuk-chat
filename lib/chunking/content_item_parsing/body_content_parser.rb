@@ -39,7 +39,7 @@ module Chunking::ContentItemParsing
     end
 
     def self.not_supported_html_publication_reason(content_item)
-      parent_document_type = content_item&.dig("links", "parent", 0, "document_type")
+      parent_document_type = content_item&.dig("expanded_links", "parent", 0, "document_type")
 
       return "HTML publication lacks a parent document_type" unless parent_document_type
 
