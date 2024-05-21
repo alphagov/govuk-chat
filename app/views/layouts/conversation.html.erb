@@ -1,1 +1,24 @@
+<% content_for :content do %>
+  <div class="app-conversation-layout__message-container">
+    <div class="app-conversation-layout__flex-container govuk-width-container">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if content_for?(:form) %>
+    <div class="app-conversation-layout__input-container">
+      <div class="app-conversation-layout__flex-container govuk-width-container">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-full">
+            <%= yield(:form) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
 <%= render template: "layouts/application", locals: { conversation_layout: true } %>

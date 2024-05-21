@@ -1,5 +1,5 @@
 class ConversationsController < BaseController
-  layout "conversation"
+  layout "conversation", except: :answer
   before_action :require_onboarding_completed
   before_action :find_conversation
 
