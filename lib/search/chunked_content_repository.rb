@@ -2,6 +2,30 @@ module Search
   class ChunkedContentRepository
     MAX_CHUNKS = 5
     MIN_SCORE = 0.5
+    MAPPINGS = {
+      content_id: { type: "keyword" },
+      locale: { type: "keyword" },
+      base_path: { type: "keyword" },
+      document_type: { type: "keyword" },
+      parent_document_type: { type: "keyword" },
+      title: { type: "text" },
+      description: { type: "text" },
+      url: { type: "keyword" },
+      chunk_index: { type: "keyword" },
+      heading_hierarchy: { type: "text" },
+      html_content: { type: "text" },
+      plain_content: { type: "text" },
+      openai_embedding: {
+        type: "knn_vector",
+        dimension: 1536, # expecting text-embedding-3-small model
+        method: {
+          name: "hnsw",
+          space_type: "l2",
+          engine: "faiss",
+        },
+      },
+      digest: { type: "keyword" },
+    }.freeze
 
     Result = Data.define(
       :_id,
@@ -42,29 +66,7 @@ module Search
             },
           },
           mappings: {
-            properties: {
-              content_id: { type: "keyword" },
-              locale: { type: "keyword" },
-              base_path: { type: "keyword" },
-              document_type: { type: "keyword" },
-              title: { type: "text" },
-              description: { type: "text" },
-              url: { type: "keyword" },
-              chunk_index: { type: "keyword" },
-              heading_hierarchy: { type: "text" },
-              html_content: { type: "text" },
-              plain_content: { type: "text" },
-              openai_embedding: {
-                type: "knn_vector",
-                dimension: 1536, # expecting text-embedding-3-small model
-                method: {
-                  name: "hnsw",
-                  space_type: "l2",
-                  engine: "faiss",
-                },
-              },
-              digest: { type: "keyword" },
-            },
+            properties: MAPPINGS,
           },
         },
       )
@@ -78,6 +80,29 @@ module Search
     def count(query)
       result = client.count(index:, body: { query: })
       result["count"]
+    end
+
+    def update_missing_mappings
+      opensearch_mappings = client.indices
+                                  .get_mapping(index:)
+                                  .dig(index, "mappings", "properties")
+                                  .to_h
+                                  .symbolize_keys
+
+      missing_keys = MAPPINGS.keys - opensearch_mappings.keys
+
+      return [] if missing_keys.empty?
+
+      missing_mappings = MAPPINGS.slice(*missing_keys)
+
+      client.indices.put_mapping(
+        index:,
+        body: {
+          properties: missing_mappings,
+        },
+      )
+
+      missing_keys
     end
 
     def delete_by_base_path(base_path)

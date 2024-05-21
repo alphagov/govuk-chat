@@ -164,4 +164,32 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
       )
     end
   end
+
+  describe "#update_missing_mappings", chunked_content_index: false do
+    let(:index) { repository.index }
+
+    it "updates the index with any missing mappings" do
+      original_mappings = described_class::MAPPINGS
+      stub_const("Search::ChunkedContentRepository::MAPPINGS", {})
+      repository.create_index!
+      stub_const("Search::ChunkedContentRepository::MAPPINGS", original_mappings)
+
+      result = repository.update_missing_mappings
+
+      new_mappings = repository
+                     .client.indices
+                     .get_mapping(index:)
+                     .dig(index, "mappings", "properties")
+                     .deep_symbolize_keys
+
+      expect(result).to eq(original_mappings.keys)
+      expect(new_mappings.keys.sort).to eq(original_mappings.keys.sort)
+    end
+
+    it "returns an empty array if no mappings are missing" do
+      repository.create_index!
+      result = repository.update_missing_mappings
+      expect(result).to eq([])
+    end
+  end
 end
