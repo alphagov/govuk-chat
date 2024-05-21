@@ -5,7 +5,7 @@ RSpec.describe "ChatController" do
 
       expect(response).to have_http_status(:ok)
       expect(response.body)
-        .to have_selector(".gem-c-title__text", text: "Welcome to GOV.UK Chat")
+        .to have_selector(".app-c-chat-introduction__title", text: "GOV.UK Chat")
     end
 
     it "sets the cache headers to 5 mins" do
