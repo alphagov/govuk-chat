@@ -1,4 +1,5 @@
 class OnboardingController < BaseController
+  layout "conversation"
   before_action :ensure_onboarding_flow_position
 
   def limitations

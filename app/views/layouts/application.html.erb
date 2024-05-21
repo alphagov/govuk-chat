@@ -1,4 +1,6 @@
-<%= tag.html(class: %w[govuk-template], lang: "en") do %>
+<% conversation_layout ||= false %>
+<%= tag.html(class: %w[govuk-template] + (conversation_layout ? %w[app-conversation-layout] : []),
+             lang: "en") do %>
   <head>
     <meta charset="utf-8">
     <title><%= yield(:title) %></title>
@@ -23,7 +25,7 @@
 
     <meta property="og:image" content="<%= asset_url("govuk-opengraph-image.png", host: Plek.website_root) %>">
   </head>
-  <%= tag.body(class: %w[govuk-template__body]) do %>
+  <%= tag.body(class: %w[govuk-template__body] + (conversation_layout ? %w[app-conversation-layout__body] : [])) do %>
     <script nonce="<%= request.content_security_policy_nonce %>">
       document.body.className += ' js-enabled';
     </script>
@@ -51,8 +53,10 @@
       ],
     } %>
 
-    <%= tag.main(class: %w[govuk-main-wrapper], id: "content", role: "main") do %>
-      <%= tag.div(class: %w[govuk-width-container]) do %>
+    <%= tag.main(class: %w[govuk-main-wrapper] + (conversation_layout ? %w[app-conversation-layout__main] : []),
+                 id: "content",
+                 role: "main") do %>
+      <%= tag.div(class: %w[govuk-width-container] + (conversation_layout ? %w[app-conversation-layout__meta] : [])) do %>
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-full-width">
             <% unless content_for?(:error_summary) %>
@@ -74,7 +78,7 @@
         </div>
 
         <% if content_for?(:title) %>
-          <%= tag.div(class: %w[govuk-grid-row]) do %>
+          <%= tag.div(class: %w[govuk-grid-row] + (conversation_layout ? %w[govuk-visually-hidden] : [])) do %>
             <div class="govuk-grid-column-two-thirds">
               <%= render "govuk_publishing_components/components/title", {
                 context: yield(:title_context),
@@ -85,7 +89,7 @@
         <% end %>
       <% end %>
 
-      <%= tag.div(class: "govuk-width-container") do %>
+      <%= tag.div(class: conversation_layout ? "app-conversation-layout__wrapper" : "govuk-width-container") do %>
         <%= yield %>
       <% end %>
     <% end %>

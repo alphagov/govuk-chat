@@ -1,6 +1,4 @@
 <%= content_for :title, "GOV.UK Chat" %>
-<%= content_for :main_class, "app-conversation-layout--chat" %>
-<%= content_for :visually_hidden_class, "govuk-visually-hidden" %>
 <%= content_for :error_summary do %>
   <% if @create_question.errors.any? %>
     <%= render "govuk_publishing_components/components/error_summary", {
@@ -10,34 +8,42 @@
   <% end %>
 <% end %>
 
-<div class="app-conversation-layout__wrapper">
-  <div class="app-conversation-layout__message-container">
-    <div class="app-conversation-layout__width-container">
-      <%= render "components/conversation_message", {
-        id: "initial-message",
-        message: tag.p("Hello 👋 I'm GOV.UK Chat. I use the guidance on GOV.UK to answer questions.", class: "app-c-conversation-message__p") +
-          tag.p(
-            "You can ask me anything about business or trade - just don't include personal or sensitive data and please limit your question to 300 characters or less.",
-            class: "app-c-conversation-message__p",
-          ),
-      } %>
+<div class="app-conversation-layout__message-container">
+  <div class="app-conversation-layout__flex-container govuk-width-container">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <%= render "components/conversation_message", {
+          id: "initial-message",
+          message: tag.p("Hello 👋 I'm GOV.UK Chat. I use the guidance on GOV.UK to answer questions.", class: "app-c-conversation-message__p") +
+            tag.p(
+              "You can ask me anything about business or trade - just don't include personal or sensitive data and please limit your question to 300 characters or less.",
+              class: "app-c-conversation-message__p",
+            ),
+        } %>
 
-      <%= render "govuk_publishing_components/components/list", {
-        items: @conversation.questions.each_with_index.map do |question, index|
-          answer = question.answer
-          render "question_and_answer", question:, index:, answer:
-        end,
-      } %>
+        <%= render "govuk_publishing_components/components/list", {
+          items: @conversation.questions.each_with_index.map do |question, index|
+            answer = question.answer
+            render "question_and_answer", question:, index:, answer:
+          end,
+        } %>
       </div>
     </div>
+  </div>
+</div>
 
-  <div class="app-conversation-layout__width-container">
-    <%= render "components/conversation_form", {
-      url: update_conversation_path,
-      name: "create_question[user_question]",
-      input_id: "create_question_user_question",
-      value: @create_question.user_question,
-      error_items: @create_question.errors[:user_question].map { |message| { text: message } },
-    } %>
+<div class="app-conversation-layout__input-container">
+  <div class="app-conversation-layout__flex-container govuk-width-container">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <%= render "components/conversation_form", {
+          url: update_conversation_path,
+          name: "create_question[user_question]",
+          input_id: "create_question_user_question",
+          value: @create_question.user_question,
+          error_items: @create_question.errors[:user_question].map { |message| { text: message } },
+        } %>
+      </div>
+    </div>
   </div>
 </div>

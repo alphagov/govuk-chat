@@ -1,4 +1,14 @@
-.app-conversation-layout--chat {
+.app-conversation-layout {
+  overflow-y: hidden;
+}
+
+.app-conversation-layout__body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-conversation-layout__main {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -28,5 +38,9 @@
   max-width: 585px;
   margin: 0 auto;
   padding: 0 govuk-spacing(3);
+  width: 100%;
+}
+
+.app-conversation-layout__meta {
   width: 100%;
 }
