@@ -16,7 +16,7 @@
   aria_described_by = aria_described_by.join(" ")
 %>
 
-<%= form_with url: url, class: "app-c-conversation-form" do |f| %>
+<%= form_with url: url, class: "app-c-conversation-form", data: { module: "conversation-form" } do |f| %>
   <%= content_tag :div, class: "app-c-conversation-form__wrapper" do %>
     <%= label_tag(
       input_id,
@@ -27,7 +27,7 @@
     <%= text_field_tag(
       input_id,
       value,
-      class: "app-c-conversation-form__input",
+      class: "app-c-conversation-form__input js-conversation-form-input",
       aria: {
         describedby: aria_described_by,
       },

@@ -1,0 +1,19 @@
+{
+  "srcDir": "public/assets/chat",
+  "srcFiles": [
+    "admin-*.js",
+    "application-*.js"
+  ],
+  "cssFiles": [
+    "admin-*.css",
+    "application-*.css"
+  ],
+  "specDir": "spec/javascripts",
+  "specFiles": [
+    "**/*[sS]pec.js"
+  ],
+  "helpers": [
+    "helpers/*.js"
+  ],
+  "browser": "headlessChrome"
+}

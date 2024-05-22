@@ -17,6 +17,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           show-progress: false
+
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
@@ -32,18 +33,32 @@ jobs:
 
   lint-javascript:
     name: Lint JavaScript
-    uses: alphagov/govuk-infrastructure/.github/workflows/standardx.yml@main
-    with:
-      files: "'app/assets/javascripts/**/*.js'"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Setup Node
+        uses: alphagov/govuk-infrastructure/.github/actions/setup-node@main
+
+      - name: "Run lint:JS task"
+        run: "yarn run lint:js"
+
+  lint-erb:
+    name: Lint ERB
+    uses: ./.github/workflows/linterb.yml
 
   lint-ruby:
     name: Lint Ruby
     uses: alphagov/govuk-infrastructure/.github/workflows/rubocop.yml@main
 
+  test-javascript:
+    name: Test JavaScript
+    uses: alphagov/govuk-infrastructure/.github/workflows/jasmine.yml@main
+    with:
+      useWithRails: true
+
   test-ruby:
     name: Test Ruby
     uses: ./.github/workflows/rspec.yml
-
-  lint-erb:
-    name: Lint ERB
-    uses: ./.github/workflows/linterb.yml
