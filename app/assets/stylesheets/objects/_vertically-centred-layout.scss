@@ -1,0 +1,9 @@
+.app-vertically-centred-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-vertically-centred-layout__main {
+  flex: 1;
+  align-content: center;
+}

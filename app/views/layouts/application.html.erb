@@ -1,4 +1,11 @@
-<% conversation_layout ||= false %>
+<%
+  conversation_layout ||= false
+  body_classes = %w[govuk-template__body]
+  body_classes << "app-conversation-layout__body" if conversation_layout
+  body_classes << yield(:body_class)
+  main_classes = conversation_layout ? %w[app-conversation-layout__main] : %w[govuk-main-wrapper]
+  main_classes << yield(:main_class)
+%>
 <%= tag.html(class: %w[govuk-template] + (conversation_layout ? %w[app-conversation-layout] : []),
              lang: "en") do %>
   <head>
@@ -25,7 +32,7 @@
 
     <meta property="og:image" content="<%= asset_url("govuk-opengraph-image.png", host: Plek.website_root) %>">
   </head>
-  <%= tag.body(class: %w[govuk-template__body] + (conversation_layout ? %w[app-conversation-layout__body] : [])) do %>
+  <%= tag.body(class: body_classes) do %>
     <script type="module" nonce="<%= request.content_security_policy_nonce %>">
       document.body.className += ' js-enabled govuk-frontend-supported';
     </script>
@@ -53,9 +60,7 @@
       ],
     } %>
 
-    <%= tag.main(class: (conversation_layout ? %w[app-conversation-layout__main] : "govuk-main-wrapper"),
-                 id: "content",
-                 role: "main") do %>
+    <%= tag.main(class: main_classes, id: "content", role: "main") do %>
         <%= yield(:alerts) if content_for?(:alerts) %>
 
         <% if content_for?(:title) %>
