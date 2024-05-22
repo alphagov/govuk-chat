@@ -1,0 +1,26 @@
+<%= form_with(url:, method: :get) do %>
+  <%= render "govuk_publishing_components/components/select", {
+    id: "status",
+    name: "status",
+    label: "Status",
+    heading_size: "s",
+    options: (["", "pending"] + Answer.statuses.keys).sort.map do |status|
+      {
+        text: status.humanize,
+        value: status,
+        selected: params[:status] == status,
+      }
+    end,
+  } %>
+
+  <%= render "govuk_publishing_components/components/button", {
+    text: "Filter",
+    margin_bottom: true,
+  } %>
+
+  <p class="govuk-body">
+    <%= link_to "Clear all filters",
+                url,
+                class: "govuk-link govuk-link--no-visited-state" %>
+  </p>
+<% end %>
