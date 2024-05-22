@@ -1,3 +1,10 @@
+// We're not using a footer a typical grey footer and we therefore want
+// the body element to span the whole page to not reveal the background
+// colour of the html element
+.govuk-template__body {
+  min-height: 100vh;
+}
+
 .gem-c-layout-header--experimental {
   .govuk-header__container {
     border-bottom: govuk-spacing(2) solid govuk-colour("yellow");
