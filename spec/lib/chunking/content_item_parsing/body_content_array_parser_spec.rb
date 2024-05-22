@@ -14,7 +14,7 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
       ]
     end
 
-    let(:content_item) { build(:notification_content_item, body:, ensure_valid: false) }
+    let(:content_item) { build(:notification_content_item, schema_name:, body:) }
   end
 
   describe ".call" do
