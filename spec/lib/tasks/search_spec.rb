@@ -101,4 +101,33 @@ RSpec.describe "rake search tasks" do
       expect(Rake::Task[task_name].prereqs).to include("create_chunked_content_index")
     end
   end
+
+  describe "search:update_chunked_content_mappings" do
+    let(:task_name) { "search:update_chunked_content_mappings" }
+    let(:repository) { Search::ChunkedContentRepository.new }
+
+    before do
+      Rake::Task[task_name].reenable
+      allow(Search::ChunkedContentRepository).to receive(:new).and_return(repository)
+    end
+
+    it "delegates the task to Search::ChunkedContentRepository" do
+      allow(repository).to receive(:update_missing_mappings)
+
+      expect { Rake::Task[task_name].invoke }.to output.to_stdout
+      expect(repository).to have_received(:update_missing_mappings)
+    end
+
+    it "outputs information about missing mappings to stoud" do
+      allow(repository).to receive(:update_missing_mappings).and_return(%i[parent_document_type child_document_type])
+      expect { Rake::Task[task_name].invoke }
+        .to output("Adding missing content mappings\nMapping(s) added for:\ parent_document_type, child_document_type\n").to_stdout
+    end
+
+    it "outputs that no mappings were updated if none were missing" do
+      allow(repository).to receive(:update_missing_mappings).and_return([])
+      expect { Rake::Task[task_name].invoke }
+      .to output("Adding missing content mappings\nNo mappings were added\n").to_stdout
+    end
+  end
 end
