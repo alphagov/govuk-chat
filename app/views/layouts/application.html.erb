@@ -53,41 +53,23 @@
       ],
     } %>
 
-    <%= tag.main(class: %w[govuk-main-wrapper] + (conversation_layout ? %w[app-conversation-layout__main] : []),
+    <%= tag.main(class: (conversation_layout ? %w[app-conversation-layout__main] : "govuk-main-wrapper"),
                  id: "content",
                  role: "main") do %>
-      <%= tag.div(class: %w[govuk-width-container] + (conversation_layout ? %w[app-conversation-layout__meta] : [])) do %>
-        <div class="govuk-grid-row">
-          <div class="govuk-grid-column-full-width">
-            <% unless content_for?(:error_summary) %>
-              <% if flash["notice"].present? %>
-                <%= render "govuk_publishing_components/components/success_alert", {
-                  message: flash["notice"],
-                } %>
-              <% end %>
-
-              <% if flash["alert"].present? %>
-                <%= render "govuk_publishing_components/components/error_alert", {
-                  message: flash["alert"],
-                } %>
-              <% end %>
-            <% end %>
-
-            <%= yield(:error_summary) %>
-          </div>
-        </div>
+        <%= yield(:alerts) if content_for?(:alerts) %>
 
         <% if content_for?(:title) %>
-          <%= tag.div(class: %w[govuk-grid-row] + (conversation_layout ? %w[govuk-visually-hidden] : [])) do %>
-            <div class="govuk-grid-column-two-thirds">
-              <%= render "govuk_publishing_components/components/title", {
-                context: yield(:title_context),
-                title: yield(:title),
-              } %>
+          <%= tag.div(class: %w[govuk-width-container] + (conversation_layout ? %w[govuk-visually-hidden] : [])) do %>
+            <div class="govuk-grid-row">
+              <div class="govuk-grid-column-two-thirds">
+                <%= render "govuk_publishing_components/components/title", {
+                  context: yield(:title_context),
+                  title: yield(:title),
+                } %>
+              </div>
             </div>
           <% end %>
         <% end %>
-      <% end %>
 
       <%= tag.div(class: conversation_layout ? "app-conversation-layout__wrapper" : "govuk-width-container") do %>
         <%= content_for?(:content) ? yield(:content) : yield %>
