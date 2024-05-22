@@ -1,8 +1,8 @@
 class Admin::QuestionsController < Admin::BaseController
+  include Admin::Concerns::QuestionFilterConcern
+
   def index
-    @questions = Question.includes(:answer)
-                         .order(created_at: :desc)
-                         .page(params[:page])
+    @filter = questions_filter
   end
 
   def show

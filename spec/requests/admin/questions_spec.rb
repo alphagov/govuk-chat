@@ -35,6 +35,13 @@ RSpec.describe "Admin::QuestionsController" do
         expect(response.body).not_to have_content("Next page")
       end
     end
+
+    context "when filter parameters are provided" do
+      it "returns successfully" do
+        get admin_questions_path(status: "abort_forbidden_words")
+        expect(response).to have_http_status(:ok)
+      end
+    end
   end
 
   describe "GET :show" do
