@@ -16,7 +16,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.module.addEventListener('submit', e => this.handleSubmit(e))
       this.module.addEventListener('question-pending', () => this.handleQuestionPending())
       this.module.addEventListener('question-accepted', () => this.handleQuestionAccepted())
-      this.module.addEventListener('question-rejected', () => this.handleQuestionRejected())
+      this.module.addEventListener('question-rejected', e => this.handleQuestionRejected(e))
       this.module.addEventListener('answer-received', () => this.handleAnswerReceived())
     }
 
@@ -44,7 +44,12 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.input.value = ''
     }
 
-    handleQuestionRejected () {
+    handleQuestionRejected (event) {
+      if (!event.detail || !event.detail.errorMessages) {
+        throw new Error('expected event detail containing errorMessages')
+      }
+
+      this.replaceErrors(event.detail.errorMessages)
       this.enableControls()
     }
 

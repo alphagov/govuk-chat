@@ -1,7 +1,7 @@
 describe('Conversation form component', () => {
   'use strict'
 
-  let form, input, button, presenceErrorMessage, errorsWrapper
+  let form, input, button, presenceErrorMessage, errorsWrapper, module
 
   beforeEach(function () {
     form = document.createElement('form')
@@ -16,7 +16,8 @@ describe('Conversation form component', () => {
     button = form.querySelector('.js-conversation-form-button')
     errorsWrapper = form.querySelector('.js-conversation-form-errors-wrapper')
     document.body.appendChild(form)
-    new window.GOVUK.Modules.ConversationForm(form).init()
+    module = new window.GOVUK.Modules.ConversationForm(form)
+    module.init()
   })
 
   afterEach(function () {
@@ -89,11 +90,21 @@ describe('Conversation form component', () => {
   })
 
   describe('receiving the question-rejected event', () => {
+    let errorDetail
+
+    beforeEach(() => {
+      errorDetail = {
+        detail: {
+          errorMessages: ['Error 1', 'Error 2']
+        }
+      }
+    })
+
     it('enables any disabled controls', () => {
       input.readOnly = true
       button.disabled = true
 
-      form.dispatchEvent(new Event('question-rejected'))
+      form.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
 
       expect(input.readOnly).toBe(false)
       expect(button.disabled).toBe(false)
@@ -101,9 +112,43 @@ describe('Conversation form component', () => {
 
     it("doesn't update the input value", () => {
       const value = input.value
-      form.dispatchEvent(new Event('question-rejected'))
+      form.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
 
       expect(input.value).toEqual(value)
+    })
+
+    it('displays error messages provided by the event', () => {
+      const event = new CustomEvent('question-rejected', errorDetail)
+      form.dispatchEvent(event)
+
+      const expectedHtml = '<li><span class="govuk-visually-hidden">Error:</span>Error 1</li>' +
+        '<li><span class="govuk-visually-hidden">Error:</span>Error 2</li>'
+
+      expect(errorsWrapper.hidden).toBe(false)
+      expect(errorsWrapper.innerHTML).toEqual(expectedHtml)
+    })
+
+    it('replaces any existing error messages', () => {
+      errorsWrapper.hidden = false
+      errorsWrapper.innerHTML = '<li><span class="govuk-visually-hidden">Error:</span>Oops</li>'
+      form.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
+
+      expect(errorsWrapper.hidden).toBe(false)
+      expect(errorsWrapper.textContent).not.toMatch(/Oops/)
+    })
+
+    it("raises an error if the event doesn't have an errorMessages detail", () => {
+      const errorMessage = 'expected event detail containing errorMessages'
+
+      // calling event handler directly as using element.dispatchEvent raises
+      // the error globally and it's unclear how to catch that.
+
+      expect(() => { module.handleQuestionRejected(new Event('question-rejected')) })
+        .toThrowError(errorMessage)
+
+      const customEvent = new CustomEvent('question-rejected', { detail: { errorMessages: null } })
+      expect(() => { module.handleQuestionRejected(customEvent) })
+        .toThrowError(errorMessage)
     })
   })
 
