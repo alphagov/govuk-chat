@@ -28,6 +28,7 @@ gem "pg"
 gem "ruby-openai"
 gem "sentry-sidekiq"
 gem "sprockets-rails"
+gem "terser"
 gem "tiktoken_ruby"
 
 group :development do
