@@ -1,13 +1,7 @@
 RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
   include ContentItemParserExamples
-  schemas = described_class.allowed_schemas.map do |schema_name|
-    next { schema_name => "guidance" } if schema_name == "publication"
-    next { schema_name => "oral_statement" } if schema_name == "speech"
 
-    schema_name
-  end
-
-  it_behaves_like "a chunking content item parser", schemas do
+  it_behaves_like "a chunking content item parser", described_class.allowed_schemas do
     let(:content_item) { build(:notification_content_item, body: "<p>Content</p>", schema_name:) }
   end
 

@@ -1,12 +1,8 @@
 module ContentItemParserExamples
   shared_examples "a chunking content item parser" do |schemas|
-    schemas.each do |schema|
-      schema_name = schema.is_a?(Hash) ? schema.keys.first : schema
-      document_type = schema.is_a?(Hash) ? schema.values.first : :preserve
-
+    schemas.each do |schema_name|
       context "when the content items uses the '#{schema_name}' schema" do
         let(:schema_name) { schema_name }
-        let(:document_type) { document_type }
 
         it "responds to .call with an array of Chunking::ContentItemChunk objects" do
           result = described_class.call(content_item)
