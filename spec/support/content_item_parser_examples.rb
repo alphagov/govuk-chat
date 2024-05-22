@@ -17,10 +17,11 @@ module ContentItemParserExamples
       end
     end
 
-    it "responds to .allowed_schemas with a non-empty array" do
+    it "responds to .allowed_schemas with an array of valid schemas" do
       result = described_class.allowed_schemas
       expect(result).to be_an_instance_of(Array)
-      expect(result).not_to be_empty
+      unexpected_schemas = result - GovukSchemas::Schema.schema_names
+      expect(unexpected_schemas).to be_empty, "schema(s) #{unexpected_schemas.join(', ')} are not known to GovukSchemas"
     end
   end
 end
