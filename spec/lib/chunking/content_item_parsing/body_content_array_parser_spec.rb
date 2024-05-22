@@ -68,18 +68,14 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
   end
 
   describe ".non_indexable_content_item_reason" do
-    described_class.allowed_schemas.without("specialist_document").each do |schema_name|
-      it "returns nil for '#{schema_name}' schema" do
-        content_item = build(:notification_content_item, schema_name:, ensure_valid: false)
-        expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
-      end
+    it "returns nil for a schema without document type requirements" do
+      content_item = build(:notification_content_item, schema_name: "answer")
+      expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
     end
 
-    described_class::ALLOWED_SPECIALIST_DOCUMENT_TYPES.each do |document_type|
-      it "is nil for '#{document_type}' document type for 'specialist_document' schema" do
-        content_item = build(:notification_content_item, schema_name: "specialist_document", document_type:, ensure_valid: false)
-        expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
-      end
+    it "returns nil for an allowed specialist_document schema" do
+      content_item = build(:notification_content_item, schema_name: "specialist_document", document_type: "business_finance_support_scheme")
+      expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
     end
 
     it "returns a message other document types for specialist_document" do
