@@ -3,6 +3,7 @@
 }
 
 .app-c-chat-introduction__svg-container {
+  line-height: 0;
   @include govuk-media-query($until: 480px) {
     margin-bottom: govuk-spacing(6);
   }
