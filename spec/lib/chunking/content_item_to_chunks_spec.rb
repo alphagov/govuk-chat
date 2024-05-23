@@ -14,20 +14,16 @@ RSpec.describe Chunking::ContentItemToChunks do
     end
 
     it "raises an error when given a schema that is not supported" do
-      content_item = build(:notification_content_item, ensure_valid: false).merge(
-        "schema_name" => "doesnt_exist",
-        "document_type" => "any",
-      )
+      content_item = build(:notification_content_item).merge("schema_name" => "doesnt_exist")
 
       expect { described_class.call(content_item) }
         .to raise_error("Content item not supported for parsing: doesnt_exist is not a supported schema")
     end
 
     it "raises an error when given a document_type that is not supported" do
-      content_item = build(:notification_content_item, ensure_valid: false).merge(
-        "schema_name" => "publication",
-        "document_type" => "decision",
-      )
+      content_item = build(:notification_content_item,
+                           schema_name: "publication",
+                           document_type: "decision")
 
       expect { described_class.call(content_item) }
         .to raise_error("Content item not supported for parsing: document type: decision not supported for schema: publication")
