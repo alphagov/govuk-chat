@@ -1,9 +1,9 @@
-<%= content_for :main_class, "app-c-conversation-layout app-c-conversation-layout--landing" %>
-
-<div class="govuk-width-container">
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-half">
-      <%= render "components/chat_introduction" %>
-    </div>
+<%
+  content_for(:body_class, "app-vertically-centred-layout")
+  content_for(:main_class, "app-vertically-centred-layout__main")
+%>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-half">
+    <%= render "components/chat_introduction" %>
   </div>
 </div>

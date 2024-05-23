@@ -1,13 +1,17 @@
-.app-conversation-layout--chat {
+.app-conversation-layout {
+  overflow-y: hidden;
+}
+
+.app-conversation-layout__body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-conversation-layout__main {
   display: flex;
   flex-direction: column;
   flex: 1;
-  overflow-y: auto;
-}
-
-.app-c-conversation-layout--landing {
-  flex: 1;
-  align-content: center;
   overflow-y: auto;
 }
 
@@ -29,4 +33,8 @@
   margin: 0 auto;
   padding: 0 govuk-spacing(3);
   width: 100%;
+}
+
+.app-conversation-layout__alerts {
+  margin: govuk-spacing(4) 0 0;
 }

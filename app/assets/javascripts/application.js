@@ -1,8 +1,3 @@
-//= require govuk_publishing_components/dependencies
-//= require govuk_publishing_components/lib
-
-//= require govuk_publishing_components/components/character-count
-//= require govuk_publishing_components/components/layout-header
-//= require govuk_publishing_components/components/skip-link
+// served to browsers under script type=module
 
 //= require components/conversation-form

@@ -12,6 +12,12 @@ linters:
   # We use a CSP and want any script tags to have a nonce
   RequireScriptNonce:
     enabled: true
+  # If we have inline JavaScript we should only serve it to browsers that
+  # support module
+  AllowedScriptType:
+    enabled: true
+    allowed_types:
+      - module
   # Use our regular Rubocop configuration but
   # disable specific rules that do not apply to ERB files
   Rubocop:

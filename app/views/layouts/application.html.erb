@@ -1,65 +1,87 @@
-<% content_for :custom_header do %>
-  <%= render "govuk_publishing_components/components/layout_header", {
-    environment: "experimental",
-    product_name: "Chat",
-    navigation_items: [
-      {
-        text: "About",
-        href: "/about",
-      },
-      {
-        text: "Privacy",
-        href: "/privacy",
-      },
-      {
-        text: "Support",
-        href: "/support",
-      },
-    ],
-  } %>
-<% end %>
+<%
+  conversation_layout ||= false
+  body_classes = %w[govuk-template__body]
+  body_classes << "app-conversation-layout__body" if conversation_layout
+  body_classes << yield(:body_class)
+  main_classes = conversation_layout ? %w[app-conversation-layout__main] : %w[govuk-main-wrapper]
+  main_classes << yield(:main_class)
+%>
+<%= tag.html(class: %w[govuk-template] + (conversation_layout ? %w[app-conversation-layout] : []),
+             lang: "en") do %>
+  <head>
+    <meta charset="utf-8">
+    <title><%= yield(:title) %></title>
 
-<%= render "govuk_publishing_components/components/layout_for_public",
-  product_name: "Chat",
-  environment: GovukPublishingComponents::AppHelpers::Environment.current_acceptance_environment,
-  show_search: false,
-  omit_feedback_form: true,
-  omit_footer_border: true,
-  hide_footer_links: true,
-  blue_bar: false,
-  custom_layout: true do %>
-  <main class="<%= yield(:main_class).presence || "govuk-main-wrapper" %>" id="content" role="main">
-    <div class="app-conversation-layout__width-container">
-      <% if yield(:error_summary).blank? %>
-        <% if flash["notice"].present? %>
-          <%= render "govuk_publishing_components/components/success_alert", {
-            message: sanitize(tag.span(flash["notice"], class: %w(govuk-!-display-block govuk-!-margin-bottom-4)) +
-              render("govuk_publishing_components/components/button", { text: "Read the answer", href: "#" })),
-          } %>
+    <%# Used for Google Analytics 4 debugging. Must be placed before load-analytics script. %>
+    <meta name="govuk:components_gem_version" content="<%= GovukPublishingComponents::VERSION %>">
+    <%= javascript_include_tag "govuk_publishing_components/load-analytics", nonce: true %>
+
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag "application", media: "all" %>
+
+    <link rel="shortcut icon" href="<%= asset_path "favicon.ico" %>" type="image/x-icon">
+    <link rel="mask-icon" href="<%= asset_path "govuk-mask-icon.svg" %>" color="#0b0c0c">
+    <link rel="apple-touch-icon" sizes="180x180" href="<%= asset_path "govuk-apple-touch-icon-180x180.png" %>">
+    <link rel="apple-touch-icon" sizes="167x167" href="<%= asset_path "govuk-apple-touch-icon-167x167.png" %>">
+    <link rel="apple-touch-icon" sizes="152x152" href="<%= asset_path "govuk-apple-touch-icon-152x152.png" %>">
+    <link rel="apple-touch-icon" href="<%= asset_path "govuk-apple-touch-icon.png" %>">
+
+    <meta name="theme-color" content="#0b0c0c">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta property="og:image" content="<%= asset_url("govuk-opengraph-image.png", host: Plek.website_root) %>">
+  </head>
+  <%= tag.body(class: body_classes) do %>
+    <script type="module" nonce="<%= request.content_security_policy_nonce %>">
+      document.body.className += ' js-enabled govuk-frontend-supported';
+    </script>
+    <%= render "govuk_publishing_components/components/cookie_banner", {} %>
+    <%= render "govuk_publishing_components/components/skip_link", {
+      href: "#content",
+    } %>
+
+    <%= render "govuk_publishing_components/components/layout_header", {
+      environment: "experimental",
+      product_name: "Chat",
+      navigation_items: [
+        {
+          text: "About",
+          href: "/chat/about",
+        },
+        {
+          text: "Privacy",
+          href: "/chat/privacy",
+        },
+        {
+          text: "Support",
+          href: "/chat/support",
+        },
+      ],
+    } %>
+
+    <%= tag.main(class: main_classes, id: "content", role: "main") do %>
+        <%= yield(:alerts) if content_for?(:alerts) %>
+
+        <% if content_for?(:title) %>
+          <%= tag.div(class: %w[govuk-width-container] + (conversation_layout ? %w[govuk-visually-hidden] : [])) do %>
+            <div class="govuk-grid-row">
+              <div class="govuk-grid-column-two-thirds">
+                <%= render "govuk_publishing_components/components/title", {
+                  context: yield(:title_context),
+                  title: yield(:title),
+                } %>
+              </div>
+            </div>
+          <% end %>
         <% end %>
 
-        <% if flash["alert"].present? %>
-          <%= render "govuk_publishing_components/components/error_alert", {
-            message: flash["alert"],
-          } %>
-        <% end %>
+      <%= tag.div(class: conversation_layout ? "app-conversation-layout__wrapper" : "govuk-width-container") do %>
+        <%= content_for?(:content) ? yield(:content) : yield %>
       <% end %>
-
-      <%= yield(:error_summary) %>
-    </div>
-
-    <% if yield(:title).present? %>
-      <div class="govuk-width-container">
-        <div class="govuk-grid-row <%= yield(:visually_hidden_class) || "" %>">
-          <div class="govuk-grid-column-two-thirds">
-            <%= render "govuk_publishing_components/components/title", {
-              context: yield(:title_context),
-              title: yield(:title),
-            } %>
-          </div>
-        </div>
-      </div>
     <% end %>
-    <%= yield %>
-  </main>
+
+    <%= javascript_include_tag "application-legacy", nonce: true %>
+    <%= javascript_include_tag "application", type: "module", nonce: true %>
+  <% end %>
 <% end %>
