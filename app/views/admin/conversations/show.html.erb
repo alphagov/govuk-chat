@@ -20,6 +20,9 @@
     <%= render "admin/shared/question_filters", url: admin_show_conversation_path %>
   </div>
   <div class="govuk-grid-column-two-thirds">
-    <%= render "admin/shared/questions_table", questions: @filter.questions %>
+    <%= render "admin/shared/questions_table",
+      filter: @filter,
+      questions: @filter.questions,
+      path: :admin_show_conversation_path %>
   </div>
 </div>

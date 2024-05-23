@@ -21,7 +21,7 @@ RSpec.describe Admin::Form::QuestionsFilter do
     end
 
     it "paginates the questions" do
-      questions = create_list(:question, 26)
+      create_list(:question, 26)
 
       questions = described_class.new(page: 1).questions
       expect(questions.count).to eq(25)
@@ -39,6 +39,38 @@ RSpec.describe Admin::Form::QuestionsFilter do
 
         expect(questions).to eq([question1])
       end
+    end
+  end
+
+  describe "previous_page_params" do
+    it "returns any empty hash if there is no previous page to link to" do
+      filter = described_class.new
+      expect(filter.previous_page_params).to eq({})
+    end
+
+    it "constructs the previous pages url based on the path passed in when a previous page is present" do
+      create_list(:question, 51)
+      filter = described_class.new(page: 3)
+      expect(filter.previous_page_params).to eq({ page: 2 })
+    end
+
+    it "removes the page param from the url correctly when it links to the first page of questions" do
+      create_list(:question, 26)
+      filter = described_class.new(page: 2)
+      expect(filter.previous_page_params).to eq({})
+    end
+  end
+
+  describe "next_page_params" do
+    it "returns any empty hash if there is no next page to link to" do
+      filter = described_class.new
+      expect(filter.next_page_params).to eq({})
+    end
+
+    it "constructs the next page based on the path passed in when a next page is present" do
+      create_list(:question, 26)
+      filter = described_class.new(page: 1)
+      expect(filter.next_page_params).to eq({ page: 2 })
     end
   end
 end

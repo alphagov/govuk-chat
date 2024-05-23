@@ -20,5 +20,31 @@ RSpec.describe "Admin::ConversationsController" do
         expect(response).to have_http_status(:ok)
       end
     end
+
+    context "when there are more than 25 questions" do
+      let(:conversation) { create(:conversation) }
+
+      before do
+        create_list(:question, 26, conversation:)
+      end
+
+      it "paginates correctly on page 1" do
+        get admin_show_conversation_path(conversation)
+
+        expect(response.body)
+          .to have_link("Next page", href: admin_show_conversation_path(conversation, page: 2))
+          .and have_selector(".govuk-pagination__link-label", text: "2 of 2")
+        expect(response.body).not_to have_content("Previous page")
+      end
+
+      it "paginates correctly on page 2" do
+        get admin_show_conversation_path(conversation, page: "2")
+
+        expect(response.body)
+          .to have_link("Previous page", href: admin_show_conversation_path(conversation))
+          .and have_selector(".govuk-pagination__link-label", text: "1 of 2")
+        expect(response.body).not_to have_content("Next page")
+      end
+    end
   end
 end
