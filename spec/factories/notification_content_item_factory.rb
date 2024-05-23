@@ -19,7 +19,7 @@ FactoryBot.define do
 
     transient do
       # This value is used to determine whether a built schema is validated
-      # as part of creation (see after(:build) callback)
+      # after modification
       ensure_valid { true }
       body { nil }
       details { nil }
