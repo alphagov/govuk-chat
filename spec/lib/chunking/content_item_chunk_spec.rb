@@ -62,7 +62,8 @@ RSpec.describe Chunking::ContentItemChunk do
                        html_content: "<p>Content</p>",
                        heading_hierarchy: ["Heading 1", "Heading 2"],
                        chunk_index: 0,
-                       chunk_url: "/chunk-url")
+                       chunk_url: "/chunk-url",
+                       parent_document_type: "guide")
 
       expect(instance.to_opensearch_hash)
         .to eq({
@@ -70,6 +71,7 @@ RSpec.describe Chunking::ContentItemChunk do
           locale: instance.content_item["locale"],
           base_path: instance.content_item["base_path"],
           document_type: instance.content_item["document_type"],
+          parent_document_type: "guide",
           title: instance.content_item["title"],
           description: instance.content_item["description"],
           url: "/chunk-url",
@@ -103,8 +105,23 @@ RSpec.describe Chunking::ContentItemChunk do
         description: "Description"
         base_path: "#{instance.content_item['base_path']}"
         document_type: "#{instance.content_item['document_type']}"
+        parent_document_type: #{instance.parent_document_type || 'nil'}
         )
       HEREDOC
+    end
+  end
+
+  describe "#parent_document_type" do
+    it "returns the document_type of the first parent in the expanded_links" do
+      instance = build(:content_item_chunk, parent_document_type: "guide")
+
+      expect(instance.parent_document_type).to eq("guide")
+    end
+
+    it "returns nil if there are no parents in the expanded_links" do
+      instance = build(:content_item_chunk, parent_document_type: nil)
+
+      expect(instance.parent_document_type).to be_nil
     end
   end
 end

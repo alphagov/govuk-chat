@@ -38,6 +38,7 @@ module Search
       :base_path,
       :locale,
       :document_type,
+      :parent_document_type,
       :title,
       :description,
       :url,
