@@ -8,21 +8,31 @@
   <% end %>
 <% end %>
 
-<%= render "components/conversation_message", {
-  id: "initial-message",
-  message: tag.p("Hello 👋 I'm GOV.UK Chat. I use the guidance on GOV.UK to answer questions.", class: "app-c-conversation-message__p") +
-    tag.p(
-      "You can ask me anything about business or trade - just don't include personal or sensitive data and please limit your question to 300 characters or less.",
-      class: "app-c-conversation-message__p",
-    ),
-} %>
+<%= render "onboarding/limitations_messages" %>
 
-<%= render "govuk_publishing_components/components/list", {
-  items: @conversation.questions.each_with_index.map do |question, index|
-    answer = question.answer
-    render "question_and_answer", question:, index:, answer:
-  end,
-} %>
+<% if @more_information %>
+  <%= render "onboarding/tell_me_more_messages" %>
+<% end %>
+
+<%= render "onboarding/privacy_messages" %>
+
+<li>
+  <%= render "components/conversation_message", {
+    id: "start-chatting",
+    message: "Okay",
+    is_question: true,
+  } %>
+</li>
+
+<li>
+  <%= render "components/conversation_message", {
+    message: tag.p("Thanks! To get started, ask me a question."),
+  } %>
+</li>
+
+<% @conversation.questions.each do |question| %>
+  <%= render "question_and_answer", question:, answer: question.answer %>
+<% end %>
 
 <% content_for :form do %>
   <%= render "components/conversation_form", {
