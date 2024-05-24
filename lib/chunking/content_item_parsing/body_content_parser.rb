@@ -1,11 +1,20 @@
 module Chunking::ContentItemParsing
   class BodyContentParser < BaseParser
-    EXCLUDED_PUBLICATION_DOCUMENT_TYPES = %w[correspondence decision].freeze
+    EXCLUDED_PUBLICATION_DOCUMENT_TYPES = %w[correspondence
+                                             decision
+                                             corporate_report
+                                             foi_release
+                                             impact_assessment
+                                             independent_report
+                                             international_treaty
+                                             map
+                                             national_statistics
+                                             official_statistics
+                                             policy_paper
+                                             standard
+                                             transparency].freeze
     INCLUDED_CORPORATE_INFORMATION_TYPES = %w[about complaints_procedure modern_slavery_statement].freeze
     SCHEMAS_TO_DOCUMENT_TYPE_CHECK = {
-      "call_for_evidence" => ANY_DOCUMENT_TYPE,
-      "case_study" => ANY_DOCUMENT_TYPE,
-      "consultation" => ANY_DOCUMENT_TYPE,
       "corporate_information_page" => ->(document_type) { INCLUDED_CORPORATE_INFORMATION_TYPES.include?(document_type) },
       "worldwide_corporate_information_page" => ->(document_type) { INCLUDED_CORPORATE_INFORMATION_TYPES.include?(document_type) },
       "detailed_guide" => ANY_DOCUMENT_TYPE,

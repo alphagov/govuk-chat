@@ -49,7 +49,7 @@ RSpec.describe Chunking::ContentItemToChunks do
   describe ".non_indexable_content_item_reason" do
     context "when the schema can be handled by one of the parsers" do
       it "returns nil" do
-        content_item = build(:notification_content_item, schema_name: "case_study")
+        content_item = build(:notification_content_item, schema_name: "detailed_guide")
         expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
       end
     end

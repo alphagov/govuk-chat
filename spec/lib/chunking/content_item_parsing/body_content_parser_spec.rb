@@ -33,7 +33,7 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
 
   describe ".non_indexable_content_item_reason" do
     it "returns nil for a schema that doesn't care about document type" do
-      content_item = build(:notification_content_item, schema_name: "call_for_evidence")
+      content_item = build(:notification_content_item, schema_name: "corporate_information_page")
       expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
     end
 
