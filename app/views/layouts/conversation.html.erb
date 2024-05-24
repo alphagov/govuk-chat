@@ -27,7 +27,9 @@
 <% content_for :content do %>
   <div class="app-conversation-layout__message-container">
     <div class="app-conversation-layout__width-container">
-      <%= yield %>
+      <ul class="govuk-list">
+        <%= yield %>
+      </ul>
     </div>
   </div>
 
