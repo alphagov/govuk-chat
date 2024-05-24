@@ -13,7 +13,7 @@ RSpec.describe "ErrorController" do
   end
 
   describe "/403" do
-    it_behaves_like "an error response", 403, :forbidden, "You are not permitted to see this page"
+    it_behaves_like "an error response", 403, :forbidden, "Sorry, you do not have access to the page"
   end
 
   describe "/404" do
@@ -25,6 +25,6 @@ RSpec.describe "ErrorController" do
   end
 
   describe "/500" do
-    it_behaves_like "an error response", 500, :internal_server_error, "Sorry, we’re experiencing technical difficulties"
+    it_behaves_like "an error response", 500, :internal_server_error, "Sorry, there is a problem with GOV.UK Chat"
   end
 end
