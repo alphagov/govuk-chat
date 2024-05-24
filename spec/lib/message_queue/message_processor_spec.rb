@@ -10,7 +10,7 @@ RSpec.describe MessageQueue::MessageProcessor do
 
       let(:content_item) do
         build(:notification_content_item,
-              schema_name: "news_article",
+              schema_name: "detailed_guide",
               base_path:,
               payload_version:,
               body: "<p>Content</p>")

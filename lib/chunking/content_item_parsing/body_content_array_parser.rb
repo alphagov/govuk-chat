@@ -10,7 +10,6 @@ module Chunking::ContentItemParsing
       "specialist_document" => lambda { |document_type|
         ALLOWED_SPECIALIST_DOCUMENT_TYPES.include?(document_type)
       },
-      "help_page" => ANY_DOCUMENT_TYPE,
       "manual" => ANY_DOCUMENT_TYPE,
       "manual_section" => ANY_DOCUMENT_TYPE,
     }.freeze

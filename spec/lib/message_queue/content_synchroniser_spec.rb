@@ -24,7 +24,7 @@ RSpec.describe MessageQueue::ContentSynchroniser, :chunked_content_index do
     let(:base_path) { "/path" }
 
     context "when content can be indexed" do
-      let(:content_item) { build(:notification_content_item, base_path:, schema_name: "news_article") }
+      let(:content_item) { build(:notification_content_item, base_path:, schema_name: "detailed_guide") }
 
       it "delegates to IndexContentItem" do
         allow(described_class::IndexContentItem).to receive(:call)
@@ -40,7 +40,7 @@ RSpec.describe MessageQueue::ContentSynchroniser, :chunked_content_index do
     context "when content is in a non-English locale" do
       include_examples "deletes with a skip index reason", "has a non-English locale" do
         let(:content_item) do
-          build(:notification_content_item, base_path:, schema_name: "news_article", locale: "cy")
+          build(:notification_content_item, base_path:, schema_name: "detailed_guide", locale: "cy")
         end
       end
     end
@@ -54,7 +54,7 @@ RSpec.describe MessageQueue::ContentSynchroniser, :chunked_content_index do
     context "when content is withdrawn" do
       include_examples "deletes with a skip index reason", "is withdrawn" do
         let(:content_item) do
-          build(:notification_content_item, schema_name: "news_article", base_path:, withdrawn: true)
+          build(:notification_content_item, schema_name: "detailed_guide", base_path:, withdrawn: true)
         end
       end
     end

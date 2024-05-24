@@ -7,7 +7,7 @@ RSpec.describe Chunking::ContentItemToChunks do
 
   describe ".call" do
     it "returns an array of ContentItemChunk objects for a valid schema" do
-      content_item = build(:notification_content_item, schema_name: "news_article")
+      content_item = build(:notification_content_item, schema_name: "detailed_guide")
       response = described_class.call(content_item)
 
       expect(response).to all(be_a(Chunking::ContentItemChunk))
