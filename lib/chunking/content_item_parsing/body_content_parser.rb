@@ -7,7 +7,7 @@ module Chunking::ContentItemParsing
       "case_study" => ANY_DOCUMENT_TYPE,
       "consultation" => ANY_DOCUMENT_TYPE,
       "corporate_information_page" => ->(document_type) { INCLUDED_CORPORATE_INFORMATION_TYPES.include?(document_type) },
-      "worldwide_corporate_information_page" => ANY_DOCUMENT_TYPE,
+      "worldwide_corporate_information_page" => ->(document_type) { INCLUDED_CORPORATE_INFORMATION_TYPES.include?(document_type) },
       "detailed_guide" => ANY_DOCUMENT_TYPE,
       "hmrc_manual_section" => ANY_DOCUMENT_TYPE,
       "html_publication" => ->(parent_document_type) { EXCLUDED_PUBLICATION_DOCUMENT_TYPES.exclude?(parent_document_type) },
