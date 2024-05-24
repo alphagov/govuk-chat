@@ -1,32 +1,12 @@
-<%= content_for :title, "GOV.UK Chat" %>
-<%= content_for :main_class, "app-conversation-layout app-conversation-layout--chat" %>
-<%= content_for :visually_hidden_class, "govuk-visually-hidden" %>
+<%= render "limitations_messages" %>
 
-<% limitations_message_1 = capture do %>
-  <p>Hello 👋 I’m GOV.UK Chat. I’m an experimental tool that uses AI to answer questions and help you find information on GOV.UK. I have limitations that you need to be aware of.</p>
-<% end %>
-
-<% limitations_message_2 = capture do %>
-  <p>The biggest limitation of AI tools like me is a problem known as ‘hallucination’.</p>
-  <p>This means we sometimes make up false information or facts but present them to you confidently.</p>
-<% end %>
-
-<% limitations_message_3 = capture do %>
-  <p>To check if my answers are right, use the links I provide to official guidance on GOV.UK.</p>
-  <p>Never act on what I’ve told you without checking GOV.UK.</p>
-<% end %>
-
-<%= render "conversations/onboarding_messages", {
-  messages: [limitations_message_1, limitations_message_2, limitations_message_3],
-} %>
-
-<% if more_information %>
-  <p class="govuk-body">And here's some more information.</p>
+<% if @more_information %>
+  <%= render "tell_me_more_messages" %>
 <% end %>
 
 <% content_for :form do %>
   <%= render "components/onboarding_form", {
     url: onboarding_limitations_confirm_path,
-    more_information:,
+    more_information: @more_information,
   } %>
 <% end %>
