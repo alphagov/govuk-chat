@@ -73,7 +73,11 @@ FactoryBot.define do
               "locale" => "en",
               "title" => "Government name",
               "document_type" => "government",
-              "current" => current_government,
+              "details" => {
+                "current" => current_government,
+                "ended_on" => nil,
+                "started_on": "2015-05-08T00:00:00+00:00",
+              },
             },
           ]
         end

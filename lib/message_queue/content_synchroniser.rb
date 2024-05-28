@@ -58,7 +58,7 @@ module MessageQueue
     def history_mode?
       return unless content_item.dig("details", "political") == true
 
-      content_item.dig("expanded_links", "government", 0, "current") == false
+      content_item.dig("expanded_links", "government", 0, "details", "current") == false
     end
   end
 end
