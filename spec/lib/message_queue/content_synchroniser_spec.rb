@@ -72,7 +72,7 @@ RSpec.describe MessageQueue::ContentSynchroniser, :chunked_content_index do
       include_examples "deletes with a skip index reason", "is in history mode" do
         let(:content_item) do
           build(:notification_content_item,
-                schema_name: "news_article",
+                schema_name: "detailed_guide",
                 base_path:,
                 details_merge: { "political" => true },
                 current_government: false)
@@ -84,7 +84,7 @@ RSpec.describe MessageQueue::ContentSynchroniser, :chunked_content_index do
       include_examples "allows content indexing" do
         let(:content_item) do
           build(:notification_content_item,
-                schema_name: "news_article",
+                schema_name: "detailed_guide",
                 base_path:,
                 details_merge: { "political" => true },
                 current_government: true)
@@ -96,7 +96,7 @@ RSpec.describe MessageQueue::ContentSynchroniser, :chunked_content_index do
       include_examples "allows content indexing" do
         let(:content_item) do
           build(:notification_content_item,
-                schema_name: "news_article",
+                schema_name: "detailed_guide",
                 base_path:,
                 details_merge: { "political" => false },
                 current_government: false)
@@ -108,7 +108,7 @@ RSpec.describe MessageQueue::ContentSynchroniser, :chunked_content_index do
       include_examples "allows content indexing" do
         let(:content_item) do
           build(:notification_content_item,
-                schema_name: "news_article",
+                schema_name: "detailed_guide",
                 base_path:,
                 current_government: nil,
                 details_merge: { "political" => true })
