@@ -1,26 +1,19 @@
 module Chunking::ContentItemParsing
   class BodyContentParser < BaseParser
-    EXCLUDED_PUBLICATION_DOCUMENT_TYPES = %w[correspondence
-                                             decision
-                                             corporate_report
-                                             foi_release
-                                             impact_assessment
-                                             independent_report
-                                             international_treaty
-                                             map
-                                             national_statistics
-                                             official_statistics
-                                             policy_paper
-                                             standard
-                                             transparency].freeze
+    ALLOWED_PUBLICATION_DOCUMENT_TYPES = %w[form
+                                            guidance
+                                            notice
+                                            promotional
+                                            regulation
+                                            statutory_guidance].freeze
     INCLUDED_CORPORATE_INFORMATION_TYPES = %w[about complaints_procedure modern_slavery_statement].freeze
     SCHEMAS_TO_DOCUMENT_TYPE_CHECK = {
       "corporate_information_page" => ->(document_type) { INCLUDED_CORPORATE_INFORMATION_TYPES.include?(document_type) },
       "worldwide_corporate_information_page" => ->(document_type) { INCLUDED_CORPORATE_INFORMATION_TYPES.include?(document_type) },
       "detailed_guide" => ANY_DOCUMENT_TYPE,
-      "html_publication" => ->(parent_document_type) { EXCLUDED_PUBLICATION_DOCUMENT_TYPES.exclude?(parent_document_type) },
+      "html_publication" => ->(parent_document_type) { ALLOWED_PUBLICATION_DOCUMENT_TYPES.include?(parent_document_type) },
       "organisation" => ANY_DOCUMENT_TYPE,
-      "publication" => ->(document_type) { EXCLUDED_PUBLICATION_DOCUMENT_TYPES.exclude?(document_type) },
+      "publication" => ->(document_type) { ALLOWED_PUBLICATION_DOCUMENT_TYPES.include?(document_type) },
       "service_manual_guide" => ANY_DOCUMENT_TYPE,
       "statistical_data_set" => ANY_DOCUMENT_TYPE,
       "take_part" => ANY_DOCUMENT_TYPE,
