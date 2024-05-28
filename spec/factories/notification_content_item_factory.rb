@@ -25,6 +25,7 @@ FactoryBot.define do
       details { nil }
       details_merge { nil }
       parent_document_type { :preserve }
+      current_government { :preserve }
     end
 
     initialize_with do
@@ -64,6 +65,23 @@ FactoryBot.define do
         end
         item["expanded_links"].delete("parent") if parent_document_type.nil?
 
+        if !current_government.nil? && current_government != :preserve
+          item["expanded_links"]["government"] = [
+            {
+              "base_path" => "/government",
+              "content_id" => SecureRandom.uuid,
+              "locale" => "en",
+              "title" => "Government name",
+              "document_type" => "government",
+              "details" => {
+                "current" => current_government,
+                "ended_on" => nil,
+                "started_on": "2015-05-08T00:00:00+00:00",
+              },
+            },
+          ]
+        end
+        item["expanded_links"].delete("government") if current_government.nil?
         item
       end
 
