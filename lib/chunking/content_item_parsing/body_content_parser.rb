@@ -15,7 +15,6 @@ module Chunking::ContentItemParsing
       "organisation" => ANY_DOCUMENT_TYPE,
       "publication" => ->(document_type) { ALLOWED_PUBLICATION_DOCUMENT_TYPES.include?(document_type) },
       "service_manual_guide" => ANY_DOCUMENT_TYPE,
-      "statistical_data_set" => ANY_DOCUMENT_TYPE,
       "take_part" => ANY_DOCUMENT_TYPE,
       "worldwide_organisation" => ANY_DOCUMENT_TYPE,
     }.freeze
