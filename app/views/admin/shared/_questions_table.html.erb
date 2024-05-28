@@ -1,36 +1,37 @@
-<%= render "govuk_publishing_components/components/table", {
-  head: [
-    {
-      text: "Question",
-    },
-    {
-      text: "Answer status",
-    },
-    {
-      text: "Created at",
-    },
-  ],
-  rows: questions.map do |question|
-    [
+<% if questions.present? %>
+  <%= render "govuk_publishing_components/components/table", {
+    head: [
       {
-        text: link_to(
-          question.message.truncate(100),
-          admin_show_question_path(question),
-          class: "govuk-link",
-        ),
+        text: "Question",
       },
       {
-        text: format_answer_status_as_tag(question.answer&.status),
+        text: "Answer status",
       },
       {
-        text: question.created_at.to_fs(:time_and_date),
+        text: "Created at",
       },
-    ]
-  end,
-} %>
+    ],
+    rows: questions.map do |question|
+      [
+        {
+          text: link_to(
+            question.message.truncate(100),
+            admin_show_question_path(question),
+            class: "govuk-link",
+          ),
+        },
+        {
+          text: format_answer_status_as_tag(question.answer&.status),
+        },
+        {
+          text: question.created_at.to_fs(:time_and_date),
+        },
+      ]
+    end,
+  } %>
 
-<%
-  pages = {}
+  <%
+    pages = {}
 
     pages[:previous_page] = {
     url: public_send(path, filter.previous_page_params),
@@ -43,4 +44,9 @@
     title: "Next page" } if questions.next_page
   %>
 
-<%= render "govuk_publishing_components/components/previous_and_next_navigation", pages %>
+  <%= render "govuk_publishing_components/components/previous_and_next_navigation", pages %>
+<% else %>
+  <%= render "govuk_publishing_components/components/inset_text", {
+    text: "No questions found.",
+  } %>
+<% end %>

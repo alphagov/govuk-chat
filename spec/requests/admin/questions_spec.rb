@@ -12,6 +12,13 @@ RSpec.describe "Admin::QuestionsController" do
       expect(response.body).to have_selector(".govuk-table__body .govuk-table__row:nth-child(2)", text: /#{oldest_question.message}/)
     end
 
+    it "renders 'No questions found' when there are no questions" do
+      get admin_questions_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to have_content("No questions found")
+    end
+
     context "when there are more than 25 questions" do
       before do
         create_list(:question, 26)

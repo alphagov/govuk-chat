@@ -14,6 +14,13 @@ RSpec.describe "Admin::ConversationsController" do
       expect(response.body).to have_selector(".govuk-table__body .govuk-table__row:nth-child(2)", text: /#{oldest_question.message}/)
     end
 
+    it "renders 'No questions found' when there are no questions" do
+      get admin_show_conversation_path(conversation)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to have_content("No questions found")
+    end
+
     context "when filter parameters are provided" do
       it "returns successfully" do
         get admin_show_conversation_path(conversation, status: "abort_forbidden_words")
