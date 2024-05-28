@@ -65,6 +65,30 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
       )
     end
 
+    it "return nil for an allowed corporate information page" do
+      content_item = build(:notification_content_item, schema_name: "corporate_information_page", document_type: "modern_slavery_statement")
+      expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
+    end
+
+    it "disallows other document types for corporate_information_page" do
+      content_item = build(:notification_content_item, schema_name: "corporate_information_page", document_type: "equality_and_diversity")
+      expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
+        "document type: equality_and_diversity not supported for schema: corporate_information_page",
+      )
+    end
+
+    it "return nil for an allowed worldwide corporate information page" do
+      content_item = build(:notification_content_item, schema_name: "worldwide_corporate_information_page", document_type: "modern_slavery_statement")
+      expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
+    end
+
+    it "disallows other document types for worldwide corporate_information_page" do
+      content_item = build(:notification_content_item, schema_name: "worldwide_corporate_information_page", document_type: "personal_information_charter")
+      expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
+        "document type: personal_information_charter not supported for schema: worldwide_corporate_information_page",
+      )
+    end
+
     context "when the schema is html_publication" do
       context "when the content item has no parent link" do
         let(:content_item) { build(:notification_content_item, schema_name: "html_publication", parent_document_type: nil) }
