@@ -14,7 +14,7 @@
         text: "I understand",
       } %>
 
-      <%= link_to "Take me to GOV.UK", "#", class: "govuk-link" %>
+      <%= link_to "Take me to GOV.UK", Plek.website_root, class: "govuk-link" %>
     <% else %>
       <%= render "components/blue_button", {
         text: "I understand",
@@ -22,7 +22,7 @@
 
       <%= render "govuk_publishing_components/components/button", {
         text: "Tell me more",
-        href: onboarding_limitations_path(more_information: true, anchor: "tell-me-more"),
+        href: tell_me_more_href,
         secondary_solid: true,
       } %>
     <% end %>

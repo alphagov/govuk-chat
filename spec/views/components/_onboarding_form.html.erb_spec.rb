@@ -1,7 +1,8 @@
 RSpec.describe "components/_onboarding_form.html.erb" do
-  it "renders the onboarding form component for limitations correctly" do
+  it "renders the initial limitation controls when tell_me_more_href is set" do
     render("components/onboarding_form", {
       url: "/onboarding-limitations",
+      tell_me_more_href: "/tell-me-more",
     })
 
     expect(rendered)
@@ -11,7 +12,7 @@ RSpec.describe "components/_onboarding_form.html.erb" do
     expect(rendered).not_to have_selector(".govuk-link", text: "Take me to GOV.UK")
   end
 
-  it "renders the onboarding form component for limitations correctly after 'Tell me more' is clicked" do
+  it "renders the more information limitations controls when more_information is true" do
     render("components/onboarding_form", {
       url: "/onboarding-limitations",
       more_information: true,
@@ -24,7 +25,7 @@ RSpec.describe "components/_onboarding_form.html.erb" do
     expect(rendered).not_to have_selector(".govuk-button--secondary", text: "Tell me more")
   end
 
-  it "renders the onboarding form component for privacy disclaimers correctly" do
+  it "renders the privacy controls when privacy_onboarding is true" do
     render("components/onboarding_form", {
       url: "/onboarding-privacy",
       privacy_onboarding: true,

@@ -8,5 +8,6 @@
   <%= render "components/onboarding_form", {
     url: onboarding_limitations_confirm_path,
     more_information: @more_information,
+    tell_me_more_href: onboarding_limitations_path(more_information: true, anchor: "tell-me-more"),
   } %>
 <% end %>

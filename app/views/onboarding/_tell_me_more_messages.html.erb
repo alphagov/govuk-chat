@@ -1,17 +1,19 @@
-<% tell_me_more_message_1 = capture do %>
+<% tell_me_more_messages = [] %>
+
+<% tell_me_more_messages << capture do %>
   <p>I combine the same technology used on ChatGPT with GOV.UK guidance.</p>
 <% end %>
 
-<% tell_me_more_message_2 = capture do %>
+<% tell_me_more_messages << capture do %>
   <p>ChatGPT is trained using millions of articles, books and other pieces of text. This is how I’m able to respond like a human.</p>
 <% end %>
 
-<% tell_me_more_message_3 = capture do %>
+<% tell_me_more_messages << capture do %>
   <p>Sometimes I use information from my training instead of GOV.UK.</p>
 <% end %>
 
-<% tell_me_more_message_4 = capture do %>
-  <p>To learn more about these limitations, read <a href=“/chat/about” target=“_blank” class=“govuk-link”>about GOV.UK Chat (opens in a new tab)</a>.</p>
+<% tell_me_more_messages << capture do %>
+  <p>To learn more about these limitations, read <a href="/chat/about" target="_blank">about GOV.UK Chat (opens in a new tab)</a>.</p>
 <% end %>
 
 <li>
@@ -22,7 +24,7 @@
   } %>
 </li>
 
-<% [tell_me_more_message_1, tell_me_more_message_2, tell_me_more_message_3, tell_me_more_message_4].each do |message| %>
+<% tell_me_more_messages.each do |message| %>
   <li>
     <%= render "components/conversation_message", {
       message:,

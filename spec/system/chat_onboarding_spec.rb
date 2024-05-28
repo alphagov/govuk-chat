@@ -29,7 +29,7 @@ RSpec.describe "Chat Onboarding" do
   end
 
   def then_i_see_the_onboarding_limitations_page
-    expect(page).to have_content("I understand")
+    expect(page).to have_content(/Hello 👋 I’m GOV.UK Chat/)
   end
 
   def when_i_click_tell_me_more
@@ -37,7 +37,7 @@ RSpec.describe "Chat Onboarding" do
   end
 
   def then_i_see_additional_information
-    expect(page).to have_content("And here's some more information.")
+    expect(page).to have_content("I combine the same technology used on ChatGPT with GOV.UK guidance.")
   end
 
   def when_i_click_that_i_understand
@@ -45,7 +45,7 @@ RSpec.describe "Chat Onboarding" do
   end
 
   def then_i_see_the_onboarding_privacy_page
-    expect(page).to have_content("Okay, start chatting")
+    expect(page).to have_content(/You can always find information about my limitations in about GOV.UK Chat/)
   end
 
   def when_i_click_on_the_start_chatting_button
