@@ -1,3 +1,5 @@
+<p class="govuk-body govuk-!-font-weight-bold"><%= "#{questions.total_count} #{'question'.pluralize(questions.total_count)}" %></p>
+
 <% if questions.present? %>
   <%= render "govuk_publishing_components/components/table", {
     head: [
