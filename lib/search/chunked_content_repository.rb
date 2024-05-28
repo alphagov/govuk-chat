@@ -27,24 +27,6 @@ module Search
       digest: { type: "keyword" },
     }.freeze
 
-    Result = Data.define(
-      :_id,
-      :score,
-      :chunk_index,
-      :html_content,
-      :content_id,
-      :heading_hierarchy,
-      :digest,
-      :base_path,
-      :locale,
-      :document_type,
-      :parent_document_type,
-      :title,
-      :description,
-      :url,
-      :plain_content,
-    )
-
     class NotFound < StandardError
     end
 
@@ -187,7 +169,7 @@ module Search
 
     def chunk(id)
       response = client.get(index:, id:, _source_excludes: %w[openai_embedding])
-      Result.new(**response["_source"].symbolize_keys.merge(_id: id, score: nil))
+      Result.new(**response["_source"].symbolize_keys.merge(_id: id))
     rescue OpenSearch::Transport::Transport::Errors::NotFound
       raise NotFound, "_id: '#{id}' is not in the '#{index}' index"
     end
