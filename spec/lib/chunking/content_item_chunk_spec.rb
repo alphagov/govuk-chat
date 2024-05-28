@@ -90,7 +90,8 @@ RSpec.describe Chunking::ContentItemChunk do
                        html_content: "<p>Content</p>",
                        heading_hierarchy: ["Heading 1", "Heading 2"],
                        chunk_index: 0,
-                       description: "Description")
+                       description: "Description",
+                       parent_document_type: "parent")
 
       # rstrip to remove the HEREDOC's trailing new line
       expect(instance.inspect).to eq(<<~HEREDOC.rstrip)
@@ -105,7 +106,7 @@ RSpec.describe Chunking::ContentItemChunk do
         description: "Description"
         base_path: "#{instance.content_item['base_path']}"
         document_type: "#{instance.content_item['document_type']}"
-        parent_document_type: #{instance.parent_document_type || 'nil'}
+        parent_document_type: "parent"
         )
       HEREDOC
     end
