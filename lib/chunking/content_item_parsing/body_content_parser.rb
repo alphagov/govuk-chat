@@ -12,10 +12,8 @@ module Chunking::ContentItemParsing
       "worldwide_corporate_information_page" => ->(document_type) { INCLUDED_CORPORATE_INFORMATION_TYPES.include?(document_type) },
       "detailed_guide" => ANY_DOCUMENT_TYPE,
       "html_publication" => ->(parent_document_type) { ALLOWED_PUBLICATION_DOCUMENT_TYPES.include?(parent_document_type) },
-      "organisation" => ANY_DOCUMENT_TYPE,
       "publication" => ->(document_type) { ALLOWED_PUBLICATION_DOCUMENT_TYPES.include?(document_type) },
       "service_manual_guide" => ANY_DOCUMENT_TYPE,
-      "statistical_data_set" => ANY_DOCUMENT_TYPE,
       "take_part" => ANY_DOCUMENT_TYPE,
       "worldwide_organisation" => ANY_DOCUMENT_TYPE,
     }.freeze
