@@ -76,7 +76,7 @@ module Admin
               else
                 {
                   field: "Status",
-                  value: format_answer_status_as_tag("pending", with_description_suffix: true),
+                  value: format_answer_status_as_tag(question.answer_status, with_description_suffix: true),
                 }
               end
 

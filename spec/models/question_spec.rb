@@ -7,4 +7,16 @@ RSpec.describe Question do
       expect(described_class.unanswered).to eq [question]
     end
   end
+
+  describe "#answer_status" do
+    it "returns the status of the answer" do
+      question = create(:question, :with_answer)
+      expect(question.answer_status).to eq "success"
+    end
+
+    it "returns 'pending' if the question has no answer" do
+      question = create(:question)
+      expect(question.answer_status).to eq "pending"
+    end
+  end
 end

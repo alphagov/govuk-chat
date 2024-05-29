@@ -23,7 +23,7 @@
           ),
         },
         {
-          text: format_answer_status_as_tag(question.answer&.status || "pending"),
+          text: format_answer_status_as_tag(question.answer_status),
         },
         {
           text: question.created_at.to_fs(:time_and_date),
