@@ -50,6 +50,8 @@ RSpec.describe Admin::Form::QuestionsFilter do
   end
 
   describe "#questions" do
+    let(:time) { Time.zone.now }
+
     it "orders the questions by the most recently created" do
       question1 = create(:question, created_at: 2.minutes.ago)
       question2 = create(:question, created_at: 1.minute.ago)
@@ -82,9 +84,71 @@ RSpec.describe Admin::Form::QuestionsFilter do
       expect(questions).to eq([question2])
     end
 
+    it "filters the questions by start date" do
+      question = create(:question)
+      create(:question, created_at: 2.days.ago)
+
+      questions = described_class.new(start_date_params: { day: time.day, month: time.month, year: time.year }).questions
+
+      expect(questions).to eq([question])
+    end
+
+    it "filters the questions by end date" do
+      question = create(:question, created_at: 2.days.ago)
+      create(:question)
+
+      questions = described_class.new(end_date_params: { day: time.day, month: time.month, year: time.year }).questions
+
+      expect(questions).to eq([question])
+    end
+
+    it "adds errors to the form and does not filter on the start date when start date is invalid" do
+      question = create(:question, created_at: 2.years.ago)
+      create(:question)
+
+      filter = described_class.new(
+        start_date_params: { day: time.day, month: "invalid", year: time.year },
+        end_date_params: { day: time.day, month: time.month, year: time.year - 1 },
+      )
+
+      expect(filter.questions).to eq([question])
+      expect(filter.errors[:start_date_params]).to include("Enter a valid start date")
+    end
+
+    it "adds errors to the form and does not filter on the end date when end date is invalid" do
+      create(:question, created_at: 2.years.ago)
+      question = create(:question)
+
+      filter = described_class.new(
+        start_date_params: { day: time.day, month: time.month, year: time.year - 1 },
+        end_date_params: { day: time.day, month: "invalid", year: time.year },
+      )
+
+      expect(filter.questions).to eq([question])
+      expect(filter.errors[:end_date_params]).to include("Enter a valid end date")
+    end
+
+    it "filters the questions between the start and end dates" do
+      question = create(:question, created_at: 3.years.ago)
+      create(:question, created_at: 1.year.ago)
+      create(:question, created_at: 5.years.ago)
+
+      questions = described_class.new(
+        start_date_params: { day: time.day, month: time.month, year: time.year - 4 },
+        end_date_params: { day: time.day, month: time.month, year: time.year - 2 },
+      ).questions
+
+      expect(questions).to eq([question])
+    end
+
     it "works with all filters applied" do
       question = create(:answer, status: "success", message: "hello world").question
-      questions = described_class.new(status: "success", search: "Hello").questions
+      questions = described_class.new(
+        status: "success",
+        search: "Hello",
+        start_date_params: { day: Time.zone.now.day, month: Time.zone.now.month, year: Time.zone.now.year - 1 },
+        end_date_params: { day: Time.zone.now.day, month: Time.zone.now.month, year: Time.zone.now.year + 1 },
+      ).questions
       expect(questions).to eq([question])
     end
 

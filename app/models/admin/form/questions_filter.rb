@@ -17,13 +17,17 @@ class Admin::Form::QuestionsFilter
   end
 
   def questions
-    scope = Question.joins("LEFT JOIN answers answer ON answer.question_id = questions.id")
-    scope = search_scope(scope)
-    scope = status_scope(scope)
-    scope = conversation_scope(scope)
-    scope.order(created_at: :desc)
-         .page(page)
-         .per(25)
+    @questions ||= begin
+      scope = Question.joins("LEFT JOIN answers answer ON answer.question_id = questions.id")
+      scope = search_scope(scope)
+      scope = status_scope(scope)
+      scope = start_date_scope(scope)
+      scope = end_date_scope(scope)
+      scope = conversation_scope(scope)
+      scope.order(created_at: :desc)
+          .page(page)
+          .per(25)
+    end
   end
 
   def previous_page_params
@@ -66,6 +70,18 @@ private
     else
       scope.where(answer: { status: })
     end
+  end
+
+  def start_date_scope(scope)
+    return scope if errors[:start_date_params].present? || start_date.nil?
+
+    scope.where("questions.created_at >= ?", start_date)
+  end
+
+  def end_date_scope(scope)
+    return scope if errors[:end_date_params].present? || end_date.nil?
+
+    scope.where("questions.created_at <= ?", end_date)
   end
 
   def conversation_scope(scope)
