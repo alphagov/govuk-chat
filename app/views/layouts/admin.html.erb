@@ -24,6 +24,10 @@
     <%= yield(:breadcrumbs) %>
 
     <main class="govuk-main-wrapper<%= " govuk-main-wrapper--l" if yield(:back_link).blank? %>" id="content" role="main">
+      <% if content_for?(:error_summary) %>
+        <%= yield(:error_summary) %>
+      <% end %>
+
       <% if yield(:title).present? %>
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-two-thirds">

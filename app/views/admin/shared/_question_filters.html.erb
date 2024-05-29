@@ -24,6 +24,68 @@
     end,
   } %>
 
+  <%= render "govuk_publishing_components/components/fieldset", {
+    legend_text: "Start date",
+    heading_size: "s",
+    id: "start_date",
+  } do %>
+    <%= render "govuk_publishing_components/components/date_input", {
+      error_items: filter.errors[:start_date_params].map { |message| { text: message } },
+      items: [
+        {
+          label: "Day",
+          name: "start_date_params[day]",
+          id: "start_date_params",
+          width: 2,
+          value: params.dig(:start_date_params, :day),
+        },
+        {
+          label: "Month",
+          name: "start_date_params[month]",
+          width: 2,
+          value: params.dig(:start_date_params, :month),
+        },
+        {
+          label: "Year",
+          name: "start_date_params[year]",
+          width: 4,
+          value:  params.dig(:start_date_params, :year),
+        },
+      ],
+    } %>
+  <% end %>
+
+  <%= render "govuk_publishing_components/components/fieldset", {
+    legend_text: "End date",
+    heading_size: "s",
+    id: "end_date",
+  } do %>
+       <%= render "govuk_publishing_components/components/date_input", {
+      error_items: filter.errors[:end_date_params].map { |message| { text: message } },
+      items: [
+        {
+          label: "Day",
+          name: "end_date_params[day]",
+          id: "end_date_params",
+          width: 2,
+          value: params.dig(:end_date_params, :day),
+        },
+        {
+          label: "Month",
+          name: "end_date_params[month]",
+          width: 2,
+          value: params.dig(:end_date_params, :month),
+        },
+        {
+          label: "Year",
+          name: "end_date_params[year]",
+          width: 4,
+          value:  params.dig(:end_date_params, :year),
+        },
+      ],
+    } %>
+  <% end %>
+
   <%= render "govuk_publishing_components/components/button", {
     text: "Filter",
     margin_bottom: true,
