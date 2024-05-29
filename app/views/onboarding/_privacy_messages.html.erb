@@ -1,0 +1,22 @@
+<% privacy_messages = [] %>
+
+<% privacy_messages << capture do %>
+  <p>Great. You can always find information about my limitations in <a href="/chat/about" target="_blank">about GOV.UK Chat (opens in a new tab)</a>.</p>
+<% end %>
+
+<% privacy_messages << capture do %>
+  <p>One more thing - please do not include any sensitive or personal information in your questions.</p>
+  <p>You can read the <a href="/chat/privacy" target="_blank">privacy notice (opens in a new tab)</a> to find out how your data is used.</p>
+<% end %>
+
+<%= render "components/conversation_message", {
+  id: "i-understand",
+  message: "I understand",
+  is_question: true,
+} %>
+
+<% privacy_messages.each do |message| %>
+  <%= render "components/conversation_message", {
+    message:,
+  } %>
+<% end %>

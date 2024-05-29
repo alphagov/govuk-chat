@@ -1,14 +1,4 @@
-.app-c-conversation-form {
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    width: 100%;
-    border-top: 1px solid govuk-colour("mid-grey");
-  }
-}
-
-.app-c-conversation-form__wrapper {
+.app-c-conversation-form__input-wrapper {
   display: flex;
   justify-content: space-between;
   padding-top: govuk-spacing(6);

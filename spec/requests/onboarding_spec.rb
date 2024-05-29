@@ -24,8 +24,8 @@ RSpec.describe "OnboardingController" do
       get onboarding_limitations_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body)
-        .to have_selector(".app-c-blue-button", text: "I understand")
+      expect(response.body).to have_content(/Hello 👋 I’m GOV.UK Chat/)
+      expect(response.body).to have_link("Tell me more")
     end
 
     context "when more_information is true in the query string" do
@@ -36,7 +36,9 @@ RSpec.describe "OnboardingController" do
 
       it "renders the tell me more information" do
         get onboarding_limitations_path(more_information: true)
-        expect(response.body).to have_content "And here's some more information."
+        expect(response.body).to have_content "Tell me more"
+        expect(response.body).to have_content "I combine the same technology used on ChatGPT with GOV.UK guidance."
+        expect(response.body).to have_selector(".govuk-link", text: "Take me to GOV.UK")
       end
     end
 
@@ -47,7 +49,7 @@ RSpec.describe "OnboardingController" do
 
       it "renders the tell me more information" do
         get onboarding_limitations_path
-        expect(response.body).to have_content "And here's some more information."
+        expect(response.body).to have_selector(".govuk-link", text: "Take me to GOV.UK")
       end
     end
   end
@@ -57,7 +59,7 @@ RSpec.describe "OnboardingController" do
       post onboarding_limitations_confirm_path
 
       expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(onboarding_privacy_path)
+      expect(response).to redirect_to(onboarding_privacy_path(anchor: "i-understand"))
     end
 
     it "sets session[:onboarding] to 'privacy'" do
@@ -73,8 +75,8 @@ RSpec.describe "OnboardingController" do
       get onboarding_privacy_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body)
-        .to have_selector(".app-c-blue-button", text: "Okay, start chatting")
+      expect(response.body).to have_content(/You can always find information about my limitations in about GOV.UK Chat/)
+      expect(response.body).to have_selector(".app-c-blue-button", text: "Okay, start chatting")
     end
   end
 
@@ -90,7 +92,7 @@ RSpec.describe "OnboardingController" do
       post onboarding_privacy_confirm_path
 
       expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(show_conversation_path)
+      expect(response).to redirect_to(show_conversation_path(anchor: "start-chatting"))
     end
   end
 end

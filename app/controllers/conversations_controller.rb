@@ -6,6 +6,7 @@ class ConversationsController < BaseController
   def show
     @conversation ||= Conversation.new
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
+    @more_information = session[:more_information].present?
   end
 
   def update

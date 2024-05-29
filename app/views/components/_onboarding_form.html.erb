@@ -1,0 +1,30 @@
+<%
+  privacy_onboarding ||= false
+  more_information ||= false
+%>
+
+<%= form_with url: url, class: "app-c-onboarding-form" do |f| %>
+  <% if privacy_onboarding %>
+    <%= render "components/blue_button", {
+      text: "Okay, start chatting",
+    } %>
+  <% else %>
+    <% if more_information %>
+      <%= render "components/blue_button", {
+        text: "I understand",
+      } %>
+
+      <%= link_to "Take me to GOV.UK", Plek.website_root, class: "govuk-link" %>
+    <% else %>
+      <%= render "components/blue_button", {
+        text: "I understand",
+      } %>
+
+      <%= render "govuk_publishing_components/components/button", {
+        text: "Tell me more",
+        href: tell_me_more_href,
+        secondary_solid: true,
+      } %>
+    <% end %>
+  <% end %>
+<% end %>

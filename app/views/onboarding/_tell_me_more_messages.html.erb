@@ -1,0 +1,29 @@
+<% tell_me_more_messages = [] %>
+
+<% tell_me_more_messages << capture do %>
+  <p>I combine the same technology used on ChatGPT with GOV.UK guidance.</p>
+<% end %>
+
+<% tell_me_more_messages << capture do %>
+  <p>ChatGPT is trained using millions of articles, books and other pieces of text. This is how I’m able to respond like a human.</p>
+<% end %>
+
+<% tell_me_more_messages << capture do %>
+  <p>Sometimes I use information from my training instead of GOV.UK.</p>
+<% end %>
+
+<% tell_me_more_messages << capture do %>
+  <p>To learn more about these limitations, read <a href="/chat/about" target="_blank">about GOV.UK Chat (opens in a new tab)</a>.</p>
+<% end %>
+
+<%= render "components/conversation_message", {
+  id: "tell-me-more",
+  message: "Tell me more",
+  is_question: true,
+} %>
+
+<% tell_me_more_messages.each do |message| %>
+  <%= render "components/conversation_message", {
+    message:,
+  } %>
+<% end %>

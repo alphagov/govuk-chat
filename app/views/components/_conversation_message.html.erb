@@ -1,5 +1,6 @@
 <%
   data_attributes ||= {}
+  id ||= nil
   sources ||= []
   is_question ||= false
   classes = %w[app-c-conversation-message]
@@ -7,7 +8,7 @@
   : "app-c-conversation-message--govuk-message")
 %>
 
-<%= tag.div id:, class: classes, data: data_attributes do %>
+<%= content_tag :li, id:, class: classes, data: data_attributes do %>
   <div class="app-c-conversation-message__identifier">
     <% if !is_question %>
       <%=

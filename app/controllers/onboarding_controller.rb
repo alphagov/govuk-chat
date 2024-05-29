@@ -10,14 +10,16 @@ class OnboardingController < BaseController
 
   def limitations_confirm
     session[:onboarding] = "privacy"
-    redirect_to onboarding_privacy_path
+    redirect_to onboarding_privacy_path(anchor: "i-understand")
   end
 
-  def privacy; end
+  def privacy
+    @more_information = session[:more_information].present?
+  end
 
   def privacy_confirm
     session[:onboarding] = "conversation"
-    redirect_to show_conversation_path
+    redirect_to show_conversation_path(anchor: "start-chatting")
   end
 
 private

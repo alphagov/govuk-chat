@@ -1,0 +1,33 @@
+name: Onboarding form
+description: A form containing buttons and links only, to navigate the user through the onboarding journey
+accessibility_criteria: |
+  Buttons in the component must:
+
+  * accept focus
+  * be focusable with a keyboard
+  * indicate when it has focus
+  * activate when focused and space is pressed
+  * activate when focused and enter is pressed
+  * have a role of button
+  * have an accessible label
+
+shared_accessibility_criteria:
+  - link
+examples:
+  default:
+    data:
+      url: "/onboarding"
+  with_more_information:
+    description: When more_information is true, an alternative onboarding form is rendered which provides a link back to the GOV.UK homepage
+    data:
+      url: "/onboarding"
+      more_information: true
+  with_tell_me_more_href:
+    description: The tell_me_more_href option sets the link on the "Tell me more" button, which will provide users with additional information
+    data:
+      url: "/onboarding"
+      tell_me_more_href: /tell-me-more
+  privacy_onboarding_form:
+    data:
+      url: "/onboarding/privacy"
+      privacy_onboarding: true

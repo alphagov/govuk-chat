@@ -1,7 +1,14 @@
+<%= render "limitations_messages" %>
+
+<% if @more_information %>
+  <%= render "tell_me_more_messages" %>
+<% end %>
+
+<%= render "privacy_messages" %>
+
 <% content_for :form do %>
-  <%= form_with url: onboarding_privacy_confirm_path do |f| %>
-    <%= render "components/blue_button", {
-      text: "Okay, start chatting",
-    } %>
-  <% end %>
+  <%= render "components/onboarding_form", {
+    url: onboarding_privacy_confirm_path,
+    privacy_onboarding: true,
+  } %>
 <% end %>

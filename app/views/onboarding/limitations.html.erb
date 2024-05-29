@@ -1,31 +1,13 @@
-<p class="govuk-body">This is the first message.</p>
+<%= render "limitations_messages" %>
 
-<% if @more_information.present? %>
-  <p class="govuk-body">And here's some more information.</p>
+<% if @more_information %>
+  <%= render "tell_me_more_messages" %>
 <% end %>
 
 <% content_for :form do %>
-  <%= form_with url: onboarding_limitations_confirm_path do |f| %>
-    <% if @more_information.present? %>
-      <div class="govuk-button-group">
-        <%= render "components/blue_button", {
-          text: "I understand",
-        } %>
-
-        <%= link_to "Take me to GOV.UK", "#", class: "govuk-link" %>
-      </div>
-    <% else %>
-      <div class="govuk-button-group">
-        <%= render "components/blue_button", {
-          text: "I understand",
-        } %>
-
-        <%= render "govuk_publishing_components/components/button", {
-          text: "Tell me more",
-          href: onboarding_limitations_path(more_information: true),
-          secondary_solid: true,
-        } %>
-      </div>
-    <% end %>
-  <% end %>
+  <%= render "components/onboarding_form", {
+    url: onboarding_limitations_confirm_path,
+    more_information: @more_information,
+    tell_me_more_href: onboarding_limitations_path(more_information: true, anchor: "tell-me-more"),
+  } %>
 <% end %>

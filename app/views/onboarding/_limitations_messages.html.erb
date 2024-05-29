@@ -1,0 +1,21 @@
+<% limitation_messages = [] %>
+
+<% limitation_messages << capture do %>
+  <p>Hello 👋 I’m GOV.UK Chat. I’m an experimental tool that uses AI to answer questions and help you find information on GOV.UK. I have limitations that you need to be aware of.</p>
+<% end %>
+
+<% limitation_messages << capture do %>
+  <p>The biggest limitation of AI tools like me is a problem known as ‘hallucination’.</p>
+  <p>This means we sometimes make up false information or facts but present them to you confidently.</p>
+<% end %>
+
+<% limitation_messages << capture do %>
+  <p>To check if my answers are right, use the links I provide to official guidance on GOV.UK.</p>
+  <p>Never act on what I’ve told you without checking GOV.UK.</p>
+<% end %>
+
+<% limitation_messages.each do |message| %>
+  <%= render "components/conversation_message", {
+    message:,
+  } %>
+<% end %>
