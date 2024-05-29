@@ -8,4 +8,13 @@ RSpec.describe Answer do
       expect(answer.sources.to_a).to eq([source_2, source_1])
     end
   end
+
+  describe "#status" do
+    it "contains the same values as the answer status config except for pending" do
+      config_keys_minus_pending = Rails.configuration.answer_statuses.except("pending").keys.sort
+      model_keys = described_class.statuses.keys.sort
+
+      expect(model_keys).to eq(config_keys_minus_pending)
+    end
+  end
 end

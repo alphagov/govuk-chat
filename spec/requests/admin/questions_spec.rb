@@ -12,6 +12,13 @@ RSpec.describe "Admin::QuestionsController" do
       expect(response.body).to have_selector(".govuk-table__body .govuk-table__row:nth-child(2)", text: /#{oldest_question.message}/)
     end
 
+    it "renders 'No questions found' when there are no questions" do
+      get admin_questions_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to have_content("No questions found")
+    end
+
     context "when there are more than 25 questions" do
       before do
         create_list(:question, 26)
@@ -21,7 +28,7 @@ RSpec.describe "Admin::QuestionsController" do
         get admin_questions_path
 
         expect(response.body)
-          .to have_selector(".govuk-pagination__link[href='#{admin_questions_path(page: 2)}']", text: "Next page")
+          .to have_link("Next page", href: admin_questions_path(page: 2))
           .and have_selector(".govuk-pagination__link-label", text: "2 of 2")
         expect(response.body).not_to have_content("Previous page")
       end
@@ -30,9 +37,16 @@ RSpec.describe "Admin::QuestionsController" do
         get admin_questions_path(page: "2")
 
         expect(response.body)
-          .to have_selector(".govuk-pagination__link[href='#{admin_questions_path(page: 1)}']", text: "Previous page")
+          .to have_link("Previous page", href: admin_questions_path)
           .and have_selector(".govuk-pagination__link-label", text: "1 of 2")
         expect(response.body).not_to have_content("Next page")
+      end
+    end
+
+    context "when filter parameters are provided" do
+      it "returns successfully" do
+        get admin_questions_path(status: "abort_forbidden_words")
+        expect(response).to have_http_status(:ok)
       end
     end
   end

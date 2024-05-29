@@ -1,24 +1,12 @@
 module Admin
   module QuestionsHelper
     def format_answer_status_as_tag(status, with_description_suffix: false)
-      label, colour, description = case status
-                                   when "success"
-                                     %w[Success green]
-                                   when "abort_forbidden_words"
-                                     ["Abort", "orange", "forbidden words in question"]
-                                   when "abort_no_govuk_content"
-                                     ["Abort", "orange", "no GOV.UK content found"]
-                                   when "error_answer_service_error"
-                                     ["Error", "red", "received error from LLM"]
-                                   when "error_context_length_exceeded"
-                                     ["Error", "red", "too many tokens sent to LLM"]
-                                   when "error_non_specific"
-                                     ["Error", "red", "unexpected system error"]
-                                   when nil
-                                     %w[Pending yellow]
-                                   else
-                                     raise "Unknown status: #{status}"
-                                   end
+      statuses = Rails.configuration.answer_statuses
+      raise "Unknown status: #{status}" unless statuses.key?(status)
+
+      label = statuses[status].label
+      colour = statuses[status].label_colour
+      description = statuses[status].description
 
       tag_title = description ? "#{label} - #{description}" : label.to_s
       tag_el = tag.span(label, title: tag_title, class: "govuk-tag govuk-tag--#{colour}")
@@ -88,7 +76,7 @@ module Admin
               else
                 {
                   field: "Status",
-                  value: format_answer_status_as_tag(nil, with_description_suffix: true),
+                  value: format_answer_status_as_tag(question.answer_status, with_description_suffix: true),
                 }
               end
 

@@ -1,0 +1,27 @@
+<%= form_with(url:, method: :get) do %>
+  <%= render "govuk_publishing_components/components/select", {
+    id: "status",
+    name: "status",
+    label: "Status",
+    heading_size: "s",
+    options: ([""] + Rails.configuration.answer_statuses.keys).map do |status|
+      status_config = Rails.configuration.answer_statuses[status]
+      {
+        text: status_config&.label_and_description || status_config&.label,
+        value: status,
+        selected: params[:status] == status,
+      }
+    end,
+  } %>
+
+  <%= render "govuk_publishing_components/components/button", {
+    text: "Filter",
+    margin_bottom: true,
+  } %>
+
+  <p class="govuk-body">
+    <%= link_to "Clear all filters",
+                url,
+                class: "govuk-link govuk-link--no-visited-state" %>
+  </p>
+<% end %>
