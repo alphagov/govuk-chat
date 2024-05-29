@@ -14,6 +14,9 @@ RSpec.describe "Admin user filters questions" do
     when_i_clear_the_filters
     then_i_see_all_the_questions
 
+    when_i_search_for_a_question
+    then_i_see_questions_related_to_my_search
+
     when_i_view_the_first_questions_conversation
     and_i_filter_on_the_pending_status
     then_i_see_the_pending_question
@@ -25,7 +28,7 @@ RSpec.describe "Admin user filters questions" do
 
   def and_there_are_questions
     conversation = build(:conversation)
-    @question1 = create(:question, conversation:)
+    @question1 = create(:question, conversation:, message: "Hello world")
     @question2 = create(:question, :with_answer, conversation:)
   end
 
@@ -64,6 +67,16 @@ RSpec.describe "Admin user filters questions" do
   def then_i_see_all_the_questions
     expect(page).to have_content(@question1.message)
     expect(page).to have_content(@question2.message)
+  end
+
+  def when_i_search_for_a_question
+    fill_in "Search", with: "Hello"
+    click_button "Filter"
+  end
+
+  def then_i_see_questions_related_to_my_search
+    expect(page).to have_content(@question1.message)
+    expect(page).not_to have_content(@question2.message)
   end
 
   def when_i_view_the_first_questions_conversation
