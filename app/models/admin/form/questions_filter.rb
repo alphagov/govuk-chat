@@ -2,11 +2,15 @@ class Admin::Form::QuestionsFilter
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  attr_reader :status, :search, :conversation, :page
+  attr_reader :status, :search, :start_date_params, :end_date_params, :conversation, :page
 
-  def initialize(status: nil, search: nil, conversation: nil, page: 1)
+  validate :validate_dates
+
+  def initialize(status: nil, search: nil, start_date_params: {}, end_date_params: {}, conversation: nil, page: 1)
     @search = search
     @status = status
+    @start_date_params = start_date_params
+    @end_date_params = end_date_params
     @conversation = conversation
     @page = page.to_i
   end
@@ -67,5 +71,31 @@ private
     return scope if conversation.blank?
 
     scope.where(conversation_id: conversation.id)
+  end
+
+  def validate_dates
+    begin
+      start_date
+    rescue ArgumentError
+      errors.add(:start_date_params, "Enter a valid start date")
+    end
+
+    begin
+      end_date
+    rescue ArgumentError
+      errors.add(:end_date_params, "Enter a valid end date")
+    end
+  end
+
+  def start_date
+    return if start_date_params.values.all?(&:blank?)
+
+    @start_date ||= Time.zone.local(start_date_params[:year], start_date_params[:month], start_date_params[:day])
+  end
+
+  def end_date
+    return if end_date_params.values.all?(&:blank?)
+
+    @end_date ||= Time.zone.local(end_date_params[:year], end_date_params[:month], end_date_params[:day])
   end
 end

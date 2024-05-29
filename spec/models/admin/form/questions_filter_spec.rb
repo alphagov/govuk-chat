@@ -1,12 +1,50 @@
 RSpec.describe Admin::Form::QuestionsFilter do
+  describe "#validations" do
+    describe "#validate_dates" do
+      it "is valid if the start date and end date are valid dates" do
+        filter = described_class.new(
+          start_date_params: { day: "1", month: "1", year: "2020" },
+          end_date_params: { day: "1", month: "1", year: "2020" },
+        )
+        expect(filter).to be_valid
+      end
+
+      it "is valid with blank params" do
+        filter = described_class.new(
+          start_date_params: { day: "", month: "", year: "" },
+          end_date_params: { day: "", month: "", year: "" },
+        )
+        expect(filter).to be_valid
+      end
+
+      it "is invalid if the start date is not a valid date" do
+        filter = described_class.new(
+          start_date_params: { day: "1", month: "13", year: "2020" },
+          end_date_params: { day: "1", month: "1", year: "2020" },
+        )
+        expect(filter).not_to be_valid
+        expect(filter.errors[:start_date_params]).to include("Enter a valid start date")
+      end
+
+      it "is invalid if the end date is not a valid date" do
+        filter = described_class.new(
+          start_date_params: { day: "1", month: "1", year: "2020" },
+          end_date_params: { day: "32", month: "1", year: "2020" },
+        )
+        expect(filter).not_to be_valid
+        expect(filter.errors[:end_date_params]).to include("Enter a valid end date")
+      end
+    end
+  end
+
   describe "#questions" do
     it "orders the questions by the most recently created" do
       question1 = create(:question, created_at: 2.minutes.ago)
       question2 = create(:question, created_at: 1.minute.ago)
 
-      questions = described_class.new.questions
+      filter = described_class.new
 
-      expect(questions).to eq([question2, question1])
+      expect(filter.questions).to eq([question2, question1])
     end
 
     it "filters the questions by search" do
