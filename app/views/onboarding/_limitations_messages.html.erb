@@ -15,9 +15,7 @@
 <% end %>
 
 <% limitation_messages.each do |message| %>
-  <li>
-    <%= render "components/conversation_message", {
-      message:,
-    } %>
-  </li>
+  <%= render "components/conversation_message", {
+    message:,
+  } %>
 <% end %>

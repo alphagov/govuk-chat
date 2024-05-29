@@ -1,17 +1,13 @@
-<li>
-  <%= render "components/conversation_message", {
-    id: dom_id(question),
-    message: question.message,
-    is_question: true,
-  } %>
-</li>
+<%= render "components/conversation_message", {
+  id: dom_id(question),
+  message: question.message,
+  is_question: true,
+} %>
 
-<li>
-  <% if answer.present? %>
-    <%= render "components/conversation_message", {
-      id: dom_id(answer),
-      sources: answer.sources.map { |source| "#{Plek.website_root}#{source.url}" },
-      message: answer.message,
-    } %>
-  <% end %>
-</li>
+<% if answer.present? %>
+  <%= render "components/conversation_message", {
+    id: dom_id(answer),
+    sources: answer.sources.map { |source| "#{Plek.website_root}#{source.url}" },
+    message: answer.message,
+  } %>
+<% end %>

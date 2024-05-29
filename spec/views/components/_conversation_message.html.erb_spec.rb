@@ -24,7 +24,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
         is_question: true,
       })
 
-      expect(rendered).to have_selector("div.app-c-conversation-message#question-1") do |rendered_question|
+      expect(rendered).to have_selector("li.app-c-conversation-message#question-1") do |rendered_question|
         expect(rendered_question)
           .to have_selector(".app-c-conversation-message__identifier .govuk-visually-hidden", text: "You:")
           .and have_selector(".app-c-conversation-message__body.app-c-conversation-message__body--user-message", text: "message 2")
@@ -39,7 +39,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
         message: "message 3",
       })
 
-      expect(rendered).to have_selector("div.app-c-conversation-message#answer-2") do |rendered_answer|
+      expect(rendered).to have_selector("li.app-c-conversation-message#answer-2") do |rendered_answer|
         expect(rendered_answer)
           .to have_selector(".app-c-conversation-message__identifier .app-c-conversation-message__identifier-icon")
           .and have_selector(".app-c-conversation-message__identifier .govuk-visually-hidden", text: "GOV.UK Chat:")

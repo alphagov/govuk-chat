@@ -6,16 +6,28 @@ shared_accessibility_criteria:
   - link
 examples:
   default:
+    embed: |
+      <ul class="govuk-list">
+        <%= component %>
+      </ul>
     data:
       id: some-id-1
       message: This is a system generated conversation message
   with_data_attributes:
+    embed: |
+      <ul class="govuk-list">
+        <%= component %>
+      </ul>
     data:
       id: some-id-2
       data_attributes:
         tracking: GTM-123AB
       message: This is a system generated conversation message with data attributes
   with_html_message:
+    embed: |
+      <ul class="govuk-list">
+        <%= component %>
+      </ul>
     description: HTML is rendered as Govspeak
     data:
       id: message-html
@@ -24,6 +36,10 @@ examples:
 
         <p>Content</p>
   with_sources:
+    embed: |
+      <ul class="govuk-list">
+        <%= component %>
+      </ul>
     data:
       id: some-id-3
       message: This is a system generated conversation message with sources
@@ -31,11 +47,19 @@ examples:
         - http://example.com
         - http://example.gov.uk
   message_is_a_question:
+    embed: |
+      <ul class="govuk-list">
+        <%= component %>
+      </ul>
     data:
       id: some-id-4
       message: This is a user's question
       is_question: true
   message_is_a_question_with_data_attributes:
+    embed: |
+      <ul class="govuk-list">
+        <%= component %>
+      </ul>
     data:
       id: some-id-5
       data_attributes:

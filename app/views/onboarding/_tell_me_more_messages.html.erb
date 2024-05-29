@@ -16,18 +16,14 @@
   <p>To learn more about these limitations, read <a href="/chat/about" target="_blank">about GOV.UK Chat (opens in a new tab)</a>.</p>
 <% end %>
 
-<li>
-  <%= render "components/conversation_message", {
-    id: "tell-me-more",
-    message: "Tell me more",
-    is_question: true,
-  } %>
-</li>
+<%= render "components/conversation_message", {
+  id: "tell-me-more",
+  message: "Tell me more",
+  is_question: true,
+} %>
 
 <% tell_me_more_messages.each do |message| %>
-  <li>
-    <%= render "components/conversation_message", {
-      message:,
-    } %>
-  </li>
+  <%= render "components/conversation_message", {
+    message:,
+  } %>
 <% end %>

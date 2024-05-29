@@ -9,18 +9,14 @@
   <p>You can read the <a href="/chat/privacy" target="_blank">privacy notice (opens in a new tab)</a> to find out how your data is used.</p>
 <% end %>
 
-<li>
-  <%= render "components/conversation_message", {
-    id: "i-understand",
-    message: "I understand",
-    is_question: true,
-  } %>
-</li>
+<%= render "components/conversation_message", {
+  id: "i-understand",
+  message: "I understand",
+  is_question: true,
+} %>
 
 <% privacy_messages.each do |message| %>
-  <li>
-    <%= render "components/conversation_message", {
-      message:,
-    } %>
-  </li>
+  <%= render "components/conversation_message", {
+    message:,
+  } %>
 <% end %>

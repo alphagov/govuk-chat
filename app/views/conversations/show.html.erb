@@ -16,19 +16,15 @@
 
 <%= render "onboarding/privacy_messages" %>
 
-<li>
-  <%= render "components/conversation_message", {
-    id: "start-chatting",
-    message: "Okay",
-    is_question: true,
-  } %>
-</li>
+<%= render "components/conversation_message", {
+  id: "start-chatting",
+  message: "Okay",
+  is_question: true,
+} %>
 
-<li>
-  <%= render "components/conversation_message", {
-    message: tag.p("Thanks! To get started, ask me a question."),
-  } %>
-</li>
+<%= render "components/conversation_message", {
+  message: tag.p("Thanks! To get started, ask me a question."),
+} %>
 
 <% @conversation.questions.each do |question| %>
   <%= render "question_and_answer", question:, answer: question.answer %>
