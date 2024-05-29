@@ -27,6 +27,12 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         errors.push(this.module.dataset.presenceErrorMessage)
       }
 
+      const maxlength = parseInt(this.module.dataset.maxlength, 10)
+
+      if (this.input.value.length > maxlength) {
+        errors.push(this.module.dataset.lengthErrorMessage)
+      }
+
       this.replaceErrors(errors)
 
       if (errors.length) {

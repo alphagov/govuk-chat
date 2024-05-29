@@ -1,12 +1,15 @@
 describe('Conversation form component', () => {
   'use strict'
 
-  let form, input, button, presenceErrorMessage, errorsWrapper, module
+  let form, input, button, presenceErrorMessage, lengthErrorMessage, errorsWrapper, module
 
   beforeEach(function () {
     form = document.createElement('form')
     presenceErrorMessage = 'Enter a question'
+    lengthErrorMessage = 'Question must be 300 characters or less'
     form.dataset.presenceErrorMessage = presenceErrorMessage
+    form.dataset.lengthErrorMessage = lengthErrorMessage
+    form.dataset.maxlength = 300
     form.innerHTML = `
       <input type="text" class="js-conversation-form-input" value="What is the VAT rate?">
       <button class="js-conversation-form-button">Submit</button>
@@ -55,6 +58,16 @@ describe('Conversation form component', () => {
 
       expect(errorsWrapper.innerHTML)
         .toEqual(`<li><span class="govuk-visually-hidden">Error:</span>${presenceErrorMessage}</li>`)
+    })
+
+    it('shows an error when the user input is greater in length than maxlength', () => {
+      const maxlength = parseInt(form.dataset.maxlength, 10)
+      input.value = 'a'.repeat(maxlength + 1)
+      form.dispatchEvent(new Event('submit'))
+      expect(errorsWrapper.hidden).toBe(false)
+
+      expect(errorsWrapper.innerHTML)
+        .toEqual(`<li><span class="govuk-visually-hidden">Error:</span>${lengthErrorMessage}</li>`)
     })
   })
 

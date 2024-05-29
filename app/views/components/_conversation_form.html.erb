@@ -17,7 +17,9 @@
 
   data_attributes = {
     module: "conversation-form",
+    maxlength: maxlength,
     "presence-error-message": "Enter a question",
+    "length-error-message": "Question must be #{maxlength} characters or less",
   }
 %>
 
@@ -37,7 +39,6 @@
         describedby: aria_described_by,
       },
       name: name,
-      maxlength:,
     ) %>
 
     <%= render "components/blue_button", {
