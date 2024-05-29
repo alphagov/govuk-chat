@@ -136,7 +136,7 @@ RSpec.describe "ConversationsController" do
         expect(response).to have_http_status(:created)
         expect(JSON.parse(response.body)).to match({
           "question_html" => /app-c-conversation-message/,
-          "answer_url" => answer_question_path(question.conversation, question),
+          "answer_url" => answer_question_path(question),
           "error_messages" => [],
         })
       end
