@@ -17,6 +17,24 @@ RSpec.describe "components/_conversation_form.html.erb" do
     end
   end
 
+  it "includes data attributes of server side validation parameters" do
+    render("components/conversation_form", {
+      url: "/conversation",
+      input_id: "id",
+      name: "name",
+      value: "Value",
+    })
+
+    maxlength = Form::CreateQuestion::USER_QUESTION_LENGTH_MAXIMUM
+    presence_error_message = Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE
+    length_error_message = sprintf(Form::CreateQuestion::USER_QUESTION_LENGTH_ERROR_MESSAGE, count: maxlength)
+
+    expect(rendered)
+      .to have_selector(".app-c-conversation-form[data-maxlength=#{maxlength}]")
+      .and have_selector(".app-c-conversation-form[data-presence-error-message='#{presence_error_message}']")
+      .and have_selector(".app-c-conversation-form[data-length-error-message='#{length_error_message}']")
+  end
+
   it "renders error messages when there is a problem" do
     render("components/conversation_form", {
       url: "/conversation",

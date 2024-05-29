@@ -5,8 +5,12 @@ class Form::CreateQuestion
   attribute :user_question
   attribute :conversation, default: -> { Conversation.new }
 
-  validates :user_question, presence: { message: "Enter a question" }
-  validates :user_question, length: { maximum: 300, message: "Question must be 300 characters or less" }
+  USER_QUESTION_PRESENCE_ERROR_MESSAGE = "Enter a question".freeze
+  USER_QUESTION_LENGTH_MAXIMUM = 300
+  USER_QUESTION_LENGTH_ERROR_MESSAGE = "Question must be %{count} characters or less".freeze
+
+  validates :user_question, presence: { message: USER_QUESTION_PRESENCE_ERROR_MESSAGE }
+  validates :user_question, length: { maximum: USER_QUESTION_LENGTH_MAXIMUM, message: USER_QUESTION_LENGTH_ERROR_MESSAGE }
   validate :all_questions_answered?
   validate :no_pii_present?, if: -> { user_question.present? }
 

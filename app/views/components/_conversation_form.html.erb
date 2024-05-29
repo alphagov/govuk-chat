@@ -2,7 +2,10 @@
   input_id ||= "#{name.parameterize}-#{SecureRandom.hex(4)}"
   value ||= nil
 
-  maxlength = 300
+  maxlength = Form::CreateQuestion::USER_QUESTION_LENGTH_MAXIMUM
+  presence_error_message = Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE
+  length_error_message = Form::CreateQuestion::USER_QUESTION_LENGTH_ERROR_MESSAGE
+
   hint = "Please limit your question to #{maxlength} characters."
   hint_id = "#{input_id}-hint"
 
@@ -18,8 +21,8 @@
   data_attributes = {
     module: "conversation-form",
     maxlength: maxlength,
-    "presence-error-message": "Enter a question",
-    "length-error-message": "Question must be #{maxlength} characters or less",
+    "presence-error-message": presence_error_message,
+    "length-error-message": sprintf(length_error_message, count: maxlength),
   }
 %>
 
