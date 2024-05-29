@@ -4,9 +4,10 @@
     name: "status",
     label: "Status",
     heading_size: "s",
-    options: (["", "pending"] + Answer.statuses.keys).sort.map do |status|
+    options: ([""] + Rails.configuration.answer_statuses.keys).map do |status|
+      status_config = Rails.configuration.answer_statuses[status]
       {
-        text: status.humanize,
+        text: status_config&.label_and_description || status_config&.label,
         value: status,
         selected: params[:status] == status,
       }

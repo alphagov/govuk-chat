@@ -1,0 +1,35 @@
+success:
+  label: "Success"
+  label_colour: "green"
+  description:
+  label_and_description:
+pending:
+  label: "Pending"
+  label_colour: "yellow"
+  description:
+  label_and_description:
+abort_forbidden_words:
+  label: "Abort"
+  label_colour: "orange"
+  description: "forbidden words in question"
+  label_and_description: "Abort - forbidden words in question"
+abort_no_govuk_content:
+  label: "Abort"
+  label_colour: "orange"
+  description: "no GOV.UK content found"
+  label_and_description: "Abort - no GOV.UK content found"
+error_answer_service_error:
+  label: "Error"
+  label_colour: "red"
+  description: "received error from LLM"
+  label_and_description: "Error - received error from LLM"
+error_context_length_exceeded:
+  label: "Error"
+  label_colour: "red"
+  description: "too many tokens sent to LLM"
+  label_and_description: "Error - too many tokens sent to LLM"
+error_non_specific:
+  label: "Error"
+  label_colour: "red"
+  description: "unexpected system error"
+  label_and_description: "Error - unexpected system error"

@@ -53,6 +53,7 @@ module GovukChat
     config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]
 
     config.llm_prompts = Hashie::Mash.new(YAML.load_file("#{__dir__}/llm_prompts.yml"))
+    config.answer_statuses = Hashie::Mash.new(YAML.load_file("#{__dir__}/answer_statuses.yml"))
 
     # List of forbidden words that will prevent a message from being sent to openAI
     config.question_forbidden_words = []
