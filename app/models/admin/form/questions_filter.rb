@@ -2,16 +2,18 @@ class Admin::Form::QuestionsFilter
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  attr_reader :status, :conversation, :page
+  attr_reader :status, :search, :conversation, :page
 
-  def initialize(status: nil, conversation: nil, page: 1)
+  def initialize(status: nil, search: nil, conversation: nil, page: 1)
+    @search = search
     @status = status
     @conversation = conversation
     @page = page.to_i
   end
 
   def questions
-    scope = Question.includes(:answer)
+    scope = Question.joins("LEFT JOIN answers answer ON answer.question_id = questions.id")
+    scope = search_scope(scope)
     scope = status_scope(scope)
     scope = conversation_scope(scope)
     scope.order(created_at: :desc)
@@ -42,6 +44,12 @@ private
     filters[:status] = status if status.present?
 
     filters
+  end
+
+  def search_scope(scope)
+    return scope if search.blank?
+
+    scope.where("questions.message ILIKE :search OR answer.rephrased_question ILIKE :search OR answer.message ILIKE :search", search: "%#{search}%")
   end
 
   def status_scope(scope)
