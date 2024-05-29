@@ -79,7 +79,7 @@ private
           is_question: true,
         },
       ),
-      answer_url: answer_question_path(question.conversation, question),
+      answer_url: answer_question_path(question),
       error_messages: [],
     }
   end
