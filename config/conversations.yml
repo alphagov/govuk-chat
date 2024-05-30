@@ -1,0 +1,12 @@
+default: &default
+  max_question_age_days: 30
+  max_messages: 500
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
