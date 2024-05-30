@@ -9,6 +9,18 @@ RSpec.describe Admin::Form::QuestionsFilter do
       expect(questions).to eq([question2, question1])
     end
 
+    it "filters the questions by search" do
+      question1 = create(:question, message: "hello world", created_at: 1.minute.ago)
+      question2 = create(:question, created_at: 2.minutes.ago)
+      create(:answer, message: "hello moon", question: question2)
+      question3 = create(:question, created_at: 3.minutes.ago)
+      create(:answer, rephrased_question: "Hello Stars", question: question3)
+      create(:question, message: "goodbye")
+
+      questions = described_class.new(search: "hello").questions
+      expect(questions).to eq([question1, question2, question3])
+    end
+
     it "filters the questions by status" do
       question1 = create(:question)
       question2 = create(:answer, status: "success").question
@@ -18,6 +30,12 @@ RSpec.describe Admin::Form::QuestionsFilter do
 
       questions = described_class.new(status: "success").questions
       expect(questions).to eq([question2])
+    end
+
+    it "works with all filters applied" do
+      question = create(:answer, status: "success", message: "hello world").question
+      questions = described_class.new(status: "success", search: "Hello").questions
+      expect(questions).to eq([question])
     end
 
     it "paginates the questions" do

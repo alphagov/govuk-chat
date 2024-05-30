@@ -1,4 +1,14 @@
 <%= form_with(url:, method: :get) do %>
+  <%= render "govuk_publishing_components/components/input", {
+    label: {
+      text: "Search",
+    },
+    name: "search",
+    id: "search",
+    value: params[:search],
+    heading_size: "s",
+  } %>
+
   <%= render "govuk_publishing_components/components/select", {
     id: "status",
     name: "status",
