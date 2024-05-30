@@ -3,7 +3,7 @@
   <% if @create_question.errors.any? %>
     <%= render "govuk_publishing_components/components/error_summary", {
       title: "There is a problem",
-      items: error_items(@create_question, :user_question, "#create_question_user_question"),
+      items: error_items(@create_question, user_question: "#create_question_user_question"),
     } %>
   <% end %>
 <% end %>

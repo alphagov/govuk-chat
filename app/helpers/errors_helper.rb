@@ -1,7 +1,7 @@
 module ErrorsHelper
-  def error_items(model, attribute, target_id)
+  def error_items(model, attributes = {})
     model.errors.map do |error|
-      href = error.attribute == attribute ? target_id : nil
+      href = anchor_mappings[error.attribute]
       { text: error.message, href: }
     end
   end
