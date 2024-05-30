@@ -77,6 +77,12 @@ RSpec.describe Admin::Form::QuestionsFilter do
       filter = described_class.new(page: 2)
       expect(filter.previous_page_params).to eq({})
     end
+
+    it "retains all other query params when constructing the params" do
+      create_list(:question, 26)
+      filter = described_class.new(status: "pending", search: "message", page: 2)
+      expect(filter.previous_page_params).to eq({ status: "pending", search: "message" })
+    end
   end
 
   describe "next_page_params" do
@@ -89,6 +95,12 @@ RSpec.describe Admin::Form::QuestionsFilter do
       create_list(:question, 26)
       filter = described_class.new(page: 1)
       expect(filter.next_page_params).to eq({ page: 2 })
+    end
+
+    it "retains all other query params when constructing the params" do
+      create_list(:question, 26)
+      filter = described_class.new(status: "pending", search: "message")
+      expect(filter.next_page_params).to eq({ status: "pending", search: "message", page: 2 })
     end
   end
 end
