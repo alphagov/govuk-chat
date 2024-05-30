@@ -30,7 +30,7 @@
     id: "start_date",
   } do %>
     <%= render "govuk_publishing_components/components/date_input", {
-      error_items: filter.errors[:start_date_params].map { |message| { text: message } },
+      error_items: error_items(filter, :start_date_params),
       items: [
         {
           label: "Day",
@@ -61,7 +61,7 @@
     id: "end_date",
   } do %>
        <%= render "govuk_publishing_components/components/date_input", {
-      error_items: filter.errors[:end_date_params].map { |message| { text: message } },
+      error_items: error_items(filter, :end_date_params),
       items: [
         {
           label: "Day",

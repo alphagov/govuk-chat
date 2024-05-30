@@ -52,4 +52,30 @@ RSpec.describe ErrorsHelper do
       end
     end
   end
+
+  describe "#error_items" do
+    context "when a model has errors" do
+      let(:model) { model_klass.new(required: nil, also_required: true).tap(&:validate) }
+
+      context "when the attribute matches the error attribute" do
+        it "returns an array of error hashes" do
+          expect(helper.error_items(model, :required)).to eq([{ text: validation_error }])
+        end
+      end
+
+      context "when the attribute doesn't match the error attribute" do
+        it "returns an empty array" do
+          expect(helper.error_items(model, :other_attr)).to eq([])
+        end
+      end
+    end
+
+    context "when a model has no errors" do
+      it "returns an empty array" do
+        model = model_klass.new(required: true, also_required: true).tap(&:validate)
+
+        expect(helper.error_items(model, :required)).to eq([])
+      end
+    end
+  end
 end

@@ -39,6 +39,6 @@
     name: "create_question[user_question]",
     input_id: "create_question_user_question",
     value: @create_question.user_question,
-    error_items: @create_question.errors[:user_question].map { |message| { text: message } },
+    error_items: error_items(@create_question, :user_question),
   } %>
 <% end %>
