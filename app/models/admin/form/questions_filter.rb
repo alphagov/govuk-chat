@@ -13,6 +13,7 @@ class Admin::Form::QuestionsFilter
     @end_date_params = end_date_params
     @conversation = conversation
     @page = page.to_i
+    validate
   end
 
   def questions

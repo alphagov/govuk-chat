@@ -37,6 +37,18 @@ RSpec.describe Admin::Form::QuestionsFilter do
     end
   end
 
+  describe "#initialize" do
+    it "validates on initialisation" do
+      filter = described_class.new(
+        start_date_params: { day: "1", month: "13", year: "2020" },
+        end_date_params: { day: "32", month: "1", year: "2020" },
+      )
+
+      expect(filter.errors[:start_date_params]).to eq(["Enter a valid start date"])
+      expect(filter.errors[:end_date_params]).to eq(["Enter a valid end date"])
+    end
+  end
+
   describe "#questions" do
     it "orders the questions by the most recently created" do
       question1 = create(:question, created_at: 2.minutes.ago)
