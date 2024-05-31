@@ -5,5 +5,5 @@ class Conversation < ApplicationRecord
     left_outer_joins(:questions).where(questions: { conversation_id: nil })
   }
 
-  scope :active, -> { joins(:questions).merge(Question.active).distinct }
+  scope :active, -> { where(Question.active.where("questions.conversation_id = conversations.id").arel.exists) }
 end
