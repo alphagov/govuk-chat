@@ -62,7 +62,7 @@ private
   def find_conversation
     return if cookies[:conversation_id].blank?
 
-    @conversation = Conversation.find(cookies[:conversation_id])
+    @conversation = Conversation.active.find(cookies[:conversation_id])
     set_conversation_cookie(@conversation)
   rescue ActiveRecord::RecordNotFound
     cookies.delete(:conversation_id)
@@ -108,6 +108,9 @@ private
   end
 
   def set_conversation_cookie(conversation)
-    cookies[:conversation_id] = { value: conversation.id, expires: 7.days.from_now }
+    cookies[:conversation_id] = {
+      value: conversation.id,
+      expires: Rails.configuration.conversations.max_question_age_days.days.from_now,
+    }
   end
 end

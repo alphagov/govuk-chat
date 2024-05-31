@@ -19,7 +19,7 @@ RSpec.describe "ConversationsController" do
     end
 
     context "when conversation_id is set on the cookie" do
-      let(:conversation) { create(:conversation) }
+      let(:conversation) { create(:conversation, :not_expired) }
 
       before do
         cookies[:conversation_id] = conversation.id
@@ -55,8 +55,25 @@ RSpec.describe "ConversationsController" do
 
       context "when the conversation cannot be found" do
         before do
+          conversation.reload.questions.destroy_all
           conversation.destroy!
         end
+
+        it "deletes the conversation_id cookie" do
+          get show_conversation_path
+          expect(cookies[:conversation_id]).to be_blank
+        end
+
+        it "redirects to the onboarding limitations page" do
+          get show_conversation_path
+
+          expect(response).to have_http_status(:redirect)
+          expect(response).to redirect_to(onboarding_limitations_path)
+        end
+      end
+
+      context "when the conversation has expired" do
+        let(:conversation) { create(:conversation, :expired) }
 
         it "deletes the conversation_id cookie" do
           get show_conversation_path
@@ -75,7 +92,7 @@ RSpec.describe "ConversationsController" do
 
   describe "POST :update" do
     include_context "with onboarding completed"
-    let(:conversation) { create(:conversation) }
+    let(:conversation) { create(:conversation, :not_expired) }
 
     it "saves the conversation & question and renders the pending page with valid params" do
       expect { post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } } }
@@ -228,6 +245,6 @@ RSpec.describe "ConversationsController" do
   def expect_conversation_id_set_on_cookie(conversation)
     cookie = cookies.get_cookie("conversation_id")
     expect(cookie.value).to eq(conversation.id)
-    expect(cookie.expires).to eq(7.days.from_now)
+    expect(cookie.expires).to eq(30.days.from_now)
   end
 end

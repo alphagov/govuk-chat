@@ -18,5 +18,22 @@ FactoryBot.define do
         create :question, conversation:, message: "corporation tax"
       end
     end
+
+    trait :expired do
+      after :create do |conversation|
+        conversation.questions.destroy_all
+        create(:question,
+               :with_answer,
+               conversation:,
+               created_at: Rails.configuration.conversations.max_question_age_days.days.ago - 1.day)
+      end
+    end
+
+    trait :not_expired do
+      after :create do |conversation|
+        conversation.questions.destroy_all
+        create(:question, :with_answer, conversation:)
+      end
+    end
   end
 end

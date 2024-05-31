@@ -21,9 +21,15 @@ RSpec.describe Question do
   end
 
   describe ".active" do
-    before do
-      allow(Rails.configuration.conversations).to receive(:max_question_age_days).and_return(1)
+    it "returns questions newer than the configured max_question_age" do
+      freeze_time do
+        allow(Rails.configuration.conversations).to receive(:max_question_age_days).and_return(1)
+        to_find = create(:question, created_at: 1.day.ago)
+        create(:question, created_at: 1.day.ago - 1.second)
+        expect(described_class.active).to eq([to_find])
+      end
     end
+  end
 
     it "returns questions newer that the configured max_question_age" do
       to_find = create(:question, created_at: 1.day.ago + 1.second)
