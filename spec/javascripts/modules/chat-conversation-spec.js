@@ -22,7 +22,7 @@ describe('ChatConversation module', () => {
   })
 
   describe('handleFormSubmission', () => {
-    let redirectToAnswerUrlSpy, fetchSpy
+    let checkAnswerSpy, fetchSpy
 
     beforeEach(() => {
       const responseJson = {
@@ -36,7 +36,12 @@ describe('ChatConversation module', () => {
         new Response(JSON.stringify(responseJson), { status: 201 })
       )
 
-      redirectToAnswerUrlSpy = spyOn(module, 'redirectToAnswerUrl')
+      checkAnswerSpy = spyOn(module, 'checkAnswer')
+      jasmine.clock().install()
+    })
+
+    afterEach(() => {
+      jasmine.clock().uninstall()
     })
 
     it('prevents the event from performing default behaviour', async () => {
@@ -75,12 +80,6 @@ describe('ChatConversation module', () => {
     })
 
     describe('when receiving a successful question response', () => {
-      it('redirects to the answer url', async () => {
-        await module.handleFormSubmission(new Event('submit'))
-
-        expect(redirectToAnswerUrlSpy).toHaveBeenCalledWith('/answer')
-      })
-
       it('appends the question HTML to the conversation list', async () => {
         await module.handleFormSubmission(new Event('submit'))
 
@@ -95,6 +94,15 @@ describe('ChatConversation module', () => {
 
         const expectedEvent = jasmine.objectContaining({ type: 'question-accepted' })
         expect(formEventSpy).toHaveBeenCalledWith(expectedEvent)
+      })
+
+      it('starts the process to load an answer', async () => {
+        await module.handleFormSubmission(new Event('submit'))
+
+        jasmine.clock().tick(module.ANSWER_INTERVAL)
+
+        expect(checkAnswerSpy).toHaveBeenCalled()
+        expect(module.pendingAnswerUrl).toEqual('/answer')
       })
     })
 
@@ -142,6 +150,96 @@ describe('ChatConversation module', () => {
 
         expect(consoleErrorSpy).toHaveBeenCalled()
         expect(formSubmitSpy).toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe('checkAnswer', () => {
+    let redirectSpy
+
+    beforeEach(() => {
+      redirectSpy = spyOn(module, 'redirect')
+    })
+
+    it("doesn't make a fetch request when 'pendingAnswerUrl' is null", async () => {
+      const fetchSpy = spyOn(window, 'fetch')
+      module.pendingAnswerUrl = null
+
+      await module.checkAnswer()
+
+      expect(fetchSpy).not.toHaveBeenCalled()
+    })
+
+    describe('when the answer is ready', () => {
+      beforeEach(() => {
+        module.pendingAnswerUrl = '/answer'
+
+        const responseJson = {
+          answer_html: '<li>Your answer</li>'
+        }
+
+        spyOn(window, 'fetch').and.resolveTo(
+          new Response(JSON.stringify(responseJson), {
+            status: 200
+          })
+        )
+      })
+
+      it('appends the answer to the conversation list', async () => {
+        await module.checkAnswer()
+
+        expect(conversationList.children.length).toEqual(1)
+        expect(conversationList.textContent).toContain('Your answer')
+      })
+
+      it('resets the "pendingAnswerUrl" value', async () => {
+        await module.checkAnswer()
+
+        expect(module.pendingAnswerUrl).toBeNull()
+      })
+
+      it('dispatches an "answer-received" event to the form', async () => {
+        const formEventSpy = spyOn(module.form, 'dispatchEvent')
+
+        await module.checkAnswer()
+
+        const expectedEvent = jasmine.objectContaining({ type: 'answer-received' })
+        expect(formEventSpy).toHaveBeenCalledWith(expectedEvent)
+      })
+    })
+
+    describe('when the answer is pending', () => {
+      it('attempts to load the answer after a delay', async () => {
+        jasmine.clock().install()
+
+        module.pendingAnswerUrl = '/answer'
+
+        const pendingResponse = new Response('', { status: 202 })
+        const successResponse = new Response(JSON.stringify({ answer_html: '<li>Answer</li>' }), { status: 200 })
+
+        const fetchSpy = spyOn(window, 'fetch').and.returnValues(
+          Promise.resolve(pendingResponse),
+          Promise.resolve(successResponse)
+        )
+        await module.checkAnswer()
+        jasmine.clock().tick(module.ANSWER_INTERVAL)
+
+        expect(fetchSpy).toHaveBeenCalledTimes(2)
+
+        jasmine.clock().uninstall()
+      })
+    })
+
+    describe('when receiving an unexpected response from the answer endpoint', () => {
+      it('redirects to the answer url and logs an error', async () => {
+        const answerUrl = '/answer'
+        module.pendingAnswerUrl = answerUrl
+
+        spyOn(window, 'fetch').and.resolveTo(new Response('error', { status: 500 }))
+
+        await module.checkAnswer()
+
+        expect(redirectSpy).toHaveBeenCalledWith(answerUrl)
       })
     })
   })
