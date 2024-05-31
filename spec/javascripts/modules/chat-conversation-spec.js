@@ -72,15 +72,35 @@ describe('ChatConversation module', () => {
       })
     })
 
+    describe('when receiving an unproccessible entity response', () => {
+      it('dispatches a "question-rejected" event on the form element', async () => {
+        const responseJson = {
+          error_messages: ['form error']
+        }
+
+        fetchSpy.and.resolveTo(
+          new Response(JSON.stringify(responseJson), { status: 422 })
+        )
+
+        const formEventSpy = spyOn(module.form, 'dispatchEvent')
+
+        await module.handleFormSubmission(new Event('submit'))
+
+        const expectedEvent = jasmine.objectContaining({ type: 'question-rejected', detail: { errorMessages: ['form error'] } })
+        expect(formEventSpy).toHaveBeenCalledWith(expectedEvent)
+      })
+    })
+
     describe('when receiving an unexpected status code', () => {
       it('logs the error and submits the form', async () => {
-        fetchSpy.and.resolveTo(new Response('', { status: 422 }))
+        fetchSpy.and.resolveTo(new Response('', { status: 500 }))
+
         const consoleErrorSpy = spyOn(console, 'error')
         const formSubmitSpy = spyOn(module.form, 'submit')
 
         await module.handleFormSubmission(new Event('submit'))
 
-        expect(consoleErrorSpy).toHaveBeenCalledWith(Error('Unexpected response status: 422'))
+        expect(consoleErrorSpy).toHaveBeenCalledWith(Error('Unexpected response status: 500'))
         expect(formSubmitSpy).toHaveBeenCalled()
       })
     })

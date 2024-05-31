@@ -33,14 +33,25 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       }
     }
 
-    // TODO: handle different response statuses here
     async handleQuestionResponse (response) {
-      if (response.status === 201) {
-        const questionResponse = await response.json()
-        // TODO: remove and update UI with `response.question_html`
-        this.redirectToAnswerUrl(questionResponse.answer_url)
-      } else {
-        throw new Error(`Unexpected response status: ${response.status}`)
+      switch (response.status) {
+        case 201: {
+          const responseJson = await response.json()
+          // TODO: remove and update UI with `response.question_html`
+          this.redirectToAnswerUrl(responseJson.answer_url)
+          break
+        }
+        case 422: {
+          const responseJson = await response.json()
+          this.form.dispatchEvent(
+            new CustomEvent('question-rejected', {
+              detail: { errorMessages: responseJson.error_messages }
+            })
+          )
+          break
+        }
+        default:
+          throw new Error(`Unexpected response status: ${response.status}`)
       }
     }
 
