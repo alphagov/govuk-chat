@@ -1,6 +1,6 @@
 default: &default
   max_question_age_days: 30
-  max_messages: 500
+  max_question_count: 500
 
 development:
   <<: *default

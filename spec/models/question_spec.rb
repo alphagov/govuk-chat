@@ -31,10 +31,12 @@ RSpec.describe Question do
     end
   end
 
-    it "returns questions newer that the configured max_question_age" do
-      to_find = create(:question, created_at: 1.day.ago + 1.second)
-      create(:question, created_at: 1.day.ago - 1.second)
-      expect(described_class.active).to eq([to_find])
+  describe ".for_display" do
+    it "returns the last N active questions based on the configuration value" do
+      create(:question, created_at: 3.days.ago)
+      expected = [create(:question, created_at: 2.days.ago), create(:question, created_at: 1.day.ago)]
+      allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(2)
+      expect(described_class.for_display).to eq(expected)
     end
   end
 end

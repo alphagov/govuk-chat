@@ -44,6 +44,17 @@ RSpec.describe "ConversationsController" do
           .and have_selector("##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message)
       end
 
+      it "only render max number of question from rails config" do
+        allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(1)
+        older_question = create(:question, :with_answer, conversation:)
+        question = create(:question, :with_answer, conversation:)
+
+        get show_conversation_path
+
+        expect(response.body).to include(question.message)
+        expect(response.body).not_to include(older_question.message)
+      end
+
       it "can render a question without an answer" do
         question = create(:question, conversation:)
         get show_conversation_path
