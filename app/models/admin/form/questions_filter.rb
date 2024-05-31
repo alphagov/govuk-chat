@@ -2,17 +2,17 @@ class Admin::Form::QuestionsFilter
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  attr_reader :status, :search, :start_date_params, :end_date_params, :conversation, :page
+  attribute :status
+  attribute :search
+  attribute :start_date_params, default: {}
+  attribute :end_date_params, default: {}
+  attribute :conversation
+  attribute :page, :integer
 
   validate :validate_dates
 
-  def initialize(status: nil, search: nil, start_date_params: {}, end_date_params: {}, conversation: nil, page: 1)
-    @search = search
-    @status = status
-    @start_date_params = start_date_params
-    @end_date_params = end_date_params
-    @conversation = conversation
-    @page = page.to_i
+  def initialize(...)
+    super
     validate
   end
 

@@ -11,13 +11,6 @@ private
       :page,
     )
 
-    Admin::Form::QuestionsFilter.new(
-      search: filter_params[:search],
-      status: filter_params[:status],
-      start_date_params: filter_params[:start_date_params] || {},
-      end_date_params: filter_params[:end_date_params] || {},
-      page: filter_params[:page],
-      conversation:,
-    )
+    Admin::Form::QuestionsFilter.new(filter_params.merge(conversation:))
   end
 end
