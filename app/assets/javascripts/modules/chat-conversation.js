@@ -6,6 +6,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     constructor (module) {
       this.module = module
       this.form = this.module.querySelector('.js-conversation-form')
+      this.conversationList = this.module.querySelector('.js-conversation-list')
     }
 
     init () {
@@ -38,6 +39,10 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         case 201: {
           const responseJson = await response.json()
           // TODO: remove and update UI with `response.question_html`
+          this.conversationList.insertAdjacentHTML('beforeend', responseJson.question_html)
+
+          this.form.dispatchEvent(new Event('question-accepted'))
+
           this.redirectToAnswerUrl(responseJson.answer_url)
           break
         }
