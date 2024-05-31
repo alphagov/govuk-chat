@@ -186,7 +186,7 @@ RSpec.describe Admin::Form::QuestionsFilter do
     end
   end
 
-  describe "previous_page_params" do
+  describe "#previous_page_params" do
     it "returns any empty hash if there is no previous page to link to" do
       filter = described_class.new
       expect(filter.previous_page_params).to eq({})
@@ -223,7 +223,7 @@ RSpec.describe Admin::Form::QuestionsFilter do
     end
   end
 
-  describe "next_page_params" do
+  describe "#next_page_params" do
     it "returns any empty hash if there is no next page to link to" do
       filter = described_class.new
       expect(filter.next_page_params).to eq({})
@@ -250,6 +250,23 @@ RSpec.describe Admin::Form::QuestionsFilter do
 
       expect(filter.next_page_params)
         .to eq({ status: "pending", search: "message", page: 2, start_date_params:, end_date_params: })
+    end
+  end
+
+  describe "#sort_direction" do
+    it "returns nil when sort does not match the field passed in" do
+      filter = described_class.new(sort: "message")
+      expect(filter.sort_direction("created_at")).to be_nil
+    end
+
+    it "returns 'ascending' when sort equals the field passed in" do
+      filter = described_class.new(sort: "message")
+      expect(filter.sort_direction("message")).to eq("ascending")
+    end
+
+    it "returns 'descending' when sort prefixed with '-' equals the field passed in" do
+      filter = described_class.new(sort: "-message")
+      expect(filter.sort_direction("message")).to eq("descending")
     end
   end
 end

@@ -52,6 +52,12 @@ class Admin::Form::QuestionsFilter
     end
   end
 
+  def sort_direction(field)
+    return unless sort.delete_prefix("-") == field
+
+    sort.starts_with?("-") ? "descending" : "ascending"
+  end
+
 private
 
   def pagination_query_params

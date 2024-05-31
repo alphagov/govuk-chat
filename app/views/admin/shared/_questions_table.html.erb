@@ -2,15 +2,18 @@
 
 <% if questions.present? %>
   <%= render "govuk_publishing_components/components/table", {
+    sortable: true,
     head: [
       {
         text: "Question",
+        sort_direction: filter.sort_direction("message"),
       },
       {
         text: "Answer status",
       },
       {
         text: "Created at",
+        sort_direction: filter.sort_direction("created_at"),
       },
     ],
     rows: questions.map do |question|
