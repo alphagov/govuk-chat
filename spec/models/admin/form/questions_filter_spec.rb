@@ -1,4 +1,6 @@
 RSpec.describe Admin::Form::QuestionsFilter do
+  let(:time) { Time.zone.now }
+
   describe "#validations" do
     describe "#validate_dates" do
       it "is valid if the start date and end date are valid dates" do
@@ -50,8 +52,6 @@ RSpec.describe Admin::Form::QuestionsFilter do
   end
 
   describe "#questions" do
-    let(:time) { Time.zone.now }
-
     it "orders the questions by the most recently created" do
       question1 = create(:question, created_at: 2.minutes.ago)
       question2 = create(:question, created_at: 1.minute.ago)
@@ -146,8 +146,8 @@ RSpec.describe Admin::Form::QuestionsFilter do
       questions = described_class.new(
         status: "success",
         search: "Hello",
-        start_date_params: { day: Time.zone.now.day, month: Time.zone.now.month, year: Time.zone.now.year - 1 },
-        end_date_params: { day: Time.zone.now.day, month: Time.zone.now.month, year: Time.zone.now.year + 1 },
+        start_date_params: { day: time.day, month: time.month, year: time.year - 1 },
+        end_date_params: { day: time.day, month: time.month, year: time.year + 1 },
       ).questions
       expect(questions).to eq([question])
     end
@@ -194,8 +194,19 @@ RSpec.describe Admin::Form::QuestionsFilter do
 
     it "retains all other query params when constructing the params" do
       create_list(:question, 26)
-      filter = described_class.new(status: "pending", search: "message", page: 2)
-      expect(filter.previous_page_params).to eq({ status: "pending", search: "message" })
+      start_date_params = { day: time.day, month: time.month, year: time.year - 1 }
+      end_date_params = { day: time.day, month: time.month, year: time.year + 1 }
+
+      filter = described_class.new(
+        status: "pending",
+        search: "message",
+        page: 2,
+        start_date_params:,
+        end_date_params:,
+      )
+
+      expect(filter.previous_page_params)
+        .to eq({ status: "pending", search: "message", start_date_params:, end_date_params: })
     end
   end
 
@@ -213,8 +224,18 @@ RSpec.describe Admin::Form::QuestionsFilter do
 
     it "retains all other query params when constructing the params" do
       create_list(:question, 26)
-      filter = described_class.new(status: "pending", search: "message")
-      expect(filter.next_page_params).to eq({ status: "pending", search: "message", page: 2 })
+      start_date_params = { day: time.day, month: time.month, year: time.year - 1 }
+      end_date_params = { day: time.day, month: time.month, year: time.year + 1 }
+
+      filter = described_class.new(
+        status: "pending",
+        search: "message",
+        start_date_params:,
+        end_date_params:,
+      )
+
+      expect(filter.next_page_params)
+        .to eq({ status: "pending", search: "message", page: 2, start_date_params:, end_date_params: })
     end
   end
 end

@@ -52,6 +52,8 @@ private
     filters = {}
     filters[:status] = status if status.present?
     filters[:search] = search if search.present?
+    filters[:start_date_params] = start_date_params if start_date_params.values.any?(&:present?)
+    filters[:end_date_params] = end_date_params if end_date_params.values.any?(&:present?)
 
     filters
   end
