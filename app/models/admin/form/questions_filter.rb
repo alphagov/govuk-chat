@@ -2,17 +2,22 @@ class Admin::Form::QuestionsFilter
   include ActiveModel::Model
   include ActiveModel::Attributes
 
+  DEFAULT_SORT = "-created_at".freeze
+  VALID_SORT_VALUES = ["created_at", "-created_at", "message", "-message"].freeze
+
   attribute :status
   attribute :search
   attribute :start_date_params, default: {}
   attribute :end_date_params, default: {}
   attribute :conversation
   attribute :page, :integer
+  attribute :sort
 
   validate :validate_dates
 
   def initialize(...)
     super
+    self.sort = DEFAULT_SORT unless VALID_SORT_VALUES.include?(sort)
     validate
   end
 

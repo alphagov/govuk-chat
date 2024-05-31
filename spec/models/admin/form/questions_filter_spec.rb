@@ -1,5 +1,5 @@
 RSpec.describe Admin::Form::QuestionsFilter do
-  describe "#validations" do
+  describe "validations" do
     describe "#validate_dates" do
       it "is valid if the start date and end date are valid dates" do
         filter = described_class.new(
@@ -57,6 +57,16 @@ RSpec.describe Admin::Form::QuestionsFilter do
 
       expect(filter.errors[:start_date_params]).to eq(["Enter a valid start date"])
       expect(filter.errors[:end_date_params]).to eq(["Enter a valid end date"])
+    end
+
+    it "sets the sort param to the default value if no value is passed in" do
+      filter = described_class.new
+      expect(filter.sort).to eq("-created_at")
+    end
+
+    it "sets the sort param to the default value if an invalid value is passed in" do
+      filter = described_class.new(sort: "invalid")
+      expect(filter.sort).to eq("-created_at")
     end
   end
 
