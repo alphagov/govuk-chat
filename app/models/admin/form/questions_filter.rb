@@ -42,6 +42,7 @@ private
   def pagination_query_params
     filters = {}
     filters[:status] = status if status.present?
+    filters[:search] = search if search.present?
 
     filters
   end
