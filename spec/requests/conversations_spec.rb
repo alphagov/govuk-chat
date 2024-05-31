@@ -66,8 +66,7 @@ RSpec.describe "ConversationsController" do
 
       context "when the conversation cannot be found" do
         before do
-          conversation.reload.questions.destroy_all
-          conversation.destroy!
+          cookies[:conversation_id] = "unknown-id"
         end
 
         it "deletes the conversation_id cookie" do
