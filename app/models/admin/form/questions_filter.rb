@@ -30,9 +30,9 @@ class Admin::Form::QuestionsFilter
       scope = start_date_scope(scope)
       scope = end_date_scope(scope)
       scope = conversation_scope(scope)
-      scope.order(created_at: :desc)
-          .page(page)
-          .per(25)
+      scope = ordering_scope(scope)
+      scope.page(page)
+           .per(25)
     end
   end
 
@@ -113,6 +113,12 @@ private
     return scope if conversation.blank?
 
     scope.where(conversation_id: conversation.id)
+  end
+
+  def ordering_scope(scope)
+    column = sort.delete_prefix("-")
+    direction = sort.start_with?("-") ? :desc : :asc
+    scope.order("#{column}": direction)
   end
 
   def validate_dates

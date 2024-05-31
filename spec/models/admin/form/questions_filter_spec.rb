@@ -71,13 +71,40 @@ RSpec.describe Admin::Form::QuestionsFilter do
   end
 
   describe "#questions" do
-    it "orders the questions by the most recently created" do
-      question1 = create(:question, created_at: 2.minutes.ago)
-      question2 = create(:question, created_at: 1.minute.ago)
+    describe "ordering" do
+      let!(:question1) { create(:question, message: "Hello world", created_at: 1.minute.ago) }
+      let!(:question2) { create(:question, :with_answer, message: "World hello", created_at: 2.minutes.ago) }
+      let!(:question3) { create(:question, :with_answer, message: "Sup moon", created_at: 3.minutes.ago) }
 
-      filter = described_class.new
+      it "orders the questions by the most recently created" do
+        questions = described_class.new.questions
+        expect(questions).to eq([question1, question2, question3])
+      end
 
-      expect(filter.questions).to eq([question2, question1])
+      it "orders the questions by the most recently created when the sort param is '-created_at'" do
+        questions = described_class.new(sort: "-created_at").questions
+        expect(questions).to eq([question1, question2, question3])
+      end
+
+      it "orders the questions by the most recently created if the sort param is invalid" do
+        questions = described_class.new(sort: "invalid").questions
+        expect(questions).to eq([question1, question2, question3])
+      end
+
+      it "orders the questions by the oldest first when the sort param is 'created_at'" do
+        questions = described_class.new(sort: "created_at").questions
+        expect(questions).to eq([question3, question2, question1])
+      end
+
+      it "orders the questions alphabetically when the sort param is 'message'" do
+        questions = described_class.new(sort: "message").questions
+        expect(questions).to eq([question1, question3, question2])
+      end
+
+      it "orders the questions reverse alphabetically when the sort param is '-message'" do
+        questions = described_class.new(sort: "-message").questions
+        expect(questions).to eq([question2, question3, question1])
+      end
     end
 
     it "filters the questions by search" do
