@@ -58,6 +58,16 @@ class Admin::Form::QuestionsFilter
     sort.starts_with?("-") ? "descending" : "ascending"
   end
 
+  def toggleable_sort_params(default_field_sort)
+    sort_param = if sort == default_field_sort
+                   sort.starts_with?("-") ? sort.delete_prefix("-") : "-#{sort}"
+                 else
+                   default_field_sort
+                 end
+
+    pagination_query_params.merge(sort: sort_param, page: nil)
+  end
+
 private
 
   def pagination_query_params
@@ -66,6 +76,7 @@ private
     filters[:search] = search if search.present?
     filters[:start_date_params] = start_date_params if start_date_params.values.any?(&:present?)
     filters[:end_date_params] = end_date_params if end_date_params.values.any?(&:present?)
+    filters[:sort] = sort if sort != DEFAULT_SORT
 
     filters
   end

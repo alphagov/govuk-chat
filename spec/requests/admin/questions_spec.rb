@@ -1,15 +1,16 @@
 RSpec.describe "Admin::QuestionsController" do
   describe "GET :index" do
     it "renders the page successfully with questions from newest to oldest" do
-      oldest_question = create(:question, created_at: 1.day.ago)
-      newest_question = create(:question, created_at: 1.minute.ago)
+      create(:question, message: "Hello world.", created_at: 1.day.ago)
+      create(:question, message: "World hello.", created_at: 1.minute.ago)
 
       get admin_questions_path
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to have_selector(".gem-c-title__text", text: "Questions")
-      expect(response.body).to have_selector(".govuk-table__body .govuk-table__row:nth-child(1)", text: /#{newest_question.message}/)
-      expect(response.body).to have_selector(".govuk-table__body .govuk-table__row:nth-child(2)", text: /#{oldest_question.message}/)
+      expect(response.body).to have_selector(".govuk-table") do |match|
+        expect(match.text).to match(/World hello.*Hello world/m)
+      end
     end
 
     it "renders 'No questions found' when there are no questions" do
@@ -17,6 +18,18 @@ RSpec.describe "Admin::QuestionsController" do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to have_content("No questions found")
+    end
+
+    it "renders the sortable table headers correctly" do
+      create(:question)
+
+      get admin_questions_path
+
+      expect(response.body)
+        .to have_link("Question", href: admin_questions_path(sort: "message"))
+        .and have_link("Created at", href: admin_questions_path(sort: "created_at"))
+        .and have_selector(".govuk-table__header--active .app-table__sort-link--descending", text: "Created at")
+        .and have_no_selector(".govuk-table__header--active", text: "Question")
     end
 
     context "when there are more than 25 questions" do
@@ -65,6 +78,75 @@ RSpec.describe "Admin::QuestionsController" do
         get admin_questions_path(start_date_params:, end_date_params:)
 
         expect_unprocessible_entity_with_errors
+      end
+    end
+
+    context "when the sort param is not the default value" do
+      before do
+        create(:question)
+      end
+
+      it "orders the documents correctly when the sort param is 'created_at'" do
+        create(:question, message: "Hello world.", created_at: 1.day.ago)
+        create(:question, message: "World hello.", created_at: 1.minute.ago)
+
+        get admin_questions_path(sort: "created_at")
+
+        expect(response.body).to have_selector(".govuk-table") do |match|
+          expect(match).to have_content(/Hello world.*World hello/m)
+        end
+      end
+
+      it "renders the sortable table headers correctly when the sort param is 'created_at'" do
+        get admin_questions_path(sort: "created_at")
+
+        expect(response.body)
+        .to have_link("Question", href: admin_questions_path(sort: "message"))
+        .and have_link("Created at", href: admin_questions_path(sort: "-created_at"))
+        .and have_selector(".govuk-table__header--active .app-table__sort-link--ascending", text: "Created at")
+        .and have_no_selector(".govuk-table__header--active", text: "Question")
+      end
+
+      it "orders the documents correctly when the sort param is 'message'" do
+        create(:question, message: "Hello world.")
+        create(:question, message: "World hello.")
+
+        get admin_questions_path(sort: "message")
+
+        within(".govuk-table") do
+          expect(page).to have_content(/Hello world.*World hello./)
+        end
+      end
+
+      it "renders the sortable table headers correctly when the sort param is 'message'" do
+        get admin_questions_path(sort: "message")
+
+        expect(response.body)
+        .to have_link("Question", href: admin_questions_path(sort: "-message"))
+        .and have_link("Created at", href: admin_questions_path(sort: "-created_at"))
+        .and have_selector(".govuk-table__header--active .app-table__sort-link--ascending", text: "Question")
+        .and have_no_selector(".govuk-table__header--active", text: "Created at")
+      end
+
+      it "orders the documents correctly when the sort param is '-message'" do
+        create(:question, message: "Hello world.")
+        create(:question, message: "World hello.")
+
+        get admin_questions_path(sort: "-message")
+
+        expect(response.body).to have_selector(".govuk-table") do |match|
+          expect(match.text).to match(/World hello.*Hello world/m)
+        end
+      end
+
+      it "renders the sortable table headers correctly when the sort param is '-message'" do
+        get admin_questions_path(sort: "-message")
+
+        expect(response.body)
+        .to have_link("Question", href: admin_questions_path(sort: "message"))
+        .and have_link("Created at", href: admin_questions_path(sort: "-created_at"))
+        .and have_selector(".govuk-table__header--active .app-table__sort-link--descending", text: "Question")
+        .and have_no_selector(".govuk-table__header--active", text: "Created at")
       end
     end
   end

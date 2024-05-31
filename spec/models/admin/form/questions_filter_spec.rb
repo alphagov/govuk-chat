@@ -269,4 +269,30 @@ RSpec.describe Admin::Form::QuestionsFilter do
       expect(filter.sort_direction("message")).to eq("descending")
     end
   end
+
+  describe "#toggleable_sort_params" do
+    it "sets the page param to nil" do
+      filter = described_class.new(sort: "-created_at", page: 2)
+      expect(filter.toggleable_sort_params("-created_at")).to eq({ sort: "created_at", page: nil })
+    end
+
+    context "when the sort attribute does not match the default_field_sort" do
+      it "sets the sort_param to the default_field_sort" do
+        filter = described_class.new(sort: "created_at")
+        expect(filter.toggleable_sort_params("-created_at")).to eq({ sort: "-created_at", page: nil })
+      end
+    end
+
+    context "when the sort attribute matches the default_field_sort" do
+      it "sets the sort_param to 'ascending' if the sort attribute is 'descending'" do
+        filter = described_class.new(sort: "-created_at")
+        expect(filter.toggleable_sort_params("-created_at")).to eq({ sort: "created_at", page: nil })
+      end
+
+      it "sets the sort_param to 'descending' if the sort attribute is 'ascending'" do
+        filter = described_class.new(sort: "message")
+        expect(filter.toggleable_sort_params("message")).to eq({ sort: "-message", page: nil })
+      end
+    end
+  end
 end

@@ -7,6 +7,7 @@
       {
         text: "Question",
         sort_direction: filter.sort_direction("message"),
+        href: public_send(path, filter.toggleable_sort_params("message")),
       },
       {
         text: "Answer status",
@@ -14,6 +15,7 @@
       {
         text: "Created at",
         sort_direction: filter.sort_direction("created_at"),
+        href: public_send(path, filter.toggleable_sort_params("-created_at")),
       },
     ],
     rows: questions.map do |question|
