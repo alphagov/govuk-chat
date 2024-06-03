@@ -5,6 +5,7 @@ class ConversationsController < BaseController
 
   def show
     @conversation ||= Conversation.new
+    @questions = @conversation.questions_for_showing_conversation
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
     @more_information = session[:more_information].present?
   end
@@ -25,6 +26,7 @@ class ConversationsController < BaseController
       respond_to do |format|
         format.html do
           @conversation = @create_question.conversation
+          @questions = @conversation.questions_for_showing_conversation
 
           render :show, status: :unprocessable_entity
         end

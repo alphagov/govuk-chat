@@ -1,3 +1,4 @@
+<% @conversation_data_attributes ||= {} %>
 <% content_for :alerts do %>
   <div class="app-conversation-layout__width-container">
     <% if content_for?(:error_summary) %>
@@ -25,7 +26,7 @@
 <% end %>
 
 <% content_for :content do %>
-  <% tag.div(class: "app-conversation-layout__wrapper", data: { module: yield(:conversation_data_module) }) do %>
+  <% tag.div(class: "app-conversation-layout__wrapper", data: @conversation_data_attributes) do %>
     <div class="app-conversation-layout__message-container">
       <div class="app-conversation-layout__width-container">
         <ul class="app-conversation-layout__list js-conversation-list">
