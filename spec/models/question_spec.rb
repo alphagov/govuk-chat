@@ -1,5 +1,5 @@
 RSpec.describe Question do
-  describe "#unanswered" do
+  describe ".unanswered" do
     it "returns all questions without an answer" do
       question = create(:question)
       create(:question, :with_answer)

@@ -8,7 +8,7 @@ class Question < ApplicationRecord
 
   belongs_to :conversation
   has_one :answer
-  scope :unanswered, -> { left_outer_joins(:answer).where(answer: { id: nil }) }
+  scope :unanswered, -> { where.missing(:answer) }
 
   def answer_status
     answer&.status || "pending"
