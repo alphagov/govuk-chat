@@ -42,7 +42,7 @@ RSpec.describe Admin::QuestionsHelper do
     let(:question) { create(:question) }
 
     it "returns the correct rows when question is unanswered" do
-      result = helper.question_show_summary_list_rows(question, nil)
+      result = helper.question_show_summary_list_rows(question, nil, 1, 1)
       expected_keys = [
         "Conversation id",
         "Question number",
@@ -57,8 +57,8 @@ RSpec.describe Admin::QuestionsHelper do
     end
 
     it "returns the correct rows when the question has an answer" do
-      answer = build_stubbed(:answer)
-      result = helper.question_show_summary_list_rows(question, answer)
+      answer = build_stubbed(:answer, sources: [])
+      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
       expected_keys = [
         "Conversation id",
         "Question number",
@@ -76,15 +76,15 @@ RSpec.describe Admin::QuestionsHelper do
     end
 
     it "returns an error message row if the answer has an error message" do
-      answer = build_stubbed(:answer, error_message: "An error message")
-      result = helper.question_show_summary_list_rows(question, answer)
+      answer = build_stubbed(:answer, sources: [], error_message: "An error message")
+      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
       expect(returned_keys(result)).to include("Error message")
     end
 
     it "returns a sources row when the question has sources" do
       answer = build_stubbed(:answer, sources: [build_stubbed(:answer_source)])
-      result = helper.question_show_summary_list_rows(question, answer)
+      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
       expect(returned_keys(result)).to include("Sources")
     end

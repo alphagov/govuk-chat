@@ -18,7 +18,7 @@ module Admin
       end
     end
 
-    def question_show_summary_list_rows(question, answer)
+    def question_show_summary_list_rows(question, answer, question_number, total_questions)
       conversation = question.conversation
       search_text = question.answer&.rephrased_question || question.message
       rows = [
@@ -28,7 +28,7 @@ module Admin
         },
         {
           field: "Question number",
-          value: "#{conversation.questions.find_index(question) + 1} of #{conversation.questions.count}",
+          value: "#{question_number} of #{total_questions}",
         },
         {
           field: "Question id",

@@ -42,7 +42,10 @@ module AnswerComposition
     end
 
     def message_history
-      question.conversation.questions.last(5).flat_map(&method(:map_question))
+      Question.where(conversation: question.conversation)
+              .includes(:answer)
+              .last(5)
+              .flat_map(&method(:map_question))
     end
 
     def map_question(question)

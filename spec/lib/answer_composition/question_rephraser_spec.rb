@@ -13,7 +13,7 @@ RSpec.describe AnswerComposition::QuestionRephraser do
 
   context "when the question is part of an ongoing chat" do
     let(:conversation) { create :conversation, :with_history }
-    let(:question) { conversation.questions.last }
+    let(:question) { conversation.questions.strict_loading(false).last }
     let(:expected_messages) do
       [
         { role: "system", content: system_prompt },
@@ -91,7 +91,7 @@ RSpec.describe AnswerComposition::QuestionRephraser do
       end
 
       before do
-        create :answer, question: conversation.questions.last, message: "You can pay..."
+        create :answer, question:, message: "You can pay..."
         (1..6).each do |n|
           answer = build :answer, question:, message: "Answer #{n}"
           create :question, answer:, conversation:, message: "Question #{n}"
