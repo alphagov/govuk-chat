@@ -111,8 +111,8 @@ module AnswerComposition
     def build_sources
       result_by_base_path = search_results.group_by(&:base_path)
       result_by_base_path.map.with_index do |(base_path, group), relevancy|
-        url = group.count == 1 ? group.first.url : base_path
-        AnswerSource.new(url:, relevancy:)
+        path = group.count == 1 ? group.first.url : base_path
+        AnswerSource.new(path:, relevancy:)
       end
     end
 
