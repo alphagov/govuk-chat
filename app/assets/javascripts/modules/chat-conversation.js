@@ -7,12 +7,25 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.module = module
       this.form = this.module.querySelector('.js-conversation-form')
       this.conversationList = this.module.querySelector('.js-conversation-list')
-      this.pendingAnswerUrl = null
+      this.pendingAnswerUrl = this.module.dataset.pendingAnswerUrl
       this.ANSWER_INTERVAL = 500
     }
 
     init () {
       this.module.addEventListener('submit', e => this.handleFormSubmission(e))
+
+      if (!this.pendingAnswerUrl) return
+
+      const loadPendingAnswer = () => {
+        this.checkAnswer()
+        this.form.dispatchEvent(new Event('question-accepted'))
+      }
+
+      if (this.form.dataset.conversationFormModuleStarted) {
+        loadPendingAnswer()
+      } else {
+        this.form.addEventListener('init', loadPendingAnswer)
+      }
     }
 
     async handleFormSubmission (event) {

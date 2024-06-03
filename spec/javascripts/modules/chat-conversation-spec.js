@@ -1,5 +1,5 @@
 describe('ChatConversation module', () => {
-  let moduleElement, module, conversationList
+  let moduleElement, module, conversationList, form
 
   beforeEach(() => {
     moduleElement = document.createElement('div')
@@ -12,19 +12,72 @@ describe('ChatConversation module', () => {
 
     document.body.appendChild(moduleElement)
     conversationList = moduleElement.querySelector('.js-conversation-list')
+    form = moduleElement.querySelector('.js-conversation-form')
 
     module = new window.GOVUK.Modules.ChatConversation(moduleElement)
-    module.init()
   })
 
   afterEach(() => {
     document.body.removeChild(moduleElement)
   })
 
+  describe('init', () => {
+    it('adds an event listener for handleFormSubmission for submit events', () => {
+      const handleFormSubmissionSpy = spyOn(module, 'handleFormSubmission')
+
+      module.init()
+      moduleElement.dispatchEvent(new Event('submit'))
+
+      expect(handleFormSubmissionSpy).toHaveBeenCalled()
+    })
+
+    describe('when there is a pendingAnswerUrl and the form component is initialised', () => {
+      beforeEach(() => {
+        module.pendingAnswerUrl = '/answer'
+        form.dataset.conversationFormModuleStarted = 'true'
+      })
+
+      it('starts checking for an answer and dispatches an event so the form is in the correct state', () => {
+        const checkAnswerSpy = spyOn(module, 'checkAnswer')
+        const formEventSpy = spyOn(form, 'dispatchEvent')
+
+        module.init()
+
+        expect(checkAnswerSpy).toHaveBeenCalled()
+        const expectedEvent = jasmine.objectContaining({ type: 'question-accepted' })
+        expect(formEventSpy).toHaveBeenCalledWith(expectedEvent)
+      })
+    })
+
+    describe('when there is a pendingAnswerUrl and the form component is not initialised', () => {
+      beforeEach(() => {
+        module.pendingAnswerUrl = '/answer'
+      })
+
+      it('starts checking for answer and changing form state once the form is initialised', () => {
+        const checkAnswerSpy = spyOn(module, 'checkAnswer')
+        const formEventSpy = spyOn(form, 'dispatchEvent').and.callThrough()
+
+        module.init()
+
+        expect(checkAnswerSpy).not.toHaveBeenCalled()
+        expect(formEventSpy).not.toHaveBeenCalled()
+
+        form.dispatchEvent(new Event('init'))
+
+        expect(checkAnswerSpy).toHaveBeenCalled()
+        const expectedEvent = jasmine.objectContaining({ type: 'question-accepted' })
+        expect(formEventSpy).toHaveBeenCalledWith(expectedEvent)
+      })
+    })
+  })
+
   describe('handleFormSubmission', () => {
     let checkAnswerSpy, fetchSpy
 
     beforeEach(() => {
+      module.init()
+
       const responseJson = {
         question_html: '<li>How can I setup a new business?</li>',
         answer_url: '/answer',
@@ -158,6 +211,7 @@ describe('ChatConversation module', () => {
     let redirectSpy
 
     beforeEach(() => {
+      module.init()
       redirectSpy = spyOn(module, 'redirect')
     })
 
