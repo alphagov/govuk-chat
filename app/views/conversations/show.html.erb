@@ -27,7 +27,10 @@
 } %>
 
 <% @conversation.questions_for_showing_conversation.each do |question| %>
-  <%= render "question_and_answer", question:, answer: question.answer %>
+  <%= render "question", question: %>
+  <% if question.answer %>
+    <%= render "answer", answer: question.answer %>
+  <% end %>
 <% end %>
 
 <% content_for :form do %>
