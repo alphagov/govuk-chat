@@ -52,7 +52,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
             status: "success",
           },
         )
-        expect(answer.sources.first.url).to eq(chunk_result.url)
+        expect(answer.sources.first.path).to eq(chunk_result.url)
       end
 
       context "with multiple chunks from the same document" do
@@ -74,7 +74,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           answer = described_class.call(question)
 
           expect(answer.sources.length).to eq(1)
-          expect(answer.sources.first.url).to eq(chunk_result.base_path)
+          expect(answer.sources.first.path).to eq(chunk_result.base_path)
         end
       end
     end

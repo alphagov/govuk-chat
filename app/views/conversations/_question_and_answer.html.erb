@@ -7,7 +7,7 @@
 <% if answer.present? %>
   <%= render "components/conversation_message", {
     id: dom_id(answer),
-    sources: answer.sources.map { |source| "#{Plek.website_root}#{source.url}" },
+    sources: answer.sources.map { |source| "#{Plek.website_root}#{source.path}" },
     message: answer.message,
   } %>
 <% end %>

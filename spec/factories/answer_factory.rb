@@ -7,8 +7,8 @@ FactoryBot.define do
     trait :with_sources do
       sources do
         [
-          build(:answer_source, url: "/income-tax", relevancy: 0),
-          build(:answer_source, url: "/vat-tax", relevancy: 1),
+          build(:answer_source, path: "/income-tax", relevancy: 0),
+          build(:answer_source, path: "/vat-tax", relevancy: 1),
         ]
       end
     end
