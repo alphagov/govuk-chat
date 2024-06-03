@@ -48,6 +48,10 @@ module GovukChat
 
     config.active_job.queue_adapter = :sidekiq
 
+    # Prevent lazy loading of ActiveRecord associations, to avoid N+1 queries.
+    # Can be disabled on an individual assocation with strict_loading: false
+    config.active_record.strict_loading_by_default = true
+
     config.opensearch = config_for(:opensearch)
     Rails.configuration.conversations = Hashie::Mash.new(max_question_age_days: 30, max_question_count: 500)
 

@@ -6,7 +6,7 @@ class Admin::QuestionsController < Admin::BaseController
   end
 
   def show
-    @question = Question.includes(answer: :sources).find(params[:id])
+    @question = Question.includes(:conversation, answer: :sources).find(params[:id])
     @answer = @question.answer
     @question_number = Question.where(conversation: @question.conversation)
                                .where("created_at <= ? ", @question.created_at)

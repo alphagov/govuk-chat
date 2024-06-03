@@ -1,5 +1,5 @@
 class Conversation < ApplicationRecord
-  has_many :questions, strict_loading: true
+  has_many :questions
 
   scope :active, -> { where(Question.active.where("questions.conversation_id = conversations.id").arel.exists) }
 
