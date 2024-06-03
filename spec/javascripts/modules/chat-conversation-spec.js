@@ -64,6 +64,15 @@ describe('ChatConversation module', () => {
       }))
     })
 
+    it('dispatches a question-pending event on the form element', async () => {
+      const formEventSpy = spyOn(module.form, 'dispatchEvent')
+
+      await module.handleFormSubmission(new Event('submit'))
+
+      const expectedEvent = jasmine.objectContaining({ type: 'question-pending' })
+      expect(formEventSpy).toHaveBeenCalledWith(expectedEvent)
+    })
+
     describe('when receiving a successful question response', () => {
       it('redirects to the answer url', async () => {
         await module.handleFormSubmission(new Event('submit'))

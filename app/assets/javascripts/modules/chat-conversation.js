@@ -15,9 +15,9 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     async handleFormSubmission (event) {
       event.preventDefault()
 
-      // TODO: dispatch `question-pending` event
-
       try {
+        this.form.dispatchEvent(new Event('question-pending'))
+
         const formData = new FormData(this.form)
         const response = await fetch(this.form.action, {
           method: 'POST',
