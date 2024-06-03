@@ -26,7 +26,7 @@
   message: tag.p("Thanks! To get started, ask me a question."),
 } %>
 
-<% @conversation.questions.for_display.each do |question| %>
+<% @conversation.questions_for_showing_conversation.each do |question| %>
   <%= render "question_and_answer", question:, answer: question.answer %>
 <% end %>
 

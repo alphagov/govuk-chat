@@ -37,5 +37,18 @@ RSpec.describe Conversation do
         expect { described_class.active.find(conversation.id) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
+
+    describe ".questions_for_showing_conversation" do
+      let(:conversation) { create(:conversation) }
+
+      it "returns the last N active questions based on the configuration value" do
+        create(:question, conversation:)
+        expected = 2.times.map do |_|
+          create(:question, conversation:)
+        end
+        allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(2)
+        expect(conversation.reload.questions_for_showing_conversation).to eq(expected)
+      end
+    end
   end
 end

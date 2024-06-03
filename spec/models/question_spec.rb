@@ -30,13 +30,4 @@ RSpec.describe Question do
       end
     end
   end
-
-  describe ".for_display" do
-    it "returns the last N active questions based on the configuration value" do
-      create(:question, created_at: 3.days.ago)
-      expected = [create(:question, created_at: 2.days.ago), create(:question, created_at: 1.day.ago)]
-      allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(2)
-      expect(described_class.for_display).to eq(expected)
-    end
-  end
 end

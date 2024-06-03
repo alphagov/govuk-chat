@@ -18,6 +18,4 @@ class Question < ApplicationRecord
     max_age = Rails.configuration.conversations.max_question_age_days.days.ago
     where("questions.created_at >= :max_age", max_age:)
   }
-
-  scope :for_display, -> { active.last(Rails.configuration.conversations.max_question_count) }
 end
