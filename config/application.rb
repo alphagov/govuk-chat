@@ -49,7 +49,7 @@ module GovukChat
     config.active_job.queue_adapter = :sidekiq
 
     config.opensearch = config_for(:opensearch)
-    config.conversations = config_for(:conversations)
+    Rails.configuration.conversations = Hashie::Mash.new(max_question_age_days: 30, max_question_count: 500)
 
     config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]
 
