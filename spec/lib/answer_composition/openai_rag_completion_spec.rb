@@ -14,15 +14,16 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
     end
 
     it "sends OpenAI a series of messages combining system prompt, few shot messages and the user question" do
-      few_shots = llm_prompts.compose_answer.few_shots
+      few_shots = llm_prompts.compose_answer.few_shots.flat_map do |few_shot|
+        [
+          { role: "user", content: few_shot.user },
+          { role: "assistant", content: few_shot.assistant },
+        ]
+      end
+
       expected_message_history = [
         { role: "system", content: system_prompt("Title\nHeading 1\nHeading 2\nDescription\n<p>Some content</p>") },
-        { role: "user", content: few_shots.first.user },
-        { role: "assistant", content: few_shots.first.assistant },
-        { role: "user", content: few_shots.second.user },
-        { role: "assistant", content: few_shots.second.assistant },
-        { role: "user", content: few_shots.third.user },
-        { role: "assistant", content: few_shots.third.assistant },
+        few_shots,
         { role: "user", content: rephrased_question },
       ]
       .flatten
