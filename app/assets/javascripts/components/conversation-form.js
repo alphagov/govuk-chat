@@ -18,6 +18,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.module.addEventListener('question-accepted', () => this.handleQuestionAccepted())
       this.module.addEventListener('question-rejected', e => this.handleQuestionRejected(e))
       this.module.addEventListener('answer-received', () => this.handleAnswerReceived())
+      this.module.dispatchEvent(new Event('init'))
     }
 
     handleSubmit (event) {
