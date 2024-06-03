@@ -22,10 +22,11 @@ FactoryBot.define do
     trait :expired do
       after :create do |conversation|
         conversation.questions.destroy_all
+        max_question_age_days = Rails.configuration.conversations.max_question_age_days
         create(:question,
                :with_answer,
                conversation:,
-               created_at: Rails.configuration.conversations.max_question_age_days.days.ago - 1.day)
+               created_at: (max_question_age_days + 1).days.ago)
       end
     end
 
