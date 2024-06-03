@@ -3,8 +3,6 @@
   body_classes = %w[govuk-template__body]
   body_classes << "app-conversation-layout__body" if conversation_layout
   body_classes << yield(:body_class)
-  main_classes = conversation_layout ? %w[app-conversation-layout__main] : %w[govuk-main-wrapper]
-  main_classes << yield(:main_class)
 %>
 <%= tag.html(class: %w[govuk-template] + (conversation_layout ? %w[app-conversation-layout] : []),
              lang: "en") do %>
@@ -40,7 +38,6 @@
     <%= render "govuk_publishing_components/components/skip_link", {
       href: "#content",
     } %>
-
     <%= render "govuk_publishing_components/components/layout_header", {
       environment: "experimental",
       product_name: "Chat",
@@ -60,11 +57,12 @@
       ],
     } %>
 
-    <%= tag.main(class: main_classes, id: "content", role: "main") do %>
-        <%= yield(:alerts) if content_for?(:alerts) %>
-
+    <% if conversation_layout %>
+      <%= yield(:content) %>
+    <% else %>
+      <main class="govuk-main-wrapper" id="content" role="main">
         <% if content_for?(:title) %>
-          <%= tag.div(class: %w[govuk-width-container] + (conversation_layout ? %w[govuk-visually-hidden] : [])) do %>
+          <div class="govuk-width-container">
             <div class="govuk-grid-row">
               <div class="govuk-grid-column-two-thirds">
                 <%= render "govuk_publishing_components/components/title", {
@@ -73,16 +71,13 @@
                 } %>
               </div>
             </div>
-          <% end %>
+          </div>
         <% end %>
 
-      <% if conversation_layout %>
-        <%= yield(:content) %>
-      <% else %>
         <div class="govuk-width-container">
           <%= yield %>
         </div>
-      <% end %>
+      </main>
     <% end %>
 
     <%= javascript_include_tag "application-legacy", nonce: true %>
