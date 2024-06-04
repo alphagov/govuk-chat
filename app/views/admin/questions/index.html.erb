@@ -1,11 +1,4 @@
-<% if @filter.errors.any? %>
-  <%= content_for :error_summary do %>
-    <%= render "govuk_publishing_components/components/error_summary", {
-      title: "There is a problem",
-      items: error_items_for_summary_component(@filter, { start_date_params: "#start_date", end_date_params: "#end_date" }),
-    } %>
-  <% end %>
-<% end %>
+<%= render "admin/shared/question_filter_error_summary", filter: @filter %>
 <%= content_for :title, "Questions" %>
 
 <div class="govuk-grid-row">

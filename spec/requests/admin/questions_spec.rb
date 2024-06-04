@@ -100,7 +100,7 @@ RSpec.describe "Admin::QuestionsController" do
 
   def expect_unprocessible_entity_with_errors
     expect(response).to have_http_status(:unprocessable_entity)
-    expect(response.body).to have_link("Enter a valid start date", href: "#start_date")
-    expect(response.body).to have_link("Enter a valid end date", href: "#end_date")
+    expect(response.body).to have_link("Enter a valid start date", href: "#start_date_params")
+    expect(response.body).to have_link("Enter a valid end date", href: "#end_date_params")
   end
 end
