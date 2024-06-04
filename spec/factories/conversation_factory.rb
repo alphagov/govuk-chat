@@ -31,7 +31,6 @@ FactoryBot.define do
 
     trait :not_expired do
       after :create do |conversation|
-        conversation.questions.destroy_all
         create(:question, :with_answer, conversation:)
       end
     end

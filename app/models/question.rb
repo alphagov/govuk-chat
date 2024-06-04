@@ -7,7 +7,12 @@ class Question < ApplicationRecord
        prefix: true
 
   belongs_to :conversation
-  has_one :answer
+
+  # We frequently make use of question.answer and it'd be quite verbose to
+  # always use an includes. Thus this is set to false, until we find evidence it
+  # could solve more N+1 problems
+  has_one :answer, strict_loading: false
+
   scope :unanswered, -> { where.missing(:answer) }
 
   scope :active, lambda {

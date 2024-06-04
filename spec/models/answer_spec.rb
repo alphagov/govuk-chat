@@ -5,7 +5,7 @@ RSpec.describe Answer do
       source_1 = create(:answer_source, answer:, relevancy: 1, path: "/1")
       source_2 = create(:answer_source, answer:, relevancy: 0, path: "/2")
 
-      expect(answer.sources.to_a).to eq([source_2, source_1])
+      expect(answer.reload.sources.strict_loading(false)).to eq([source_2, source_1])
     end
   end
 

@@ -69,8 +69,8 @@ RSpec.describe Form::CreateQuestion do
           conversation:,
         ).submit
 
-        expect(conversation.reload.questions.count).to eq 2
-        expect(conversation.questions.last.message).to eq "How much tax should I be paying?"
+        expect(Question.where(conversation:).count).to eq 2
+        expect(Question.where(conversation:).last.message).to eq "How much tax should I be paying?"
       end
 
       it "enqueues a ComposeAnswerJob" do

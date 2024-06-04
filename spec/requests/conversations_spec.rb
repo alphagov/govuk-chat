@@ -158,7 +158,7 @@ RSpec.describe "ConversationsController" do
         post update_conversation_path,
              params: { create_question: { user_question: "How much tax should I be paying?" }, format: :json }
 
-        question = conversation.reload.questions.last
+        question = Question.where(conversation:).last
 
         expect(response).to have_http_status(:created)
         expect(JSON.parse(response.body)).to match({

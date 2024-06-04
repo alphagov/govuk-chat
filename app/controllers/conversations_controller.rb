@@ -36,7 +36,9 @@ class ConversationsController < BaseController
   def answer
     return redirect_to onboarding_limitations_path unless @conversation
 
-    @question = @conversation.questions.find(params[:question_id])
+    @question = Question.where(conversation: @conversation)
+                        .includes(answer: :sources)
+                        .find(params[:question_id])
     answer = @question.answer
 
     respond_to do |format|
