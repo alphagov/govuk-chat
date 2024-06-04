@@ -22,9 +22,27 @@ RSpec.describe "Admin::ConversationsController" do
     end
 
     context "when filter parameters are provided" do
-      it "returns successfully" do
+      it "returns success when filters paramaters are valid" do
         get admin_show_conversation_path(conversation, status: "abort_forbidden_words")
         expect(response).to have_http_status(:ok)
+      end
+
+      it "returns unprocessable_entity and renders the page with errors when invalid parameters are received" do
+        start_date_params = { day: 1, month: 1, year: "invalid" }
+        end_date_params = { day: 1, month: 1, year: "invalid" }
+
+        get admin_show_conversation_path(conversation, start_date_params:, end_date_params:)
+
+        expect_unprocessible_entity_with_errors
+      end
+
+      it "returns unprocessable_entity and renders the page with errors when partial date parameters are received" do
+        start_date_params = { day: 1, month: 1 }
+        end_date_params = { day: 1, month: 1 }
+
+        get admin_show_conversation_path(conversation, start_date_params:, end_date_params:)
+
+        expect_unprocessible_entity_with_errors
       end
     end
 
@@ -53,5 +71,11 @@ RSpec.describe "Admin::ConversationsController" do
         expect(response.body).not_to have_content("Next page")
       end
     end
+  end
+
+  def expect_unprocessible_entity_with_errors
+    expect(response).to have_http_status(:unprocessable_entity)
+    expect(response.body).to have_link("Enter a valid start date", href: "#start_date_params")
+    expect(response.body).to have_link("Enter a valid end date", href: "#end_date_params")
   end
 end

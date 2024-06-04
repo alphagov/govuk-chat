@@ -10,7 +10,7 @@ end
   <% if @create_question.errors.any? %>
     <%= render "govuk_publishing_components/components/error_summary", {
       title: "There is a problem",
-      items: error_items(@create_question, :user_question, "#create_question_user_question"),
+      items: error_items_for_summary_component(@create_question, user_question: "#create_question_user_question"),
     } %>
   <% end %>
 <% end %>
@@ -46,6 +46,6 @@ end
     name: "create_question[user_question]",
     input_id: "create_question_user_question",
     value: @create_question.user_question,
-    error_items: @create_question.errors[:user_question].map { |message| { text: message } },
+    error_items: error_items(@create_question, :user_question),
   } %>
 <% end %>
