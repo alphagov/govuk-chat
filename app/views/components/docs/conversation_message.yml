@@ -44,8 +44,10 @@ examples:
       id: some-id-3
       message: This is a system generated conversation message with sources
       sources:
-        - http://example.com
-        - http://example.gov.uk
+        - href: http://example.com
+          title: Document 1
+        - href: http://example.gov.uk
+          title: Document 2
   message_is_a_question:
     embed: |
       <ul class="govuk-list">

@@ -81,8 +81,8 @@ RSpec.describe "Conversation with chat-api" do
   end
 
   def and_i_can_see_the_sources
-    expect(page).to have_link("#{Plek.website_root}/taxes")
-    expect(page).to have_link("#{Plek.website_root}/vat")
+    expect(page).to have_link("/taxes", href: "#{Plek.website_root}/taxes")
+    expect(page).to have_link("/vat", href: "#{Plek.website_root}/vat")
   end
 
   def when_i_enter_a_second_question
