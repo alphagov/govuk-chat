@@ -3,11 +3,6 @@ $message-container-spacing-mobile: 40px;
 
 .app-c-conversation-message {
   display: flex;
-  margin: 0 0 govuk-spacing(5);
-
-  &:first-of-type {
-    margin: govuk-spacing(5) 0;
-  }
 }
 
 .app-c-conversation-message--user-message {
@@ -23,11 +18,11 @@ $message-container-spacing-mobile: 40px;
 }
 
 .app-c-conversation-message--govuk-message {
-  margin: govuk-spacing(3) 0 govuk-spacing(3) auto;
+  margin: govuk-spacing(3) 0;
   width: calc(100% - $message-container-spacing-mobile);
 
   @include govuk-media-query($from: tablet) {
-    margin: govuk-spacing(5) 0 govuk-spacing(5) auto;
+    margin: govuk-spacing(5) 0;
     width: calc(100% - $message-container-spacing-tablet);
   }
 }
