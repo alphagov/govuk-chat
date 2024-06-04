@@ -1,4 +1,4 @@
-describe('Conversation form component', () => {
+describe('ConversationForm component', () => {
   'use strict'
 
   let form, input, button, presenceErrorMessage, lengthErrorMessage, errorsWrapper, module
@@ -37,7 +37,7 @@ describe('Conversation form component', () => {
     })
   })
 
-  describe('receiving the submit event', () => {
+  describe('when receiving a submit event', () => {
     beforeEach(() => module.init())
 
     it('allows form submission when input is valid', () => {
@@ -83,7 +83,7 @@ describe('Conversation form component', () => {
     })
   })
 
-  describe('receiving the question-pending event', () => {
+  describe('when receiving a question-pending event', () => {
     beforeEach(() => module.init())
 
     it('disables the controls', () => {
@@ -101,7 +101,7 @@ describe('Conversation form component', () => {
     })
   })
 
-  describe('receiving the question-accepted event', () => {
+  describe('when receiving a question-accepted event', () => {
     beforeEach(() => module.init())
 
     it('disables the controls', () => {
@@ -118,7 +118,7 @@ describe('Conversation form component', () => {
     })
   })
 
-  describe('receiving the question-rejected event', () => {
+  describe('when receiving a question-rejected event', () => {
     let errorDetail
 
     beforeEach(() => {
@@ -182,7 +182,7 @@ describe('Conversation form component', () => {
     })
   })
 
-  describe('receiving the answer-received event', () => {
+  describe('when receiving an answer-received event', () => {
     beforeEach(() => module.init())
 
     it('enables any disabled controls', () => {
