@@ -8,14 +8,14 @@ class Question < ApplicationRecord
 
   belongs_to :conversation
   has_one :answer
-  scope :unanswered, -> { left_outer_joins(:answer).where(answer: { id: nil }) }
-
-  def answer_status
-    answer&.status || "pending"
-  end
+  scope :unanswered, -> { where.missing(:answer) }
 
   scope :active, lambda {
     max_age = Rails.configuration.conversations.max_question_age_days.days.ago
     where("questions.created_at >= :max_age", max_age:)
   }
+
+  def answer_status
+    answer&.status || "pending"
+  end
 end
