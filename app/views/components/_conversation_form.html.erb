@@ -34,7 +34,11 @@
 
 <%= form_with url: url, class: "app-c-conversation-form js-conversation-form", data: data_attributes do |f| %>
   <%= content_tag :div, class: form_group_classes do %>
-    <%= tag.ul(id: error_id, class: %w[govuk-list govuk-error-message js-conversation-form-errors-wrapper], hidden: !has_error) do %>
+    <%= tag.ul(
+      id: error_id,
+      class: %w[govuk-list govuk-error-message js-conversation-form-errors-wrapper],
+      hidden: !has_error,
+      aria: { atomic: "true", live: "polite" }) do %>
       <% error_items.each do |error| %>
         <li>
           <span class="govuk-visually-hidden">Error:</span>
