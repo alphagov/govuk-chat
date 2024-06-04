@@ -24,38 +24,46 @@
     "presence-error-message": presence_error_message,
     "length-error-message": sprintf(length_error_message, count: maxlength),
   }
+
+  form_group_classes = " app-c-conversation-form__form-group js-conversation-form-group"
+  form_group_classes << " app-c-conversation-form__form-group--error" if error_items.any?
+
+  input_classes = "app-c-conversation-form__input js-conversation-form-input"
+  input_classes << " app-c-conversation-form__input--error" if error_items.any?
 %>
 
 <%= form_with url: url, class: "app-c-conversation-form js-conversation-form", data: data_attributes do |f| %>
-  <%= content_tag :div, class: "app-c-conversation-form__input-wrapper" do %>
-    <%= label_tag(
-      input_id,
-      "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
-      class: "app-c-conversation-form__label govuk-visually-hidden",
-    ) %>
+  <%= content_tag :div, class: form_group_classes do %>
+    <%= tag.ul(id: error_id, class: %w[govuk-list govuk-error-message js-conversation-form-errors-wrapper], hidden: !has_error) do %>
+      <% error_items.each do |error| %>
+        <li>
+          <span class="govuk-visually-hidden">Error:</span>
+          <%= error[:text] %>
+        </li>
+      <% end %>
+    <% end %>
 
-    <%= text_field_tag(
-      input_id,
-      value,
-      class: "app-c-conversation-form__input js-conversation-form-input",
-      aria: {
-        describedby: aria_described_by,
-      },
-      name: name,
-    ) %>
+    <%= content_tag :div, class: "app-c-conversation-form__input-wrapper" do %>
+      <%= label_tag(
+        input_id,
+        "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
+        class: "app-c-conversation-form__label govuk-visually-hidden",
+      ) %>
 
-    <%= render "components/blue_button", {
-      text: "Send",
-      conversation_form_button: true,
-    } %>
-  <% end %>
+      <%= text_field_tag(
+        input_id,
+        value,
+        class: input_classes,
+        aria: {
+          describedby: aria_described_by,
+        },
+        name: name,
+      ) %>
 
-  <%= tag.ul(id: error_id, class: %w[govuk-list govuk-error-message js-conversation-form-errors-wrapper], hidden: !has_error) do %>
-    <% error_items.each do |error| %>
-      <li>
-        <span class="govuk-visually-hidden">Error:</span>
-        <%= error[:text] %>
-      </li>
+      <%= render "components/blue_button", {
+        text: "Send",
+        conversation_form_button: true,
+      } %>
     <% end %>
   <% end %>
 

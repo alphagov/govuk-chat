@@ -1,7 +1,7 @@
 describe('Conversation form component', () => {
   'use strict'
 
-  let form, input, button, presenceErrorMessage, lengthErrorMessage, errorsWrapper, module
+  let form, formGroup, input, button, presenceErrorMessage, lengthErrorMessage, errorsWrapper, module
 
   beforeEach(function () {
     form = document.createElement('form')
@@ -11,13 +11,18 @@ describe('Conversation form component', () => {
     form.dataset.lengthErrorMessage = lengthErrorMessage
     form.dataset.maxlength = 300
     form.innerHTML = `
-      <input type="text" class="js-conversation-form-input" value="What is the VAT rate?">
-      <button class="js-conversation-form-button">Submit</button>
-      <ul class="js-conversation-form-errors-wrapper" hidden="true"></ul>
+      <div class="js-conversation-form-group">
+        <ul class="js-conversation-form-errors-wrapper" hidden="true"></ul>
+        <div class="app-c-conversation-form__input-wrapper">
+          <input type="text" class="js-conversation-form-input" value="What is the VAT rate?">
+          <button class="js-conversation-form-button">Submit</button>
+        </div>
+      </div>
     `
     input = form.querySelector('.js-conversation-form-input')
     button = form.querySelector('.js-conversation-form-button')
     errorsWrapper = form.querySelector('.js-conversation-form-errors-wrapper')
+    formGroup = form.querySelector('.js-conversation-form-group')
     document.body.appendChild(form)
     module = new window.GOVUK.Modules.ConversationForm(form)
   })
@@ -70,6 +75,14 @@ describe('Conversation form component', () => {
 
       expect(errorsWrapper.innerHTML)
         .toEqual(`<li><span class="govuk-visually-hidden">Error:</span>${presenceErrorMessage}</li>`)
+    })
+
+    it('adds error stylesheet classes', () => {
+      input.value = ''
+      form.dispatchEvent(new Event('submit'))
+
+      expect(formGroup.classList).toContain('app-c-conversation-form__form-group--error')
+      expect(input.classList).toContain('app-c-conversation-form__input--error')
     })
 
     it('shows an error when the user input is greater in length than maxlength', () => {
@@ -156,6 +169,15 @@ describe('Conversation form component', () => {
 
       expect(errorsWrapper.hidden).toBe(false)
       expect(errorsWrapper.innerHTML).toEqual(expectedHtml)
+    })
+
+    it('adds error stylesheet classes', () => {
+      const event = new CustomEvent('question-rejected', errorDetail)
+      form.dispatchEvent(event)
+      console.warn(formGroup.classList)
+
+      expect(formGroup.classList).toContain('app-c-conversation-form__form-group--error')
+      expect(input.classList).toContain('app-c-conversation-form__input--error')
     })
 
     it('replaces any existing error messages', () => {
