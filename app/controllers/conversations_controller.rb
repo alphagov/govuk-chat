@@ -72,13 +72,9 @@ private
   def question_success_json(question)
     {
       question_html: render_to_string(
-        partial: "components/conversation_message",
+        partial: "question",
         formats: :html,
-        locals: {
-          id: helpers.dom_id(question),
-          message: question.message,
-          is_question: true,
-        },
+        locals: { question: },
       ),
       answer_url: answer_question_path(question),
       error_messages: [],
@@ -96,13 +92,9 @@ private
   def answer_success_json(answer)
     {
       answer_html: render_to_string(
-        partial: "components/conversation_message",
+        partial: "answer",
         formats: :html,
-        locals: {
-          id: helpers.dom_id(answer),
-          sources: answer.sources.map(&:url),
-          message: answer.message,
-        },
+        locals: { answer: },
       ),
     }
   end
