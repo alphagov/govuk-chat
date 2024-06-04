@@ -18,7 +18,8 @@ class Admin::Form::QuestionsFilter
 
   def questions
     @questions ||= begin
-      scope = Question.joins("LEFT JOIN answers answer ON answer.question_id = questions.id")
+      scope = Question.includes(:answer)
+                      .left_outer_joins(:answer)
       scope = search_scope(scope)
       scope = status_scope(scope)
       scope = start_date_scope(scope)
@@ -61,7 +62,7 @@ private
   def search_scope(scope)
     return scope if search.blank?
 
-    scope.where("questions.message ILIKE :search OR answer.rephrased_question ILIKE :search OR answer.message ILIKE :search", search: "%#{search}%")
+    scope.where("questions.message ILIKE :search OR answers.rephrased_question ILIKE :search OR answers.message ILIKE :search", search: "%#{search}%")
   end
 
   def status_scope(scope)
@@ -70,7 +71,7 @@ private
     if status == "pending"
       scope.unanswered
     else
-      scope.where(answer: { status: })
+      scope.where(answers: { status: })
     end
   end
 
