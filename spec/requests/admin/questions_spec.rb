@@ -44,9 +44,27 @@ RSpec.describe "Admin::QuestionsController" do
     end
 
     context "when filter parameters are provided" do
-      it "returns successfully" do
+      it "returns success when filters paramaters are valid" do
         get admin_questions_path(status: "abort_forbidden_words")
         expect(response).to have_http_status(:ok)
+      end
+
+      it "returns unprocessable_entity and renders the page with errors when invalid parameters are received" do
+        start_date_params = { day: 1, month: 1, year: "invalid" }
+        end_date_params = { day: 1, month: 1, year: "invalid" }
+
+        get admin_questions_path(start_date_params:, end_date_params:)
+
+        expect_unprocessible_entity_with_errors
+      end
+
+      it "returns unprocessable_entity and renders the page with errors when partial date parameters are received" do
+        start_date_params = { day: 1, month: 1 }
+        end_date_params = { day: 1, month: 1 }
+
+        get admin_questions_path(start_date_params:, end_date_params:)
+
+        expect_unprocessible_entity_with_errors
       end
     end
   end
@@ -78,5 +96,11 @@ RSpec.describe "Admin::QuestionsController" do
       href = admin_search_path(params: { search_text: "how do I pay self assessment" })
       expect(response.body).to have_selector("a.govuk-link[href='#{href}']", text: "how do I pay self assessment")
     end
+  end
+
+  def expect_unprocessible_entity_with_errors
+    expect(response).to have_http_status(:unprocessable_entity)
+    expect(response.body).to have_link("Enter a valid start date", href: "#start_date")
+    expect(response.body).to have_link("Enter a valid end date", href: "#end_date")
   end
 end

@@ -110,12 +110,20 @@ private
   def start_date
     return if start_date_params.values.all?(&:blank?)
 
-    @start_date ||= Time.zone.local(start_date_params[:year], start_date_params[:month], start_date_params[:day])
+    @start_date ||= Time.zone.local(
+      start_date_params.fetch(:year, ""),
+      start_date_params.fetch(:month, ""),
+      start_date_params.fetch(:day, ""),
+    )
   end
 
   def end_date
     return if end_date_params.values.all?(&:blank?)
 
-    @end_date ||= Time.zone.local(end_date_params[:year], end_date_params[:month], end_date_params[:day])
+    @end_date ||= Time.zone.local(
+      end_date_params.fetch(:year, ""),
+      end_date_params.fetch(:month, ""),
+      end_date_params.fetch(:day, ""),
+    )
   end
 end

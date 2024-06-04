@@ -3,6 +3,7 @@ class Admin::QuestionsController < Admin::BaseController
 
   def index
     @filter = questions_filter
+    render :index, status: :unprocessable_entity if @filter.errors.present?
   end
 
   def show

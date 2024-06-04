@@ -23,7 +23,7 @@ RSpec.describe Admin::Form::QuestionsFilter do
           end_date_params: { day: "1", month: "1", year: "2020" },
         )
         expect(filter).not_to be_valid
-        expect(filter.errors[:start_date_params]).to include("Enter a valid start date")
+        expect(filter.errors[:start_date_params]).to eq(["Enter a valid start date"])
       end
 
       it "is invalid if the end date is not a valid date" do
@@ -32,7 +32,18 @@ RSpec.describe Admin::Form::QuestionsFilter do
           end_date_params: { day: "32", month: "1", year: "2020" },
         )
         expect(filter).not_to be_valid
-        expect(filter.errors[:end_date_params]).to include("Enter a valid end date")
+        expect(filter.errors[:end_date_params]).to eq(["Enter a valid end date"])
+      end
+
+      it "is invalid with partial date params" do
+        filter = described_class.new(
+          start_date_params: { day: "1", month: "1" },
+          end_date_params: { day: "1", month: "1" },
+        )
+
+        expect(filter).not_to be_valid
+        expect(filter.errors[:start_date_params]).to eq(["Enter a valid start date"])
+        expect(filter.errors[:end_date_params]).to eq(["Enter a valid end date"])
       end
     end
   end
