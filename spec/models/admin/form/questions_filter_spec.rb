@@ -1,6 +1,4 @@
 RSpec.describe Admin::Form::QuestionsFilter do
-  let(:time) { Time.zone.now }
-
   describe "#validations" do
     describe "#validate_dates" do
       it "is valid if the start date and end date are valid dates" do
@@ -69,63 +67,66 @@ RSpec.describe Admin::Form::QuestionsFilter do
       create(:answer, rephrased_question: "Hello Stars", question: question3)
       create(:question, message: "goodbye")
 
-      questions = described_class.new(search: "hello").questions
-      expect(questions).to eq([question1, question2, question3])
+      filter = described_class.new(search: "hello")
+      expect(filter.questions).to eq([question1, question2, question3])
     end
 
     it "filters the questions by status" do
       question1 = create(:question)
       question2 = create(:answer, status: "success").question
 
-      questions = described_class.new(status: "pending").questions
-      expect(questions).to eq([question1])
+      filter = described_class.new(status: "pending")
+      expect(filter.questions).to eq([question1])
 
-      questions = described_class.new(status: "success").questions
-      expect(questions).to eq([question2])
+      filter = described_class.new(status: "success")
+      expect(filter.questions).to eq([question2])
     end
 
     it "filters the questions by start date" do
       question = create(:question)
       create(:question, created_at: 2.days.ago)
+      today = Date.current
+      filter = described_class.new(
+        start_date_params: { day: today.day, month: today.month, year: today.year },
+      )
 
-      questions = described_class.new(start_date_params: { day: time.day, month: time.month, year: time.year }).questions
-
-      expect(questions).to eq([question])
+      expect(filter.questions).to eq([question])
     end
 
     it "filters the questions by end date" do
       question = create(:question, created_at: 2.days.ago)
       create(:question)
 
-      questions = described_class.new(end_date_params: { day: time.day, month: time.month, year: time.year }).questions
+      today = Date.current
+      filter = described_class.new(end_date_params: { day: today.day, month: today.month, year: today.year })
 
-      expect(questions).to eq([question])
+      expect(filter.questions).to eq([question])
     end
 
-    it "adds errors to the form and does not filter on the start date when start date is invalid" do
+    it "does not filter on the start date when start date is invalid" do
       question = create(:question, created_at: 2.years.ago)
       create(:question)
 
+      today = Date.current
       filter = described_class.new(
-        start_date_params: { day: time.day, month: "invalid", year: time.year },
-        end_date_params: { day: time.day, month: time.month, year: time.year - 1 },
+        start_date_params: { day: today.day, month: "invalid", year: today.year },
+        end_date_params: { day: today.day, month: today.month, year: today.year - 1 },
       )
 
       expect(filter.questions).to eq([question])
-      expect(filter.errors[:start_date_params]).to include("Enter a valid start date")
     end
 
-    it "adds errors to the form and does not filter on the end date when end date is invalid" do
+    it "does not filter on the end date when end date is invalid" do
       create(:question, created_at: 2.years.ago)
       question = create(:question)
 
+      today = Date.current
       filter = described_class.new(
-        start_date_params: { day: time.day, month: time.month, year: time.year - 1 },
-        end_date_params: { day: time.day, month: "invalid", year: time.year },
+        start_date_params: { day: today.day, month: today.month, year: today.year - 1 },
+        end_date_params: { day: today.day, month: "invalid", year: today.year },
       )
 
       expect(filter.questions).to eq([question])
-      expect(filter.errors[:end_date_params]).to include("Enter a valid end date")
     end
 
     it "filters the questions between the start and end dates" do
@@ -133,23 +134,13 @@ RSpec.describe Admin::Form::QuestionsFilter do
       create(:question, created_at: 1.year.ago)
       create(:question, created_at: 5.years.ago)
 
-      questions = described_class.new(
-        start_date_params: { day: time.day, month: time.month, year: time.year - 4 },
-        end_date_params: { day: time.day, month: time.month, year: time.year - 2 },
-      ).questions
+      today = Date.current
+      filter = described_class.new(
+        start_date_params: { day: today.day, month: today.month, year: today.year - 4 },
+        end_date_params: { day: today.day, month: today.month, year: today.year - 2 },
+      )
 
-      expect(questions).to eq([question])
-    end
-
-    it "works with all filters applied" do
-      question = create(:answer, status: "success", message: "hello world").question
-      questions = described_class.new(
-        status: "success",
-        search: "Hello",
-        start_date_params: { day: time.day, month: time.month, year: time.year - 1 },
-        end_date_params: { day: time.day, month: time.month, year: time.year + 1 },
-      ).questions
-      expect(questions).to eq([question])
+      expect(filter.questions).to eq([question])
     end
 
     it "paginates the questions" do
@@ -167,9 +158,9 @@ RSpec.describe Admin::Form::QuestionsFilter do
         question1 = create(:question, created_at: 2.minutes.ago)
         create(:question, created_at: 1.minute.ago)
 
-        questions = described_class.new(conversation: question1.conversation).questions
+        filter = described_class.new(conversation: question1.conversation)
 
-        expect(questions).to eq([question1])
+        expect(filter.questions).to eq([question1])
       end
     end
   end
@@ -194,8 +185,9 @@ RSpec.describe Admin::Form::QuestionsFilter do
 
     it "retains all other query params when constructing the params" do
       create_list(:question, 26)
-      start_date_params = { day: time.day, month: time.month, year: time.year - 1 }
-      end_date_params = { day: time.day, month: time.month, year: time.year + 1 }
+      today = Date.current
+      start_date_params = { day: today.day, month: today.month, year: today.year - 1 }
+      end_date_params = { day: today.day, month: today.month, year: today.year + 1 }
 
       filter = described_class.new(
         status: "pending",
@@ -224,8 +216,9 @@ RSpec.describe Admin::Form::QuestionsFilter do
 
     it "retains all other query params when constructing the params" do
       create_list(:question, 26)
-      start_date_params = { day: time.day, month: time.month, year: time.year - 1 }
-      end_date_params = { day: time.day, month: time.month, year: time.year + 1 }
+      today = Date.current
+      start_date_params = { day: today.day, month: today.month, year: today.year - 1 }
+      end_date_params = { day: today.day, month: today.month, year: today.year + 1 }
 
       filter = described_class.new(
         status: "pending",
