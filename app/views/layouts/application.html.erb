@@ -76,8 +76,12 @@
           <% end %>
         <% end %>
 
-      <%= tag.div(class: conversation_layout ? "app-conversation-layout__wrapper" : "govuk-width-container") do %>
-        <%= content_for?(:content) ? yield(:content) : yield %>
+      <% if conversation_layout %>
+        <%= yield(:content) %>
+      <% else %>
+        <div class="govuk-width-container">
+          <%= yield %>
+        </div>
       <% end %>
     <% end %>
 

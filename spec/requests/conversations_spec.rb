@@ -62,6 +62,7 @@ RSpec.describe "ConversationsController" do
         expect(response).to have_http_status(:ok)
         expect(response.body)
           .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
+          .and have_selector("[data-pending-answer-url='#{answer_question_path(question)}']")
       end
 
       context "when the conversation cannot be found" do

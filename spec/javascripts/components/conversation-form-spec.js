@@ -20,14 +20,26 @@ describe('Conversation form component', () => {
     errorsWrapper = form.querySelector('.js-conversation-form-errors-wrapper')
     document.body.appendChild(form)
     module = new window.GOVUK.Modules.ConversationForm(form)
-    module.init()
   })
 
   afterEach(function () {
     document.body.removeChild(form)
   })
 
+  describe('init', () => {
+    it('dispatches an init event on the form element', () => {
+      const spy = jasmine.createSpy()
+      form.addEventListener('init', spy)
+
+      module.init()
+
+      expect(spy).toHaveBeenCalled()
+    })
+  })
+
   describe('receiving the submit event', () => {
+    beforeEach(() => module.init())
+
     it('allows form submission when input is valid', () => {
       input.value = 'valid input'
       const submitSpy = jasmine.createSpy('submit event spy')
@@ -72,6 +84,8 @@ describe('Conversation form component', () => {
   })
 
   describe('receiving the question-pending event', () => {
+    beforeEach(() => module.init())
+
     it('disables the controls', () => {
       form.dispatchEvent(new Event('question-pending'))
 
@@ -88,6 +102,8 @@ describe('Conversation form component', () => {
   })
 
   describe('receiving the question-accepted event', () => {
+    beforeEach(() => module.init())
+
     it('disables the controls', () => {
       form.dispatchEvent(new Event('question-accepted'))
 
@@ -106,6 +122,7 @@ describe('Conversation form component', () => {
     let errorDetail
 
     beforeEach(() => {
+      module.init()
       errorDetail = {
         detail: {
           errorMessages: ['Error 1', 'Error 2']
@@ -166,6 +183,8 @@ describe('Conversation form component', () => {
   })
 
   describe('receiving the answer-received event', () => {
+    beforeEach(() => module.init())
+
     it('enables any disabled controls', () => {
       input.readOnly = true
       button.disabled = true

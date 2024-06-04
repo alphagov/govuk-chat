@@ -1,3 +1,10 @@
+<%
+@conversation_data_attributes = { module: "chat-conversation" }
+
+if @questions.last && !@questions.last.answer
+  @conversation_data_attributes[:"pending-answer-url"] = answer_question_path(@questions.last)
+end
+%>
 <%= content_for :title, "GOV.UK Chat" %>
 <%= content_for :error_summary do %>
   <% if @create_question.errors.any? %>
@@ -26,7 +33,7 @@
   message: tag.p("Thanks! To get started, ask me a question."),
 } %>
 
-<% @conversation.questions_for_showing_conversation.each do |question| %>
+<% @questions.each do |question| %>
   <%= render "question", question: %>
   <% if question.answer %>
     <%= render "answer", answer: question.answer %>

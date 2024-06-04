@@ -1,3 +1,4 @@
+<% @conversation_data_attributes ||= {} %>
 <% content_for :alerts do %>
   <div class="app-conversation-layout__width-container">
     <% if content_for?(:error_summary) %>
@@ -25,20 +26,22 @@
 <% end %>
 
 <% content_for :content do %>
-  <div class="app-conversation-layout__message-container">
-    <div class="app-conversation-layout__width-container">
-      <ul class="app-conversation-layout__list">
-        <%= yield %>
-      </ul>
-    </div>
-  </div>
-
-  <% if content_for?(:form) %>
-    <div class="app-conversation-layout__form-container">
+  <% tag.div(class: "app-conversation-layout__wrapper", data: @conversation_data_attributes) do %>
+    <div class="app-conversation-layout__message-container">
       <div class="app-conversation-layout__width-container">
-        <%= yield(:form) %>
+        <ul class="app-conversation-layout__list js-conversation-list">
+          <%= yield %>
+        </ul>
       </div>
     </div>
+
+    <% if content_for?(:form) %>
+      <div class="app-conversation-layout__form-container">
+        <div class="app-conversation-layout__width-container">
+          <%= yield(:form) %>
+        </div>
+      </div>
+    <% end %>
   <% end %>
 <% end %>
 
