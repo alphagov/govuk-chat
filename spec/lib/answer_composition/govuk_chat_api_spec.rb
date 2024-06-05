@@ -33,6 +33,7 @@ RSpec.describe AnswerComposition::GovukChatApi do
         persisted?: false,
       )
       expect(answer.sources.map(&:path)).to match_array(["/taxes", "/vat", "/income-tax"])
+      expect(answer.sources.map(&:title)).to match_array(["/taxes", "/vat", "/income-tax"])
     end
   end
 end

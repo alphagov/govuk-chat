@@ -9,7 +9,11 @@ module AnswerComposition
     def call
       answer = question.build_answer(message: response["answer"], status: "success")
       response["sources"].each.with_index do |url, index|
-        answer.sources.build(path: return_base_path(url), relevancy: index)
+        answer.sources.build(
+          path: return_base_path(url),
+          title: return_base_path(url),
+          relevancy: index,
+        )
       end
       answer
     end
