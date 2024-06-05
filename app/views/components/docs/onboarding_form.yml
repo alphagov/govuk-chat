@@ -17,6 +17,7 @@ examples:
   default:
     data:
       url: "/onboarding"
+      tell_me_more_href: /tell-me-more
   with_more_information:
     description: When more_information is true, an alternative onboarding form is rendered which provides a link back to the GOV.UK homepage
     data:
