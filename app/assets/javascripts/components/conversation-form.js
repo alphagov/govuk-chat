@@ -76,6 +76,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     enableControls () {
       this.input.readOnly = false
       this.button.disabled = false
+      this.button.focus()
     }
 
     replaceErrors (errors) {
