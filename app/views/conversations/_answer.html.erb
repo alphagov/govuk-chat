@@ -2,7 +2,7 @@
   id: dom_id(answer),
   sources: answer.sources.flat_map do |source|
     {
-      href: "#{Plek.website_root}#{source.path}",
+      href: source.url,
       title: source.title,
     }
   end,
