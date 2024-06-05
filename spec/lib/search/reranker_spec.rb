@@ -60,5 +60,25 @@ RSpec.describe Search::Reranker do
           .map { |r| [r.document_type, r.reranked_score] }).to eq([["export_health_certificate", 0.125]])
       end
     end
+
+    context "when the parent_document_type is html_publication" do
+      let(:chunked_content_results) do
+        [
+          Search::ChunkedContentRepository::Result.new(score: 0.25, document_type: "html_publication", parent_document_type: "form"),
+          Search::ChunkedContentRepository::Result.new(score: 0.25, document_type: "html_publication", parent_document_type: "guide"),
+          Search::ChunkedContentRepository::Result.new(score: 0.25, document_type: "html_publication", parent_document_type: "export_health_certificate"),
+        ]
+      end
+
+      it "returns results sorted based on parent_document_type" do
+        expect(described_class.call(chunked_content_results).results.map { |r| [r.parent_document_type, r.reranked_score] }).to eq(
+          [
+            ["guide", 0.5], # doc type weighting of 2.0
+            ["form", 0.25], # doc type weighting of 1.0
+            ["export_health_certificate", 0.125], # doc type weighting of 0.5
+          ],
+        )
+      end
+    end
   end
 end

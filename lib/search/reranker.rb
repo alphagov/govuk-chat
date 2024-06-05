@@ -27,9 +27,14 @@ module Search
     end
 
     def rank_result(result)
+      document_type_weight = if result.document_type == "html_publication"
+                               Reranking::DocumentTypeWeights.call(result.parent_document_type)
+                             else
+                               Reranking::DocumentTypeWeights.call(result.document_type)
+                             end
       Search::ResultsForQuestion::Result.new(
         result:,
-        reranked_score: result.score * Reranking::DocumentTypeWeights.call(result.document_type),
+        reranked_score: result.score * document_type_weight,
       )
     end
 
