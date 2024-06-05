@@ -32,7 +32,7 @@ module RequestExamples
             end
           end
 
-          context "when covnersation_id is set on the cookie" do
+          context "when conversation_id is set on the cookie" do
             it "does not redirect to the onboarding flow for #{method} #{path}" do
               conversation = create(:conversation)
               cookies[:conversation_id] = conversation.id
