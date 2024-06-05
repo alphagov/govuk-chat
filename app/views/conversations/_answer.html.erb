@@ -1,5 +1,10 @@
 <%= render "components/conversation_message", {
   id: dom_id(answer),
-  sources: answer.sources.map { |source| "#{Plek.website_root}#{source.path}" },
+  sources: answer.sources.flat_map do |source|
+    {
+      href: source.url,
+      title: source.title,
+    }
+  end,
   message: answer.message,
 } %>

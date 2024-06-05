@@ -90,8 +90,7 @@ module Admin
 
       if answer&.sources.present?
         source_links = answer.sources.map do |source|
-          url = "#{Plek.website_root}#{source.path}"
-          tag.a(url, href: url, class: "govuk-link")
+          tag.a(source.title, href: source.url, class: "govuk-link")
         end
 
         rows << {

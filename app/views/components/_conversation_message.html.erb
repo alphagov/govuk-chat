@@ -50,7 +50,13 @@
           <%= render "govuk_publishing_components/components/list", {
             visible_counters: true,
             items: sources.map do |source|
-              link_to(source, source, class: "govuk-link", target: "_blank", rel: "noopener noreferrer")
+              link_to(
+                source.fetch(:title),
+                source.fetch(:href),
+                class: "govuk-link",
+                target: "_blank",
+                rel: "noopener noreferrer",
+              )
             end,
           } %>
         </div>

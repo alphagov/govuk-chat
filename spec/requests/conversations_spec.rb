@@ -44,6 +44,20 @@ RSpec.describe "ConversationsController" do
           .and have_selector("##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message)
       end
 
+      it "can render an answer with sources" do
+        question = create(:question, conversation:)
+        answer = create(:answer, :with_sources, question:)
+        first_source = answer.sources.first
+        second_source = answer.sources.second
+
+        get show_conversation_path
+
+        expect(response).to have_http_status(:success)
+        expect(response.body)
+          .to have_link(first_source.title, href: first_source.url)
+          .and have_link(second_source.title, href: second_source.url)
+      end
+
       it "only render max number of question from rails config" do
         allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(1)
         older_question = create(:question, :with_answer, conversation:)

@@ -48,19 +48,25 @@ RSpec.describe "components/_conversation_message.html.erb" do
       end
     end
 
-    it "renders sources as links in a details component when provided" do
+    it "renders sources as titles in a details component when provided" do
       render("components/conversation_message", {
         id: "answer-3",
         message: "message 4",
         sources: [
-          "http://example.com",
-          "http://example.gov.uk",
+          {
+            title: "Example 1",
+            href: "http://example.com",
+          },
+          {
+            title: "Example 2",
+            href: "http://example.gov.uk",
+          },
         ],
       })
 
       expect(rendered)
-        .to have_selector(".gem-c-list a[href='http://example.com']", text: "http://example.com", visible: :all)
-        .and have_selector(".gem-c-list a[href='http://example.gov.uk']", text: "http://example.gov.uk", visible: :all)
+        .to have_link("Example 1", href: "http://example.com", visible: :all)
+        .and have_link("Example 2", href: "http://example.gov.uk", visible: :all)
     end
 
     it "sanitises the message" do
