@@ -36,7 +36,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       }
 
       this.replaceErrors(errors)
-      this.toggleErrorStyles(errors.length)
 
       if (errors.length) {
         event.preventDefault()
@@ -59,7 +58,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       }
 
       this.replaceErrors(event.detail.errorMessages)
-      this.toggleErrorStyles(event.detail.errorMessages.length)
       this.enableControls()
     }
 
@@ -90,6 +88,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       })
 
       this.errorsWrapper.replaceChildren(...elements)
+
+      this.toggleErrorStyles(errors.length)
     }
 
     toggleErrorStyles (hasErrors) {

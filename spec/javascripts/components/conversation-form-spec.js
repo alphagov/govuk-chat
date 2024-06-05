@@ -13,10 +13,8 @@ describe('Conversation form component', () => {
     form.innerHTML = `
       <div class="js-conversation-form-group">
         <ul class="js-conversation-form-errors-wrapper" hidden="true"></ul>
-        <div class="app-c-conversation-form__input-wrapper">
-          <input type="text" class="js-conversation-form-input" value="What is the VAT rate?">
-          <button class="js-conversation-form-button">Submit</button>
-        </div>
+        <input type="text" class="js-conversation-form-input" value="What is the VAT rate?">
+        <button class="js-conversation-form-button">Submit</button>
       </div>
     `
     input = form.querySelector('.js-conversation-form-input')
@@ -77,12 +75,25 @@ describe('Conversation form component', () => {
         .toEqual(`<li><span class="govuk-visually-hidden">Error:</span>${presenceErrorMessage}</li>`)
     })
 
-    it('adds error stylesheet classes', () => {
+    it('adds the appropriate classes when there is a validation error', () => {
       input.value = ''
       form.dispatchEvent(new Event('submit'))
 
       expect(formGroup.classList).toContain('app-c-conversation-form__form-group--error')
       expect(input.classList).toContain('app-c-conversation-form__input--error')
+    })
+
+    it('removes any errors and error classes when input is valid', () => {
+      input.value = ''
+      form.dispatchEvent(new Event('submit'))
+
+      input.value = 'valid input'
+      form.dispatchEvent(new Event('submit'))
+
+      expect(errorsWrapper.hidden).toBe(true)
+      expect(errorsWrapper.innerHTML).toBe('')
+      expect(formGroup.classList).not.toContain('app-c-conversation-form__form-group--error')
+      expect(input.classList).not.toContain('app-c-conversation-form__input--error')
     })
 
     it('shows an error when the user input is greater in length than maxlength', () => {
@@ -171,10 +182,9 @@ describe('Conversation form component', () => {
       expect(errorsWrapper.innerHTML).toEqual(expectedHtml)
     })
 
-    it('adds error stylesheet classes', () => {
+    it('adds the appropriate classes when there is a validation error', () => {
       const event = new CustomEvent('question-rejected', errorDetail)
       form.dispatchEvent(event)
-      console.warn(formGroup.classList)
 
       expect(formGroup.classList).toContain('app-c-conversation-form__form-group--error')
       expect(input.classList).toContain('app-c-conversation-form__input--error')
