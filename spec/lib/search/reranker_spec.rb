@@ -17,6 +17,9 @@ RSpec.describe Search::Reranker do
 
     before do
       allow(Rails.configuration.search).to receive(:result_score_threshold).and_return(result_score_threshold)
+      allow(Rails.configuration).to receive(:chunked_content_reranking).and_return({
+        "guide" => 2.0, "export_health_certificate" => 0.5
+      })
     end
 
     it "returns a Search::ResultsForQuestion::ResultSet" do
@@ -31,7 +34,7 @@ RSpec.describe Search::Reranker do
       expect(described_class.call(chunked_content_results).results.map { |r| [r.document_type, r.reranked_score] }).to eq(
         [
           ["guide", 0.5], # doc type weighting of 2.0
-          ["form", 0.25], # doc type weighting of 1.0
+          ["form", 0.25], # not defined - default weighting of 1.0
           ["export_health_certificate", 0.125], # doc type weighting of 0.5
         ],
       )
