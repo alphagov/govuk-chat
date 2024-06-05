@@ -27,11 +27,11 @@ RSpec.describe Search::Reranker do
     end
 
     it "returns results as Search::ResultsForQuestion::Result" do
-      expect(described_class.call(chunked_content_results).results).to all(be_a(Search::ResultsForQuestion::Result))
+      expect(described_class.call(chunked_content_results).results).to all(be_a(Search::ResultsForQuestion::WeightedResult))
     end
 
-    it "returns results sorted by reranked_score" do
-      expect(described_class.call(chunked_content_results).results.map { |r| [r.document_type, r.reranked_score] }).to eq(
+    it "returns results sorted by weighted_score" do
+      expect(described_class.call(chunked_content_results).results.map { |r| [r.document_type, r.weighted_score] }).to eq(
         [
           ["guide", 0.5], # doc type weighting of 2.0
           ["form", 0.25], # not defined - default weighting of 1.0
@@ -43,14 +43,14 @@ RSpec.describe Search::Reranker do
     context "when the reranked score doesn't meet the configured threshold" do
       let(:result_score_threshold) { 0.5 }
 
-      it "has results with reranked_score >= threshold" do
+      it "has results with weighted_score >= threshold" do
         expect(described_class.call(chunked_content_results).results
-          .map { |r| [r.document_type, r.reranked_score] }).to eq([["guide", 0.5]])
+          .map { |r| [r.document_type, r.weighted_score] }).to eq([["guide", 0.5]])
       end
 
       it "has the other results in rejected_results" do
         expect(described_class.call(chunked_content_results).rejected_results
-          .map { |r| [r.document_type, r.reranked_score] }).to eq([["form", 0.25], ["export_health_certificate", 0.125]])
+          .map { |r| [r.document_type, r.weighted_score] }).to eq([["form", 0.25], ["export_health_certificate", 0.125]])
       end
     end
 
@@ -61,12 +61,12 @@ RSpec.describe Search::Reranker do
 
       it "has the top N results" do
         expect(described_class.call(chunked_content_results).results
-          .map { |r| [r.document_type, r.reranked_score] }).to eq([["guide", 0.5], ["form", 0.25]])
+          .map { |r| [r.document_type, r.weighted_score] }).to eq([["guide", 0.5], ["form", 0.25]])
       end
 
       it "has the other results in rejected_results" do
         expect(described_class.call(chunked_content_results).rejected_results
-          .map { |r| [r.document_type, r.reranked_score] }).to eq([["export_health_certificate", 0.125]])
+          .map { |r| [r.document_type, r.weighted_score] }).to eq([["export_health_certificate", 0.125]])
       end
     end
 
@@ -80,7 +80,7 @@ RSpec.describe Search::Reranker do
       end
 
       it "returns results sorted based on parent_document_type" do
-        expect(described_class.call(chunked_content_results).results.map { |r| [r.parent_document_type, r.reranked_score] }).to eq(
+        expect(described_class.call(chunked_content_results).results.map { |r| [r.parent_document_type, r.weighted_score] }).to eq(
           [
             ["guide", 0.5], # doc type weighting of 2.0
             ["form", 0.25], # doc type weighting of 1.0

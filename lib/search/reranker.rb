@@ -15,7 +15,7 @@ module Search
     attr_reader :search_results
 
     def results
-      ranked_results.select { |r| r.reranked_score >= score_threshold }.sort_by { |r| -r.reranked_score }.take(max_number_of_results)
+      ranked_results.select { |r| r.weighted_score >= score_threshold }.sort_by { |r| -r.weighted_score }.take(max_number_of_results)
     end
 
     def rejected_results
@@ -32,9 +32,9 @@ module Search
                              else
                                document_type_weight(result.document_type)
                              end
-      Search::ResultsForQuestion::Result.new(
+      Search::ResultsForQuestion::WeightedResult.new(
         result:,
-        reranked_score: result.score * document_type_weight,
+        weighted_score: result.score * document_type_weight,
       )
     end
 
