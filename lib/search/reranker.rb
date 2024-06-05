@@ -7,7 +7,7 @@ module Search
     end
 
     def call
-      Search::ResultsForQuestion::ResultSet.new(results:, rejected_results:)
+      results
     end
 
   private
@@ -15,15 +15,7 @@ module Search
     attr_reader :search_results
 
     def results
-      ranked_results.select { |r| r.weighted_score >= score_threshold }.sort_by { |r| -r.weighted_score }.take(max_number_of_results)
-    end
-
-    def rejected_results
-      ranked_results - results
-    end
-
-    def ranked_results
-      @ranked_results ||= search_results.map(&method(:rank_result))
+      search_results.map(&method(:rank_result)).sort_by { |r| -r.weighted_score }
     end
 
     def rank_result(result)
