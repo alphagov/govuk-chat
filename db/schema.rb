@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_03_125737) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_04_121936) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_03_125737) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "relevancy", null: false
+    t.string "title"
     t.index ["answer_id", "relevancy"], name: "index_answer_sources_on_answer_id_and_relevancy", unique: true
     t.index ["answer_id"], name: "index_answer_sources_on_answer_id"
     t.index ["created_at"], name: "index_answer_sources_on_created_at"

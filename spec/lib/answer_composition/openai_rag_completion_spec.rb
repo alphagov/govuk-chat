@@ -40,7 +40,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
         stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
       end
 
-      it "calls OpenAI chat endpoint and returns unsaved answer with sources" do
+      it "calls OpenAI chat endpoint and returns unsaved answer" do
         answer = described_class.call(question)
 
         expect_unsaved_answer_with_attributes(
@@ -52,7 +52,29 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
             status: "success",
           },
         )
+      end
+
+      it "builds a source using the results url which includes the anchor" do
+        answer = described_class.call(question)
         expect(answer.sources.first.path).to eq(chunk_result.url)
+      end
+
+      it "builds a source using the last heading in the heading_hierarchy to constuct the title" do
+        answer = described_class.call(question)
+
+        title = "#{chunk_result.title}: #{chunk_result.heading_hierarchy.last}"
+        expect(answer.sources.first.title).to eq(title)
+      end
+
+      context "when the result has no heading_hierarchy" do
+        let(:opensearch_chunk) do
+          build(:chunked_content_record, heading_hierarchy: []).except(:openai_embedding).merge(_id: "1", score: 1.0)
+        end
+
+        it "builds a source using the title" do
+          answer = described_class.call(question)
+          expect(answer.sources.first.title).to eq(chunk_result.title)
+        end
       end
 
       context "with multiple chunks from the same document" do
@@ -70,11 +92,19 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           allow(Search::ResultsForQuestion).to receive(:call).and_return([chunk_result, chunk_result])
         end
 
-        it "only builds one source and uses the base path" do
+        it "only builds one source for the result" do
           answer = described_class.call(question)
-
           expect(answer.sources.length).to eq(1)
+        end
+
+        it "uses the results base path as the source path" do
+          answer = described_class.call(question)
           expect(answer.sources.first.path).to eq(chunk_result.base_path)
+        end
+
+        it "uses the results title as the source title" do
+          answer = described_class.call(question)
+          expect(answer.sources.first.title).to eq(chunk_result.title)
         end
       end
     end
