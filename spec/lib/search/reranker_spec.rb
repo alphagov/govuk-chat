@@ -8,9 +8,9 @@ RSpec.describe Search::Reranker do
   describe ".call" do
     let(:chunked_content_results) do
       [
-        Search::ChunkedContentRepository::Result.new(score: 0.25, document_type: "form"),
-        Search::ChunkedContentRepository::Result.new(score: 0.25, document_type: "guide"),
-        Search::ChunkedContentRepository::Result.new(score: 0.25, document_type: "export_health_certificate"),
+        build_chunked_content_result(score: 0.25, document_type: "form"),
+        build_chunked_content_result(score: 0.25, document_type: "guide"),
+        build_chunked_content_result(score: 0.25, document_type: "export_health_certificate"),
       ]
     end
     let(:result_score_threshold) { 0.1 }
@@ -73,9 +73,9 @@ RSpec.describe Search::Reranker do
     context "when the parent_document_type is html_publication" do
       let(:chunked_content_results) do
         [
-          Search::ChunkedContentRepository::Result.new(score: 0.25, document_type: "html_publication", parent_document_type: "form"),
-          Search::ChunkedContentRepository::Result.new(score: 0.25, document_type: "html_publication", parent_document_type: "guide"),
-          Search::ChunkedContentRepository::Result.new(score: 0.25, document_type: "html_publication", parent_document_type: "export_health_certificate"),
+          build_chunked_content_result(score: 0.25, document_type: "html_publication", parent_document_type: "form"),
+          build_chunked_content_result(score: 0.25, document_type: "html_publication", parent_document_type: "guide"),
+          build_chunked_content_result(score: 0.25, document_type: "html_publication", parent_document_type: "export_health_certificate"),
         ]
       end
 
@@ -89,5 +89,10 @@ RSpec.describe Search::Reranker do
         )
       end
     end
+  end
+
+  def build_chunked_content_result(attributes)
+    defaults = build(:chunked_content_record).except(:openai_embedding)
+    Search::ChunkedContentRepository::Result.new(**defaults.merge(attributes))
   end
 end
