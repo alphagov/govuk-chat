@@ -28,9 +28,9 @@ module Search
 
     def rank_result(result)
       document_type_weight = if result.document_type == "html_publication"
-                               Reranking::DocumentTypeWeights.call(result.parent_document_type)
+                               document_type_weight(result.parent_document_type)
                              else
-                               Reranking::DocumentTypeWeights.call(result.document_type)
+                               document_type_weight(result.document_type)
                              end
       Search::ResultsForQuestion::Result.new(
         result:,
@@ -44,6 +44,10 @@ module Search
 
     def max_number_of_results
       Rails.configuration.search.max_number_of_results
+    end
+
+    def document_type_weight(document_type)
+      Rails.configuration.chunked_content_reranking.fetch(document_type, 1.0)
     end
   end
 end
