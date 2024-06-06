@@ -25,6 +25,10 @@
 
 .app-conversation-layout__message-container {
   overflow-y: auto;
+  position: relative;
+  @media (prefers-reduced-motion: no-preference) {
+    scroll-behavior: smooth;
+  }
 }
 
 .app-conversation-layout__width-container {
