@@ -1,8 +1,7 @@
 RSpec.describe "components/_onboarding_form.html.erb" do
-  it "renders the initial limitation controls when tell_me_more_href is set" do
+  it "renders the initial limitation controls" do
     render("components/onboarding_form", {
       url: "/onboarding-limitations",
-      tell_me_more_href: "/tell-me-more",
     })
 
     expect(rendered)
