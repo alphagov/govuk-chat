@@ -1,4 +1,4 @@
-module RequestExamples
+module OnboardingRequestExamples
   shared_examples "requires user to have completed onboarding" do |routes:|
     let(:route_params) { [] }
 
