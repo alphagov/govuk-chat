@@ -15,8 +15,8 @@ RSpec.describe Search::ResultsForQuestion::Reranker do
     end
 
     before do
-      allow(Rails.configuration.search).to receive(:document_type_weightings).and_return({
-        "guide" => 2.0, "export_health_certificate" => 0.5
+      stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS", {
+        "guide" => 4.0, "export_health_certificate" => 0.8
       })
     end
 
@@ -27,9 +27,9 @@ RSpec.describe Search::ResultsForQuestion::Reranker do
     it "returns results sorted by weighted_score" do
       expect(described_class.call(chunked_content_results).map { |r| [r.document_type, r.weighted_score] }).to eq(
         [
-          ["guide", 0.5], # doc type weighting of 2.0
+          ["guide", 1.0], # doc type weighting of 4.0
           ["form", 0.25], # not defined - default weighting of 1.0
-          ["export_health_certificate", 0.125], # doc type weighting of 0.5
+          ["export_health_certificate", 0.2], # doc type weighting of 0.8
         ],
       )
     end
@@ -46,9 +46,9 @@ RSpec.describe Search::ResultsForQuestion::Reranker do
       it "returns results sorted based on parent_document_type" do
         expect(described_class.call(chunked_content_results).map { |r| [r.parent_document_type, r.weighted_score] }).to eq(
           [
-            ["guide", 0.5], # doc type weighting of 2.0
-            ["form", 0.25], # doc type weighting of 1.0
-            ["export_health_certificate", 0.125], # doc type weighting of 0.5
+            ["guide", 1.0], # doc type weighting of 4.0
+            ["form", 0.25], # not defined - default weighting of 1.0
+            ["export_health_certificate", 0.2], # doc type weighting of 0.8
           ],
         )
       end

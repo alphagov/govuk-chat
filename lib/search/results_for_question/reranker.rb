@@ -1,6 +1,8 @@
 module Search
   class ResultsForQuestion
     class Reranker
+      DOCUMENT_TYPE_WEIGHTINGS = Rails.configuration.search.document_type_weightings.to_h.freeze
+
       def self.call(...) = new(...).call
 
       def initialize(search_results)
@@ -21,9 +23,9 @@ module Search
 
       def rank_result(result)
         document_type_weight = if result.document_type == "html_publication"
-                                 document_type_weight(result.parent_document_type)
+                                 DOCUMENT_TYPE_WEIGHTINGS.fetch(result.parent_document_type, 1.0)
                                else
-                                 document_type_weight(result.document_type)
+                                 DOCUMENT_TYPE_WEIGHTINGS.fetch(result.document_type, 1.0)
                                end
         Search::ResultsForQuestion::WeightedResult.new(
           result:,
@@ -37,10 +39,6 @@ module Search
 
       def max_number_of_results
         Rails.configuration.search.thresholds.max_results
-      end
-
-      def document_type_weight(document_type)
-        Rails.configuration.search.document_type_weightings.fetch(document_type, 1.0)
       end
     end
   end
