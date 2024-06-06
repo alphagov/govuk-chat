@@ -14,6 +14,9 @@ RSpec.describe "Admin user filters questions" do
     when_i_clear_the_filters
     then_i_see_all_the_questions
 
+    when_i_reorder_the_questions
+    then_i_see_the_ordering_has_changed
+
     when_i_search_for_a_question
     then_i_see_questions_related_to_my_search
 
@@ -37,7 +40,7 @@ RSpec.describe "Admin user filters questions" do
   def and_there_are_questions
     conversation = build(:conversation)
     @question1 = create(:question, conversation:, message: "Hello world", created_at: 2.years.ago)
-    @question2 = create(:question, :with_answer, conversation:)
+    @question2 = create(:question, :with_answer, message: "World", conversation:)
   end
 
   def when_i_visit_the_admin_area
@@ -73,8 +76,19 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_all_the_questions
-    expect(page).to have_content(@question1.message)
-    expect(page).to have_content(@question2.message)
+    within(".govuk-table") do
+      expect(page).to have_content(/World.*Hello world./)
+    end
+  end
+
+  def when_i_reorder_the_questions
+    click_link "Created at"
+  end
+
+  def then_i_see_the_ordering_has_changed
+    within(".govuk-table") do
+      expect(page).to have_content(/Hello world.*World./)
+    end
   end
 
   def when_i_search_for_a_question

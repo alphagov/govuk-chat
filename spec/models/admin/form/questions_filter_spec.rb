@@ -1,5 +1,5 @@
 RSpec.describe Admin::Form::QuestionsFilter do
-  describe "#validations" do
+  describe "validations" do
     describe "#validate_dates" do
       it "is valid if the start date and end date are valid dates" do
         filter = described_class.new(
@@ -58,16 +58,53 @@ RSpec.describe Admin::Form::QuestionsFilter do
       expect(filter.errors[:start_date_params]).to eq(["Enter a valid start date"])
       expect(filter.errors[:end_date_params]).to eq(["Enter a valid end date"])
     end
+
+    it "sets the sort param to the default value if no value is passed in" do
+      filter = described_class.new
+      expect(filter.sort).to eq("-created_at")
+    end
+
+    it "sets the sort param to the default value if an invalid value is passed in" do
+      filter = described_class.new(sort: "invalid")
+      expect(filter.sort).to eq("-created_at")
+    end
   end
 
   describe "#questions" do
-    it "orders the questions by the most recently created" do
-      question1 = create(:question, created_at: 2.minutes.ago)
-      question2 = create(:question, created_at: 1.minute.ago)
+    describe "ordering" do
+      let!(:question1) { create(:question, message: "Hello world", created_at: 1.minute.ago) }
+      let!(:question2) { create(:question, :with_answer, message: "World hello", created_at: 2.minutes.ago) }
+      let!(:question3) { create(:question, :with_answer, message: "Sup moon", created_at: 3.minutes.ago) }
 
-      filter = described_class.new
+      it "orders the questions by the most recently created" do
+        questions = described_class.new.questions
+        expect(questions).to eq([question1, question2, question3])
+      end
 
-      expect(filter.questions).to eq([question2, question1])
+      it "orders the questions by the most recently created when the sort param is '-created_at'" do
+        questions = described_class.new(sort: "-created_at").questions
+        expect(questions).to eq([question1, question2, question3])
+      end
+
+      it "orders the questions by the most recently created if the sort param is invalid" do
+        questions = described_class.new(sort: "invalid").questions
+        expect(questions).to eq([question1, question2, question3])
+      end
+
+      it "orders the questions by the oldest first when the sort param is 'created_at'" do
+        questions = described_class.new(sort: "created_at").questions
+        expect(questions).to eq([question3, question2, question1])
+      end
+
+      it "orders the questions alphabetically when the sort param is 'message'" do
+        questions = described_class.new(sort: "message").questions
+        expect(questions).to eq([question1, question3, question2])
+      end
+
+      it "orders the questions reverse alphabetically when the sort param is '-message'" do
+        questions = described_class.new(sort: "-message").questions
+        expect(questions).to eq([question2, question3, question1])
+      end
     end
 
     it "filters the questions by search" do
@@ -176,7 +213,7 @@ RSpec.describe Admin::Form::QuestionsFilter do
     end
   end
 
-  describe "previous_page_params" do
+  describe "#previous_page_params" do
     it "returns any empty hash if there is no previous page to link to" do
       filter = described_class.new
       expect(filter.previous_page_params).to eq({})
@@ -213,7 +250,7 @@ RSpec.describe Admin::Form::QuestionsFilter do
     end
   end
 
-  describe "next_page_params" do
+  describe "#next_page_params" do
     it "returns any empty hash if there is no next page to link to" do
       filter = described_class.new
       expect(filter.next_page_params).to eq({})
@@ -240,6 +277,49 @@ RSpec.describe Admin::Form::QuestionsFilter do
 
       expect(filter.next_page_params)
         .to eq({ status: "pending", search: "message", page: 2, start_date_params:, end_date_params: })
+    end
+  end
+
+  describe "#sort_direction" do
+    it "returns nil when sort does not match the field passed in" do
+      filter = described_class.new(sort: "message")
+      expect(filter.sort_direction("created_at")).to be_nil
+    end
+
+    it "returns 'ascending' when sort equals the field passed in" do
+      filter = described_class.new(sort: "message")
+      expect(filter.sort_direction("message")).to eq("ascending")
+    end
+
+    it "returns 'descending' when sort prefixed with '-' equals the field passed in" do
+      filter = described_class.new(sort: "-message")
+      expect(filter.sort_direction("message")).to eq("descending")
+    end
+  end
+
+  describe "#toggleable_sort_params" do
+    it "sets the page param to nil" do
+      filter = described_class.new(sort: "-created_at", page: 2)
+      expect(filter.toggleable_sort_params("-created_at")).to eq({ sort: "created_at", page: nil })
+    end
+
+    context "when the sort attribute does not match the default_field_sort" do
+      it "sets the sort_param to the default_field_sort" do
+        filter = described_class.new(sort: "created_at")
+        expect(filter.toggleable_sort_params("-created_at")).to eq({ sort: "-created_at", page: nil })
+      end
+    end
+
+    context "when the sort attribute matches the default_field_sort" do
+      it "sets the sort_param to 'ascending' if the sort attribute is 'descending'" do
+        filter = described_class.new(sort: "-created_at")
+        expect(filter.toggleable_sort_params("-created_at")).to eq({ sort: "created_at", page: nil })
+      end
+
+      it "sets the sort_param to 'descending' if the sort attribute is 'ascending'" do
+        filter = described_class.new(sort: "message")
+        expect(filter.toggleable_sort_params("message")).to eq({ sort: "-message", page: nil })
+      end
     end
   end
 end

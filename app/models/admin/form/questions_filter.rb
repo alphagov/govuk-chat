@@ -2,17 +2,22 @@ class Admin::Form::QuestionsFilter
   include ActiveModel::Model
   include ActiveModel::Attributes
 
+  DEFAULT_SORT = "-created_at".freeze
+  VALID_SORT_VALUES = ["created_at", "-created_at", "message", "-message"].freeze
+
   attribute :status
   attribute :search
   attribute :start_date_params, default: {}
   attribute :end_date_params, default: {}
   attribute :conversation
   attribute :page, :integer
+  attribute :sort
 
   validate :validate_dates
 
   def initialize(...)
     super
+    self.sort = DEFAULT_SORT unless VALID_SORT_VALUES.include?(sort)
     validate
   end
 
@@ -25,9 +30,9 @@ class Admin::Form::QuestionsFilter
       scope = start_date_scope(scope)
       scope = end_date_scope(scope)
       scope = conversation_scope(scope)
-      scope.order(created_at: :desc)
-          .page(page)
-          .per(25)
+      scope = ordering_scope(scope)
+      scope.page(page)
+           .per(25)
     end
   end
 
@@ -47,6 +52,22 @@ class Admin::Form::QuestionsFilter
     end
   end
 
+  def sort_direction(field)
+    return unless sort.delete_prefix("-") == field
+
+    sort.starts_with?("-") ? "descending" : "ascending"
+  end
+
+  def toggleable_sort_params(default_field_sort)
+    sort_param = if sort == default_field_sort
+                   sort.starts_with?("-") ? sort.delete_prefix("-") : "-#{sort}"
+                 else
+                   default_field_sort
+                 end
+
+    pagination_query_params.merge(sort: sort_param, page: nil)
+  end
+
 private
 
   def pagination_query_params
@@ -55,6 +76,7 @@ private
     filters[:search] = search if search.present?
     filters[:start_date_params] = start_date_params if start_date_params.values.any?(&:present?)
     filters[:end_date_params] = end_date_params if end_date_params.values.any?(&:present?)
+    filters[:sort] = sort if sort != DEFAULT_SORT
 
     filters
   end
@@ -91,6 +113,12 @@ private
     return scope if conversation.blank?
 
     scope.where(conversation_id: conversation.id)
+  end
+
+  def ordering_scope(scope)
+    column = sort.delete_prefix("-")
+    direction = sort.start_with?("-") ? :desc : :asc
+    scope.order("#{column}": direction)
   end
 
   def validate_dates

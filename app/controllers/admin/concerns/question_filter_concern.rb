@@ -9,6 +9,7 @@ private
       :status,
       { start_date_params: %i[day month year], end_date_params: %i[day month year] },
       :page,
+      :sort,
     )
 
     Admin::Form::QuestionsFilter.new(filter_params.merge(conversation:))
