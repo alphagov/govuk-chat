@@ -28,14 +28,6 @@ module Search
           weighted_score: result.score * document_type_weight,
         )
       end
-
-      def score_threshold
-        Rails.configuration.search.thresholds.minimum_score
-      end
-
-      def max_number_of_results
-        Rails.configuration.search.thresholds.max_results
-      end
     end
   end
 end
