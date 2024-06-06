@@ -10,16 +10,12 @@ module Search
       end
 
       def call
-        results
+        search_results.map(&method(:rank_result)).sort_by { |r| -r.weighted_score }
       end
 
     private
 
       attr_reader :search_results
-
-      def results
-        search_results.map(&method(:rank_result)).sort_by { |r| -r.weighted_score }
-      end
 
       def rank_result(result)
         document_type_weight = if result.document_type == "html_publication"
