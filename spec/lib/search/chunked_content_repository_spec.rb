@@ -122,12 +122,12 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
       populate_chunked_content_index(chunked_content_records)
     end
 
-    it "returns an array of Result objects where the score is over #{described_class::MIN_SCORE}" do
+    it "returns an array of Result objects" do
       result = repository.search_by_embedding(openai_embedding)
       expected_attributes = chunked_content_records.first.except(:openai_embedding).merge(score: 1)
 
       expect(result).to all be_a(Search::ChunkedContentRepository::Result)
-      expect(result).to all have_attributes(score: a_value > described_class::MIN_SCORE)
+      expect(result).to all have_attributes(score: a_value > 0)
       expect(result.first).to have_attributes(**expected_attributes)
     end
 

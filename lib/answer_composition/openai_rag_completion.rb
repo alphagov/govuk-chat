@@ -101,7 +101,7 @@ module AnswerComposition
     end
 
     def search_results
-      @search_results ||= Search::ResultsForQuestion.call(question_message)
+      @search_results ||= Search::ResultsForQuestion.call(question_message).results
     end
 
     def build_answer(message, status, sources = [])

@@ -1,7 +1,6 @@
 module Search
   class ChunkedContentRepository
-    MAX_CHUNKS = 5
-    MIN_SCORE = 0.5
+    MAX_CHUNKS = 30
     MAPPINGS = {
       content_id: { type: "keyword" },
       locale: { type: "keyword" },
@@ -147,7 +146,6 @@ module Search
         index:,
         body: {
           size: MAX_CHUNKS,
-          min_score: MIN_SCORE,
           query: {
             knn: {
               openai_embedding: {

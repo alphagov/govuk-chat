@@ -9,6 +9,6 @@ private
   def search_results
     return [] if @search_text.blank?
 
-    Search::ResultsForQuestion.call(@search_text)
+    Search::ResultsForQuestion.call(@search_text).results
   end
 end
