@@ -1,6 +1,6 @@
 module Search
   class ChunkedContentRepository
-    MAX_CHUNKS = 30
+    MAX_CHUNKS = Rails.configuration.search.thresholds.retrieved_from_index.freeze
     MAPPINGS = {
       content_id: { type: "keyword" },
       locale: { type: "keyword" },
