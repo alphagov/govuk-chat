@@ -26,23 +26,29 @@
 <% end %>
 
 <% content_for :content do %>
-  <% tag.div(class: "app-conversation-layout__wrapper", data: @conversation_data_attributes) do %>
-    <div class="app-conversation-layout__message-container">
-      <div class="app-conversation-layout__width-container">
-        <ul class="app-conversation-layout__list js-conversation-list">
-          <%= yield %>
-        </ul>
-      </div>
-    </div>
+  <main class="app-conversation-layout__main" id="content" role="main" data-module="conversation-onboarding-flow">
+    <%= yield(:alerts) if content_for?(:alerts) %>
 
-    <% if content_for?(:form) %>
+    <% if content_for?(:title) %>
+      <h1 class="govuk-visually-hidden"><%= yield(:title) %></h1>
+    <% end %>
+
+    <%= tag.div(class: "app-conversation-layout__wrapper", data: @conversation_data_attributes) do %>
+      <div class="app-conversation-layout__message-container">
+        <div class="app-conversation-layout__width-container">
+          <ul class="app-conversation-layout__list js-conversation-list">
+            <%= yield %>
+          </ul>
+        </div>
+      </div>
+
       <div class="app-conversation-layout__form-container">
         <div class="app-conversation-layout__width-container">
           <%= yield(:form) %>
         </div>
       </div>
     <% end %>
-  <% end %>
+  </main>
 <% end %>
 
 <%= render template: "layouts/application", locals: { conversation_layout: true } %>
