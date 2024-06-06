@@ -11,12 +11,13 @@ RSpec.describe Search::ResultsForQuestion::Reranker do
         build_chunked_content_result(score: 0.25, document_type: "form"),
         build_chunked_content_result(score: 0.25, document_type: "guide"),
         build_chunked_content_result(score: 0.25, document_type: "export_health_certificate"),
+        build_chunked_content_result(score: 0.25, document_type: "notice"),
       ]
     end
 
     before do
       stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS", {
-        "guide" => 4.0, "export_health_certificate" => 0.8
+        "guide" => 4.0, "export_health_certificate" => 0.8, "notice" => 0.0
       })
     end
 
@@ -30,6 +31,7 @@ RSpec.describe Search::ResultsForQuestion::Reranker do
           ["guide", 1.0], # doc type weighting of 4.0
           ["form", 0.25], # not defined - default weighting of 1.0
           ["export_health_certificate", 0.2], # doc type weighting of 0.8
+          ["notice", 0.0], # doc type weighting of 0.0
         ],
       )
     end
