@@ -4,13 +4,17 @@ class OnboardingController < BaseController
 
   def limitations
     session[:onboarding] = nil
-    session[:more_information] = true if params[:more_information].present?
     @more_information = session[:more_information].present?
   end
 
   def limitations_confirm
-    session[:onboarding] = "privacy"
-    redirect_to onboarding_privacy_path(anchor: "i-understand")
+    if params[:more_information].present?
+      session[:more_information] = true
+      redirect_to onboarding_limitations_path(anchor: "tell-me-more")
+    else
+      session[:onboarding] = "privacy"
+      redirect_to onboarding_privacy_path(anchor: "i-understand")
+    end
   end
 
   def privacy
