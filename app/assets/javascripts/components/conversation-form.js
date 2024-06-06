@@ -10,6 +10,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.input = module.querySelector('.js-conversation-form-input')
       this.button = module.querySelector('.js-conversation-form-button')
       this.errorsWrapper = module.querySelector('.js-conversation-form-errors-wrapper')
+      this.formGroup = module.querySelector('.js-conversation-form-group')
     }
 
     init () {
@@ -73,6 +74,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     enableControls () {
       this.input.readOnly = false
       this.button.disabled = false
+      this.button.focus()
     }
 
     replaceErrors (errors) {
@@ -86,6 +88,18 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       })
 
       this.errorsWrapper.replaceChildren(...elements)
+
+      this.toggleErrorStyles(errors.length)
+    }
+
+    toggleErrorStyles (hasErrors) {
+      if (hasErrors) {
+        this.input.classList.add('app-c-conversation-form__input--error')
+        this.formGroup.classList.add('app-c-conversation-form__form-group--error')
+      } else {
+        this.input.classList.remove('app-c-conversation-form__input--error')
+        this.formGroup.classList.remove('app-c-conversation-form__form-group--error')
+      }
     }
   }
 
