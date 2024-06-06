@@ -10,14 +10,14 @@ module Search
       end
 
       def call
-        search_results.map(&method(:rank_result)).sort_by { |r| -r.weighted_score }
+        search_results.map(&method(:weight_result)).sort_by { |r| -r.weighted_score }
       end
 
     private
 
       attr_reader :search_results
 
-      def rank_result(result)
+      def weight_result(result)
         document_type_weight = if result.document_type == "html_publication"
                                  DOCUMENT_TYPE_WEIGHTINGS.fetch(result.parent_document_type, 1.0)
                                else
