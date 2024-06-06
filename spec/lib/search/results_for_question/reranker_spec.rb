@@ -1,7 +1,7 @@
 RSpec.describe Search::ResultsForQuestion::Reranker do
-  describe "reranking configuration" do
+  describe "DOCUMENT_TYPE_WEIGHTINGS" do
     it "only contains keys that are valid document types" do
-      expect(Rails.configuration.search.document_type_weightings.keys - GovukSchemas::DocumentTypes.valid_document_types).to be_empty
+      expect(described_class::DOCUMENT_TYPE_WEIGHTINGS.keys - GovukSchemas::DocumentTypes.valid_document_types).to be_empty
     end
   end
 
@@ -21,7 +21,7 @@ RSpec.describe Search::ResultsForQuestion::Reranker do
       })
     end
 
-    it "returns a Search::ResultsForQuestion::ResultSet" do
+    it "returns an array of Search::ResultsForQuestion::WeightedResult objects" do
       expect(described_class.call(chunked_content_results)).to all(be_a(Search::ResultsForQuestion::WeightedResult))
     end
 
