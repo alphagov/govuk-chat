@@ -31,15 +31,15 @@ module Search
     end
 
     def score_threshold
-      Rails.configuration.search.result_score_threshold
+      Rails.configuration.search.thresholds.minimum_score
     end
 
     def max_number_of_results
-      Rails.configuration.search.max_number_of_results
+      Rails.configuration.search.thresholds.max_results
     end
 
     def document_type_weight(document_type)
-      Rails.configuration.chunked_content_reranking.fetch(document_type, 1.0)
+      Rails.configuration.search.document_type_weightings.fetch(document_type, 1.0)
     end
   end
 end

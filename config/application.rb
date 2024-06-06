@@ -59,8 +59,7 @@ module GovukChat
 
     config.llm_prompts = Hashie::Mash.new(YAML.load_file("#{__dir__}/llm_prompts.yml"))
     config.answer_statuses = Hashie::Mash.new(YAML.load_file("#{__dir__}/answer_statuses.yml"))
-    config.chunked_content_reranking = Hashie::Mash.new(YAML.load_file("#{__dir__}/chunked_content_reranking.yml"))
-    config.search = Hashie::Mash.new(number_of_results_from_index: 30, result_score_threshold: 0.8, max_number_of_results: 10)
+    config.search = Hashie::Mash.new(YAML.load_file("#{__dir__}/search.yml"))
 
     # List of forbidden words that will prevent a message from being sent to openAI
     config.question_forbidden_words = []

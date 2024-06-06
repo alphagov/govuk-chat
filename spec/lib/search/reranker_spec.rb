@@ -1,7 +1,7 @@
 RSpec.describe Search::Reranker do
   describe "reranking configuration" do
     it "only contains keys that are valid document types" do
-      expect(Rails.configuration.chunked_content_reranking.keys - GovukSchemas::DocumentTypes.valid_document_types).to be_empty
+      expect(Rails.configuration.search.document_type_weightings.keys - GovukSchemas::DocumentTypes.valid_document_types).to be_empty
     end
   end
 
@@ -13,11 +13,9 @@ RSpec.describe Search::Reranker do
         build_chunked_content_result(score: 0.25, document_type: "export_health_certificate"),
       ]
     end
-    let(:result_score_threshold) { 0.1 }
 
     before do
-      allow(Rails.configuration.search).to receive(:result_score_threshold).and_return(result_score_threshold)
-      allow(Rails.configuration).to receive(:chunked_content_reranking).and_return({
+      allow(Rails.configuration.search).to receive(:document_type_weightings).and_return({
         "guide" => 2.0, "export_health_certificate" => 0.5
       })
     end
