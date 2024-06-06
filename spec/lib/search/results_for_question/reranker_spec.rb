@@ -1,4 +1,4 @@
-RSpec.describe Search::Reranker do
+RSpec.describe Search::ResultsForQuestion::Reranker do
   describe "reranking configuration" do
     it "only contains keys that are valid document types" do
       expect(Rails.configuration.search.document_type_weightings.keys - GovukSchemas::DocumentTypes.valid_document_types).to be_empty
