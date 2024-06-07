@@ -1,6 +1,5 @@
 module Search
   class ChunkedContentRepository
-    MAX_CHUNKS = Rails.configuration.search.thresholds.retrieved_from_index.freeze
     MAPPINGS = {
       content_id: { type: "keyword" },
       locale: { type: "keyword" },
@@ -141,16 +140,16 @@ module Search
       items
     end
 
-    def search_by_embedding(embedding)
+    def search_by_embedding(embedding, max_chunks:)
       response = client.search(
         index:,
         body: {
-          size: MAX_CHUNKS,
+          size: max_chunks,
           query: {
             knn: {
               openai_embedding: {
                 vector: embedding,
-                k: MAX_CHUNKS,
+                k: max_chunks,
               },
             },
           },
