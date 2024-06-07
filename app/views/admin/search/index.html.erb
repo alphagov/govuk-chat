@@ -19,6 +19,10 @@
                  results: @result_set.results,
                  search_text: @search_text,
                  caption: "#{@result_set.results.count} results (max #{Rails.configuration.search.thresholds.max_results}) "\
-                          "are over the score threshold of #{Rails.configuration.search.thresholds.minimum_score}" %>
+                          "are over the weighted score threshold of #{Rails.configuration.search.thresholds.minimum_score}" %>
+      <%= render "results_table",
+                 results: @result_set.rejected_results,
+                 search_text: @search_text,
+                 caption: "#{@result_set.rejected_results.count} more results were retrieved from the search index" %>
     <% end %>
 <% end %>
