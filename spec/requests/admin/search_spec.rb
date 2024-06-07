@@ -1,5 +1,9 @@
 RSpec.describe "Admin::SearchController", :chunked_content_index do
   describe "GET :index" do
+    before do
+      stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS", { "guide" => 1.2 })
+    end
+
     context "with empty params" do
       before do
         get admin_search_path
@@ -17,6 +21,7 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
       let(:chunk_to_find) do
         build(:chunked_content_record,
               title: "Looking for this one",
+              document_type: "guide",
               heading_hierarchy: ["Main header", "Sub header"],
               openai_embedding:)
       end
@@ -51,6 +56,7 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
             heading: "Sub header",
             text: chunk_to_find[:plain_content].truncate(100),
             score: 1.0,
+            weighted_score: 1.2,
           )
         end
       end
@@ -70,13 +76,14 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
       have_selector("input[name='search_text'][value='#{value}']")
     end
 
-    def include_search_result(title:, id:, heading:, text:, score:)
+    def include_search_result(title:, id:, heading:, text:, score:, weighted_score:)
       back_link = admin_search_path(search_text:)
       href = admin_chunk_path(id:, params: { back_link: })
       have_selector("a[href='#{href}']", text: title)
         .and have_selector("td", text: heading)
         .and have_selector("td", text:)
         .and have_selector("td", text: score)
+        .and have_selector("td", text: weighted_score)
     end
   end
 end
