@@ -28,18 +28,20 @@ module Search
     class NotFound < StandardError
     end
 
-    attr_reader :index, :client, :default_refresh_writes
+    attr_reader :index, :default_index_name, :client, :default_refresh_writes
 
     def initialize
       @index = Rails.configuration.opensearch.chunked_content_index!
+      @default_index_name = Rails.configuration.opensearch.chunked_content_default_index!
       client_options = Rails.configuration.opensearch.slice(:url, :user, :password)
       @client = OpenSearch::Client.new(**client_options)
       @default_refresh_writes = Rails.configuration.opensearch.refresh_writes || false
     end
 
-    def create_index
-      client.indices.create(
-        index:,
+    def create_index(index_name: default_index_name, create_alias: true)
+      aliases = create_alias ? { index.to_sym => {} } : {}
+      client.indices.create( # rubocop:disable Rails/SaveBang
+        index: index_name,
         body: {
           settings: {
             index: {
@@ -49,13 +51,14 @@ module Search
           mappings: {
             properties: MAPPINGS,
           },
+          aliases:,
         },
       )
     end
 
-    def create_index!
-      client.indices.delete(index:) if client.indices.exists?(index:)
-      create_index
+    def create_index!(index_name: default_index_name, create_alias: true)
+      client.indices.delete(index: index_name) if client.indices.exists?(index: index_name)
+      create_index(index_name:, create_alias:)
     end
 
     def count(query)
@@ -64,11 +67,8 @@ module Search
     end
 
     def update_missing_mappings
-      opensearch_mappings = client.indices
-                                  .get_mapping(index:)
-                                  .dig(index, "mappings", "properties")
-                                  .to_h
-                                  .symbolize_keys
+      index_details = client.indices.get_mapping(index:).values.first
+      opensearch_mappings = index_details.dig("mappings", "properties").to_h.symbolize_keys
 
       missing_keys = MAPPINGS.keys - opensearch_mappings.keys
 

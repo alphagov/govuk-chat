@@ -1,6 +1,103 @@
 RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
   let(:repository) { described_class.new }
 
+  describe "#create_index" do
+    let(:client) { repository.client }
+
+    before do
+      allow(client.indices).to receive(:create)
+    end
+
+    it "creates a new index with an alias" do
+      repository.create_index
+
+      expected_args = {
+        index: repository.default_index_name,
+        body: {
+          settings: {
+            index: {
+              knn: true,
+            },
+          },
+          mappings: {
+            properties: described_class::MAPPINGS,
+          },
+          aliases: { "#{repository.index}": {} },
+        },
+      }
+      expect(client.indices).to have_received(:create).with(**expected_args)
+    end
+
+    it "takes an optional index name" do
+      repository.create_index(index_name: "custom_index")
+
+      expected_args = {
+        index: "custom_index",
+        body: {
+          settings: {
+            index: {
+              knn: true,
+            },
+          },
+          mappings: {
+            properties: described_class::MAPPINGS,
+          },
+          aliases: { "#{repository.index}": {} },
+        },
+      }
+      expect(client.indices).to have_received(:create).with(**expected_args)
+    end
+
+    it "does not create an alias if create_alias is false" do
+      repository.create_index(index_name: "custom_index", create_alias: false)
+
+      expected_args = {
+        index: "custom_index",
+        body: {
+          settings: {
+            index: {
+              knn: true,
+            },
+          },
+          mappings: {
+            properties: described_class::MAPPINGS,
+          },
+          aliases: {},
+        },
+      }
+      expect(client.indices).to have_received(:create).with(**expected_args)
+    end
+  end
+
+  describe "#create_index!" do
+    let(:client) { repository.client }
+
+    before do
+      allow(client.indices).to receive(:create)
+    end
+
+    it "deletes a pre-existing index before creating a new one" do
+      allow(client.indices).to receive(:delete)
+      repository.create_index!
+
+      expect(client.indices).to have_received(:delete).with(index: repository.default_index_name)
+    end
+
+    it "delegates to create with default args when none are present" do
+      allow(repository).to receive(:create_index)
+      repository.create_index!
+
+      expect(repository).to have_received(:create_index).with(index_name: repository.default_index_name, create_alias: true)
+    end
+
+    it "delegates to create and retains the index name and alias boolean when present" do
+      allow(repository).to receive(:create_index)
+      repository.create_index!(index_name: "custom_index", create_alias: false)
+
+      expect(repository).to have_received(:create_index).with(index_name: "custom_index", create_alias: false)
+    end
+  end
+
   describe "#delete_by_base_path" do
     before do
       populate_chunked_content_index([
@@ -177,9 +274,10 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
       result = repository.update_missing_mappings
 
       new_mappings = repository
-                     .client.indices
+                     .client
+                     .indices
                      .get_mapping(index:)
-                     .dig(index, "mappings", "properties")
+                     .dig(repository.default_index_name, "mappings", "properties")
                      .deep_symbolize_keys
 
       expect(result).to eq(original_mappings.keys)
