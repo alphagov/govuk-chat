@@ -56,11 +56,16 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
             heading: "Sub header",
             text: chunk_to_find[:plain_content].truncate(100),
             weighted_score: 1.2,
+            score_calculation: "1.0 * 1.2 = 1.2",
             table: 1,
           )
         end
 
         it "renders results that don't meet the threshold" do
+          # rubocop:disable RSpec/AnyInstance
+          allow_any_instance_of(Search::ResultsForQuestion::WeightedResult).to receive(:score_calculation).and_return("1.0 * 0.5 = 1.0")
+          # rubocop:enable RSpec/AnyInstance
+
           get admin_search_path, params: { search_text: }
 
           expect(response.body).to include_search_result(
@@ -69,6 +74,7 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
             heading: "",
             text: "",
             weighted_score: /^\d\.\d*$/,
+            score_calculation: "1.0 * 0.5 = 1.0",
             table: 2,
           )
         end
@@ -89,9 +95,9 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
       have_selector("input[name='search_text'][value='#{value}']")
     end
 
-    def include_search_result(title:, id:, heading:, text:, weighted_score:, table:)
+    def include_search_result(title:, id:, heading:, text:, weighted_score:, score_calculation:, table:)
       back_link = admin_search_path(search_text:)
-      href = admin_chunk_path(id:, params: { back_link: })
+      href = admin_chunk_path(id:, params: { back_link:, score_calculation: })
       have_selector(".govuk-table:nth-of-type(#{table}) a[href='#{href}']", text: title)
         .and have_selector(".govuk-table:nth-of-type(#{table}) td", text: heading)
         .and have_selector(".govuk-table:nth-of-type(#{table}) td", text:)

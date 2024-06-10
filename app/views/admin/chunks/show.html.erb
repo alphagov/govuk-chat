@@ -24,6 +24,7 @@
         { field: "Chunk number", value: "#{@chunk.chunk_index + 1} of #{@chunks_for_base_path}" },
         { field: "Heading hierarchy", value: @chunk.heading_hierarchy.join(" | ") },
         { field: "Description", value: @chunk.description},
+        { field: "Score calculation <br/>(score * weighting)".html_safe, value: @score_calculation },
         { field: "Document type", value: @chunk.document_type},
         { field: "Html content", value: html_content },
         { field: "Search content", value: render("govuk_publishing_components/components/govspeak") { simple_format(@chunk.plain_content) } },
