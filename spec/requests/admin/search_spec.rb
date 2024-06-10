@@ -61,6 +61,12 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
           )
         end
 
+        it "renders a description for the results table" do
+          get admin_search_path, params: { search_text: }
+          expected_text = "1 result (max 10) over the weighted score threshold of 0.8"
+          expect(response.body).to have_selector(".govuk-table:first-of-type caption", text: expected_text)
+        end
+
         it "renders results that don't meet the threshold" do
           # rubocop:disable RSpec/AnyInstance
           allow_any_instance_of(Search::ResultsForQuestion::WeightedResult).to receive(:score_calculation).and_return("1.0 * 0.5 = 1.0")
@@ -77,6 +83,12 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
             score_calculation: "1.0 * 0.5 = 1.0",
             table: 2,
           )
+        end
+
+        it "renders a description for the rejected results table" do
+          get admin_search_path, params: { search_text: }
+          expected_text = "1 more result retrieved from the search index"
+          expect(response.body).to have_selector(".govuk-table:nth-of-type(2) caption", text: expected_text)
         end
       end
 
