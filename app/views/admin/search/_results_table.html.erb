@@ -3,14 +3,12 @@
         head: [{ text: "Title" },
                { text: "Heading"},
                { text: "Text" },
-               { text: "Score", format: "numeric" },
-               { text: "Weighted score", format: "numeric"}],
+               { text: "Score", format: "numeric"}],
       rows: results.map do |result|
               [{ text: link_to(result.title, admin_chunk_path(id: result._id, params: { back_link: admin_search_path(search_text: search_text) }),
                                                               class: "govuk-link") },
               { text: result.heading_hierarchy.last },
               { text: result.plain_content.truncate(100) },
-              { text: result.score, format: "numeric" },
               { text: result.weighted_score, format: "numeric" }]
             end,
 } %>

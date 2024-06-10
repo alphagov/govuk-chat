@@ -55,7 +55,6 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
             id: chunk_id,
             heading: "Sub header",
             text: chunk_to_find[:plain_content].truncate(100),
-            score: 1.0,
             weighted_score: 1.2,
             table: 1,
           )
@@ -69,7 +68,6 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
             id: "anything",
             heading: "",
             text: "",
-            score: /^\d\.\d*$/,
             weighted_score: /^\d\.\d*$/,
             table: 2,
           )
@@ -91,13 +89,12 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
       have_selector("input[name='search_text'][value='#{value}']")
     end
 
-    def include_search_result(title:, id:, heading:, text:, score:, weighted_score:, table:)
+    def include_search_result(title:, id:, heading:, text:, weighted_score:, table:)
       back_link = admin_search_path(search_text:)
       href = admin_chunk_path(id:, params: { back_link: })
       have_selector(".govuk-table:nth-of-type(#{table}) a[href='#{href}']", text: title)
         .and have_selector(".govuk-table:nth-of-type(#{table}) td", text: heading)
         .and have_selector(".govuk-table:nth-of-type(#{table}) td", text:)
-        .and have_selector(".govuk-table:nth-of-type(#{table}) td", text: score)
         .and have_selector(".govuk-table:nth-of-type(#{table}) td", text: weighted_score)
     end
   end
