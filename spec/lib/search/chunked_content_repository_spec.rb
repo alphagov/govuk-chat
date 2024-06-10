@@ -122,21 +122,21 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
       populate_chunked_content_index(chunked_content_records)
     end
 
-    it "returns an array of Result objects where the score is over #{described_class::MIN_SCORE}" do
-      result = repository.search_by_embedding(openai_embedding)
+    it "returns an array of Result objects" do
+      result = repository.search_by_embedding(openai_embedding, max_chunks: 10)
       expected_attributes = chunked_content_records.first.except(:openai_embedding).merge(score: 1)
 
       expect(result).to all be_a(Search::ChunkedContentRepository::Result)
-      expect(result).to all have_attributes(score: a_value > described_class::MIN_SCORE)
       expect(result.first).to have_attributes(**expected_attributes)
     end
 
-    context "when there are more then the maxiumum number of results" do
-      let(:chunked_content_records) { build_list(:chunked_content_record, described_class::MAX_CHUNKS + 1, openai_embedding:) }
+    context "when there are more then the maxiumum chunks" do
+      let(:max_chunks) { 10 }
+      let(:chunked_content_records) { build_list(:chunked_content_record, 11, openai_embedding:) }
 
-      it "only returns the first #{described_class::MAX_CHUNKS}" do
-        result = repository.search_by_embedding(openai_embedding)
-        expect(result.count).to eq described_class::MAX_CHUNKS
+      it "only returns the first max_chunks" do
+        result = repository.search_by_embedding(openai_embedding, max_chunks:)
+        expect(result.count).to eq max_chunks
       end
     end
   end

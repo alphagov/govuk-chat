@@ -7,10 +7,11 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
     end
     let(:opensearch_chunk) { build(:chunked_content_record).except(:openai_embedding).merge(_id: "1", score: 1.0) }
     let(:chunk_result) { Search::ChunkedContentRepository::Result.new(**opensearch_chunk) }
+    let(:results_for_question) { Search::ResultsForQuestion::ResultSet.new(results: [chunk_result], rejected_results: []) }
 
     before do
       allow(AnswerComposition::QuestionRephraser).to receive(:call).and_return(rephrased_question)
-      allow(Search::ResultsForQuestion).to receive(:call).and_return([chunk_result])
+      allow(Search::ResultsForQuestion).to receive(:call).and_return(results_for_question)
     end
 
     it "sends OpenAI a series of messages combining system prompt, few shot messages and the user question" do
@@ -88,9 +89,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           )
         end
 
-        before do
-          allow(Search::ResultsForQuestion).to receive(:call).and_return([chunk_result, chunk_result])
-        end
+        let(:results_for_question) { Search::ResultsForQuestion::ResultSet.new(results: [chunk_result, chunk_result], rejected_results: []) }
 
         it "only builds one source for the result" do
           answer = described_class.call(question)
@@ -161,9 +160,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
       let(:question) { build_stubbed(:question, message: "I want to know about something that isn't on GOV.UK") }
       let(:rephrased_question) { "Question where no content is found on GOV.UK" }
 
-      before do
-        allow(Search::ResultsForQuestion).to receive(:call).and_return([])
-      end
+      let(:results_for_question) { Search::ResultsForQuestion::ResultSet.new(results: [], rejected_results: []) }
 
       it "returns an answer with a no content found message and an 'abort_no_govuk_content' status" do
         stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
