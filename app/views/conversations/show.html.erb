@@ -22,16 +22,7 @@ end
 <% end %>
 
 <%= render "onboarding/privacy_messages" %>
-
-<%= render "components/conversation_message", {
-  id: "start-chatting",
-  message: "Okay",
-  is_question: true,
-} %>
-
-<%= render "components/conversation_message", {
-  message: tag.p("Thanks! To get started, ask me a question."),
-} %>
+<%= render "get_started_messages" %>
 
 <% @questions.each do |question| %>
   <%= render "question", question: %>
@@ -41,11 +32,5 @@ end
 <% end %>
 
 <% content_for :form do %>
-  <%= render "components/conversation_form", {
-    url: update_conversation_path,
-    name: "create_question[user_question]",
-    input_id: "create_question_user_question",
-    value: @create_question.user_question,
-    error_items: error_items(@create_question, :user_question),
-  } %>
+  <%= render "form", { create_question: @create_question } %>
 <% end %>
