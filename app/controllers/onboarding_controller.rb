@@ -42,6 +42,25 @@ class OnboardingController < BaseController
 
   def privacy
     @more_information = session[:more_information].present?
+    @conversation_data_attributes = { module: "onboarding" }
+
+    respond_to do |format|
+      format.html { render :privacy }
+      format.json do
+        render json: {
+          fragment: "i-understand",
+          conversation_data: @conversation_data_attributes,
+          conversation_append_html: render_to_string(partial: "privacy_messages",
+                                                     formats: :html),
+          form_html: render_to_string(partial: "components/onboarding_form",
+                                      formats: :html,
+                                      locals: {
+                                        url: onboarding_privacy_confirm_path,
+                                        privacy_onboarding: true,
+                                      }),
+        }
+      end
+    end
   end
 
   def privacy_confirm

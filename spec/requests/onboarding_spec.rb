@@ -107,6 +107,20 @@ RSpec.describe "OnboardingController" do
       expect(response.body).to have_content(/You can always find information about my limitations in about GOV.UK Chat/)
       expect(response.body).to have_selector(".app-c-blue-button", text: "Okay, start chatting")
     end
+
+    context "when the request format is JSON" do
+      it "returns the the correct JSON" do
+        get onboarding_privacy_path, params: { format: :json }
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)).to match({
+          "fragment" => "i-understand",
+          "conversation_data" => { "module" => "onboarding" },
+          "conversation_append_html" => /You can always find information about my limitations in.*about GOV.UK Chat/,
+          "form_html" => /<button class="app-c-blue-button govuk-button">Okay, start chatting<\/button>/,
+        })
+      end
+    end
   end
 
   describe "POST :privacy_confirm" do
