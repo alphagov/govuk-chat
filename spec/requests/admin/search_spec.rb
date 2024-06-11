@@ -2,6 +2,8 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
   describe "GET :index" do
     before do
       stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS", { "guide" => 1.2 })
+      allow(Rails.configuration.search.thresholds).to receive(:minimum_score).and_return(0.6)
+      allow(Rails.configuration.search.thresholds).to receive(:max_results).and_return(5)
     end
 
     context "with empty params" do
@@ -18,6 +20,7 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
     context "with search_text in params" do
       let(:search_text) { "how do I pay tax" }
       let(:openai_embedding) { mock_openai_embedding(search_text) }
+      let(:close_embedding) { close_openai_embedding(openai_embedding) }
       let(:chunk_to_find) do
         build(:chunked_content_record,
               title: "Looking for this one",
@@ -43,7 +46,9 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
         before do
           populate_chunked_content_index({
             chunk_id => chunk_to_find,
-            "anything" => build(:chunked_content_record, title: "Shouldn't find this"),
+            "anything" => build(:chunked_content_record,
+                                title: "Shouldn't find this",
+                                openai_embedding: close_embedding),
           })
         end
 
@@ -63,24 +68,19 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
 
         it "renders a description for the results table" do
           get admin_search_path, params: { search_text: }
-          expected_text = "1 result (max 10) over the weighted score threshold of 0.8"
+          expected_text = "1 result (max 5) over the weighted score threshold of 0.6"
           expect(response.body).to have_selector(".govuk-table:first-of-type caption", text: expected_text)
         end
 
         it "renders results that don't meet the threshold" do
-          # rubocop:disable RSpec/AnyInstance
-          allow_any_instance_of(Search::ResultsForQuestion::WeightedResult).to receive(:score_calculation).and_return("1.0 * 0.5 = 1.0")
-          # rubocop:enable RSpec/AnyInstance
-
           get admin_search_path, params: { search_text: }
-
           expect(response.body).to include_search_result(
             title: "Shouldn't find this",
             id: "anything",
             heading: "",
             text: "",
-            weighted_score: /^\d\.\d*$/,
-            score_calculation: "1.0 * 0.5 = 1.0",
+            weighted_score: "0.5230776",
+            score_calculation: "0.435898 * 1.2 = 0.5230776",
             table: 2,
           )
         end
