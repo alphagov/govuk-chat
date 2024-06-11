@@ -9,25 +9,20 @@
     } %>
 <% end %>
 <% if @search_text.present? %>
-    <% if @search_results.empty? %>
+    <% if @result_set.empty? %>
         <%= render "govuk_publishing_components/components/notice", {
             title: "No results have been found for your query",
             description: "Please rephrase and try again",
         } %>
     <% else %>
-    <%= render "govuk_publishing_components/components/table", {
-        head: [{ text: "Title" },
-               { text: "Heading"},
-               { text: "Text" },
-               { text: "Score", format: "numeric" }],
-        rows: @search_results.map do |result|
-      [{ text: link_to(result.title, admin_chunk_path(id: result._id,
-                                                      params: { back_link: admin_search_path(search_text: @search_text) }),
-                                                      class: "govuk-link") },
-         { text: result.heading_hierarchy.last },
-         { text: result.plain_content.truncate(100) },
-         { text: result.score, format: "numeric" }]
-        end,
-    } %>
+      <%= render "results_table",
+                 results: @result_set.results,
+                 search_text: @search_text,
+                 caption: "#{@result_set.results.count} #{'result'.pluralize(@result_set.results.count)} (max #{Rails.configuration.search.thresholds.max_results}) "\
+                          "over the weighted score threshold of #{Rails.configuration.search.thresholds.minimum_score}" %>
+      <%= render "results_table",
+                 results: @result_set.rejected_results,
+                 search_text: @search_text,
+                 caption: "#{@result_set.rejected_results.count} more #{'result'.pluralize(@result_set.results.count)} retrieved from the search index" %>
     <% end %>
 <% end %>

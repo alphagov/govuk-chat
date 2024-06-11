@@ -35,4 +35,10 @@ module StubOpenAIEmbedding
     random_generator = Random.new(text.bytes.sum)
     dimensions.times.map { random_generator.rand }
   end
+
+  # this returns a vector that is a fixed distance from the embedding parameter
+  # The score is always 0.435898
+  def close_openai_embedding(embedding)
+    embedding.map { |n| n * 1.05 }
+  end
 end
