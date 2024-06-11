@@ -5,6 +5,29 @@ class OnboardingController < BaseController
   def limitations
     session[:onboarding] = nil
     @more_information = session[:more_information].present?
+    @conversation_data_attributes = { module: "onboarding" }
+
+    respond_to do |format|
+      format.html { render :limitations }
+      format.json do
+        if session[:more_information].present?
+          render json: {
+            fragment: "tell-me-more",
+            conversation_data: @conversation_data_attributes,
+            conversation_append_html: render_to_string(partial: "tell_me_more_messages",
+                                                       formats: :html),
+            form_html: render_to_string(partial: "components/onboarding_form",
+                                        formats: :html,
+                                        locals: {
+                                          url: onboarding_privacy_confirm_path,
+                                          more_information: true,
+                                        }),
+          }
+        else
+          render json: {}, status: :not_acceptable
+        end
+      end
+    end
   end
 
   def limitations_confirm
