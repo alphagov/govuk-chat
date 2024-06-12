@@ -12,5 +12,9 @@ FactoryBot.define do
         ]
       end
     end
+
+    trait :with_feedback do
+      feedback { build(:answer_feedback) }
+    end
   end
 end
