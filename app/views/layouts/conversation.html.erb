@@ -33,7 +33,7 @@
       <h1 class="govuk-visually-hidden"><%= yield(:title) %></h1>
     <% end %>
 
-    <%= tag.div(class: "app-conversation-layout__wrapper", data: @conversation_data_attributes) do %>
+    <%= tag.div(class: "app-conversation-layout__wrapper js-module-wrapper", data: @conversation_data_attributes) do %>
       <div class="app-conversation-layout__message-container">
         <div class="app-conversation-layout__width-container">
           <ul class="app-conversation-layout__list js-conversation-list">
