@@ -77,6 +77,26 @@ class ConversationsController < BaseController
     end
   end
 
+  def answer_feedback
+    return redirect_to onboarding_limitations_path unless @conversation
+
+    answer = @conversation.answers.includes(:feedback).find(params[:answer_id])
+    feedback_form = Form::CreateAnswerFeedback.new(answer_feedback_params.merge(answer:))
+    fragment = helpers.dom_id(answer)
+
+    respond_to do |format|
+      if feedback_form.valid?
+        feedback_form.submit
+
+        format.html { redirect_to show_conversation_path(anchor: fragment), notice: "Feedback submitted successfully." }
+        format.json { render json: { error_messages: [] }, status: :created }
+      else
+        format.html { redirect_to show_conversation_path(anchor: fragment) }
+        format.json { render json: { error_messages: feedback_form.errors.map(&:message) }, status: :unprocessable_entity }
+      end
+    end
+  end
+
 private
 
   def user_question_params
@@ -128,5 +148,9 @@ private
       value: conversation.id,
       expires: Rails.configuration.conversations.max_question_age_days.days.from_now,
     }
+  end
+
+  def answer_feedback_params
+    params.require(:create_answer_feedback).permit(:useful)
   end
 end

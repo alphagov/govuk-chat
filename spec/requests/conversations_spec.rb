@@ -4,7 +4,7 @@ RSpec.describe "ConversationsController" do
   delegate :helpers, to: ConversationsController
 
   it_behaves_like "requires user to have completed onboarding", routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "requires user to have completed onboarding", routes: { answer_question_path: %i[get] } do
+  it_behaves_like "requires user to have completed onboarding", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
     let(:route_params) { [SecureRandom.uuid] }
   end
 
@@ -288,6 +288,90 @@ RSpec.describe "ConversationsController" do
 
         expect(response).to have_http_status(:accepted)
         expect(JSON.parse(response.body)).to eq({ "answer_html" => nil })
+      end
+    end
+  end
+
+  describe "POST :answer_feedback" do
+    include_context "with onboarding completed"
+    let(:conversation) { create(:conversation) }
+    let(:question) { create(:question, conversation:) }
+
+    before do
+      cookies[:conversation_id] = conversation.id
+    end
+
+    it "sets the converation_id cookie with valid params" do
+      answer = create(:answer, question:)
+
+      freeze_time do
+        post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "true" } }
+        expect_conversation_id_set_on_cookie(conversation)
+      end
+    end
+
+    context "when the response format is HTML" do
+      it "saves the answer feedback and redirects to the show page with valid params" do
+        create(:answer, question:)
+        answer = Answer.includes(:feedback).last
+
+        post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "false" } }
+
+        expect(answer.reload.feedback.useful).to eq(false)
+        expect(response).to redirect_to(show_conversation_path(anchor: helpers.dom_id(answer)))
+        follow_redirect!
+        expect(response.body).to have_selector(".govuk-notification-banner__content", text: "Feedback submitted successfully.")
+      end
+
+      it "does not persist the feedback and redirects show page when feedback is invalid" do
+        answer = create(:answer, question:)
+
+        expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "" } } }
+          .to change(AnswerFeedback, :count).by(0)
+        expect(response).to redirect_to(show_conversation_path(anchor: helpers.dom_id(answer)))
+        follow_redirect!
+        expect(response.body).not_to have_selector(".govuk-notification-banner__content", text: "Feedback submitted successfully.")
+      end
+
+      it "does not persist the feedback and redirects show page when feedback is already present" do
+        answer = create(:answer, :with_feedback, question:)
+
+        expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "true" } } }
+          .to change(AnswerFeedback, :count).by(0)
+        expect(response).to redirect_to(show_conversation_path(anchor: helpers.dom_id(answer)))
+        follow_redirect!
+        expect(response.body).not_to have_selector(".govuk-notification-banner__content", text: "Feedback submitted successfully.")
+      end
+    end
+
+    context "when the response format is JSON" do
+      it "creates the feedback and returns a created response with valid params" do
+        create(:answer, question:)
+        answer = Answer.includes(:feedback).last
+
+        post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "false" }, format: :json }
+
+        expect(answer.reload.feedback.useful).to eq(false)
+        expect(response).to have_http_status(:created)
+        expect(JSON.parse(response.body)).to eq({ "error_messages" => [] })
+      end
+
+      it "returns an unprocessable_entity response with invalid params" do
+        answer = create(:answer, question:)
+
+        expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "" }, format: :json } }
+          .to change(AnswerFeedback, :count).by(0)
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)).to eq({ "error_messages" => ["Useful must be true or false"] })
+      end
+
+      it "returns a unprocessable_entity response when feedback is already present on the answer" do
+        answer = create(:answer, :with_feedback, question:)
+
+        expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: true }, format: :json } }
+        .to change(AnswerFeedback, :count).by(0)
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)).to eq({ "error_messages" => ["Feedback already provided"] })
       end
     end
   end
