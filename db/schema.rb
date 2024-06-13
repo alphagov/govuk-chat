@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_05_145958) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_12_122624) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -18,6 +18,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_145958) do
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "status", ["success", "error_non_specific", "error_answer_service_error", "abort_forbidden_words", "error_context_length_exceeded", "abort_no_govuk_content"]
+
+  create_table "answer_feedback", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "answer_id", null: false
+    t.boolean "useful", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_answer_feedback_on_answer_id", unique: true
+    t.index ["created_at"], name: "index_answer_feedback_on_created_at"
+  end
 
   create_table "answer_sources", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
@@ -97,6 +106,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_145958) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "answer_feedback", "answers", on_delete: :cascade
   add_foreign_key "answer_sources", "answers", on_delete: :cascade
   add_foreign_key "answers", "questions", on_delete: :cascade
   add_foreign_key "questions", "conversations"
