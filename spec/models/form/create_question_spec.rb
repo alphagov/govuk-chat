@@ -18,7 +18,7 @@ RSpec.describe Form::CreateQuestion do
       form = described_class.new(user_question: "")
       form.validate
 
-      expect(form.errors.messages[:user_question]).to eq(["Enter a question"])
+      expect(form.errors.messages[:user_question]).to eq(["Ask a question. For example, 'how do I register for VAT?'"])
     end
 
     it "is invalid when the conversation passed in has an unanswered question" do
