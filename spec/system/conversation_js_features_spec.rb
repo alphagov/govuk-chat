@@ -112,7 +112,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :js d
 
   def then_i_see_a_presence_validation_message
     within(:css, ".js-conversation-form") do
-      expect(page).to have_content("Enter a question")
+      expect(page).to have_content(Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
     end
   end
 

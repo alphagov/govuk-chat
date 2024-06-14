@@ -26,7 +26,7 @@ RSpec.describe "components/_conversation_form.html.erb" do
     })
 
     maxlength = Form::CreateQuestion::USER_QUESTION_LENGTH_MAXIMUM
-    presence_error_message = Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE
+    presence_error_message = Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE.gsub("\'", "\\\\'")
     length_error_message = sprintf(Form::CreateQuestion::USER_QUESTION_LENGTH_ERROR_MESSAGE, count: maxlength)
 
     expect(rendered)
