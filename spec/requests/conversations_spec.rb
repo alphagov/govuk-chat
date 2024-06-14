@@ -33,7 +33,7 @@ RSpec.describe "ConversationsController" do
       end
 
       it "can render a question with an answer" do
-        question = create(:question, :with_answer, conversation:)
+        question = Question.includes(:answer).where(conversation:).first
         answer = question.answer
 
         get show_conversation_path
@@ -42,6 +42,19 @@ RSpec.describe "ConversationsController" do
         expect(response.body)
           .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
           .and have_selector("##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message)
+          .and have_button("Useful", name: "create_answer_feedback[useful]", value: "true")
+          .and have_button("not useful", name: "create_answer_feedback[useful]", value: "false")
+      end
+
+      it "doesn't render feedback links when the answer already has feedback" do
+        question = Question.includes(:answer).where(conversation:).first
+        create(:answer_feedback, answer: question.answer)
+
+        get show_conversation_path
+        expect(response).to have_http_status(:success)
+        expect(response.body)
+          .to have_button("Useful", name: "create_answer_feedback[useful]", value: "true", count: 0)
+          .and have_button("not useful", name: "create_answer_feedback[useful]", value: "false", count: 0)
       end
 
       it "can render an answer with sources" do

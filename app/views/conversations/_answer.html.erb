@@ -8,3 +8,22 @@
   end,
   message: answer.message,
 } %>
+
+<% if answer.feedback.blank? %>
+  <%= form_with url: answer_feedback_path(answer) do |f| %>
+    <p class="govuk-body govuk-!-margin-left-7">
+      How was this answer?
+      <%= button_tag(
+        "Useful",
+        class: "govuk-body govuk-link",
+        name: "create_answer_feedback[useful]",
+        value: "true") %>
+      or
+      <%= button_tag(
+        "not useful",
+        class: "govuk-body govuk-link",
+        name: "create_answer_feedback[useful]",
+        value: "false") %>
+    </p>
+  <% end %>
+<% end %>

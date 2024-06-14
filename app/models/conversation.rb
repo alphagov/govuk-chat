@@ -6,7 +6,7 @@ class Conversation < ApplicationRecord
 
   def questions_for_showing_conversation
     Question.where(conversation: self)
-            .includes(answer: :sources)
+            .includes(answer: %i[feedback sources])
             .active
             .last(Rails.configuration.conversations.max_question_count)
   end
