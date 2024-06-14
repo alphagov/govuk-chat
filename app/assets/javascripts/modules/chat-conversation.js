@@ -29,6 +29,10 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     async handleFormSubmission (event) {
+      if (event.submitter && event.submitter.className.includes('app-c-answer-feedback-form__button')) {
+        return
+      }
+
       event.preventDefault()
 
       try {

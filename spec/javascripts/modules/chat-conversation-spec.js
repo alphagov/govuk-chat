@@ -205,6 +205,19 @@ describe('ChatConversation module', () => {
         expect(formSubmitSpy).toHaveBeenCalled()
       })
     })
+
+    describe('when the events submitter is a answer feedback button', () => {
+      it('does not prevent the default event', () => {
+        const event = new Event('submit')
+        event.submitter = { className: 'app-c-answer-feedback-form__button' }
+
+        const preventDefaultSpy = spyOn(event, 'preventDefault')
+
+        module.handleFormSubmission(event)
+
+        expect(preventDefaultSpy).not.toHaveBeenCalled()
+      })
+    })
   })
 
   describe('checkAnswer', () => {
