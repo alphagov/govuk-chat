@@ -113,6 +113,34 @@ RSpec.describe "ConversationsController" do
         end
       end
     end
+
+    context "when the request format is JSON" do
+      it "returns a bad request response" do
+        get show_conversation_path, params: { format: :json }
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)).to match({
+          "fragment" => "start-chatting",
+          "conversation_data" => { "module" => "chat-conversation" },
+          "conversation_append_html" => /<p>Thanks! To get started, ask me a question.<\/p>/,
+          "form_html" => /<button class="app-c-blue-button govuk-button app-c-blue-button--conversation-form js-conversation-form-button">Send<\/button/,
+        })
+      end
+
+      context "when a conversation is in progress" do
+        before do
+          conversation = create(:conversation, :not_expired)
+          cookies[:conversation_id] = conversation.id
+        end
+
+        it "returns a bad request response with an error message in the JSON" do
+          get show_conversation_path, params: { format: :json }
+
+          expect(response).to have_http_status(:bad_request)
+          expect(JSON.parse(response.body)).to match({})
+        end
+      end
+    end
   end
 
   describe "POST :update" do

@@ -40,6 +40,35 @@ RSpec.describe "OnboardingController" do
         expect(response.body).to have_selector(".govuk-link", text: "Take me to GOV.UK")
       end
     end
+
+    context "when the request format is JSON" do
+      context "when session[:more_information] is true" do
+        before do
+          post onboarding_limitations_confirm_path(more_information: true)
+        end
+
+        it "returns a successful response the the correct JSON" do
+          get onboarding_limitations_path, params: { format: :json }
+
+          expect(response).to have_http_status(:ok)
+          expect(JSON.parse(response.body)).to match({
+            "fragment" => "tell-me-more",
+            "conversation_data" => { "module" => "onboarding" },
+            "conversation_append_html" => /I combine the same technology used on ChatGPT with GOV.UK guidance./,
+            "form_html" => /Take me to GOV.UK/,
+          })
+        end
+      end
+
+      context "when session[:more_information] is not set" do
+        it "returns a not_acceptable response" do
+          get onboarding_limitations_path, params: { format: :json }
+
+          expect(response).to have_http_status(:not_acceptable)
+          expect(JSON.parse(response.body)).to eq({})
+        end
+      end
+    end
   end
 
   describe "POST :limitations_confirm" do
@@ -77,6 +106,20 @@ RSpec.describe "OnboardingController" do
       expect(response).to have_http_status(:ok)
       expect(response.body).to have_content(/You can always find information about my limitations in about GOV.UK Chat/)
       expect(response.body).to have_selector(".app-c-blue-button", text: "Okay, start chatting")
+    end
+
+    context "when the request format is JSON" do
+      it "returns the the correct JSON" do
+        get onboarding_privacy_path, params: { format: :json }
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)).to match({
+          "fragment" => "i-understand",
+          "conversation_data" => { "module" => "onboarding" },
+          "conversation_append_html" => /You can always find information about my limitations in.*about GOV.UK Chat/,
+          "form_html" => /<button class="app-c-blue-button govuk-button">Okay, start chatting<\/button>/,
+        })
+      end
     end
   end
 

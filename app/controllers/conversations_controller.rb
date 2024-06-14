@@ -8,6 +8,26 @@ class ConversationsController < BaseController
     @questions = @conversation.questions_for_showing_conversation
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
     @more_information = session[:more_information].present?
+    @conversation_data_attributes = { module: "chat-conversation" }
+
+    respond_to do |format|
+      format.html { render :show }
+      format.json do
+        if cookies[:conversation_id].blank?
+          render json: {
+            fragment: "start-chatting",
+            conversation_data: @conversation_data_attributes,
+            conversation_append_html: render_to_string(partial: "get_started_messages",
+                                                       formats: :html),
+            form_html: render_to_string(partial: "form",
+                                        formats: :html,
+                                        locals: { create_question: @create_question }),
+          }
+        else
+          render json: {}, status: :bad_request
+        end
+      end
+    end
   end
 
   def update
