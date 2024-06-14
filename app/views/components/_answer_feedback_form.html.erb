@@ -1,0 +1,18 @@
+<%= form_with url:, class: "app-c-answer-feedback-form" do |f| %>
+  <div class="app-c-answer-feedback-form__button-group">
+    <p class="govuk-body">
+      How was this answer?
+      <%= button_tag(
+        "Useful",
+        class: "app-c-answer-feedback-form__button",
+        name: "create_answer_feedback[useful]",
+        value: "true") %>
+      or
+      <%= button_tag(
+        "not useful",
+        class: "app-c-answer-feedback-form__button",
+        name: "create_answer_feedback[useful]",
+        value: "false") %>
+    </p>
+  </div>
+<% end %>
