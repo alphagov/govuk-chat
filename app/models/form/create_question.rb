@@ -32,8 +32,7 @@ private
 
   def no_pii_present?
     if PiiValidator.invalid?(user_question)
-      error_message = "Personal data has been detected in your question. Please remove it. You can ask another question. " \
-        "But please don’t include personal data in it or in any future questions."
+      error_message = "Personal data has been detected in your question. Please remove it and try asking again."
 
       errors.add(:user_question, error_message)
     end

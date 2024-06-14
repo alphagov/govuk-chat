@@ -33,8 +33,7 @@ RSpec.describe Form::CreateQuestion do
 
     describe "#no_pii_present?" do
       let(:pii_error_message) do
-        "Personal data has been detected in your question. Please remove it. You can ask another question. " \
-          "But please don’t include personal data in it or in any future questions."
+        "Personal data has been detected in your question. Please remove it and try asking again."
       end
 
       it "adds an error message when pii is present" do
