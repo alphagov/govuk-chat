@@ -28,7 +28,11 @@ RSpec.describe "Admin user filters questions" do
     and_i_search_for_old_questions
     then_i_see_the_old_question
 
-    when_i_view_the_first_questions_conversation
+    when_i_clear_the_filters
+    and_i_filter_by_questions_with_useful_answers
+    then_i_see_the_useful_question
+
+    when_i_view_the_questions_conversation
     and_i_filter_on_the_pending_status
     then_i_see_the_pending_question
   end
@@ -41,6 +45,7 @@ RSpec.describe "Admin user filters questions" do
     conversation = build(:conversation)
     @question1 = create(:question, conversation:, message: "Hello world", created_at: 2.years.ago)
     @question2 = create(:question, :with_answer, message: "World", conversation:)
+    create(:answer_feedback, answer: @question2.answer, useful: true)
   end
 
   def when_i_visit_the_admin_area
@@ -129,8 +134,18 @@ RSpec.describe "Admin user filters questions" do
     expect(page).not_to have_content(@question2.message)
   end
 
-  def when_i_view_the_first_questions_conversation
-    click_on @question1.message
-    click_on @question1.conversation.id
+  def and_i_filter_by_questions_with_useful_answers
+    select "Useful"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_useful_question
+    expect(page).to have_content(@question2.message)
+    expect(page).not_to have_content(@question1.message)
+  end
+
+  def when_i_view_the_questions_conversation
+    click_on @question2.message
+    click_on @question2.conversation.id
   end
 end

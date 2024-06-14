@@ -12,6 +12,7 @@ class Admin::Form::QuestionsFilter
   attribute :conversation
   attribute :page, :integer
   attribute :sort
+  attribute :answer_feedback_useful, :boolean
 
   validate :validate_dates
 
@@ -23,12 +24,13 @@ class Admin::Form::QuestionsFilter
 
   def questions
     @questions ||= begin
-      scope = Question.includes(:answer)
+      scope = Question.includes(answer: :feedback)
                       .left_outer_joins(:answer)
       scope = search_scope(scope)
       scope = status_scope(scope)
       scope = start_date_scope(scope)
       scope = end_date_scope(scope)
+      scope = answer_feedback_useful_scope(scope)
       scope = conversation_scope(scope)
       scope = ordering_scope(scope)
       scope.page(page)
@@ -77,6 +79,7 @@ private
     filters[:start_date_params] = start_date_params if start_date_params.values.any?(&:present?)
     filters[:end_date_params] = end_date_params if end_date_params.values.any?(&:present?)
     filters[:sort] = sort if sort != DEFAULT_SORT
+    filters[:answer_feedback_useful] = answer_feedback_useful unless answer_feedback_useful.nil?
 
     filters
   end
@@ -107,6 +110,12 @@ private
     return scope if errors[:end_date_params].present? || end_date.nil?
 
     scope.where("questions.created_at <= ?", end_date)
+  end
+
+  def answer_feedback_useful_scope(scope)
+    return scope if answer_feedback_useful.nil?
+
+    scope.joins(answer: :feedback).where(feedback: { useful: answer_feedback_useful })
   end
 
   def conversation_scope(scope)

@@ -191,6 +191,22 @@ RSpec.describe Admin::Form::QuestionsFilter do
       expect(filter.questions).to eq([question])
     end
 
+    it "filters the questions by answer feedback" do
+      useful_question = create(:question)
+      answer1 = create(:answer, question: useful_question)
+      create(:answer_feedback, answer: answer1, useful: true)
+
+      useless_question = create(:question)
+      answer2 = create(:answer, question: useless_question)
+      create(:answer_feedback, answer: answer2, useful: false)
+
+      filter = described_class.new(answer_feedback_useful: "true")
+      expect(filter.questions).to eq([useful_question])
+
+      filter = described_class.new(answer_feedback_useful: "false")
+      expect(filter.questions).to eq([useless_question])
+    end
+
     it "paginates the questions" do
       create_list(:question, 26)
 
@@ -232,21 +248,22 @@ RSpec.describe Admin::Form::QuestionsFilter do
     end
 
     it "retains all other query params when constructing the params" do
-      create_list(:question, 26)
+      create_list(:answer, 26, :with_feedback)
       today = Date.current
       start_date_params = { day: today.day, month: today.month, year: today.year - 1 }
       end_date_params = { day: today.day, month: today.month, year: today.year + 1 }
 
       filter = described_class.new(
-        status: "pending",
+        status: "success",
         search: "message",
         page: 2,
         start_date_params:,
         end_date_params:,
+        answer_feedback_useful: "true",
       )
 
       expect(filter.previous_page_params)
-        .to eq({ status: "pending", search: "message", start_date_params:, end_date_params: })
+        .to eq({ status: "success", search: "message", answer_feedback_useful: true, start_date_params:, end_date_params: })
     end
   end
 
@@ -263,20 +280,21 @@ RSpec.describe Admin::Form::QuestionsFilter do
     end
 
     it "retains all other query params when constructing the params" do
-      create_list(:question, 26)
+      create_list(:answer, 26, :with_feedback)
       today = Date.current
       start_date_params = { day: today.day, month: today.month, year: today.year - 1 }
       end_date_params = { day: today.day, month: today.month, year: today.year + 1 }
 
       filter = described_class.new(
-        status: "pending",
+        status: "success",
         search: "message",
         start_date_params:,
         end_date_params:,
+        answer_feedback_useful: "true",
       )
 
       expect(filter.next_page_params)
-        .to eq({ status: "pending", search: "message", page: 2, start_date_params:, end_date_params: })
+        .to eq({ status: "success", search: "message", answer_feedback_useful: true, page: 2, start_date_params:, end_date_params: })
     end
   end
 
