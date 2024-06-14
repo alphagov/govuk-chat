@@ -5,7 +5,7 @@ class Form::CreateQuestion
   attribute :user_question
   attribute :conversation, default: -> { Conversation.new }
 
-  USER_QUESTION_PRESENCE_ERROR_MESSAGE = "Enter a question".freeze
+  USER_QUESTION_PRESENCE_ERROR_MESSAGE = "Ask a question. For example, 'how do I register for VAT?'".freeze
   USER_QUESTION_LENGTH_MAXIMUM = 300
   USER_QUESTION_LENGTH_ERROR_MESSAGE = "Question must be %{count} characters or less".freeze
 

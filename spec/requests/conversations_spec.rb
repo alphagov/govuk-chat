@@ -141,7 +141,8 @@ RSpec.describe "ConversationsController" do
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body)
-        .to have_selector(".govuk-error-summary a[href='#create_question_user_question']", text: "Enter a question")
+        .to have_selector(".govuk-error-summary a[href='#create_question_user_question']",
+                          text: Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
         .and have_selector(".app-c-conversation-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
     end
 
@@ -193,7 +194,7 @@ RSpec.describe "ConversationsController" do
         expect(JSON.parse(response.body)).to eq(
           "question_html" => nil,
           "answer_url" => nil,
-          "error_messages" => ["Enter a question"],
+          "error_messages" => [Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE],
         )
       end
     end
