@@ -27,7 +27,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         window.GOVUK.modules.start(this.module)
 
         if (fragment) {
-          this.conversationList.querySelector(`#${fragment}`).scrollIntoView()
+          this.scrollIntoView(this.conversationList.querySelector(`#${fragment}`))
         }
       } catch (error) {
         console.error(error)
@@ -47,6 +47,10 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
       this.conversationList.insertAdjacentHTML('beforeend', conversationAppendHtml)
       this.formContainer.innerHTML = formHtml
+    }
+
+    scrollIntoView (element) {
+      element.scrollIntoView()
     }
 
     redirect (url) {
