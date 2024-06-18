@@ -4,19 +4,12 @@ RSpec.describe "components/_chat_header.html.erb" do
 
     expect(rendered)
       .to have_selector(".app-c-header")
+      .and have_selector(".app-c-header__tag", text: "Experimental")
       .and have_selector(".app-c-header__container")
       .and have_selector(".app-c-header__logo")
       .and have_selector(".app-c-header__link.app-c-header__link--homepage")
       .and have_selector(".app-c-header__logotype")
       .and have_selector(".app-c-header__product-name")
-  end
-
-  it "renders the chat header with a tag when tag_text is specified" do
-    render("components/chat_header", {
-      tag_text: "Tag text",
-    })
-
-    expect(rendered).to have_selector(".app-c-header__tag", text: "Tag text")
   end
 
   it "renders the chat header with links when navigation_items are specified" do

@@ -1,5 +1,4 @@
 <%
-  tag_text ||= nil
   navigation_items ||= []
 %>
 
@@ -15,11 +14,9 @@
             </span>
           </span>
         </a>
-        <% if tag_text %>
-          <span class="app-c-header__tag govuk-tag">
-            <%= tag_text %>
-          </span>
-        <% end %>
+        <span class="app-c-header__tag govuk-tag">
+          Experimental
+        </span>
       </div>
 
       <% if navigation_items.any? %>

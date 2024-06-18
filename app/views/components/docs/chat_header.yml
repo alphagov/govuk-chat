@@ -27,9 +27,6 @@ shared_accessibility_criteria:
   - link
 examples:
   default:
-  with_tag:
-    data:
-      tag_text: Tag text
   with_navigation_items:
     data:
       navigation_items:
