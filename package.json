@@ -22,7 +22,7 @@
     "extends": "stylelint-config-gds/scss"
   },
   "devDependencies": {
-    "jasmine-browser-runner": "^2.4.0",
+    "jasmine-browser-runner": "^2.5.0",
     "jasmine-core": "^5.1.2",
     "standard": "^17.1.0",
     "stylelint": "^16.6.1",
