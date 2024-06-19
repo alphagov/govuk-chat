@@ -1,6 +1,13 @@
 describe('ChatConversation module', () => {
   let moduleElement, module, conversationList, form, formContainer
 
+  const matchElementBySelector = (selector) => {
+    return {
+      asymmetricMatch: (element) => element.matches(selector),
+      jasmineToString: () => `<matchElementBySelector:${selector}>`
+    }
+  }
+
   beforeEach(() => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
@@ -82,7 +89,7 @@ describe('ChatConversation module', () => {
       module.init()
 
       const responseJson = {
-        question_html: '<li>How can I setup a new business?</li>',
+        question_html: '<li id="question_123">How can I setup a new business?</li>',
         answer_url: '/answer',
         error_messages: []
       }
@@ -141,6 +148,14 @@ describe('ChatConversation module', () => {
 
         expect(conversationList.children.length).toEqual(1)
         expect(conversationList.textContent).toContain('How can I setup a new business?')
+      })
+
+      it('scrolls the question into view', async () => {
+        const scrollToMessageSpy = spyOn(module, 'scrollToMessage')
+
+        await module.handleFormSubmission(new Event('submit'))
+
+        expect(scrollToMessageSpy).toHaveBeenCalledWith(matchElementBySelector('#question_123'))
       })
 
       it('dispatches a "question-accepted" event on the form element', async () => {
@@ -232,7 +247,7 @@ describe('ChatConversation module', () => {
         module.pendingAnswerUrl = '/answer'
 
         const responseJson = {
-          answer_html: '<li>Your answer</li>'
+          answer_html: '<li id="answer_123">Your answer</li>'
         }
 
         spyOn(window, 'fetch').and.resolveTo(
@@ -247,6 +262,14 @@ describe('ChatConversation module', () => {
 
         expect(conversationList.children.length).toEqual(1)
         expect(conversationList.textContent).toContain('Your answer')
+      })
+
+      it('scrolls the answer into view', async () => {
+        const scrollToMessageSpy = spyOn(module, 'scrollToMessage')
+
+        await module.checkAnswer()
+
+        expect(scrollToMessageSpy).toHaveBeenCalledWith(matchElementBySelector('#answer_123'))
       })
 
       it('resets the "pendingAnswerUrl" value', async () => {
