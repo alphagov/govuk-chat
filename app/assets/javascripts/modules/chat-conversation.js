@@ -60,6 +60,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
           const responseJson = await response.json()
 
           this.conversationList.insertAdjacentHTML('beforeend', responseJson.question_html)
+          this.scrollToMessage(this.conversationList.lastElementChild)
 
           this.form.dispatchEvent(new Event('question-accepted'))
 
@@ -91,9 +92,14 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         switch (response.status) {
           case 200: {
             const responseJson = await response.json()
+
             this.conversationList.insertAdjacentHTML('beforeend', responseJson.answer_html)
+            this.scrollToMessage(this.conversationList.lastElementChild)
+
             window.GOVUK.modules.start(this.conversationList)
+
             this.pendingAnswerUrl = null
+
             this.form.dispatchEvent(new Event('answer-received'))
             break
           }
@@ -112,6 +118,10 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     redirect (url) {
       window.location.href = url
+    }
+
+    scrollToMessage (lastElementChild) {
+      lastElementChild.scrollIntoView()
     }
   }
 
