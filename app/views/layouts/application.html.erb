@@ -38,21 +38,20 @@
     <%= render "govuk_publishing_components/components/skip_link", {
       href: "#content",
     } %>
-    <%= render "govuk_publishing_components/components/layout_header", {
-      environment: "experimental",
-      product_name: "Chat",
+
+    <%= render "components/chat_header", {
       navigation_items: [
         {
           text: "About",
           href: "/chat/about",
         },
         {
-          text: "Privacy",
-          href: "/chat/privacy",
-        },
-        {
           text: "Support",
           href: "/chat/support",
+        },
+        {
+          text: "Privacy notice",
+          href: "/chat/privacy",
         },
       ],
     } %>

@@ -8,7 +8,6 @@
 @import "govuk_publishing_components/components/error-summary";
 @import "govuk_publishing_components/components/govspeak";
 @import "govuk_publishing_components/components/layout-for-public";
-@import "govuk_publishing_components/components/layout-header";
 @import "govuk_publishing_components/components/skip-link";
 @import "govuk_publishing_components/components/success-alert";
 @import "govuk_publishing_components/components/warning-text";
@@ -20,6 +19,7 @@
 @import "components/chat-introduction";
 @import "components/conversation-form";
 @import "components/conversation-message";
+@import "components/chat-header";
 @import "components/onboarding-form";
 
 @import "overrides";

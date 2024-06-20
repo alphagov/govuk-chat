@@ -1,0 +1,50 @@
+@import "govuk/components/header/header";
+
+.app-c-header {
+  .govuk-header__link--homepage {
+    display: inline;
+    border-bottom: 3px solid transparent;
+
+    &:hover {
+      margin-bottom: 0;
+      border-bottom: 3px solid govuk-colour("white");
+    }
+  }
+
+  .govuk-header__navigation-item {
+    border-bottom: none;
+  }
+}
+
+.app-c-header__container {
+  border-bottom: govuk-spacing(2) solid govuk-colour("yellow");
+}
+
+.app-c-header__logo {
+  margin: govuk-spacing(1) 0 govuk-spacing(3);
+}
+
+.app-c-header__link--homepage {
+  vertical-align: middle;
+}
+
+.app-c-header__product-name {
+  font-size: 30px; // there currently isn't a mixin that produces a 30px font size
+  font-weight: normal;
+}
+
+.app-c-header__tag {
+  background-color: govuk-tint(govuk-colour("yellow"), 75%);
+  color: govuk-colour("black");
+  text-transform: capitalize;
+  @include govuk-font($size: 19, $weight: regular);
+  letter-spacing: 0;
+  padding: 7px;
+  margin-left: 3px;
+  display: inline-block;
+  vertical-align: middle;
+
+  @include govuk-media-query($until: 385px) {
+    margin-top: govuk-spacing(2);
+  }
+}
