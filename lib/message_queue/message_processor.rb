@@ -33,28 +33,18 @@ module MessageQueue
 
       message.ack
 
-      # Occurs when the lock_for_base_path fails due to item already being processed
+    # Occurs when the lock_for_base_path fails due to item already being processed
     rescue ActiveRecord::LockWaitTimeout
       logger.warn("#{content_identifier(payload)} scheduled for retry due to this base_path already being synched")
       message.retry
 
-      # Temporary catch to stop the logs being swamped by messages before the indexes are created
-    rescue OpenSearch::Transport::Transport::Errors::NotFound => e
-      if e.message.include?("index_not_found_exception")
-        message.discard
-      else
-        logger.error("#{content_identifier(payload)} scheduled for retry due to error: #{e.class} #{e.message}")
-        notify_sentry(e, message.payload)
-        message.retry
-      end
-
-      # Retry when experiencing an error from a supporting service
+    # Retry when experiencing an error from a supporting service
     rescue OpenSearch::Transport::Transport::Error, OpenAIClient::RequestError => e
       logger.error("#{content_identifier(payload)} scheduled for retry due to error: #{e.class} #{e.message}")
       notify_sentry(e, message.payload)
       message.retry
 
-      # This should only be catching exceptions we can't anticipate and not transient errors
+    # This should only be catching exceptions we can't anticipate and not transient errors
     rescue StandardError => e
       payload = message.payload
       log_standard_error(e, payload)
