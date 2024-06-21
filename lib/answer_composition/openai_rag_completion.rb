@@ -1,6 +1,6 @@
 module AnswerComposition
   class OpenAIRagCompletion
-    FORBIDDEN_WORDS_RESPONSE = "<p>Sorry, I can't answer that. Ask me a question about " \
+    FORBIDDEN_WORDS_RESPONSE = "<p>Sorry, I cannot answer that. Ask me a question about " \
       "business or trade and I'll use GOV.UK guidance to answer it.</p>".freeze
     NO_CONTENT_FOUND_REPONSE = "<p>Sorry, I can't find anything on GOV.UK to help me answer your question. " \
       "Could you rewrite it so I can try answering again?</p>".freeze
