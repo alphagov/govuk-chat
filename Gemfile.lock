@@ -274,7 +274,7 @@ GEM
       net-smtp
     marcel (1.0.4)
     matrix (0.4.2)
-    method_source (1.0.0)
+    method_source (1.1.0)
     mime-types (3.5.2)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2024.0604)
@@ -550,8 +550,8 @@ GEM
     pry-byebug (3.10.1)
       byebug (~> 11.0)
       pry (>= 0.13, < 0.15)
-    pry-rails (0.3.9)
-      pry (>= 0.10.4)
+    pry-rails (0.3.11)
+      pry (>= 0.13.0)
     psych (5.1.2)
       stringio
     public_suffix (5.0.5)
