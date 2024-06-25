@@ -15,6 +15,9 @@ RSpec.describe "components/_conversation_form.html.erb" do
         .and have_selector(".govuk-error-message[hidden][aria-atomic][aria-live]", visible: :hidden)
         .and have_selector(".app-c-blue-button")
     end
+
+    expect(rendered)
+      .to have_selector(".govuk-link", text: "Share your feedback (opens in a new tab)")
   end
 
   it "includes data attributes of server side validation parameters" do
