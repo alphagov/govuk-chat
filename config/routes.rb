@@ -25,6 +25,8 @@ Rails.application.routes.draw do
       post "", to: "conversations#update", as: :update_conversation
 
       get "/questions/:question_id/answer", to: "conversations#answer", as: :answer_question
+
+      post "/answers/:answer_id/feedback", to: "conversations#answer_feedback", as: :answer_feedback
     end
   end
 

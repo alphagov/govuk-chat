@@ -1,0 +1,15 @@
+name: Answer feedback form
+description: Renders a form that submits feedback for an answer
+accessibility_criteria: |
+  Buttons in the component must:
+
+  * accept focus
+  * be focusable with a keyboard
+  * indicate when it has focus
+  * activate when focused and space is pressed
+  * activate when focused and enter is pressed
+  * have an accessible label
+examples:
+  default:
+    data:
+      url: "/answer-feedback"

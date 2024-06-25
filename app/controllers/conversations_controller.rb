@@ -59,7 +59,7 @@ class ConversationsController < BaseController
     return redirect_to onboarding_limitations_path unless @conversation
 
     @question = Question.where(conversation: @conversation)
-                        .includes(answer: :sources)
+                        .includes(answer: %i[sources feedback])
                         .find(params[:question_id])
     answer = @question.answer
 
@@ -73,6 +73,26 @@ class ConversationsController < BaseController
       else
         format.html { render :pending, status: :accepted }
         format.json { render json: { answer_html: nil }, status: :accepted }
+      end
+    end
+  end
+
+  def answer_feedback
+    return redirect_to onboarding_limitations_path unless @conversation
+
+    answer = @conversation.answers.includes(:feedback).find(params[:answer_id])
+    feedback_form = Form::CreateAnswerFeedback.new(answer_feedback_params.merge(answer:))
+    fragment = helpers.dom_id(answer)
+
+    respond_to do |format|
+      if feedback_form.valid?
+        feedback_form.submit
+
+        format.html { redirect_to show_conversation_path(anchor: fragment), notice: "Feedback submitted successfully." }
+        format.json { render json: { error_messages: [] }, status: :created }
+      else
+        format.html { redirect_to show_conversation_path(anchor: fragment) }
+        format.json { render json: { error_messages: feedback_form.errors.map(&:message) }, status: :unprocessable_entity }
       end
     end
   end
@@ -128,5 +148,9 @@ private
       value: conversation.id,
       expires: Rails.configuration.conversations.max_question_age_days.days.from_now,
     }
+  end
+
+  def answer_feedback_params
+    params.require(:create_answer_feedback).permit(:useful)
   end
 end

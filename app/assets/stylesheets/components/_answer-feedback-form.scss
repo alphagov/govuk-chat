@@ -1,0 +1,15 @@
+.app-c-answer-feedback-form__button-group {
+  margin-left: govuk-spacing(7);
+}
+
+.app-c-answer-feedback-form__button {
+  background-color: transparent;
+  border: none;
+  color: govuk-colour("blue");
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  @include govuk-typography-responsive(19, $override-line-height: false, $important: false);
+  @include govuk-link-common;
+  @include govuk-link-style-default;
+}

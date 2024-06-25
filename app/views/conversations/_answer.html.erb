@@ -8,3 +8,9 @@
   end,
   message: answer.message,
 } %>
+
+<% if answer.feedback.blank? %>
+  <%= render "components/answer_feedback_form", {
+    url: answer_feedback_path(answer),
+  } %>
+<% end %>
