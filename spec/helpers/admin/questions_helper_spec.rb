@@ -57,7 +57,8 @@ RSpec.describe Admin::QuestionsHelper do
     end
 
     it "returns the correct rows when the question has an answer" do
-      answer = build_stubbed(:answer, sources: [])
+      answer = create(:answer, sources: [])
+      answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
       expected_keys = [
         "Conversation id",
@@ -76,21 +77,35 @@ RSpec.describe Admin::QuestionsHelper do
     end
 
     it "returns an error message row if the answer has an error message" do
-      answer = build_stubbed(:answer, sources: [], error_message: "An error message")
+      answer = create(:answer, sources: [], error_message: "An error message")
+      answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
       expect(returned_keys(result)).to include("Error message")
     end
 
-    it "returns a sources row when the question has sources" do
-      answer = build_stubbed(:answer, sources: [build_stubbed(:answer_source)])
+    it "returns a sources row when the answer has sources" do
+      answer = create(:answer, sources: [create(:answer_source)])
+      answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
       expect(returned_keys(result)).to include("Sources")
+    end
+
+    it "returns feedback rows when the answer has feedback" do
+      answer = create(:answer, :with_feedback)
+      answer = answer_from_db(answer)
+      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
+
+      expect(returned_keys(result)).to include("Feedback created at", "Feedback")
     end
   end
 
   def returned_keys(result)
     result.map { |row| row[:field] }
+  end
+
+  def answer_from_db(answer)
+    Answer.includes(:sources, :feedback).find(answer.id)
   end
 end
