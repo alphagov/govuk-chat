@@ -1,6 +1,7 @@
 <%
   input_id ||= "#{name.parameterize}-#{SecureRandom.hex(4)}"
   value ||= nil
+  conversation_id ||= nil
 
   maxlength = Form::CreateQuestion::USER_QUESTION_LENGTH_MAXIMUM
   presence_error_message = Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE
@@ -81,7 +82,7 @@
 
 <%= link_to(
   "Share your feedback (opens in a new tab)",
-  "https://surveys.publishing.service.gov.uk/s/0K1VSX/",
+  "https://surveys.publishing.service.gov.uk/s/0K1VSX/?conversation=#{conversation_id}",
   class: "govuk-body govuk-link govuk-!-margin-bottom-3",
   target: "_blank",
   rel: "noopener noreferrer",
