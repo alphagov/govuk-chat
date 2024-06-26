@@ -330,7 +330,7 @@ RSpec.describe "ConversationsController" do
 
         post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "false" } }
 
-        expect(answer.reload.feedback.useful).to eq(false)
+        expect(answer.reload.feedback.useful).to be(false)
         expect(response).to redirect_to(show_conversation_path(anchor: helpers.dom_id(answer)))
         follow_redirect!
         expect(response.body).to have_selector(".govuk-notification-banner__content", text: "Feedback submitted successfully.")
@@ -340,7 +340,7 @@ RSpec.describe "ConversationsController" do
         answer = create(:answer, question:)
 
         expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "" } } }
-          .to change(AnswerFeedback, :count).by(0)
+          .not_to change(AnswerFeedback, :count)
         expect(response).to redirect_to(show_conversation_path(anchor: helpers.dom_id(answer)))
         follow_redirect!
         expect(response.body).not_to have_selector(".govuk-notification-banner__content", text: "Feedback submitted successfully.")
@@ -350,7 +350,7 @@ RSpec.describe "ConversationsController" do
         answer = create(:answer, :with_feedback, question:)
 
         expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "true" } } }
-          .to change(AnswerFeedback, :count).by(0)
+          .not_to change(AnswerFeedback, :count)
         expect(response).to redirect_to(show_conversation_path(anchor: helpers.dom_id(answer)))
         follow_redirect!
         expect(response.body).not_to have_selector(".govuk-notification-banner__content", text: "Feedback submitted successfully.")
@@ -364,7 +364,7 @@ RSpec.describe "ConversationsController" do
 
         post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "false" }, format: :json }
 
-        expect(answer.reload.feedback.useful).to eq(false)
+        expect(answer.reload.feedback.useful).to be(false)
         expect(response).to have_http_status(:created)
         expect(JSON.parse(response.body)).to eq({ "error_messages" => [] })
       end
@@ -373,7 +373,7 @@ RSpec.describe "ConversationsController" do
         answer = create(:answer, question:)
 
         expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "" }, format: :json } }
-          .to change(AnswerFeedback, :count).by(0)
+          .not_to change(AnswerFeedback, :count)
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to eq({ "error_messages" => ["Useful must be true or false"] })
       end
@@ -382,7 +382,7 @@ RSpec.describe "ConversationsController" do
         answer = create(:answer, :with_feedback, question:)
 
         expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: true }, format: :json } }
-        .to change(AnswerFeedback, :count).by(0)
+        .not_to change(AnswerFeedback, :count)
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to eq({ "error_messages" => ["Feedback already provided"] })
       end

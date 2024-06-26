@@ -1,4 +1,4 @@
-RSpec.describe OpenAIClient do # rubocop:disable RSpec/FilePath
+RSpec.describe OpenAIClient do
   describe ".build" do
     let(:chat_parameters) do
       {

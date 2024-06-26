@@ -33,7 +33,7 @@ RSpec.describe Form::CreateAnswerFeedback do
 
       described_class.new(answer:, useful: true).submit
 
-      expect(answer.feedback.useful).to eq true
+      expect(answer.feedback.useful).to be true
     end
   end
 end

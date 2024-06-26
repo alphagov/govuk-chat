@@ -32,7 +32,7 @@ RSpec.describe AnswerComposition::Composer do
       let(:result) { described_class.call(question) }
 
       it "builds an answer with the error_non_specific status" do
-        expect(result.persisted?).to eq false
+        expect(result.persisted?).to be false
         expect(result.status).to eq("error_non_specific")
       end
 
@@ -61,7 +61,7 @@ RSpec.describe AnswerComposition::Composer do
       end
 
       it "builds an answer with the error_non_specific status" do
-        expect(result.persisted?).to eq false
+        expect(result.persisted?).to be false
         expect(result.status).to eq("error_non_specific")
       end
 

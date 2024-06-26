@@ -11,8 +11,7 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
         .with(question_message)
         .and_return(openai_embedding)
 
-      allow(Rails.configuration.search.thresholds).to receive(:minimum_score).and_return(min_score)
-      allow(Rails.configuration.search.thresholds).to receive(:max_results).and_return(max_results)
+      allow(Rails.configuration.search.thresholds).to receive_messages(minimum_score: min_score, max_results:)
       stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS",
                  { "guide" => 1.0, "notice" => 0.4, "about" => 0.3 })
 

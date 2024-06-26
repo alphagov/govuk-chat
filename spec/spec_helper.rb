@@ -38,7 +38,7 @@ RSpec.configure do |config|
   config.include StubChatApi
   config.include SystemSpecHelpers, type: :system
 
-  config.before(:each, chunked_content_index: true) do
+  config.before(:each, :chunked_content_index) do
     Search::ChunkedContentRepository.new.create_index!
     config.include SearchChunkedContentHelpers
   end
@@ -52,7 +52,7 @@ RSpec.configure do |config|
     driven_by :rack_test
   end
 
-  config.before(:each, type: :system, js: true) do
+  config.before(:each, :js, type: :system) do
     driven_by Capybara.javascript_driver
   end
 end

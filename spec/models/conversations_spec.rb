@@ -21,7 +21,7 @@ RSpec.describe Conversation do
       end
 
       it "returns no conversations" do
-        expect(described_class.active.exists?).to eq(false)
+        expect(described_class.active.exists?).to be(false)
       end
 
       it "throws NotFound when attempting to access conversation through the scope" do

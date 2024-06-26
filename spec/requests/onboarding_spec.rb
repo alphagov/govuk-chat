@@ -87,7 +87,7 @@ RSpec.describe "OnboardingController" do
     context "when the more_information param is present" do
       it "sets session[:more_information] to true" do
         post onboarding_limitations_confirm_path(more_information: true)
-        expect(session[:more_information]).to eq(true)
+        expect(session[:more_information]).to be(true)
       end
 
       it "redirects to the limitations page" do
