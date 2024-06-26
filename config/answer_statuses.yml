@@ -18,6 +18,11 @@ abort_no_govuk_content:
   label_colour: "orange"
   description: "no GOV.UK content found"
   label_and_description: "Abort - no GOV.UK content found"
+abort_timeout:
+  label: "Abort"
+  label_colour: "orange"
+  description: "no answer after configured timeout"
+  label_and_description: "Abort - no answer after configured timeout"
 error_answer_service_error:
   label: "Error"
   label_colour: "red"
