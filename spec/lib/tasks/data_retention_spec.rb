@@ -15,7 +15,7 @@ RSpec.describe "rake data_retention tasks" do
         .to change(Question, :count).by(-1)
         .and change(Answer, :count).by(-1)
         .and change(AnswerSource, :count).by(-2)
-        .and change(Conversation, :count).by(0)
+        .and not_change(Conversation, :count)
         .and output("\"1 question deleted\"\n\"0 conversations deleted\"\n").to_stdout
     end
 
