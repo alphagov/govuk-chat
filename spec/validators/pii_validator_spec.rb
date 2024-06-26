@@ -3,7 +3,7 @@ RSpec.describe PiiValidator do
     context "when the input does not contain any personal information" do
       it "returns false" do
         user_question = "How much VAT do i have to pay?"
-        expect(described_class.invalid?(user_question)).to eq false
+        expect(described_class.invalid?(user_question)).to be false
       end
     end
 
@@ -17,7 +17,7 @@ RSpec.describe PiiValidator do
 
         email_addresses.each do |email_address|
           user_question = "My email address is #{email_address}"
-          expect(described_class.invalid?(user_question)).to eq true
+          expect(described_class.invalid?(user_question)).to be true
         end
       end
     end
@@ -33,18 +33,18 @@ RSpec.describe PiiValidator do
 
         credit_card_numbers.each do |credit_card_number|
           user_question = "My credit card number is #{credit_card_number}"
-          expect(described_class.invalid?(user_question)).to eq true
+          expect(described_class.invalid?(user_question)).to be true
         end
       end
 
       it "returns true when the it contains a normal credit card number" do
         user_question = "My credit card number is 1234 5678 9012 3456"
-        expect(described_class.invalid?(user_question)).to eq true
+        expect(described_class.invalid?(user_question)).to be true
       end
 
       it "returns true when the it contains an AMEX credit card number" do
         user_question = "My credit card number is 1234 567890 12345"
-        expect(described_class.invalid?(user_question)).to eq true
+        expect(described_class.invalid?(user_question)).to be true
       end
     end
 
@@ -87,7 +87,7 @@ RSpec.describe PiiValidator do
 
         phone_numbers.each do |phone_number|
           user_question = "My phone number is #{phone_number}"
-          expect(described_class.invalid?(user_question)).to eq true
+          expect(described_class.invalid?(user_question)).to be true
         end
       end
     end
@@ -98,7 +98,7 @@ RSpec.describe PiiValidator do
 
         ni_numbers.each do |ni_number|
           user_question = "My ni number is #{ni_number}"
-          expect(described_class.invalid?(user_question)).to eq true
+          expect(described_class.invalid?(user_question)).to be true
         end
       end
     end

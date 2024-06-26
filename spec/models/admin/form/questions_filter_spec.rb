@@ -72,38 +72,38 @@ RSpec.describe Admin::Form::QuestionsFilter do
 
   describe "#questions" do
     describe "ordering" do
-      let!(:question1) { create(:question, message: "Hello world", created_at: 1.minute.ago) }
-      let!(:question2) { create(:question, :with_answer, message: "World hello", created_at: 2.minutes.ago) }
-      let!(:question3) { create(:question, :with_answer, message: "Sup moon", created_at: 3.minutes.ago) }
+      let!(:question_1_min_ago) { create(:question, message: "Hello world", created_at: 1.minute.ago) }
+      let!(:question_2_mins_ago) { create(:question, :with_answer, message: "World hello", created_at: 2.minutes.ago) }
+      let!(:question_3_mins_ago) { create(:question, :with_answer, message: "Sup moon", created_at: 3.minutes.ago) }
 
       it "orders the questions by the most recently created" do
         questions = described_class.new.questions
-        expect(questions).to eq([question1, question2, question3])
+        expect(questions).to eq([question_1_min_ago, question_2_mins_ago, question_3_mins_ago])
       end
 
       it "orders the questions by the most recently created when the sort param is '-created_at'" do
         questions = described_class.new(sort: "-created_at").questions
-        expect(questions).to eq([question1, question2, question3])
+        expect(questions).to eq([question_1_min_ago, question_2_mins_ago, question_3_mins_ago])
       end
 
       it "orders the questions by the most recently created if the sort param is invalid" do
         questions = described_class.new(sort: "invalid").questions
-        expect(questions).to eq([question1, question2, question3])
+        expect(questions).to eq([question_1_min_ago, question_2_mins_ago, question_3_mins_ago])
       end
 
       it "orders the questions by the oldest first when the sort param is 'created_at'" do
         questions = described_class.new(sort: "created_at").questions
-        expect(questions).to eq([question3, question2, question1])
+        expect(questions).to eq([question_3_mins_ago, question_2_mins_ago, question_1_min_ago])
       end
 
       it "orders the questions alphabetically when the sort param is 'message'" do
         questions = described_class.new(sort: "message").questions
-        expect(questions).to eq([question1, question3, question2])
+        expect(questions).to eq([question_1_min_ago, question_3_mins_ago, question_2_mins_ago])
       end
 
       it "orders the questions reverse alphabetically when the sort param is '-message'" do
         questions = described_class.new(sort: "-message").questions
-        expect(questions).to eq([question2, question3, question1])
+        expect(questions).to eq([question_2_mins_ago, question_3_mins_ago, question_1_min_ago])
       end
     end
 

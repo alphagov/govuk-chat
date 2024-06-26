@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do # rubocop:disable RSpec/FilePath
+RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do # rubocop:disable RSpec/SpecFilePathFormat
   describe ".call" do
     let(:rephrased_question) { "Question rephrased by OpenAI" }
     let(:question) { create :question }

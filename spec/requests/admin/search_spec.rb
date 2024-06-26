@@ -2,8 +2,7 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
   describe "GET :index" do
     before do
       stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS", { "guide" => 1.2 })
-      allow(Rails.configuration.search.thresholds).to receive(:minimum_score).and_return(0.6)
-      allow(Rails.configuration.search.thresholds).to receive(:max_results).and_return(5)
+      allow(Rails.configuration.search.thresholds).to receive_messages(minimum_score: 0.6, max_results: 5)
     end
 
     context "with empty params" do
