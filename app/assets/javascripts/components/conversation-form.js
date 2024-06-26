@@ -7,6 +7,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
   class ConversationForm {
     constructor (module) {
       this.module = module
+      this.form = module.querySelector('.js-conversation-form')
       this.input = module.querySelector('.js-conversation-form-input')
       this.button = module.querySelector('.js-conversation-form-button')
       this.errorsWrapper = module.querySelector('.js-conversation-form-errors-wrapper')
@@ -14,11 +15,12 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     init () {
-      this.module.addEventListener('submit', e => this.handleSubmit(e))
+      this.form.addEventListener('submit', e => this.handleSubmit(e))
       this.module.addEventListener('question-pending', () => this.handleQuestionPending())
       this.module.addEventListener('question-accepted', () => this.handleQuestionAccepted())
       this.module.addEventListener('question-rejected', e => this.handleQuestionRejected(e))
       this.module.addEventListener('answer-received', () => this.handleAnswerReceived())
+      // used to inform other components that this component is initialised.
       this.module.dispatchEvent(new Event('init'))
     }
 

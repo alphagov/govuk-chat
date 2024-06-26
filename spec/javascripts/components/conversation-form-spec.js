@@ -1,38 +1,41 @@
 describe('ConversationForm component', () => {
   'use strict'
 
-  let form, formGroup, input, button, presenceErrorMessage, lengthErrorMessage, errorsWrapper, module
+  let div, form, formGroup, input, button, presenceErrorMessage, lengthErrorMessage, errorsWrapper, module
 
   beforeEach(function () {
-    form = document.createElement('form')
+    div = document.createElement('div')
     presenceErrorMessage = 'Enter a question'
     lengthErrorMessage = 'Question must be 300 characters or less'
-    form.dataset.presenceErrorMessage = presenceErrorMessage
-    form.dataset.lengthErrorMessage = lengthErrorMessage
-    form.dataset.maxlength = 300
-    form.innerHTML = `
-      <div class="js-conversation-form-group">
-        <ul class="js-conversation-form-errors-wrapper" hidden="true"></ul>
-        <input type="text" class="js-conversation-form-input" value="What is the VAT rate?">
-        <button class="js-conversation-form-button">Submit</button>
-      </div>
+    div.dataset.presenceErrorMessage = presenceErrorMessage
+    div.dataset.lengthErrorMessage = lengthErrorMessage
+    div.dataset.maxlength = 300
+    div.innerHTML = `
+      <form class="js-conversation-form">
+        <div class="js-conversation-form-group">
+          <ul class="js-conversation-form-errors-wrapper" hidden="true"></ul>
+          <input type="text" class="js-conversation-form-input" value="What is the VAT rate?">
+          <button class="js-conversation-form-button">Submit</button>
+        </div>
+      </form>
     `
-    input = form.querySelector('.js-conversation-form-input')
-    button = form.querySelector('.js-conversation-form-button')
-    errorsWrapper = form.querySelector('.js-conversation-form-errors-wrapper')
-    formGroup = form.querySelector('.js-conversation-form-group')
-    document.body.appendChild(form)
-    module = new window.GOVUK.Modules.ConversationForm(form)
+    form = div.querySelector('.js-conversation-form')
+    input = div.querySelector('.js-conversation-form-input')
+    button = div.querySelector('.js-conversation-form-button')
+    errorsWrapper = div.querySelector('.js-conversation-form-errors-wrapper')
+    formGroup = div.querySelector('.js-conversation-form-group')
+    document.body.appendChild(div)
+    module = new window.GOVUK.Modules.ConversationForm(div)
   })
 
   afterEach(function () {
-    document.body.removeChild(form)
+    document.body.removeChild(div)
   })
 
   describe('init', () => {
-    it('dispatches an init event on the form element', () => {
+    it('dispatches an init event on the module element', () => {
       const spy = jasmine.createSpy()
-      form.addEventListener('init', spy)
+      div.addEventListener('init', spy)
 
       module.init()
 
@@ -40,7 +43,7 @@ describe('ConversationForm component', () => {
     })
   })
 
-  describe('when receiving a submit event', () => {
+  describe('when form receives a submit event', () => {
     beforeEach(() => module.init())
 
     it('allows form submission when input is valid', () => {
@@ -97,7 +100,7 @@ describe('ConversationForm component', () => {
     })
 
     it('shows an error when the user input is greater in length than maxlength', () => {
-      const maxlength = parseInt(form.dataset.maxlength, 10)
+      const maxlength = parseInt(div.dataset.maxlength, 10)
       input.value = 'a'.repeat(maxlength + 1)
       form.dispatchEvent(new Event('submit'))
       expect(errorsWrapper.hidden).toBe(false)
@@ -111,7 +114,7 @@ describe('ConversationForm component', () => {
     beforeEach(() => module.init())
 
     it('disables the controls', () => {
-      form.dispatchEvent(new Event('question-pending'))
+      div.dispatchEvent(new Event('question-pending'))
 
       expect(input.readOnly).toBe(true)
       expect(button.disabled).toBe(true)
@@ -119,7 +122,7 @@ describe('ConversationForm component', () => {
 
     it("doesn't update the input value", () => {
       const value = input.value
-      form.dispatchEvent(new Event('question-pending'))
+      div.dispatchEvent(new Event('question-pending'))
 
       expect(input.value).toEqual(value)
     })
@@ -129,14 +132,14 @@ describe('ConversationForm component', () => {
     beforeEach(() => module.init())
 
     it('disables the controls', () => {
-      form.dispatchEvent(new Event('question-accepted'))
+      div.dispatchEvent(new Event('question-accepted'))
 
       expect(input.readOnly).toBe(true)
       expect(button.disabled).toBe(true)
     })
 
     it('resets the input value', () => {
-      form.dispatchEvent(new Event('question-accepted'))
+      div.dispatchEvent(new Event('question-accepted'))
 
       expect(input.value).toEqual('')
     })
@@ -158,7 +161,7 @@ describe('ConversationForm component', () => {
       input.readOnly = true
       button.disabled = true
 
-      form.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
+      div.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
 
       expect(input.readOnly).toBe(false)
       expect(button.disabled).toBe(false)
@@ -166,14 +169,14 @@ describe('ConversationForm component', () => {
 
     it("doesn't update the input value", () => {
       const value = input.value
-      form.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
+      div.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
 
       expect(input.value).toEqual(value)
     })
 
     it('displays error messages provided by the event', () => {
       const event = new CustomEvent('question-rejected', errorDetail)
-      form.dispatchEvent(event)
+      div.dispatchEvent(event)
 
       const expectedHtml = '<li><span class="govuk-visually-hidden">Error:</span>Error 1</li>' +
         '<li><span class="govuk-visually-hidden">Error:</span>Error 2</li>'
@@ -184,7 +187,7 @@ describe('ConversationForm component', () => {
 
     it('adds the appropriate classes when there is a validation error', () => {
       const event = new CustomEvent('question-rejected', errorDetail)
-      form.dispatchEvent(event)
+      div.dispatchEvent(event)
 
       expect(formGroup.classList).toContain('app-c-conversation-form__form-group--error')
       expect(input.classList).toContain('app-c-conversation-form__input--error')
@@ -193,7 +196,7 @@ describe('ConversationForm component', () => {
     it('replaces any existing error messages', () => {
       errorsWrapper.hidden = false
       errorsWrapper.innerHTML = '<li><span class="govuk-visually-hidden">Error:</span>Oops</li>'
-      form.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
+      div.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
 
       expect(errorsWrapper.hidden).toBe(false)
       expect(errorsWrapper.textContent).not.toMatch(/Oops/)
@@ -221,14 +224,14 @@ describe('ConversationForm component', () => {
       input.readOnly = true
       button.disabled = true
 
-      form.dispatchEvent(new Event('answer-received'))
+      div.dispatchEvent(new Event('answer-received'))
 
       expect(input.readOnly).toBe(false)
       expect(button.disabled).toBe(false)
     })
 
     it('resets the value of the input', () => {
-      form.dispatchEvent(new Event('answer-received'))
+      div.dispatchEvent(new Event('answer-received'))
 
       expect(input.value).toEqual('')
     })

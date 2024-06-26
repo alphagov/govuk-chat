@@ -7,7 +7,7 @@ RSpec.describe "components/_conversation_form.html.erb" do
       value: "Value",
     })
 
-    expect(rendered).to have_selector('.app-c-conversation-form[action="/conversation"]') do |rendered_form|
+    expect(rendered).to have_selector('.app-c-conversation-form__form[action="/conversation"]') do |rendered_form|
       expect(rendered_form)
         .to have_selector(".app-c-conversation-form__label.govuk-visually-hidden", text: /Enter your question/)
         .and have_selector(".app-c-conversation-form__input[id=id][name=name][value=Value]")

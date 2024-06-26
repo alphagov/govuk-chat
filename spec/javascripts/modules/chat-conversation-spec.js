@@ -1,14 +1,14 @@
 /* global asymmetricMatchers */
 
 describe('ChatConversation module', () => {
-  let moduleElement, module, conversationList, form, formContainer
+  let moduleElement, module, conversationList, formComponent, form
 
   beforeEach(() => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
       <ul class="js-conversation-list"></ul>
-      <div class="js-form-container">
-        <form class="js-conversation-form" action="/conversation">
+      <div class="js-conversation-form-wrapper">
+        <form action="/conversation" class="js-conversation-form">
           <input type="text" name="question" value="How can I setup a new business?">
         </form>
       </div>
@@ -16,8 +16,8 @@ describe('ChatConversation module', () => {
 
     document.body.appendChild(moduleElement)
     conversationList = moduleElement.querySelector('.js-conversation-list')
+    formComponent = moduleElement.querySelector('.js-conversation-form-wrapper')
     form = moduleElement.querySelector('.js-conversation-form')
-    formContainer = moduleElement.querySelector('.js-form-container')
 
     module = new window.GOVUK.Modules.ChatConversation(moduleElement)
   })
@@ -27,11 +27,11 @@ describe('ChatConversation module', () => {
   })
 
   describe('init', () => {
-    it('adds an event listener for handleFormSubmission for submit events', () => {
+    it('adds an event listener for handleFormSubmission for form component submit events', () => {
       const handleFormSubmissionSpy = spyOn(module, 'handleFormSubmission')
 
       module.init()
-      formContainer.dispatchEvent(new Event('submit'))
+      formComponent.dispatchEvent(new Event('submit'))
 
       expect(handleFormSubmissionSpy).toHaveBeenCalled()
     })
@@ -39,18 +39,18 @@ describe('ChatConversation module', () => {
     describe('when there is a pendingAnswerUrl and the form component is initialised', () => {
       beforeEach(() => {
         module.pendingAnswerUrl = '/answer'
-        form.dataset.conversationFormModuleStarted = 'true'
+        formComponent.dataset.conversationFormModuleStarted = 'true'
       })
 
       it('starts checking for an answer and dispatches an event so the form is in the correct state', () => {
         const checkAnswerSpy = spyOn(module, 'checkAnswer')
-        const formEventSpy = spyOn(form, 'dispatchEvent')
+        const formComponentEventSpy = spyOn(formComponent, 'dispatchEvent')
 
         module.init()
 
         expect(checkAnswerSpy).toHaveBeenCalled()
         const expectedEvent = jasmine.objectContaining({ type: 'question-accepted' })
-        expect(formEventSpy).toHaveBeenCalledWith(expectedEvent)
+        expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
     })
 
@@ -59,20 +59,20 @@ describe('ChatConversation module', () => {
         module.pendingAnswerUrl = '/answer'
       })
 
-      it('starts checking for answer and changing form state once the form is initialised', () => {
+      it('starts checking for answer and changing form state once the form component is initialised', () => {
         const checkAnswerSpy = spyOn(module, 'checkAnswer')
-        const formEventSpy = spyOn(form, 'dispatchEvent').and.callThrough()
+        const formComponentEventSpy = spyOn(formComponent, 'dispatchEvent').and.callThrough()
 
         module.init()
 
         expect(checkAnswerSpy).not.toHaveBeenCalled()
-        expect(formEventSpy).not.toHaveBeenCalled()
+        expect(formComponentEventSpy).not.toHaveBeenCalled()
 
-        form.dispatchEvent(new Event('init'))
+        formComponent.dispatchEvent(new Event('init'))
 
         expect(checkAnswerSpy).toHaveBeenCalled()
         const expectedEvent = jasmine.objectContaining({ type: 'question-accepted' })
-        expect(formEventSpy).toHaveBeenCalledWith(expectedEvent)
+        expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
     })
   })
@@ -112,8 +112,6 @@ describe('ChatConversation module', () => {
     })
 
     it('submits a JSON fetch request to the action of the form', async () => {
-      const form = moduleElement.querySelector('.js-conversation-form')
-
       await module.handleFormSubmission(new Event('submit'))
 
       const formData = new FormData()
@@ -128,8 +126,8 @@ describe('ChatConversation module', () => {
       }))
     })
 
-    it('dispatches a question-pending event on the form element', async () => {
-      const formEventSpy = spyOn(module.form, 'dispatchEvent')
+    it('dispatches a question-pending event on the form component element', async () => {
+      const formEventSpy = spyOn(module.formComponent, 'dispatchEvent')
 
       await module.handleFormSubmission(new Event('submit'))
 
@@ -153,13 +151,13 @@ describe('ChatConversation module', () => {
         expect(scrollToMessageSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#question_123'))
       })
 
-      it('dispatches a "question-accepted" event on the form element', async () => {
-        const formEventSpy = spyOn(module.form, 'dispatchEvent')
+      it('dispatches a "question-accepted" event on the form component element', async () => {
+        const formComponentEventSpy = spyOn(module.formComponent, 'dispatchEvent')
 
         await module.handleFormSubmission(new Event('submit'))
 
         const expectedEvent = jasmine.objectContaining({ type: 'question-accepted' })
-        expect(formEventSpy).toHaveBeenCalledWith(expectedEvent)
+        expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
 
       it('starts the process to load an answer', async () => {
@@ -173,7 +171,7 @@ describe('ChatConversation module', () => {
     })
 
     describe('when receiving an unproccessible entity response', () => {
-      it('dispatches a "question-rejected" event on the form element', async () => {
+      it('dispatches a "question-rejected" event on the form component element', async () => {
         const responseJson = {
           error_messages: ['form error']
         }
@@ -182,12 +180,12 @@ describe('ChatConversation module', () => {
           new Response(JSON.stringify(responseJson), { status: 422 })
         )
 
-        const formEventSpy = spyOn(module.form, 'dispatchEvent')
+        const formComponentEventSpy = spyOn(module.formComponent, 'dispatchEvent')
 
         await module.handleFormSubmission(new Event('submit'))
 
         const expectedEvent = jasmine.objectContaining({ type: 'question-rejected', detail: { errorMessages: ['form error'] } })
-        expect(formEventSpy).toHaveBeenCalledWith(expectedEvent)
+        expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
     })
 
@@ -273,13 +271,13 @@ describe('ChatConversation module', () => {
         expect(module.pendingAnswerUrl).toBeNull()
       })
 
-      it('dispatches an "answer-received" event to the form', async () => {
-        const formEventSpy = spyOn(module.form, 'dispatchEvent')
+      it('dispatches an "answer-received" event to the form component', async () => {
+        const formComponentEventSpy = spyOn(module.formComponent, 'dispatchEvent')
 
         await module.checkAnswer()
 
         const expectedEvent = jasmine.objectContaining({ type: 'answer-received' })
-        expect(formEventSpy).toHaveBeenCalledWith(expectedEvent)
+        expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
 
       it('starts any nested modules', async () => {
