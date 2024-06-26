@@ -40,5 +40,23 @@ RSpec.describe ComposeAnswerJob do
           .not_to change(Answer, :count)
       end
     end
+
+    context "when a timed out answer exists before RAG completion returns" do
+      before do
+        allow(AnswerComposition::Composer).to receive(:call) do
+          # ensure a uniqueness conflict
+          create(:answer, question:)
+          returned_answer
+        end
+      end
+
+      it "logs a warning" do
+        expect(described_class.logger)
+          .to receive(:warn)
+          .with("Already an answer created for #{question.id}")
+
+        described_class.new.perform(question.id)
+      end
+    end
   end
 end
