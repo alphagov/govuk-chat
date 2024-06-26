@@ -18,3 +18,13 @@ inherit_mode:
 #
 # See https://github.com/alphagov/rubocop-govuk/blob/main/CONTRIBUTING.md
 # **************************************************************
+
+
+# This can be removed once https://github.com/alphagov/rubocop-govuk/pull/400
+# is released
+#
+# The GOV.UK Feature spec style has expectations in method calls so this
+# cop falsely triggers
+RSpec/NoExpectationExample:
+  Exclude:
+    - 'spec/system/**/*.rb'
