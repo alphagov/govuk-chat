@@ -6,13 +6,14 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     constructor (module) {
       this.module = module
       this.form = this.module.querySelector('.js-conversation-form')
+      this.formContainer = this.module.querySelector('.js-form-container')
       this.conversationList = this.module.querySelector('.js-conversation-list')
       this.pendingAnswerUrl = this.module.dataset.pendingAnswerUrl
       this.ANSWER_INTERVAL = 500
     }
 
     init () {
-      this.module.addEventListener('submit', e => this.handleFormSubmission(e))
+      this.formContainer.addEventListener('submit', e => this.handleFormSubmission(e))
 
       if (!this.pendingAnswerUrl) return
 
@@ -29,10 +30,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     async handleFormSubmission (event) {
-      if (event.submitter && event.submitter.className.includes('app-c-answer-feedback-form__button')) {
-        return
-      }
-
       event.preventDefault()
 
       try {

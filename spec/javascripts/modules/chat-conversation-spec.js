@@ -1,18 +1,21 @@
 describe('ChatConversation module', () => {
-  let moduleElement, module, conversationList, form
+  let moduleElement, module, conversationList, form, formContainer
 
   beforeEach(() => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
       <ul class="js-conversation-list"></ul>
-      <form class="js-conversation-form" action="/conversation">
-        <input type="text" name="question" value="How can I setup a new business?">
-      </form>
+      <div class="js-form-container">
+        <form class="js-conversation-form" action="/conversation">
+          <input type="text" name="question" value="How can I setup a new business?">
+        </form>
+      </div>
     `
 
     document.body.appendChild(moduleElement)
     conversationList = moduleElement.querySelector('.js-conversation-list')
     form = moduleElement.querySelector('.js-conversation-form')
+    formContainer = moduleElement.querySelector('.js-form-container')
 
     module = new window.GOVUK.Modules.ChatConversation(moduleElement)
   })
@@ -26,7 +29,7 @@ describe('ChatConversation module', () => {
       const handleFormSubmissionSpy = spyOn(module, 'handleFormSubmission')
 
       module.init()
-      moduleElement.dispatchEvent(new Event('submit'))
+      formContainer.dispatchEvent(new Event('submit'))
 
       expect(handleFormSubmissionSpy).toHaveBeenCalled()
     })
@@ -203,19 +206,6 @@ describe('ChatConversation module', () => {
 
         expect(consoleErrorSpy).toHaveBeenCalled()
         expect(formSubmitSpy).toHaveBeenCalled()
-      })
-    })
-
-    describe('when the events submitter is a answer feedback button', () => {
-      it('does not prevent the default event', () => {
-        const event = new Event('submit')
-        event.submitter = { className: 'app-c-answer-feedback-form__button' }
-
-        const preventDefaultSpy = spyOn(event, 'preventDefault')
-
-        module.handleFormSubmission(event)
-
-        expect(preventDefaultSpy).not.toHaveBeenCalled()
       })
     })
   })
