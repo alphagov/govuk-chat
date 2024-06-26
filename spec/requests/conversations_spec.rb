@@ -315,6 +315,22 @@ RSpec.describe "ConversationsController" do
       end
     end
 
+    context "when the answer generation has timed out" do
+      it "creates the answer with a status of abort_timeout" do
+        question = create(
+          :question,
+          conversation:,
+          created_at: Rails.configuration.conversations.answer_timeout_in_seconds.seconds.ago,
+        )
+
+        expect { get answer_question_path(question) }.to change { question.reload.answer }.from(nil)
+        expect(question.answer).to have_attributes(
+          message: AnswerComposition::TIMED_OUT_RESPONSE,
+          status: "abort_timeout",
+        )
+      end
+    end
+
     context "when the request format is JSON" do
       it "responds with a 200 and answer_html when the question has been answered" do
         question = create(:question, :with_answer, conversation:)

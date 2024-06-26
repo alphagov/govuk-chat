@@ -63,6 +63,13 @@ class ConversationsController < BaseController
                         .find(params[:question_id])
     answer = @question.answer
 
+    if answer.nil? && @question.created_at <= Rails.configuration.conversations.answer_timeout_in_seconds.seconds.ago
+      answer = @question.create_answer(
+        message: AnswerComposition::OpenAIRagCompletion::TIMED_OUT_RESPONSE,
+        status: :abort_timeout,
+      )
+    end
+
     respond_to do |format|
       if answer.present?
         format.html do

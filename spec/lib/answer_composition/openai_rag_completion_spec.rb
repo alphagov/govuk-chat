@@ -148,7 +148,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           answer,
           {
             question:,
-            message: described_class::FORBIDDEN_WORDS_RESPONSE,
+            message: AnswerComposition::FORBIDDEN_WORDS_RESPONSE,
             rephrased_question:,
             status: "abort_forbidden_words",
           },
@@ -171,7 +171,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           answer,
           {
             question:,
-            message: described_class::NO_CONTENT_FOUND_REPONSE,
+            message: AnswerComposition::NO_CONTENT_FOUND_REPONSE,
             rephrased_question:,
             status: "abort_no_govuk_content",
           },
@@ -210,7 +210,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           answer,
           {
             question:,
-            message: described_class::OPENAI_CLIENT_ERROR_RESPONSE,
+            message: AnswerComposition::OPENAI_CLIENT_ERROR_RESPONSE,
             status: "error_answer_service_error",
             error_message: "class: OpenAIClient::ClientError message: Error message",
           },

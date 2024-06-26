@@ -53,7 +53,11 @@ module GovukChat
     config.active_record.strict_loading_by_default = true
 
     config.opensearch = config_for(:opensearch)
-    config.conversations = Hashie::Mash.new(max_question_age_days: 30, max_question_count: 500)
+    config.conversations = Hashie::Mash.new(
+      answer_timeout_in_seconds: 120,
+      max_question_age_days: 30,
+      max_question_count: 500,
+    )
 
     config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]
 
