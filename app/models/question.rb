@@ -23,4 +23,16 @@ class Question < ApplicationRecord
   def answer_status
     answer&.status || "pending"
   end
+
+  def check_or_create_timeout_answer
+    return answer if answer.present?
+
+    age = Time.current - created_at
+    if age >= Rails.configuration.conversations.answer_timeout_in_seconds
+      create_answer(
+        message: AnswerComposition::TIMED_OUT_RESPONSE,
+        status: :abort_timeout,
+      )
+    end
+  end
 end

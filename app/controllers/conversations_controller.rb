@@ -61,14 +61,7 @@ class ConversationsController < BaseController
     @question = Question.where(conversation: @conversation)
                         .includes(answer: %i[sources feedback])
                         .find(params[:question_id])
-    answer = @question.answer
-
-    if answer.nil? && @question.created_at <= Rails.configuration.conversations.answer_timeout_in_seconds.seconds.ago
-      answer = @question.create_answer(
-        message: AnswerComposition::OpenAIRagCompletion::TIMED_OUT_RESPONSE,
-        status: :abort_timeout,
-      )
-    end
+    answer = @question.check_or_create_timeout_answer
 
     respond_to do |format|
       if answer.present?

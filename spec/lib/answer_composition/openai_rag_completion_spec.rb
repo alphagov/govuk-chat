@@ -190,7 +190,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           answer,
           {
             question:,
-            message: described_class::CONTEXT_LENGTH_EXCEEDED_RESPONSE,
+            message: AnswerComposition::CONTEXT_LENGTH_EXCEEDED_RESPONSE,
             status: "error_context_length_exceeded",
             error_message: "class: OpenAIClient::ContextLengthExceededError message: Error message",
           },
