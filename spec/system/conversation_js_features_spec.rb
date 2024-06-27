@@ -1,4 +1,4 @@
-RSpec.describe "Conversation JavaScript features", :chunked_content_index, :js do
+RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dismiss_cookie_banner, :js do
   include ActiveJob::TestHelper
 
   scenario "questions with answers" do

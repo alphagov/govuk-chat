@@ -1,8 +1,18 @@
 module SystemSpecHelpers
   def given_i_have_confirmed_i_understand_chat_risks
     visit onboarding_limitations_path
-    click_on "I understand"
-    click_on "Okay, start chatting"
+
+    click_button "I understand"
+    click_button "Okay, start chatting"
+  end
+
+  def dismiss_cookie_banner
+    visit root_path
+
+    within(".gem-c-cookie-banner") do
+      click_button "Reject additional cookies"
+      click_button "Hide this message"
+    end
   end
 
   def set_cookie(name, value)

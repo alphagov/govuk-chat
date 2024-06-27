@@ -55,4 +55,10 @@ RSpec.configure do |config|
   config.before(:each, :js, type: :system) do
     driven_by Capybara.javascript_driver
   end
+
+  config.before(:each, :dismiss_cookie_banner, type: :system) do
+    # The cookie banner for the session as it can break tests due to
+    # them running in a small viewport.
+    dismiss_cookie_banner
+  end
 end
