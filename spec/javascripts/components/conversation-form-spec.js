@@ -1,7 +1,8 @@
 describe('ConversationForm component', () => {
   'use strict'
 
-  let div, form, formGroup, input, button, presenceErrorMessage, lengthErrorMessage, errorsWrapper, module
+  let div, form, formGroup, input, button, presenceErrorMessage,
+    lengthErrorMessage, errorsWrapper, surveyLink, module
 
   beforeEach(function () {
     div = document.createElement('div')
@@ -18,12 +19,14 @@ describe('ConversationForm component', () => {
           <button class="js-conversation-form-button">Submit</button>
         </div>
       </form>
+      <a href="/survey" class="js-survey-link">Survey</a>
     `
     form = div.querySelector('.js-conversation-form')
     input = div.querySelector('.js-conversation-form-input')
     button = div.querySelector('.js-conversation-form-button')
     errorsWrapper = div.querySelector('.js-conversation-form-errors-wrapper')
     formGroup = div.querySelector('.js-conversation-form-group')
+    surveyLink = div.querySelector('.js-survey-link')
     document.body.appendChild(div)
     module = new window.GOVUK.Modules.ConversationForm(div)
   })
@@ -142,6 +145,14 @@ describe('ConversationForm component', () => {
       div.dispatchEvent(new Event('question-accepted'))
 
       expect(input.value).toEqual('')
+    })
+
+    it('updates the survey link to add the value of the conversation_id cookie', () => {
+      const cookieSpy = spyOn(window.GOVUK, 'cookie')
+      cookieSpy.withArgs('conversation_id').and.returnValue('1234-1234-1234')
+
+      div.dispatchEvent(new Event('question-accepted'))
+      expect(surveyLink.href).toMatch(/\?conversation=1234-1234-1234$/)
     })
   })
 

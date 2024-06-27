@@ -12,6 +12,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.button = module.querySelector('.js-conversation-form-button')
       this.errorsWrapper = module.querySelector('.js-conversation-form-errors-wrapper')
       this.formGroup = module.querySelector('.js-conversation-form-group')
+      this.surveyLink = module.querySelector('.js-survey-link')
+      this.conversationId = null
     }
 
     init () {
@@ -52,6 +54,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     handleQuestionAccepted () {
       this.disableControls()
       this.input.value = ''
+      this.updateSurveyLink()
     }
 
     handleQuestionRejected (event) {
@@ -102,6 +105,18 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         this.input.classList.remove('app-c-conversation-form__input--error')
         this.formGroup.classList.remove('app-c-conversation-form__form-group--error')
       }
+    }
+
+    updateSurveyLink () {
+      const conversationId = window.GOVUK.cookie('conversation_id')
+
+      if (conversationId === this.conversationId) return
+
+      const url = new URL(this.surveyLink.href)
+      url.searchParams.set('conversation', conversationId)
+      this.surveyLink.href = url.toString()
+
+      this.conversationId = conversationId
     }
   }
 

@@ -55,6 +55,15 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     then_i_no_longer_see_the_thank_you_message
   end
 
+  scenario "survey link populated with conversation id" do
+    given_i_have_confirmed_i_understand_chat_risks
+    then_i_see_the_survey_url_lacks_a_conversation_id
+
+    when_i_enter_a_valid_question
+    then_i_see_the_valid_question_was_accepted
+    and_i_see_the_survey_url_has_a_conversation_id
+  end
+
   def when_i_enter_a_first_question
     @first_question = "How do I setup a workplace pension?"
     fill_in "create_question[user_question]", with: @first_question
@@ -149,6 +158,17 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   def then_i_no_longer_see_the_thank_you_message
     expect(page).not_to have_content("Thanks for your feedback.")
     expect(page).not_to have_content("Hide this message")
+  end
+
+  def then_i_see_the_survey_url_lacks_a_conversation_id
+    expect(page)
+      .to have_link("Share your feedback (opens in a new tab)", href: /\?conversation=\z/)
+  end
+
+  def and_i_see_the_survey_url_has_a_conversation_id
+    conversation_id = Conversation.last.id
+    expect(page)
+      .to have_link("Share your feedback (opens in a new tab)", href: /\?conversation=#{conversation_id}\z/)
   end
 
   def stubs_for_mock_answer(question, answer, rephrase_question: false)
