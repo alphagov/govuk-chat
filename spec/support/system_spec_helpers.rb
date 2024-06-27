@@ -15,7 +15,7 @@ module SystemSpecHelpers
     end
   end
 
-  def set_cookie(name, value)
+  def set_rack_cookie(name, value)
     headers = {}
     Rack::Utils.set_cookie_header!(headers, name, value)
     cookie_string = headers["Set-Cookie"]

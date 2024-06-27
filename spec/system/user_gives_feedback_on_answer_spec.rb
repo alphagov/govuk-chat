@@ -8,7 +8,7 @@ RSpec.describe "User gives feedback on an answer" do
 
   def given_i_have_an_active_conversation_with_an_answered_question
     @conversation = create(:conversation)
-    set_cookie(:conversation_id, @conversation.id)
+    set_rack_cookie(:conversation_id, @conversation.id)
     create(:question, :with_answer, conversation: @conversation)
   end
 
