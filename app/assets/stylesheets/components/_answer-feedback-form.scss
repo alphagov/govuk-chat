@@ -2,6 +2,10 @@
   margin-left: govuk-spacing(7);
 }
 
+.app-c-answer-feedback-form__button-group[hidden], .app-c-answer-feedback-form__feedback-submitted[hidden] {
+  display: none;
+}
+
 .app-c-answer-feedback-form__button {
   background-color: transparent;
   border: none;
