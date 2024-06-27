@@ -79,4 +79,16 @@ RSpec.describe "components/_conversation_message.html.erb" do
         .to have_selector(".app-c-conversation-message__answer .govuk-govspeak", text: "alert('hackerman')")
     end
   end
+
+  context "when a feedback url is passed" do
+    it "renders the answer feedback component" do
+      render("components/conversation_message", {
+        id: "answer-4",
+        message: "message 4",
+        feedback_url: "http://example.com",
+      })
+
+      expect(rendered).to have_selector(".app-c-answer-feedback-form[action='http://example.com']")
+    end
+  end
 end

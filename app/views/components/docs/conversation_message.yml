@@ -68,4 +68,12 @@ examples:
         tracking: GTM-123AB
       message: This is a user's question with data attributes
       is_question: true
-
+  with_feedback_component:
+    embed: |
+      <ul class="govuk-list">
+        <%= component %>
+      </ul>
+    data:
+      id: some-id-4
+      message: "This is a system generated conversation message with a feedback component."
+      feedback_url: "http://example.com"

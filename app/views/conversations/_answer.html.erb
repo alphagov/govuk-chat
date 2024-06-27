@@ -7,10 +7,5 @@
     }
   end,
   message: answer.message,
+  feedback_url: (answer_feedback_path(answer) if answer.feedback.blank?),
 } %>
-
-<% if answer.feedback.blank? %>
-  <%= render "components/answer_feedback_form", {
-    url: answer_feedback_path(answer),
-  } %>
-<% end %>
