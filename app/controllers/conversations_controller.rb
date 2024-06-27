@@ -61,7 +61,7 @@ class ConversationsController < BaseController
     @question = Question.where(conversation: @conversation)
                         .includes(answer: %i[sources feedback])
                         .find(params[:question_id])
-    answer = @question.answer
+    answer = @question.check_or_create_timeout_answer
 
     respond_to do |format|
       if answer.present?

@@ -30,4 +30,34 @@ RSpec.describe Question do
       expect(question.answer_status).to eq "pending"
     end
   end
+
+  describe "#check_or_create_timeout_answer" do
+    it "returns the answer if it exists" do
+      question = create(:question, :with_answer)
+      expect(question.check_or_create_timeout_answer).to eq(question.answer)
+    end
+
+    context "when the answer does not exist and the timeout hasn't expired" do
+      it "returns nil" do
+        question = create(:question, created_at: 1.minute.ago)
+        expect(question.check_or_create_timeout_answer).to be_nil
+      end
+    end
+
+    context "when the answer does not exist and the timeout has expired" do
+      it "creates the answer" do
+        question = create(
+          :question,
+          created_at: Rails.configuration.conversations.answer_timeout_in_seconds.seconds.ago,
+        )
+        answer = question.check_or_create_timeout_answer
+
+        expect(answer).to have_attributes(
+          message: Answer::CannedResponses::TIMED_OUT_RESPONSE,
+          status: "abort_timeout",
+          question:,
+        )
+      end
+    end
+  end
 end

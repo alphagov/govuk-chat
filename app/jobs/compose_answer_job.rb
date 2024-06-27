@@ -7,6 +7,11 @@ class ComposeAnswerJob < ApplicationJob
     return logger.warn("Question #{question_id} has already been answered") if question.answer
 
     answer = AnswerComposition::Composer.call(question)
-    answer.save!
+
+    begin
+      answer.save!
+    rescue ActiveRecord::RecordNotUnique
+      logger.warn("Already an answer created for #{question_id}")
+    end
   end
 end
