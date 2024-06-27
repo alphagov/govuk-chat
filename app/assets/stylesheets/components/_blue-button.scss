@@ -5,7 +5,7 @@
   box-shadow: 0 2px 0 govuk-shade(govuk-colour("blue"), 60%);
   margin-bottom: 0;
 
-  &:hover {
+  &:hover, &:disabled:hover {
     background-color: govuk-shade(govuk-colour("blue"), 20%);
   }
 }
