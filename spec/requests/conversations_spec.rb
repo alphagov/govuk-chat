@@ -325,7 +325,7 @@ RSpec.describe "ConversationsController" do
 
         expect { get answer_question_path(question) }.to change { question.reload.answer }.from(nil)
         expect(question.answer).to have_attributes(
-          message: AnswerComposition::TIMED_OUT_RESPONSE,
+          message: Answer::CannedResponses::TIMED_OUT_RESPONSE,
           status: "abort_timeout",
         )
       end

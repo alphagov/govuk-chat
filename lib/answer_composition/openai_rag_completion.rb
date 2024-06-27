@@ -12,22 +12,22 @@ module AnswerComposition
     def call
       @question_message = QuestionRephraser.call(question:)
 
-      return build_answer(FORBIDDEN_WORDS_RESPONSE, "abort_forbidden_words") if question_contains_forbidden_words?
-      return build_answer(NO_CONTENT_FOUND_REPONSE, "abort_no_govuk_content") if search_results.blank?
+      return build_answer(Answer::CannedResponses::FORBIDDEN_WORDS_RESPONSE, "abort_forbidden_words") if question_contains_forbidden_words?
+      return build_answer(Answer::CannedResponses::NO_CONTENT_FOUND_REPONSE, "abort_no_govuk_content") if search_results.blank?
 
       message = openai_response.dig("choices", 0, "message", "content")
       build_answer(message, "success", build_sources)
     rescue OpenAIClient::ContextLengthExceededError => e
       GovukError.notify(e)
       question.build_answer(
-        message: CONTEXT_LENGTH_EXCEEDED_RESPONSE,
+        message: Answer::CannedResponses::CONTEXT_LENGTH_EXCEEDED_RESPONSE,
         status: "error_context_length_exceeded",
         error_message: error_message(e),
       )
     rescue OpenAIClient::RequestError => e
       GovukError.notify(e)
       question.build_answer(
-        message: OPENAI_CLIENT_ERROR_RESPONSE,
+        message: Answer::CannedResponses::OPENAI_CLIENT_ERROR_RESPONSE,
         status: "error_answer_service_error",
         error_message: error_message(e),
       )

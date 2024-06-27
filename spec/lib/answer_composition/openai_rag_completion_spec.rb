@@ -148,7 +148,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           answer,
           {
             question:,
-            message: AnswerComposition::FORBIDDEN_WORDS_RESPONSE,
+            message: Answer::CannedResponses::FORBIDDEN_WORDS_RESPONSE,
             rephrased_question:,
             status: "abort_forbidden_words",
           },
@@ -171,7 +171,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           answer,
           {
             question:,
-            message: AnswerComposition::NO_CONTENT_FOUND_REPONSE,
+            message: Answer::CannedResponses::NO_CONTENT_FOUND_REPONSE,
             rephrased_question:,
             status: "abort_no_govuk_content",
           },
@@ -190,7 +190,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           answer,
           {
             question:,
-            message: AnswerComposition::CONTEXT_LENGTH_EXCEEDED_RESPONSE,
+            message: Answer::CannedResponses::CONTEXT_LENGTH_EXCEEDED_RESPONSE,
             status: "error_context_length_exceeded",
             error_message: "class: OpenAIClient::ContextLengthExceededError message: Error message",
           },
@@ -210,7 +210,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           answer,
           {
             question:,
-            message: AnswerComposition::OPENAI_CLIENT_ERROR_RESPONSE,
+            message: Answer::CannedResponses::OPENAI_CLIENT_ERROR_RESPONSE,
             status: "error_answer_service_error",
             error_message: "class: OpenAIClient::ClientError message: Error message",
           },

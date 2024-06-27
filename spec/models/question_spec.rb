@@ -53,7 +53,7 @@ RSpec.describe Question do
         answer = question.check_or_create_timeout_answer
 
         expect(answer).to have_attributes(
-          message: AnswerComposition::TIMED_OUT_RESPONSE,
+          message: Answer::CannedResponses::TIMED_OUT_RESPONSE,
           status: "abort_timeout",
           question:,
         )
