@@ -11,14 +11,70 @@ RSpec.describe "ConversationsController" do
   describe "GET :show" do
     include_context "with onboarding completed"
 
-    it "renders the question form" do
-      get show_conversation_path
+    context "when there is no conversation cookie" do
+      context "and the response type is HTML" do
+        it "renders the question form" do
+          get show_conversation_path
 
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to render_create_question_form
+          expect(response).to have_http_status(:success)
+          expect(response.body).to render_create_question_form
+        end
+      end
+
+      context "and the response type is JSON" do
+        it "returns a success response with the correct JSON" do
+          get show_conversation_path, params: { format: :json }
+
+          expect(response).to have_http_status(:success)
+          expect(JSON.parse(response.body)).to match({
+            "fragment" => "start-chatting",
+            "conversation_data" => { "module" => "chat-conversation" },
+            "conversation_append_html" => /<p>Thanks! To get started, ask me a question.<\/p>/,
+            "form_html" => /<button class="app-c-blue-button govuk-button app-c-blue-button--conversation-form js-conversation-form-button">Send<\/button/,
+          })
+        end
+      end
     end
 
-    context "when conversation_id is set on the cookie" do
+    context "when the conversation cannot be found" do
+      before do
+        cookies[:conversation_id] = "unknown-id"
+      end
+
+      it "deletes the conversation_id cookie" do
+        get show_conversation_path
+        expect(cookies[:conversation_id]).to be_blank
+      end
+
+      it "redirects to the onboarding limitations page" do
+        get show_conversation_path
+
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(onboarding_limitations_path)
+      end
+    end
+
+    context "when the conversation cookie has expired" do
+      let(:conversation) { create(:conversation, :expired) }
+
+      before do
+        cookies[:conversation_id] = conversation.id
+      end
+
+      it "deletes the conversation_id cookie" do
+        get show_conversation_path
+        expect(cookies[:conversation_id]).to be_blank
+      end
+
+      it "redirects to the onboarding limitations page" do
+        get show_conversation_path
+
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(onboarding_limitations_path)
+      end
+    end
+
+    context "when the conversation is active" do
       let(:conversation) { create(:conversation, :not_expired) }
 
       before do
@@ -32,121 +88,93 @@ RSpec.describe "ConversationsController" do
         end
       end
 
-      it "can render a question with an answer" do
-        question = Question.includes(:answer).where(conversation:).first
-        answer = question.answer
+      context "and there is a question without an answer" do
+        let(:conversation) { create(:conversation) }
 
-        get show_conversation_path
-
-        expect(response).to have_http_status(:success)
-        expect(response.body)
-          .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
-          .and have_selector("##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message)
-          .and have_button("Useful", name: "create_answer_feedback[useful]", value: "true")
-          .and have_button("not useful", name: "create_answer_feedback[useful]", value: "false")
-      end
-
-      it "doesn't render feedback links when the answer already has feedback" do
-        question = Question.includes(:answer).where(conversation:).first
-        create(:answer_feedback, answer: question.answer)
-
-        get show_conversation_path
-        expect(response).to have_http_status(:success)
-        expect(response.body)
-          .to have_button("Useful", name: "create_answer_feedback[useful]", value: "true", count: 0)
-          .and have_button("not useful", name: "create_answer_feedback[useful]", value: "false", count: 0)
-      end
-
-      it "can render an answer with sources" do
-        question = create(:question, conversation:)
-        answer = create(:answer, :with_sources, question:)
-        first_source = answer.sources.first
-        second_source = answer.sources.second
-
-        get show_conversation_path
-
-        expect(response).to have_http_status(:success)
-        expect(response.body)
-          .to have_link(first_source.title, href: first_source.url)
-          .and have_link(second_source.title, href: second_source.url)
-      end
-
-      it "only render max number of question from rails config" do
-        allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(1)
-        older_question = create(:question, :with_answer, conversation:)
-        question = create(:question, :with_answer, conversation:)
-
-        get show_conversation_path
-
-        expect(response.body).to include(question.message)
-        expect(response.body).not_to include(older_question.message)
-      end
-
-      it "can render a question without an answer" do
-        question = create(:question, conversation:)
-        get show_conversation_path
-
-        expect(response).to have_http_status(:ok)
-        expect(response.body)
-          .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
-          .and have_selector("[data-pending-answer-url='#{answer_question_path(question)}']")
-      end
-
-      context "when the conversation cannot be found" do
-        before do
-          cookies[:conversation_id] = "unknown-id"
-        end
-
-        it "deletes the conversation_id cookie" do
-          get show_conversation_path
-          expect(cookies[:conversation_id]).to be_blank
-        end
-
-        it "redirects to the onboarding limitations page" do
+        it "renders the question and pending answer url correctly" do
+          question = create(:question, conversation:)
           get show_conversation_path
 
-          expect(response).to have_http_status(:redirect)
-          expect(response).to redirect_to(onboarding_limitations_path)
+          expect(response).to have_http_status(:success)
+          expect(response.body)
+            .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
+            .and have_selector("[data-pending-answer-url='#{answer_question_path(question)}']")
         end
       end
 
-      context "when the conversation has expired" do
-        let(:conversation) { create(:conversation, :expired) }
+      context "and there is a question with an answer that doesn't have feedback" do
+        let(:conversation) { create(:conversation) }
 
-        it "deletes the conversation_id cookie" do
+        it "renders the answer and an answer feedback form" do
+          question = create(:question, :with_answer, conversation:)
+          answer = question.answer
+
           get show_conversation_path
-          expect(cookies[:conversation_id]).to be_blank
-        end
 
-        it "redirects to the onboarding limitations page" do
+          expect(response).to have_http_status(:success)
+          expect(response.body)
+            .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
+            .and have_selector("##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message)
+            .and have_button("Useful", name: "create_answer_feedback[useful]", value: "true")
+            .and have_button("not useful", name: "create_answer_feedback[useful]", value: "false")
+        end
+      end
+
+      context "and there is a question with an answer that has feedback" do
+        let(:conversation) { create(:conversation) }
+
+        it "doesn't render a feedback form" do
+          question = create(:question, :with_answer, conversation:)
+          create(:answer_feedback, answer: question.answer)
+
+          get show_conversation_path
+          expect(response).to have_http_status(:success)
+          expect(response.body)
+            .to have_no_button("Useful")
+            .and have_no_button("not useful")
+        end
+      end
+
+      context "and there is a question with an answer that has sources" do
+        let(:conversation) { create(:conversation) }
+
+        it "renders the sources correctly" do
+          question = create(:question, conversation:)
+          answer = create(:answer, :with_sources, question:)
+          first_source = answer.sources.first
+          second_source = answer.sources.second
+
           get show_conversation_path
 
-          expect(response).to have_http_status(:redirect)
-          expect(response).to redirect_to(onboarding_limitations_path)
+          expect(response).to have_http_status(:success)
+          expect(response.body)
+            .to have_link(first_source.title, href: first_source.url)
+            .and have_link(second_source.title, href: second_source.url)
         end
       end
-    end
 
-    context "when the request format is JSON" do
-      it "returns a bad request response" do
-        get show_conversation_path, params: { format: :json }
+      context "and there are more questions than the max number of questions" do
+        let(:conversation) { create(:conversation) }
 
-        expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)).to match({
-          "fragment" => "start-chatting",
-          "conversation_data" => { "module" => "chat-conversation" },
-          "conversation_append_html" => /<p>Thanks! To get started, ask me a question.<\/p>/,
-          "form_html" => /<button class="app-c-blue-button govuk-button app-c-blue-button--conversation-form js-conversation-form-button">Send<\/button/,
-        })
+        it "only renders the max number of question from rails config" do
+          allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(1)
+          older_question = create(:question, :with_answer, conversation:)
+          question = create(:question, :with_answer, conversation:)
+
+          get show_conversation_path
+
+          expect(response.body).to include(question.message)
+          expect(response.body).not_to include(older_question.message)
+        end
       end
 
-      context "when a conversation is in progress" do
+      context "and the response format is JSON" do
         before do
           conversation = create(:conversation, :not_expired)
           cookies[:conversation_id] = conversation.id
         end
 
-        it "returns a bad request response with an error message in the JSON" do
+        it "returns a bad request response" do
           get show_conversation_path, params: { format: :json }
 
           expect(response).to have_http_status(:bad_request)
@@ -160,16 +188,6 @@ RSpec.describe "ConversationsController" do
     include_context "with onboarding completed"
     let(:conversation) { create(:conversation, :not_expired) }
 
-    it "saves the conversation & question and renders the pending page with valid params" do
-      expect { post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } } }
-        .to change(Question, :count).by(1)
-        .and change(Conversation, :count).by(1)
-      expect(response).to have_http_status(:redirect)
-      follow_redirect!
-      expect(response.body)
-        .to have_selector(".gem-c-title__text", text: "GOV.UK Chat is generating an answer")
-    end
-
     it "sets the converation_id cookie with valid params" do
       freeze_time do
         post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
@@ -177,31 +195,43 @@ RSpec.describe "ConversationsController" do
       end
     end
 
-    it "renders the conversation with an error when the params are invalid" do
-      post update_conversation_path, params: { create_question: { user_question: "" } }
-
-      expect(response).to have_http_status(:unprocessable_entity)
-      expect(response.body)
-        .to have_selector(".govuk-error-summary a[href='#create_question_user_question']",
-                          text: Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
-        .and have_selector(".app-c-conversation-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
-    end
-
-    context "when the converation_id cookie is present" do
-      before do
-        cookies[:conversation_id] = conversation.id
-      end
-
-      it "saves the question on the conversation" do
+    context "when the response type is HTML" do
+      it "saves the conversation & question and renders the pending page with valid params" do
         expect { post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } } }
           .to change(Question, :count).by(1)
-          .and change { conversation.reload.questions.count }.by(1)
+          .and change(Conversation, :count).by(1)
+        expect(response).to have_http_status(:redirect)
+        follow_redirect!
+        expect(response.body)
+          .to have_selector(".gem-c-title__text", text: "GOV.UK Chat is generating an answer")
       end
 
-      it "refreshes the conversation_id cookie" do
-        freeze_time do
-          post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
-          expect_conversation_id_set_on_cookie(conversation)
+      it "renders the conversation with an error when the params are invalid" do
+        post update_conversation_path, params: { create_question: { user_question: "" } }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body)
+          .to have_selector(".govuk-error-summary a[href='#create_question_user_question']",
+                            text: Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
+          .and have_selector(".app-c-conversation-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+      end
+
+      context "and the converation_id cookie is present" do
+        before do
+          cookies[:conversation_id] = conversation.id
+        end
+
+        it "saves the question on the conversation" do
+          expect { post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } } }
+            .to change(Question, :count).by(1)
+            .and change { conversation.reload.questions.count }.by(1)
+        end
+
+        it "refreshes the conversation_id cookie" do
+          freeze_time do
+            post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
+            expect_conversation_id_set_on_cookie(conversation)
+          end
         end
       end
     end
@@ -291,7 +321,7 @@ RSpec.describe "ConversationsController" do
 
         get answer_question_path(question, format: :json)
 
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:success)
         expect(JSON.parse(response.body)).to match({ "answer_html" => /app-c-conversation-message/ })
       end
 
