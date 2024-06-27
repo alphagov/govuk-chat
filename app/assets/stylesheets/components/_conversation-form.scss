@@ -35,3 +35,8 @@
     border-color: govuk-colour("red");
   }
 }
+
+.app-c-conversation-form__survey-link {
+  display: inline-block;
+  margin-bottom: govuk-spacing(3);
+}
