@@ -16,10 +16,9 @@ class OnboardingController < BaseController
             conversation_data: @conversation_data_attributes,
             conversation_append_html: render_to_string(partial: "tell_me_more_messages",
                                                        formats: :html),
-            form_html: render_to_string(partial: "components/onboarding_form",
+            form_html: render_to_string(partial: "limitations_form",
                                         formats: :html,
                                         locals: {
-                                          url: onboarding_privacy_confirm_path,
                                           more_information: true,
                                         }),
           }
@@ -52,12 +51,8 @@ class OnboardingController < BaseController
           conversation_data: @conversation_data_attributes,
           conversation_append_html: render_to_string(partial: "privacy_messages",
                                                      formats: :html),
-          form_html: render_to_string(partial: "components/onboarding_form",
-                                      formats: :html,
-                                      locals: {
-                                        url: onboarding_privacy_confirm_path,
-                                        privacy_onboarding: true,
-                                      }),
+          form_html: render_to_string(partial: "privacy_form",
+                                      formats: :html),
         }
       end
     end

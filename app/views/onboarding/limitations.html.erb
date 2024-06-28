@@ -7,8 +7,7 @@
 <% end %>
 
 <% content_for :form do %>
-  <%= render "components/onboarding_form", {
-    url: onboarding_limitations_confirm_path,
+  <%= render "limitations_form", {
     more_information: @more_information,
   } %>
 <% end %>
