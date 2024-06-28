@@ -1,7 +1,7 @@
 <%= form_with url:, class: "app-c-answer-feedback-form js-answer-feedback-form", data: { module: "answer-feedback-form" } do |f| %>
-  <fieldset class="app-c-answer-feedback-form__fieldset">
+  <fieldset class="app-c-answer-feedback-form__fieldset js-fieldset">
     <legend class="app-c-answer-feedback-form__legend">How was this answer?</legend>
-    <div class="app-c-answer-feedback-form__button-group js-button-group">
+    <div class="app-c-answer-feedback-form__button-group">
       <%= button_tag(
         "#{tag.span('This answer was ', class: 'govuk-visually-hidden')}Useful".html_safe,
         class: "app-c-answer-feedback-form__button",

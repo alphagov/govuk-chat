@@ -1,19 +1,19 @@
 describe('AnswerFeedbackForm component', () => {
   'use strict'
 
-  let module, form, buttonGroup, feedbackSubmittedDiv, hideButton, event, fetchSpy
+  let module, form, fieldset, feedbackSubmittedDiv, hideButton, event, fetchSpy
 
   beforeEach(function () {
     form = document.createElement('form')
     form.action = '/feedback'
     form.innerHTML = `
-      <div class="js-button-group"></div>
+      <fieldset class="js-fieldset"></fieldset>
       <div class="js-feedback-submitted">
         <button class="js-hide-control"></button>
       </div>
     `
     document.body.appendChild(form)
-    buttonGroup = form.querySelector('.js-button-group')
+    fieldset = form.querySelector('.js-fieldset')
     feedbackSubmittedDiv = form.querySelector('.js-feedback-submitted')
     hideButton = feedbackSubmittedDiv.querySelector('.js-hide-control')
     event = new Event('submit')
@@ -39,9 +39,9 @@ describe('AnswerFeedbackForm component', () => {
       expect(preventDefaultSpy).toHaveBeenCalled()
     })
 
-    it('hides the feedback form button group', () => {
+    it('hides the fieldset', () => {
       form.dispatchEvent(event)
-      expect(buttonGroup.hidden).toEqual(true)
+      expect(fieldset.hidden).toEqual(true)
     })
 
     it('shows the feedback submitted div when the user provides feedback', () => {

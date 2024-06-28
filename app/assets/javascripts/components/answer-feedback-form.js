@@ -7,7 +7,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
   class AnswerFeedbackForm {
     constructor (module) {
       this.module = module
-      this.buttonGroup = this.module.querySelector('.js-button-group')
+      this.fieldset = this.module.querySelector('.js-fieldset')
       this.hideButton = this.module.querySelector('.js-hide-control')
       this.feedbackSubmittedDiv = this.module.querySelector('.js-feedback-submitted')
     }
@@ -19,7 +19,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     handleSubmit (event) {
       event.preventDefault()
 
-      this.buttonGroup.hidden = true
+      this.fieldset.hidden = true
       this.hideButton.addEventListener('click', e => this.hideComponent(e))
       this.feedbackSubmittedDiv.hidden = false
 
