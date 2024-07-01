@@ -1,5 +1,5 @@
-<%= form_with url:, class: "app-c-answer-feedback-form" do |f| %>
-  <div class="app-c-answer-feedback-form__button-group">
+<%= form_with url:, class: "app-c-answer-feedback-form js-answer-feedback-form", data: { module: "answer-feedback-form" } do |f| %>
+  <div class="app-c-answer-feedback-form__button-group js-button-group">
     <p class="govuk-body">
       How was this answer?
       <%= button_tag(
@@ -13,6 +13,12 @@
         class: "app-c-answer-feedback-form__button",
         name: "create_answer_feedback[useful]",
         value: "false") %>
+    </p>
+  </div>
+
+  <div class="app-c-answer-feedback-form__feedback-submitted js-feedback-submitted" hidden>
+    <p class="govuk-body">
+      Thanks for your feedback. <%= button_tag("Hide this message", class: "app-c-answer-feedback-form__button js-hide-control", type: "button") %>
     </p>
   </div>
 <% end %>

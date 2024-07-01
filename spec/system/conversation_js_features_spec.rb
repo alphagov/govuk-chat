@@ -48,6 +48,18 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     then_i_can_see_the_first_answer
   end
 
+  scenario "User gives feedback on an answer" do
+    given_i_have_confirmed_i_understand_chat_risks
+    when_i_visit_the_conversation_page
+    and_i_enter_a_first_question
+    and_the_first_answer_is_generated
+    and_i_click_that_the_answer_was_useful
+    then_i_am_thanked_for_my_feedback
+
+    when_i_click_hide_this_message
+    then_i_no_longer_see_the_thank_you_message
+  end
+
   def when_i_visit_the_conversation_page
     visit show_conversation_path
   end
@@ -129,6 +141,23 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
   def when_i_reload_the_page
     refresh
+  end
+
+  def and_i_click_that_the_answer_was_useful
+    click_on "Useful"
+  end
+
+  def then_i_am_thanked_for_my_feedback
+    expect(page).to have_content("Thanks for your feedback.")
+  end
+
+  def when_i_click_hide_this_message
+    click_on "Hide this message"
+  end
+
+  def then_i_no_longer_see_the_thank_you_message
+    expect(page).not_to have_content("Thanks for your feedback.")
+    expect(page).not_to have_content("Hide this message")
   end
 
   def stubs_for_mock_answer(question, answer, rephrase_question: false)

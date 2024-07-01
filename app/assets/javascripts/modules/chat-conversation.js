@@ -92,6 +92,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
           case 200: {
             const responseJson = await response.json()
             this.conversationList.insertAdjacentHTML('beforeend', responseJson.answer_html)
+            window.GOVUK.modules.start(this.conversationList)
             this.pendingAnswerUrl = null
             this.form.dispatchEvent(new Event('answer-received'))
             break

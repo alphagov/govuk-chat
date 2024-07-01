@@ -263,6 +263,14 @@ describe('ChatConversation module', () => {
         const expectedEvent = jasmine.objectContaining({ type: 'answer-received' })
         expect(formEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
+
+      it('starts any nested modules', async () => {
+        const startSpy = spyOn(window.GOVUK.modules, 'start')
+
+        await module.checkAnswer()
+
+        expect(startSpy).toHaveBeenCalledWith(conversationList)
+      })
     })
 
     describe('when the answer is pending', () => {

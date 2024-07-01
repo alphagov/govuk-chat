@@ -3,64 +3,76 @@
   id ||= nil
   sources ||= []
   is_question ||= false
-  classes = %w[app-c-conversation-message]
-  classes << (is_question ? "app-c-conversation-message--user-message"
-  : "app-c-conversation-message--govuk-message")
+  feedback_url ||= false
+  message_classes = %w[app-c-conversation-message__message]
+  message_classes << (is_question ? "app-c-conversation-message__message--user-message"
+  : "app-c-conversation-message__message--govuk-message")
 %>
 
-<%= content_tag :li, id:, class: classes, data: data_attributes do %>
-  <div class="app-c-conversation-message__identifier">
-    <% if !is_question %>
-      <%=
-        inline_svg_tag "components/conversation_message/govuk-chat-icon.svg",
-        class: "app-c-conversation-message__identifier-icon",
-        aria_hidden: true
-      %>
-    <% end %>
-    <span class="govuk-visually-hidden">
-      <% if is_question %>
-        You:
-      <% else %>
-        GOV.UK Chat:
+<%= content_tag :li, id:, class: "app-c-conversation-message", data: data_attributes do %>
+  <%= content_tag :div, class: message_classes do %>
+    <div class="app-c-conversation-message__identifier">
+      <% if !is_question %>
+        <%=
+          inline_svg_tag "components/conversation_message/govuk-chat-icon.svg",
+          class: "app-c-conversation-message__identifier-icon",
+          aria_hidden: true
+        %>
       <% end %>
-    </span>
-  </div>
-
-  <% if is_question %>
-    <div class="app-c-conversation-message__body app-c-conversation-message__body--user-message">
-      <%= render "govuk_publishing_components/components/govspeak", {
-      } do %>
-        <%= escaped_simple_format(message) %>
-      <% end %>
+      <span class="govuk-visually-hidden">
+        <% if is_question %>
+          You:
+        <% else %>
+          GOV.UK Chat:
+        <% end %>
+      </span>
     </div>
 
-  <% else %>
-    <div class="app-c-conversation-message__body app-c-conversation-message__body--govuk-message">
-      <div class="app-c-conversation-message__answer">
-        <%= render_answer_message(message) %>
+    <% if is_question %>
+      <div class="app-c-conversation-message__body app-c-conversation-message__body--user-message">
+        <%= render "govuk_publishing_components/components/govspeak", {
+        } do %>
+          <%= escaped_simple_format(message) %>
+        <% end %>
       </div>
 
-      <% if sources.present? %>
-        <div class="app-c-conversation-message__sources">
-          <%= render "govuk_publishing_components/components/warning_text", {
-            text_assistive: "Warning",
-            text: "Check this answer (links open in a new tab)",
-          } %>
-
-          <%= render "govuk_publishing_components/components/list", {
-            visible_counters: true,
-            items: sources.map do |source|
-              link_to(
-                source.fetch(:title),
-                source.fetch(:href),
-                class: "govuk-link",
-                target: "_blank",
-                rel: "noopener noreferrer",
-              )
-            end,
-          } %>
+    <% else %>
+      <div class="app-c-conversation-message__body app-c-conversation-message__body--govuk-message">
+        <div class="app-c-conversation-message__answer">
+          <%= render_answer_message(message) %>
         </div>
-      <% end %>
+
+        <% if sources.present? %>
+          <div class="app-c-conversation-message__sources">
+            <%= render "govuk_publishing_components/components/warning_text", {
+              text_assistive: "Warning",
+              text: "Check this answer (links open in a new tab)",
+            } %>
+
+            <%= render "govuk_publishing_components/components/list", {
+              visible_counters: true,
+              items: sources.map do |source|
+                link_to(
+                  source.fetch(:title),
+                  source.fetch(:href),
+                  class: "govuk-link",
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                )
+              end,
+            } %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if feedback_url.present? %>
+    <div class="app-c-conversation-message__feedback">
+
+      <%= render "components/answer_feedback_form", {
+        url: feedback_url,
+      } %>
     </div>
   <% end %>
 <% end %>
