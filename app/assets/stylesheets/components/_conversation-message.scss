@@ -21,7 +21,7 @@ $message-container-spacing-mobile: 40px;
   }
 }
 
-.app-c-conversation-message__message--govuk-message {
+.app-c-conversation-message__message--govuk-message, .app-c-conversation-message__feedback {
   margin: govuk-spacing(3) 0;
   width: calc(100% - $message-container-spacing-mobile);
 
