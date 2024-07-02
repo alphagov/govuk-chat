@@ -1,3 +1,5 @@
+/* global asymmetricMatchers */
+
 describe('ConversationOnboardingFlow module', () => {
   let moduleElement, module, moduleWrapper, conversationList, formContainer
 
@@ -107,18 +109,11 @@ describe('ConversationOnboardingFlow module', () => {
     })
 
     it('scrolls the fragment into view', () => {
-      const matchElementBySelector = (selector) => {
-        return {
-          asymmetricMatch: (element) => element.matches(selector),
-          jasmineToString: () => `<matchElementBySelector:${selector}>`
-        }
-      }
-
       const scrollIntoViewSpy = spyOn(module, 'scrollIntoView')
 
       module.handleOnboardingTransition(event)
 
-      expect(scrollIntoViewSpy).toHaveBeenCalledWith(matchElementBySelector('#i-understand'))
+      expect(scrollIntoViewSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#i-understand'))
     })
 
     describe('and an error occurs', () => {

@@ -1,12 +1,7 @@
+/* global asymmetricMatchers */
+
 describe('ChatConversation module', () => {
   let moduleElement, module, conversationList, form, formContainer
-
-  const matchElementBySelector = (selector) => {
-    return {
-      asymmetricMatch: (element) => element.matches(selector),
-      jasmineToString: () => `<matchElementBySelector:${selector}>`
-    }
-  }
 
   beforeEach(() => {
     moduleElement = document.createElement('div')
@@ -155,7 +150,7 @@ describe('ChatConversation module', () => {
 
         await module.handleFormSubmission(new Event('submit'))
 
-        expect(scrollToMessageSpy).toHaveBeenCalledWith(matchElementBySelector('#question_123'))
+        expect(scrollToMessageSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#question_123'))
       })
 
       it('dispatches a "question-accepted" event on the form element', async () => {
@@ -269,7 +264,7 @@ describe('ChatConversation module', () => {
 
         await module.checkAnswer()
 
-        expect(scrollToMessageSpy).toHaveBeenCalledWith(matchElementBySelector('#answer_123'))
+        expect(scrollToMessageSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#answer_123'))
       })
 
       it('resets the "pendingAnswerUrl" value', async () => {
