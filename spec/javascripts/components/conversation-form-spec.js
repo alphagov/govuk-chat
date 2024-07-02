@@ -36,7 +36,7 @@ describe('ConversationForm component', () => {
   })
 
   describe('init', () => {
-    it('dispatches an init event on the module element', () => {
+    it('dispatches an init event on the module', () => {
       const spy = jasmine.createSpy()
       div.addEventListener('init', spy)
 
@@ -46,7 +46,7 @@ describe('ConversationForm component', () => {
     })
   })
 
-  describe('when form receives a submit event', () => {
+  describe('when the form receives a submit event', () => {
     beforeEach(() => module.init())
 
     it('allows form submission when input is valid', () => {
