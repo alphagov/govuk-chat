@@ -4,29 +4,29 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 (function (Modules) {
   'use strict'
 
-  class AnswerFeedbackForm {
+  class AnswerFeedback {
     constructor (module) {
       this.module = module
-      this.buttonGroup = this.module.querySelector('.js-button-group')
+      this.form = this.module.querySelector('.js-form')
       this.hideButton = this.module.querySelector('.js-hide-control')
       this.feedbackSubmittedDiv = this.module.querySelector('.js-feedback-submitted')
     }
 
     init () {
-      this.module.addEventListener('submit', e => this.handleSubmit(e))
+      this.form.addEventListener('submit', e => this.handleSubmit(e))
     }
 
     handleSubmit (event) {
       event.preventDefault()
 
-      this.buttonGroup.hidden = true
+      this.form.hidden = true
       this.hideButton.addEventListener('click', e => this.hideComponent(e))
       this.feedbackSubmittedDiv.hidden = false
 
       try {
-        const formData = new FormData(this.module)
+        const formData = new FormData(this.form)
         formData.append(event.submitter.name, event.submitter.value)
-        fetch(this.module.action, {
+        fetch(this.form.action, {
           method: 'POST',
           body: formData,
           headers: {
@@ -35,7 +35,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         })
       } catch (error) {
         console.error(error)
-        this.module.submit()
+        this.form.submit()
       }
     }
 
@@ -45,5 +45,5 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
   }
 
-  Modules.AnswerFeedbackForm = AnswerFeedbackForm
+  Modules.AnswerFeedback = AnswerFeedback
 })(window.GOVUK.Modules)
