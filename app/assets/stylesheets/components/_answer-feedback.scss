@@ -1,25 +1,25 @@
-.app-c-answer-feedback-form {
+.app-c-answer-feedback {
   margin-left: govuk-spacing(7);
 }
 
-.app-c-answer-feedback-form__fieldset {
+.app-c-answer-feedback__fieldset {
   min-width:0;
   margin:0;
   padding:0;
   border:0;
 }
 
-.app-c-answer-feedback-form__legend {
+.app-c-answer-feedback__legend {
   float: left;
   margin-right: govuk-spacing(1);
   @include govuk-font($size: 19, $weight: regular);
 }
 
-.app-c-answer-feedback-form__fieldset[hidden], .app-c-answer-feedback-form__feedback-submitted[hidden] {
+.app-c-answer-feedback__fieldset[hidden], .app-c-answer-feedback__feedback-submitted[hidden] {
   display: none;
 }
 
-.app-c-answer-feedback-form__button {
+.app-c-answer-feedback__button {
   position: relative;
   background-color: transparent;
   border: none;

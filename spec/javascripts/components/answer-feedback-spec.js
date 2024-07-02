@@ -1,28 +1,29 @@
-describe('AnswerFeedbackForm component', () => {
+describe('AnswerFeedback component', () => {
   'use strict'
 
-  let module, form, fieldset, feedbackSubmittedDiv, hideButton, event, fetchSpy
+  let module, rootDiv, form, fieldset, feedbackSubmittedDiv, hideButton, event, fetchSpy
 
   beforeEach(function () {
-    form = document.createElement('form')
-    form.action = '/feedback'
-    form.innerHTML = `
-      <fieldset class="js-fieldset"></fieldset>
+    rootDiv = document.createElement('div')
+    rootDiv.innerHTML = `
+      <form class="js-form" action="/feedback">
+      </form>
       <div class="js-feedback-submitted">
         <button class="js-hide-control"></button>
       </div>
     `
-    document.body.appendChild(form)
-    fieldset = form.querySelector('.js-fieldset')
-    feedbackSubmittedDiv = form.querySelector('.js-feedback-submitted')
+    document.body.appendChild(rootDiv)
+    form = rootDiv.querySelector('.js-form')
+    fieldset = rootDiv.querySelector('.js-fieldset')
+    feedbackSubmittedDiv = rootDiv.querySelector('.js-feedback-submitted')
     hideButton = feedbackSubmittedDiv.querySelector('.js-hide-control')
     event = new Event('submit')
     event.submitter = { name: 'create_answer_feedback[useful]', value: 'true' }
-    module = new window.GOVUK.Modules.AnswerFeedbackForm(form)
+    module = new window.GOVUK.Modules.AnswerFeedback(rootDiv)
   })
 
   afterEach(function () {
-    document.body.removeChild(form)
+    document.body.removeChild(rootDiv)
   })
 
   describe('when receiving a submit event', () => {
@@ -39,9 +40,9 @@ describe('AnswerFeedbackForm component', () => {
       expect(preventDefaultSpy).toHaveBeenCalled()
     })
 
-    it('hides the fieldset', () => {
+    it('hides the form', () => {
       form.dispatchEvent(event)
-      expect(fieldset.hidden).toEqual(true)
+      expect(form.hidden).toEqual(true)
     })
 
     it('shows the feedback submitted div when the user provides feedback', () => {
@@ -95,7 +96,7 @@ describe('AnswerFeedbackForm component', () => {
 
     it('hides the component when the hide button is clicked', () => {
       hideButton.dispatchEvent(new Event('click'))
-      expect(form.hidden).toEqual(true)
+      expect(rootDiv.hidden).toEqual(true)
     })
   })
 })

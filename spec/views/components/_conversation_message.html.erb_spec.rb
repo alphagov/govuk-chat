@@ -88,7 +88,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
         feedback_url: "http://example.com",
       })
 
-      expect(rendered).to have_selector(".app-c-answer-feedback-form[action='http://example.com']")
+      expect(rendered).to have_selector(".app-c-answer-feedback__form[action='http://example.com']")
     end
   end
 end
