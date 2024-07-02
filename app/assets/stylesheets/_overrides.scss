@@ -4,11 +4,3 @@
 .govuk-template__body {
   min-height: 100vh;
 }
-
-// The ".govuk-link" class adds a margin-bottom to links, but it isn't
-// applied because the links are inline elements. Therefore, 
-// `display: inline-block` has been added to the survey link in order to 
-// get the bottom margin applied.
-.app-conversation-layout__form-container .govuk-link {
-  display: inline-block;
-}
