@@ -1,7 +1,5 @@
 # Message Queue consumption
 
-**⚠️ This documentation was written before using this code in production and may need updating following this ⚠️**
-
 GOV.UK Chat stores a search index of GOV.UK content which is populated by consuming the [Publishing API `published_documents` message queue](https://github.com/alphagov/publishing-api/blob/main/docs/rabbitmq.md). This search index provides access to relevant GOV.UK Content in order to answer users' questions.
 
 ## How it works
@@ -36,6 +34,39 @@ and then start it with:
 govuk-docker-up queue-consumer
 ```
 
+## Bulk indexing all GOV.UK content
+
+You will want to follow these steps in one of two situations:
+
+1. you've setup the queue consumer and Opensearch index and want to populate the index for the first time
+2. you're reindexing and need to bulk requeue documents to populate the new fields
+
+**Note: This will take a significant amount of time as it will requeue each live document on GOV.UK (as of 2/7/2024 close to 1 million) to the message queue.**
+
+Prior to running the rake task to queue the documents you should ensure that you have the necessary monitoring setup so that you have good visibiity
+of the process. You should use:
+
+**Note: These links are for production. If you're bulk indexing another environment you will need to update the environemnt in the urls accordingly**
+
+- [Sidekiq](https://grafana.eks.production.govuk.digital/d/sidekiq-queues/sidekiq3a-queue-length-max-delay?orgId=1&var-namespace=apps&var-app=publishing-api-worker) to monitor the queue length
+on Publishing API
+- [Sentry](https://govuk.sentry.io/issues/?environment=production&project=4507072589070336&statsPeriod=14d) to check any errors that might occur during the process
+- [RabbitMQ web control panel](https://docs.publishing.service.gov.uk/manual/amazonmq.html) to view the queue length. Once the RabbitMQ HTTPS port has been forwarded to your local machine you can visit [https://localhost:4430/#/queues/publishing/govuk_chat_published_documents](https://localhost:4430/#/queues/publishing/govuk_chat_published_documents) to view the dashboard for the `govuk_chat_published_documents` queue
+- [Argo CD](https://argo.eks.production.govuk.digital/applications/govuk-chat?orphaned=false&resource=) or [Logit](https://dashboard.logit.io/a/1c6b2316-16e2-4ca5-a3df-ff18631b0e74) for application logs.
+
+Once you're confident you have sufficient monitoring in place you can run the following [rake task](https://github.com/alphagov/publishing-api/blob/main/lib/tasks/queue.rake#L41-L52) from Publishing API.
+
+```bash
+rake queue:requeue_all_the_things["bulk.govuk_chat_sync"]
+```
+
+You can check the count of documents in the index to confirm that documents are being indexed with the following code from [Rails console](https://docs.publishing.service.gov.uk/kubernetes/cheatsheet.html#open-a-rails-console) in govuk-chat:
+
+```bash
+r = Search::ChunkedContentRepository.new
+r.client.count(index: r.index)
+```
+
 ## Consuming queues in a development environment
 
 It can take a long time to index all GOV.UK content, so just indexing the subset of content from Mainstream Publisher is recommended.
@@ -47,7 +78,7 @@ The process to do this with GOV.UK Docker is:
 3. Create a new terminal window and start the queue consumer process with `govuk-docker up govuk-chat-queue-consumer`
 4. Create a new terminal window and navigate to the Publishing API directory, `cd ~/govuk/publishing-api`
 5. Open a Rails console for the Publishing API `govuk-docker-run bundle exec rails console`
-6. To queue just content from Mainstream Publisher: `RequeueContentByScope.new(Edition.live.where(publishing_app: "publisher"), action: "bulk.reindex.govuk-chat").call`
+6. To queue just content from Mainstream Publisher: `RequeueContentByScope.new(Edition.live.where(publishing_app: "publisher"), action: "bulk.govuk_chat_sync").call`
 
 You can check on the progress of the queue consumption by following the Rails log file for GOV.UK Chat `tail -f logs/development.log`.
 
