@@ -1,7 +1,7 @@
 describe('AnswerFeedback component', () => {
   'use strict'
 
-  let module, rootDiv, form, fieldset, feedbackSubmittedDiv, hideButton, event, fetchSpy
+  let module, rootDiv, form, feedbackSubmittedDiv, hideButton, event, fetchSpy
 
   beforeEach(function () {
     rootDiv = document.createElement('div')
@@ -14,7 +14,6 @@ describe('AnswerFeedback component', () => {
     `
     document.body.appendChild(rootDiv)
     form = rootDiv.querySelector('.js-form')
-    fieldset = rootDiv.querySelector('.js-fieldset')
     feedbackSubmittedDiv = rootDiv.querySelector('.js-feedback-submitted')
     hideButton = feedbackSubmittedDiv.querySelector('.js-hide-control')
     event = new Event('submit')

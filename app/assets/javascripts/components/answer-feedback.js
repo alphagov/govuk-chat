@@ -8,7 +8,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     constructor (module) {
       this.module = module
       this.form = this.module.querySelector('.js-form')
-      this.fieldset = this.module.querySelector('.js-fieldset')
       this.hideButton = this.module.querySelector('.js-hide-control')
       this.feedbackSubmittedDiv = this.module.querySelector('.js-feedback-submitted')
     }
