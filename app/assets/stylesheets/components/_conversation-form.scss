@@ -1,7 +1,7 @@
 @import "govuk/components/error-message/error-message";
 
-.app-c-conversation-form {
-  padding-top: govuk-spacing(6);
+.app-c-conversation-form__form {
+  padding-top: govuk-spacing(3);
   margin-bottom: govuk-spacing(2);
 }
 
@@ -34,4 +34,9 @@
   &.app-c-conversation-form__input--error {
     border-color: govuk-colour("red");
   }
+}
+
+.app-c-conversation-form__survey-link {
+  display: inline-block;
+  margin-bottom: govuk-spacing(3);
 }

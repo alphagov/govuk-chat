@@ -55,6 +55,15 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     then_i_no_longer_see_the_thank_you_message
   end
 
+  scenario "survey link populated with conversation id" do
+    given_i_have_confirmed_i_understand_chat_risks
+    then_i_see_the_survey_url_lacks_a_conversation_id
+
+    when_i_enter_a_valid_question
+    then_i_see_the_valid_question_was_accepted
+    and_i_see_the_survey_url_has_a_conversation_id
+  end
+
   def when_i_enter_a_first_question
     @first_question = "How do I setup a workplace pension?"
     fill_in "create_question[user_question]", with: @first_question
@@ -63,7 +72,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   alias_method :when_i_enter_a_valid_question, :when_i_enter_a_first_question
 
   def then_i_see_the_first_question_was_accepted
-    within(:css, ".js-conversation-list") do
+    within(".js-conversation-list") do
       expect(page).to have_content(@first_question)
     end
   end
@@ -78,9 +87,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   alias_method :and_the_first_answer_is_generated, :when_the_first_answer_is_generated
 
   def then_i_can_see_the_first_answer
-    within(:css, ".js-conversation-list") do
-      expect(page).to have_content(@first_answer)
-    end
+    expect(page).to have_content(@first_answer)
   end
 
   def when_i_enter_a_second_question
@@ -90,7 +97,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   def then_i_see_the_second_question_was_accepted
-    within(:css, ".js-conversation-list") do
+    within(".js-conversation-list") do
       expect(page).to have_content(@second_question)
     end
   end
@@ -103,9 +110,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   def then_i_can_see_the_second_answer
-    within(:css, ".js-conversation-list") do
-      expect(page).to have_content(@second_answer)
-    end
+    expect(page).to have_content(@second_answer)
   end
 
   def when_i_enter_an_empty_question
@@ -114,9 +119,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   def then_i_see_a_presence_validation_message
-    within(:css, ".js-conversation-form") do
-      expect(page).to have_content(Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
-    end
+    expect(page).to have_content(Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
   end
 
   def when_i_enter_a_question_with_pii
@@ -125,9 +128,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   def then_i_see_a_pii_validation_message
-    within(:css, ".js-conversation-form") do
-      expect(page).to have_content(/Personal data has been detected/)
-    end
+    expect(page).to have_content(/Personal data has been detected/)
   end
 
   def when_i_reload_the_page
@@ -149,6 +150,17 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   def then_i_no_longer_see_the_thank_you_message
     expect(page).not_to have_content("Thanks for your feedback.")
     expect(page).not_to have_content("Hide this message")
+  end
+
+  def then_i_see_the_survey_url_lacks_a_conversation_id
+    expect(page)
+      .to have_link("Share your feedback (opens in a new tab)", href: /\?conversation=\z/)
+  end
+
+  def and_i_see_the_survey_url_has_a_conversation_id
+    conversation_id = Conversation.last.id
+    expect(page)
+      .to have_link("Share your feedback (opens in a new tab)", href: /\?conversation=#{conversation_id}\z/)
   end
 
   def stubs_for_mock_answer(question, answer, rephrase_question: false)

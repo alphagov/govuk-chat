@@ -7,7 +7,7 @@ RSpec.describe "components/_conversation_form.html.erb" do
       value: "Value",
     })
 
-    expect(rendered).to have_selector('.app-c-conversation-form[action="/conversation"]') do |rendered_form|
+    expect(rendered).to have_selector('.app-c-conversation-form__form[action="/conversation"]') do |rendered_form|
       expect(rendered_form)
         .to have_selector(".app-c-conversation-form__label.govuk-visually-hidden", text: /Enter your question/)
         .and have_selector(".app-c-conversation-form__input[id=id][name=name][value=Value]")
@@ -15,6 +15,20 @@ RSpec.describe "components/_conversation_form.html.erb" do
         .and have_selector(".govuk-error-message[hidden][aria-atomic][aria-live]", visible: :hidden)
         .and have_selector(".app-c-blue-button")
     end
+
+    expect(rendered).to have_link("Share your feedback (opens in a new tab)")
+  end
+
+  it "includes a conversation id if one is provided" do
+    conversation_id = SecureRandom.uuid
+    render("components/conversation_form", {
+      url: "/conversation",
+      name: "name",
+      conversation_id:,
+    })
+
+    expect(rendered)
+      .to have_link("Share your feedback (opens in a new tab)", href: /\?conversation=#{conversation_id}/)
   end
 
   it "includes data attributes of server side validation parameters" do

@@ -5,27 +5,27 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
   class ChatConversation {
     constructor (module) {
       this.module = module
+      this.formComponent = this.module.querySelector('.js-conversation-form-wrapper')
       this.form = this.module.querySelector('.js-conversation-form')
-      this.formContainer = this.module.querySelector('.js-form-container')
       this.conversationList = this.module.querySelector('.js-conversation-list')
       this.pendingAnswerUrl = this.module.dataset.pendingAnswerUrl
       this.ANSWER_INTERVAL = 500
     }
 
     init () {
-      this.formContainer.addEventListener('submit', e => this.handleFormSubmission(e))
+      this.formComponent.addEventListener('submit', e => this.handleFormSubmission(e))
 
       if (!this.pendingAnswerUrl) return
 
       const loadPendingAnswer = () => {
         this.checkAnswer()
-        this.form.dispatchEvent(new Event('question-accepted'))
+        this.formComponent.dispatchEvent(new Event('question-accepted'))
       }
 
-      if (this.form.dataset.conversationFormModuleStarted) {
+      if (this.formComponent.dataset.conversationFormModuleStarted) {
         loadPendingAnswer()
       } else {
-        this.form.addEventListener('init', loadPendingAnswer)
+        this.formComponent.addEventListener('init', loadPendingAnswer)
       }
     }
 
@@ -33,7 +33,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       event.preventDefault()
 
       try {
-        this.form.dispatchEvent(new Event('question-pending'))
+        this.formComponent.dispatchEvent(new Event('question-pending'))
 
         const formData = new FormData(this.form)
         const response = await fetch(this.form.action, {
@@ -62,7 +62,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
           this.conversationList.insertAdjacentHTML('beforeend', responseJson.question_html)
           this.scrollToMessage(this.conversationList.lastElementChild)
 
-          this.form.dispatchEvent(new Event('question-accepted'))
+          this.formComponent.dispatchEvent(new Event('question-accepted'))
 
           this.pendingAnswerUrl = responseJson.answer_url
           break
@@ -70,7 +70,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         case 422: {
           const responseJson = await response.json()
 
-          this.form.dispatchEvent(
+          this.formComponent.dispatchEvent(
             new CustomEvent('question-rejected', {
               detail: { errorMessages: responseJson.error_messages }
             })
@@ -99,8 +99,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
             window.GOVUK.modules.start(this.conversationList)
 
             this.pendingAnswerUrl = null
-
-            this.form.dispatchEvent(new Event('answer-received'))
+            this.formComponent.dispatchEvent(new Event('answer-received'))
             break
           }
           case 202: {

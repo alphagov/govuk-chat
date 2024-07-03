@@ -1,6 +1,7 @@
 <%
   input_id ||= "#{name.parameterize}-#{SecureRandom.hex(4)}"
   value ||= nil
+  conversation_id ||= nil
 
   maxlength = Form::CreateQuestion::USER_QUESTION_LENGTH_MAXIMUM
   presence_error_message = Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE
@@ -32,49 +33,59 @@
   input_classes << " app-c-conversation-form__input--error" if error_items.any?
 %>
 
-<%= form_with url: url, class: "app-c-conversation-form js-conversation-form", data: data_attributes do |f| %>
-  <%= content_tag :div, class: form_group_classes do %>
-    <%= tag.ul(
-      id: error_id,
-      class: %w[govuk-list govuk-error-message js-conversation-form-errors-wrapper],
-      hidden: !has_error,
-      aria: { atomic: "true", live: "polite" }) do %>
-      <% error_items.each do |error| %>
-        <li>
-          <span class="govuk-visually-hidden">Error:</span>
-          <%= error[:text] %>
-        </li>
+<%= tag.div class: "app-c-conversation-form js-conversation-form-wrapper", data: data_attributes do %>
+  <%= form_with url: url, class: "app-c-conversation-form__form js-conversation-form" do |f| %>
+    <%= content_tag :div, class: form_group_classes do %>
+      <%= tag.ul(
+        id: error_id,
+        class: %w[govuk-list govuk-error-message js-conversation-form-errors-wrapper],
+        hidden: !has_error,
+        aria: { atomic: "true", live: "polite" }) do %>
+        <% error_items.each do |error| %>
+          <li>
+            <span class="govuk-visually-hidden">Error:</span>
+            <%= error[:text] %>
+          </li>
+        <% end %>
+      <% end %>
+
+      <%= content_tag :div, class: "app-c-conversation-form__input-wrapper" do %>
+        <%= label_tag(
+          input_id,
+          "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
+          class: "app-c-conversation-form__label govuk-visually-hidden",
+        ) %>
+
+        <%= text_field_tag(
+          input_id,
+          value,
+          class: input_classes,
+          aria: {
+            describedby: aria_described_by,
+          },
+          name: name,
+        ) %>
+
+        <%= render "components/blue_button", {
+          text: "Send",
+          conversation_form_button: true,
+        } %>
       <% end %>
     <% end %>
 
-    <%= content_tag :div, class: "app-c-conversation-form__input-wrapper" do %>
-      <%= label_tag(
-        input_id,
-        "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
-        class: "app-c-conversation-form__label govuk-visually-hidden",
-      ) %>
-
-      <%= text_field_tag(
-        input_id,
-        value,
-        class: input_classes,
-        aria: {
-          describedby: aria_described_by,
-        },
-        name: name,
-      ) %>
-
-      <%= render "components/blue_button", {
-        text: "Send",
-        conversation_form_button: true,
+    <div class="govuk-visually-hidden">
+      <%= render "govuk_publishing_components/components/hint", {
+        id: hint_id,
+        text: hint,
       } %>
-    <% end %>
+    </div>
   <% end %>
 
-  <div class="govuk-visually-hidden">
-    <%= render "govuk_publishing_components/components/hint", {
-      id: hint_id,
-      text: hint,
-    } %>
-  </div>
+  <%= link_to(
+    "Share your feedback (opens in a new tab)",
+    "https://surveys.publishing.service.gov.uk/s/0K1VSX/?conversation=#{conversation_id}",
+    class: "govuk-body govuk-link govuk-link--no-visited-state app-c-conversation-form__survey-link js-survey-link",
+    target: "_blank",
+    rel: "noopener noreferrer",
+  ) %>
 <% end %>

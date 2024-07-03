@@ -7,18 +7,22 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
   class ConversationForm {
     constructor (module) {
       this.module = module
+      this.form = module.querySelector('.js-conversation-form')
       this.input = module.querySelector('.js-conversation-form-input')
       this.button = module.querySelector('.js-conversation-form-button')
       this.errorsWrapper = module.querySelector('.js-conversation-form-errors-wrapper')
       this.formGroup = module.querySelector('.js-conversation-form-group')
+      this.surveyLink = module.querySelector('.js-survey-link')
+      this.conversationId = null
     }
 
     init () {
-      this.module.addEventListener('submit', e => this.handleSubmit(e))
+      this.form.addEventListener('submit', e => this.handleSubmit(e))
       this.module.addEventListener('question-pending', () => this.handleQuestionPending())
       this.module.addEventListener('question-accepted', () => this.handleQuestionAccepted())
       this.module.addEventListener('question-rejected', e => this.handleQuestionRejected(e))
       this.module.addEventListener('answer-received', () => this.handleAnswerReceived())
+      // used to inform other components that this component is initialised.
       this.module.dispatchEvent(new Event('init'))
     }
 
@@ -50,6 +54,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     handleQuestionAccepted () {
       this.disableControls()
       this.input.value = ''
+      this.updateSurveyLink()
     }
 
     handleQuestionRejected (event) {
@@ -100,6 +105,18 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         this.input.classList.remove('app-c-conversation-form__input--error')
         this.formGroup.classList.remove('app-c-conversation-form__form-group--error')
       }
+    }
+
+    updateSurveyLink () {
+      const conversationId = window.GOVUK.cookie('conversation_id')
+
+      if (conversationId === this.conversationId) return
+
+      const url = new URL(this.surveyLink.href)
+      url.searchParams.set('conversation', conversationId)
+      this.surveyLink.href = url.toString()
+
+      this.conversationId = conversationId
     }
   }
 
