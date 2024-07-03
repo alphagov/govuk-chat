@@ -1,0 +1,24 @@
+<div class="app-c-conversation-sources">
+  <div class="app-c-warning-text">
+    <span class="app-c-warning-text__icon" aria-hidden="true">!</span>
+    <span class="app-c-warning-text__text">
+      <span class="govuk-visually-hidden">Warning</span>
+      <strong>Check this answer</strong>
+      <span class="app-c-warning-text__opens-in-new-tab">(links open in a new tab)</span>
+    </span>
+  </div>
+
+  <ul class="app-c-conversation-sources-list gem-c-list govuk-list govuk-list--bullet">
+    <% sources.map do |source| %>
+      <%= tag.li class: "app-c-conversation-sources-list__item" do %>
+        <%= link_to source.fetch(:href),
+          class: "govuk-link",
+          target: "_blank",
+          rel: "noopener noreferrer" do %>
+          <%= source.fetch(:title).html_safe + tag.span("(opens in new tab)",
+            class: "govuk-visually-hidden") %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </ul>
+</div>

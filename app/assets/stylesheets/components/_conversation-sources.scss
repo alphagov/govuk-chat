@@ -1,0 +1,70 @@
+.app-c-conversation-sources {
+  border-top: 1px solid govuk-colour("mid-grey");
+  margin-top: govuk-spacing(6);
+  padding-top: govuk-spacing(6);
+}
+
+.app-c-conversation-sources-list {
+  padding-left: govuk-spacing(5);
+
+  .app-c-conversation-sources-list__item {
+    @include govuk-responsive-margin(3, "bottom");
+    padding-left: govuk-spacing(2);
+  }
+}
+
+.app-c-warning-text {
+  @include govuk-media-query($from: tablet) {
+    align-items: center;
+  }
+  display: flex;
+  @include govuk-font($size: 19);
+  @include govuk-responsive-margin(4, "bottom");
+  padding: govuk-spacing(2) 0;
+  position: relative;
+}
+
+.app-c-warning-text__icon {
+  @include govuk-typography-weight-bold;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  min-width: 25px;
+  min-height: 25px;
+  @include govuk-media-query($until: tablet) {
+    // min-height - line-height
+    margin-top: - calc((25px - 20px) / 2);
+  }
+  border: none;
+  border-radius: 50%;
+  color: govuk-colour("white");
+  background: govuk-colour("black");
+  font-size: 18px;
+  line-height: 20px;
+  text-align: center;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  forced-color-adjust: none;
+
+  @media screen and (forced-colors: active) {
+    border-color: windowText;
+    color: windowText;
+    background: transparent;
+  }
+}
+
+.app-c-warning-text__text {
+  @include govuk-text-colour;
+  display: block;
+  padding-left: 35px;
+}
+
+@include govuk-media-query($until: tablet) {
+  .app-c-warning-text__opens-in-new-tab {
+    display: inline-block;
+  }
+}
