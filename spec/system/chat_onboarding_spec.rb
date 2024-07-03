@@ -1,10 +1,10 @@
 RSpec.describe "Chat Onboarding" do
-  scenario do
+  scenario "without JS" do
     when_i_visit_the_root_path
     then_i_see_the_landing_page
 
     when_i_click_on_the_try_govuk_chat_button
-    then_i_see_the_onboarding_limitations_page
+    then_i_see_the_onboarding_page
 
     when_i_click_tell_me_more
     then_i_see_additional_information
@@ -14,6 +14,23 @@ RSpec.describe "Chat Onboarding" do
 
     when_i_click_on_the_start_chatting_button
     then_i_see_the_conversation_page
+  end
+
+  scenario "with JS", :dismiss_cookie_banner, :js do
+    when_i_visit_the_root_path
+    then_i_see_the_landing_page
+
+    when_i_click_on_the_try_govuk_chat_button
+    then_i_see_the_onboarding_page
+
+    when_i_click_tell_me_more
+    then_i_see_additional_information
+
+    when_i_click_that_i_understand
+    then_i_see_the_onboarding_privacy_page
+
+    when_i_click_on_the_start_chatting_button
+    then_i_see_the_chat_prompt
   end
 
   def when_i_visit_the_root_path
@@ -28,7 +45,7 @@ RSpec.describe "Chat Onboarding" do
     click_on "Try GOV.UK Chat"
   end
 
-  def then_i_see_the_onboarding_limitations_page
+  def then_i_see_the_onboarding_page
     expect(page).to have_content(/Hello 👋 I’m GOV.UK Chat/)
   end
 
@@ -37,7 +54,7 @@ RSpec.describe "Chat Onboarding" do
   end
 
   def then_i_see_additional_information
-    expect(page).to have_content("I combine the same technology used on ChatGPT with GOV.UK guidance.")
+    expect(page).to have_content(/I combine the same technology used on ChatGPT with GOV.UK guidance/)
   end
 
   def when_i_click_that_i_understand
@@ -45,7 +62,7 @@ RSpec.describe "Chat Onboarding" do
   end
 
   def then_i_see_the_onboarding_privacy_page
-    expect(page).to have_content(/You can always find information about my limitations in about GOV.UK Chat/)
+    expect(page).to have_content(/Great. You can always find information about my limitations in about GOV.UK Chat/)
   end
 
   def when_i_click_on_the_start_chatting_button
@@ -54,5 +71,12 @@ RSpec.describe "Chat Onboarding" do
 
   def then_i_see_the_conversation_page
     expect(page).to have_content("GOV.UK Chat")
+  end
+
+  def then_i_see_the_chat_prompt
+    expect(page).to have_content(/Okay/)
+    expect(page).to have_content(/Thanks! To get started, ask me a question/)
+
+    expect(page).to have_css(".js-conversation-form-group")
   end
 end

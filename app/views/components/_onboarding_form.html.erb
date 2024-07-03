@@ -3,7 +3,7 @@
   more_information ||= false
 %>
 
-<%= form_with url: url, class: "app-c-onboarding-form" do |f| %>
+<%= form_with url: url, class: "app-c-onboarding-form js-onboarding-form" do |f| %>
   <% if privacy_onboarding %>
     <%= render "components/blue_button", {
       text: "Okay, start chatting",
