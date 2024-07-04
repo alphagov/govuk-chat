@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get "/healthcheck/ready", to: GovukHealthcheck.rack_response(
     GovukHealthcheck::ActiveRecord,
     GovukHealthcheck::SidekiqRedis,
+    Healthcheck::Opensearch,
   )
 
   scope :chat do
