@@ -48,7 +48,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
       end
     end
 
-    it "renders sources as titles in a details component when provided" do
+    it "renders sources as titles in the sources component when provided" do
       render("components/conversation_message", {
         id: "answer-3",
         message: "message 4",
