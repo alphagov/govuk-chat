@@ -43,25 +43,9 @@
         </div>
 
         <% if sources.present? %>
-          <div class="app-c-conversation-message__sources">
-            <%= render "govuk_publishing_components/components/warning_text", {
-              text_assistive: "Warning",
-              text: "Check this answer (links open in a new tab)",
-            } %>
-
-            <%= render "govuk_publishing_components/components/list", {
-              visible_counters: true,
-              items: sources.map do |source|
-                link_to(
-                  source.fetch(:title),
-                  source.fetch(:href),
-                  class: "govuk-link",
-                  target: "_blank",
-                  rel: "noopener noreferrer",
-                )
-              end,
-            } %>
-          </div>
+          <%= render "components/conversation_sources", {
+            sources: sources,
+          } %>
         <% end %>
       </div>
     <% end %>
