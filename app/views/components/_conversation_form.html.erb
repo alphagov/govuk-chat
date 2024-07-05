@@ -5,10 +5,11 @@
 
   maxlength = Form::CreateQuestion::USER_QUESTION_LENGTH_MAXIMUM
   presence_error_message = Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE
-  length_error_message = Form::CreateQuestion::USER_QUESTION_LENGTH_ERROR_MESSAGE
+  # After entering this percentage of the maxlength, the user will see the character count hint
+  character_count_threshold = 80
 
   hint = "Please limit your question to #{maxlength} characters."
-  hint_id = "#{input_id}-hint"
+  hint_id = "#{input_id}-info" # The character-count component relies on an element with this ID being present
 
   error_items ||= []
   has_error ||= error_items.any?
@@ -22,14 +23,14 @@
   data_attributes = {
     module: "conversation-form",
     maxlength: maxlength,
+    threshold: character_count_threshold,
     "presence-error-message": presence_error_message,
-    "length-error-message": sprintf(length_error_message, count: maxlength),
   }
 
   form_group_classes = " app-c-conversation-form__form-group js-conversation-form-group"
   form_group_classes << " app-c-conversation-form__form-group--error" if error_items.any?
 
-  input_classes = "app-c-conversation-form__input js-conversation-form-input"
+  input_classes = "app-c-conversation-form__input js-conversation-form-input govuk-js-character-count"
   input_classes << " app-c-conversation-form__input--error" if error_items.any?
 %>
 
@@ -56,15 +57,17 @@
           class: "app-c-conversation-form__label govuk-visually-hidden",
         ) %>
 
-        <%= text_field_tag(
-          input_id,
-          value,
-          class: input_classes,
-          aria: {
-            describedby: aria_described_by,
-          },
-          name: name,
-        ) %>
+        <%= content_tag :div, class: "app-c-conversation-form__input-character-count-wraper" do %>
+          <%= text_field_tag(
+            input_id,
+            value,
+            class: input_classes,
+            aria: {
+              describedby: aria_described_by,
+            },
+            name: name,
+          ) %>
+        <% end %>
 
         <%= render "components/blue_button", {
           text: "Send",

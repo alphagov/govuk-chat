@@ -64,6 +64,15 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     and_i_see_the_survey_url_has_a_conversation_id
   end
 
+  scenario "character limits" do
+    given_i_have_confirmed_i_understand_chat_risks
+    when_i_type_in_a_question_approaching_the_character_count_limit
+    then_i_see_a_character_count_warning
+
+    when_i_type_in_a_question_exceeding_the_character_count_limit
+    then_i_see_a_character_count_error
+  end
+
   def when_i_enter_a_first_question
     @first_question = "How do I setup a workplace pension?"
     fill_in "create_question[user_question]", with: @first_question
@@ -161,6 +170,24 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     conversation_id = Conversation.last.id
     expect(page)
       .to have_link("Share your feedback (opens in a new tab)", href: /\?conversation=#{conversation_id}\z/)
+  end
+
+  def when_i_type_in_a_question_approaching_the_character_count_limit
+    character_count = Form::CreateQuestion::USER_QUESTION_LENGTH_MAXIMUM - 50
+    fill_in "create_question[user_question]", with: "A" * character_count
+  end
+
+  def when_i_type_in_a_question_exceeding_the_character_count_limit
+    character_count = Form::CreateQuestion::USER_QUESTION_LENGTH_MAXIMUM + 10
+    fill_in "create_question[user_question]", with: "A" * character_count
+  end
+
+  def then_i_see_a_character_count_warning
+    expect(page).to have_content("You have 50 characters remaining")
+  end
+
+  def then_i_see_a_character_count_error
+    expect(page).to have_content("You have 10 characters too many")
   end
 
   def stubs_for_mock_answer(question, answer, rephrase_question: false)

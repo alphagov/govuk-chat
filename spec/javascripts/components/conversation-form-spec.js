@@ -15,7 +15,10 @@ describe('ConversationForm component', () => {
       <form class="js-conversation-form">
         <div class="js-conversation-form-group">
           <ul class="js-conversation-form-errors-wrapper" hidden="true"></ul>
-          <input type="text" class="js-conversation-form-input" value="What is the VAT rate?">
+          <input type="text" class="js-conversation-form-input govuk-js-character-count" id="create_question_user_question" value="What is the VAT rate?">
+          <div id="create_question_user_question-info" class="gem-c-hint govuk-hint govuk-visually-hidden">
+            Please limit your question to 300 characters.
+          </div>
           <button class="js-conversation-form-button">Submit</button>
         </div>
       </form>
@@ -59,8 +62,23 @@ describe('ConversationForm component', () => {
       expect(submitSpy).toHaveBeenCalled()
     })
 
-    it("prevents form submission when the form isn't valid", () => {
+    it('prevents form submission when the input is empty', () => {
       input.value = ''
+      const submitSpy = jasmine.createSpy('submit event spy')
+      form.addEventListener('submit', submitSpy)
+      const event = new Event('submit')
+      spyOn(event, 'preventDefault')
+
+      form.dispatchEvent(event)
+
+      expect(event.preventDefault).toHaveBeenCalled()
+      expect(submitSpy).not.toHaveBeenCalled()
+    })
+
+    it('prevents form submission when the input exceeds the max character count', () => {
+      const maxlength = parseInt(div.dataset.maxlength, 10)
+      input.value = 'a'.repeat(maxlength + 1)
+
       const submitSpy = jasmine.createSpy('submit event spy')
       form.addEventListener('submit', submitSpy)
       const event = new Event('submit')
@@ -100,16 +118,6 @@ describe('ConversationForm component', () => {
       expect(errorsWrapper.innerHTML).toBe('')
       expect(formGroup.classList).not.toContain('app-c-conversation-form__form-group--error')
       expect(input.classList).not.toContain('app-c-conversation-form__input--error')
-    })
-
-    it('shows an error when the user input is greater in length than maxlength', () => {
-      const maxlength = parseInt(div.dataset.maxlength, 10)
-      input.value = 'a'.repeat(maxlength + 1)
-      form.dispatchEvent(new Event('submit'))
-      expect(errorsWrapper.hidden).toBe(false)
-
-      expect(errorsWrapper.innerHTML)
-        .toEqual(`<li><span class="govuk-visually-hidden">Error:</span>${lengthErrorMessage}</li>`)
     })
   })
 
@@ -153,6 +161,17 @@ describe('ConversationForm component', () => {
 
       div.dispatchEvent(new Event('question-accepted'))
       expect(surveyLink.href).toMatch(/\?conversation=1234-1234-1234$/)
+    })
+
+    it('hides the character count hint', () => {
+      // Type in enough characters to make the hint show on screen
+      input.value = 'A'.repeat(280)
+      input.dispatchEvent(new Event('keyup'))
+      expect(form.innerHTML).toContain('You have 20 characters remaining')
+
+      div.dispatchEvent(new Event('question-accepted'))
+
+      expect(form.innerHTML).not.toContain('You have 20 characters remaining')
     })
   })
 
@@ -245,6 +264,17 @@ describe('ConversationForm component', () => {
       div.dispatchEvent(new Event('answer-received'))
 
       expect(input.value).toEqual('')
+    })
+
+    it('hides the character count hint', () => {
+      // Type in enough characters to make the hint show on screen
+      input.value = 'A'.repeat(280)
+      input.dispatchEvent(new Event('keyup'))
+      expect(form.innerHTML).toContain('You have 20 characters remaining')
+
+      div.dispatchEvent(new Event('answer-received'))
+
+      expect(form.innerHTML).not.toContain('You have 20 characters remaining')
     })
   })
 })

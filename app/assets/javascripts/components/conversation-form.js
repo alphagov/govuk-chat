@@ -24,6 +24,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.module.addEventListener('answer-received', () => this.handleAnswerReceived())
       // used to inform other components that this component is initialised.
       this.module.dispatchEvent(new Event('init'))
+
+      new window.GOVUKFrontend.CharacterCount(this.module).init()
     }
 
     handleSubmit (event) {
@@ -33,15 +35,12 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         errors.push(this.module.dataset.presenceErrorMessage)
       }
 
-      const maxlength = parseInt(this.module.dataset.maxlength, 10)
-
-      if (this.input.value.length > maxlength) {
-        errors.push(this.module.dataset.lengthErrorMessage)
-      }
-
       this.replaceErrors(errors)
 
-      if (errors.length) {
+      const maxlength = parseInt(this.module.dataset.maxlength, 10)
+      const exceedsMaxLength = this.input.value.length > maxlength
+
+      if (errors.length || exceedsMaxLength) {
         event.preventDefault()
         event.stopImmediatePropagation()
       }
@@ -53,7 +52,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     handleQuestionAccepted () {
       this.disableControls()
-      this.input.value = ''
+      this.resetInput()
       this.updateSurveyLink()
     }
 
@@ -67,7 +66,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     handleAnswerReceived () {
-      this.input.value = ''
+      this.resetInput()
       this.enableControls()
     }
 
@@ -80,6 +79,13 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.input.readOnly = false
       this.button.disabled = false
       this.button.focus()
+    }
+
+    resetInput () {
+      this.input.value = ''
+
+      // Trigger keyup event so the character-count component resets and clears the count hint
+      this.input.dispatchEvent(new Event('keyup'))
     }
 
     replaceErrors (errors) {
