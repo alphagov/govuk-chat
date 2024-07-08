@@ -206,14 +206,33 @@ RSpec.describe "ConversationsController" do
           .to have_selector(".gem-c-title__text", text: "GOV.UK Chat is generating an answer")
       end
 
-      it "renders the conversation with an error when the params are invalid" do
-        post update_conversation_path, params: { create_question: { user_question: "" } }
+      context "and the params are invalid while the last question is answered" do
+        it "renders the conversation with an error" do
+          post update_conversation_path, params: { create_question: { user_question: "" } }
 
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body)
-          .to have_selector(".govuk-error-summary a[href='#create_question_user_question']",
-                            text: Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
-          .and have_selector(".app-c-conversation-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body)
+            .to have_selector(".govuk-error-summary a[href='#create_question_user_question']",
+                              text: Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
+            .and have_selector(".app-c-conversation-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+        end
+      end
+
+      context "and the params are invalid while the last question is not answered" do
+        let(:conversation) { create(:conversation, questions: [create(:question)]) }
+
+        before do
+          cookies[:conversation_id] = conversation.id
+        end
+
+        it "renders the conversation with a pending answer URL" do
+          post update_conversation_path, params: { create_question: { user_question: "" } }
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          question = conversation.questions.last
+          expect(response.body)
+            .to have_selector("[data-pending-answer-url='#{answer_question_path(question)}']")
+        end
       end
 
       context "and the converation_id cookie is present" do

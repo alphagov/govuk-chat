@@ -5,10 +5,8 @@ class ConversationsController < BaseController
 
   def show
     @conversation ||= Conversation.new
-    @questions = @conversation.questions_for_showing_conversation
+    prepare_for_show_view(@conversation)
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
-    @more_information = session[:more_information].present?
-    @conversation_data_attributes = { module: "chat-conversation" }
 
     respond_to do |format|
       format.html { render :show }
@@ -45,8 +43,7 @@ class ConversationsController < BaseController
     else
       respond_to do |format|
         format.html do
-          @conversation = @create_question.conversation
-          @questions = @conversation.questions_for_showing_conversation
+          prepare_for_show_view(@create_question.conversation)
 
           render :show, status: :unprocessable_entity
         end
@@ -152,5 +149,11 @@ private
 
   def answer_feedback_params
     params.require(:create_answer_feedback).permit(:useful)
+  end
+
+  def prepare_for_show_view(conversation)
+    @questions = conversation.questions_for_showing_conversation
+    @more_information = session[:more_information].present?
+    @conversation_data_attributes = { module: "chat-conversation" }
   end
 end
