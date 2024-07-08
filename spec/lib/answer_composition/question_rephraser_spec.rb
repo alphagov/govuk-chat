@@ -11,6 +11,14 @@ RSpec.describe AnswerComposition::QuestionRephraser do
     end
   end
 
+  context "when the conversation hasn't been persisted to the database" do
+    let(:question) { build(:question, conversation: build(:conversation)) }
+
+    it "returns the question as-is" do
+      expect(described_class.call(question:)).to eq(question.message)
+    end
+  end
+
   context "when the question is part of an ongoing chat" do
     let(:conversation) { create :conversation, :with_history }
     let(:question) { conversation.questions.strict_loading(false).last }

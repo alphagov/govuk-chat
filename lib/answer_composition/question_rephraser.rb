@@ -58,7 +58,7 @@ module AnswerComposition
     end
 
     def first_question?
-      question.conversation.questions.count == 1
+      question.conversation.questions.count < 2
     end
 
     def system_prompt
