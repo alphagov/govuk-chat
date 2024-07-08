@@ -2,36 +2,40 @@
 @import "govuk/components/error-message/error-message";
 
 .app-c-conversation-form__form {
-  padding-top: govuk-spacing(3);
+  padding-top: govuk-spacing(4);
   margin-bottom: govuk-spacing(2);
 }
 
 .app-c-conversation-form__form-group {
-  &.app-c-conversation-form__form-group--error {
-    padding-left: govuk-spacing(3);
-    border-left: $govuk-border-width-form-group-error solid $govuk-error-colour;
-  }
+  display: flex;
 }
 
-.app-c-conversation-form__input-wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+.app-c-conversation-form__error-list {
+  margin-bottom: 0;
 
-  .govuk-character-count__status {
-    margin-top: govuk-spacing(2);
+  > li {
     margin-bottom: 0;
+    padding-bottom: govuk-spacing(2);
 
-    &.govuk-character-count__message--disabled {
-      height: 1px;
-      margin-top: 0;
+    &:last-child {
+      padding-bottom: govuk-spacing(4);
     }
   }
 }
 
-.app-c-conversation-form__input-character-count-wraper {
+.app-c-conversation-form__form-group--error, .app-c-conversation-form__error-list {
+  padding-left: govuk-spacing(3);
+  border-left: $govuk-border-width-form-group-error solid $govuk-error-colour;
+}
+
+.app-c-conversation-form__input-wrapper {
   flex-grow: 1;
   margin-right: govuk-spacing(1);
+
+  .govuk-character-count__message--disabled {
+    height: 0;
+    margin: 0;
+  }
 }
 
 .app-c-conversation-form__input {
@@ -46,7 +50,7 @@
     box-shadow: inset 0 0 0 $govuk-border-width-form-element;
   }
 
-  &.govuk-textarea--error, // This is a class injected by the GOV.UK Frontend character-count component
+  &.govuk-textarea--error, // A class injected by the GOV.UK Frontend character-count component
   &.app-c-conversation-form__input--error {
     border-color: govuk-colour("red");
 
@@ -54,6 +58,12 @@
       border-color: govuk-colour("black");
     }
   }
+}
+
+// A class injected by the GOV.UK Frontend character-count component
+.govuk-character-count__status {
+  margin-top: govuk-spacing(2);
+  margin-bottom: 0;
 }
 
 .app-c-conversation-form__survey-link {

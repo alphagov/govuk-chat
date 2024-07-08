@@ -36,20 +36,20 @@
 
 <%= tag.div class: "app-c-conversation-form js-conversation-form-wrapper", data: data_attributes do %>
   <%= form_with url: url, class: "app-c-conversation-form__form js-conversation-form" do |f| %>
-    <%= content_tag :div, class: form_group_classes do %>
-      <%= tag.ul(
-        id: error_id,
-        class: %w[govuk-list govuk-error-message js-conversation-form-errors-wrapper],
-        hidden: !has_error,
-        aria: { atomic: "true", live: "polite" }) do %>
-        <% error_items.each do |error| %>
-          <li>
-            <span class="govuk-visually-hidden">Error:</span>
-            <%= error[:text] %>
-          </li>
-        <% end %>
+    <%= tag.ul(
+      id: error_id,
+      class: %w[govuk-list govuk-error-message js-conversation-form-errors-wrapper app-c-conversation-form__error-list],
+      hidden: !has_error,
+      aria: { atomic: "true", live: "polite" }) do %>
+      <% error_items.each do |error| %>
+        <li>
+          <span class="govuk-visually-hidden">Error:</span>
+          <%= error[:text] %>
+        </li>
       <% end %>
+    <% end %>
 
+    <%= content_tag :div, class: form_group_classes do %>
       <%= content_tag :div, class: "app-c-conversation-form__input-wrapper" do %>
         <%= label_tag(
           input_id,
@@ -57,7 +57,7 @@
           class: "app-c-conversation-form__label govuk-visually-hidden",
         ) %>
 
-        <%= content_tag :div, class: "app-c-conversation-form__input-character-count-wraper" do %>
+        <%= content_tag :div, class: "app-c-conversation-form__input-character-count-wrapper" do %>
           <%= text_field_tag(
             input_id,
             value,
@@ -69,19 +69,21 @@
           ) %>
         <% end %>
 
+        <div class="govuk-visually-hidden">
+          <%= render "govuk_publishing_components/components/hint", {
+            id: hint_id,
+            text: hint,
+          } %>
+        </div>
+      <% end %>
+
+      <%= content_tag :div, class: "app-c-conversation-form__button-wrapper" do %>
         <%= render "components/blue_button", {
           text: "Send",
           conversation_form_button: true,
         } %>
       <% end %>
     <% end %>
-
-    <div class="govuk-visually-hidden">
-      <%= render "govuk_publishing_components/components/hint", {
-        id: hint_id,
-        text: hint,
-      } %>
-    </div>
   <% end %>
 
   <%= link_to(
