@@ -28,6 +28,17 @@
   }
 
   .govuk-js-header-toggle {
+    margin-top: govuk-spacing(1);
+    font-weight: 700;
+    font-size: 16px; // directly set the font size to prevent govuk-font mixins from reducing it on smaller screens
+    border-bottom: 3px solid transparent;
+    padding: govuk-spacing(2) govuk-spacing(1);
+    top: govuk-spacing(3);
+
+    @include govuk-media-query($until: desktop) {
+      margin-top: 0;
+    }
+
     // removes the default chevron
     &::after {
       content: none;
@@ -36,11 +47,36 @@
     &::before {
       @include chevron(govuk-colour("white"), false);
     }
+
+    &:focus {
+      background-color: govuk-colour("black");
+      color: govuk-colour("white");
+      box-shadow: none;
+    }
+
+    &:focus-visible {
+      background-color: $govuk-focus-colour;
+      color: govuk-colour("black");
+      outline: none;
+    }
+
+    &:focus-visible::before {
+      @include chevron(govuk-colour("black"), false);
+    }
+
+    &:hover {
+      text-decoration: none;
+      border-bottom: 3px solid govuk-colour("white");
+    }
   }
 
   .app-c-header__menu-button {
     &--expanded {
       border-bottom: 3px solid govuk-colour("white");
+    }
+
+    &--expanded::before, &--expanded:focus-visible::before {
+      @include prefixed-transform($rotate: 225deg, $translateY: 1px);
     }
   }
 }
