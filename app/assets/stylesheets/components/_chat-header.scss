@@ -20,7 +20,20 @@
       font-size: 16px; // directly set the font size to prevent govuk-font mixins from reducing it on smaller screens
     }
   }
+
+  .js-header-navigation-item {
+    display: block;
+    margin-top: govuk-spacing(1);
+  }
+
+  .app-c-header__menu-button {
+    &--expanded {
+      border-bottom: 3px solid govuk-colour("white");
+    }
+  }
 }
+
+
 
 .app-c-header-row {
   margin: govuk-spacing(1) 0 govuk-spacing(3);
