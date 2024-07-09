@@ -1,20 +1,41 @@
+@import "govuk/components/character-count/character-count";
 @import "govuk/components/error-message/error-message";
 
 .app-c-conversation-form__form {
-  padding-top: govuk-spacing(3);
+  padding-top: govuk-spacing(4);
   margin-bottom: govuk-spacing(2);
 }
 
 .app-c-conversation-form__form-group {
-  &.app-c-conversation-form__form-group--error {
-    padding-left: govuk-spacing(3);
-    border-left: $govuk-border-width-form-group-error solid $govuk-error-colour;
+  display: flex;
+}
+
+.app-c-conversation-form__error-list {
+  margin-bottom: 0;
+
+  > li {
+    margin-bottom: 0;
+    padding-bottom: govuk-spacing(2);
+
+    &:last-child {
+      padding-bottom: govuk-spacing(4);
+    }
   }
 }
 
+.app-c-conversation-form__form-group--error, .app-c-conversation-form__error-list {
+  padding-left: govuk-spacing(3);
+  border-left: $govuk-border-width-form-group-error solid $govuk-error-colour;
+}
+
 .app-c-conversation-form__input-wrapper {
-  display: flex;
-  justify-content: space-between;
+  flex-grow: 1;
+  margin-right: govuk-spacing(1);
+
+  .govuk-character-count__message--disabled {
+    height: 0;
+    margin: 0;
+  }
 }
 
 .app-c-conversation-form__input {
@@ -22,8 +43,6 @@
   padding: govuk-spacing(2);
   @include govuk-font($size: 19);
   width: 100%;
-  margin-right: govuk-spacing(1);
-  flex-grow: 1;
 
   &:focus {
     outline: $govuk-focus-width solid $govuk-focus-colour;
@@ -31,9 +50,20 @@
     box-shadow: inset 0 0 0 $govuk-border-width-form-element;
   }
 
+  &.govuk-textarea--error, // A class injected by the GOV.UK Frontend character-count component
   &.app-c-conversation-form__input--error {
     border-color: govuk-colour("red");
+
+    &:focus {
+      border-color: govuk-colour("black");
+    }
   }
+}
+
+// A class injected by the GOV.UK Frontend character-count component
+.govuk-character-count__status {
+  margin-top: govuk-spacing(2);
+  margin-bottom: 0;
 }
 
 .app-c-conversation-form__survey-link {
