@@ -85,6 +85,15 @@
   margin: govuk-spacing(1) 0 govuk-spacing(3);
 }
 
+.app-c-header__link {
+  @include govuk-media-query($until: 500px) {
+    &::after {
+      content: "\a";
+      white-space: pre;
+    }
+  }
+}
+
 .app-c-header__container {
   border-bottom: govuk-spacing(2) solid govuk-colour("yellow");
 }
@@ -109,7 +118,7 @@
   display: inline-block;
   vertical-align: middle;
 
-  @include govuk-media-query($until: 385px) {
+  @include govuk-media-query($until: 500px) {
     margin-top: govuk-spacing(2);
   }
 }
