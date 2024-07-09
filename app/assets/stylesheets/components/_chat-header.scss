@@ -27,6 +27,10 @@
     margin-top: govuk-spacing(1);
   }
 
+  .govuk-header__navigation--end {
+    text-align: left;
+  }
+
   .govuk-js-header-toggle {
     margin-top: govuk-spacing(1);
     font-weight: 700;
