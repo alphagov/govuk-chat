@@ -13,15 +13,17 @@
 
   .govuk-header__navigation-item {
     border-bottom: none;
+    display: inline-block;
+    margin-right: govuk-spacing(2);
   }
+}
+
+.app-c-header-row {
+  margin: govuk-spacing(1) 0 govuk-spacing(3);
 }
 
 .app-c-header__container {
   border-bottom: govuk-spacing(2) solid govuk-colour("yellow");
-}
-
-.app-c-header__logo {
-  margin: govuk-spacing(1) 0 govuk-spacing(3);
 }
 
 .app-c-header__link--homepage {
@@ -46,5 +48,12 @@
 
   @include govuk-media-query($until: 385px) {
     margin-top: govuk-spacing(2);
+  }
+}
+
+.app-c-header__nav-container--float-right-desktop {
+  @include govuk-media-query($from: desktop) {
+    width: auto;
+    float: right;
   }
 }
