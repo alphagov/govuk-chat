@@ -1,0 +1,24 @@
+@mixin chevron($colour, $update: false) {
+  $chevron-indent-spacing: 7px;
+
+  @if $update == true {
+    border-bottom-color: $colour;
+    border-right-color: $colour;
+  } @else {
+    @include prefixed-transform($rotate: 45deg, $translateY: -35%);
+    border-bottom: 2px solid $colour;
+    border-right: 2px solid $colour;
+    content: "";
+    display: inline-block;
+    height: 8px;
+    margin: 0 10px 0 2px;
+    vertical-align: middle;
+    width: 8px;
+  }
+}
+
+@mixin prefixed-transform($translateY: 0, $rotate: 0, $scale: 1) {
+  -webkit-transform: translateY($translateY) rotate($rotate) scale($scale);
+  -ms-transform: translateY($translateY) rotate($rotate) scale($scale);
+  transform: translateY($translateY) rotate($rotate) scale($scale);
+}
