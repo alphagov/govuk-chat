@@ -15,6 +15,10 @@
     border-bottom: none;
     display: inline-block;
     margin-right: govuk-spacing(2);
+
+    .govuk-header__link {
+      font-size: 16px; // directly set the font size to prevent govuk-font mixins from reducing it on smaller screens
+    }
   }
 }
 
