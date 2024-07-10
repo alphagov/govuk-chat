@@ -3,6 +3,7 @@
   id ||= nil
   sources ||= []
   is_question ||= false
+  is_loading ||= false
   feedback_url ||= false
   message_classes = %w[app-c-conversation-message__message]
   message_classes << (is_question ? "app-c-conversation-message__message--user-message"
@@ -30,22 +31,33 @@
 
     <% if is_question %>
       <div class="app-c-conversation-message__body app-c-conversation-message__body--user-message">
-        <%= render "govuk_publishing_components/components/govspeak", {
-        } do %>
-          <%= escaped_simple_format(message) %>
+        <% if is_loading %>
+          <p class="app-c-conversation-message__loading-text govuk-body">
+            Loading your question<span class="app-c-conversation-message__loading-ellipsis" aria-hidden="true">...</span>
+          </p>
+        <% else %>
+          <%= render "govuk_publishing_components/components/govspeak" do %>
+            <%= escaped_simple_format(message) %>
+          <% end %>
         <% end %>
       </div>
 
     <% else %>
       <div class="app-c-conversation-message__body app-c-conversation-message__body--govuk-message">
-        <div class="app-c-conversation-message__answer">
-          <%= render_answer_message(message) %>
-        </div>
+        <% if is_loading %>
+          <p class="app-c-conversation-message__loading-text govuk-body">
+            Loading your answer<span class="app-c-conversation-message__loading-ellipsis" aria-hidden="true">...</span>
+          </p>
+        <% else %>
+          <div class="app-c-conversation-message__answer">
+            <%= render_answer_message(message) %>
+          </div>
 
-        <% if sources.present? %>
-          <%= render "components/conversation_sources", {
-            sources: sources,
-          } %>
+          <% if sources.present? %>
+            <%= render "components/conversation_sources", {
+              sources: sources,
+            } %>
+          <% end %>
         <% end %>
       </div>
     <% end %>

@@ -10,6 +10,10 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.conversationList = this.module.querySelector('.js-conversation-list')
       this.pendingAnswerUrl = this.module.dataset.pendingAnswerUrl
       this.ANSWER_INTERVAL = 500
+
+      this.QUESTION_LOADNG_TIMEOUT = 500
+      this.loadingAnswerTemplate = this.module.querySelector('#js-loading-answer')
+      this.loadingQuestionTemplate = this.module.querySelector('#js-loading-question')
     }
 
     init () {
@@ -35,6 +39,11 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       try {
         this.formComponent.dispatchEvent(new Event('question-pending'))
 
+        let questionLoadingElement
+        const loadingTimeout = setTimeout(() => {
+          questionLoadingElement = this.startLoading(this.loadingQuestionTemplate)
+        }, this.QUESTION_LOADNG_TIMEOUT)
+
         const formData = new FormData(this.form)
         const response = await fetch(this.form.action, {
           method: 'POST',
@@ -43,7 +52,10 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
             Accept: 'application/json'
           }
         })
+        clearTimeout(loadingTimeout)
+        if (questionLoadingElement) this.conversationList.removeChild(questionLoadingElement)
         await this.handleQuestionResponse(response)
+        this.answerLoadingElement = this.startLoading(this.loadingAnswerTemplate)
 
         if (this.pendingAnswerUrl) {
           setTimeout(() => this.checkAnswer(), this.ANSWER_INTERVAL)
@@ -93,13 +105,18 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
           case 200: {
             const responseJson = await response.json()
 
+            if (this.answerLoadingElement) this.conversationList.removeChild(this.answerLoadingElement)
+
             this.conversationList.insertAdjacentHTML('beforeend', responseJson.answer_html)
-            this.scrollToMessage(this.conversationList.lastElementChild)
+            const answer = this.conversationList.lastElementChild
+            answer.classList.add('app-c-conversation-message--fade-in')
 
             window.GOVUK.modules.start(this.conversationList)
 
             this.pendingAnswerUrl = null
+
             this.formComponent.dispatchEvent(new Event('answer-received'))
+            this.scrollToMessage(answer)
             break
           }
           case 202: {
@@ -121,6 +138,15 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     scrollToMessage (lastElementChild) {
       lastElementChild.scrollIntoView()
+    }
+
+    startLoading (template) {
+      this.conversationList.appendChild(template.content.cloneNode(true))
+
+      const loadingElement = this.conversationList.lastElementChild
+      this.scrollToMessage(loadingElement)
+
+      return loadingElement
     }
   }
 

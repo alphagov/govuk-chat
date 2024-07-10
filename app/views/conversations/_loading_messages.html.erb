@@ -1,0 +1,14 @@
+<template id="js-loading-question">
+  <%= render "components/conversation_message", {
+    id: "loading-question",
+    is_question: true,
+    is_loading: true,
+  } %>
+</template>
+
+<template id="js-loading-answer">
+  <%= render "components/conversation_message", {
+    id: "loading-answer",
+    is_loading: true,
+  } %>
+</template>
