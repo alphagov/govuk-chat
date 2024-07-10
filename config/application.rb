@@ -62,6 +62,7 @@ module GovukChat
     config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]
 
     config.llm_prompts = Hashie::Mash.new(YAML.load_file("#{__dir__}/llm_prompts.yml"))
+    config.llm_prompts.guardrails = Hashie::Mash.new(YAML.load_file("#{__dir__}/llm_prompts/guardrails.yml"))
     config.answer_statuses = Hashie::Mash.new(YAML.load_file("#{__dir__}/answer_statuses.yml"))
     config.search = Hashie::Mash.new(YAML.load_file("#{__dir__}/search.yml"))
 
