@@ -1,0 +1,3 @@
+input,output
+input1,"True | ""1"""
+input2,False | None
