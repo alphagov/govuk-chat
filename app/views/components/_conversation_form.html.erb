@@ -39,8 +39,7 @@
     <%= tag.ul(
       id: error_id,
       class: %w[govuk-list govuk-error-message js-conversation-form-errors-wrapper app-c-conversation-form__error-list],
-      hidden: !has_error,
-      aria: { atomic: "true", live: "polite" }) do %>
+      hidden: !has_error) do %>
       <% error_items.each do |error| %>
         <li>
           <span class="govuk-visually-hidden">Error:</span>
@@ -54,7 +53,7 @@
         <%= label_tag(
           input_id,
           "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
-          class: "app-c-conversation-form__label govuk-visually-hidden",
+          class: "app-c-conversation-form__label js-label govuk-visually-hidden",
         ) %>
 
         <%= content_tag :div, class: "app-c-conversation-form__input-character-count-wrapper" do %>

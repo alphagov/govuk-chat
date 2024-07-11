@@ -9,6 +9,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.module = module
       this.form = module.querySelector('.js-conversation-form')
       this.input = module.querySelector('.js-conversation-form-input')
+      this.inputLabel = module.querySelector('.js-label')
       this.button = module.querySelector('.js-conversation-form-button')
       this.errorsWrapper = module.querySelector('.js-conversation-form-errors-wrapper')
       this.formGroup = module.querySelector('.js-conversation-form-group')
@@ -61,8 +62,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         throw new Error('expected event detail containing errorMessages')
       }
 
-      this.replaceErrors(event.detail.errorMessages)
       this.enableControls()
+      this.replaceErrors(event.detail.errorMessages)
     }
 
     handleAnswerReceived () {
@@ -101,6 +102,21 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.errorsWrapper.replaceChildren(...elements)
 
       this.toggleErrorStyles(errors.length)
+      this.announceErrors(errors.length)
+    }
+
+    // This function changes the label of the input field to the list of error messages if errors are present.
+    // This is to get errors re-announced if the same erroneous input is submitted (e.g. repeatedly submitting a blank input).
+    // Aria-live won't work in this scenario because repeated errors aren't re-announced.
+    announceErrors (hasErrors) {
+      if (hasErrors) {
+        this.inputLabel.ariaHidden = true
+        this.input.setAttribute('aria-labelledby', this.errorsWrapper.id)
+        this.input.focus()
+      } else {
+        this.input.removeAttribute('aria-labelledby')
+        this.inputLabel.ariaHidden = false
+      }
     }
 
     toggleErrorStyles (hasErrors) {

@@ -1,7 +1,7 @@
 describe('ConversationForm component', () => {
   'use strict'
 
-  let div, form, formGroup, input, button, presenceErrorMessage,
+  let div, form, formGroup, label, input, button, presenceErrorMessage,
     lengthErrorMessage, errorsWrapper, surveyLink, module
 
   beforeEach(function () {
@@ -14,7 +14,8 @@ describe('ConversationForm component', () => {
     div.innerHTML = `
       <form class="js-conversation-form">
         <div class="js-conversation-form-group">
-          <ul class="js-conversation-form-errors-wrapper" hidden="true"></ul>
+          <ul id="create_question_user_question-error" class="js-conversation-form-errors-wrapper" hidden="true"></ul>
+          <label class="js-label">Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)</label>
           <input type="text" class="js-conversation-form-input govuk-js-character-count" id="create_question_user_question" value="What is the VAT rate?">
           <div id="create_question_user_question-info" class="gem-c-hint govuk-hint govuk-visually-hidden">
             Please limit your question to 300 characters.
@@ -25,6 +26,7 @@ describe('ConversationForm component', () => {
       <a href="/survey" class="js-survey-link">Survey</a>
     `
     form = div.querySelector('.js-conversation-form')
+    label = div.querySelector('.js-label')
     input = div.querySelector('.js-conversation-form-input')
     button = div.querySelector('.js-conversation-form-button')
     errorsWrapper = div.querySelector('.js-conversation-form-errors-wrapper')
@@ -99,6 +101,14 @@ describe('ConversationForm component', () => {
         .toEqual(`<li><span class="govuk-visually-hidden">Error:</span>${presenceErrorMessage}</li>`)
     })
 
+    it('hides the regular label and references the error messages via aria-labelledby when the user input is empty', () => {
+      input.value = ''
+      form.dispatchEvent(new Event('submit'))
+
+      expect(label.ariaHidden).toBe('true')
+      expect(input.getAttribute('aria-labelledby')).toBe('create_question_user_question-error')
+    })
+
     it('adds the appropriate classes when there is a validation error', () => {
       input.value = ''
       form.dispatchEvent(new Event('submit'))
@@ -118,6 +128,17 @@ describe('ConversationForm component', () => {
       expect(errorsWrapper.innerHTML).toBe('')
       expect(formGroup.classList).not.toContain('app-c-conversation-form__form-group--error')
       expect(input.classList).not.toContain('app-c-conversation-form__input--error')
+    })
+
+    it('restores the regular label when input is valid', () => {
+      input.value = ''
+      form.dispatchEvent(new Event('submit'))
+
+      input.value = 'valid input'
+      form.dispatchEvent(new Event('submit'))
+
+      expect(label.ariaHidden).toBe('false')
+      expect(input.getAttribute('aria-labelledby')).toBe(null)
     })
   })
 
@@ -213,6 +234,14 @@ describe('ConversationForm component', () => {
 
       expect(errorsWrapper.hidden).toBe(false)
       expect(errorsWrapper.innerHTML).toEqual(expectedHtml)
+    })
+
+    it('hides the regular label and references the error messages provided by the event via aria-labelledby', () => {
+      const event = new CustomEvent('question-rejected', errorDetail)
+      div.dispatchEvent(event)
+
+      expect(label.ariaHidden).toBe('true')
+      expect(input.getAttribute('aria-labelledby')).toBe('create_question_user_question-error')
     })
 
     it('adds the appropriate classes when there is a validation error', () => {
