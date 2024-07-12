@@ -29,7 +29,7 @@ module AnswerComposition
           model: OPENAI_MODEL,
           messages:,
           temperature: 0.0,
-          max_tokens: 1,
+          max_tokens: 25,
         },
       )
     end

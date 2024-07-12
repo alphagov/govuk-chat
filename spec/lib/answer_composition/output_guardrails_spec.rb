@@ -25,7 +25,7 @@ RSpec.describe AnswerComposition::OutputGuardrails do
       guardrail_result = "True"
       stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
         model: "gpt-4o",
-        max_tokens: 1,
+        max_tokens: 25, # It takes 23 tokens for True | "1, 2, 3, 4, 5, 6, 7"
       })
       expect(described_class.call(input)).to eq(guardrail_result)
     end
