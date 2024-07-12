@@ -15,19 +15,17 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     init () {
       this.menuButton.addEventListener('click', e => this.handleClick(e))
-      this.initialiseState()
+
+      // set the initial state of the navigation menu
+      this.menuButton.hidden = false
+      this.menuButton.ariaExpanded = false
+      this.navList.hidden = true
 
       // removing/adding classes for styling the JS enhanced header
       this.navContainer.classList.remove('app-c-header__nav-container--float-right-desktop')
       this.navListItems.forEach(listItem => {
         listItem.classList.add('js-header-navigation-item')
       })
-    }
-
-    initialiseState () {
-      this.menuButton.hidden = false
-      this.menuButton.ariaExpanded = false
-      this.navList.hidden = true
     }
 
     handleClick () {
