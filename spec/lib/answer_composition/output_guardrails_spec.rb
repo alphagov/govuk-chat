@@ -1,4 +1,4 @@
-RSpec.describe Guardrails::FewShot do
+RSpec.describe AnswerComposition::OutputGuardrails do
   before do
     allow(Rails.logger).to receive(:error)
   end

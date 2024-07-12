@@ -1,5 +1,5 @@
-module Guardrails
-  class FewShot
+module AnswerComposition
+  class OutputGuardrails
     OPENAI_MODEL = "gpt-4o".freeze
 
     def self.call(...) = new(...).call
