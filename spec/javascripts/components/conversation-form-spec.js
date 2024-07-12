@@ -11,12 +11,13 @@ describe('ConversationForm component', () => {
     div.dataset.presenceErrorMessage = presenceErrorMessage
     div.dataset.lengthErrorMessage = lengthErrorMessage
     div.dataset.maxlength = 300
+    div.dataset.hintId = 'create_question_user_question-info'
     div.innerHTML = `
       <form class="js-conversation-form">
         <div class="js-conversation-form-group">
           <ul id="create_question_user_question-error" class="js-conversation-form-errors-wrapper" hidden="true"></ul>
-          <label class="js-label">Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)</label>
-          <input type="text" class="js-conversation-form-input govuk-js-character-count" id="create_question_user_question" value="What is the VAT rate?">
+          <label class="js-conversation-form-label">Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)</label>
+          <input type="text" class="js-conversation-form-input govuk-js-character-count" id="create_question_user_question" value="What is the VAT rate?" aria-describedby="create_question_user_question-info create_question_user_question-error">
           <div id="create_question_user_question-info" class="gem-c-hint govuk-hint govuk-visually-hidden">
             Please limit your question to 300 characters.
           </div>
@@ -26,7 +27,7 @@ describe('ConversationForm component', () => {
       <a href="/survey" class="js-survey-link">Survey</a>
     `
     form = div.querySelector('.js-conversation-form')
-    label = div.querySelector('.js-label')
+    label = div.querySelector('.js-conversation-form-label')
     input = div.querySelector('.js-conversation-form-input')
     button = div.querySelector('.js-conversation-form-button')
     errorsWrapper = div.querySelector('.js-conversation-form-errors-wrapper')
@@ -48,6 +49,15 @@ describe('ConversationForm component', () => {
       module.init()
 
       expect(spy).toHaveBeenCalled()
+    })
+
+    it('sets the input/s aria-describedby attribute to only reference hint text', () => {
+      expect(input.getAttribute('aria-describedby')).toBe('create_question_user_question-info create_question_user_question-error')
+
+      module.init()
+
+      expect(input.getAttribute('aria-describedby')).toBe('create_question_user_question-info')
+      expect(input.getAttribute('aria-describedby')).not.toContain('create_question_user_question-error')
     })
   })
 

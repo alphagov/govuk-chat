@@ -17,7 +17,7 @@
 
   aria_described_by = []
   aria_described_by << hint_id
-  aria_described_by << error_id
+  aria_described_by << error_id if has_error
   aria_described_by = aria_described_by.join(" ")
 
   data_attributes = {
@@ -25,6 +25,7 @@
     maxlength: maxlength,
     threshold: character_count_threshold,
     "presence-error-message": presence_error_message,
+    "hint-id": hint_id,
   }
 
   form_group_classes = " app-c-conversation-form__form-group js-conversation-form-group"
@@ -53,7 +54,7 @@
         <%= label_tag(
           input_id,
           "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
-          class: "app-c-conversation-form__label js-label govuk-visually-hidden",
+          class: "app-c-conversation-form__label js-conversation-form-label govuk-visually-hidden",
         ) %>
 
         <%= content_tag :div, class: "app-c-conversation-form__input-character-count-wrapper" do %>
