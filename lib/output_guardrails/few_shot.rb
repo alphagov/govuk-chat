@@ -1,5 +1,5 @@
-module AnswerComposition
-  class OutputGuardrails
+module OutputGuardrails
+  class FewShot
     Result = Data.define(:triggered, :guardrails, :llm_response)
     class ResponseError < StandardError
       attr_reader :llm_response

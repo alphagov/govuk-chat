@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition::OutputGuardrails do
+RSpec.describe OutputGuardrails::FewShot do
   let(:guardrail_mappings) { { "1" => "COSTS", "5" => "PERSONAL" } }
 
   before do
@@ -30,7 +30,7 @@ RSpec.describe AnswerComposition::OutputGuardrails do
         model: "gpt-4o",
         max_tokens: 25, # It takes 23 tokens for True | "1, 2, 3, 4, 5, 6, 7"
       })
-      expect(described_class.call(input)).to be_a(AnswerComposition::OutputGuardrails::Result)
+      expect(described_class.call(input)).to be_a(OutputGuardrails::FewShot::Result)
         .and(having_attributes(
                triggered: true,
                guardrails: %w[COSTS PERSONAL],
@@ -44,7 +44,7 @@ RSpec.describe AnswerComposition::OutputGuardrails do
         model: "gpt-4o",
         max_tokens: 25,
       })
-      expect(described_class.call(input)).to be_a(AnswerComposition::OutputGuardrails::Result)
+      expect(described_class.call(input)).to be_a(OutputGuardrails::FewShot::Result)
         .and(having_attributes(
                triggered: false,
                guardrails: [],
@@ -61,7 +61,7 @@ RSpec.describe AnswerComposition::OutputGuardrails do
         })
         expect { described_class.call(input) }
           .to raise_error(
-            an_instance_of(AnswerComposition::OutputGuardrails::ResponseError)
+            an_instance_of(OutputGuardrails::FewShot::ResponseError)
               .and(having_attributes(message: "Error parsing guardrail response",
                                      llm_response: guardrail_result)),
           )
