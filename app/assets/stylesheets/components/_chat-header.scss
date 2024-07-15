@@ -15,7 +15,11 @@
   .govuk-header__navigation-item {
     border-bottom: none;
     display: inline-block;
-    margin-right: govuk-spacing(2);
+    margin-right: govuk-spacing(5);
+
+    &:last-of-type {
+      margin-right: 0;
+    }
 
     .govuk-header__link {
       font-size: 16px; // directly set the font size to prevent govuk-font mixins from reducing it on smaller screens
@@ -39,6 +43,11 @@
 
   .govuk-header__navigation--end {
     text-align: left;
+    margin-bottom: govuk-spacing(1);
+
+    @include govuk-media-query($until: tablet) {
+      margin-top: govuk-spacing(2);
+    }
   }
 
   .govuk-js-header-toggle {
@@ -93,7 +102,7 @@
   margin-top: govuk-spacing(1);
   margin-bottom: govuk-spacing(1);
 
-  @include govuk-media-query($until: desktop) {
+  @include govuk-media-query($until: tablet) {
     margin-bottom: govuk-spacing(3);
   }
 }
