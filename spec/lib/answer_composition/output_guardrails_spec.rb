@@ -1,6 +1,9 @@
 RSpec.describe AnswerComposition::OutputGuardrails do
+  let(:guardrail_mappings) { { "1" => "COSTS", "5" => "PERSONAL" } }
+
   before do
     allow(Rails.logger).to receive(:error)
+    allow(Rails.configuration.llm_prompts.guardrails.few_shot).to receive(:guardrail_mappings).and_return(guardrail_mappings)
   end
 
   context "when the request is successful" do
@@ -21,13 +24,48 @@ RSpec.describe AnswerComposition::OutputGuardrails do
       ]
     end
 
-    it "calls openAI with the correct payload and returns the guardrail result" do
-      guardrail_result = "True"
+    it "returns triggered: true with human readable guardrails" do
+      guardrail_result = 'True | "1, 5"'
       stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
         model: "gpt-4o",
         max_tokens: 25, # It takes 23 tokens for True | "1, 2, 3, 4, 5, 6, 7"
       })
-      expect(described_class.call(input)).to eq(guardrail_result)
+      expect(described_class.call(input)).to be_a(AnswerComposition::OutputGuardrails::Result)
+        .and(having_attributes(
+               triggered: true,
+               guardrails: %w[COSTS PERSONAL],
+               llm_response: guardrail_result,
+             ))
+    end
+
+    it "returns triggered: false with empty guardrails" do
+      guardrail_result = "False | None"
+      stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
+        model: "gpt-4o",
+        max_tokens: 25,
+      })
+      expect(described_class.call(input)).to be_a(AnswerComposition::OutputGuardrails::Result)
+        .and(having_attributes(
+               triggered: false,
+               guardrails: [],
+               llm_response: guardrail_result,
+             ))
+    end
+
+    context "when the OpenAI response format is incorrect" do
+      it "throws a AnswerComposition::OutputGuardrails::ResponseError" do
+        guardrail_result = 'False | "1, 2"'
+        stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
+          model: "gpt-4o",
+          max_tokens: 25,
+        })
+        expect { described_class.call(input) }
+          .to raise_error(
+            an_instance_of(AnswerComposition::OutputGuardrails::ResponseError)
+              .and(having_attributes(message: "Error parsing guardrail response",
+                                     llm_response: guardrail_result)),
+          )
+      end
     end
 
     context "when there is an OpenAIClient::ClientError" do

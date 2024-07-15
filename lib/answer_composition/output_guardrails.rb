@@ -1,5 +1,15 @@
 module AnswerComposition
   class OutputGuardrails
+    Result = Data.define(:triggered, :guardrails, :llm_response)
+    class ResponseError < StandardError
+      attr_reader :llm_response
+
+      def initialize(message, llm_response)
+        super(message)
+        @llm_response = llm_response
+      end
+    end
+
     OPENAI_MODEL = "gpt-4o".freeze
 
     def self.call(...) = new(...).call
@@ -10,7 +20,7 @@ module AnswerComposition
     end
 
     def call
-      openai_response.dig("choices", 0, "message", "content")
+      create_result
     rescue OpenAIClient::ContextLengthExceededError => e
       Rails.logger.error("Exceeded context length running guardrail: #{e.message}")
       raise OpenAIClient::ContextLengthExceededError.new("Exceeded context length running guardrail: #{input}", e.response)
@@ -23,6 +33,22 @@ module AnswerComposition
 
     attr_reader :input, :openai_client
 
+    def create_result
+      llm_response = openai_response.dig("choices", 0, "message", "content")
+      response_pattern = /^(False \| None|True \| "\d+(, \d+)*")$/
+
+      raise ResponseError.new("Error parsing guardrail response", llm_response) unless response_pattern =~ llm_response
+
+      parts = llm_response.split(" | ")
+      triggered = parts.first.chomp == "True"
+      guardrails = if triggered
+                     extract_guardrails(parts.second)
+                   else
+                     []
+                   end
+      Result.new(triggered:, llm_response:, guardrails:)
+    end
+
     def openai_response
       @openai_response ||= openai_client.chat(
         parameters: {
@@ -32,6 +58,12 @@ module AnswerComposition
           max_tokens: 25,
         },
       )
+    end
+
+    def extract_guardrails(parts)
+      guardrail_numbers = parts.scan(/\d+/)
+      mappings = Rails.configuration.llm_prompts.guardrails.few_shot.guardrail_mappings
+      guardrail_numbers.map { |n| mappings[n] }
     end
 
     def messages
