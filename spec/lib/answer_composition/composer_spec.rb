@@ -37,7 +37,7 @@ RSpec.describe AnswerComposition::Composer do
       end
 
       it "sets the message to a generic failure message" do
-        expect(result.message).to eq(AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE)
+        expect(result.message).to eq(Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE)
       end
 
       it "sets the error_message to the class of the error and the message" do
@@ -66,7 +66,7 @@ RSpec.describe AnswerComposition::Composer do
       end
 
       it "sets the message to a generic failure message" do
-        expect(result.message).to eq(AnswerComposition::Composer::UNSUCCESSFUL_REQUEST_MESSAGE)
+        expect(result.message).to eq(Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE)
       end
 
       it "sets the error_message to the class of the error and the message" do

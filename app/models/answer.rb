@@ -15,6 +15,7 @@ class Answer < ApplicationRecord
     MESSAGE
     TIMED_OUT_RESPONSE = "Sorry, something went wrong and I could not find an answer in time. " \
       "Please try again.".freeze
+    UNSUCCESSFUL_REQUEST_MESSAGE = "There's been a problem retrieving a response to your question.".freeze
   end
 
   belongs_to :question
