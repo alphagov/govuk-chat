@@ -1,7 +1,5 @@
 module AnswerComposition
   class Composer
-    UNSUCCESSFUL_REQUEST_MESSAGE = "<p>There's been a problem retrieving a response to your question.</p>".freeze
-
     delegate :answer_strategy, to: :question
 
     def self.call(...) = new(...).call
@@ -22,7 +20,7 @@ module AnswerComposition
     rescue StandardError => e
       GovukError.notify(e)
       question.build_answer(
-        message: UNSUCCESSFUL_REQUEST_MESSAGE,
+        message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
         status: "error_non_specific",
         error_message: "class: #{e.class} message: #{e.message}",
       )
