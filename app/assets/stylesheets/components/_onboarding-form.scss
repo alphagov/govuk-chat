@@ -5,7 +5,7 @@
   padding-top: govuk-spacing(3);
 
   .govuk-button, .govuk-link {
-    flex: 1;
+    flex: auto;
     margin: govuk-spacing(2);
 
     @include govuk-media-query($until: tablet) {
