@@ -5,4 +5,21 @@ module AnswersHelper
       sanitize(message_to_html)
     end
   end
+
+  def group_answer_sources_by_base_path(answer)
+    sources_by_base_path = answer.sources.group_by(&:base_path)
+
+    sources_by_base_path.map do |base_path, group|
+      result = group.first
+      path = group.count == 1 ? result.exact_path : base_path
+
+      title = result.title
+      title += ": #{result.heading}" if group.count == 1 && result.heading.present?
+
+      {
+        href: "#{Plek.website_root}#{path}",
+        title:,
+      }
+    end
+  end
 end

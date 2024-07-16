@@ -97,16 +97,11 @@ module AnswerComposition
     end
 
     def build_sources
-      result_by_base_path = search_results.group_by(&:base_path)
-      result_by_base_path.map.with_index do |(base_path, group), relevancy|
-        result = group.first
-        path = group.count == 1 ? result.url : base_path
-        title = result.title
-        title += ": #{result.heading_hierarchy.last}" if group.count == 1 && result.heading_hierarchy.any?
+      search_results.map.with_index do |result, relevancy|
         AnswerSource.new(
           exact_path: result.url,
           base_path: result.base_path,
-          title:,
+          title: result.title,
           relevancy:,
           content_chunk_id: result._id,
           content_chunk_digest: result.digest,

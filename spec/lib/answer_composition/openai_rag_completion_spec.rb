@@ -66,25 +66,8 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           content_chunk_id: chunk_result._id,
           content_chunk_digest: chunk_result.digest,
           heading: chunk_result.heading_hierarchy.last,
+          title: chunk_result.title,
         )
-      end
-
-      it "builds a source using the last heading in the heading_hierarchy to constuct the title" do
-        answer = described_class.call(question)
-
-        title = "#{chunk_result.title}: #{chunk_result.heading_hierarchy.last}"
-        expect(answer.sources.first.title).to eq(title)
-      end
-
-      context "when the result has no heading_hierarchy" do
-        let(:opensearch_chunk) do
-          build(:chunked_content_record, heading_hierarchy: []).except(:openai_embedding).merge(_id: "1", score: 1.0)
-        end
-
-        it "builds a source using the title" do
-          answer = described_class.call(question)
-          expect(answer.sources.first.title).to eq(chunk_result.title)
-        end
       end
 
       context "with multiple chunks from the same document" do
@@ -100,9 +83,9 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
 
         let(:results_for_question) { Search::ResultsForQuestion::ResultSet.new(results: [chunk_result, chunk_result], rejected_results: []) }
 
-        it "only builds one source for the result" do
+        it "builds one source for each result" do
           answer = described_class.call(question)
-          expect(answer.sources.length).to eq(1)
+          expect(answer.sources.length).to eq(2)
         end
 
         it "builds a source using attributes from the result" do
