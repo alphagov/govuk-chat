@@ -1,4 +1,5 @@
 @import "govuk/components/header/header";
+@import "mixins";
 
 .app-c-header {
   .govuk-header__link--homepage {
@@ -13,15 +14,110 @@
 
   .govuk-header__navigation-item {
     border-bottom: none;
+    display: inline-block;
+    margin-right: govuk-spacing(5);
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+
+    .govuk-header__link {
+      font-size: 16px; // directly set the font size to prevent govuk-font mixins from reducing it on smaller screens
+    }
+  }
+
+  .js-header-navigation-item {
+    display: block;
+    margin-top: govuk-spacing(1);
+
+    @include govuk-media-query($until: tablet) {
+      &:first-of-type {
+        margin-top: govuk-spacing(2);
+      }
+    }
+
+    &:last-of-type {
+      margin-bottom: govuk-spacing(2);
+    }
+  }
+
+  .govuk-header__navigation--end {
+    text-align: left;
+    margin-bottom: govuk-spacing(1);
+
+    @include govuk-media-query($until: tablet) {
+      margin-top: govuk-spacing(2);
+    }
+  }
+
+  .govuk-js-header-toggle {
+    margin-top: govuk-spacing(1);
+    @include govuk-typography-weight-bold($important: false);
+    font-size: 16px; // directly set the font size to prevent govuk-font mixins from reducing it on smaller screens
+    border-bottom: 3px solid transparent;
+    padding: govuk-spacing(2) govuk-spacing(1);
+    top: govuk-spacing(2);
+
+    // removes the default chevron
+    &::after {
+      content: none;
+    }
+
+    &::before {
+      @include chevron(govuk-colour("white"), false);
+    }
+
+    &:focus {
+      background-color: govuk-colour("black");
+      color: govuk-colour("white");
+      box-shadow: none;
+    }
+
+    &:focus-visible {
+      background-color: $govuk-focus-colour;
+      color: govuk-colour("black");
+      outline: none;
+    }
+
+    &:focus-visible::before {
+      @include chevron(govuk-colour("black"), false);
+    }
+
+    &:hover {
+      text-decoration: none;
+      border-bottom: 3px solid govuk-colour("white");
+    }
+  }
+
+  .app-c-header__menu-button--expanded {
+    border-bottom: 3px solid govuk-colour("white");
+
+    &::before, &:focus-visible::before {
+      @include prefixed-transform($rotate: 225deg, $translateY: 1px);
+    }
+  }
+}
+
+.app-c-header-row {
+  margin-top: govuk-spacing(1);
+  margin-bottom: govuk-spacing(1);
+
+  @include govuk-media-query($until: tablet) {
+    margin-bottom: govuk-spacing(3);
+  }
+}
+
+.app-c-header__link {
+  @include govuk-media-query($until: 500px) {
+    &::after {
+      content: "\a";
+      white-space: pre;
+    }
   }
 }
 
 .app-c-header__container {
   border-bottom: govuk-spacing(2) solid govuk-colour("yellow");
-}
-
-.app-c-header__logo {
-  margin: govuk-spacing(1) 0 govuk-spacing(3);
 }
 
 .app-c-header__link--homepage {
@@ -44,7 +140,14 @@
   display: inline-block;
   vertical-align: middle;
 
-  @include govuk-media-query($until: 385px) {
+  @include govuk-media-query($until: 500px) {
     margin-top: govuk-spacing(2);
+  }
+}
+
+.app-c-header__nav-container--float-right-desktop {
+  @include govuk-media-query($from: desktop) {
+    width: auto;
+    float: right;
   }
 }
