@@ -40,7 +40,11 @@ module AnswerComposition
     end
 
     def error_message(error)
-      "class: #{error.class} message: #{error.response[:body].dig('error', 'message') || error.message}"
+      body_error_message = if error.response
+                             error.response[:body]&.dig("error", "message")
+                           end
+
+      "class: #{error.class} message: #{body_error_message || error.message}"
     end
   end
 end
