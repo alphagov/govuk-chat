@@ -9,11 +9,8 @@ module AnswerComposition
         Pipeline::QuestionRephraser,
         Pipeline::ForbiddenWordsChecker,
         Pipeline::SearchResultFetcher,
-        # method(:compose_answer)
+        method(:compose_answer),
       )
-
-      # message = openai_response.dig("choices", 0, "message", "content")
-      # build_answer(message, "success", build_sources)
     end
 
   private
@@ -25,6 +22,14 @@ module AnswerComposition
           messages:,
           temperature: 0.0,
         },
+      )
+    end
+
+    def compose_answer
+      message = openai_response.dig("choices", 0, "message", "content")
+      context.answer.assign_attributes(
+        message:,
+        status: "success",
       )
     end
 
@@ -55,10 +60,6 @@ module AnswerComposition
       }
       .join("\n\n")
     end
-
-    # def build_answer(message, status, sources = [])
-    #   question.build_answer(message:, rephrased_question:, status:, sources:)
-    # end
 
     def few_shots
       llm_prompts.answer_composition.compose_answer.few_shots.flat_map do |few_shot|
