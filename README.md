@@ -38,6 +38,7 @@ bundle exec rake
 
 - [Message queue consumption](docs/message-queue-consumption.md)
 - [Populating search](docs/populating-search.md)
+- [Output guardrails](docs/output_guardrails.md)
 
 ## Licence
 
