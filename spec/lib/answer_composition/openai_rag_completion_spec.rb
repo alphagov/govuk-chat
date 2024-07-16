@@ -67,6 +67,14 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
         expect(answer.sources.first.title).to eq(title)
       end
 
+      it "sets the content chunk attributes on the source" do
+        answer = described_class.call(question)
+        source = answer.sources.first
+
+        expect(source.content_chunk_id).to eq(chunk_result._id)
+        expect(source.content_chunk_digest).to eq(chunk_result.digest)
+      end
+
       context "when the result has no heading_hierarchy" do
         let(:opensearch_chunk) do
           build(:chunked_content_record, heading_hierarchy: []).except(:openai_embedding).merge(_id: "1", score: 1.0)

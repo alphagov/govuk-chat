@@ -103,7 +103,13 @@ module AnswerComposition
         path = group.count == 1 ? result.url : base_path
         title = result.title
         title += ": #{result.heading_hierarchy.last}" if group.count == 1 && result.heading_hierarchy.any?
-        AnswerSource.new(path:, title:, relevancy:)
+        AnswerSource.new(
+          path:,
+          title:,
+          relevancy:,
+          content_chunk_id: result._id,
+          content_chunk_digest: result.digest,
+        )
       end
     end
 
