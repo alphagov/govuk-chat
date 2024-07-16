@@ -114,6 +114,7 @@ GEM
       bigdecimal
       rexml
     crass (1.0.6)
+    csv (3.3.0)
     dartsass-rails (0.5.0)
       railties (>= 6.0.0)
       sass-embedded (~> 1.63)
@@ -777,6 +778,7 @@ DEPENDENCIES
   bootsnap
   brakeman
   climate_control
+  csv
   dartsass-rails
   dotenv
   erb_lint
