@@ -7,12 +7,11 @@ module AnswerComposition
     def call
       answer_pipeline(
         Pipeline::QuestionRephraser,
-        # Pipeline::ForbiddenWordsChecker,
+        Pipeline::ForbiddenWordsChecker,
         # Pipeline::SearchResultFetcher,
         # method(:compose_answer)
       )
 
-      # return build_answer(Answer::CannedResponses::FORBIDDEN_WORDS_RESPONSE, "abort_forbidden_words") if question_contains_forbidden_words?
       # return build_answer(Answer::CannedResponses::NO_CONTENT_FOUND_REPONSE, "abort_no_govuk_content") if search_results.blank?
 
       # message = openai_response.dig("choices", 0, "message", "content")
@@ -58,11 +57,6 @@ module AnswerComposition
       }
       .join("\n\n")
     end
-
-    # def question_contains_forbidden_words?
-    #   words = question_message.downcase.split(/\b/)
-    #   Rails.configuration.question_forbidden_words.intersection(words).any?
-    # end
 
     def search_results
       @search_results ||= Search::ResultsForQuestion.call(context.question_message).results
