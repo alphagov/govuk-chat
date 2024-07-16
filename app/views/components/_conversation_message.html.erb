@@ -9,7 +9,7 @@
   : "app-c-conversation-message__message--govuk-message")
 %>
 
-<%= content_tag :li, id:, class: "app-c-conversation-message", data: data_attributes do %>
+<%= content_tag :li, id:, class: "app-c-conversation-message js-conversation-message", data: data_attributes do %>
   <%= content_tag :div, class: message_classes do %>
     <div class="app-c-conversation-message__identifier">
       <% if !is_question %>

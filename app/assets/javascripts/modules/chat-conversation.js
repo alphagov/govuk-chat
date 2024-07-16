@@ -9,12 +9,16 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.formComponent = this.module.querySelector('.js-conversation-form-wrapper')
       this.form = this.module.querySelector('.js-conversation-form')
       this.conversationList = this.module.querySelector('.js-conversation-list')
+      this.chatMessages = this.module.querySelectorAll('.js-conversation-message[id*="answer_"]')
       this.pendingAnswerUrl = this.module.dataset.pendingAnswerUrl
       this.ANSWER_INTERVAL = 500
     }
 
     init () {
-      if (this.flashAlert) this.flashAlert.classList.add('js-hidden')
+      // if there is an existing conversation on page load, scroll to the latest message
+      if (this.conversationList.children.length > 0) {
+        this.scrollToMessage(this.conversationList.lastElementChild)
+      }
 
       this.formComponent.addEventListener('submit', e => this.handleFormSubmission(e))
 

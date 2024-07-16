@@ -75,6 +75,20 @@ describe('ChatConversation module', () => {
         expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
     })
+
+    describe('if there are pre-existing chat messages', () => {
+      it('scrolls the most recent answer into view', () => {
+        conversationList.innerHTML = '<li class="js-conversation-message" id="answer_321"></li>'
+
+        // declare a new instance of module so it can take the above HTML into account when it's instantiated
+        module = new window.GOVUK.Modules.ChatConversation(moduleElement)
+        const scrollToMessageSpy = spyOn(module, 'scrollToMessage')
+
+        module.init()
+
+        expect(scrollToMessageSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#answer_321'))
+      })
+    })
   })
 
   describe('handleFormSubmission', () => {
