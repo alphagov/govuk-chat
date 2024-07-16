@@ -1,8 +1,13 @@
+//= require govuk-frontend/dist/govuk/components/character-count/character-count.bundle
+
 window.GOVUK = window.GOVUK || {}
 window.GOVUK.Modules = window.GOVUK.Modules || {};
 
 (function (Modules) {
   'use strict'
+
+  // workaround for https://github.com/alphagov/govuk-frontend/issues/5047
+  const CharacterCount = window.GOVUKFrontend.CharacterCount
 
   class ConversationForm {
     constructor (module) {
@@ -25,7 +30,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       // used to inform other components that this component is initialised.
       this.module.dispatchEvent(new Event('init'))
 
-      new window.GOVUKFrontend.CharacterCount(this.module).init()
+      new CharacterCount(this.module) // eslint-disable-line no-new
     }
 
     handleSubmit (event) {
