@@ -64,7 +64,9 @@ class ConversationsController < BaseController
       if answer.present?
         format.html do
           flash[:notice] = "GOV.UK Chat has answered your question"
-          redirect_to show_conversation_path(anchor: helpers.dom_id(answer))
+          flash[:link_text] = "View your answer"
+          flash[:id] = "##{helpers.dom_id(answer)}"
+          redirect_to show_conversation_path
         end
         format.json { render json: answer_success_json(answer), status: :ok }
       else
@@ -79,16 +81,15 @@ class ConversationsController < BaseController
 
     answer = @conversation.answers.includes(:feedback).find(params[:answer_id])
     feedback_form = Form::CreateAnswerFeedback.new(answer_feedback_params.merge(answer:))
-    fragment = helpers.dom_id(answer)
 
     respond_to do |format|
       if feedback_form.valid?
         feedback_form.submit
 
-        format.html { redirect_to show_conversation_path(anchor: fragment), notice: "Feedback submitted successfully." }
+        format.html { redirect_to show_conversation_path, notice: "Feedback submitted successfully." }
         format.json { render json: { error_messages: [] }, status: :created }
       else
-        format.html { redirect_to show_conversation_path(anchor: fragment) }
+        format.html { redirect_to show_conversation_path }
         format.json { render json: { error_messages: feedback_form.errors.map(&:message) }, status: :unprocessable_entity }
       end
     end

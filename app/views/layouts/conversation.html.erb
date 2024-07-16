@@ -1,4 +1,8 @@
-<% @conversation_data_attributes ||= {} %>
+<%
+  @conversation_data_attributes ||= {}
+  alert_description = sanitize("<a href=\"#{flash["id"]}\" class=\"govuk-link govuk-notification-banner__link\">#{flash["link_text"]}</a>") if flash["id"] and flash["link_text"]
+%>
+
 <% content_for :alerts do %>
   <% if content_for?(:error_summary) %>
     <div class="app-conversation-layout__alerts">

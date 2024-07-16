@@ -302,7 +302,7 @@ RSpec.describe "ConversationsController" do
       question = create(:question, :with_answer, conversation:)
       get answer_question_path(question, refresh: true)
 
-      expected_redirect_destination = show_conversation_path(anchor: helpers.dom_id(question.answer))
+      expected_redirect_destination = show_conversation_path
       expect(response).to redirect_to(expected_redirect_destination)
       expect(flash[:notice]).to eq("GOV.UK Chat has answered your question")
 
@@ -396,7 +396,7 @@ RSpec.describe "ConversationsController" do
         post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "false" } }
 
         expect(answer.reload.feedback.useful).to be(false)
-        expect(response).to redirect_to(show_conversation_path(anchor: helpers.dom_id(answer)))
+        expect(response).to redirect_to(show_conversation_path)
         follow_redirect!
         expect(response.body).to have_selector(".govuk-notification-banner__content", text: "Feedback submitted successfully.")
       end
@@ -406,7 +406,7 @@ RSpec.describe "ConversationsController" do
 
         expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "" } } }
           .not_to change(AnswerFeedback, :count)
-        expect(response).to redirect_to(show_conversation_path(anchor: helpers.dom_id(answer)))
+        expect(response).to redirect_to(show_conversation_path)
         follow_redirect!
         expect(response.body).not_to have_selector(".govuk-notification-banner__content", text: "Feedback submitted successfully.")
       end
@@ -416,7 +416,7 @@ RSpec.describe "ConversationsController" do
 
         expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "true" } } }
           .not_to change(AnswerFeedback, :count)
-        expect(response).to redirect_to(show_conversation_path(anchor: helpers.dom_id(answer)))
+        expect(response).to redirect_to(show_conversation_path)
         follow_redirect!
         expect(response.body).not_to have_selector(".govuk-notification-banner__content", text: "Feedback submitted successfully.")
       end
