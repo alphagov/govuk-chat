@@ -1,13 +1,8 @@
 module AnswerComposition
-  class OpenAIUnstructuredAnswer
+  class OpenAIUnstructuredAnswer < OpenAIAnswer
     OPENAI_MODEL = "gpt-3.5-turbo".freeze
 
     def self.call(...) = new(...).call
-
-    def initialize(question)
-      @question = question
-      @openai_client = OpenAIClient.build
-    end
 
     def call
       @question_message = QuestionRephraser.call(question:)
@@ -35,7 +30,7 @@ module AnswerComposition
 
   private
 
-    attr_reader :question, :retriever, :openai_client, :question_message
+    attr_reader :question, :question_message
 
     def openai_response
       openai_client.chat(
@@ -57,15 +52,15 @@ module AnswerComposition
     end
 
     def system_prompt
-      sprintf(llm_prompts.answer_composition.compose_answer.system_prompt, context:)
+      sprintf(llm_prompts.answer_composition.compose_answer.system_prompt, context: system_prompt_context)
     end
 
     def rephrased_question
       question_message unless question_message == question.message
     end
 
-    def context
-      search_results.map { |result|
+    def system_prompt_context
+      context.search_results.map { |result|
         [
           result.title,
           result.heading_hierarchy,
@@ -82,10 +77,6 @@ module AnswerComposition
     def question_contains_forbidden_words?
       words = question_message.downcase.split(/\b/)
       Rails.configuration.question_forbidden_words.intersection(words).any?
-    end
-
-    def error_message(error)
-      "class: #{error.class} message: #{error.response[:body].dig('error', 'message') || error.message}"
     end
 
     def search_results
@@ -121,6 +112,10 @@ module AnswerComposition
 
     def llm_prompts
       Rails.configuration.llm_prompts
+    end
+
+    def openai_client
+      @openai_client ||= OpenAIClient.build
     end
   end
 end
