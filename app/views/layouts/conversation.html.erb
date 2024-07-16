@@ -5,12 +5,12 @@
 
 <% content_for :alerts do %>
   <% if content_for?(:error_summary) %>
-    <div class="app-conversation-layout__alerts">
+    <div class="app-conversation-layout__alerts js-conversation-alert">
       <%= yield(:error_summary) %>
     </div>
   <% else %>
     <% if flash["notice"].present? %>
-      <div class="app-conversation-layout__alerts">
+      <div class="app-conversation-layout__alerts js-conversation-alert">
         <%= render "govuk_publishing_components/components/success_alert", {
           message: flash["notice"],
           description: alert_description,
@@ -20,7 +20,7 @@
     <% end %>
 
     <% if flash["alert"].present? %>
-      <div class="app-conversation-layout__alerts">
+      <div class="app-conversation-layout__alerts js-conversation-alert">
         <%= render "govuk_publishing_components/components/error_alert", {
           message: flash["alert"],
         } %>

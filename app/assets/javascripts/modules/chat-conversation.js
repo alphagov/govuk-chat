@@ -5,6 +5,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
   class ChatConversation {
     constructor (module) {
       this.module = module
+      this.flashAlert = this.module.querySelector('.js-conversation-alert')
       this.formComponent = this.module.querySelector('.js-conversation-form-wrapper')
       this.form = this.module.querySelector('.js-conversation-form')
       this.conversationList = this.module.querySelector('.js-conversation-list')
@@ -13,6 +14,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     init () {
+      if (this.flashAlert) this.flashAlert.classList.add('js-hidden')
+
       this.formComponent.addEventListener('submit', e => this.handleFormSubmission(e))
 
       if (!this.pendingAnswerUrl) return
