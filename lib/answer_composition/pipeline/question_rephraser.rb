@@ -23,7 +23,7 @@ module AnswerComposition
 
     private
 
-      attr_reader :context,
+      attr_reader :context
 
       def openai_response
         openai_client.chat(

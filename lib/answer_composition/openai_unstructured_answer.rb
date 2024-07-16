@@ -8,11 +8,9 @@ module AnswerComposition
       answer_pipeline(
         Pipeline::QuestionRephraser,
         Pipeline::ForbiddenWordsChecker,
-        # Pipeline::SearchResultFetcher,
+        Pipeline::SearchResultFetcher,
         # method(:compose_answer)
       )
-
-      # return build_answer(Answer::CannedResponses::NO_CONTENT_FOUND_REPONSE, "abort_no_govuk_content") if search_results.blank?
 
       # message = openai_response.dig("choices", 0, "message", "content")
       # build_answer(message, "success", build_sources)
@@ -58,26 +56,8 @@ module AnswerComposition
       .join("\n\n")
     end
 
-    def search_results
-      @search_results ||= Search::ResultsForQuestion.call(context.question_message).results
-    end
-
     # def build_answer(message, status, sources = [])
     #   question.build_answer(message:, rephrased_question:, status:, sources:)
-    # end
-
-    # def build_sources
-    #   search_results.map.with_index do |result, relevancy|
-    #     AnswerSource.new(
-    #       exact_path: result.url,
-    #       base_path: result.base_path,
-    #       title: result.title,
-    #       relevancy:,
-    #       content_chunk_id: result._id,
-    #       content_chunk_digest: result.digest,
-    #       heading: result.heading_hierarchy.last,
-    #     )
-    #   end
     # end
 
     def few_shots
