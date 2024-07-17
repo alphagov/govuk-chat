@@ -55,11 +55,18 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
         )
       end
 
-      it "builds a source using the result's URL paths" do
+      it "builds a source using attributes from the result" do
         answer = described_class.call(question)
+
         source = answer.sources.first
-        expect(source.exact_path).to eq(chunk_result.url)
-        expect(source.base_path).to eq(chunk_result.base_path)
+
+        expect(source).to have_attributes(
+          exact_path: chunk_result.url,
+          base_path: chunk_result.base_path,
+          content_chunk_id: chunk_result._id,
+          content_chunk_digest: chunk_result.digest,
+          heading: chunk_result.heading_hierarchy.last,
+        )
       end
 
       it "builds a source using the last heading in the heading_hierarchy to constuct the title" do
@@ -67,14 +74,6 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
 
         title = "#{chunk_result.title}: #{chunk_result.heading_hierarchy.last}"
         expect(answer.sources.first.title).to eq(title)
-      end
-
-      it "sets the content chunk attributes on the source" do
-        answer = described_class.call(question)
-        source = answer.sources.first
-
-        expect(source.content_chunk_id).to eq(chunk_result._id)
-        expect(source.content_chunk_digest).to eq(chunk_result.digest)
       end
 
       context "when the result has no heading_hierarchy" do
@@ -106,16 +105,17 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           expect(answer.sources.length).to eq(1)
         end
 
-        it "uses the results URL paths as the source URL paths" do
+        it "builds a source using attributes from the result" do
           answer = described_class.call(question)
-          source = answer.sources.first
-          expect(source.exact_path).to eq(chunk_result.url)
-          expect(source.base_path).to eq(chunk_result.base_path)
-        end
 
-        it "uses the results title as the source title" do
-          answer = described_class.call(question)
-          expect(answer.sources.first.title).to eq(chunk_result.title)
+          source = answer.sources.first
+
+          expect(source).to have_attributes(
+            exact_path: chunk_result.url,
+            base_path: chunk_result.base_path,
+            title: chunk_result.title,
+            heading: chunk_result.heading_hierarchy.last,
+          )
         end
       end
     end

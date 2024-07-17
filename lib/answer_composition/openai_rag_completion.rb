@@ -110,6 +110,7 @@ module AnswerComposition
           relevancy:,
           content_chunk_id: result._id,
           content_chunk_digest: result.digest,
+          heading: result.heading_hierarchy.last,
         )
       end
     end
