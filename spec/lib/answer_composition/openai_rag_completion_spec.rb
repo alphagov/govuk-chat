@@ -55,9 +55,11 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
         )
       end
 
-      it "builds a source using the results url which includes the anchor" do
+      it "builds a source using the result's URL paths" do
         answer = described_class.call(question)
-        expect(answer.sources.first.path).to eq(chunk_result.url)
+        source = answer.sources.first
+        expect(source.path).to eq(chunk_result.url)
+        expect(source.base_path).to eq(chunk_result.base_path)
       end
 
       it "builds a source using the last heading in the heading_hierarchy to constuct the title" do
@@ -104,9 +106,11 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
           expect(answer.sources.length).to eq(1)
         end
 
-        it "uses the results base path as the source path" do
+        it "uses the results URL paths as the source URL paths" do
           answer = described_class.call(question)
-          expect(answer.sources.first.path).to eq(chunk_result.base_path)
+          source = answer.sources.first
+          expect(source.path).to eq(chunk_result.url)
+          expect(source.base_path).to eq(chunk_result.base_path)
         end
 
         it "uses the results title as the source title" do
