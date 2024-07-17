@@ -60,7 +60,7 @@ module OutputGuardrails
 
     def extract_guardrails(parts)
       guardrail_numbers = parts.scan(/\d+/)
-      mappings = Rails.configuration.llm_prompts.guardrails.few_shot.guardrail_mappings
+      mappings = Rails.configuration.llm_prompts.output_guardrails.few_shot.guardrail_mappings
       guardrail_numbers.map { |n| mappings[n] }
     end
 
@@ -72,7 +72,7 @@ module OutputGuardrails
     end
 
     def system_prompt
-      Rails.configuration.llm_prompts.guardrails.few_shot.system_prompt
+      Rails.configuration.llm_prompts.output_guardrails.few_shot.system_prompt
         .gsub("{date}", Time.zone.today.strftime("%A %d %B %Y"))
     end
 
