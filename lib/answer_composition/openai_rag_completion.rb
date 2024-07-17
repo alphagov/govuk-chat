@@ -57,7 +57,7 @@ module AnswerComposition
     end
 
     def system_prompt
-      sprintf(llm_prompts.compose_answer.system_prompt, context:)
+      sprintf(llm_prompts.answer_composition.compose_answer.system_prompt, context:)
     end
 
     def rephrased_question
@@ -108,7 +108,7 @@ module AnswerComposition
     end
 
     def few_shots
-      llm_prompts.compose_answer.few_shots.flat_map do |few_shot|
+      llm_prompts.answer_composition.compose_answer.few_shots.flat_map do |few_shot|
         [
           { role: "user", content: few_shot.user },
           { role: "assistant", content: few_shot.assistant },

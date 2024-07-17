@@ -61,7 +61,7 @@ module GovukChat
 
     config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]
 
-    llm_prompts = YAML.load_file("#{__dir__}/llm_prompts.yml")
+    llm_prompts = {}
     Dir[Rails.root.join("config/llm_prompts/*.yml")].each do |path|
       llm_prompts.merge!(YAML.load_file(path))
     end

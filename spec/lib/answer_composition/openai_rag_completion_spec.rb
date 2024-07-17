@@ -15,7 +15,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
     end
 
     it "sends OpenAI a series of messages combining system prompt, few shot messages and the user question" do
-      few_shots = llm_prompts.compose_answer.few_shots.flat_map do |few_shot|
+      few_shots = llm_prompts.answer_composition.compose_answer.few_shots.flat_map do |few_shot|
         [
           { role: "user", content: few_shot.user },
           { role: "assistant", content: few_shot.assistant },
@@ -222,7 +222,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
   private
 
     def system_prompt(context)
-      sprintf(llm_prompts.compose_answer.system_prompt, context:)
+      sprintf(llm_prompts.answer_composition.compose_answer.system_prompt, context:)
     end
 
     def expect_unsaved_answer_with_attributes(answer, attributes = {})
