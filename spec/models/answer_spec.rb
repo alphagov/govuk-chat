@@ -17,4 +17,44 @@ RSpec.describe Answer do
       expect(model_keys).to eq(config_keys_minus_pending)
     end
   end
+
+  describe "#build_sources_from_search_results" do
+    it "sets sources on the answer" do
+      search_result_a = build(:chunked_content_search_result, base_path: "/a")
+      search_result_b = build(:chunked_content_search_result, base_path: "/b")
+      answer = build(:answer)
+      answer.build_sources_from_search_results([search_result_a, search_result_b])
+
+      expect(answer.sources.length).to be(2)
+      expect(answer.sources.first)
+        .to have_attributes(
+          relevancy: 0,
+          exact_path: search_result_a.url,
+          base_path: search_result_a.base_path,
+          title: search_result_a.title,
+          content_chunk_id: search_result_a._id,
+          content_chunk_digest: search_result_a.digest,
+          heading: search_result_a.heading_hierarchy.last,
+        )
+      expect(answer.sources.second)
+        .to have_attributes(
+          relevancy: 1,
+          exact_path: search_result_b.url,
+          base_path: search_result_b.base_path,
+          title: search_result_b.title,
+          content_chunk_id: search_result_b._id,
+          content_chunk_digest: search_result_b.digest,
+          heading: search_result_b.heading_hierarchy.last,
+        )
+    end
+
+    it "resets any existing sources" do
+      answer = build(:answer, :with_sources)
+      search_result = build(:chunked_content_search_result)
+      answer.build_sources_from_search_results([search_result])
+
+      expect(answer.sources.length).to be(1)
+      expect(answer.sources.first).to have_attributes(exact_path: search_result.url)
+    end
+  end
 end
