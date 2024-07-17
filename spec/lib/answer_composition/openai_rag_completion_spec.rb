@@ -58,7 +58,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
       it "builds a source using the result's URL paths" do
         answer = described_class.call(question)
         source = answer.sources.first
-        expect(source.path).to eq(chunk_result.url)
+        expect(source.exact_path).to eq(chunk_result.url)
         expect(source.base_path).to eq(chunk_result.base_path)
       end
 
@@ -109,7 +109,7 @@ RSpec.describe AnswerComposition::OpenAIRagCompletion, :chunked_content_index do
         it "uses the results URL paths as the source URL paths" do
           answer = described_class.call(question)
           source = answer.sources.first
-          expect(source.path).to eq(chunk_result.url)
+          expect(source.exact_path).to eq(chunk_result.url)
           expect(source.base_path).to eq(chunk_result.base_path)
         end
 

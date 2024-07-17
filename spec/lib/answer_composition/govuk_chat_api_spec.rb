@@ -32,7 +32,7 @@ RSpec.describe AnswerComposition::GovukChatApi do
         status: "success",
         persisted?: false,
       )
-      expect(answer.sources.map(&:path)).to contain_exactly("/taxes", "/vat", "/income-tax")
+      expect(answer.sources.map(&:exact_path)).to contain_exactly("/taxes", "/vat", "/income-tax")
       expect(answer.sources.map(&:title)).to contain_exactly("/taxes", "/vat", "/income-tax")
     end
   end

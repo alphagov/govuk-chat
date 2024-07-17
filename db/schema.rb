@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_17_091401) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_17_132032) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -30,7 +30,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_17_091401) do
 
   create_table "answer_sources", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
-    t.string "path", null: false
+    t.string "exact_path", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "relevancy", null: false

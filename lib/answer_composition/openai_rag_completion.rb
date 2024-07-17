@@ -104,7 +104,7 @@ module AnswerComposition
         title = result.title
         title += ": #{result.heading_hierarchy.last}" if group.count == 1 && result.heading_hierarchy.any?
         AnswerSource.new(
-          path:,
+          exact_path: result.url,
           base_path: result.base_path,
           title:,
           relevancy:,
