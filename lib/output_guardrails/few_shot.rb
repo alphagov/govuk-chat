@@ -33,7 +33,7 @@ module OutputGuardrails
 
     def create_result
       llm_response = openai_response.dig("choices", 0, "message", "content")
-      response_pattern = /^(False \| None|True \| "\d+(, \d+)*")$/
+      response_pattern = /^(False \| None|True \| "[1-7](, [1-7])*")$/
 
       raise ResponseError.new("Error parsing guardrail response", llm_response) unless response_pattern =~ llm_response
 

@@ -68,6 +68,22 @@ RSpec.describe OutputGuardrails::FewShot do
       end
     end
 
+    context "when the OpenAI response contains an unknown guardrail number" do
+      it "throws a AnswerComposition::OutputGuardrails::ResponseError" do
+        guardrail_result = 'False | "1, 8"'
+        stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
+          model: "gpt-4o",
+          max_tokens: 25,
+        })
+        expect { described_class.call(input) }
+          .to raise_error(
+            an_instance_of(OutputGuardrails::FewShot::ResponseError)
+              .and(having_attributes(message: "Error parsing guardrail response",
+                                     llm_response: guardrail_result)),
+          )
+      end
+    end
+
     context "when there is an OpenAIClient::ClientError" do
       before do
         stub_openai_chat_completion_error
