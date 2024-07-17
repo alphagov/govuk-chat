@@ -12,6 +12,15 @@ RSpec.describe "ConversationsController" do
     include_context "with onboarding completed"
 
     context "when there is no conversation cookie" do
+      context "and session[:onboarding] is 'conversation'" do
+        include_context "with onboarding completed"
+
+        it "does not redirect to the onboarding flow" do
+          get show_conversation_path
+          expect(response).to have_http_status(:success)
+        end
+      end
+
       context "and the response type is HTML" do
         it "renders the question form" do
           get show_conversation_path

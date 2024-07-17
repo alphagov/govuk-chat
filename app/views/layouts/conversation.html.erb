@@ -18,14 +18,6 @@
         } %>
       </div>
     <% end %>
-
-    <% if flash["alert"].present? %>
-      <div class="app-conversation-layout__alerts js-conversation-alert">
-        <%= render "govuk_publishing_components/components/error_alert", {
-          message: flash["alert"],
-        } %>
-      </div>
-    <% end %>
   <% end %>
 <% end %>
 
