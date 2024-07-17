@@ -77,13 +77,8 @@ module OutputGuardrails
     end
 
     def user_prompt
-      <<~PROMPT
-        Here is the answer to check: #{input}. Remember
-        to return True or False and the number associated with the
-        guardrail requirement if it returns True. Remember
-        to carefully consider your judgement with respect to the
-        instructions provided.
-      PROMPT
+      Rails.configuration.llm_prompts.output_guardrails.few_shot.user_prompt
+        .sub("{input}", input)
     end
   end
 end
