@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_16_111719) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_17_091401) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -37,6 +37,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_16_111719) do
     t.string "title", null: false
     t.string "content_chunk_id"
     t.string "content_chunk_digest"
+    t.string "base_path"
     t.index ["answer_id", "relevancy"], name: "index_answer_sources_on_answer_id_and_relevancy", unique: true
     t.index ["answer_id"], name: "index_answer_sources_on_answer_id"
     t.index ["created_at"], name: "index_answer_sources_on_created_at"
