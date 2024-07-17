@@ -82,11 +82,6 @@ RSpec.describe OutputGuardrails::FewShot do
                                      cause: an_instance_of(OpenAIClient::ClientError))),
           )
       end
-
-      it "Logs the error" do
-        expect { described_class.call(input) }.to raise_error(OpenAIClient::RequestError)
-        expect(Rails.logger).to have_received(:error).with("OpenAI error running guardrail: the server responded with status 400")
-      end
     end
 
     context "when there is an OpenAIClient::ContextLengthExceededError" do
@@ -102,11 +97,6 @@ RSpec.describe OutputGuardrails::FewShot do
                                      message: "Exceeded context length running guardrail: This is a test input.",
                                      cause: an_instance_of(OpenAIClient::ContextLengthExceededError))),
           )
-      end
-
-      it "Logs the error" do
-        expect { described_class.call(input) }.to raise_error(OpenAIClient::ContextLengthExceededError)
-        expect(Rails.logger).to have_received(:error).with("Exceeded context length running guardrail: the server responded with status 400")
       end
     end
   end

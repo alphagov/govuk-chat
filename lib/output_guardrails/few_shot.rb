@@ -22,10 +22,8 @@ module OutputGuardrails
     def call
       create_result
     rescue OpenAIClient::ContextLengthExceededError => e
-      Rails.logger.error("Exceeded context length running guardrail: #{e.message}")
       raise OpenAIClient::ContextLengthExceededError.new("Exceeded context length running guardrail: #{input}", e.response)
     rescue OpenAIClient::RequestError => e
-      Rails.logger.error("OpenAI error running guardrail: #{e.message}")
       raise OpenAIClient::RequestError.new("could not run guardrail: #{input}", e.response)
     end
 
