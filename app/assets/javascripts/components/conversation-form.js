@@ -103,6 +103,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         const li = document.createElement('li')
         li.innerHTML = '<span class="govuk-visually-hidden">Error:</span>'
         li.appendChild(document.createTextNode(error))
+        li.className = 'app-c-conversation-form__error-message'
         return li
       })
 

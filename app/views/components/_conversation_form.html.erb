@@ -42,7 +42,7 @@
       class: %w[govuk-list govuk-error-message js-conversation-form-errors-wrapper app-c-conversation-form__error-list],
       hidden: !has_error) do %>
       <% error_items.each do |error| %>
-        <li>
+        <li class="app-c-conversation-form__error-message">
           <span class="govuk-visually-hidden">Error:</span>
           <%= error[:text] %>
         </li>

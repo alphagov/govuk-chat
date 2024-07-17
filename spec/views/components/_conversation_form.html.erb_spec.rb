@@ -14,6 +14,7 @@ RSpec.describe "components/_conversation_form.html.erb" do
         .and have_selector(".gem-c-hint", text: /Please limit your question/)
         .and have_selector(".govuk-error-message[hidden]", visible: :hidden)
         .and have_selector(".app-c-blue-button")
+      expect(rendered).not_to have_selector(".app-c-conversation-form__error-message")
     end
 
     expect(rendered).to have_link("Share your feedback (opens in a new tab)")
@@ -59,6 +60,7 @@ RSpec.describe "components/_conversation_form.html.erb" do
 
     expect(rendered)
       .to have_selector(".app-c-conversation-form .govuk-error-message:not([hidden])", text: /Error:\s+Error 1/)
+      .and have_selector(".app-c-conversation-form__error-message", text: /Error 1/)
       .and have_selector(".app-c-conversation-form__input[aria-describedby~=id-error]")
   end
 end

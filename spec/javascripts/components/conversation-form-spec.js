@@ -108,7 +108,7 @@ describe('ConversationForm component', () => {
       expect(errorsWrapper.hidden).toBe(false)
 
       expect(errorsWrapper.innerHTML)
-        .toEqual(`<li><span class="govuk-visually-hidden">Error:</span>${presenceErrorMessage}</li>`)
+        .toEqual(`<li class="app-c-conversation-form__error-message"><span class="govuk-visually-hidden">Error:</span>${presenceErrorMessage}</li>`)
     })
 
     it('hides the regular label and references the error messages via aria-labelledby when the user input is empty', () => {
@@ -239,8 +239,8 @@ describe('ConversationForm component', () => {
       const event = new CustomEvent('question-rejected', errorDetail)
       div.dispatchEvent(event)
 
-      const expectedHtml = '<li><span class="govuk-visually-hidden">Error:</span>Error 1</li>' +
-        '<li><span class="govuk-visually-hidden">Error:</span>Error 2</li>'
+      const expectedHtml = '<li class="app-c-conversation-form__error-message"><span class="govuk-visually-hidden">Error:</span>Error 1</li>' +
+        '<li class="app-c-conversation-form__error-message"><span class="govuk-visually-hidden">Error:</span>Error 2</li>'
 
       expect(errorsWrapper.hidden).toBe(false)
       expect(errorsWrapper.innerHTML).toEqual(expectedHtml)
@@ -264,7 +264,7 @@ describe('ConversationForm component', () => {
 
     it('replaces any existing error messages', () => {
       errorsWrapper.hidden = false
-      errorsWrapper.innerHTML = '<li><span class="govuk-visually-hidden">Error:</span>Oops</li>'
+      errorsWrapper.innerHTML = '<li class="app-c-conversation-form__error-message"><span class="govuk-visually-hidden">Error:</span>Oops</li>'
       div.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
 
       expect(errorsWrapper.hidden).toBe(false)
