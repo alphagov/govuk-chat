@@ -5,12 +5,10 @@ RSpec.describe AnswerComposition::OpenAIUnstructuredAnswer, :chunked_content_ind
     let(:expected_message_history) do
       array_including({ "role" => "user", "content" => rephrased_question })
     end
-    let(:opensearch_chunk) { build(:chunked_content_record).except(:openai_embedding).merge(_id: "1", score: 1.0) }
-    let(:chunk_result) { Search::ChunkedContentRepository::Result.new(**opensearch_chunk) }
-    let(:results_for_question) { Search::ResultsForQuestion::ResultSet.new(results: [chunk_result], rejected_results: []) }
+    let(:search_result) { build(:chunked_content_search_result, _id: "1", score: 1.0) }
+    let(:results_for_question) { Search::ResultsForQuestion::ResultSet.new(results: [search_result], rejected_results: []) }
 
     before do
-      allow(AnswerComposition::QuestionRephraser).to receive(:call).and_return(rephrased_question)
       allow(Search::ResultsForQuestion).to receive(:call).and_return(results_for_question)
     end
 
@@ -25,7 +23,7 @@ RSpec.describe AnswerComposition::OpenAIUnstructuredAnswer, :chunked_content_ind
       expected_message_history = [
         { role: "system", content: system_prompt("Title\nHeading 1\nHeading 2\nDescription\n<p>Some content</p>") },
         few_shots,
-        { role: "user", content: rephrased_question },
+        { role: "user", content: question.message },
       ]
       .flatten
 
@@ -37,17 +35,25 @@ RSpec.describe AnswerComposition::OpenAIUnstructuredAnswer, :chunked_content_ind
     end
 
     context "when the question has been rephrased" do
+      let(:conversation) { create(:conversation) }
+      let(:second_question) { create(:question, conversation:) }
+
       before do
+        create(:question, conversation:)
+        stub_openai_chat_completion(
+          array_including({ "role" => "user", "content" => second_question.message }),
+          rephrased_question,
+        )
         stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
       end
 
       it "calls OpenAI chat endpoint and returns unsaved answer" do
-        answer = described_class.call(question)
+        answer = described_class.call(second_question)
 
         expect_unsaved_answer_with_attributes(
           answer,
           {
-            question:,
+            question: second_question,
             message: "OpenAI responded with...",
             rephrased_question:,
             status: "success",
@@ -56,17 +62,17 @@ RSpec.describe AnswerComposition::OpenAIUnstructuredAnswer, :chunked_content_ind
       end
 
       it "builds a source using attributes from the result" do
-        answer = described_class.call(question)
+        answer = described_class.call(second_question)
 
         source = answer.sources.first
 
         expect(source).to have_attributes(
-          exact_path: chunk_result.url,
-          base_path: chunk_result.base_path,
-          content_chunk_id: chunk_result._id,
-          content_chunk_digest: chunk_result.digest,
-          heading: chunk_result.heading_hierarchy.last,
-          title: chunk_result.title,
+          exact_path: search_result.url,
+          base_path: search_result.base_path,
+          content_chunk_id: search_result._id,
+          content_chunk_digest: search_result.digest,
+          heading: search_result.heading_hierarchy.last,
+          title: search_result.title,
         )
       end
 
@@ -81,7 +87,7 @@ RSpec.describe AnswerComposition::OpenAIUnstructuredAnswer, :chunked_content_ind
           )
         end
 
-        let(:results_for_question) { Search::ResultsForQuestion::ResultSet.new(results: [chunk_result, chunk_result], rejected_results: []) }
+        let(:results_for_question) { Search::ResultsForQuestion::ResultSet.new(results: [search_result, search_result], rejected_results: []) }
 
         it "builds one source for each result" do
           answer = described_class.call(question)
@@ -94,33 +100,42 @@ RSpec.describe AnswerComposition::OpenAIUnstructuredAnswer, :chunked_content_ind
           source = answer.sources.first
 
           expect(source).to have_attributes(
-            exact_path: chunk_result.url,
-            base_path: chunk_result.base_path,
-            title: chunk_result.title,
-            heading: chunk_result.heading_hierarchy.last,
+            exact_path: search_result.url,
+            base_path: search_result.base_path,
+            title: search_result.title,
+            heading: search_result.heading_hierarchy.last,
           )
         end
       end
     end
 
     context "when rephrasing produces the same question" do
+      let(:conversation) { create(:conversation) }
+      let!(:first_question) { create(:question, conversation:) }
+      let(:second_question) { create(:question, conversation:) }
       let(:expected_message_history) do
-        array_including({ "role" => "user", "content" => question.message })
+        array_including(
+          { "role" => "system", "content" => system_prompt("Title\nHeading 1\nHeading 2\nDescription\n<p>Some content</p>") },
+          { "role" => "user", "content" => second_question.message },
+        )
       end
-
-      before do
-        allow(AnswerComposition::QuestionRephraser).to receive(:call).and_return(question.message)
+      let(:rephrased_question_prompt) do
+        array_including(
+          { "role" => "user", "content" => first_question.message },
+          { "role" => "user", "content" => second_question.message },
+        )
       end
 
       it "calls OpenAI chat endpoint and returns unsaved answer with rephrased_question: nil" do
+        stub_openai_chat_completion(rephrased_question_prompt, second_question.message)
         stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
 
-        answer = described_class.call(question)
+        answer = described_class.call(second_question)
 
         expect_unsaved_answer_with_attributes(
           answer,
           {
-            question:,
+            question: second_question,
             message: "OpenAI responded with...",
             rephrased_question: nil,
             status: "success",
@@ -130,19 +145,28 @@ RSpec.describe AnswerComposition::OpenAIUnstructuredAnswer, :chunked_content_ind
     end
 
     context "when the rephrased question contains a forbidden word" do
-      let(:question) { build_stubbed(:question, message: user_input) }
+      let(:conversation) { create(:conversation) }
+      let(:second_question) { create(:question, conversation:, message: user_input) }
       let(:rephrased_question) { "Question about forbidden_word rephrased by OpenAI" }
       let(:user_input) { "I want to know about forbidden_word" }
+
+      before do
+        create(:question, conversation:)
+        stub_openai_chat_completion(
+          array_including({ "role" => "user", "content" => second_question.message }),
+          rephrased_question,
+        )
+      end
 
       it "returns an answer with a forbidden words message" do
         allow(Rails.configuration).to receive(:question_forbidden_words).and_return(%w[forbidden_word])
 
-        answer = described_class.call(question)
+        answer = described_class.call(second_question)
 
         expect_unsaved_answer_with_attributes(
           answer,
           {
-            question:,
+            question: second_question,
             message: Answer::CannedResponses::FORBIDDEN_WORDS_RESPONSE,
             rephrased_question:,
             status: "abort_forbidden_words",
@@ -153,8 +177,6 @@ RSpec.describe AnswerComposition::OpenAIUnstructuredAnswer, :chunked_content_ind
 
     context "when OpenSearch returns no results" do
       let(:question) { build_stubbed(:question, message: "I want to know about something that isn't on GOV.UK") }
-      let(:rephrased_question) { "Question where no content is found on GOV.UK" }
-
       let(:results_for_question) { Search::ResultsForQuestion::ResultSet.new(results: [], rejected_results: []) }
 
       it "returns an answer with a no content found message and an 'abort_no_govuk_content' status" do
@@ -167,7 +189,7 @@ RSpec.describe AnswerComposition::OpenAIUnstructuredAnswer, :chunked_content_ind
           {
             question:,
             message: Answer::CannedResponses::NO_CONTENT_FOUND_REPONSE,
-            rephrased_question:,
+            rephrased_question: nil,
             status: "abort_no_govuk_content",
           },
         )
