@@ -1,9 +1,9 @@
 module StubOpenAIChat
-  def stub_openai_chat_completion(chat_history, answer)
+  def stub_openai_chat_completion(chat_history, answer, chat_options: {})
     stub_request(:post, "https://api.openai.com/v1/chat/completions")
       .with(
         headers: StubOpenAIChat.headers,
-        body: StubOpenAIChat.request_body(chat_history),
+        body: StubOpenAIChat.request_body(chat_history, chat_options:),
       )
       .to_return_json(
         status: 200,
@@ -63,11 +63,11 @@ module StubOpenAIChat
     }
   end
 
-  def self.request_body(messages)
+  def self.request_body(messages, chat_options:)
     {
       model: "gpt-3.5-turbo",
       messages:,
       temperature: 0.0,
-    }
+    }.merge(chat_options)
   end
 end
