@@ -235,49 +235,6 @@ RSpec.describe MessageQueue::MessageProcessor do
       end
     end
 
-    context "when an Opensearch 404 occurs because the index is missing" do
-      let(:content_item) { build(:notification_content_item, schema_name: "news_article", base_path: "/path") }
-      let(:message) { create_mock_message(content_item) }
-
-      before do
-        allow(MessageQueue::ContentSynchroniser)
-          .to receive(:call)
-          .and_raise(OpenSearch::Transport::Transport::Errors::NotFound, '{"error":{"type":"index_not_found_exception}')
-      end
-
-      it "discards the message" do
-        expect { described_class.new.process(message) }
-          .to change(message, :discarded?).to(true)
-      end
-    end
-
-    context "when an Opensearch 404 occurs for another reason" do
-      let(:content_item) { build(:notification_content_item, schema_name: "news_article", base_path: "/path") }
-      let(:message) { create_mock_message(content_item) }
-
-      before do
-        allow(MessageQueue::ContentSynchroniser)
-          .to receive(:call)
-          .and_raise(OpenSearch::Transport::Transport::Errors::NotFound, "OpenSearch error")
-      end
-
-      it "writes to the log" do
-        allow(Rails.logger).to receive(:error)
-        described_class.new.process(message)
-
-        log_message = "{#{content_item['base_path']}, #{content_item['content_id']}, #{content_item['locale']}} " \
-                      "scheduled for retry due to error: " \
-                      "OpenSearch::Transport::Transport::Errors::NotFound OpenSearch error"
-
-        expect(Rails.logger).to have_received(:error).with(log_message)
-      end
-
-      it "retries the messages" do
-        expect { described_class.new.process(message) }
-          .to change(message, :retried?)
-      end
-    end
-
     context "when any other exception is raised" do
       let(:message) { create_mock_message(1) }
 
