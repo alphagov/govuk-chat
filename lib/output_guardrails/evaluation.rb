@@ -30,7 +30,7 @@ module OutputGuardrails
     attr_reader :examples, :file_path
 
     def initialize(file_path, &block)
-      raise ArgumentError, "You should pass a block to ExactMatchEvaluation.call that can process each input" unless block_given?
+      raise ArgumentError, "You should pass a block to #{self.class.name}.call that can process each input" unless block_given?
 
       @guardrail_block = block
       @file_path = file_path
