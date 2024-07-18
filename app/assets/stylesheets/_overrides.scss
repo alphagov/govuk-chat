@@ -51,7 +51,7 @@
   }
 }
 
-// The error summary component is used a bit differently in this application - it's placed
+// The error summary component is used a bit differently in the conversation view - it's placed
 // at the top of the message container with the other chat messages rather than at the top
 // of the page. As such, we want to remove the bottom margin from this component because
 // its default spacing causes an excessive gap between the component and the chat

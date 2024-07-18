@@ -1,7 +1,4 @@
-<%
-  @conversation_data_attributes ||= {}
-  alert_description = sanitize("<a href=\"#{flash["id"]}\" class=\"govuk-link govuk-notification-banner__link\">#{flash["link_text"]}</a>") if flash["id"] and flash["link_text"]
-%>
+<% @conversation_data_attributes ||= {} %>
 
 <% content_for :alerts do %>
   <% if content_for?(:error_summary) %>
@@ -10,9 +7,15 @@
     </div>
   <% else %>
     <% if flash["notice"].present? %>
+      <%
+         notice = flash["notice"].is_a?(Hash) ? flash["notice"] : { "message" => flash["notice"] }
+         if notice["link_text"] && notice["link_href"]
+           alert_description = link_to(notice["link_text"], notice["link_href"], class: %w[govuk-link govuk-notification-banner__link])
+         end
+      %>
       <div class="app-conversation-layout__alerts js-conversation-alert">
         <%= render "govuk_publishing_components/components/success_alert", {
-          message: flash["notice"],
+          message: notice["message"],
           description: alert_description,
           margin_bottom: 0,
         } %>

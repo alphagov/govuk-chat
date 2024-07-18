@@ -63,9 +63,11 @@ class ConversationsController < BaseController
     respond_to do |format|
       if answer.present?
         format.html do
-          flash[:notice] = "GOV.UK Chat has answered your question"
-          flash[:link_text] = "View your answer"
-          flash[:id] = "##{helpers.dom_id(answer)}"
+          flash[:notice] = {
+            message: "GOV.UK Chat has answered your question",
+            link_text: "View your answer",
+            link_href: "##{helpers.dom_id(answer)}",
+          }
           redirect_to show_conversation_path
         end
         format.json { render json: answer_success_json(answer), status: :ok }

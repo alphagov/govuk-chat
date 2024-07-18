@@ -310,10 +310,11 @@ RSpec.describe "ConversationsController" do
     it "redirects to the conversation page when there are no pending answers and the user has clicked on the refresh button" do
       question = create(:question, :with_answer, conversation:)
       get answer_question_path(question, refresh: true)
+      answer = question.answer
 
       expected_redirect_destination = show_conversation_path
       expect(response).to redirect_to(expected_redirect_destination)
-      expect(flash[:notice]).to eq("GOV.UK Chat has answered your question")
+      expect(flash[:notice]).to eq({ link_href: "##{helpers.dom_id(answer)}", link_text: "View your answer", message: "GOV.UK Chat has answered your question" })
 
       follow_redirect!
       expect(response.body)

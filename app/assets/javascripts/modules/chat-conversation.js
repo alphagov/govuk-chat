@@ -5,11 +5,9 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
   class ChatConversation {
     constructor (module) {
       this.module = module
-      this.flashAlert = this.module.querySelector('.js-conversation-alert')
       this.formComponent = this.module.querySelector('.js-conversation-form-wrapper')
       this.form = this.module.querySelector('.js-conversation-form')
       this.conversationList = this.module.querySelector('.js-conversation-list')
-      this.chatMessages = this.module.querySelectorAll('.js-conversation-message[id*="answer_"]')
       this.pendingAnswerUrl = this.module.dataset.pendingAnswerUrl
       this.ANSWER_INTERVAL = 500
     }
