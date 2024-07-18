@@ -33,8 +33,6 @@ module OutputGuardrails
 
     def create_result
       llm_response = openai_response.dig("choices", 0, "message", "content")
-      response_pattern = /^(False \| None|True \| "[1-7](, [1-7])*")$/
-
       raise ResponseError.new("Error parsing guardrail response", llm_response) unless response_pattern =~ llm_response
 
       parts = llm_response.split(" | ")
@@ -56,6 +54,17 @@ module OutputGuardrails
           max_tokens: 25,
         },
       )
+    end
+
+    def response_pattern
+      @response_pattern ||= begin
+        guardrail_range = "[#{mapping_keys.min}-#{mapping_keys.max}]"
+        /^(False \| None|True \| "#{guardrail_range}(, #{guardrail_range})*")$/
+      end
+    end
+
+    def mapping_keys
+      Rails.configuration.llm_prompts.output_guardrails.few_shot.guardrail_mappings.keys.map(&:to_i)
     end
 
     def extract_guardrails(parts)
