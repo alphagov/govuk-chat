@@ -41,6 +41,8 @@ private
   def answer_strategy
     if Feature.enabled?(:chat_api)
       :govuk_chat_api
+    elsif Feature.enabled?(:structured_answer_generation)
+      :openai_structured_answer
     else
       :open_ai_rag_completion
     end
