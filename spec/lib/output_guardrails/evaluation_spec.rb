@@ -4,13 +4,9 @@ RSpec.describe OutputGuardrails::Evaluation do
   let(:file_path) { Rails.root.join("spec/support/files/guardrail_exact_examples.csv") }
 
   context "when Evaluating FewShot" do
-    before do
-      allow(OutputGuardrails::FewShot).to receive(:call).and_return('True | "1"')
-    end
-
     describe "#call" do
       it "evaluates the examples correctly" do
-        result = described_class.call(file_path) { |input| OutputGuardrails::FewShot.call(input) }
+        result = described_class.call(file_path) { |_input| 'True | "1"' }
         expect(result).to include(
           count: 2,
           percent_correct: 50.0,
