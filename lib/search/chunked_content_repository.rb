@@ -8,7 +8,7 @@ module Search
       parent_document_type: { type: "keyword" },
       title: { type: "text" },
       description: { type: "text" },
-      url: { type: "keyword" },
+      url: { type: "keyword" }, # TODO: rename this to exact_path to match our answer sources
       chunk_index: { type: "keyword" },
       heading_hierarchy: { type: "text" },
       html_content: { type: "text" },

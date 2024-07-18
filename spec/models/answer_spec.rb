@@ -2,8 +2,8 @@ RSpec.describe Answer do
   describe "#sources" do
     it "implicitly orders sources by relevancy" do
       answer = create(:answer)
-      source_1 = create(:answer_source, answer:, relevancy: 1, path: "/1")
-      source_2 = create(:answer_source, answer:, relevancy: 0, path: "/2")
+      source_1 = create(:answer_source, answer:, relevancy: 1, exact_path: "/1")
+      source_2 = create(:answer_source, answer:, relevancy: 0, exact_path: "/2")
 
       expect(answer.reload.sources.strict_loading(false)).to eq([source_2, source_1])
     end

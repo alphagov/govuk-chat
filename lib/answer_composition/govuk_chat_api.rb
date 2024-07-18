@@ -10,7 +10,8 @@ module AnswerComposition
       answer = question.build_answer(message: response["answer"], status: "success")
       response["sources"].each.with_index do |url, index|
         answer.sources.build(
-          path: return_base_path(url),
+          exact_path: return_base_path(url),
+          base_path: return_base_path(url),
           title: return_base_path(url),
           relevancy: index,
         )
