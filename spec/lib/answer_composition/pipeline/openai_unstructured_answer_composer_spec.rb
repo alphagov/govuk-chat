@@ -14,10 +14,10 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIUnstructuredAnswerComposer, :c
 
     it "sends OpenAI a series of messages combining system prompt, few shot messages and the user question" do
       system_prompt = sprintf(
-        llm_prompts.answer_composition.compose_answer.system_prompt,
+        llm_prompts.openai_unstructured_answer.system_prompt,
         context: "Title\nHeading 1\nHeading 2\nDescription\n<p>Some content</p>",
       )
-      few_shots = llm_prompts.answer_composition.compose_answer.few_shots.flat_map do |few_shot|
+      few_shots = llm_prompts.openai_unstructured_answer.few_shots.flat_map do |few_shot|
         [
           { role: "user", content: few_shot.user },
           { role: "assistant", content: few_shot.assistant },

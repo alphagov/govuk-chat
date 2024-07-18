@@ -62,7 +62,7 @@ module AnswerComposition
     end
 
     def system_prompt
-      Rails.configuration.llm_prompts.answer_composition.rephrase_question.system_prompt
+      Rails.configuration.llm_prompts.question_rephraser.system_prompt
     end
   end
 end
