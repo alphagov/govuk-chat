@@ -28,6 +28,11 @@
   border-left: $govuk-border-width-form-group-error solid $govuk-error-colour;
 }
 
+.app-c-conversation-form__error-message {
+  @include govuk-typography-weight-bold($important: false);
+  color: $govuk-error-colour
+}
+
 .app-c-conversation-form__input-wrapper {
   flex-grow: 1;
   margin-right: govuk-spacing(1);
