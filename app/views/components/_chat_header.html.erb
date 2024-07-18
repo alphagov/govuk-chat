@@ -7,12 +7,8 @@
     <div class="app-c-header-row govuk-grid-row">
       <div class="app-c-header__logo govuk-grid-column-two-thirds">
         <a href="/" class="app-c-header__link app-c-header__link--homepage govuk-header__link govuk-header__link--homepage">
-          <span class="app-c-header__logotype govuk-header__logotype">
-            <%= inline_svg_tag "components/chat_header/tudor-crown.svg", aria_hidden: true %>
-            <span class="govuk-header__logotype-text">
-              GOV.UK <span class="app-c-header__product-name">Chat</span>
-            </span>
-          </span>
+          <%= inline_svg_tag "components/chat_header/govuk-logo.svg", class: %w[app-c-header__logotype govuk-header__logotype] %>
+          <span class="app-c-header__product-name">Chat</span>
         </a>
         <span class="app-c-header__tag govuk-tag">
           Experimental

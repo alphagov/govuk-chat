@@ -5,10 +5,7 @@
 //= require govuk_publishing_components/dependencies
 //= require govuk_publishing_components/lib
 
-//= require govuk_publishing_components/components/character-count
 //= require govuk_publishing_components/components/cookie-banner
-//= require govuk_publishing_components/components/error-summary
-//= require govuk_publishing_components/components/skip-link
 
 // In browsers that do not support ES6 modules
 if (!('noModule' in window.HTMLScriptElement.prototype)) {
