@@ -7,6 +7,7 @@ ruby file: ".ruby-version"
 gem "rails", "7.1.3.4"
 
 gem "bootsnap"
+gem "csv"
 gem "dartsass-rails"
 gem "erb_lint", require: false
 gem "faraday"
