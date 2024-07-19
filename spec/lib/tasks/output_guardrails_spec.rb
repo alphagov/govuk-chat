@@ -1,6 +1,6 @@
 RSpec.describe "rake guardrails tasks" do
-  describe "guardrails:evaluate_fewshot" do
-    let(:task_name) { "guardrails:evaluate_fewshot" }
+  describe "output_guardrails:evaluate_fewshot" do
+    let(:task_name) { "output_guardrails:evaluate_fewshot" }
     let(:llm_response) do
       OutputGuardrails::FewShot::Result.new(
         llm_response: "False | None",
