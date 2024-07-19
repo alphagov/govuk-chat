@@ -46,6 +46,7 @@
 
 .app-c-conversation-form__input {
   border: 2px solid govuk-colour("black");
+  border-radius: 0;
   padding: govuk-spacing(2);
   @include govuk-font($size: 19);
   width: 100%;
