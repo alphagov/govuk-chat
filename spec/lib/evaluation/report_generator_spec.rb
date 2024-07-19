@@ -32,9 +32,6 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
   end
 
   before do
-    # allow(Rails.configuration).to receive(:evaluation_data_questions).and_return(
-    #   evaluation_questions,
-    # )
     allow(described_class).to receive(:evaluation_questions).and_return(evaluation_questions)
 
     populate_chunked_content_index({
