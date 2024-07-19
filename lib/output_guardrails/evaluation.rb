@@ -1,5 +1,3 @@
-require "csv"
-
 module OutputGuardrails
   # Reads a CSV file - calls the provided block with the value in the input column
   # The result is compared with the output column from the csv - metrics about
@@ -63,6 +61,8 @@ module OutputGuardrails
         expected = row["output"]
         latency = Benchmark.realtime do
           actual = run_guardrail(input)
+        rescue OutputGuardrails::FewShot::ResponseError => e
+          actual = "ERR: #{e.llm_response}"
         end
 
         entry = Example.new(
