@@ -57,7 +57,12 @@ RSpec.describe "Conversation with OpenAI", :chunked_content_index do
       array_including({ "role" => "user", "content" => "How much tax should I be paying?" }),
       "First answer from OpenAI",
     )
-
+    ## Stub the guardrails call to be OK
+    stub_openai_chat_completion(
+      array_including({ "role" => "system", "content" => Rails.configuration.llm_prompts.output_guardrails.few_shot.system_prompt }),
+      "False | None",
+      chat_options: { model: "gpt-4o", max_tokens: 25 },
+    )
     perform_enqueued_jobs
   end
 

@@ -7,9 +7,17 @@ RSpec.describe AnswerComposition::OpenAIUnstructuredAnswer, :chunked_content_ind
     end
     let(:search_result) { build(:chunked_content_search_result, _id: "1", score: 1.0) }
     let(:results_for_question) { Search::ResultsForQuestion::ResultSet.new(results: [search_result], rejected_results: []) }
+    let(:guardrails_response) do
+      OutputGuardrails::FewShot::Result.new(
+        triggered: false,
+        guardrails: [],
+        llm_response: "False | None",
+      )
+    end
 
     before do
       allow(Search::ResultsForQuestion).to receive(:call).and_return(results_for_question)
+      allow(OutputGuardrails::FewShot).to receive(:call).and_return(guardrails_response)
     end
 
     it "sends OpenAI a series of messages combining system prompt, few shot messages and the user question" do

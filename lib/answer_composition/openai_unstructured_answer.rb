@@ -10,6 +10,7 @@ module AnswerComposition
         Pipeline::ForbiddenWordsChecker,
         Pipeline::SearchResultFetcher,
         method(:compose_answer),
+        Pipeline::OutputGuardrails,
       )
     end
 

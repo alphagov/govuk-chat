@@ -26,7 +26,7 @@ module AnswerComposition
       rescue ::OutputGuardrails::FewShot::ResponseError => e
         context.abort_pipeline!(
           message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
-          status: "error_guardrails_formatting",
+          status: "error_output_guardrails",
           output_guardrail_llm_response: e.llm_response,
           output_guardrail_status: :error,
         )
