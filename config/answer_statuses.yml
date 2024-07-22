@@ -13,6 +13,11 @@ abort_forbidden_words:
   label_colour: "orange"
   description: "forbidden words in question"
   label_and_description: "Abort - forbidden words in question"
+abort_output_guardrails:
+  label: "Abort"
+  label_colour: "orange"
+  description: "output guardrails triggered"
+  label_and_description: "Abort - output guardrails triggered"
 abort_no_govuk_content:
   label: "Abort"
   label_colour: "orange"

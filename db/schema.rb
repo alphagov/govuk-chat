@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_17_141242) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_22_073620) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
-  create_enum "status", ["success", "error_non_specific", "error_answer_service_error", "abort_forbidden_words", "error_context_length_exceeded", "abort_no_govuk_content", "abort_timeout"]
+  create_enum "status", ["success", "error_non_specific", "error_answer_service_error", "abort_forbidden_words", "error_context_length_exceeded", "abort_no_govuk_content", "abort_timeout", "abort_output_guardrails"]
 
   create_table "answer_feedback", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
