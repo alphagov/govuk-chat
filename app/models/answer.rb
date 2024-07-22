@@ -16,6 +16,12 @@ class Answer < ApplicationRecord
     TIMED_OUT_RESPONSE = "Sorry, something went wrong and I could not find an answer in time. " \
       "Please try again.".freeze
     UNSUCCESSFUL_REQUEST_MESSAGE = "There's been a problem retrieving a response to your question.".freeze
+    GUARDRAILS_FAILED_MESSAGE = <<~MESSAGE.freeze
+      Sorry, the answer does not meet the GOV.UK Chat content guidelines.
+      This might be because it contains unclear, misleading or inappropriate information.
+
+      Please try asking about something else or rephrasing your question.
+    MESSAGE
   end
 
   belongs_to :question
