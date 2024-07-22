@@ -1,20 +1,24 @@
 module AnswerComposition::Pipeline
-  class OpenAIUnstructuredAnswerComposer < OpenAIAnswer
+  class OpenAIUnstructuredAnswerComposer
     OPENAI_MODEL = "gpt-3.5-turbo".freeze
 
     def self.call(...) = new(...).call
 
+    def initialize(context)
+      @context = context
+    end
+
     def call
-      answer_pipeline(
-        Pipeline::QuestionRephraser,
-        Pipeline::ForbiddenWordsChecker,
-        Pipeline::SearchResultFetcher,
-        method(:compose_answer),
-        Pipeline::OutputGuardrails,
+      message = openai_response.dig("choices", 0, "message", "content")
+      context.answer.assign_attributes(
+        message:,
+        status: "success",
       )
     end
 
   private
+
+    attr_reader :context
 
     def openai_response
       openai_client.chat(
@@ -23,14 +27,6 @@ module AnswerComposition::Pipeline
           messages:,
           temperature: 0.0,
         },
-      )
-    end
-
-    def compose_answer
-      message = openai_response.dig("choices", 0, "message", "content")
-      context.answer.assign_attributes(
-        message:,
-        status: "success",
       )
     end
 
