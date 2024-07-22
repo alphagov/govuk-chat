@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_22_102026) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_22_104817) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -53,6 +53,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_22_102026) do
     t.datetime "updated_at", null: false
     t.enum "status", null: false, enum_type: "status"
     t.string "error_message"
+    t.enum "output_guardrail_status", enum_type: "output_guardrails_status"
+    t.string "output_guardrail_failures", default: [], array: true
+    t.string "output_guardrail_llm_response"
     t.index ["created_at"], name: "index_answers_on_created_at"
     t.index ["question_id"], name: "index_answers_on_question_id", unique: true
   end
