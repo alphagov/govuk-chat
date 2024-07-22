@@ -35,6 +35,8 @@ class Answer < ApplicationRecord
        },
        prefix: true
 
+  enum :output_guardrail_status, { pass: "pass", fail: "fail", error: "error" }
+
   def build_sources_from_search_results(search_results)
     self.sources = search_results.map.with_index do |result, relevancy|
       sources.build(
