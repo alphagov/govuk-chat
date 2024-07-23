@@ -72,6 +72,18 @@ module Admin
                        end
                       ),
                   },
+                  {
+                    field: "Guardrails status",
+                    value: answer.output_guardrail_status,
+                  },
+                  {
+                    field: "Guardrails triggered",
+                    value: answer.output_guardrail_failures.join(", "),
+                  },
+                  {
+                    field: "Guardrails LLM response",
+                    value: answer.output_guardrail_llm_response,
+                  },
                 ]
               else
                 {
