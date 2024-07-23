@@ -145,9 +145,9 @@ RSpec.describe MessageQueue::MessageProcessor do
           .and_raise(ActiveRecord::LockWaitTimeout)
       end
 
-      it "retries the messages" do
+      it "discards the messages to trigger a retry" do
         expect { described_class.new.process(message) }
-          .to change(message, :retried?)
+          .to change(message, :discarded?)
       end
 
       it "writes to the log" do
@@ -158,6 +158,71 @@ RSpec.describe MessageQueue::MessageProcessor do
                       "scheduled for retry due to this base_path already being synched"
 
         expect(Rails.logger).to have_received(:warn).with(log_message)
+      end
+
+      context "when the job has been retried the maximum amount of times" do
+        let(:message) { create_mock_message(content_item, max_retries_headers) }
+
+        it "acks the message to quit retrying" do
+          expect { described_class.new.process(message) }
+            .to change(message, :acked?)
+        end
+
+        it "writes to the log" do
+          allow(Rails.logger).to receive(:error)
+          described_class.new.process(message)
+
+          log_message = "{#{base_path}, #{content_item['content_id']}, #{content_item['locale']}} " \
+                        "ignored after #{described_class::MAX_RETRIES} retries"
+
+          expect(Rails.logger).to have_received(:error).with(log_message)
+        end
+      end
+    end
+
+    shared_examples "transient error behaviour" do |error_class, error_message|
+      it "discards the messages to trigger a retry" do
+        expect { described_class.new.process(message) }
+          .to change(message, :discarded?)
+      end
+
+      it "writes to the log" do
+        allow(Rails.logger).to receive(:error)
+        described_class.new.process(message)
+
+        log_message = "{#{content_item['base_path']}, #{content_item['content_id']}, #{content_item['locale']}} " \
+                      "scheduled for retry due to error: " \
+                      "#{error_class} #{error_message}"
+
+        expect(Rails.logger).to have_received(:error).with(log_message)
+      end
+
+      context "when the job has been retried the maximum amount of times" do
+        let(:message) { create_mock_message(content_item, max_retries_headers) }
+
+        it "acks the message to quit retrying" do
+          expect { described_class.new.process(message) }
+            .to change(message, :acked?)
+        end
+
+        it "writes to the log" do
+          allow(Rails.logger).to receive(:error)
+          described_class.new.process(message)
+
+          log_message = "{#{content_item['base_path']}, #{content_item['content_id']}, #{content_item['locale']}} " \
+                        "ignored after #{described_class::MAX_RETRIES} retries"
+
+          expect(Rails.logger).to have_received(:error).with(log_message)
+        end
+
+        it "sets the context and tags correctly for Sentry" do
+          sentry_scope = Sentry::Scope.new
+          allow(Sentry).to receive(:with_scope).and_yield(sentry_scope)
+
+          described_class.new.process(message)
+
+          expect_sentry_scope_to_be_configured(sentry_scope, message.payload)
+        end
       end
     end
 
@@ -172,30 +237,7 @@ RSpec.describe MessageQueue::MessageProcessor do
           .and_raise(OpenSearch::Transport::Transport::Error, "OpenSearch error")
       end
 
-      it "retries the messages" do
-        expect { described_class.new.process(message) }
-          .to change(message, :retried?)
-      end
-
-      it "writes to the log" do
-        allow(Rails.logger).to receive(:error)
-        described_class.new.process(message)
-
-        log_message = "{#{content_item['base_path']}, #{content_item['content_id']}, #{content_item['locale']}} " \
-                      "scheduled for retry due to error: " \
-                      "OpenSearch::Transport::Transport::Error OpenSearch error"
-
-        expect(Rails.logger).to have_received(:error).with(log_message)
-      end
-
-      it "sets the context and tags correctly for Sentry" do
-        sentry_scope = Sentry::Scope.new
-        allow(Sentry).to receive(:with_scope).and_yield(sentry_scope)
-
-        described_class.new.process(message)
-
-        expect_sentry_scope_to_be_configured(sentry_scope, message.payload)
-      end
+      include_examples "transient error behaviour", OpenSearch::Transport::Transport::Error, "OpenSearch error"
     end
 
     context "when an OpenAIClient error is raised" do
@@ -209,38 +251,15 @@ RSpec.describe MessageQueue::MessageProcessor do
           .and_raise(OpenAIClient::RequestError, "OpenAI error")
       end
 
-      it "retries the messages" do
-        expect { described_class.new.process(message) }
-          .to change(message, :retried?)
-      end
-
-      it "writes to the log" do
-        allow(Rails.logger).to receive(:error)
-        described_class.new.process(message)
-
-        log_message = "{#{content_item['base_path']}, #{content_item['content_id']}, #{content_item['locale']}} " \
-                      "scheduled for retry due to error: " \
-                      "OpenAIClient::RequestError OpenAI error"
-
-        expect(Rails.logger).to have_received(:error).with(log_message)
-      end
-
-      it "sets the context and tags correctly for Sentry" do
-        sentry_scope = Sentry::Scope.new
-        allow(Sentry).to receive(:with_scope).and_yield(sentry_scope)
-
-        described_class.new.process(message)
-
-        expect_sentry_scope_to_be_configured(sentry_scope, message.payload)
-      end
+      include_examples "transient error behaviour", OpenAIClient::RequestError, "OpenAI error"
     end
 
     context "when any other exception is raised" do
       let(:message) { create_mock_message(1) }
 
-      it "discards the message" do
+      it "acks the message" do
         expect { described_class.new.process(message) }
-          .to change(message, :discarded?)
+          .to change(message, :acked?)
       end
 
       it "sends the error to GovukError" do
@@ -295,6 +314,15 @@ RSpec.describe MessageQueue::MessageProcessor do
 
   def create_mock_message(...)
     GovukMessageQueueConsumer::MockMessage.new(...)
+  end
+
+  def max_retries_headers
+    {
+      headers: {
+        "x-death" => [{ "count" => described_class::MAX_RETRIES },
+                      { "count" => described_class::MAX_RETRIES }],
+      },
+    }
   end
 
   def expect_sentry_scope_to_be_configured(sentry_scope, payload)
