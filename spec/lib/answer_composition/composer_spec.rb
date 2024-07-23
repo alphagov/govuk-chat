@@ -6,12 +6,24 @@ RSpec.describe AnswerComposition::Composer do
     context "when the question is for open ai" do
       let(:question) { create :question, answer_strategy: :open_ai_rag_completion }
 
-      it "get the result via OpenAIUnstructuredAnswer.call(question)" do
-        allow(AnswerComposition::OpenAIUnstructuredAnswer)
-          .to receive(:call).with(question).and_return(retrieved_answer)
-        expect(described_class.call(question)).to eq(retrieved_answer)
+      it "calls OpenAIAnswer with the correct pipeline" do
+        expected_pipeline = [
+          AnswerComposition::Pipeline::QuestionRephraser,
+          AnswerComposition::Pipeline::ForbiddenWordsChecker,
+          AnswerComposition::Pipeline::SearchResultFetcher,
+          AnswerComposition::Pipeline::OpenAIUnstructuredAnswerComposer,
+          AnswerComposition::Pipeline::OutputGuardrails,
+        ]
+        expected_pipeline.each do |pipeline|
+          allow(pipeline).to receive(:call) { |context| context }
+        end
+        expect(AnswerComposition::OpenAIAnswer).to receive(:call).and_call_original
+        result = described_class.call(question)
 
-        expect(AnswerComposition::OpenAIUnstructuredAnswer).to have_received(:call).with(question)
+        expect(result)
+          .to be_an_instance_of(Answer)
+          .and have_attributes(question:)
+        expect(expected_pipeline).to all(have_received(:call))
       end
     end
 
@@ -55,8 +67,8 @@ RSpec.describe AnswerComposition::Composer do
       let(:result) { described_class.call(question) }
 
       before do
-        allow(AnswerComposition::OpenAIUnstructuredAnswer)
-        .to receive(:call).with(question)
+        allow(AnswerComposition::OpenAIAnswer)
+        .to receive(:call)
         .and_raise(StandardError, "error message")
       end
 

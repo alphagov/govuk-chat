@@ -2,22 +2,15 @@ module AnswerComposition
   class OpenAIAnswer
     def self.call(...) = new(...).call
 
-    def initialize(question)
+    def initialize(question:, pipeline: [])
       @context = Pipeline::Context.new(question)
+      @pipeline = pipeline
     end
 
-  private
-
-    attr_reader :context
-
-    def answer_pipeline(*steps)
+    def call
       catch :abort do
-        steps.each do |pipeline_step|
-          if pipeline_step.respond_to?(:arity) && pipeline_step.arity.zero?
-            pipeline_step.call
-          else
-            pipeline_step.call(context)
-          end
+        pipeline.each do |pipeline_step|
+          pipeline_step.call(context)
           break if context.aborted?
         end
       end
@@ -38,6 +31,10 @@ module AnswerComposition
         error_message: error_message(e),
       )
     end
+
+  private
+
+    attr_reader :context, :pipeline
 
     def error_message(error)
       body_error_message = if error.response

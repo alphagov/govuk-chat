@@ -11,7 +11,13 @@ module AnswerComposition
     def call
       case answer_strategy
       when "open_ai_rag_completion"
-        OpenAIUnstructuredAnswer.call(question)
+        OpenAIAnswer.call(question:, pipeline: [
+          Pipeline::QuestionRephraser,
+          Pipeline::ForbiddenWordsChecker,
+          Pipeline::SearchResultFetcher,
+          Pipeline::OpenAIUnstructuredAnswerComposer,
+          Pipeline::OutputGuardrails,
+        ])
       when "govuk_chat_api"
         GovukChatApi.call(question)
       else
