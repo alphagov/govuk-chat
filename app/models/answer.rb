@@ -36,6 +36,7 @@ class Answer < ApplicationRecord
          abort_timeout: "abort_timeout",
          error_answer_service_error: "error_answer_service_error",
          error_context_length_exceeded: "error_context_length_exceeded",
+         error_invalid_llm_response: "error_invalid_llm_response",
          error_output_guardrails: "error_output_guardrails",
          error_non_specific: "error_non_specific",
          success: "success",
