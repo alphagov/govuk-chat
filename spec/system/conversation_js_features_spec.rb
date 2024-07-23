@@ -208,11 +208,8 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
       build(:chunked_content_record, openai_embedding: mock_openai_embedding(question)),
     ])
 
-    stub_openai_chat_completion(
-      array_including({ "role" => "user", "content" => question }),
-      "<p>#{answer}</p>",
-    )
+    stub_openai_chat_completion(array_including({ "role" => "user", "content" => question }), answer)
 
-    stub_openai_output_guardrail_pass("<p>#{answer}</p>")
+    stub_openai_output_guardrail_pass(answer)
   end
 end

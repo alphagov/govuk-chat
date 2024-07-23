@@ -1,10 +1,8 @@
 RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
   let(:context) { build(:answer_pipeline_context) }
-  let(:question_message) { "sample question message" }
   let(:answer_message) { "sample answer message" }
 
   before do
-    context.question_message = question_message
     context.answer.message = answer_message
     allow(OutputGuardrails::FewShot).to receive(:call).and_return(few_shot_response)
   end
@@ -18,7 +16,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
       )
     end
 
-    it "calls the guardrails with the question message" do
+    it "calls the guardrails with the answer message" do
       described_class.call(context)
       expect(OutputGuardrails::FewShot).to have_received(:call).with(context.answer.message)
     end
