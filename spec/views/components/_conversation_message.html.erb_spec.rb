@@ -30,6 +30,22 @@ RSpec.describe "components/_conversation_message.html.erb" do
           .and have_selector(".app-c-conversation-message__body.app-c-conversation-message__body--user-message", text: "message 2")
       end
     end
+
+    context "and is_loading is true" do
+      it "renders the loading text" do
+        render("components/conversation_message", {
+          id: "loading-question",
+          is_question: true,
+          is_loading: true,
+        })
+
+        expect(rendered).to have_selector("li.app-c-conversation-message#loading-question") do |rendered_question|
+          expect(rendered_question)
+            .to have_selector(".app-c-conversation-message__loading-text", text: "Loading your question")
+            .and have_selector(".app-c-conversation-message__loading-ellipsis", text: "...")
+        end
+      end
+    end
   end
 
   context "when is_question is false/not passed" do
@@ -77,6 +93,21 @@ RSpec.describe "components/_conversation_message.html.erb" do
 
       expect(rendered)
         .to have_selector(".app-c-conversation-message__answer .govuk-govspeak", text: "alert('hackerman')")
+    end
+
+    context "and is_loading is true" do
+      it "renders the loading text" do
+        render("components/conversation_message", {
+          id: "loading-answer",
+          is_loading: true,
+        })
+
+        expect(rendered).to have_selector("li.app-c-conversation-message#loading-answer") do |rendered_question|
+          expect(rendered_question)
+            .to have_selector(".app-c-conversation-message__loading-text", text: "Loading your answer")
+            .and have_selector(".app-c-conversation-message__loading-ellipsis", text: "...")
+        end
+      end
     end
   end
 
