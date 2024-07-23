@@ -8,7 +8,7 @@ module AnswerComposition
       end
 
       def call
-        response = ::OutputGuardrails::FewShot.call(question_message)
+        response = ::OutputGuardrails::FewShot.call(context.answer.message)
         if response.triggered
           context.abort_pipeline!(
             message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,

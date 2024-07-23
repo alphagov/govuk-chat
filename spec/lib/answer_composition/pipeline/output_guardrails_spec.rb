@@ -1,9 +1,11 @@
 RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
   let(:context) { build(:answer_pipeline_context) }
   let(:question_message) { "sample question message" }
+  let(:answer_message) { "sample answer message" }
 
   before do
-    allow(context).to receive(:question_message).and_return(question_message)
+    context.question_message = question_message
+    context.answer.message = answer_message
     allow(OutputGuardrails::FewShot).to receive(:call).and_return(few_shot_response)
   end
 
@@ -18,7 +20,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
 
     it "calls the guardrails with the question message" do
       described_class.call(context)
-      expect(OutputGuardrails::FewShot).to have_received(:call).with(question_message)
+      expect(OutputGuardrails::FewShot).to have_received(:call).with(context.answer.message)
     end
 
     it "does not abort the pipeline" do
