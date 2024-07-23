@@ -57,7 +57,7 @@ RSpec.describe "Conversation with OpenAI", :chunked_content_index do
       array_including({ "role" => "user", "content" => "How much tax should I be paying?" }),
       "First answer from OpenAI",
     )
-
+    stub_openai_output_guardrail_pass("First answer from OpenAI")
     perform_enqueued_jobs
   end
 
@@ -70,6 +70,7 @@ RSpec.describe "Conversation with OpenAI", :chunked_content_index do
       array_including({ "role" => "user", "content" => "Rephrased How much tax should I be paying?" }),
       "Second answer from OpenAI",
     )
+    stub_openai_output_guardrail_pass("Second answer from OpenAI")
     perform_enqueued_jobs
   end
 

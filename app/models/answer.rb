@@ -16,6 +16,12 @@ class Answer < ApplicationRecord
     TIMED_OUT_RESPONSE = "Sorry, something went wrong and I could not find an answer in time. " \
       "Please try again.".freeze
     UNSUCCESSFUL_REQUEST_MESSAGE = "There's been a problem retrieving a response to your question.".freeze
+    GUARDRAILS_FAILED_MESSAGE = <<~MESSAGE.freeze
+      Sorry, the answer does not meet the GOV.UK Chat content guidelines.
+      This might be because it contains unclear, misleading or inappropriate information.
+
+      Please try asking about something else or rephrasing your question.
+    MESSAGE
   end
 
   belongs_to :question
@@ -26,13 +32,17 @@ class Answer < ApplicationRecord
        {
          abort_forbidden_words: "abort_forbidden_words",
          abort_no_govuk_content: "abort_no_govuk_content",
+         abort_output_guardrails: "abort_output_guardrails",
          abort_timeout: "abort_timeout",
          error_answer_service_error: "error_answer_service_error",
          error_context_length_exceeded: "error_context_length_exceeded",
+         error_output_guardrails: "error_output_guardrails",
          error_non_specific: "error_non_specific",
          success: "success",
        },
        prefix: true
+
+  enum :output_guardrail_status, { pass: "pass", fail: "fail", error: "error" }
 
   def build_sources_from_search_results(search_results)
     self.sources = search_results.map.with_index do |result, relevancy|
