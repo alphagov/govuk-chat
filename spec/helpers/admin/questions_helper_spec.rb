@@ -71,6 +71,9 @@ RSpec.describe Admin::QuestionsHelper do
         "Status",
         "Answer created at",
         "Answer",
+        "Guardrails status",
+        "Guardrails triggered",
+        "Guardrails LLM response",
       ]
 
       expect(returned_keys(result)).to match_array(expected_keys)
