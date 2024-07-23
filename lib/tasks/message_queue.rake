@@ -3,8 +3,22 @@ namespace :message_queue do
   task create_published_documents_queue: :environment do
     queue_name = ENV.fetch("PUBLISHED_DOCUMENTS_MESSAGE_QUEUE_NAME", "govuk_chat_published_documents")
     channel = Bunny.new.start.create_channel
-    exchange = Bunny::Exchange.new(channel, :topic, "published_documents")
-    channel.queue(queue_name).bind(exchange, routing_key: "#")
+
+    exchange = channel.fanout("published_documents")
+    delay_retry_dlx = channel.fanout("govuk_chat_delay_retry_dlx")
+    retry_dlx = channel.fanout("govuk_chat_retry_dlx")
+
+    # discarded messages are routed to delay_retry_dlx
+    channel.queue(queue_name, arguments: { "x-dead-letter-exchange" => delay_retry_dlx.name })
+           .bind(exchange)
+
+    # messages are queued on delay_retry_dlx for 30s before their ttl completes then are routed to the retry_dlx
+    channel.queue("#{queue_name}_delay_retry",
+                  arguments: { "x-dead-letter-exchange" => retry_dlx.name, "x-message-ttl" => 30 * 1000 })
+           .bind(delay_retry_dlx)
+
+    # messages on the retry_dlx are routed back to the original queue
+    channel.queue(queue_name).bind(retry_dlx)
   end
 
   desc "Run worker to consume published documents from Publishing API message queue"
