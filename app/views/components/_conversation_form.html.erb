@@ -98,5 +98,15 @@
     class: "govuk-body govuk-link govuk-link--no-visited-state app-c-conversation-form__survey-link js-survey-link",
     target: "_blank",
     rel: "noopener noreferrer",
+    data: {
+      module: "ga4-link-tracker",
+      ga4_link: {
+        "event_name": "navigation",
+        "index": {
+          "index_link": 1,
+        },
+        "index_total": 1,
+      },
+    },
   ) %>
 <% end %>
