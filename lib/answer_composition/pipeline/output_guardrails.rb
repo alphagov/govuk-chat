@@ -35,8 +35,6 @@ module AnswerComposition
     private
 
       attr_reader :context
-
-      delegate :question_message, to: :context
     end
   end
 end
