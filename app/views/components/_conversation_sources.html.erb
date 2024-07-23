@@ -8,13 +8,23 @@
     </span>
   </div>
 
-  <ul class="app-c-conversation-sources-list gem-c-list govuk-list govuk-list--bullet">
-    <% sources.map do |source| %>
+  <ul class="app-c-conversation-sources-list gem-c-list govuk-list govuk-list--bullet" data-module="ga4-link-tracker">
+    <% sources.map.with_index do |source, index| %>
       <%= tag.li class: "app-c-conversation-sources-list__item" do %>
         <%= link_to source.fetch(:href),
           class: "govuk-link",
           target: "_blank",
-          rel: "noopener noreferrer" do %>
+          rel: "noopener noreferrer",
+          data: {
+            ga4_link: {
+              "event_name": "navigation",
+              "index": {
+                "index_link": index + 1,
+              },
+              "index_total": sources.count,
+              "type": "chat source click",
+            },
+          } do %>
           <%= source.fetch(:title).html_safe + tag.span("(opens in new tab)",
             class: "govuk-visually-hidden") %>
         <% end %>
