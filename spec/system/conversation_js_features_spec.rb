@@ -213,11 +213,6 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
       "<p>#{answer}</p>",
     )
 
-    ## Stub the guardrails call to be OK
-    stub_openai_chat_completion(
-      array_including({ "role" => "system", "content" => Rails.configuration.llm_prompts.output_guardrails.few_shot.system_prompt }),
-      "False | None",
-      chat_options: { model: "gpt-4o", max_tokens: 25 },
-    )
+    stub_openai_output_guardrail_pass("<p>#{answer}</p>")
   end
 end

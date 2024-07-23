@@ -31,6 +31,14 @@ module StubOpenAIChat
       )
   end
 
+  def stub_openai_output_guardrail_pass(answer)
+    messages = [
+      { role: "system", content: Rails.configuration.llm_prompts.output_guardrails.few_shot.system_prompt },
+      { role: "user", content: Rails.configuration.llm_prompts.output_guardrails.few_shot.user_prompt.sub("{input}", answer) },
+    ]
+    stub_openai_chat_completion(messages, "False | None", chat_options: { model: "gpt-4o", max_tokens: 25 })
+  end
+
   def self.response_body(answer)
     {
       id: "chatcmpl-abc123",
