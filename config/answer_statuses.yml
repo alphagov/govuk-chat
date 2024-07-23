@@ -38,6 +38,11 @@ error_context_length_exceeded:
   label_colour: "red"
   description: "too many tokens sent to LLM"
   label_and_description: "Error - too many tokens sent to LLM"
+error_output_guardrails:
+  label: "Error"
+  label_colour: "red"
+  description: "invalid format from output guardrails LLM call"
+  label_and_description: "Error - invalid format from output guardrails LLM call"
 error_non_specific:
   label: "Error"
   label_colour: "red"
