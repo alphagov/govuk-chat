@@ -81,6 +81,10 @@
         Send
         <%= content_tag :span, "message to GOV.UK Chat",
           class: "govuk-visually-hidden" %>
+        <%= content_tag :span, "",
+          aria: { live: "assertive" },
+          data: { awaiting_response_text: "GOV.UK Chat is generating a response to your question" },
+          class: "govuk-visually-hidden js-conversation-form-button__response-status" %>
       <% end %>
 
       <%= content_tag :div, class: "app-c-conversation-form__button-wrapper" do %>
