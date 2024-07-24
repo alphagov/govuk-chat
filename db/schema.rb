@@ -81,6 +81,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_07_102055) do
     t.index ["created_at"], name: "index_conversations_on_created_at"
   end
 
+  create_table "early_access_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.citext "email", null: false
+    t.datetime "last_login_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_early_access_users_on_email", unique: true
+  end
+
   create_table "flipper_features", force: :cascade do |t|
     t.string "key", null: false
     t.datetime "created_at", null: false
