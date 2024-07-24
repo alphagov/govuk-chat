@@ -22,6 +22,7 @@ class Answer < ApplicationRecord
 
       Please try asking about something else or rephrasing your question.
     MESSAGE
+    LLM_CANNOT_ANSWER_MESSAGE = "Sorry, I cannot answer that question.".freeze
   end
 
   belongs_to :question

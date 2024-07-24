@@ -9,6 +9,14 @@ module AnswerComposition::Pipeline
     end
 
     def call
+      unless parsed_structured_response["answered"]
+        return context.abort_pipeline!(
+          message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
+          status: "abort_llm_cannot_answer",
+          llm_response: raw_structured_response,
+        )
+      end
+
       message = if parsed_structured_response["call_for_action"].present?
                   "#{parsed_structured_response['answer']}\n\n#{parsed_structured_response['call_for_action']}"
                 else

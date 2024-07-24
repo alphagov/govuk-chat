@@ -94,6 +94,29 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
             )
         end
       end
+
+      context "and answered is 'false'" do
+        let(:structured_response) do
+          {
+            answer: "Sorry i cannot answer that question.",
+            answered: false,
+            call_for_action: "",
+            sources_used: ["/vat-rates#vat-basics"],
+          }.to_json
+        end
+
+        it "aborts the pipeline and sets the answers status to 'abort_llm_cannot_answer'" do
+          stub_openai_chat_completion_structured_response(
+            expected_message_history,
+            structured_response,
+          )
+
+          expect { described_class.call(context) }.to throw_symbol(:abort)
+            .and change { context.answer.status }.to("abort_llm_cannot_answer")
+            .and change { context.answer.message }.to(Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE)
+            .and change { context.answer.llm_response }.to(structured_response)
+        end
+      end
     end
 
     context "when OpenAI passes JSON back that is invalid against the Output schema" do
