@@ -19,6 +19,8 @@ module AnswerComposition
           Pipeline::OutputGuardrails,
         ])
       when "govuk_chat_api"
+        #  TODO: when removing this, we should add non-null constraints to these fields on the answer_sources table:
+        #  content_chunk_id, content_chunk_digest, base_path
         GovukChatApi.call(question)
       else
         raise "Answer strategy #{answer_strategy} not configured"
