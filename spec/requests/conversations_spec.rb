@@ -147,7 +147,7 @@ RSpec.describe "ConversationsController" do
       context "and there is a question with an answer that has sources" do
         let(:conversation) { create(:conversation) }
 
-        it "renders the sources correctly" do
+        it "renders the sources correctly for answers with the success status" do
           question = create(:question, conversation:)
           answer = create(:answer, :with_sources, question:)
           first_source = answer.sources.first
@@ -159,6 +159,16 @@ RSpec.describe "ConversationsController" do
           expect(response.body)
             .to have_link(first_source.title, href: first_source.url)
             .and have_link(second_source.title, href: second_source.url)
+        end
+
+        it "doesn't render the sources for answers aborted by the LLM" do
+          question = create(:question, conversation:)
+          create(:answer, :with_sources, question:, status: :abort_llm_cannot_answer)
+
+          get show_conversation_path
+
+          expect(response).to have_http_status(:success)
+          expect(response.body).to have_no_selector(".app-c-conversation-sources")
         end
       end
 
