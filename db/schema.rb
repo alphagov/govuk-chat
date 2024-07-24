@@ -12,6 +12,7 @@
 
 ActiveRecord::Schema[7.1].define(version: 2024_08_07_102055) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "citext"
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
