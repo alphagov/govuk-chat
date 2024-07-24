@@ -49,9 +49,22 @@
             Loading your answer<span class="app-c-conversation-message__loading-ellipsis" aria-hidden="true">...</span>
           </p>
         <% else %>
-          <div class="app-c-conversation-message__answer">
+          <%= content_tag(
+            :div,
+            class: "app-c-conversation-message__answer",
+            data: {
+              module: "ga4-link-tracker",
+              ga4_link: {
+                "event_name": "navigation",
+                "type": "generic link",
+                "section": "answer",
+              },
+              ga4_track_links_only: "",
+              ga4_set_indexes: "",
+            },
+          ) do %>
             <%= render_answer_message(message) %>
-          </div>
+          <% end %>
 
           <% if sources.present? %>
             <%= render "components/conversation_sources", {
