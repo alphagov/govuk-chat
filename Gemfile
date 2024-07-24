@@ -25,6 +25,7 @@ gem "hashie"
 gem "inline_svg"
 gem "kaminari"
 gem "kramdown"
+gem "mail-notify"
 gem "opensearch-ruby" # may need opensearch-aws-sigv4 for prod
 gem "pg"
 gem "ruby-openai"
