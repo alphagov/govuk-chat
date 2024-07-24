@@ -96,6 +96,20 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_07_102055) do
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
   end
 
+  create_table "passwordless_sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "authenticatable_type"
+    t.uuid "authenticatable_id"
+    t.datetime "timeout_at", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "claimed_at"
+    t.string "token_digest", null: false
+    t.uuid "identifier", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["authenticatable_type", "authenticatable_id"], name: "authenticatable"
+    t.index ["identifier"], name: "index_passwordless_sessions_on_identifier", unique: true
+  end
+
   create_table "questions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "conversation_id", null: false
     t.string "message", null: false
