@@ -13,6 +13,7 @@ module AnswerComposition::Pipeline
       context.answer.assign_attributes(
         message:,
         status: "success",
+        llm_response: message,
       )
     end
 
