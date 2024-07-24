@@ -71,6 +71,7 @@ RSpec.describe Admin::QuestionsHelper do
         "Status",
         "Answer created at",
         "Answer",
+        "LLM Response",
         "Guardrails status",
         "Guardrails triggered",
         "Guardrails LLM response",
