@@ -29,6 +29,7 @@ gem "kramdown"
 gem "mail-notify"
 gem "nokogiri"
 gem "opensearch-ruby" # may need opensearch-aws-sigv4 for prod
+gem "passwordless"
 gem "pg"
 gem "ruby-openai"
 gem "sentry-sidekiq"
