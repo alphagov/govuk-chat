@@ -31,18 +31,16 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
     it "has the results over the configured threshold after reranking" do
       result = described_class.call(question_message)
       expect(result.results).to all be_a(Search::ResultsForQuestion::WeightedResult)
-      expect(result.results.map { |r| [r.title, r.weighted_score] }).to eq([
-        ["find this", 1.0],
-      ])
+      expect(result.results.map { |r| [r.title, r.weighted_score] })
+        .to contain_exactly(["find this", a_value_between(0.9, 1)])
     end
 
     it "has the rejected results after reranking" do
       result = described_class.call(question_message)
       expect(result.rejected_results).to all be_a(Search::ResultsForQuestion::WeightedResult)
-      expect(result.rejected_results.map { |r| [r.title, r.weighted_score] }).to eq([
-        ["not found 1", 0.4],
-        ["not found 2", 0.3],
-      ])
+      expect(result.rejected_results.map { |r| [r.title, r.weighted_score] })
+        .to contain_exactly(["not found 1", a_value_between(0.3, 0.4)],
+                            ["not found 2", a_value_between(0.2, 0.3)])
     end
 
     context "when then are more results than the configured max_results" do
@@ -51,13 +49,11 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
 
       it "respects the max_results configuration value" do
         result = described_class.call(question_message)
-        expect(result.results.map { |r| [r.title, r.weighted_score] }).to eq([
-          ["find this", 1.0],
-          ["not found 1", 0.4],
-        ])
-        expect(result.rejected_results.map { |r| [r.title, r.weighted_score] }).to eq([
-          ["not found 2", 0.3],
-        ])
+        expect(result.results.map { |r| [r.title, r.weighted_score] })
+          .to contain_exactly(["find this", a_value_between(0.9, 1)],
+                              ["not found 1", a_value_between(0.3, 0.4)])
+        expect(result.rejected_results.map { |r| [r.title, r.weighted_score] })
+          .to contain_exactly(["not found 2", a_value_between(0.2, 0.3)])
       end
     end
   end

@@ -1,7 +1,7 @@
 RSpec.describe "Admin::SearchController", :chunked_content_index do
   describe "GET :index" do
     before do
-      stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS", { "guide" => 1.2 })
+      stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS", { "guide" => 1.2, "answer" => 0.5 })
       allow(Rails.configuration.search.thresholds).to receive_messages(minimum_score: 0.6, max_results: 5)
     end
 
@@ -48,6 +48,7 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
             chunk_id => chunk_to_find,
             "anything" => build(:chunked_content_record,
                                 title: "Shouldn't find this",
+                                document_type: "answer",
                                 openai_embedding: close_embedding),
           })
         end
@@ -56,11 +57,10 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
           get admin_search_path, params: { search_text: }
 
           expect(response.body).to have_selector("#used-results") do |result|
-            back_link = admin_search_path(search_text:)
-            href = admin_chunk_path(id: chunk_id, params: { back_link:, score_calculation: "1.0 * 1.2 = 1.2" })
-            expect(result).to have_link("Looking for this one", href:)
+            expect(result).to have_link("Looking for this one")
             expect(result).to have_selector("td", text: "Sub header")
-            expect(result).to have_selector("td", text: "1.2")
+            # matching a score that is ~1.2
+            expect(result).to have_selector("td", text: /1.\d+/)
           end
         end
 

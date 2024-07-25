@@ -19,8 +19,8 @@ module Search
         dimension: OPENAI_EMBEDDING_DIMENSIONS,
         method: {
           name: "hnsw",
-          space_type: "l2",
-          engine: "faiss",
+          space_type: "cosinesimil",
+          engine: "nmslib",
         },
       },
       digest: { type: "keyword" },

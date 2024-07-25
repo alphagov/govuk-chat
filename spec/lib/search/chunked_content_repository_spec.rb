@@ -221,7 +221,9 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
 
     it "returns an array of Result objects" do
       result = repository.search_by_embedding(openai_embedding, max_chunks: 10)
-      expected_attributes = chunked_content_records.first.except(:openai_embedding).merge(score: 1)
+      expected_attributes = chunked_content_records.first
+                                                   .except(:openai_embedding)
+                                                   .merge(score: a_value_between(0.9, 1))
 
       expect(result).to all be_a(Search::ChunkedContentRepository::Result)
       expect(result.first).to have_attributes(**expected_attributes)
