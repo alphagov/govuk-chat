@@ -55,7 +55,7 @@
     @include govuk-typography-weight-bold($important: false);
     font-size: 16px; // directly set the font size to prevent govuk-font mixins from reducing it on smaller screens
     border-bottom: 3px solid transparent;
-    padding: govuk-spacing(2) govuk-spacing(1);
+    padding: 7px govuk-spacing(1) govuk-spacing(2);
     top: govuk-spacing(2);
 
     // removes the default chevron
