@@ -1,5 +1,7 @@
 module Chunking
   class HtmlHierarchicalChunker
+    # block elements to extract content from
+    ELEMENTS_TO_FLATTEN = %w[div section article main details nav header footer summary].freeze
     def initialize(html)
       @doc = Nokogiri::HTML::DocumentFragment.parse(html)
       @headers = []
@@ -13,7 +15,8 @@ module Chunking
       remove_footnotes
       clean_attributes
       remove_h1s
-      split_nodes(doc.children)
+      nodes = flatten_html(doc.children)
+      split_nodes(nodes)
       chunks
     end
 
@@ -23,11 +26,6 @@ module Chunking
 
     def split_nodes(child_nodes)
       child_nodes.each do |node|
-        if node.name == "div"
-          save_chunk
-          split_nodes(node.children)
-          next
-        end
         if header?(node)
           save_chunk
           new_header(node)
@@ -36,6 +34,17 @@ module Chunking
         end
       end
       save_chunk
+    end
+
+    def flatten_html(child_nodes)
+      child_nodes.inject([]) do |memo, node|
+        if ELEMENTS_TO_FLATTEN.include?(node.name)
+          memo += flatten_html(node.children)
+        else
+          memo << node
+        end
+        memo
+      end
     end
 
     def header?(node)

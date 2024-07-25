@@ -23,7 +23,7 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
       expect(headers.first.fragment).to eq("heading-2")
     end
 
-    context "with divs at top level" do
+    context "with content within a container element" do
       let(:html) do
         <<~HTML
           <div class="govspeak">
@@ -51,24 +51,40 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
       end
     end
 
-    context "with divs below the top level" do
+    context "with html within a variety of container elements" do
       let(:html) do
         <<~HTML
-          <div class="govspeak">
-            <h2>First subheading</h2>
-            <p>First paragraph under subheading</p>
-            <p>Second paragraph under subheading</p>
+          <main>
             <div>
-              <h2>Second subheading</h2>
-              <p>Another paragraph under the second subheading</p>
+              <header>
+                <h2>First subheading</h2>
+                <p>First paragraph under subheading</p>
+              </header>
+              <nav>
+                <article>
+                  <p>Second paragraph under subheading</p>
+                </article>
+              </nav>
+              <section>
+                <h2>Second subheading</h2>
+                <p>Another paragraph under the second subheading</p>
+              </section>
+              <footer>
+                <details>
+                  <summary>
+                    <h2>Third subheading</h2>
+                  </summary>
+                  <div>
+                    <p>Paragraph under third subheading</p>
+                  </div>
+                </details>
+              </footer>
             </div>
-            <h2>Third subheading</h2>
-            <p>Paragraph under third subheading</p>
-          </div>
+          </main>
         HTML
       end
 
-      it "ignores the divs and produces the same format" do
+      it "ignores the container element and produces the same format" do
         output = described_class.call(html)
         expect(output).to eq([
           build_html_chunk(
@@ -87,7 +103,7 @@ RSpec.describe Chunking::HtmlHierarchicalChunker do
       end
     end
 
-    context "without divs at top level including h1 tags" do
+    context "without container elements at top level including h1 tags" do
       let(:html) do
         <<~HTML
           <h1>A different main title here</h1>
