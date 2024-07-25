@@ -9,27 +9,30 @@ module AnswerComposition::Pipeline
     end
 
     def call
-      message = if structured_response["call_for_action"].present?
-                  "#{structured_response['answer']}\n\n#{structured_response['call_for_action']}"
+      message = if parsed_structured_response["call_for_action"].present?
+                  "#{parsed_structured_response['answer']}\n\n#{parsed_structured_response['call_for_action']}"
                 else
-                  structured_response["answer"]
+                  parsed_structured_response["answer"]
                 end
 
       context.answer.assign_attributes(
         message:,
         status: "success",
+        llm_response: raw_structured_response,
       )
     rescue JSON::Schema::ValidationError => e
       context.abort_pipeline!(
         message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
         status: "error_invalid_llm_response",
         error_message: error_message(e),
+        llm_response: raw_structured_response,
       )
     rescue JSON::ParserError => e
       context.abort_pipeline!(
         message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
         status: "error_invalid_llm_response",
         error_message: error_message(e),
+        llm_response: raw_structured_response,
       )
     end
 
@@ -37,16 +40,18 @@ module AnswerComposition::Pipeline
 
     attr_reader :context
 
-    def structured_response
-      @structured_response ||= begin
-        structured_response = JSON.parse(
-          openai_response.dig(
-            "choices", 0, "message", "tool_calls", 0, "function", "arguments"
-          ),
-        )
-        JSON::Validator.validate!(output_schema, structured_response)
-        structured_response
+    def parsed_structured_response
+      @parsed_structured_response ||= begin
+        parsed_structured_response = JSON.parse(raw_structured_response)
+        JSON::Validator.validate!(output_schema, parsed_structured_response)
+        parsed_structured_response
       end
+    end
+
+    def raw_structured_response
+      @raw_structured_response ||= openai_response.dig(
+        "choices", 0, "message", "tool_calls", 0, "function", "arguments"
+      )
     end
 
     def openai_response

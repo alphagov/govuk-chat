@@ -63,6 +63,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
             .to have_attributes(
               message: "VAT (Value Added Tax) is a tax applied to most goods and services in the UK.\n\nFor more detailed information, you can visit [VAT Rates](https://www.gov.uk/vat-rates)",
               status: "success",
+              llm_response: structured_response,
             )
         end
       end
@@ -89,6 +90,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
             .to have_attributes(
               message: "VAT (Value Added Tax) is a tax applied to most goods and services in the UK.",
               status: "success",
+              llm_response: structured_response,
             )
         end
       end
@@ -110,6 +112,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
           status: "error_invalid_llm_response",
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           error_message: "class: JSON::Schema::ValidationError message: The property '#/' did not contain a required property of 'answered'",
+          llm_response: structured_response,
         )
 
         described_class.call(context)
@@ -132,6 +135,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
           status: "error_invalid_llm_response",
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           error_message: "class: JSON::ParserError message: unexpected token at 'this will blow up'",
+          llm_response: structured_response,
         )
 
         described_class.call(context)
