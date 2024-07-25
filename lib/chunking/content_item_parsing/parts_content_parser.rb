@@ -9,7 +9,7 @@ module Chunking
 
           {
             title: part["title"],
-            url: "#{base_path}/#{part['slug']}",
+            exact_path: "#{base_path}/#{part['slug']}",
             chunks: Chunking::HtmlHierarchicalChunker.call(html),
           }
         end
@@ -22,7 +22,7 @@ module Chunking
               html_content: html_chunk.html_content,
               heading_hierarchy: [chunked_part[:title]] + html_chunk.headers.map(&:text_content),
               chunk_index:,
-              chunk_url: append_fragment(chunked_part[:url], html_chunk.fragment),
+              exact_path: append_fragment(chunked_part[:exact_path], html_chunk.fragment),
             )
 
             chunk_index += 1

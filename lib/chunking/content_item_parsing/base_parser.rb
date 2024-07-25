@@ -24,7 +24,7 @@ module Chunking
             html_content: html_chunk.html_content,
             heading_hierarchy: html_chunk.headers.map(&:text_content),
             chunk_index: index,
-            chunk_url: append_fragment(base_path, html_chunk.fragment),
+            exact_path: append_fragment(base_path, html_chunk.fragment),
           )
         end
       end

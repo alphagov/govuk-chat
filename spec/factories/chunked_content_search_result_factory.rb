@@ -9,12 +9,12 @@ FactoryBot.define do
     heading_hierarchy { ["Heading 1", "Heading 2"] }
     digest { Digest::SHA2.new(256).hexdigest(rand.to_s) }
     base_path { "/base-path" }
+    exact_path { "#{base_path}#anchor" }
     locale { "en" }
     document_type { "guide" }
     parent_document_type { nil }
     title { "Title" }
     description { "Description" }
-    url { "#{base_path}#anchor" }
     plain_content { "Some content" }
     _id { "#{content_id}_#{locale}_#{chunk_index}" }
 

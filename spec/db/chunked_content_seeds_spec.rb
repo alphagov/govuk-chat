@@ -9,12 +9,12 @@ RSpec.describe "chunked_content_seeds" do
     # alphanumeric, underscore or dash characters
     base_path_pattern = /\A(\/(\w|-)+)+\Z/
     # Same as base_path_pattern but with an obtional fragment
-    url_pattern = /\A(\/(\w|-)+)+(#(\w|-)+)?\Z/
+    exact_path_pattern = /\A(\/(\w|-)+)+(#(\w|-)+)?\Z/
 
     chunk_match = match(
       "html_content" => instance_of(String),
       "heading_hierarchy" => all(match(instance_of(String))),
-      "url" => match(url_pattern),
+      "exact_path" => match(exact_path_pattern),
     )
 
     expect(seed_data).to all(

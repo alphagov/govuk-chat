@@ -5,10 +5,10 @@
   chunks:
     - html_content: "<p>Start your application for student finance as early as possible to ensure you receive your funds on time. You will need your personal information, course details, and bank account information.</p>"
       heading_hierarchy: ["Applying for Student Finance"]
-      url: "/apply-for-student-finance/applying-for-student-finance"
+      exact_path: "/apply-for-student-finance/applying-for-student-finance"
     - html_content: "<p>Keep track of application deadlines and required documents to avoid delays. Late applications might result in delayed payments, affecting your ability to pay for tuition and living expenses on time.</p>"
       heading_hierarchy: ["Application Deadlines"]
-      url: "/apply-for-student-finance/application-deadlines"
+      exact_path: "/apply-for-student-finance/application-deadlines"
 
 - base_path: "/school-admissions"
   document_type: "guide"
@@ -17,10 +17,10 @@
   chunks:
     - html_content: "<p>Understand the criteria for school admissions to choose the right school for your child. Consider the school's academic performance, OFSTED ratings, and proximity to your home.</p>"
       heading_hierarchy: ["Choosing a School"]
-      url: "/school-admissions/choosing-a-school"
+      exact_path: "/school-admissions/choosing-a-school"
     - html_content: "<p>Submit your application by the national deadline, typically in January, for primary school admissions and October for secondary schools. Late applications have less chance of securing a place at your preferred school.</p>"
       heading_hierarchy: ["Application Process"]
-      url: "/school-admissions/application-process"
+      exact_path: "/school-admissions/application-process"
 
 - base_path: "/check-qualification-recognised"
   document_type: "answer"
@@ -29,7 +29,7 @@
   chunks:
     - html_content: "<p>Use the UK NARIC service to check if your overseas qualifications meet the UK standards. This is essential for pursuing further education or professional employment in the UK.</p>"
       heading_hierarchy: ["Using UK NARIC"]
-      url: "/check-qualification-recognised/using-uk-naric"
+      exact_path: "/check-qualification-recognised/using-uk-naric"
 
 - base_path: "/student-loan-repayment"
   document_type: "guide"
@@ -38,10 +38,10 @@
   chunks:
     - html_content: "<p>Understand the different repayment plans available for your student loan. Repayments are income-contingent and start once you earn above a certain threshold.</p>"
       heading_hierarchy: ["Repayment Plans"]
-      url: "/student-loan-repayment/repayment-plans"
+      exact_path: "/student-loan-repayment/repayment-plans"
     - html_content: "<p>Keep your contact details up to date with the Student Loans Company to ensure you receive all necessary information about your loan repayment status.</p>"
       heading_hierarchy: ["Managing Your Loan"]
-      url: "/student-loan-repayment/managing-your-loan"
+      exact_path: "/student-loan-repayment/managing-your-loan"
 
 - base_path: "/graduate-employment-services"
   document_type: "transaction"
@@ -50,7 +50,7 @@
   chunks:
     - html_content: "<p>Utilize the graduate employment services offered by your university to enhance your job prospects. These services often include CV workshops, interview preparation, and job placement opportunities.</p>"
       heading_hierarchy: ["Utilizing University Services"]
-      url: "/graduate-employment-services/utilizing-university-services"
+      exact_path: "/graduate-employment-services/utilizing-university-services"
     - html_content: "<p>Engage in networking events and career fairs organized through these services to connect with potential employers and learn about job openings in your field.</p>"
       heading_hierarchy: ["Networking and Career Fairs"]
-      url: "/graduate-employment-services/networking-and-career-fairs"
+      exact_path: "/graduate-employment-services/networking-and-career-fairs"

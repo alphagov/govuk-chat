@@ -29,8 +29,8 @@ RSpec.describe Answer do
       expect(answer.sources.first)
         .to have_attributes(
           relevancy: 0,
-          exact_path: search_result_a.url,
           base_path: search_result_a.base_path,
+          exact_path: search_result_a.exact_path,
           title: search_result_a.title,
           content_chunk_id: search_result_a._id,
           content_chunk_digest: search_result_a.digest,
@@ -39,8 +39,8 @@ RSpec.describe Answer do
       expect(answer.sources.second)
         .to have_attributes(
           relevancy: 1,
-          exact_path: search_result_b.url,
           base_path: search_result_b.base_path,
+          exact_path: search_result_b.exact_path,
           title: search_result_b.title,
           content_chunk_id: search_result_b._id,
           content_chunk_digest: search_result_b.digest,
@@ -54,7 +54,7 @@ RSpec.describe Answer do
       answer.build_sources_from_search_results([search_result])
 
       expect(answer.sources.length).to be(1)
-      expect(answer.sources.first).to have_attributes(exact_path: search_result.url)
+      expect(answer.sources.first).to have_attributes(exact_path: search_result.exact_path)
     end
   end
 end

@@ -56,7 +56,7 @@ namespace :search do
                                        html_content: chunk["html_content"],
                                        heading_hierarchy: chunk["heading_hierarchy"],
                                        chunk_index: index,
-                                       chunk_url: chunk["url"])
+                                       exact_path: chunk["exact_path"])
       end
     end
 
