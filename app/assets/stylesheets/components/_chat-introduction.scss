@@ -18,7 +18,7 @@
 
 .app-c-chat-introduction__title {
   @include govuk-font($size: 48, $weight: bold);
-  margin: govuk-spacing(6) 0;
+  margin: govuk-spacing(6) 0 govuk-spacing(5);
 }
 
 .app-c-chat-introduction__lead-paragraph {
