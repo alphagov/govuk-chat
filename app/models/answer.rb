@@ -4,6 +4,9 @@ class Answer < ApplicationRecord
       "business or trade and I'll use GOV.UK guidance to answer it.".freeze
     NO_CONTENT_FOUND_REPONSE = "Sorry, I can’t find anything on GOV.UK to help me answer your question. " \
       "Please try asking a different question.".freeze
+    CONTEXT_LENGTH_EXCEEDED_RESPONSE = "Sorry, your last question was too complex for me to answer. " \
+      "Could you make your question more specific? You can also try splitting it into multiple " \
+      "smaller questions and asking them separately.".freeze
     OPENAI_CLIENT_ERROR_RESPONSE = <<~MESSAGE.freeze
       Sorry, there is a problem with OpenAI's API. Try again later.
 
