@@ -23,4 +23,5 @@
 
 .app-c-chat-introduction__lead-paragraph {
   @include govuk-font($size: 36, $weight: regular);
+  margin-bottom: govuk-spacing(6);
 }
