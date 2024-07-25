@@ -100,7 +100,6 @@
 
 .app-c-header-row {
   margin-top: govuk-spacing(1);
-  margin-bottom: govuk-spacing(1);
 
   @include govuk-media-query($until: tablet) {
     margin-bottom: govuk-spacing(3);
