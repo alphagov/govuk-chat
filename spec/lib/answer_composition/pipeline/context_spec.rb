@@ -39,6 +39,18 @@ RSpec.describe AnswerComposition::Pipeline::Context do
       instance.abort_pipeline(**args)
       expect(instance.answer).to have_attributes(args)
     end
+
+    it "sets all sources to unused" do
+      instance = described_class.new(build(:question))
+      instance.search_results = [
+        build(:chunked_content_search_result),
+        build(:chunked_content_search_result),
+      ]
+
+      instance.abort_pipeline
+
+      expect(instance.answer.sources.map(&:used)).to all(be false)
+    end
   end
 
   describe "#abort_pipeline!" do
