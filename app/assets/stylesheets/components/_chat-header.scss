@@ -140,8 +140,8 @@
   text-transform: capitalize;
   @include govuk-font($size: 19, $weight: regular);
   letter-spacing: 0;
-  padding: 7px;
-  margin-left: 3px;
+  padding: govuk-spacing(1) govuk-spacing(2) 7px;
+  margin-left: govuk-spacing(1);
   display: inline-block;
   vertical-align: middle;
 
