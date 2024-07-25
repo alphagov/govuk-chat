@@ -71,6 +71,33 @@
           <%= yield %>
         </div>
       </main>
+
+      <%= render "govuk_publishing_components/components/layout_footer", {
+        navigation: [
+          {
+            title: "GOV.UK Chat",
+            columns: 3,
+            items: [
+              {
+                href: "/chat/about",
+                text: "About",
+              },
+              {
+                href: "/chat/support",
+                text: "Help and support",
+              },
+              {
+                href: "/chat/privacy",
+                text: "Privacy notice",
+              },
+              {
+                href: "/chat/accessibility",
+                text: "Accessibility statement",
+              },
+            ],
+          },
+        ],
+      } %>
     <% end %>
 
     <%= javascript_include_tag "application-legacy", nonce: true %>

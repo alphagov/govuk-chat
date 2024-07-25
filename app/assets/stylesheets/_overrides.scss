@@ -1,6 +1,52 @@
-// We're not using a footer a typical grey footer and we therefore want
-// the body element to span the whole page to not reveal the background
-// colour of the html element
+// We're not using a typical grey footer (except on the landing page and help pages) 
+// and we therefore want the body element to span the whole page to not reveal the 
+// background colour of the html element
 .govuk-template__body {
   min-height: 100vh;
+}
+
+// Footer overrides
+.gem-c-layout-footer {
+  .govuk-footer__heading.govuk-heading-m {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  // When we call the footer component in application.html.erb, we specify that it should
+  // span 3 columns in order to get the .govuk-grid-column-full class applied as we want
+  // it to span the full width. However this is also causes the .govuk-footer__list--columns-3
+  // class to be applied to list items. But we want to keep list items all in the same column so
+  // we therefore unintuitively override the column-count rule to be 1 rather than 3.
+  .govuk-footer__list.govuk-footer__list--columns-3 {
+    column-count: 1;
+  }
+
+  .govuk-footer__list {
+    padding-top: govuk-spacing(2);
+    padding-bottom: govuk-spacing(6);
+    margin-bottom: govuk-spacing(6);
+    border-bottom: 1px solid govuk-colour("mid-grey");
+
+    @include govuk-media-query($from: tablet) {
+      padding-bottom: 0;
+      padding-top: 0;
+      margin-bottom: 0;
+      border-bottom: none;
+    }
+  }
+
+  .govuk-footer__list-item {
+    display: block;
+
+    @include govuk-media-query($from: tablet) {
+      display: inline-block;
+      width: auto;
+      margin-right: govuk-spacing(4);
+    }
+  }
+  
+  .govuk-footer__section-break {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
 }
