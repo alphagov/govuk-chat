@@ -1,16 +1,18 @@
-<%= render "govuk_publishing_components/components/table", {
-        caption:,
-        head: [{ text: "Title" },
-               { text: "Heading"},
-               { text: "Text" },
-               { text: "Score", format: "numeric"}],
-      rows: results.map do |result|
-              [{ text: link_to(result.title, admin_chunk_path(id: result._id,
-                                                              params: { back_link: admin_search_path(search_text: search_text),
-                                                                        score_calculation: result.score_calculation }),
-                              class: "govuk-link") },
-              { text: result.heading_hierarchy.last },
-              { text: result.plain_content.truncate(100) },
-              { text: result.weighted_score, format: "numeric" }]
-            end,
-} %>
+<%
+rows = results.map do |result|
+  admin_link = admin_chunk_path(id: result._id,
+                                params: { back_link: admin_search_path(search_text: search_text),
+                                          score_calculation: result.score_calculation })
+
+  [{ text: link_to(result.title, admin_link, class: "govuk-link") },
+   { text: result.heading_hierarchy.last },
+   { text: result.plain_content.truncate(100) },
+   { text: result.weighted_score, format: "numeric" }]
+end
+
+head = [{ text: "Title" },
+        { text: "Heading"},
+        { text: "Text" },
+        { text: "Score", format: "numeric"}]
+%>
+<%= render "govuk_publishing_components/components/table", { caption:, head:, rows: } %>

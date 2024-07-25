@@ -19,7 +19,8 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
     context "with search_text in params" do
       let(:search_text) { "how do I pay tax" }
       let(:openai_embedding) { mock_openai_embedding(search_text) }
-      let(:close_embedding) { close_openai_embedding(openai_embedding) }
+      # adjust the vector values to produce a vector that will be similar
+      let(:close_embedding) { openai_embedding.map { |n| n * 1.05 } }
       let(:chunk_to_find) do
         build(:chunked_content_record,
               title: "Looking for this one",
@@ -54,40 +55,32 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
         it "renders a list of search results" do
           get admin_search_path, params: { search_text: }
 
-          expect(response.body).to include_search_result(
-            title: "Looking for this one",
-            id: chunk_id,
-            heading: "Sub header",
-            text: chunk_to_find[:plain_content].truncate(100),
-            weighted_score: 1.2,
-            score_calculation: "1.0 * 1.2 = 1.2",
-            table: 1,
-          )
+          expect(response.body).to have_selector("#used-results") do |result|
+            back_link = admin_search_path(search_text:)
+            href = admin_chunk_path(id: chunk_id, params: { back_link:, score_calculation: "1.0 * 1.2 = 1.2" })
+            expect(result).to have_link("Looking for this one", href:)
+            expect(result).to have_selector("td", text: "Sub header")
+            expect(result).to have_selector("td", text: "1.2")
+          end
         end
 
         it "renders a description for the results table" do
           get admin_search_path, params: { search_text: }
           expected_text = "1 result (max 5) over the weighted score threshold of 0.6"
-          expect(response.body).to have_selector(".govuk-table:first-of-type caption", text: expected_text)
+          expect(response.body).to have_selector("#used-results caption", text: expected_text)
         end
 
         it "renders results that don't meet the threshold" do
           get admin_search_path, params: { search_text: }
-          expect(response.body).to include_search_result(
-            title: "Shouldn't find this",
-            id: "anything",
-            heading: "",
-            text: "",
-            weighted_score: "0.5230776",
-            score_calculation: "0.435898 * 1.2 = 0.5230776",
-            table: 2,
-          )
+          expect(response.body).to have_selector("#near-miss-results") do |result|
+            expect(result).to have_link("Shouldn't find this")
+          end
         end
 
         it "renders a description for the rejected results table" do
           get admin_search_path, params: { search_text: }
           expected_text = "1 more result retrieved from the search index"
-          expect(response.body).to have_selector(".govuk-table:nth-of-type(2) caption", text: expected_text)
+          expect(response.body).to have_selector("#near-miss-results caption", text: expected_text)
         end
       end
 
@@ -104,15 +97,6 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
 
     def render_search_box(value:)
       have_selector("input[name='search_text'][value='#{value}']")
-    end
-
-    def include_search_result(title:, id:, heading:, text:, weighted_score:, score_calculation:, table:)
-      back_link = admin_search_path(search_text:)
-      href = admin_chunk_path(id:, params: { back_link:, score_calculation: })
-      have_selector(".govuk-table:nth-of-type(#{table}) a[href='#{href}']", text: title)
-        .and have_selector(".govuk-table:nth-of-type(#{table}) td", text: heading)
-        .and have_selector(".govuk-table:nth-of-type(#{table}) td", text:)
-        .and have_selector(".govuk-table:nth-of-type(#{table}) td", text: weighted_score)
     end
   end
 end

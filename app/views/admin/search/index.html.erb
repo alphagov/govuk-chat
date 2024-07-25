@@ -15,14 +15,18 @@
             description: "Please rephrase and try again",
         } %>
     <% else %>
-      <%= render "results_table",
-                 results: @result_set.results,
-                 search_text: @search_text,
-                 caption: "#{@result_set.results.count} #{'result'.pluralize(@result_set.results.count)} (max #{Rails.configuration.search.thresholds.max_results}) "\
-                          "over the weighted score threshold of #{Rails.configuration.search.thresholds.minimum_score}" %>
-      <%= render "results_table",
-                 results: @result_set.rejected_results,
-                 search_text: @search_text,
-                 caption: "#{@result_set.rejected_results.count} more #{'result'.pluralize(@result_set.results.count)} retrieved from the search index" %>
+      <div id="used-results">
+        <%= render "results_table",
+                   results: @result_set.results,
+                   search_text: @search_text,
+                   caption: "#{@result_set.results.count} #{'result'.pluralize(@result_set.results.count)} (max #{Rails.configuration.search.thresholds.max_results}) "\
+                            "over the weighted score threshold of #{Rails.configuration.search.thresholds.minimum_score}" %>
+      </div>
+      <div id="near-miss-results">
+        <%= render "results_table",
+                   results: @result_set.rejected_results,
+                   search_text: @search_text,
+                   caption: "#{@result_set.rejected_results.count} more #{'result'.pluralize(@result_set.results.count)} retrieved from the search index" %>
+      </div>
     <% end %>
 <% end %>
