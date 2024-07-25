@@ -100,4 +100,81 @@ RSpec.describe AnswerComposition::Pipeline::Context do
         .to change { instance.answer.sources.length }.from(0)
     end
   end
+
+  describe "#update_sources_from_exact_paths_used" do
+    let(:instance) { described_class.new(build(:question)) }
+    let(:answer) { instance.answer }
+
+    it "sets used to 'true' for used sources" do
+      source = build(:answer_source, exact_path: "/vat-rates#vat", used: false)
+      answer.sources = [source]
+
+      instance.update_sources_from_exact_paths_used([source.exact_path])
+
+      expect(answer.sources).to contain_exactly(source)
+      expect(source.used).to be(true)
+    end
+
+    it "sets used to 'false' for unused sources" do
+      used_source = build(:answer_source, exact_path: "/vat-rates#vat")
+      unused_source = build(:answer_source, exact_path: "/vat-rates#vat-basics", used: true)
+      answer.sources = [used_source, unused_source]
+
+      instance.update_sources_from_exact_paths_used([used_source.exact_path])
+
+      expect(answer.sources).to contain_exactly(used_source, unused_source)
+      expect(unused_source.used).to be(false)
+    end
+
+    it "sets all sources used to 'true' if no sources are passed in" do
+      first_source = build(:answer_source, exact_path: "/vat-rates#vat", used: false)
+      second_source = build(:answer_source, exact_path: "/vat-rates#vat", used: false)
+      answer.sources = [first_source, second_source]
+
+      instance.update_sources_from_exact_paths_used([])
+
+      expect(answer.sources).to contain_exactly(first_source, second_source)
+      expect(first_source.used).to be(true)
+      expect(second_source.used).to be(true)
+    end
+
+    it "handles invalid exact_paths gracefully" do
+      source = build(:answer_source, exact_path: "/vat-rates#vat", used: false)
+      answer.sources = [source]
+
+      instance.update_sources_from_exact_paths_used(["/made-up-path"])
+
+      expect(answer.sources).to contain_exactly(source)
+      expect(source.used).to be(true)
+    end
+
+    it "orders the relevancy of sources based on the order of the exact_paths passed in" do
+      first_used_source = build(:answer_source, exact_path: "/vat-rates#vat", relevancy: 1)
+      second_used_source = build(:answer_source, exact_path: "/vat-rates#vat-basics", relevancy: 0)
+      answer.sources = [second_used_source, first_used_source]
+
+      instance.update_sources_from_exact_paths_used(
+        [
+          first_used_source.exact_path,
+          second_used_source.exact_path,
+        ],
+      )
+
+      expect(answer.sources).to contain_exactly(first_used_source, second_used_source)
+      expect(first_used_source.relevancy).to eq(0)
+      expect(second_used_source.relevancy).to eq(1)
+    end
+
+    it "orders used sources before unused sources" do
+      unused_source = build(:answer_source, exact_path: "/vat-rates#vat", relevancy: 0)
+      used_source = build(:answer_source, exact_path: "/vat-rates#vat-basics", relevancy: 1)
+      answer.sources = [unused_source, used_source]
+
+      instance.update_sources_from_exact_paths_used([used_source.exact_path])
+
+      expect(answer.sources).to contain_exactly(used_source, unused_source)
+      expect(used_source.relevancy).to eq(0)
+      expect(unused_source.relevancy).to eq(1)
+    end
+  end
 end
