@@ -6,8 +6,8 @@ module AnswersHelper
     end
   end
 
-  def group_answer_sources_by_base_path(answer)
-    sources_by_base_path = answer.sources.group_by(&:base_path)
+  def group_used_answer_sources_by_base_path(answer)
+    sources_by_base_path = answer.sources.used.group_by(&:base_path)
 
     sources_by_base_path.map do |base_path, group|
       result = group.first
