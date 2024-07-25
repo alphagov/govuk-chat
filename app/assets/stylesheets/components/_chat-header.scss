@@ -147,6 +147,10 @@
   @include govuk-media-query($until: 500px) {
     margin-top: govuk-spacing(2);
   }
+  
+  @include govuk-media-query($until: tablet) {
+    margin-left: 0;
+  }
 }
 
 .app-c-header__nav-container--float-right-desktop {
