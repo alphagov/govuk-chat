@@ -9,6 +9,13 @@
   }
 }
 
+.app-c-chat-introduction__svg {
+  @include govuk-media-query($until: 500px) {
+    height: 70px;
+    width: 70px;
+  }
+}
+
 .app-c-chat-introduction__title {
   @include govuk-font($size: 48, $weight: bold);
   margin: govuk-spacing(6) 0;
