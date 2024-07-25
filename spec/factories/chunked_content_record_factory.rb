@@ -15,7 +15,7 @@ FactoryBot.define do
     description { "Description" }
     url { "/base-path#anchor" }
     plain_content { "Some content" }
-    openai_embedding { [rand(-0.9...0.9)] * 1536 }
+    openai_embedding { [rand(-0.9...0.9)] * Search::ChunkedContentRepository::OPENAI_EMBEDDING_DIMENSIONS }
 
     initialize_with { attributes }
   end

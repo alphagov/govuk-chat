@@ -1,5 +1,6 @@
 module Search
   class ChunkedContentRepository
+    OPENAI_EMBEDDING_DIMENSIONS = 3072
     MAPPINGS = {
       content_id: { type: "keyword" },
       locale: { type: "keyword" },
@@ -15,7 +16,7 @@ module Search
       plain_content: { type: "text" },
       openai_embedding: {
         type: "knn_vector",
-        dimension: 1536, # expecting text-embedding-3-small model
+        dimension: OPENAI_EMBEDDING_DIMENSIONS,
         method: {
           name: "hnsw",
           space_type: "l2",

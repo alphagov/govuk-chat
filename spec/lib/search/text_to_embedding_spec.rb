@@ -8,7 +8,7 @@ RSpec.describe Search::TextToEmbedding do
 
       expect(embedding)
         .to be_an_instance_of(Array)
-        .and have_attributes(length: 1536)
+        .and have_attributes(length: Search::ChunkedContentRepository::OPENAI_EMBEDDING_DIMENSIONS)
     end
 
     it "returns an array of embedding arrays for an array input" do
@@ -20,7 +20,7 @@ RSpec.describe Search::TextToEmbedding do
       expect(embedding_collection)
         .to be_an_instance_of(Array)
         .and have_attributes(length: 2)
-        .and all(have_attributes(length: 1536))
+        .and all(have_attributes(length: Search::ChunkedContentRepository::OPENAI_EMBEDDING_DIMENSIONS))
     end
 
     it "does multiple requests to OpenAI when the number of strings is greater than the batch size" do

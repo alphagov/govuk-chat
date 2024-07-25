@@ -1,7 +1,6 @@
 module Search
   class TextToEmbedding
-    # TODO: confirm this model
-    EMBEDDING_MODEL = "text-embedding-3-small".freeze
+    EMBEDDING_MODEL = "text-embedding-3-large".freeze
     INPUT_TOKEN_LIMIT = 8191
     BATCH_SIZE = 50
 

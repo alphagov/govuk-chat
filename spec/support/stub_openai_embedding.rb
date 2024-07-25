@@ -1,6 +1,6 @@
 module StubOpenAIEmbedding
   def stub_openai_embedding(input)
-    model = "text-embedding-3-small"
+    model = "text-embedding-3-large"
     input = Array(input)
     data = input.map.with_index do |text, index|
       { object: "embedding", embedding: mock_openai_embedding(text), index: }
@@ -31,7 +31,7 @@ module StubOpenAIEmbedding
 
   # This returns a mock vector embedding which is deterministic based on the
   # text given
-  def mock_openai_embedding(text, dimensions: 1536)
+  def mock_openai_embedding(text, dimensions: Search::ChunkedContentRepository::OPENAI_EMBEDDING_DIMENSIONS)
     random_generator = Random.new(text.bytes.sum)
     dimensions.times.map { random_generator.rand }
   end
