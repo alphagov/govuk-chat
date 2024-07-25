@@ -73,6 +73,10 @@ module Admin
                       ),
                   },
                   {
+                    field: "LLM Response",
+                    value: render("components/code_snippet", content: answer.llm_response),
+                  },
+                  {
                     field: "Guardrails status",
                     value: answer.output_guardrail_status,
                   },

@@ -38,7 +38,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIUnstructuredAnswerComposer, :c
       expect(request).to have_been_made
     end
 
-    it "calls OpenAI chat endpoint updates the message and status on the context's answer" do
+    it "calls OpenAI chat endpoint updates the message, status and llm response on the context's answer" do
       stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
 
       described_class.call(context)
@@ -46,6 +46,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIUnstructuredAnswerComposer, :c
       answer = context.answer
       expect(answer.message).to eq("OpenAI responded with...")
       expect(answer.status).to eq("success")
+      expect(answer.llm_response).to eq("OpenAI responded with...")
     end
 
     def llm_prompts
