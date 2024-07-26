@@ -64,6 +64,19 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
           end
         end
 
+        it "includes score calculation and back links in links to results" do
+          get admin_search_path, params: { search_text: }
+
+          expected_link = admin_chunk_path(id: chunk_id, back_link: admin_search_path(search_text:))
+          score_calculation_pattern = /0.9\d+
+                                      #{Regexp.escape(CGI.escape(' * '))}
+                                      1.2
+                                      #{Regexp.escape(CGI.escape(' = '))}
+                                      1.19\d+/x
+          link_pattern = /#{Regexp.escape(expected_link)}&score_calculation=#{score_calculation_pattern}/
+          expect(response.body).to have_link("Looking for this one", href: link_pattern)
+        end
+
         it "renders a description for the results table" do
           get admin_search_path, params: { search_text: }
           expected_text = "1 result (max 5) over the weighted score threshold of 0.6"
