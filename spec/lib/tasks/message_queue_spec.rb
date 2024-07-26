@@ -8,34 +8,65 @@ RSpec.describe "rake message_queue tasks" do
       end
     end
 
-    let(:exchange) { instance_double(Bunny::Exchange) }
-    let(:channel) { instance_double(Bunny::Channel, queue:) }
+    let(:exchange) { instance_double(Bunny::Exchange, name: "published_documents") }
+    let(:delay_retry_dlx) { instance_double(Bunny::Exchange, name: "govuk_chat_delay_retry_dlx") }
+    let(:retry_dlx) { instance_double(Bunny::Exchange, name: "govuk_chat_retry_dlx") }
+    let(:channel) { instance_double(Bunny::Channel) }
     let(:queue) { instance_double(Bunny::Queue, bind: nil) }
+    let(:delay_retry_queue) { instance_double(Bunny::Queue, bind: nil) }
 
     before do
       Rake::Task[task_name].reenable
 
       allow(Bunny).to receive(:new).and_return(session)
-      allow(Bunny::Exchange).to receive(:new).and_return(exchange)
+      allow(channel).to receive(:fanout).with("published_documents").and_return(exchange)
+      allow(channel).to receive(:fanout).with("govuk_chat_delay_retry_dlx")
+        .and_return(delay_retry_dlx)
+      allow(channel).to receive(:fanout).with("govuk_chat_retry_dlx")
+        .and_return(retry_dlx)
     end
 
-    it "creates a queue on the published_documents exchange that listens to all events" do
-      Rake::Task[task_name].invoke
-      expect(queue).to have_received(:bind).with(exchange, routing_key: "#")
-    end
-
-    it "defaults to a queue named 'govuk_chat_published_documents'" do
+    it "creates exchanges and queues with a default queue naming of govuk_chat_published_documents" do
       ClimateControl.modify PUBLISHED_DOCUMENTS_MESSAGE_QUEUE_NAME: nil do
+        allow(channel)
+          .to receive(:queue).with("govuk_chat_published_documents", anything)
+          .and_return(queue)
+
+        allow(channel)
+          .to receive(:queue).with("govuk_chat_published_documents_delay_retry", anything)
+          .and_return(delay_retry_queue)
+
+        allow(channel).to receive(:queue).with("govuk_chat_published_documents").and_return(queue)
+
         Rake::Task[task_name].invoke
 
+        expect(channel).to have_received(:queue).with(
+          "govuk_chat_published_documents",
+          arguments: { "x-dead-letter-exchange" => "govuk_chat_delay_retry_dlx" },
+        )
+        expect(channel).to have_received(:queue).with(
+          "govuk_chat_published_documents_delay_retry",
+          arguments: { "x-dead-letter-exchange" => "govuk_chat_retry_dlx",
+                       "x-message-ttl" => 30_000 },
+        )
         expect(channel).to have_received(:queue).with("govuk_chat_published_documents")
+
+        expect(queue).to have_received(:bind).with(exchange)
+        expect(delay_retry_queue).to have_received(:bind).with(delay_retry_dlx)
+        expect(queue).to have_received(:bind).with(retry_dlx)
       end
     end
 
     it "configures the queue name based on an environment variable" do
       ClimateControl.modify PUBLISHED_DOCUMENTS_MESSAGE_QUEUE_NAME: "custom_queue_name" do
+        allow(channel).to receive(:queue).with("custom_queue_name", anything).and_return(queue)
+        allow(channel).to receive(:queue).with("custom_queue_name_delay_retry", anything).and_return(delay_retry_queue)
+        allow(channel).to receive(:queue).with("custom_queue_name").and_return(queue)
+
         Rake::Task[task_name].invoke
 
+        expect(channel).to have_received(:queue).with("custom_queue_name", anything)
+        expect(channel).to have_received(:queue).with("custom_queue_name_delay_retry", anything)
         expect(channel).to have_received(:queue).with("custom_queue_name")
       end
     end
