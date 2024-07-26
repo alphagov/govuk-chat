@@ -278,6 +278,13 @@ GEM
       net-imap
       net-pop
       net-smtp
+    mail-notify (2.0.0)
+      actionmailer (>= 5.2.8.1)
+      actionpack (>= 5.2.8.1)
+      actionview (>= 5.2.8.1)
+      activesupport (>= 5.2.8.1)
+      notifications-ruby-client (~> 6.0)
+      rack (>= 2.1.4.1)
     marcel (1.0.4)
     matrix (0.4.2)
     method_source (1.1.0)
@@ -316,6 +323,8 @@ GEM
       racc (~> 1.4)
     nokogiri (1.16.6-x86_64-linux)
       racc (~> 1.4)
+    notifications-ruby-client (6.1.0)
+      jwt (>= 1.5, < 3)
     null_logger (0.0.1)
     oauth2 (2.0.9)
       faraday (>= 0.17.3, < 3.0)
@@ -800,6 +809,7 @@ DEPENDENCIES
   inline_svg
   kaminari
   kramdown
+  mail-notify
   opensearch-ruby
   pg
   pry-byebug
