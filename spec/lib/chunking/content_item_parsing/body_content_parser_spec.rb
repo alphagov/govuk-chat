@@ -15,12 +15,12 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
       expect(chunk_1).to have_attributes(html_content: "<p>Content 1</p>",
                                          heading_hierarchy: ["Heading 1"],
                                          chunk_index: 0,
-                                         url: "/path#heading-1")
+                                         exact_path: "/path#heading-1")
 
       expect(chunk_2).to have_attributes(html_content: "<p>Content 2</p>",
                                          heading_hierarchy: ["Heading 2"],
                                          chunk_index: 1,
-                                         url: "/path#heading-2")
+                                         exact_path: "/path#heading-2")
     end
 
     it "raises an error if there is not a body field in the details hash" do

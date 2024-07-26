@@ -9,12 +9,12 @@ module Search
       :heading_hierarchy,
       :digest,
       :base_path,
+      :exact_path,
       :locale,
       :document_type,
       :parent_document_type,
       :title,
       :description,
-      :url,
       :plain_content,
     ) do
       def initialize(**kwargs)

@@ -5,10 +5,10 @@
   chunks:
     - html_content: "<p>Starting your own business can be a thrilling and rewarding endeavor. It's important to begin with a solid business plan and clear objectives. Research your market thoroughly and understand your competition.</p>"
       heading_hierarchy: ["Business Planning"]
-      url: "/starting-your-own-business/business-planning"
+      exact_path: "/starting-your-own-business/business-planning"
     - html_content: "<p>Securing financing is a crucial step in starting a business. Explore different funding options such as loans, grants, or angel investors to find the best fit for your business needs.</p>"
       heading_hierarchy: ["Financing Your Business"]
-      url: "/starting-your-own-business/financing-your-business"
+      exact_path: "/starting-your-own-business/financing-your-business"
 
 - base_path: "/business-tax"
   document_type: "guide"
@@ -17,10 +17,10 @@
   chunks:
     - html_content: "<p>Understanding the tax obligations for your business is essential. Ensure you're familiar with VAT, corporation tax, and other relevant taxes.</p>"
       heading_hierarchy: ["Tax Essentials"]
-      url: "/business-tax/tax-essentials"
+      exact_path: "/business-tax/tax-essentials"
     - html_content: "<p>Keep accurate records and consider using accounting software to streamline tax preparation and compliance. Regularly review your tax strategy with a professional.</p>"
       heading_hierarchy: ["Tax Management"]
-      url: "/business-tax/tax-management"
+      exact_path: "/business-tax/tax-management"
 
 - base_path: "/employing-staff"
   document_type: "guide"
@@ -29,10 +29,10 @@
   chunks:
     - html_content: "<p>Hiring your first employee is a significant step. Ensure you understand legal requirements such as contracts, minimum wage, and workers' rights.</p>"
       heading_hierarchy: ["Hiring Process"]
-      url: "/employing-staff/hiring-process"
+      exact_path: "/employing-staff/hiring-process"
     - html_content: "<p>Develop a clear onboarding process to help new employees integrate smoothly into your business. Provide training and support as they grow into their roles.</p>"
       heading_hierarchy: ["Employee Onboarding"]
-      url: "/employing-staff/employee-onboarding"
+      exact_path: "/employing-staff/employee-onboarding"
 
 - base_path: "/business-insurance"
   document_type: "guide"
@@ -41,10 +41,10 @@
   chunks:
     - html_content: "<p>Business insurance is crucial for protecting your assets and operations. Assess your risks and consider various types of insurance like liability, property, and workers' compensation.</p>"
       heading_hierarchy: ["Insurance Basics"]
-      url: "/business-insurance/insurance-basics"
+      exact_path: "/business-insurance/insurance-basics"
     - html_content: "<p>Compare different insurance providers and policies to find the best coverage for your specific business needs. Don't hesitate to consult with an insurance broker for expert advice.</p>"
       heading_hierarchy: ["Choosing a Provider"]
-      url: "/business-insurance/choosing-a-provider"
+      exact_path: "/business-insurance/choosing-a-provider"
 
 - base_path: "/data-protection-for-business"
   document_type: "guide"
@@ -53,7 +53,7 @@
   chunks:
     - html_content: "<p>Protecting customer data is not only a legal obligation but also crucial for maintaining trust. Familiarize yourself with data protection laws like GDPR.</p>"
       heading_hierarchy: ["Understanding Data Laws"]
-      url: "/data-protection-for-business/understanding-data-laws"
+      exact_path: "/data-protection-for-business/understanding-data-laws"
     - html_content: "<p>Implement robust security measures such as encryption and secure data storage. Regularly update your policies and train your staff on data protection best practices.</p>"
       heading_hierarchy: ["Implementing Security Measures"]
-      url: "/data-protection-for-business/implementing-security-measures"
+      exact_path: "/data-protection-for-business/implementing-security-measures"

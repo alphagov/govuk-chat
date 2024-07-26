@@ -47,7 +47,7 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
       expect(chunk).to have_attributes(html_content: "<p>Content</p>",
                                        heading_hierarchy: [],
                                        chunk_index: 0,
-                                       url: "/path")
+                                       exact_path: "/path")
     end
 
     it "raises an error when there is not a text/html content type in a multiple content types body field" do

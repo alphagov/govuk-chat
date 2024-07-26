@@ -20,7 +20,7 @@
     <%= render "govuk_publishing_components/components/summary_list", {
       items: [
         { field: "Title", value: @chunk.title },
-        { field: "URL", value: link_to(@chunk.url, "#{Plek.website_root}#{@chunk.url}", class: "govuk-link") },
+        { field: "URL", value: link_to(@chunk.exact_path, "#{Plek.website_root}#{@chunk.exact_path}", class: "govuk-link") },
         { field: "Chunk number", value: "#{@chunk.chunk_index + 1} of #{@chunks_for_base_path}" },
         { field: "Heading hierarchy", value: @chunk.heading_hierarchy.join(" | ") },
         { field: "Description", value: @chunk.description},

@@ -47,8 +47,8 @@ class Answer < ApplicationRecord
   def build_sources_from_search_results(search_results)
     self.sources = search_results.map.with_index do |result, relevancy|
       sources.build(
-        exact_path: result.url,
         base_path: result.base_path,
+        exact_path: result.exact_path,
         title: result.title,
         relevancy:,
         content_chunk_id: result._id,

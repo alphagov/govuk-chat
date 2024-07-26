@@ -30,20 +30,20 @@ RSpec.describe Chunking::ContentItemChunk do
     end
   end
 
-  describe "#url" do
-    context "when initialised with a chunk_url" do
-      it "returns the chunk_url" do
-        instance = build(:content_item_chunk, base_path: "/base-path", chunk_url: "/path")
+  describe "#exact_path" do
+    context "when initialised with a exact_path" do
+      it "returns the exact_path" do
+        instance = build(:content_item_chunk, base_path: "/base-path", exact_path: "/path")
 
-        expect(instance.url).to eq("/path")
+        expect(instance.exact_path).to eq("/path")
       end
     end
 
-    context "when not initialised with a chunk_url" do
+    context "when not initialised with a exact_path" do
       it "returns the content item's base_path" do
         instance = build(:content_item_chunk, base_path: "/base-path")
 
-        expect(instance.url).to eq("/base-path")
+        expect(instance.exact_path).to eq("/base-path")
       end
     end
   end
@@ -62,7 +62,7 @@ RSpec.describe Chunking::ContentItemChunk do
                        html_content: "<p>Content</p>",
                        heading_hierarchy: ["Heading 1", "Heading 2"],
                        chunk_index: 0,
-                       chunk_url: "/chunk-url",
+                       exact_path: "/exact-path",
                        parent_document_type: "guide")
 
       expect(instance.to_opensearch_hash)
@@ -70,11 +70,11 @@ RSpec.describe Chunking::ContentItemChunk do
           content_id: instance.content_item["content_id"],
           locale: instance.content_item["locale"],
           base_path: instance.content_item["base_path"],
+          exact_path: "/exact-path",
           document_type: instance.content_item["document_type"],
           parent_document_type: "guide",
           title: instance.content_item["title"],
           description: instance.content_item["description"],
-          url: "/chunk-url",
           chunk_index: 0,
           heading_hierarchy: ["Heading 1", "Heading 2"],
           html_content: "<p>Content</p>",
@@ -99,12 +99,12 @@ RSpec.describe Chunking::ContentItemChunk do
         html_content: "<p>Content</p>"
         heading_hierarchy: ["Heading 1", "Heading 2"]
         chunk_index: 0
-        url: "#{instance.content_item['base_path']}"
         content_id: "#{instance.content_item['content_id']}"
         locale: "#{instance.content_item['locale']}"
         title: "#{instance.content_item['title']}"
         description: "Description"
         base_path: "#{instance.content_item['base_path']}"
+        exact_path: "#{instance.content_item['base_path']}"
         document_type: "#{instance.content_item['document_type']}"
         parent_document_type: "parent"
         )

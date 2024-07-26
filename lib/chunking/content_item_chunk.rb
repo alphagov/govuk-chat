@@ -1,13 +1,13 @@
 module Chunking
   class ContentItemChunk
-    attr_reader :content_item, :html_content, :heading_hierarchy, :chunk_index, :chunk_url
+    attr_reader :content_item, :html_content, :heading_hierarchy, :chunk_index, :chunk_exact_path
 
-    def initialize(content_item:, html_content:, heading_hierarchy:, chunk_index:, chunk_url: nil)
+    def initialize(content_item:, html_content:, heading_hierarchy:, chunk_index:, exact_path: nil)
       @content_item = content_item
       @html_content = html_content
       @heading_hierarchy = heading_hierarchy
       @chunk_index = chunk_index
-      @chunk_url = chunk_url
+      @chunk_exact_path = exact_path
     end
 
     def plain_content
@@ -50,8 +50,8 @@ module Chunking
       content_item.dig("expanded_links", "parent", 0, "document_type")
     end
 
-    def url
-      chunk_url || base_path
+    def exact_path
+      chunk_exact_path || base_path
     end
 
     def digest
@@ -59,7 +59,7 @@ module Chunking
         values = [html_content,
                   heading_hierarchy,
                   chunk_index,
-                  url,
+                  exact_path,
                   content_id,
                   locale,
                   title,
@@ -78,11 +78,11 @@ module Chunking
         content_id:,
         locale:,
         base_path:,
+        exact_path:,
         document_type:,
         parent_document_type:,
         title:,
         description:,
-        url:,
         chunk_index:,
         heading_hierarchy:,
         html_content:,
@@ -96,12 +96,12 @@ module Chunking
         html_content:,
         heading_hierarchy:,
         chunk_index:,
-        url:,
         content_id:,
         locale:,
         title:,
         description:,
         base_path:,
+        exact_path:,
         document_type:,
         parent_document_type:,
       }
