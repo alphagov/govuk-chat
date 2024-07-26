@@ -26,7 +26,15 @@
   </svg>
 <% end %>
 
+<% send_button_text = capture do %>
+  <span>
+    <%= text %>
+  </span>
+  <%= content_tag :span, "message to GOV.UK Chat", class: "govuk-visually-hidden" %>
+<% end %>
+
 <% text = start_button_text if start %>
+<% text = send_button_text if conversation_form_button %>
 
 <% if href.present? %>
   <%= link_to text, href, options %>
