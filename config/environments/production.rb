@@ -99,4 +99,5 @@ Rails.application.configure do
   config.action_mailer.notify_settings = {
     api_key: ENV["GOVUK_NOTIFY_API_KEY"],
   }
+  config.action_mailer.perform_deliveries = ENV["DISABLE_MAIL_DELIVERY"].blank?
 end
