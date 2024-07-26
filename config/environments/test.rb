@@ -56,4 +56,6 @@ Rails.application.configure do
 
   # Use a hardcoded config value for testing
   config.openai_access_token = "fake-openai-access-token"
+
+  config.action_mailer.delivery_method = :test
 end
