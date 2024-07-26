@@ -31,6 +31,9 @@
     "CHAT_API_PASSWORD": {
       "required": true
     },
+    "DISABLE_MAIL_DELIVERY": {
+      "value": "true"
+    },
     "OPENAI_ACCESS_TOKEN": {
       "required": true
     },
