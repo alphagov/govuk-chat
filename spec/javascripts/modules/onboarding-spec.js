@@ -1,10 +1,13 @@
+/* global asymmetricMatchers */
+
 describe('Onboarding module', () => {
-  let moduleElement, module, form
+  let moduleElement, module, conversationList, form
 
   beforeEach(() => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
       <div class="js-module-wrapper">
+        <ul class="js-conversation-list"></ul>
         <div class="js-form-container">
           <form class="js-onboarding-form" action="/chat/onboarding">
             <button>I understand</button>
@@ -14,6 +17,7 @@ describe('Onboarding module', () => {
     `
 
     document.body.appendChild(moduleElement)
+    conversationList = moduleElement.querySelector('.js-conversation-list')
     form = moduleElement.querySelector('.js-onboarding-form')
 
     module = new window.GOVUK.Modules.Onboarding(moduleElement)
@@ -40,6 +44,18 @@ describe('Onboarding module', () => {
       moduleElement.dispatchEvent(new Event('deinit'))
 
       expect(deinitSpy).toHaveBeenCalled()
+    })
+
+    it('scrolls the most recent onboarding message into view', () => {
+      conversationList.innerHTML = '<li class="js-conversation-message" id="onboarding-message"></li>'
+
+      // declare a new instance of module so it can take the above HTML into account when it's instantiated
+      module = new window.GOVUK.Modules.Onboarding(moduleElement)
+      const scrollIntoViewSpy = spyOn(module, 'scrollIntoView')
+
+      module.init()
+
+      expect(scrollIntoViewSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#onboarding-message'))
     })
   })
 
