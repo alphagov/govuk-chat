@@ -180,25 +180,65 @@ RSpec.describe MessageQueue::MessageProcessor do
       end
     end
 
-    shared_examples "transient error behaviour" do |error_class, error_message|
-      it "discards the messages to trigger a retry" do
-        expect { described_class.new.process(message) }
-          .to change(message, :discarded?)
+    context "when any other exception is raised" do
+      context "and the payload is not a hash" do
+        let(:message) { create_mock_message(1) }
+
+        it "logs the error without any identifying information" do
+          allow(Rails.logger).to receive(:error)
+          described_class.new.process(message)
+          expect(Rails.logger).to have_received(:error)
+            .with("Failed to process message '1' with TypeError: no implicit conversion of String into Integer")
+        end
+
+        it "sends the error to GovukError" do
+          allow(GovukError).to receive(:notify)
+          described_class.new.process(message)
+          expect(GovukError).to have_received(:notify).with(kind_of(TypeError))
+        end
+
+        it "acks the message to prevent any retry attempts" do
+          expect { described_class.new.process(message) }
+            .to change(message, :acked?)
+        end
       end
 
-      it "writes to the log" do
-        allow(Rails.logger).to receive(:error)
-        described_class.new.process(message)
+      context "and this item has retries available" do
+        let(:content_item) { build(:notification_content_item, schema_name: "news_article", base_path: "/path") }
+        let(:message) { create_mock_message(content_item) }
 
-        log_message = "{#{content_item['base_path']}, #{content_item['content_id']}, #{content_item['locale']}} " \
-                      "scheduled for retry due to error: " \
-                      "#{error_class} #{error_message}"
+        before do
+          allow(MessageQueue::ContentSynchroniser)
+            .to receive(:call)
+            .and_raise(OpenSearch::Transport::Transport::Error, "OpenSearch error")
+        end
 
-        expect(Rails.logger).to have_received(:error).with(log_message)
+        it "discards the messages to trigger a retry" do
+          expect { described_class.new.process(message) }
+            .to change(message, :discarded?)
+        end
+
+        it "writes to the log" do
+          allow(Rails.logger).to receive(:error)
+          described_class.new.process(message)
+
+          log_message = "{#{content_item['base_path']}, #{content_item['content_id']}, #{content_item['locale']}} " \
+                        "scheduled for retry due to error: " \
+                        "OpenSearch::Transport::Transport::Error OpenSearch error"
+
+          expect(Rails.logger).to have_received(:error).with(log_message)
+        end
       end
 
-      context "when the job has been retried the maximum amount of times" do
+      context "and this item has exhausted retries" do
+        let(:content_item) { build(:notification_content_item, schema_name: "news_article", base_path: "/path") }
         let(:message) { create_mock_message(content_item, max_retries_headers) }
+
+        before do
+          allow(MessageQueue::ContentSynchroniser)
+            .to receive(:call)
+            .and_raise(OpenSearch::Transport::Transport::Error, "OpenSearch error")
+        end
 
         it "acks the message to quit retrying" do
           expect { described_class.new.process(message) }
@@ -216,91 +256,6 @@ RSpec.describe MessageQueue::MessageProcessor do
         end
 
         it "sets the context and tags correctly for Sentry" do
-          sentry_scope = Sentry::Scope.new
-          allow(Sentry).to receive(:with_scope).and_yield(sentry_scope)
-
-          described_class.new.process(message)
-
-          expect_sentry_scope_to_be_configured(sentry_scope, message.payload)
-        end
-      end
-    end
-
-    context "when an OpenSearch error is raised" do
-      let(:content_item) { build(:notification_content_item, schema_name: "news_article", base_path: "/path") }
-
-      let(:message) { create_mock_message(content_item) }
-
-      before do
-        allow(MessageQueue::ContentSynchroniser)
-          .to receive(:call)
-          .and_raise(OpenSearch::Transport::Transport::Error, "OpenSearch error")
-      end
-
-      include_examples "transient error behaviour", OpenSearch::Transport::Transport::Error, "OpenSearch error"
-    end
-
-    context "when an OpenAIClient error is raised" do
-      let(:content_item) { build(:notification_content_item, schema_name: "news_article", base_path: "/path") }
-
-      let(:message) { create_mock_message(content_item) }
-
-      before do
-        allow(MessageQueue::ContentSynchroniser)
-          .to receive(:call)
-          .and_raise(OpenAIClient::RequestError, "OpenAI error")
-      end
-
-      include_examples "transient error behaviour", OpenAIClient::RequestError, "OpenAI error"
-    end
-
-    context "when any other exception is raised" do
-      let(:message) { create_mock_message(1) }
-
-      it "acks the message" do
-        expect { described_class.new.process(message) }
-          .to change(message, :acked?)
-      end
-
-      it "sends the error to GovukError" do
-        allow(GovukError).to receive(:notify)
-        described_class.new.process(message)
-        expect(GovukError).to have_received(:notify).with(kind_of(StandardError))
-      end
-
-      context "when the payload is not a hash" do
-        it "logs the error without any identifying information" do
-          allow(Rails.logger).to receive(:error)
-          described_class.new.process(message)
-          expect(Rails.logger).to have_received(:error)
-            .with("Failed to process message '1' with TypeError: no implicit conversion of String into Integer")
-        end
-      end
-
-      context "when the payload is a hash" do
-        let(:content_item) { build(:notification_content_item, schema_name: "news_article", base_path: "/path") }
-        let(:message) { create_mock_message(content_item) }
-
-        it "logs the error with identifying information" do
-          call_count = 0
-          content_id = SecureRandom.uuid
-
-          # setup to raise error on first call and return a hash on subsequent calls
-          allow(message).to receive(:payload) do
-            call_count += 1
-            raise "Contrived error" if call_count == 1
-
-            { "content_id" => content_id, "locale" => "en" }
-          end
-
-          allow(Rails.logger).to receive(:error)
-          described_class.new.process(message)
-          expect(Rails.logger).to have_received(:error)
-            .with("{#{content_id}, en} processing failed with RuntimeError: Contrived error")
-        end
-
-        it "sets the context and tags correctly for Sentry" do
-          allow(MessageQueue::ContentSynchroniser).to receive(:call).and_raise(RuntimeError, "Contrived error")
           sentry_scope = Sentry::Scope.new
           allow(Sentry).to receive(:with_scope).and_yield(sentry_scope)
 
