@@ -12,6 +12,15 @@ RSpec.describe "ConversationsController" do
     include_context "with onboarding completed"
 
     context "when there is no conversation cookie" do
+      context "and session[:onboarding] is 'conversation'" do
+        include_context "with onboarding completed"
+
+        it "does not redirect to the onboarding flow" do
+          get show_conversation_path
+          expect(response).to have_http_status(:success)
+        end
+      end
+
       context "and the response type is HTML" do
         it "renders the question form" do
           get show_conversation_path
@@ -301,10 +310,11 @@ RSpec.describe "ConversationsController" do
     it "redirects to the conversation page when there are no pending answers and the user has clicked on the refresh button" do
       question = create(:question, :with_answer, conversation:)
       get answer_question_path(question, refresh: true)
+      answer = question.answer
 
-      expected_redirect_destination = show_conversation_path(anchor: helpers.dom_id(question.answer))
+      expected_redirect_destination = show_conversation_path
       expect(response).to redirect_to(expected_redirect_destination)
-      expect(flash[:notice]).to eq("GOV.UK Chat has answered your question")
+      expect(flash[:notice]).to eq({ link_href: "##{helpers.dom_id(answer)}", link_text: "View your answer", message: "GOV.UK Chat has answered your question" })
 
       follow_redirect!
       expect(response.body)
@@ -396,7 +406,7 @@ RSpec.describe "ConversationsController" do
         post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "false" } }
 
         expect(answer.reload.feedback.useful).to be(false)
-        expect(response).to redirect_to(show_conversation_path(anchor: helpers.dom_id(answer)))
+        expect(response).to redirect_to(show_conversation_path)
         follow_redirect!
         expect(response.body).to have_selector(".govuk-notification-banner__content", text: "Feedback submitted successfully.")
       end
@@ -406,7 +416,7 @@ RSpec.describe "ConversationsController" do
 
         expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "" } } }
           .not_to change(AnswerFeedback, :count)
-        expect(response).to redirect_to(show_conversation_path(anchor: helpers.dom_id(answer)))
+        expect(response).to redirect_to(show_conversation_path)
         follow_redirect!
         expect(response.body).not_to have_selector(".govuk-notification-banner__content", text: "Feedback submitted successfully.")
       end
@@ -416,7 +426,7 @@ RSpec.describe "ConversationsController" do
 
         expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "true" } } }
           .not_to change(AnswerFeedback, :count)
-        expect(response).to redirect_to(show_conversation_path(anchor: helpers.dom_id(answer)))
+        expect(response).to redirect_to(show_conversation_path)
         follow_redirect!
         expect(response.body).not_to have_selector(".govuk-notification-banner__content", text: "Feedback submitted successfully.")
       end

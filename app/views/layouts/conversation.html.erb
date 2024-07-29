@@ -1,41 +1,40 @@
 <% @conversation_data_attributes ||= {} %>
-<% content_for :alerts do %>
-  <div class="app-conversation-layout__width-container">
-    <% if content_for?(:error_summary) %>
-      <div class="app-conversation-layout__alerts">
-        <%= yield(:error_summary) %>
-      </div>
-    <% else %>
-      <% if flash["notice"].present? %>
-        <div class="app-conversation-layout__alerts">
-          <%= render "govuk_publishing_components/components/success_alert", {
-            message: flash["notice"],
-          } %>
-        </div>
-      <% end %>
 
-      <% if flash["alert"].present? %>
-        <div class="app-conversation-layout__alerts">
-          <%= render "govuk_publishing_components/components/error_alert", {
-            message: flash["alert"],
-          } %>
-        </div>
-      <% end %>
+<% content_for :alerts do %>
+  <% if content_for?(:error_summary) %>
+    <div class="app-conversation-layout__alerts js-conversation-alert">
+      <%= yield(:error_summary) %>
+    </div>
+  <% else %>
+    <% if flash["notice"].present? %>
+      <%
+         notice = flash["notice"].is_a?(Hash) ? flash["notice"] : { "message" => flash["notice"] }
+         if notice["link_text"] && notice["link_href"]
+           alert_description = link_to(notice["link_text"], notice["link_href"], class: %w[govuk-link govuk-notification-banner__link])
+         end
+      %>
+      <div class="app-conversation-layout__alerts js-conversation-alert">
+        <%= render "govuk_publishing_components/components/success_alert", {
+          message: notice["message"],
+          description: alert_description,
+          margin_bottom: 0,
+        } %>
+      </div>
     <% end %>
-  </div>
+  <% end %>
 <% end %>
 
 <% content_for :content do %>
   <main class="app-conversation-layout__main" id="content" role="main" data-module="conversation-onboarding-flow">
-    <%= yield(:alerts) if content_for?(:alerts) %>
-
-    <% if content_for?(:title) %>
-      <h1 class="govuk-visually-hidden"><%= yield(:title) %></h1>
-    <% end %>
-
     <%= tag.div(class: "app-conversation-layout__wrapper js-module-wrapper", data: @conversation_data_attributes) do %>
       <div class="app-conversation-layout__message-container">
         <div class="app-conversation-layout__width-container">
+          <%= yield(:alerts) if content_for?(:alerts) %>
+
+          <% if content_for?(:title) %>
+            <h1 class="govuk-visually-hidden"><%= yield(:title) %></h1>
+          <% end %>
+
           <ul class="app-conversation-layout__list js-conversation-list">
             <%= yield %>
           </ul>

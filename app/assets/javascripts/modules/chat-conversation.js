@@ -13,6 +13,11 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     init () {
+      // if there is an existing conversation on page load, scroll to the latest message
+      if (this.conversationList.children.length > 0) {
+        this.scrollToMessage(this.conversationList.lastElementChild)
+      }
+
       this.formComponent.addEventListener('submit', e => this.handleFormSubmission(e))
 
       if (!this.pendingAnswerUrl) return

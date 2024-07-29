@@ -10,40 +10,16 @@ module OnboardingRequestExamples
 
             expect(response).to have_http_status(:redirect)
             expect(response).to redirect_to(onboarding_limitations_path)
-            follow_redirect!
-            expect(response.body)
-              .to have_selector(
-                ".gem-c-error-alert__message",
-                text: "Confirm you understand the limitations of GOV.UK Chat before continuing.",
-              )
-          end
-
-          context "when session[:onboarding] is 'conversation'" do
-            include_context "with onboarding completed"
-
-            it "does not redirect to the onboarding flow for #{method} #{path}" do
-              process(method.to_sym, public_send(path.to_sym, *route_params))
-
-              expect(response.body)
-                .not_to have_selector(
-                  ".gem-c-error-alert__message",
-                  text: "Confirm you understand the limitations of GOV.UK Chat before continuing.",
-                )
-            end
           end
 
           context "when conversation_id is set on the cookie" do
             it "does not redirect to the onboarding flow for #{method} #{path}" do
-              conversation = create(:conversation)
+              conversation = create(:conversation, :not_expired)
               cookies[:conversation_id] = conversation.id
 
               process(method.to_sym, public_send(path.to_sym, *route_params))
 
-              expect(response.body)
-                .not_to have_selector(
-                  ".gem-c-error-alert__message",
-                  text: "Confirm you understand the limitations of GOV.UK Chat before continuing.",
-                )
+              expect(response).not_to redirect_to(onboarding_limitations_path)
             end
           end
         end

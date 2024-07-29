@@ -6,10 +6,16 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     constructor (module) {
       this.module = module
       this.form = this.module.querySelector('.js-onboarding-form')
+      this.conversationList = this.module.querySelector('.js-conversation-list')
       this.eventListeners = []
     }
 
     init () {
+      // if a user revisits or refreshes an ongoing onboarding process, scroll to the latest onboarding message
+      if (this.conversationList.children.length > 0) {
+        this.scrollIntoView(this.conversationList.lastElementChild)
+      }
+
       this.addEventListener(this.module, 'submit', e => this.handleSubmit(e))
       this.addEventListener(this.module, 'deinit', () => this.deinit())
     }
@@ -64,6 +70,10 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     addEventListener (element, event, handler) {
       element.addEventListener(event, handler)
       this.eventListeners.push([element, event, handler])
+    }
+
+    scrollIntoView (element) {
+      element.scrollIntoView()
     }
   }
   Modules.Onboarding = Onboarding
