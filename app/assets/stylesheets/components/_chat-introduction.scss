@@ -1,5 +1,5 @@
 .app-c-chat-introduction {
-  padding: govuk-spacing(6) 0;
+  padding: 100px 0 govuk-spacing(6); // setting the padding top directly as per the designs (and there isn't a mixin for this much padding)
 }
 
 .app-c-chat-introduction__svg-container {
@@ -9,11 +9,19 @@
   }
 }
 
+.app-c-chat-introduction__svg {
+  @include govuk-media-query($until: 500px) {
+    height: 70px;
+    width: 70px;
+  }
+}
+
 .app-c-chat-introduction__title {
   @include govuk-font($size: 48, $weight: bold);
-  margin: govuk-spacing(6) 0;
+  margin: govuk-spacing(6) 0 govuk-spacing(5);
 }
 
 .app-c-chat-introduction__lead-paragraph {
   @include govuk-font($size: 36, $weight: regular);
+  margin-bottom: govuk-spacing(6);
 }

@@ -55,7 +55,7 @@
     @include govuk-typography-weight-bold($important: false);
     font-size: 16px; // directly set the font size to prevent govuk-font mixins from reducing it on smaller screens
     border-bottom: 3px solid transparent;
-    padding: govuk-spacing(2) govuk-spacing(1);
+    padding: 7px govuk-spacing(1) govuk-spacing(2);
     top: govuk-spacing(2);
 
     // removes the default chevron
@@ -100,7 +100,6 @@
 
 .app-c-header-row {
   margin-top: govuk-spacing(1);
-  margin-bottom: govuk-spacing(1);
 
   @include govuk-media-query($until: tablet) {
     margin-bottom: govuk-spacing(3);
@@ -140,13 +139,17 @@
   text-transform: capitalize;
   @include govuk-font($size: 19, $weight: regular);
   letter-spacing: 0;
-  padding: 7px;
-  margin-left: 3px;
+  padding: govuk-spacing(1) govuk-spacing(2) 7px;
+  margin-left: govuk-spacing(1);
   display: inline-block;
   vertical-align: middle;
 
   @include govuk-media-query($until: 500px) {
     margin-top: govuk-spacing(2);
+  }
+  
+  @include govuk-media-query($until: tablet) {
+    margin-left: 0;
   }
 }
 
