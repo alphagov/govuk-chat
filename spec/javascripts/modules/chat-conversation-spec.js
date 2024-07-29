@@ -12,6 +12,12 @@ describe('ChatConversation module', () => {
           <input type="text" name="question" value="How can I setup a new business?">
         </form>
       </div>
+      <template id="js-loading-question">
+        <p id="loading-question-content">Loading question...</p>
+      </template>
+      <template id="js-loading-answer">
+        <p id="loading-answer-content">Loading answer...</p>
+      </template>
     `
 
     document.body.appendChild(moduleElement)
@@ -104,12 +110,12 @@ describe('ChatConversation module', () => {
   })
 
   describe('handleFormSubmission', () => {
-    let checkAnswerSpy, fetchSpy
+    let checkAnswerSpy, fetchSpy, successfulQuestionResponseJson
 
     beforeEach(() => {
       module.init()
 
-      const responseJson = {
+      successfulQuestionResponseJson = {
         question_html: '<li id="question_123">How can I setup a new business?</li>',
         answer_url: '/answer',
         error_messages: []
@@ -117,7 +123,7 @@ describe('ChatConversation module', () => {
 
       fetchSpy = spyOn(window, 'fetch')
       fetchSpy.and.resolveTo(
-        new Response(JSON.stringify(responseJson), { status: 201 })
+        new Response(JSON.stringify(successfulQuestionResponseJson), { status: 201 })
       )
 
       checkAnswerSpy = spyOn(module, 'checkAnswer')
@@ -135,6 +141,39 @@ describe('ChatConversation module', () => {
       await module.handleFormSubmission(event)
 
       expect(preventDefaultSpy).toHaveBeenCalled()
+    })
+
+    describe('question loading message', () => {
+      let startLoadingSpy, scrollToMessageSpy
+
+      beforeEach(() => {
+        startLoadingSpy = spyOn(module, 'startLoading').and.callThrough()
+        scrollToMessageSpy = spyOn(module, 'scrollToMessage')
+      })
+
+      it('shows the question loading message when the request is slow', async () => {
+        fetchSpy.and.callFake(() => {
+          return new Promise(resolve => {
+            // slow down the question submission request so the question loading message appears
+            jasmine.clock().tick(1000)
+            resolve(new Response(JSON.stringify(successfulQuestionResponseJson), { status: 201 }))
+          })
+        })
+
+        await module.handleFormSubmission(new Event('submit'))
+
+        expect(startLoadingSpy).toHaveBeenCalledWith(module.loadingQuestionTemplate)
+        expect(scrollToMessageSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#loading-question-content'))
+
+        // the loading message should have been cleared from the DOM
+        expect(conversationList.textContent).not.toContain('Loading question...')
+      })
+
+      it('does not show the question loading message when the request is fast', async () => {
+        await module.handleFormSubmission(new Event('submit'))
+
+        expect(startLoadingSpy).not.toHaveBeenCalledWith(module.loadingQuestionTemplate)
+      })
     })
 
     it('submits a JSON fetch request to the action of the form', async () => {
@@ -165,8 +204,21 @@ describe('ChatConversation module', () => {
       it('appends the question HTML to the conversation list', async () => {
         await module.handleFormSubmission(new Event('submit'))
 
-        expect(conversationList.children.length).toEqual(1)
         expect(conversationList.textContent).toContain('How can I setup a new business?')
+      })
+
+      it('appends the answer loading message to the conversation list', async () => {
+        await module.handleFormSubmission(new Event('submit'))
+
+        expect(conversationList.textContent).toContain('Loading answer...')
+      })
+
+      it('scrolls the answer loading message into view', async () => {
+        const scrollToMessageSpy = spyOn(module, 'scrollToMessage')
+
+        await module.handleFormSubmission(new Event('submit'))
+
+        expect(scrollToMessageSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#loading-answer-content'))
       })
 
       it('scrolls the question into view', async () => {
@@ -312,6 +364,19 @@ describe('ChatConversation module', () => {
         await module.checkAnswer()
 
         expect(startSpy).toHaveBeenCalledWith(conversationList)
+      })
+
+      it('removes the answer loading message', async () => {
+        const answerElement = document.createElement('li')
+        answerElement.innerHTML = 'Loading answer'
+        conversationList.appendChild(answerElement)
+        module.answerLoadingElement = answerElement
+
+        expect(conversationList.textContent).toContain('Loading answer')
+
+        await module.checkAnswer()
+
+        expect(conversationList.textContent).not.toContain('Loading answer')
       })
     })
 

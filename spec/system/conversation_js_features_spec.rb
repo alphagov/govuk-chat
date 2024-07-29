@@ -73,6 +73,19 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     then_i_see_a_character_count_error
   end
 
+  scenario "loading messages" do
+    given_i_have_confirmed_i_understand_chat_risks
+    when_i_enter_a_first_question_with_a_slow_response
+    then_i_see_a_question_loading_message
+
+    when_i_see_the_first_question_was_accepted
+    then_i_see_an_answer_loading_message
+
+    when_the_first_answer_is_generated
+    then_i_can_see_the_first_answer
+    and_i_see_no_answer_loading_message
+  end
+
   def when_i_enter_a_first_question
     @first_question = "How do I setup a workplace pension?"
     fill_in "create_question[user_question]", with: @first_question
@@ -80,12 +93,49 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
   alias_method :when_i_enter_a_valid_question, :when_i_enter_a_first_question
 
+  def when_i_enter_a_first_question_with_a_slow_response
+    @first_question = "How do I setup a workplace pension?"
+
+    allow(Question).to receive(:create!) do
+      sleep 1
+      create(:question, message: @first_question)
+    end
+
+    fill_in "create_question[user_question]", with: @first_question
+    click_on "Send"
+  end
+
   def then_i_see_the_first_question_was_accepted
     within(".js-conversation-list") do
       expect(page).to have_content(@first_question)
     end
   end
   alias_method :then_i_see_the_valid_question_was_accepted, :then_i_see_the_first_question_was_accepted
+  alias_method :when_i_see_the_first_question_was_accepted, :then_i_see_the_valid_question_was_accepted
+
+  def then_i_see_an_answer_loading_message
+    within(".js-conversation-list") do
+      expect(page).to have_content("Loading your answer")
+    end
+  end
+
+  def and_i_see_no_answer_loading_message
+    within(".js-conversation-list") do
+      expect(page).not_to have_content("Loading your answer")
+    end
+  end
+
+  def then_i_see_a_question_loading_message
+    within(".js-conversation-list") do
+      expect(page).to have_content("Loading your question")
+    end
+  end
+
+  def then_i_see_no_question_loading_message
+    within(".js-conversation-list") do
+      expect(page).not_to have_content("Loading your question")
+    end
+  end
 
   def when_the_first_answer_is_generated
     @first_answer = "You can use a simple service on GOV.UK"
