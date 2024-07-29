@@ -45,9 +45,15 @@ module MessageQueue
         logger.error("#{content_identifier(payload)} ignored after 5 retries")
         message.done
       end
+    rescue StandardError => e
+      # we won't bother with any retries if we don't have a hash for a payload
+      unless message.payload.is_a?(Hash)
+        logger.error("Failed to process message '#{message.payload.inspect}' with #{e.class}: #{e.message}")
+        GovukError.notify(e)
+        message.done
+        return
+      end
 
-    # Retry when experiencing an error from a supporting service
-    rescue OpenSearch::Transport::Transport::Error, OpenAIClient::RequestError => e
       if message.retries < MAX_RETRIES
         logger.error("#{content_identifier(payload)} scheduled for retry due to error: #{e.class} #{e.message}")
         message.retry
@@ -56,13 +62,6 @@ module MessageQueue
         notify_sentry(e, message.payload)
         message.done
       end
-
-    # This should only be catching exceptions we can't anticipate and not transient errors
-    rescue StandardError => e
-      payload = message.payload
-      log_standard_error(e, payload)
-      notify_sentry(e, payload)
-      message.done
     end
 
   private
@@ -73,23 +72,12 @@ module MessageQueue
       "{#{data.compact.join(', ')}}"
     end
 
-    def log_standard_error(error, payload)
-      error_text = "#{error.class}: #{error.message}"
-      if payload.is_a?(Hash)
-        logger.error("#{content_identifier(payload)} processing failed with #{error_text}")
-      else
-        logger.error("Failed to process message '#{payload.inspect}' with #{error_text}")
-      end
-    end
-
     def lock_for_base_path(base_path, &block)
       base_path_version = BasePathVersion.find_or_create_by!(base_path:)
       base_path_version.with_lock("FOR UPDATE NOWAIT") { block.call(base_path_version) }
     end
 
     def notify_sentry(error, payload)
-      return GovukError.notify(error) unless payload.is_a?(Hash)
-
       Sentry.with_scope do |scope|
         scope.set_context(
           "message processer",
