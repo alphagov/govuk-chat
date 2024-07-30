@@ -22,6 +22,7 @@ class Answer < ApplicationRecord
 
       Please try asking about something else or rephrasing your question.
     MESSAGE
+    LLM_CANNOT_ANSWER_MESSAGE = "Sorry, I cannot answer that question.".freeze
   end
 
   belongs_to :question
@@ -31,11 +32,13 @@ class Answer < ApplicationRecord
   enum :status,
        {
          abort_forbidden_words: "abort_forbidden_words",
+         abort_llm_cannot_answer: "abort_llm_cannot_answer",
          abort_no_govuk_content: "abort_no_govuk_content",
          abort_output_guardrails: "abort_output_guardrails",
          abort_timeout: "abort_timeout",
          error_answer_service_error: "error_answer_service_error",
          error_context_length_exceeded: "error_context_length_exceeded",
+         error_invalid_llm_response: "error_invalid_llm_response",
          error_output_guardrails: "error_output_guardrails",
          error_non_specific: "error_non_specific",
          success: "success",

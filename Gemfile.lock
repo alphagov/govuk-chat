@@ -807,6 +807,7 @@ DEPENDENCIES
   govuk_test
   hashie
   inline_svg
+  json-schema
   kaminari
   kramdown
   mail-notify
