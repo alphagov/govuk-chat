@@ -1,7 +1,10 @@
 {
   "name": "govuk-chat",
   "scripts": {
-    "postdeploy": "bundle exec rake db:prepare"
+    "postdeploy": {
+      "command": "bundle exec rake db:prepare",
+      "size": "basic"
+    }
   },
   "env": {
     "GOVUK_APP_DOMAIN": {
@@ -43,10 +46,12 @@
   },
   "formation": {
     "web": {
-      "quantity": 1
+      "quantity": 1,
+      "size": "basic"
     },
     "worker": {
-      "quantity": 1
+      "quantity": 1,
+      "size": "basic"
     }
   },
   "addons": [
