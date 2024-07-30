@@ -12,6 +12,7 @@ module AnswerComposition::Pipeline
     def abort_pipeline(**answer_attrs)
       @aborted = true
 
+      answer.sources.each { |source| source.used = false }
       answer.assign_attributes(answer_attrs)
       answer
     end
@@ -33,6 +34,31 @@ module AnswerComposition::Pipeline
     def search_results=(search_results)
       answer.build_sources_from_search_results(search_results)
       @search_results = search_results
+    end
+
+    def update_sources_from_exact_paths_used(exact_paths)
+      used_sources = exact_paths.filter_map do |exact_path|
+        answer.sources.find { |source| source.exact_path == exact_path }
+      end
+
+      if used_sources.empty?
+        answer.sources.each { |source| source.used = true }
+        return answer.sources
+      end
+
+      used_sources.each_with_index do |source, index|
+        source.used = true
+        source.relevancy = index
+      end
+
+      unused_sources = answer.sources - used_sources
+
+      unused_sources.each.with_index(used_sources.length) do |source, index|
+        source.used = false
+        source.relevancy = index
+      end
+
+      answer.sources = used_sources + unused_sources
     end
   end
 end

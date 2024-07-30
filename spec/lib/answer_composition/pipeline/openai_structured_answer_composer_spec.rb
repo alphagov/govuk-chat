@@ -49,6 +49,19 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
       let(:expected_message_history) do
         array_including({ "role" => "user", "content" => question.message })
       end
+      let(:unused_search_result) { build(:chunked_content_search_result, _id: "2", score: 0.5, exact_path: "/vat-rates#vat-rates") }
+
+      it "sets the 'used' boolean to false for unused sources" do
+        context.search_results = [search_result, unused_search_result]
+        stub_openai_chat_completion_structured_response(
+          expected_message_history,
+          structured_response,
+        )
+
+        described_class.call(context)
+
+        expect(context.answer.sources.map(&:used)).to eq([true, false])
+      end
 
       context "and a call to action is provided" do
         it "calls OpenAI chat endpoint and assigns the correct values to the context's answer" do

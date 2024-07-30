@@ -23,6 +23,7 @@ module AnswerComposition::Pipeline
                   parsed_structured_response["answer"]
                 end
 
+      context.update_sources_from_exact_paths_used(parsed_structured_response["sources_used"])
       context.answer.assign_attributes(
         message:,
         status: "success",

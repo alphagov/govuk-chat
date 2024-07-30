@@ -161,9 +161,24 @@ RSpec.describe "ConversationsController" do
             .and have_link(second_source.title, href: second_source.url)
         end
 
-        it "doesn't render the sources for answers aborted by the LLM" do
+        it "doesn't render unused sources" do
           question = create(:question, conversation:)
-          create(:answer, :with_sources, question:, status: :abort_llm_cannot_answer)
+          answer = create(:answer, question:)
+          first_source = create(:answer_source, answer:, used: true)
+          second_source = create(:answer_source, answer:, used: false)
+
+          get show_conversation_path
+
+          expect(response).to have_http_status(:success)
+          expect(response.body)
+            .to have_link(first_source.title, href: first_source.url)
+            .and have_no_link(second_source.title)
+        end
+
+        it "doesn't render the sources component if all sources are unused" do
+          question = create(:question, conversation:)
+          answer = create(:answer, question:)
+          create(:answer_source, answer:, used: false)
 
           get show_conversation_path
 
