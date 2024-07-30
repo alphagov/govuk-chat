@@ -4,12 +4,15 @@ module Chunking
       def call
         parts = details_field!("parts")
 
-        chunked_parts = parts.map do |part|
+        chunked_parts = parts.map.with_index do |part, index|
           html = extract_html_from_multiple_content_types!(part["body"])
+
+          # GOV.UK doesn't include slug in the URL for the first part, so we'll match that logic
+          exact_path = index.zero? ? base_path : "#{base_path}/#{part['slug']}"
 
           {
             title: part["title"],
-            exact_path: "#{base_path}/#{part['slug']}",
+            exact_path:,
             chunks: Chunking::HtmlHierarchicalChunker.call(html),
           }
         end
