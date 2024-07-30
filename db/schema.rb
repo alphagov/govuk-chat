@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_31_135343) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_01_114212) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -100,6 +100,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_31_135343) do
     t.string "answer_strategy", null: false
     t.index ["conversation_id"], name: "index_questions_on_conversation_id"
     t.index ["created_at"], name: "index_questions_on_created_at"
+  end
+
+  create_table "settings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "singleton_guard", default: 0
+    t.integer "instant_access_places", default: 0
+    t.integer "delayed_access_places", default: 0
+    t.boolean "sign_up_enabled", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["singleton_guard"], name: "index_settings_on_singleton_guard", unique: true
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
