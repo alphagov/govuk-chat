@@ -64,12 +64,12 @@ RSpec.describe Chunking::ContentItemParsing::PartsContentParser do
       expect(chunk_1).to have_attributes(html_content: "<p>Content 1</p>",
                                          heading_hierarchy: ["Part 1", "Heading 1"],
                                          chunk_index: 0,
-                                         exact_path: "/my-guide/slug-1#heading-1")
+                                         exact_path: "/my-guide#heading-1")
 
       expect(chunk_2).to have_attributes(html_content: "<p>Content 2</p>",
                                          heading_hierarchy: ["Part 1", "Heading 2"],
                                          chunk_index: 1,
-                                         exact_path: "/my-guide/slug-1#heading-2")
+                                         exact_path: "/my-guide#heading-2")
 
       expect(chunk_3).to have_attributes(html_content: "<p>Content</p>",
                                          heading_hierarchy: ["Part 2"],
