@@ -77,9 +77,15 @@
         </div>
       <% end %>
 
+      <% send_text = capture do %>
+        Send
+        <%= content_tag :span, "message to GOV.UK Chat",
+          class: "govuk-visually-hidden" %>
+      <% end %>
+
       <%= content_tag :div, class: "app-c-conversation-form__button-wrapper" do %>
         <%= render "components/blue_button", {
-          text: "Send",
+          text: send_text,
           conversation_form_button: true,
         } %>
       <% end %>

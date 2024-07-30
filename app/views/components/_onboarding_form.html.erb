@@ -9,19 +9,30 @@
       text: "Okay, start chatting",
     } %>
   <% else %>
+      <% i_understand_text = capture do %>
+        I understand
+        <%= content_tag :span, "the limitations of GOV.UK Chat and want to continue",
+          class: "govuk-visually-hidden" %>
+      <% end %>
     <% if more_information %>
       <%= render "components/blue_button", {
-        text: "I understand",
+        text: i_understand_text,
       } %>
 
       <%= link_to "Take me to GOV.UK", Plek.website_root, class: "govuk-link" %>
     <% else %>
       <%= render "components/blue_button", {
-        text: "I understand",
+        text: i_understand_text,
       } %>
 
+      <% tell_me_more_text = capture do %>
+        Tell me more
+        <%= content_tag :span, "I want to learn more about the limitations of GOV.UK Chat before I start using the tool",
+          class: "govuk-visually-hidden" %>
+      <% end %>
+
       <%= render "govuk_publishing_components/components/button", {
-        text: "Tell me more",
+        text: tell_me_more_text,
         name: "more_information",
         value: "true",
         secondary_solid: true,
