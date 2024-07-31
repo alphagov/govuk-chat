@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :question do
     conversation
     sequence(:message) { |n| "Message #{n}" }
-    answer_strategy { :open_ai_rag_completion }
+    answer_strategy { :openai_structured_answer }
 
     trait :with_answer do
       after(:build) do |question|

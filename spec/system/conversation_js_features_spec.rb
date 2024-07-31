@@ -139,7 +139,12 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
   def when_the_first_answer_is_generated
     @first_answer = "You can use a simple service on GOV.UK"
-    stubs_for_mock_answer(@first_question, @first_answer)
+    answer = {
+      "answer" => @first_answer,
+      "answered" => true,
+      "sources_used" => ["/pensions-service"],
+    }.to_json
+    stubs_for_mock_answer(@first_question, answer)
 
     perform_enqueued_jobs
   end
@@ -163,7 +168,13 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
   def when_the_second_answer_is_generated
     @second_answer = "The simple workplace pension service"
-    stubs_for_mock_answer(@second_question, @second_answer, rephrase_question: true)
+    answer = {
+      "answer" => @second_answer,
+      "answered" => true,
+      "sources_used" => ["/pensions-service"],
+    }.to_json
+
+    stubs_for_mock_answer(@second_question, answer, rephrase_question: true)
 
     perform_enqueued_jobs
   end
@@ -258,8 +269,11 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
       build(:chunked_content_record, openai_embedding: mock_openai_embedding(question)),
     ])
 
-    stub_openai_chat_completion(array_including({ "role" => "user", "content" => question }), answer)
-
-    stub_openai_output_guardrail_pass(answer)
+    stub_openai_chat_completion_structured_response(
+      array_including({ "role" => "user", "content" => question }),
+      answer,
+    )
+    parsed_answer = JSON.parse(answer)["answer"]
+    stub_openai_output_guardrail_pass(parsed_answer)
   end
 end

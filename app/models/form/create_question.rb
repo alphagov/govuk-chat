@@ -41,10 +41,10 @@ private
   def answer_strategy
     if Feature.enabled?(:chat_api)
       :govuk_chat_api
-    elsif Feature.enabled?(:structured_answer_generation)
-      :openai_structured_answer
-    else
+    elsif Feature.enabled?(:unstructured_answer_generation)
       :open_ai_rag_completion
+    else
+      :openai_structured_answer
     end
   end
 end

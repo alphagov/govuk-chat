@@ -59,7 +59,7 @@ RSpec.describe Form::CreateQuestion do
     end
 
     context "when a conversation is passed in on initialisation" do
-      it "adds a new question to the conversation" do
+      it "adds a new question with the correct attributes to the conversation" do
         existing_question = build(:question, :with_answer)
         conversation = create(:conversation, questions: [existing_question])
 
@@ -69,7 +69,11 @@ RSpec.describe Form::CreateQuestion do
         ).submit
 
         expect(Question.where(conversation:).count).to eq 2
-        expect(Question.where(conversation:).last.message).to eq "How much tax should I be paying?"
+        expect(Question.where(conversation:).last)
+          .to have_attributes(
+            message: "How much tax should I be paying?",
+            answer_strategy: "openai_structured_answer",
+          )
       end
 
       it "enqueues a ComposeAnswerJob" do
@@ -92,11 +96,15 @@ RSpec.describe Form::CreateQuestion do
           .and change(Question, :count).by(1)
       end
 
-      it "returns the created question with the correct message" do
+      it "returns the created question with the correct attributes" do
         form = described_class.new(user_question: "How much tax should I be paying?")
         question = form.submit
 
-        expect(question.message).to eq("How much tax should I be paying?")
+        expect(question)
+          .to have_attributes(
+            message: "How much tax should I be paying?",
+            answer_strategy: "openai_structured_answer",
+          )
       end
     end
   end
