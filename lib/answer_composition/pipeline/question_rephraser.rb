@@ -62,7 +62,7 @@ module AnswerComposition
       end
 
       def system_prompt
-        Rails.configuration.llm_prompts.question_rephraser.system_prompt
+        Rails.configuration.llm_prompts.question_rephraser[:system_prompt]
       end
 
       def openai_client

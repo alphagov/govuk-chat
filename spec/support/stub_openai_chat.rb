@@ -13,7 +13,7 @@ module StubOpenAIChat
   end
 
   def stub_openai_chat_completion_structured_response(chat_history, answer, chat_options: {})
-    output_schema = Rails.configuration.llm_prompts.openai_structured_answer.output_schema
+    output_schema = Rails.configuration.llm_prompts.openai_structured_answer[:output_schema]
 
     structured_generation_chat_options = chat_options.merge(
       {
@@ -71,8 +71,8 @@ module StubOpenAIChat
 
   def stub_openai_output_guardrail_pass(answer)
     messages = [
-      { role: "system", content: Rails.configuration.llm_prompts.output_guardrails.few_shot.system_prompt },
-      { role: "user", content: Rails.configuration.llm_prompts.output_guardrails.few_shot.user_prompt.sub("{input}", answer) },
+      { role: "system", content: Rails.configuration.llm_prompts.output_guardrails.dig(:few_shot, :system_prompt) },
+      { role: "user", content: Rails.configuration.llm_prompts.output_guardrails.dig(:few_shot, :user_prompt).sub("{input}", answer) },
     ]
     stub_openai_chat_completion(messages, "False | None", chat_options: { model: "gpt-4o", max_tokens: 25 })
   end
