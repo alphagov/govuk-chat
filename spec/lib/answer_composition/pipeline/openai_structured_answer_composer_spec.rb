@@ -17,10 +17,10 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
     end
 
     it "sends OpenAI a series of messages combining system prompt, few shot messages and the user question" do
-      few_shots = llm_prompts.openai_structured_answer.few_shots.flat_map do |few_shot|
+      few_shots = llm_prompts[:few_shots].flat_map do |few_shot|
         [
-          { role: "user", content: few_shot.user },
-          { role: "assistant", content: few_shot.assistant },
+          { role: "user", content: few_shot[:user] },
+          { role: "assistant", content: few_shot[:assistant] },
         ]
       end
       system_prompt_context = "[{:page_url=>\"/vat-rates#vat-basics\", " \
@@ -179,11 +179,11 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
     end
 
     def system_prompt(context)
-      sprintf(llm_prompts.openai_structured_answer.system_prompt, context:)
+      sprintf(llm_prompts[:system_prompt], context:)
     end
 
     def llm_prompts
-      Rails.configuration.llm_prompts
+      Rails.configuration.llm_prompts.openai_structured_answer
     end
   end
 end

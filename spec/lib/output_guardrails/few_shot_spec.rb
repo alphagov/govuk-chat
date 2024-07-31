@@ -3,7 +3,9 @@ RSpec.describe OutputGuardrails::FewShot do
 
   before do
     allow(Rails.logger).to receive(:error)
-    allow(Rails.configuration.llm_prompts.output_guardrails.few_shot).to receive(:guardrail_mappings).and_return(guardrail_mappings)
+    allow(Rails.configuration.llm_prompts.output_guardrails).to receive(:dig).and_call_original
+    allow(Rails.configuration.llm_prompts.output_guardrails).to receive(:dig).with(:few_shot, :guardrail_mappings)
+                                                            .and_return(guardrail_mappings)
   end
 
   context "when the request is successful" do
@@ -13,7 +15,7 @@ RSpec.describe OutputGuardrails::FewShot do
         { role: "system", content: system_prompt },
         {
           role: "user",
-          content: Rails.configuration.llm_prompts.output_guardrails.few_shot.user_prompt.sub("{input}", input),
+          content: Rails.configuration.llm_prompts.output_guardrails.dig(:few_shot, :user_prompt).sub("{input}", input),
         },
       ]
     end
@@ -112,7 +114,7 @@ RSpec.describe OutputGuardrails::FewShot do
   end
 
   def system_prompt
-    Rails.configuration.llm_prompts.output_guardrails.few_shot.system_prompt
+    Rails.configuration.llm_prompts.output_guardrails.dig(:few_shot, :system_prompt)
       .gsub("{date}", Time.zone.today.strftime("%A %d %B %Y"))
   end
 end

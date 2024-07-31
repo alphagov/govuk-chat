@@ -41,7 +41,7 @@ module AnswerComposition::Pipeline
     end
 
     def system_prompt
-      sprintf(llm_prompts.openai_unstructured_answer.system_prompt, context: system_prompt_context)
+      sprintf(llm_prompts[:system_prompt], context: system_prompt_context)
     end
 
     def system_prompt_context
@@ -60,16 +60,16 @@ module AnswerComposition::Pipeline
     end
 
     def few_shots
-      llm_prompts.openai_unstructured_answer.few_shots.flat_map do |few_shot|
+      llm_prompts[:few_shots].flat_map do |few_shot|
         [
-          { role: "user", content: few_shot.user },
-          { role: "assistant", content: few_shot.assistant },
+          { role: "user", content: few_shot[:user] },
+          { role: "assistant", content: few_shot[:assistant] },
         ]
       end
     end
 
     def llm_prompts
-      Rails.configuration.llm_prompts
+      Rails.configuration.llm_prompts.openai_unstructured_answer
     end
 
     def openai_client

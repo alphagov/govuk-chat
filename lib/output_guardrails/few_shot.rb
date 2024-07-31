@@ -64,12 +64,12 @@ module OutputGuardrails
     end
 
     def mapping_keys
-      Rails.configuration.llm_prompts.output_guardrails.few_shot.guardrail_mappings.keys.map(&:to_i)
+      llm_prompts.dig(:few_shot, :guardrail_mappings).keys.map(&:to_i)
     end
 
     def extract_guardrails(parts)
       guardrail_numbers = parts.scan(/\d+/)
-      mappings = Rails.configuration.llm_prompts.output_guardrails.few_shot.guardrail_mappings
+      mappings = llm_prompts.dig(:few_shot, :guardrail_mappings)
       guardrail_numbers.map { |n| mappings[n] }
     end
 
@@ -81,13 +81,15 @@ module OutputGuardrails
     end
 
     def system_prompt
-      Rails.configuration.llm_prompts.output_guardrails.few_shot.system_prompt
-        .gsub("{date}", Time.zone.today.strftime("%A %d %B %Y"))
+      llm_prompts.dig(:few_shot, :system_prompt).gsub("{date}", Time.zone.today.strftime("%A %d %B %Y"))
     end
 
     def user_prompt
-      Rails.configuration.llm_prompts.output_guardrails.few_shot.user_prompt
-        .sub("{input}", input)
+      llm_prompts.dig(:few_shot, :user_prompt).sub("{input}", input)
+    end
+
+    def llm_prompts
+      Rails.configuration.llm_prompts.output_guardrails
     end
   end
 end

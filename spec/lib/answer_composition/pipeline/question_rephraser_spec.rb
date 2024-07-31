@@ -110,6 +110,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
   end
 
   def system_prompt
-    Rails.configuration.llm_prompts.question_rephraser.system_prompt
+    Rails.configuration.llm_prompts.question_rephraser[:system_prompt]
   end
 end
