@@ -35,7 +35,6 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include StubOpenAIChat
   config.include StubOpenAIEmbedding
-  config.include StubChatApi
   config.include SystemSpecHelpers, type: :system
 
   config.before(:each, :chunked_content_index) do

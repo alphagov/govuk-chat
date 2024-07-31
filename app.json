@@ -25,15 +25,6 @@
     "AVAILABLE_WITHOUT_SIGNON_AUTHENTICATION": {
       "value": "true"
     },
-    "CHAT_API_URL": {
-      "required": true
-    },
-    "CHAT_API_USERNAME": {
-      "required": true
-    },
-    "CHAT_API_PASSWORD": {
-      "required": true
-    },
     "DISABLE_MAIL_DELIVERY": {
       "value": "true"
     },

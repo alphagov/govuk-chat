@@ -2,7 +2,6 @@ RSpec.describe ComposeAnswerJob do
   include ActiveJob::TestHelper
   let(:question) { create(:question, message: user_input) }
   let(:user_input) { "hello" }
-  let(:chat_url) { "https://chat-api.example.com" }
   let(:returned_answer) { build :answer, :with_sources, question:, message: "Hello, how can I help you?" }
 
   before do
@@ -10,7 +9,7 @@ RSpec.describe ComposeAnswerJob do
   end
 
   describe "#perform" do
-    it "saves the answer and sources returned from the chat api" do
+    it "saves the answer and sources" do
       expect { described_class.new.perform(question.id) }
         .to change(Answer, :count).by(1)
         .and change(AnswerSource, :count).by(2)
