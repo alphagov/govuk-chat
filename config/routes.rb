@@ -15,6 +15,9 @@ Rails.application.routes.draw do
 
   scope :chat do
     get "", to: "chat#index", as: :chat
+    passwordless_for :early_access_users, at: "/", as: :early_access
+    get "sign-up", to: "signup#new"
+    post "sign-up", to: "signup#create"
 
     scope :onboarding do
       get "", to: "onboarding#limitations", as: :onboarding_limitations
