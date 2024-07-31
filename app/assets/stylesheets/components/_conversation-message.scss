@@ -46,10 +46,17 @@ $message-container-spacing-mobile: 40px;
 
 .app-c-conversation-message__body--govuk-message {
   background-color: govuk-colour("light-grey");
+  // Add an outline to messages to ensure they are clearly delineated in high contrast mode.
+  // Using a negative value for the outline-offset property ensures that the outline
+  // aligns with the edge of the message body container
+  outline: 1px solid govuk-colour("light-grey");
+  outline-offset: -1px;
 }
 
 .app-c-conversation-message__body--user-message {
   background-color: govuk-tint(govuk-colour("light-blue"), 75%);
+  outline: 1px solid govuk-tint(govuk-colour("light-blue"), 75%);
+  outline-offset: -1px;
 }
 
 .app-c-conversation-message__loading-text {
