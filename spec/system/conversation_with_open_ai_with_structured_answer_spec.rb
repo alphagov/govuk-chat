@@ -52,11 +52,10 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
       {
         answer: "Lots of tax.",
         answered: true,
-        call_for_action: "For more detailed information, you can visit [Pay more tax](https://www.gov.uk/pay-more-tax)",
         sources_used: ["/pay-more-tax#yes-really"],
       }.to_json,
     )
-    stub_openai_output_guardrail_pass("Lots of tax.\n\nFor more detailed information, you can visit [Pay more tax](https://www.gov.uk/pay-more-tax)")
+    stub_openai_output_guardrail_pass("Lots of tax.")
 
     perform_enqueued_jobs
   end
@@ -71,11 +70,10 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
       {
         answer: "Even more tax.",
         answered: true,
-        call_for_action: "For more detailed information, you can visit [Pay more tax](https://www.gov.uk/pay-more-tax)",
         sources_used: ["/pay-more-tax#yes-really"],
       }.to_json,
     )
-    stub_openai_output_guardrail_pass("Even more tax.\n\nFor more detailed information, you can visit [Pay more tax](https://www.gov.uk/pay-more-tax)")
+    stub_openai_output_guardrail_pass("Even more tax.")
 
     perform_enqueued_jobs
   end
@@ -89,11 +87,11 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
   end
 
   def and_i_can_see_the_first_answer
-    expect(page).to have_content("Lots of tax.\nFor more detailed information, you can visit Pay more tax")
+    expect(page).to have_content("Lots of tax.")
   end
 
   def and_i_can_see_the_second_answer
-    expect(page).to have_content("Even more tax.\nFor more detailed information, you can visit Pay more tax")
+    expect(page).to have_content("Even more tax.")
   end
 
   def when_i_enter_a_second_question
