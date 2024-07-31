@@ -3,7 +3,6 @@ class Question < ApplicationRecord
        {
          open_ai_rag_completion: "open_ai_rag_completion",
          openai_structured_answer: "openai_structured_answer",
-         govuk_chat_api: "govuk_chat_api",
        },
        prefix: true
 

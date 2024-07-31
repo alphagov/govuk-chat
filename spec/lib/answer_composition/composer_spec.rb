@@ -53,18 +53,6 @@ RSpec.describe AnswerComposition::Composer do
       end
     end
 
-    context "when the question is for chat API" do
-      let(:question) { create :question, answer_strategy: :govuk_chat_api }
-
-      it "get the result via ChatApiCompletion.call(question)" do
-        allow(AnswerComposition::GovukChatApi)
-          .to receive(:call).with(question).and_return(retrieved_answer)
-        expect(described_class.call(question)).to eq(retrieved_answer)
-
-        expect(AnswerComposition::GovukChatApi).to have_received(:call).with(question)
-      end
-    end
-
     context "when the question is for an unknown strategy" do
       let(:question) { build_stubbed(:question, answer_strategy: nil) }
       let(:result) { described_class.call(question) }
