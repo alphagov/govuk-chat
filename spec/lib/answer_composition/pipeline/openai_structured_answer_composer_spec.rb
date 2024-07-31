@@ -7,7 +7,6 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
       {
         answer: "VAT (Value Added Tax) is a tax applied to most goods and services in the UK.",
         answered: true,
-        call_for_action: "For more detailed information, you can visit [VAT Rates](https://www.gov.uk/vat-rates)",
         sources_used: ["/vat-rates#vat-basics"],
       }.to_json
     end
@@ -51,6 +50,22 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
       end
       let(:unused_search_result) { build(:chunked_content_search_result, _id: "2", score: 0.5, exact_path: "/vat-rates#vat-rates") }
 
+      it "calls OpenAI chat endpoint and assigns the correct values to the context's answer" do
+        stub_openai_chat_completion_structured_response(
+          expected_message_history,
+          structured_response,
+        )
+
+        described_class.call(context)
+
+        expect(context.answer)
+          .to have_attributes(
+            message: "VAT (Value Added Tax) is a tax applied to most goods and services in the UK.",
+            status: "success",
+            llm_response: structured_response,
+          )
+      end
+
       it "sets the 'used' boolean to false for unused sources" do
         context.search_results = [search_result, unused_search_result]
         stub_openai_chat_completion_structured_response(
@@ -63,57 +78,11 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
         expect(context.answer.sources.map(&:used)).to eq([true, false])
       end
 
-      context "and a call to action is provided" do
-        it "calls OpenAI chat endpoint and assigns the correct values to the context's answer" do
-          stub_openai_chat_completion_structured_response(
-            expected_message_history,
-            structured_response,
-          )
-
-          described_class.call(context)
-
-          expect(context.answer)
-            .to have_attributes(
-              message: "VAT (Value Added Tax) is a tax applied to most goods and services in the UK.\n\nFor more detailed information, you can visit [VAT Rates](https://www.gov.uk/vat-rates)",
-              status: "success",
-              llm_response: structured_response,
-            )
-        end
-      end
-
-      context "and call for action is blank" do
-        let(:structured_response) do
-          {
-            answer: "VAT (Value Added Tax) is a tax applied to most goods and services in the UK.",
-            answered: true,
-            call_for_action: "",
-            sources_used: ["/vat-rates#vat-basics"],
-          }.to_json
-        end
-
-        it "calls OpenAI chat endpoint and assigns the correct values to the context's answer" do
-          stub_openai_chat_completion_structured_response(
-            expected_message_history,
-            structured_response,
-          )
-
-          described_class.call(context)
-
-          expect(context.answer)
-            .to have_attributes(
-              message: "VAT (Value Added Tax) is a tax applied to most goods and services in the UK.",
-              status: "success",
-              llm_response: structured_response,
-            )
-        end
-      end
-
       context "and answered is 'false'" do
         let(:structured_response) do
           {
             answer: "Sorry i cannot answer that question.",
             answered: false,
-            call_for_action: "",
             sources_used: ["/vat-rates#vat-basics"],
           }.to_json
         end
