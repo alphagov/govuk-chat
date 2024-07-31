@@ -17,8 +17,10 @@ RSpec.describe "Notify tasks" do
     end
 
     it "raises an error if email address is not present" do
-      expect { Rake::Task["notify:send_email"].invoke }
-        .to raise_error("Missing email address")
+      ClimateControl.modify EMAIL_ADDRESS_OVERRIDE: nil do
+        expect { Rake::Task["notify:send_email"].invoke }
+          .to raise_error("Missing email address")
+      end
     end
 
     it "raises an error when GOVUK_NOTIFY_TEMPLATE_ID is not set" do
