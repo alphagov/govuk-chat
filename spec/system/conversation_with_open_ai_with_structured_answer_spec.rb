@@ -2,8 +2,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
   include ActiveJob::TestHelper
 
   scenario do
-    given_the_structured_answer_generation_feature_flag_is_active
-    and_i_have_confirmed_i_understand_chat_risks
+    given_i_have_confirmed_i_understand_chat_risks
     when_i_visit_the_conversation_page
     and_i_enter_a_question
     then_i_see_the_answer_is_pending
@@ -20,10 +19,6 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
     and_i_click_on_the_check_answer_button
     then_i_see_my_second_question_on_the_page
     and_i_can_see_the_second_answer
-  end
-
-  def given_the_structured_answer_generation_feature_flag_is_active
-    Flipper.enable(:structured_answer_generation)
   end
 
   def when_i_visit_the_conversation_page
