@@ -21,6 +21,7 @@ Rails.application.configure do
 
   # Enable server timing
   config.server_timing = true
+  config.logger = Logger.new($stdout)
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
@@ -39,8 +40,8 @@ Rails.application.configure do
   end
   config.action_mailer.default_url_options = { host: Plek.website_root }
   routes.default_url_options[:host] ||= Plek.website_root
-  config.action_mailer.delivery_method = :file
-  config.action_mailer.file_settings = { location: Rails.root.join("tmp/mails") }
+  config.action_mailer.delivery_method = :test
+  config.action_mailer.logger = config.logger
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
