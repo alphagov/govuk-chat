@@ -116,6 +116,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
       render("components/conversation_message", {
         id: "answer-4",
         message: "message 4",
+        question_message: "How do I apply for teacher training?",
         feedback_url: "http://example.com",
       })
 

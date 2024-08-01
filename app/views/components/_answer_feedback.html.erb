@@ -4,14 +4,14 @@
       <legend class="app-c-answer-feedback__legend">How was this answer?</legend>
       <div class="app-c-answer-feedback__button-group">
         <%= button_tag(
-          "#{tag.span('This answer was ', class: 'govuk-visually-hidden')}Useful".html_safe,
+          safe_join([tag.span('The answer to "' + question_message + '" was ', class: "govuk-visually-hidden"), "Useful"]),
           class: "app-c-answer-feedback__button",
           name: "create_answer_feedback[useful]",
           value: "true",
         ) %>
         <span class="govuk-body"> or </span>
         <%= button_tag(
-          "#{tag.span('This answer was ', class: 'govuk-visually-hidden')}not useful".html_safe,
+          "#{tag.span('The answer was ', class: 'govuk-visually-hidden')}not useful".html_safe,
           class: "app-c-answer-feedback__button",
           name: "create_answer_feedback[useful]",
           value: "false",
