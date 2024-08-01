@@ -33,6 +33,7 @@ $message-container-spacing-mobile: 40px;
 
 .app-c-conversation-message__body {
   padding: govuk-spacing(3);
+  word-break: break-all;
 
   // two classes used to increase specificity
   .gem-c-govspeak.govuk-govspeak :last-child {
@@ -105,7 +106,7 @@ $message-container-spacing-mobile: 40px;
 }
 
 .app-c-conversation-message--fade-in {
-  animation: fade-in 0.5s ease-in-out;
+  animation: fade-in 0.3s ease-in-out;
 }
 
 @keyframes fade-in {
