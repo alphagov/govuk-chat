@@ -2,7 +2,15 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
   describe ".call" do
     let(:question) { build :question }
     let(:context) { build(:answer_pipeline_context, question:) }
-    let(:search_result) { build(:chunked_content_search_result, _id: "1", score: 1.0, exact_path: "/vat-rates#vat-basics") }
+    let(:search_result) do
+      build(
+        :chunked_content_search_result,
+        _id: "1",
+        score: 1.0,
+        exact_path: "/vat-rates#vat-basics",
+        html_content: '<p>Some content</p><a href="/tax-returns">Tax returns</a>',
+      )
+    end
     let(:structured_response) do
       {
         answer: "VAT (Value Added Tax) is a tax applied to most goods and services in the UK.",
@@ -26,7 +34,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
                               ":page_title=>\"Title\", " \
                               ":page_description=>\"Description\", " \
                               ":context_headings=>[\"Heading 1\", \"Heading 2\"], " \
-                              ":context_content=>\"<p>Some content</p>\"}]"
+                              ":context_content=>\"<p>Some content</p><a href=\\\"link_1\\\">Tax returns</a>\"}]"
       expected_message_history = [
         { role: "system", content: system_prompt(system_prompt_context) },
         few_shots,

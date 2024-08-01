@@ -4,7 +4,14 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIUnstructuredAnswerComposer, :c
     let(:expected_message_history) do
       array_including({ "role" => "user", "content" => question.message })
     end
-    let(:search_result) { build(:chunked_content_search_result, _id: "1", score: 1.0) }
+    let(:search_result) do
+      build(
+        :chunked_content_search_result,
+        _id: "1",
+        score: 1.0,
+        html_content: '<p>Some content</p><a href="/tax-returns">Tax returns</a>',
+      )
+    end
     let(:context) { build(:answer_pipeline_context, question:) }
 
     before do
@@ -15,7 +22,8 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIUnstructuredAnswerComposer, :c
     it "sends OpenAI a series of messages combining system prompt, few shot messages and the user question" do
       system_prompt = sprintf(
         llm_prompts[:system_prompt],
-        context: "Title\nHeading 1\nHeading 2\nDescription\n<p>Some content</p>",
+        context: "Title\nHeading 1\nHeading 2\nDescription\n" \
+          "<p>Some content</p><a href=\"link_1\">Tax returns</a>",
       )
       few_shots = llm_prompts[:few_shots].flat_map do |few_shot|
         [

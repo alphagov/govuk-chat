@@ -6,6 +6,7 @@ module AnswerComposition::Pipeline
 
     def initialize(context)
       @context = context
+      @link_token_mapper = AnswerComposition::LinkTokenMapper.new
     end
 
     def call
@@ -41,7 +42,7 @@ module AnswerComposition::Pipeline
 
   private
 
-    attr_reader :context
+    attr_reader :context, :link_token_mapper
 
     def parsed_structured_response
       @parsed_structured_response ||= begin
@@ -102,7 +103,7 @@ module AnswerComposition::Pipeline
           page_title: result.title,
           page_description: result.description,
           context_headings: result.heading_hierarchy,
-          context_content: result.html_content,
+          context_content: link_token_mapper.map_links_to_tokens(result.html_content),
         }
       end
     end

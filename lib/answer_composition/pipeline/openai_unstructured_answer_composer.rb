@@ -6,6 +6,7 @@ module AnswerComposition::Pipeline
 
     def initialize(context)
       @context = context
+      @link_token_mapper = AnswerComposition::LinkTokenMapper.new
     end
 
     def call
@@ -19,7 +20,7 @@ module AnswerComposition::Pipeline
 
   private
 
-    attr_reader :context
+    attr_reader :context, :link_token_mapper
 
     def openai_response
       openai_client.chat(
@@ -50,7 +51,7 @@ module AnswerComposition::Pipeline
           result.title,
           result.heading_hierarchy,
           result.description,
-          result.html_content,
+          link_token_mapper.map_links_to_tokens(result.html_content),
         ]
         .flatten
         .compact
