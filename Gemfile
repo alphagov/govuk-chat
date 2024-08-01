@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby file: ".ruby-version"
+ruby "~> #{File.read('.ruby-version').strip}"
 
 gem "rails", "7.1.3.4"
 
