@@ -48,6 +48,7 @@ describe('AnswerFeedback component', () => {
       form.dispatchEvent(event)
 
       expect(feedbackSubmittedDiv.hidden).toEqual(false)
+      expect(feedbackSubmittedDiv.ownerDocument.activeElement === feedbackSubmittedDiv)
     })
 
     it('submits a JSON fetch request to the action of the form', () => {

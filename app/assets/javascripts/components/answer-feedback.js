@@ -22,6 +22,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.form.hidden = true
       this.hideButton.addEventListener('click', e => this.hideComponent(e))
       this.feedbackSubmittedDiv.hidden = false
+      this.feedbackSubmittedDiv.focus()
 
       try {
         const formData = new FormData(this.form)
