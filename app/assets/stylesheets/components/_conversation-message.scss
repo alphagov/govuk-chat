@@ -33,6 +33,7 @@ $message-container-spacing-mobile: 40px;
 
 .app-c-conversation-message__body {
   padding: govuk-spacing(3);
+  word-break: break-all;
 
   // two classes used to increase specificity
   .gem-c-govspeak.govuk-govspeak :last-child {
