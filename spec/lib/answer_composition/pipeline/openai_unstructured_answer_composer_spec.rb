@@ -13,6 +13,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIUnstructuredAnswerComposer, :c
       )
     end
     let(:context) { build(:answer_pipeline_context, question:) }
+    let(:openai_response) { "VAT (Value Added Tax) is a [tax](link_1) applied to most goods and services in the UK." }
 
     before do
       context.search_results = [search_result]
@@ -39,7 +40,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIUnstructuredAnswerComposer, :c
       ]
       .flatten
 
-      request = stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
+      request = stub_openai_chat_completion(expected_message_history, openai_response)
 
       described_class.call(context)
 
@@ -47,14 +48,16 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIUnstructuredAnswerComposer, :c
     end
 
     it "calls OpenAI chat endpoint updates the message, status and llm response on the context's answer" do
-      stub_openai_chat_completion(expected_message_history, "OpenAI responded with...")
+      stub_openai_chat_completion(expected_message_history, openai_response)
 
       described_class.call(context)
 
       answer = context.answer
-      expect(answer.message).to eq("OpenAI responded with...")
+      expect(answer.message.squish).to eq(
+        "VAT (Value Added Tax) is a [tax](/tax-returns) applied to most goods and services in the UK.",
+      )
       expect(answer.status).to eq("success")
-      expect(answer.llm_response).to eq("OpenAI responded with...")
+      expect(answer.llm_response).to eq(openai_response)
     end
 
     def llm_prompts

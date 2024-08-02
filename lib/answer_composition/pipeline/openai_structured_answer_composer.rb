@@ -18,9 +18,11 @@ module AnswerComposition::Pipeline
         )
       end
 
+      message = link_token_mapper.replace_tokens_with_links(parsed_structured_response["answer"])
+
       context.update_sources_from_exact_paths_used(parsed_structured_response["sources_used"])
       context.answer.assign_attributes(
-        message: parsed_structured_response["answer"],
+        message:,
         status: "success",
         llm_response: raw_structured_response,
       )

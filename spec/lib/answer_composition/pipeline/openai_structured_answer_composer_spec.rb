@@ -8,12 +8,12 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
         _id: "1",
         score: 1.0,
         exact_path: "/vat-rates#vat-basics",
-        html_content: '<p>Some content</p><a href="/tax-returns">Tax returns</a>',
+        html_content: '<p>Some content</p><a href="/what-is-tax">What is a tax?</a>',
       )
     end
     let(:structured_response) do
       {
-        answer: "VAT (Value Added Tax) is a tax applied to most goods and services in the UK.",
+        answer: "VAT (Value Added Tax) is a [tax](link_1) applied to most goods and services in the UK.",
         answered: true,
         sources_used: ["/vat-rates#vat-basics"],
       }.to_json
@@ -34,7 +34,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
                               ":page_title=>\"Title\", " \
                               ":page_description=>\"Description\", " \
                               ":context_headings=>[\"Heading 1\", \"Heading 2\"], " \
-                              ":context_content=>\"<p>Some content</p><a href=\\\"link_1\\\">Tax returns</a>\"}]"
+                              ":context_content=>\"<p>Some content</p><a href=\\\"link_1\\\">What is a tax?</a>\"}]"
       expected_message_history = [
         { role: "system", content: system_prompt(system_prompt_context) },
         few_shots,
@@ -66,12 +66,11 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
 
         described_class.call(context)
 
-        expect(context.answer)
-          .to have_attributes(
-            message: "VAT (Value Added Tax) is a tax applied to most goods and services in the UK.",
-            status: "success",
-            llm_response: structured_response,
-          )
+        expect(context.answer.message.squish).to eq(
+          "VAT (Value Added Tax) is a [tax](/what-is-tax) applied to most goods and services in the UK.",
+        )
+        expect(context.answer.status).to eq("success")
+        expect(context.answer.llm_response).to eq(structured_response)
       end
 
       it "sets the 'used' boolean to false for unused sources" do

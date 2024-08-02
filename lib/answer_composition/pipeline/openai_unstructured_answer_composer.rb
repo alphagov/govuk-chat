@@ -12,7 +12,7 @@ module AnswerComposition::Pipeline
     def call
       message = openai_response.dig("choices", 0, "message", "content")
       context.answer.assign_attributes(
-        message:,
+        message: link_token_mapper.replace_tokens_with_links(message),
         status: "success",
         llm_response: message,
       )
