@@ -40,7 +40,12 @@ Rails.application.routes.draw do
     get "/conversations/:id", to: "conversations#show", as: :show_conversation
     get "/search", to: "search#index", as: :search
     get "/search/chunk/:id", to: "chunks#show", as: :chunk
-    get "/settings", to: "settings#show", as: :settings
+
+    scope :settings do
+      get "", to: "settings#show", as: :settings
+      get "/instant_access_places", to: "settings/instant_access_places#edit", as: :edit_instant_access_places
+      patch "/instant_access_places", to: "settings/instant_access_places#update", as: :update_instant_access_places
+    end
   end
 
   scope via: :all do
