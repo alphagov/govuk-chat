@@ -1,0 +1,59 @@
+<% content_for :title, "Settings" %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-!-margin-bottom-8">
+      <%= render "govuk_publishing_components/components/summary_list", {
+        title: "Instant access places",
+        heading_level: 2,
+        heading_size: "l",
+        items: [
+          {
+            field: "Available instant access places",
+            value: @settings.instant_access_places,
+          },
+          {
+            field: "Description",
+            value: "The number of places we have available for early access signups to be granted instant access.",
+          },
+        ],
+      } %>
+    </div>
+
+    <div class="govuk-!-margin-bottom-8">
+      <%= render "govuk_publishing_components/components/summary_list", {
+        title: "Delayed access places",
+        heading_level: 2,
+        heading_size: "l",
+        items: [
+          {
+            field: "Available delayed access places",
+            value: @settings.delayed_access_places,
+          },
+          {
+            field: "Description",
+            value: "The number of places we have available for people on the waiting list to be granted delayed access.",
+          },
+        ],
+      } %>
+    </div>
+
+    <div class="govuk-!-margin-bottom-8">
+      <%= render "govuk_publishing_components/components/summary_list", {
+        title: "Sign up enabled",
+        heading_level: 2,
+        heading_size: "l",
+        items: [
+          {
+            field: "Enabled",
+            value: @settings.sign_up_enabled ? "Yes" : "No",
+          },
+          {
+            field: "Description",
+            value: "Whether anyone can currently sign-up for access.",
+          },
+        ],
+      } %>
+    </div>
+  </div>
+</div>

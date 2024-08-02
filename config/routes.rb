@@ -40,6 +40,7 @@ Rails.application.routes.draw do
     get "/conversations/:id", to: "conversations#show", as: :show_conversation
     get "/search", to: "search#index", as: :search
     get "/search/chunk/:id", to: "chunks#show", as: :chunk
+    get "/settings", to: "settings#show", as: :settings
   end
 
   scope via: :all do
