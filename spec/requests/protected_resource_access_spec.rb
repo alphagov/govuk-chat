@@ -2,7 +2,7 @@ RSpec.describe "accessing resources with passwordless" do
   context "when not logged in" do
     it "redirects to /chat/sign_in" do
       get protected_path
-      expect(response).to redirect_to(early_access_sign_in_path)
+      expect(response).to redirect_to(sign_in_path)
     end
   end
 
