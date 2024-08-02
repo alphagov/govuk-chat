@@ -21,15 +21,19 @@ private
 
   def body
     <<~BODY
-      To access GOV.UK chat please provide the following code. #{token}
+      Hello #{to}
 
-      Alternatively you can access GOV.UK Chat using this link
+      Welcome to GOV.UK Chat
+
+      You can use the link below to start chatting. And you
+      can always generate a new link when you need to access it again.
       #{magic_link}
     BODY
   end
 
   def magic_link
-    sign_in_confirm_url(session.to_param, session.token)
+    url = sign_in_confirm_url(session.to_param, session.token)
+    "[Start chatting](#{url})"
   end
 
   def to
