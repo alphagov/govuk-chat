@@ -18,22 +18,26 @@ class SigninController < ActionController::Base # rubocop:disable Rails/Applicat
     # safe. We don't want to sign in the user in that case.
     return head(:ok) if request.head?
 
-    session = Passwordless::Session.find_by!(
-      identifier: params[:id],
-      authenticatable_type: "EarlyAccessUser"
-    )
-    if session.authenticate(params[:token])
-      sign_in(session)
+    if passwordless_session&.authenticate(params[:token])
+      sign_in(passwordless_session)
       redirect_to(redirect_location)
     else
-      redirect_to(signin_failure_path)
+      redirect_to(sign_in_failure_path)
     end
+  end
 
   end
 
   def failure; end
 
 private
+
+  def passwordless_session
+    @passwordless_session ||= Passwordless::Session.find_by(
+      identifier: params[:id],
+      authenticatable_type: "EarlyAccessUser",
+    )
+  end
 
   def signin_attributes
     params.require(:form_signin_user).permit(:email)

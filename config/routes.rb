@@ -20,8 +20,8 @@ Rails.application.routes.draw do
     get "sign-in", to: "signin#new"
     post "sign-in", to: "signin#create"
     get "sign-in/email_sent", to: "signin#email_sent"
-    get "sign-in/:id/:token", to: "signin#confirm", as: :signin_confirm
-    get "sign-in/failure", to: "signin#failure", as: :signin_failure
+    get "sign-in/:id/:token", to: "signin#confirm", as: :sign_in_confirm
+    get "sign-in/failure", to: "signin#failure", as: :sign_in_failure
 
     scope :onboarding do
       get "", to: "onboarding#limitations", as: :onboarding_limitations

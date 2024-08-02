@@ -29,7 +29,7 @@ private
   end
 
   def magic_link
-    signin_confirm_url(session.to_param, session.token)
+    sign_in_confirm_url(session.to_param, session.token)
   end
 
   def to
