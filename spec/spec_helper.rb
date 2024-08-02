@@ -8,7 +8,6 @@ SimpleCov.start "rails"
 require File.expand_path("../config/environment", __dir__)
 require "govuk_message_queue_consumer/test_helpers"
 require "govuk_sidekiq/testing"
-require "passwordless/test_helpers"
 require "rspec/rails"
 require "webmock/rspec"
 
@@ -35,6 +34,7 @@ RSpec.configure do |config|
   config.include Capybara::RSpecMatchers, type: :request
   config.include FactoryBot::Syntax::Methods
   config.include StubOpenAIChat
+  config.include PasswordlessHelpers
   config.include StubOpenAIEmbedding
   config.include SystemSpecHelpers, type: :system
 
