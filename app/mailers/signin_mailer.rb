@@ -1,4 +1,5 @@
 class SigninMailer
+  include Rails.application.routes.url_helpers
   def self.call(...) = new(...).call
 
   def initialize(session)
@@ -28,12 +29,7 @@ private
   end
 
   def magic_link
-    Passwordless.context.url_for(
-      session,
-      action: "confirm",
-      id: session.to_param,
-      token:,
-    )
+    signin_confirm_url(session.to_param, session.token)
   end
 
   def to
