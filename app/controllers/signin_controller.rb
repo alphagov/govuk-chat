@@ -26,6 +26,9 @@ class SigninController < ActionController::Base # rubocop:disable Rails/Applicat
     end
   end
 
+  def destroy
+    sign_out(EarlyAccessUser)
+    redirect_to chat_path
   end
 
   def failure; end

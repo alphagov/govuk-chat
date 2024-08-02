@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     get "sign-up", to: "signup#new"
     post "sign-up", to: "signup#create"
     get "sign-in", to: "signin#new"
+    get "sign-out", to: "signin#destroy"
     post "sign-in", to: "signin#create"
     get "sign-in/email_sent", to: "signin#email_sent"
     get "sign-in/:id/:token", to: "signin#confirm", as: :sign_in_confirm
