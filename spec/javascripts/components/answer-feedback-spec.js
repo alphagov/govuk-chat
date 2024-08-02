@@ -1,7 +1,7 @@
 describe('AnswerFeedback component', () => {
   'use strict'
 
-  let module, rootDiv, form, feedbackSubmittedDiv, hideButton, event, fetchSpy
+  let module, rootDiv, form, feedbackSubmittedContainer, hideButton, event, fetchSpy
 
   beforeEach(function () {
     rootDiv = document.createElement('div')
@@ -14,8 +14,8 @@ describe('AnswerFeedback component', () => {
     `
     document.body.appendChild(rootDiv)
     form = rootDiv.querySelector('.js-form')
-    feedbackSubmittedDiv = rootDiv.querySelector('.js-feedback-submitted')
-    hideButton = feedbackSubmittedDiv.querySelector('.js-hide-control')
+    feedbackSubmittedContainer = rootDiv.querySelector('.js-feedback-submitted')
+    hideButton = feedbackSubmittedContainer.querySelector('.js-hide-control')
     event = new Event('submit')
     event.submitter = { name: 'create_answer_feedback[useful]', value: 'true' }
     module = new window.GOVUK.Modules.AnswerFeedback(rootDiv)
@@ -47,8 +47,8 @@ describe('AnswerFeedback component', () => {
     it('shows the feedback submitted div when the user provides feedback', () => {
       form.dispatchEvent(event)
 
-      expect(feedbackSubmittedDiv.hidden).toEqual(false)
-      expect(feedbackSubmittedDiv.ownerDocument.activeElement === feedbackSubmittedDiv)
+      expect(feedbackSubmittedContainer.hidden).toEqual(false)
+      expect(feedbackSubmittedContainer.ownerDocument.activeElement === feedbackSubmittedContainer)
     })
 
     it('submits a JSON fetch request to the action of the form', () => {
