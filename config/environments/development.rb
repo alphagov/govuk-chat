@@ -21,7 +21,6 @@ Rails.application.configure do
 
   # Enable server timing
   config.server_timing = true
-  config.logger = Logger.new($stdout)
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
@@ -40,8 +39,14 @@ Rails.application.configure do
   end
   config.action_mailer.default_url_options = { host: Plek.website_root }
   routes.default_url_options[:host] ||= Plek.website_root
+
+  ## use these 2 lines to output to the console
   config.action_mailer.delivery_method = :test
-  config.action_mailer.logger = config.logger
+  config.action_mailer.logger = Logger.new($stdout)
+
+  ## use these 2 lines to send for real via Notify
+  # config.action_mailer.delivery_method = :notify
+  # config.action_mailer.notify_settings = { api_key: ENV["GOVUK_NOTIFY_API_KEY"] }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
