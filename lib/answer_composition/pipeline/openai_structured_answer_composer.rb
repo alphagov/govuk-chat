@@ -101,7 +101,7 @@ module AnswerComposition::Pipeline
     def system_prompt_context
       context.search_results.map do |result|
         {
-          page_url: result.exact_path,
+          page_url: link_token_mapper.map_link_to_token(result.exact_path),
           page_title: result.title,
           page_description: result.description,
           context_headings: result.heading_hierarchy,

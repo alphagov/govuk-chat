@@ -13,13 +13,20 @@ module AnswerComposition
         if mapping.key?(href)
           link["href"] = mapping[href]
         else
-          token = "link_#{mapping.count + 1}"
-          mapping[href] = token
+          token = map_link_to_token(href)
           link["href"] = token
         end
       end
 
       doc.to_html
+    end
+
+    def map_link_to_token(link)
+      return mapping[link] if mapping[link]
+
+      token = "link_#{mapping.count + 1}"
+      mapping[link] = token
+      token
     end
 
     def replace_tokens_with_links(markdown)

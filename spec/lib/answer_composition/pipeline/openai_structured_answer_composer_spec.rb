@@ -13,9 +13,9 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
     end
     let(:structured_response) do
       {
-        answer: "VAT (Value Added Tax) is a [tax](link_1) applied to most goods and services in the UK.",
+        answer: "VAT (Value Added Tax) is a [tax](link_2) applied to most goods and services in the UK.",
         answered: true,
-        sources_used: ["/vat-rates#vat-basics"],
+        sources_used: %w[link_1],
       }.to_json
     end
 
@@ -30,11 +30,11 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
           { role: "assistant", content: few_shot[:assistant] },
         ]
       end
-      system_prompt_context = "[{:page_url=>\"/vat-rates#vat-basics\", " \
+      system_prompt_context = "[{:page_url=>\"link_1\", " \
                               ":page_title=>\"Title\", " \
                               ":page_description=>\"Description\", " \
                               ":context_headings=>[\"Heading 1\", \"Heading 2\"], " \
-                              ":context_content=>\"<p>Some content</p><a href=\\\"link_1\\\">What is a tax?</a>\"}]"
+                              ":context_content=>\"<p>Some content</p><a href=\\\"link_2\\\">What is a tax?</a>\"}]"
       expected_message_history = [
         { role: "system", content: system_prompt(system_prompt_context) },
         few_shots,
