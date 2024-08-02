@@ -22,4 +22,8 @@ module SystemSpecHelpers
     cookie_string = headers["Set-Cookie"]
     Capybara.current_session.driver.browser.set_cookie(cookie_string)
   end
+
+  def given_i_am_an_admin
+    login_as(create(:user, :admin))
+  end
 end

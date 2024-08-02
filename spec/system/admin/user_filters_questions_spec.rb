@@ -37,10 +37,6 @@ RSpec.describe "Admin user filters questions" do
     then_i_see_the_pending_question
   end
 
-  def given_i_am_an_admin
-    login_as(create(:user, :admin))
-  end
-
   def and_there_are_questions
     conversation = build(:conversation)
     @question1 = create(:question, conversation:, message: "Hello world", created_at: 2.years.ago)
