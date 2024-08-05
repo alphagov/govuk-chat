@@ -29,6 +29,10 @@ module AnswerComposition
       token
     end
 
+    def link_for_token(token)
+      mapping.key(token)
+    end
+
     def replace_tokens_with_links(markdown)
       doc = Kramdown::Document.new(markdown)
       rewrite_links(doc.root)
@@ -53,7 +57,7 @@ module AnswerComposition
     def rewrite_link(link_element)
       token = link_element.attr["href"]
 
-      if (url = mapping.key(token))
+      if (url = link_for_token(token))
         link_element.tap do |el|
           el.attr["href"] = url
         end

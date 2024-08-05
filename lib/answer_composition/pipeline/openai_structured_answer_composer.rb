@@ -20,7 +20,8 @@ module AnswerComposition::Pipeline
 
       message = link_token_mapper.replace_tokens_with_links(parsed_structured_response["answer"])
 
-      context.update_sources_from_exact_paths_used(parsed_structured_response["sources_used"])
+      set_context_sources
+
       context.answer.assign_attributes(
         message:,
         status: "success",
@@ -133,6 +134,14 @@ module AnswerComposition::Pipeline
 
     def error_message(error)
       "class: #{error.class} message: #{error.message}"
+    end
+
+    def set_context_sources
+      source_urls = parsed_structured_response["sources_used"].map do |source_link_token|
+        link_token_mapper.link_for_token(source_link_token)
+      end
+
+      context.update_sources_from_exact_paths_used(source_urls)
     end
   end
 end

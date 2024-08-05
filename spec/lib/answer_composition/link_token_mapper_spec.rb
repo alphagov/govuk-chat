@@ -105,4 +105,19 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
       "Some text with a link and something that \\[looks like\\] a link (but is not). A link with `code`",
     )
   end
+
+  describe "#link_for_token" do
+    it "returns the link for a given token" do
+      mapper = described_class.new
+      mapper.map_links_to_tokens(html)
+
+      expect(mapper.link_for_token("link_1")).to eq("/tax-returns")
+    end
+
+    it "returns nil if the token is not in the mapping" do
+      mapper = described_class.new
+
+      expect(mapper.link_for_token("link_1")).to be_nil
+    end
+  end
 end
