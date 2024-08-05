@@ -16,4 +16,24 @@ namespace :evaluation do
       puts jsonl
     end
   end
+
+  desc "Export CSV for HMRC evaluation"
+  task :generate_hmrc_report, %i[output_path] => :environment do |_, args|
+    output_path = args[:output_path]
+
+    results = Evaluation::HmrcReportGenerator.call do |total, current, evaluation_question|
+      puts "(#{current} / #{total}): #{evaluation_question}"
+    end
+
+    if output_path.present?
+      CSV.open(output_path, "w") do |csv|
+        results.each do |row|
+          csv << row
+        end
+      end
+      puts "Written to #{output_path}"
+    else
+      puts results.to_csv
+    end
+  end
 end

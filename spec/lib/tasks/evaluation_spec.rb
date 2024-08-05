@@ -37,4 +37,43 @@ RSpec.describe "rake evaluation tasks" do
       end
     end
   end
+
+  describe "generate_hmrc_report" do
+    let(:task_name) { "evaluation:generate_hmrc_report" }
+    let(:result) do
+      headers = Evaluation::HmrcReportGenerator::HEADERS
+      rows = [
+        ["First question", "First answer"],
+        ["Second question", "Second answer"],
+      ]
+      [headers] + rows
+    end
+
+    before do
+      Rake::Task[task_name].reenable
+
+      allow(Evaluation::HmrcReportGenerator).to receive(:call).and_return(result)
+    end
+
+    it "generates the results as CSV data and prints them" do
+      expect { Rake::Task[task_name].invoke }
+        .to output(result.to_csv).to_stdout
+    end
+
+    it "generates the results as CSV and writes them to a file" do
+      temp = Tempfile.new
+      path = temp.path
+
+      begin
+        expect { Rake::Task[task_name].invoke(path) }
+          .to output(/Written to #{path}/).to_stdout
+
+        expected_output = result.map { |r| r.join(",") }.join("\n")
+        expect(File.read(path).strip).to eq(expected_output)
+      ensure
+        temp.close
+        temp.unlink
+      end
+    end
+  end
 end
