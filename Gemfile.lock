@@ -823,6 +823,7 @@ DEPENDENCIES
   kaminari
   kramdown
   mail-notify
+  nokogiri
   opensearch-ruby
   pg
   pry-byebug

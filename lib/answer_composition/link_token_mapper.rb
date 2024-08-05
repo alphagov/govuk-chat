@@ -1,0 +1,62 @@
+module AnswerComposition
+  class LinkTokenMapper
+    def initialize
+      @mapping = {}
+    end
+
+    def map_links_to_tokens(html_content)
+      doc = Nokogiri::HTML::DocumentFragment.parse(html_content)
+
+      doc.css("a").each do |link|
+        href = link["href"]
+
+        if mapping.key?(href)
+          link["href"] = mapping[href]
+        else
+          token = "link_#{mapping.count + 1}"
+          mapping[href] = token
+          link["href"] = token
+        end
+      end
+
+      doc.to_html
+    end
+
+    def replace_tokens_with_links(markdown)
+      doc = Kramdown::Document.new(markdown)
+      rewrite_links(doc.root)
+
+      # `to_kramdown` adds 2 trailing newlines, so let's strip those
+      doc.to_kramdown.strip
+    end
+
+  private
+
+    attr_reader :mapping
+
+    def rewrite_links(element)
+      if element.type == :a
+        rewrite_link(element)
+      else
+        element.children.map!(&method(:rewrite_links))
+        element
+      end
+    end
+
+    def rewrite_link(link_element)
+      token = link_element.attr["href"]
+
+      if (url = mapping.key(token))
+        link_element.tap do |el|
+          el.attr["href"] = url
+        end
+      else
+        # We don't have the link mapping stored, so we want to strip out the link
+        # We can do this by just returning the first child of the link node, as that's
+        # everything that comes between the <a> tags, which might just be one text
+        # node or it might be a whole sub-tree of nodes
+        link_element.children.first
+      end
+    end
+  end
+end

@@ -27,6 +27,7 @@ gem "json-schema"
 gem "kaminari"
 gem "kramdown"
 gem "mail-notify"
+gem "nokogiri"
 gem "opensearch-ruby" # may need opensearch-aws-sigv4 for prod
 gem "pg"
 gem "ruby-openai"

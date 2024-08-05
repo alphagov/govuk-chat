@@ -6,6 +6,7 @@ module AnswerComposition::Pipeline
 
     def initialize(context)
       @context = context
+      @link_token_mapper = AnswerComposition::LinkTokenMapper.new
     end
 
     def call
@@ -17,9 +18,11 @@ module AnswerComposition::Pipeline
         )
       end
 
+      message = link_token_mapper.replace_tokens_with_links(parsed_structured_response["answer"])
+
       context.update_sources_from_exact_paths_used(parsed_structured_response["sources_used"])
       context.answer.assign_attributes(
-        message: parsed_structured_response["answer"],
+        message:,
         status: "success",
         llm_response: raw_structured_response,
       )
@@ -41,7 +44,7 @@ module AnswerComposition::Pipeline
 
   private
 
-    attr_reader :context
+    attr_reader :context, :link_token_mapper
 
     def parsed_structured_response
       @parsed_structured_response ||= begin
@@ -102,7 +105,7 @@ module AnswerComposition::Pipeline
           page_title: result.title,
           page_description: result.description,
           context_headings: result.heading_hierarchy,
-          context_content: result.html_content,
+          context_content: link_token_mapper.map_links_to_tokens(result.html_content),
         }
       end
     end
