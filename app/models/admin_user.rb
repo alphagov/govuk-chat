@@ -1,4 +1,4 @@
-class User < ApplicationRecord
+class AdminUser < ApplicationRecord
   include GDS::SSO::User
 
   module Permissions
