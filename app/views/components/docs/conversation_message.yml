@@ -76,4 +76,5 @@ examples:
     data:
       id: some-id-4
       message: "This is a system generated conversation message with a feedback component."
+      question_message: "How do I apply for teacher training?"
       feedback_url: "http://example.com"

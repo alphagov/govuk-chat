@@ -9,7 +9,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.module = module
       this.form = this.module.querySelector('.js-form')
       this.hideButton = this.module.querySelector('.js-hide-control')
-      this.feedbackSubmittedDiv = this.module.querySelector('.js-feedback-submitted')
+      this.feedbackSubmittedContainer = this.module.querySelector('.js-feedback-submitted')
     }
 
     init () {
@@ -21,7 +21,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
       this.form.hidden = true
       this.hideButton.addEventListener('click', e => this.hideComponent(e))
-      this.feedbackSubmittedDiv.hidden = false
+      this.feedbackSubmittedContainer.hidden = false
+      this.feedbackSubmittedContainer.focus()
 
       try {
         const formData = new FormData(this.form)

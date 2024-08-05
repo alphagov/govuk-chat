@@ -2,5 +2,6 @@
   id: dom_id(answer),
   sources: group_used_answer_sources_by_base_path(answer),
   message: answer.message,
+  question_message: answer.question.message,
   feedback_url: (answer_feedback_path(answer) if answer.feedback.blank?),
 } %>

@@ -124,8 +124,8 @@ RSpec.describe "ConversationsController" do
           expect(response.body)
             .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
             .and have_selector("##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message)
-            .and have_button("This answer was Useful", name: "create_answer_feedback[useful]", value: "true")
-            .and have_button("This answer was not useful", name: "create_answer_feedback[useful]", value: "false")
+            .and have_button("The answer to \"#{question.message}\" was Useful", name: "create_answer_feedback[useful]", value: "true")
+            .and have_button("The answer was not useful", name: "create_answer_feedback[useful]", value: "false")
         end
       end
 
