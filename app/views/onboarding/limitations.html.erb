@@ -1,4 +1,7 @@
-<% @conversation_data_attributes = { module: "onboarding" } %>
+<%
+@conversation_data_attributes = { module: "onboarding" }
+content_for(:title, @title)
+%>
 
 <%= render "limitations_messages" %>
 

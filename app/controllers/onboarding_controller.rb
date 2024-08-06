@@ -6,12 +6,18 @@ class OnboardingController < BaseController
     session[:onboarding] = nil
     @more_information = session[:more_information].present?
     @conversation_data_attributes = { module: "onboarding" }
+    @title = if @more_information
+               "More information on GOV.UK Chat and its limitations"
+             else
+               "Introduction to GOV.UK Chat and its limitations"
+             end
 
     respond_to do |format|
       format.html { render :limitations }
       format.json do
-        if session[:more_information].present?
+        if @more_information
           render json: {
+            title: @title,
             fragment: "tell-me-more",
             conversation_data: @conversation_data_attributes,
             conversation_append_html: render_to_string(partial: "tell_me_more_messages",
@@ -42,11 +48,13 @@ class OnboardingController < BaseController
   def privacy
     @more_information = session[:more_information].present?
     @conversation_data_attributes = { module: "onboarding" }
+    @title = "Privacy on GOV.UK Chat"
 
     respond_to do |format|
       format.html { render :privacy }
       format.json do
         render json: {
+          title: @title,
           fragment: "i-understand",
           conversation_data: @conversation_data_attributes,
           conversation_append_html: render_to_string(partial: "privacy_messages",

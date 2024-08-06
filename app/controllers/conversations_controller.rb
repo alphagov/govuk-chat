@@ -13,6 +13,7 @@ class ConversationsController < BaseController
       format.json do
         if cookies[:conversation_id].blank?
           render json: {
+            title: @title,
             fragment: "start-chatting",
             conversation_data: @conversation_data_attributes,
             conversation_append_html: render_to_string(partial: "get_started_messages",
@@ -155,6 +156,7 @@ private
   end
 
   def prepare_for_show_view(conversation)
+    @title = "Your conversation"
     @questions = conversation.questions_for_showing_conversation
     @more_information = session[:more_information].present?
     @conversation_data_attributes = { module: "chat-conversation" }
