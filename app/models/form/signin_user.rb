@@ -7,6 +7,7 @@ class Form::SigninUser
 
   def submit
     user = EarlyAccessUser.find_by(email:)
+    #check
     session = Passwordless::Session.new(authenticatable: user)
     session.save!
     SigninMailer.call(session).deliver_now

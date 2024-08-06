@@ -1,13 +1,13 @@
-class SigninMailer
+class SigninMailer < ApplicationMailer
   include Rails.application.routes.url_helpers
   def self.call(...) = new(...).call
 
   def initialize(session)
+    super()
     @session = session
   end
 
   def call
-    template = ENV.fetch("GOVUK_NOTIFY_TEMPLATE_ID")
     params = {
       to:,
       subject: "GOV.UK Chat login link",
