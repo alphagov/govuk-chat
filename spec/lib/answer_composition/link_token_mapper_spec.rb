@@ -39,6 +39,29 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
     end
   end
 
+  describe "#map_link_to_token" do
+    it "stores the link and returns the token" do
+      mapper = described_class.new
+      link = "/tax-returns"
+      token = mapper.map_link_to_token(link)
+
+      expect(token).to eq("link_1")
+
+      replaced_markdown = mapper.replace_tokens_with_links(
+        "This is a [link](link_1)",
+      )
+
+      expect(replaced_markdown).to eq("This is a [link](/tax-returns)")
+    end
+
+    it "returns the same token if the link is already in the mapping" do
+      mapper = described_class.new
+      token = mapper.map_link_to_token("/tax-returns")
+
+      expect(mapper.map_link_to_token("/tax-returns")).to eq(token)
+    end
+  end
+
   describe "#replace_tokens_with_links" do
     it "replaces token-based links with stored links" do
       mapper = described_class.new
@@ -81,5 +104,20 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
     expect(output).to eq(
       "Some text with a link and something that \\[looks like\\] a link (but is not). A link with `code`",
     )
+  end
+
+  describe "#link_for_token" do
+    it "returns the link for a given token" do
+      mapper = described_class.new
+      mapper.map_links_to_tokens(html)
+
+      expect(mapper.link_for_token("link_1")).to eq("/tax-returns")
+    end
+
+    it "returns nil if the token is not in the mapping" do
+      mapper = described_class.new
+
+      expect(mapper.link_for_token("link_1")).to be_nil
+    end
   end
 end

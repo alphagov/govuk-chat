@@ -13,13 +13,24 @@ module AnswerComposition
         if mapping.key?(href)
           link["href"] = mapping[href]
         else
-          token = "link_#{mapping.count + 1}"
-          mapping[href] = token
+          token = map_link_to_token(href)
           link["href"] = token
         end
       end
 
       doc.to_html
+    end
+
+    def map_link_to_token(link)
+      return mapping[link] if mapping[link]
+
+      token = "link_#{mapping.count + 1}"
+      mapping[link] = token
+      token
+    end
+
+    def link_for_token(token)
+      mapping.key(token)
     end
 
     def replace_tokens_with_links(markdown)
@@ -46,7 +57,7 @@ module AnswerComposition
     def rewrite_link(link_element)
       token = link_element.attr["href"]
 
-      if (url = mapping.key(token))
+      if (url = link_for_token(token))
         link_element.tap do |el|
           el.attr["href"] = url
         end
