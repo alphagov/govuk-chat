@@ -12,6 +12,12 @@
     }
   }
 
+  .govuk-header__navigation-list {
+    @include govuk-media-query($until: tablet) {
+      margin-top: govuk-spacing(4);
+    }
+  }
+
   .govuk-header__navigation-item {
     border-bottom: none;
     display: inline-block;
