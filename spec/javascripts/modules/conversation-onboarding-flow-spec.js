@@ -1,12 +1,13 @@
 /* global asymmetricMatchers */
 
 describe('ConversationOnboardingFlow module', () => {
-  let moduleElement, module, moduleWrapper, conversationList, formContainer
+  let moduleElement, module, moduleWrapper, conversationList, formContainer, titleElement
 
   beforeEach(() => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
       <div class="js-module-wrapper" data-module="foo" data-other="bar">
+        <h1 class="js-title"></h1>
         <ul class="js-conversation-list"></ul>
         <div class="js-form-container">
           <form class="js-onboarding-form" action="/chat/onboarding" method="post">
@@ -20,6 +21,7 @@ describe('ConversationOnboardingFlow module', () => {
     moduleWrapper = moduleElement.querySelector('.js-module-wrapper')
     conversationList = moduleElement.querySelector('.js-conversation-list')
     formContainer = moduleElement.querySelector('.js-form-container')
+    titleElement = moduleElement.querySelector('.js-title')
 
     module = new window.GOVUK.Modules.ConversationOnboardingFlow(moduleElement)
   })
@@ -38,7 +40,7 @@ describe('ConversationOnboardingFlow module', () => {
   })
 
   describe('when receiving an onboarding-transition event', () => {
-    let event, historyReplaceStateSpy, redirectSpy
+    let event, historyReplaceStateSpy, redirectSpy, originalBrowserTitle
 
     beforeEach(() => {
       event = {
@@ -50,7 +52,8 @@ describe('ConversationOnboardingFlow module', () => {
           conversationData: { module: 'onboarding' },
           formHtml: '<form><button>Okay, start chatting</button></form>',
           fragment: 'i-understand',
-          path: '/chat/onboarding/privacy'
+          path: '/chat/onboarding/privacy',
+          title: 'Title'
         }
       }
 
@@ -59,6 +62,12 @@ describe('ConversationOnboardingFlow module', () => {
       module.init()
 
       redirectSpy = spyOn(module, 'redirect')
+      originalBrowserTitle = document.title
+      document.title = 'Page on - GOV.UK Chat'
+    })
+
+    afterEach(() => {
+      document.title = originalBrowserTitle
     })
 
     it('dispatches "deinit" event on the module wrapper', () => {
@@ -98,6 +107,18 @@ describe('ConversationOnboardingFlow module', () => {
       module.handleOnboardingTransition(event)
 
       expect(formContainer.innerHTML).toContain(event.detail.formHtml)
+    })
+
+    it('updates the page title', () => {
+      module.handleOnboardingTransition(event)
+
+      expect(titleElement.textContent).toEqual(event.detail.title)
+    })
+
+    it('updates the browser title', () => {
+      module.handleOnboardingTransition(event)
+
+      expect(document.title).toEqual(`${event.detail.title} - GOV.UK Chat`)
     })
 
     it('initialises GOV.UK modules within the root element of this module', () => {

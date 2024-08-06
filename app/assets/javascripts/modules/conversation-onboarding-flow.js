@@ -8,6 +8,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.moduleWrapper = this.module.querySelector('.js-module-wrapper')
       this.conversationList = this.module.querySelector('.js-conversation-list')
       this.formContainer = this.module.querySelector('.js-form-container')
+      this.title = this.module.querySelector('.js-title')
     }
 
     init () {
@@ -15,14 +16,15 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     handleOnboardingTransition (event) {
-      const { path, fragment, conversationData, conversationAppendHtml, formHtml } = event.detail
+      const { path, fragment, conversationData, conversationAppendHtml, formHtml, title } = event.detail
 
       try {
         this.moduleWrapper.dispatchEvent(new Event('deinit'))
 
         history.replaceState(null, '', path)
+        this.updateBrowserTitle(title)
 
-        this.updateHtml(conversationData, conversationAppendHtml, formHtml)
+        this.updateHtml(conversationData, conversationAppendHtml, formHtml, title)
 
         window.GOVUK.modules.start(this.module)
 
@@ -35,7 +37,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       }
     }
 
-    updateHtml (conversationData, conversationAppendHtml, formHtml) {
+    updateHtml (conversationData, conversationAppendHtml, formHtml, title) {
       const dataset = this.moduleWrapper.dataset
       for (const key in dataset) {
         if (conversationData[key]) {
@@ -47,6 +49,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
       this.conversationList.insertAdjacentHTML('beforeend', conversationAppendHtml)
       this.formContainer.innerHTML = formHtml
+      this.title.textContent = title
     }
 
     scrollIntoView (element) {
@@ -55,6 +58,17 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     redirect (url) {
       window.location.href = url
+    }
+
+    updateBrowserTitle (title) {
+      let newTitle = title
+      const splitTitle = document.title.split(' - ')
+
+      if (splitTitle.length > 1) {
+        newTitle += ` - ${splitTitle[splitTitle.length - 1]}`
+      }
+
+      document.title = newTitle
     }
   }
   Modules.ConversationOnboardingFlow = ConversationOnboardingFlow

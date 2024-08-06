@@ -55,7 +55,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         fragment: responseJson.fragment, // ideally we'd get fragment from URL but browsers seem to strip it
         conversationData: responseJson.conversation_data,
         conversationAppendHtml: responseJson.conversation_append_html,
-        formHtml: responseJson.form_html
+        formHtml: responseJson.form_html,
+        title: responseJson.title
       }
       const event = new CustomEvent('onboarding-transition', { detail: eventDetail })
       this.module.dispatchEvent(event)

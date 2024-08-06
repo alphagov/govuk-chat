@@ -31,9 +31,7 @@
         <div class="app-conversation-layout__width-container">
           <%= yield(:alerts) if content_for?(:alerts) %>
 
-          <% if content_for?(:title) %>
-            <h1 class="govuk-visually-hidden"><%= yield(:title) %></h1>
-          <% end %>
+          <h1 class="govuk-visually-hidden js-title"><%= yield(:title) %></h1>
 
           <ul class="app-conversation-layout__list js-conversation-list">
             <%= yield %>

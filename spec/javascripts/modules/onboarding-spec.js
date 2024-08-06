@@ -78,7 +78,8 @@ describe('Onboarding module', () => {
         conversation_append_html: '<p>Message</p>',
         conversation_data: { module: 'onboarding' },
         form_html: '<form></form>',
-        fragment: 'i-understand'
+        fragment: 'i-understand',
+        title: 'Title'
       }
 
       fetchSpy = spyOn(window, 'fetch')
@@ -136,8 +137,8 @@ describe('Onboarding module', () => {
             fragment: 'i-understand',
             conversationAppendHtml: '<p>Message</p>',
             conversationData: { module: 'onboarding' },
-            formHtml: '<form></form>'
-
+            formHtml: '<form></form>',
+            title: 'Title'
           }
         })
         expect(eventSpy).toHaveBeenCalledWith(expectedEvent)
