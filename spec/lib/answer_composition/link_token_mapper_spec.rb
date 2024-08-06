@@ -58,10 +58,6 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
   end
 
   describe "#replace_tokens_with_links" do
-    around do |example|
-      ClimateControl.modify(GOVUK_WEBSITE_ROOT: "https://www.test.gov.uk") { example.run }
-    end
-
     it "replaces token-based links with stored links that are absolute URIs" do
       mapper = described_class.new
       mapper.map_links_to_tokens(html)

@@ -23,10 +23,6 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
       context.search_results = [search_result]
     end
 
-    around do |example|
-      ClimateControl.modify(GOVUK_WEBSITE_ROOT: "https://www.test.gov.uk") { example.run }
-    end
-
     it "sends OpenAI a series of messages combining system prompt, few shot messages and the user question" do
       few_shots = llm_prompts[:few_shots].flat_map do |few_shot|
         [

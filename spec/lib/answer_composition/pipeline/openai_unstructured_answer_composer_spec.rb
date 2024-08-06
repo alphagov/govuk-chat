@@ -20,10 +20,6 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIUnstructuredAnswerComposer, :c
       allow(AnswerComposition::Pipeline::Context).to receive(:new).and_return(context)
     end
 
-    around do |example|
-      ClimateControl.modify(GOVUK_WEBSITE_ROOT: "https://www.test.gov.uk") { example.run }
-    end
-
     it "sends OpenAI a series of messages combining system prompt, few shot messages and the user question" do
       system_prompt = sprintf(
         llm_prompts[:system_prompt],
