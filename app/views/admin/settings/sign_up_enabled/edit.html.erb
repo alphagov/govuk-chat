@@ -40,20 +40,7 @@
         ],
       } %>
 
-      <%= render "govuk_publishing_components/components/character_count", {
-        textarea: {
-          label: {
-            heading_size: "l",
-            heading_level: 2,
-            text: "Author comment (optional)",
-          },
-          name: "sign_up_enabled_form[author_comment]",
-          value: @form.author_comment,
-          error_items: error_items(@form, :author_comment),
-        },
-        id: "sign_up_enabled_form_author_comment",
-        maxlength: 250,
-      } %>
+      <%= render "admin/settings/shared/author_comment", form: @form, setting: "sign_up_enabled" %>
 
       <%= render "govuk_publishing_components/components/button", {
         text: "Submit",
