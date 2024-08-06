@@ -27,6 +27,10 @@
     <main class="govuk-main-wrapper<%= " govuk-main-wrapper--l" if yield(:back_link).blank? %>" id="content" role="main">
       <% if content_for?(:error_summary) %>
         <%= yield(:error_summary) %>
+      <% elsif flash["notice"] %>
+        <%= render "govuk_publishing_components/components/success_alert", {
+          message: flash["notice"],
+        } %>
       <% end %>
 
       <% if yield(:title).present? %>
