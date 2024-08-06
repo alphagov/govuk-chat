@@ -81,7 +81,7 @@ module OutputGuardrails
     end
 
     def system_prompt
-      llm_prompts.dig(:few_shot, :system_prompt).gsub("{date}", Time.zone.today.strftime("%A %d %B %Y"))
+      llm_prompts.dig(:few_shot, :system_prompt).gsub("{date}", Date.current.strftime("%A %d %B %Y"))
     end
 
     def user_prompt
