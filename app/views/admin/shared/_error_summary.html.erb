@@ -1,8 +1,8 @@
-<% if filter.errors.any? %>
+<% if model.errors.any? %>
   <%= content_for :error_summary do %>
     <%= render "govuk_publishing_components/components/error_summary", {
       title: "There is a problem",
-      items: error_items_for_summary_component(filter, { start_date_params: "#start_date_params", end_date_params: "#end_date_params" }),
+      items: error_items_for_summary_component(model, anchor_mappings),
     } %>
   <% end %>
 <% end %>

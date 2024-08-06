@@ -52,6 +52,10 @@
           {
             field: "Enabled",
             value: @settings.sign_up_enabled ? "Yes" : "No",
+            edit: {
+              href: admin_edit_sign_up_enabled_path,
+              link_text: "Edit",
+            },
           },
           {
             field: "Description",

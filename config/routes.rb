@@ -43,8 +43,12 @@ Rails.application.routes.draw do
 
     scope :settings do
       get "", to: "settings#show", as: :settings
+
       get "/instant_access_places", to: "settings/instant_access_places#edit", as: :edit_instant_access_places
       patch "/instant_access_places", to: "settings/instant_access_places#update", as: :update_instant_access_places
+
+      get "/sign-up-enabled", to: "settings/sign_up_enabled#edit", as: :edit_sign_up_enabled
+      patch "/sign-up-enabled", to: "settings/sign_up_enabled#update", as: :update_sign_up_enabled
     end
   end
 

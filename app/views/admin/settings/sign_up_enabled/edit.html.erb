@@ -1,0 +1,42 @@
+<%= content_for :title, "Edit sign up enabled" %>
+<%= content_for :title_context, "Settings" %>
+ <%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
+                                    href: admin_settings_path) ) %>
+<%= render "admin/shared/error_summary",
+  model: @form,
+  anchor_mappings: {
+    author_comment: "#sign_up_enabled_form_author_comment",
+  } %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <%= form_with url: admin_update_sign_up_enabled_path, method: :patch do |f| %>
+        <%= render "govuk_publishing_components/components/radio", {
+        heading: "Sign up enabled",
+        heading_size: "l",
+        heading_level: 2,
+        margin_bottom: 8,
+        name: "sign_up_enabled_form[enabled]",
+        items: [
+          {
+            value: "true",
+            text: "Yes",
+            checked: @form.enabled,
+
+          },
+          {
+            value: "false",
+            text: "No",
+            checked: !@form.enabled,
+          },
+        ],
+      } %>
+
+      <%= render "admin/settings/shared/author_comment", form: @form, setting: "sign_up_enabled" %>
+
+      <%= render "govuk_publishing_components/components/button", {
+        text: "Submit",
+      } %>
+    <% end %>
+  </div>
+</div>
