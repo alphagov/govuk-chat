@@ -1,18 +1,18 @@
-RSpec.describe Admin::Form::Settings::InstantAccessPlacesForm do
+RSpec.describe Admin::Form::Settings::DelayedAccessPlacesForm do
   describe "validations" do
-    it "is invalid if places takes instant_access_places below 0" do
-      create(:settings, instant_access_places: 10)
+    it "is invalid if places takes delayed_access_places below 0" do
+      create(:settings, delayed_access_places: 10)
       form = described_class.new(places: -100)
 
       expect(form).to be_invalid
       expect(form.errors.count).to eq(1)
       expect(form.errors.messages[:places])
-        .to eq(["Instant access places cannot be negative. There are currently 10 places available to remove."])
+        .to eq(["Delayed access places cannot be negative. There are currently 10 places available to remove."])
     end
   end
 
   describe "#submit" do
-    let!(:settings) { create(:settings, instant_access_places: 10) }
+    let!(:settings) { create(:settings, delayed_access_places: 10) }
 
     it "raises an error when the form object is invalid" do
       form = described_class.new
@@ -27,14 +27,14 @@ RSpec.describe Admin::Form::Settings::InstantAccessPlacesForm do
         .to have_attributes(
           user: form.user,
           author_comment: form.author_comment,
-          action: "Added 5 instant access places.",
+          action: "Added 5 delayed access places.",
         )
     end
 
-    it "adds the number of instant access places to the settings instance" do
+    it "adds the number of delayed access places to the settings instance" do
       form = described_class.new(places: 5)
       form.submit
-      expect(settings.reload.instant_access_places).to eq 15
+      expect(settings.reload.delayed_access_places).to eq 15
     end
 
     it "handles negative places correctly" do
@@ -42,18 +42,18 @@ RSpec.describe Admin::Form::Settings::InstantAccessPlacesForm do
 
       form.submit
 
-      expect(settings.reload.instant_access_places).to eq 5
-      expect(SettingsAudit.last.action).to eq "Removed 5 instant access places."
+      expect(settings.reload.delayed_access_places).to eq 5
+      expect(SettingsAudit.last.action).to eq "Removed 5 delayed access places."
     end
 
-    it "sets instant access places to 0 if the result is negative as a failsafe" do
+    it "sets delayed access places to 0 if the result is negative as a failsafe" do
       form = described_class.new(places: -10)
       form.validate
-      settings.update!(instant_access_places: 5)
+      settings.update!(delayed_access_places: 5)
       form.submit
 
-      expect(settings.reload.instant_access_places).to eq 0
-      expect(SettingsAudit.last.action).to eq "Removed 10 instant access places."
+      expect(settings.reload.delayed_access_places).to eq 0
+      expect(SettingsAudit.last.action).to eq "Removed 10 delayed access places."
     end
   end
 end
