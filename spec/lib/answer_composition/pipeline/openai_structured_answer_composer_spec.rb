@@ -23,6 +23,10 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
       context.search_results = [search_result]
     end
 
+    around do |example|
+      ClimateControl.modify(GOVUK_WEBSITE_ROOT: "https://www.test.gov.uk") { example.run }
+    end
+
     it "sends OpenAI a series of messages combining system prompt, few shot messages and the user question" do
       few_shots = llm_prompts[:few_shots].flat_map do |few_shot|
         [
@@ -67,7 +71,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
         described_class.call(context)
 
         expect(context.answer.message.squish).to eq(
-          "VAT (Value Added Tax) is a [tax](/what-is-tax) applied to most goods and services in the UK.",
+          "VAT (Value Added Tax) is a [tax][1] applied to most goods and services in the UK. [1]: https://www.test.gov.uk/what-is-tax",
         )
         expect(context.answer.status).to eq("success")
         expect(context.answer.llm_response).to eq(structured_response)
