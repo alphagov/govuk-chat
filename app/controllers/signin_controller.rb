@@ -1,4 +1,4 @@
-class SigninController < ActionController::Base # rubocop:disable Rails/ApplicationController
+class SigninController < ApplicationController
   include Passwordless::ControllerHelpers
   layout "application"
 
@@ -36,7 +36,7 @@ class SigninController < ActionController::Base # rubocop:disable Rails/Applicat
 private
 
   def passwordless_session
-    @passwordless_session ||= Passwordless::Session.find_by(
+    @passwordless_session ||= Passwordless::Session.find_by!(
       identifier: params[:id],
       authenticatable_type: "EarlyAccessUser",
     )

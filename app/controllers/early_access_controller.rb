@@ -1,9 +1,6 @@
-class EarlyAccessController < ActionController::Base # rubocop:disable Rails/ApplicationController
+class EarlyAccessController < ApplicationController
   include Passwordless::ControllerHelpers
   helper_method :current_user
-  before_action :require_user!
-
-  layout "application"
 
 private
 
