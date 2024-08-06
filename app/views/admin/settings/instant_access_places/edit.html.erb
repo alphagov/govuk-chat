@@ -1,35 +1,4 @@
-<%= content_for :title, "Edit instant access places" %>
-<%= content_for :title_context, "Settings" %>
- <%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
-                                    href: admin_settings_path) ) %>
-<%= render "admin/shared/error_summary",
-  model: @form,
-  anchor_mappings: {
-    places: "#instant_access_places_form_places",
-    author_comment: "#instant_access_places_form_author_comment",
-  } %>
-
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <%= form_with url: admin_update_instant_access_places_path, method: :patch do |f| %>
-      <%= render "govuk_publishing_components/components/input", {
-        label: {
-          text: "Additional places",
-        },
-        hint: "Enter the number of places you want to add or remove. It must be a positive or negative integer",
-        id: "instant_access_places_form_places",
-        name: "instant_access_places_form[places]",
-        value: @form.places,
-        heading_level: 2,
-        heading_size: "l",
-        error_items: error_items(@form, :places),
-      } %>
-
-      <%= render "admin/settings/shared/author_comment", form: @form, setting: "instant_access_places" %>
-
-      <%= render "govuk_publishing_components/components/button", {
-        text: "Submit",
-      } %>
-    <% end %>
-  </div>
-</div>
+<%= render "admin/settings/shared/access_places",
+  form: @form,
+  form_url: admin_update_instant_access_places_path,
+  setting: "instant_access_places" %>
