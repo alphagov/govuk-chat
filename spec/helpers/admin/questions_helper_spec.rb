@@ -88,12 +88,20 @@ RSpec.describe Admin::QuestionsHelper do
       expect(returned_keys(result)).to include("Error message")
     end
 
-    it "returns a sources row when the answer has sources" do
+    it "returns a used sources row when the answer has sources" do
       answer = create(:answer, sources: [create(:answer_source)])
       answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
-      expect(returned_keys(result)).to include("Sources")
+      expect(returned_keys(result)).to include("Used sources")
+    end
+
+    it "returns an unused sources row when the answer has unused sources" do
+      answer = create(:answer, sources: [create(:answer_source, used: false)])
+      answer = answer_from_db(answer)
+      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
+
+      expect(returned_keys(result)).to include("Unused sources")
     end
 
     it "returns feedback rows when the answer has feedback" do

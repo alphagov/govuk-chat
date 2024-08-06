@@ -14,4 +14,13 @@ RSpec.describe AnswerSource do
       expect(described_class.used).to eq([used_source])
     end
   end
+
+  describe ".unused" do
+    it "returns sources where used is 'false'" do
+      unused_source = create(:answer_source, used: false)
+      create(:answer_source, used: true)
+
+      expect(described_class.unused).to eq([unused_source])
+    end
+  end
 end
