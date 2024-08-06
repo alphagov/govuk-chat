@@ -19,9 +19,17 @@
 .app-c-chat-introduction__title {
   margin: govuk-spacing(6) 0 govuk-spacing(5);
   @include govuk-font($size: 48, $weight: bold);
+
+  @include govuk-media-query($from: 1919px) {
+    @include govuk-font($size: 80, $weight: bold);
+  }
 }
 
 .app-c-chat-introduction__lead-paragraph {
   margin-bottom: govuk-spacing(6);
   @include govuk-font($size: 36, $weight: regular);
+
+  @include govuk-media-query($from: 1919px) {
+    @include govuk-font($size: 48, $weight: regular);
+  }
 }
