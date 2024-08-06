@@ -33,8 +33,8 @@ module Evaluation
       )
     end
 
-    def full_url(path)
-      "https://www.gov.uk#{path}"
+    def absolute_govuk_url(path)
+      Plek.website_root + path
     end
 
     def build_retrieved_context(source)
@@ -53,8 +53,8 @@ module Evaluation
         heading_hierarchy: chunk.heading_hierarchy,
         description: chunk.description,
         html_content: chunk.html_content,
-        exact_path: full_url(source.exact_path),
-        base_path: full_url(source.base_path),
+        exact_path: absolute_govuk_url(source.exact_path),
+        base_path: absolute_govuk_url(source.base_path),
       }
     end
 

@@ -47,12 +47,12 @@ RSpec.describe Evaluation::HmrcReportGenerator do
         [
           "How do I pay VAT?",
           "First answer from OpenAI",
-          "https://www.gov.uk/vat-payments/late-payments\nhttps://www.gov.uk/vat-payments/pay-online",
+          "https://www.test.gov.uk/vat-payments/late-payments\nhttps://www.test.gov.uk/vat-payments/pay-online",
         ],
         [
           "Do I need a visa?",
           "Second answer from OpenAI",
-          "https://www.gov.uk/visas/check-if-you-need-a-visa",
+          "https://www.test.gov.uk/visas/check-if-you-need-a-visa",
         ],
       ])
     end
