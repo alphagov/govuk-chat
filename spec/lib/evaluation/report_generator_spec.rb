@@ -17,7 +17,14 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
           ),
           build(
             :answer_source,
-            title: "Pay your VAT bill online", content_chunk_id: "id1", content_chunk_digest: "digest1",
+            title: "Pay your VAT bill online",
+            content_chunk_id: "id1",
+            content_chunk_digest: "digest1",
+          ),
+          build(
+            :answer_source,
+            title: "Unused source",
+            used: false,
           ),
         ],
       ),

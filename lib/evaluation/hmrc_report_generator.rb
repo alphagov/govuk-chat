@@ -20,7 +20,7 @@ module Evaluation
         [
           evaluation_question,
           answer.message,
-          answer.sources.map(&method(:build_source)).join("\n"),
+          answer.sources.select(&:used?).map(&method(:build_source)).join("\n"),
         ]
       end
 

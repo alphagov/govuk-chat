@@ -18,7 +18,7 @@ module Evaluation
         {
           question: evaluation_question,
           llm_answer: answer.message,
-          retrieved_context: answer.sources.flat_map(&method(:build_retrieved_context)),
+          retrieved_context: answer.sources.select(&:used?).flat_map(&method(:build_retrieved_context)),
         }
       end
     end
