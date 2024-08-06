@@ -51,7 +51,7 @@ module OutputGuardrails
           model: OPENAI_MODEL,
           messages:,
           temperature: 0.0,
-          max_tokens: 25,
+          max_tokens: 25, # It takes 23 tokens for True | "1, 2, 3, 4, 5, 6, 7"
         },
       )
     end

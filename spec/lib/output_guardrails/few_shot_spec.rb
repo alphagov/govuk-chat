@@ -44,7 +44,7 @@ RSpec.describe OutputGuardrails::FewShot do
       guardrail_result = 'True | "1, 5"'
       stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
         model: "gpt-4o",
-        max_tokens: 25, # It takes 23 tokens for True | "1, 2, 3, 4, 5, 6, 7"
+        max_tokens: 25,
       })
       expect(described_class.call(input)).to be_a(OutputGuardrails::FewShot::Result)
         .and(having_attributes(
