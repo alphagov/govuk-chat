@@ -2,19 +2,11 @@
 <%= content_for :title_context, "Settings" %>
  <%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
                                     href: admin_settings_path) ) %>
-<% if @form.errors.any? %>
-  <%= content_for :error_summary do %>
-    <%= render "govuk_publishing_components/components/error_summary", {
-      title: "There is a problem",
-      items: error_items_for_summary_component(
-        @form,
-        {
-          author_comment: "#sign_up_enabled_form_author_comment",
-        },
-      ),
-    } %>
-  <% end %>
-<% end %>
+<%= render "admin/shared/error_summary",
+  model: @form,
+  anchor_mappings: {
+    author_comment: "#sign_up_enabled_form_author_comment",
+  } %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">

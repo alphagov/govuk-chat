@@ -12,7 +12,12 @@
     ],
   } %>
 <% end %>
-<%= render "admin/shared/question_filter_error_summary", filter: @filter %>
+<%= render "admin/shared/error_summary",
+  model: @filter,
+  anchor_mappings: {
+    start_date_params: "#start_date_params",
+    end_date_params: "#end_date_params",
+  } %>
 <%= content_for :title, "Conversation" %>
 
 <div class="govuk-grid-row">
