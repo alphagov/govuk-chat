@@ -1,6 +1,12 @@
 RSpec.describe OutputGuardrails::FewShot do
   let(:guardrail_mappings) { { "1" => "COSTS", "5" => "PERSONAL" } }
 
+  let(:formatted_date) { Date.current.strftime("%A %d %B %Y") }
+  let(:system_prompt) do
+    Rails.configuration.llm_prompts.output_guardrails.dig(:few_shot, :system_prompt)
+      .gsub("{date}", formatted_date)
+  end
+
   before do
     allow(Rails.logger).to receive(:error)
     allow(Rails.configuration.llm_prompts.output_guardrails).to receive(:dig).and_call_original
@@ -20,11 +26,25 @@ RSpec.describe OutputGuardrails::FewShot do
       ]
     end
 
+    it "calls OpenAI to check for guardrail violations, including the date in the system prompt and the input in the user prompt" do
+      messages = [
+        { role: "system", content: Regexp.new(formatted_date) },
+        { role: "user", content: Regexp.new(input) },
+      ]
+      openai_request = stub_openai_chat_completion(messages, "False | None", chat_options: {
+        model: "gpt-4o",
+        max_tokens: 25,
+      })
+
+      described_class.call(input)
+      expect(openai_request).to have_been_made
+    end
+
     it "returns triggered: true with human readable guardrails" do
       guardrail_result = 'True | "1, 5"'
       stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
         model: "gpt-4o",
-        max_tokens: 25, # It takes 23 tokens for True | "1, 2, 3, 4, 5, 6, 7"
+        max_tokens: 25,
       })
       expect(described_class.call(input)).to be_a(OutputGuardrails::FewShot::Result)
         .and(having_attributes(
@@ -111,10 +131,5 @@ RSpec.describe OutputGuardrails::FewShot do
           )
       end
     end
-  end
-
-  def system_prompt
-    Rails.configuration.llm_prompts.output_guardrails.dig(:few_shot, :system_prompt)
-      .gsub("{date}", Time.zone.today.strftime("%A %d %B %Y"))
   end
 end
