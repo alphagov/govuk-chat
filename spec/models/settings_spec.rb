@@ -19,4 +19,37 @@ RSpec.describe Settings do
       expect { described_class.instance }.to change(described_class, :count).by(1)
     end
   end
+
+  describe "#locked_audited_update" do
+    let(:audit_user) { build(:user) }
+    let(:audit_action) { "Added 5 instant access places." }
+    let(:audit_comment) { "We've run out of places so it's time to add more." }
+    let(:call_locked_audit_update) do
+      settings.locked_audited_update(
+        audit_user,
+        audit_action,
+        audit_comment,
+      ) do
+        settings.instant_access_places += 5
+      end
+    end
+    let(:settings) { create(:settings, instant_access_places: 5) }
+
+    it "locks the settings instance to cope with concurrent edits" do
+      expect(settings).to receive(:with_lock).and_call_original
+      call_locked_audit_update
+      expect(settings.reload.instant_access_places).to eq(10)
+    end
+
+    it "persists a settings audit based on the arguments passed in" do
+      expect { call_locked_audit_update }
+        .to change(SettingsAudit, :count).by(1)
+        .and change { settings.reload.instant_access_places }.by(5)
+      expect(SettingsAudit.includes(:user).last).to have_attributes(
+        user: audit_user,
+        action: audit_action,
+        author_comment: audit_comment,
+      )
+    end
+  end
 end
