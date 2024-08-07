@@ -8,7 +8,7 @@
              lang: "en") do %>
   <head>
     <meta charset="utf-8">
-    <title><%= yield(:title) %></title>
+    <title><%= yield(:title) %><%= content_for?(:title) ? " - " : "" %>GOV.UK Chat</title>
 
     <%# Used for Google Analytics 4 debugging. Must be placed before load-analytics script. %>
     <meta name="govuk:components_gem_version" content="<%= GovukPublishingComponents::VERSION %>">
