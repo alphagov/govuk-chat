@@ -25,6 +25,9 @@
     "AVAILABLE_WITHOUT_SIGNON_AUTHENTICATION": {
       "value": "true"
     },
+    "AVAILABLE_WITHOUT_EARLY_ACCESS_AUTHENTICATION": {
+      "value": "true"
+    },
     "DISABLE_MAIL_DELIVERY": {
       "value": "true"
     },

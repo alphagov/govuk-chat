@@ -1,11 +1,32 @@
 RSpec.describe "ChatController" do
   describe "GET :index" do
-    it "renders the initial onboarding page" do
-      get chat_path
+    context "when early access authentication is enabled" do
+      before do
+        allow(Rails.configuration).to receive(:available_without_early_access_authentication).and_return(false)
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(response.body)
-        .to have_selector(".app-c-chat-introduction__title", text: "GOV.UK Chat")
+      it "renders the early access authentication welcome page" do
+        get chat_path
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body)
+          .to have_content(:all, "Early Access")
+          .and have_selector(".app-c-chat-introduction__title", text: "GOV.UK Chat")
+      end
+    end
+
+    context "when early access authentication is disabled" do
+      before do
+        allow(Rails.configuration).to receive(:available_without_early_access_authentication).and_return(false)
+      end
+
+      it "renders the welcome page" do
+        get chat_path
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body)
+          .to have_selector(".app-c-chat-introduction__title", text: "GOV.UK Chat")
+      end
     end
 
     it "sets the cache headers to 5 mins" do
