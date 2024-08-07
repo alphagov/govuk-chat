@@ -79,5 +79,8 @@ module GovukChat
     config.exceptions_app = routes
 
     config.available_without_signon_authentication = ENV["AVAILABLE_WITHOUT_SIGNON_AUTHENTICATION"]
+
+    # Make session length predictable to reduce confusion of when session data is lost.
+    config.session_store :cookie_store, key: "_govuk_chat_session", expire_after: 30.days
   end
 end
