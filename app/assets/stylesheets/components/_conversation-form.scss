@@ -48,8 +48,8 @@
   border: 2px solid govuk-colour("black");
   border-radius: 0;
   padding: govuk-spacing(2);
-  @include govuk-font($size: 19);
   width: 100%;
+  @include govuk-font($size: 19);
 
   &:focus {
     outline: $govuk-focus-width solid $govuk-focus-colour;

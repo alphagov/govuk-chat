@@ -14,9 +14,9 @@
   }
 
   .govuk-link {
-    @include govuk-font($size: 19, $weight: regular);
     text-align: center;
     margin: auto 0;
+    @include govuk-font($size: 19, $weight: regular);
   }
 
   @include govuk-media-query($until: tablet) {
