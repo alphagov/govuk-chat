@@ -9,6 +9,7 @@ RSpec.describe Evaluation::HmrcReportGenerator do
         sources: [
           build(:answer_source, exact_path: "/vat-payments/late-payments"),
           build(:answer_source, exact_path: "/vat-payments/pay-online"),
+          build(:answer_source, exact_path: "/vat-payments/not-used", used: false),
         ],
       ),
       build(

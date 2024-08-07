@@ -18,7 +18,7 @@ module Evaluation
         {
           question: evaluation_question,
           llm_answer: answer.message,
-          retrieved_context: answer.sources.flat_map(&method(:build_retrieved_context)),
+          retrieved_context: answer.sources.select(&:used?).flat_map(&method(:build_retrieved_context)),
         }
       end
     end
@@ -26,11 +26,7 @@ module Evaluation
   private
 
     def build_question(question_message)
-      Question.new(
-        message: question_message,
-        answer_strategy: "open_ai_rag_completion",
-        conversation: Conversation.new,
-      )
+      Question.new(message: question_message, conversation: Conversation.new)
     end
 
     def full_url(path)

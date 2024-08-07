@@ -20,7 +20,7 @@ module Evaluation
         [
           evaluation_question,
           answer.message,
-          answer.sources.map(&method(:build_source)).join("\n"),
+          answer.sources.select(&:used?).map(&method(:build_source)).join("\n"),
         ]
       end
 
@@ -30,11 +30,7 @@ module Evaluation
   private
 
     def build_question(question_message)
-      Question.new(
-        message: question_message,
-        answer_strategy: "open_ai_rag_completion",
-        conversation: Conversation.new,
-      )
+      Question.new(message: question_message, conversation: Conversation.new)
     end
 
     def full_url(path)

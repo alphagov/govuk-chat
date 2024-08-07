@@ -17,7 +17,9 @@ class Form::CreateQuestion
   def submit
     validate!
 
-    question = Question.create!(message: user_question, conversation:, answer_strategy:)
+    question = Question.new(message: user_question, conversation:)
+    question.answer_strategy = :open_ai_rag_completion if Feature.enabled?(:unstructured_answer_generation)
+    question.save!
     ComposeAnswerJob.perform_later(question.id)
     question
   end

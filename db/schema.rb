@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_01_114312) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_06_132511) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -97,7 +97,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_01_114312) do
     t.string "message", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "answer_strategy", null: false
+    t.string "answer_strategy", default: "openai_structured_answer", null: false
     t.index ["conversation_id"], name: "index_questions_on_conversation_id"
     t.index ["created_at"], name: "index_questions_on_created_at"
   end

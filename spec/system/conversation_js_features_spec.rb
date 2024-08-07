@@ -95,11 +95,11 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
   def when_i_enter_a_first_question_with_a_slow_response
     @first_question = "How do I setup a workplace pension?"
+    prepared_question = create(:question, message: @first_question)
 
-    allow(Question).to receive(:create!) do
-      sleep 1
-      create(:question, message: @first_question)
-    end
+    allow(Question).to receive(:new).and_return(prepared_question)
+    # delay the server side response to provide time for a delayed loading state
+    allow(prepared_question).to receive(:save!) { sleep 1 }
 
     fill_in "create_question[user_question]", with: @first_question
     click_on "Send"
