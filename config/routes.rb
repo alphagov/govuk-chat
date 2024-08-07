@@ -52,6 +52,8 @@ Rails.application.routes.draw do
 
       get "/sign-up-enabled", to: "settings/sign_up_enabled#edit", as: :edit_sign_up_enabled
       patch "/sign-up-enabled", to: "settings/sign_up_enabled#update", as: :update_sign_up_enabled
+
+      get "/audits", to: "settings#audits", as: :settings_audits
     end
   end
 

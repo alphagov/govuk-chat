@@ -19,6 +19,9 @@ RSpec.describe "Admin user updates settings" do
     when_i_click_the_edit_link_for_sign_up_enabled
     and_i_choose_to_enable_signups
     then_i_see_that_signups_are_enabled
+
+    when_i_click_on_the_audits_link
+    then_i_can_see_the_audits_for_my_changes
   end
 
   def and_a_settings_instance_exists
@@ -79,5 +82,15 @@ RSpec.describe "Admin user updates settings" do
 
   def then_i_see_that_signups_are_enabled
     expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled Yes")
+  end
+
+  def when_i_click_on_the_audits_link
+    click_on "Audits"
+  end
+
+  def then_i_can_see_the_audits_for_my_changes
+    expect(page).to have_content("Added 5 instant access places")
+    expect(page).to have_content("Added 5 delayed access places")
+    expect(page).to have_content("Sign up enabled set to true")
   end
 end

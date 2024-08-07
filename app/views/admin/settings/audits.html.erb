@@ -1,0 +1,51 @@
+<% content_for :title, "Audits" %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <% if @audits.present? %>
+      <%= render "components/secondary_navigation", {
+        aria_label: "Settings navigation",
+        items: [
+          {
+            label: "Settings",
+            href: admin_settings_path,
+          },
+          {
+            label: "Audits",
+            href: admin_settings_audits_path,
+            current: true,
+          },
+        ],
+      } %>
+
+      <% @audits.each do |audit| %>
+        <%= render "components/settings_audit_entry", {
+          action: audit.action,
+          author_comment: audit.author_comment,
+          created_at: audit.created_at.to_fs(:time_and_date),
+          user: audit.user&.name,
+        } %>
+      <% end %>
+
+      <%
+        pages = {}
+
+        pages[:previous_page] = {
+        url: admin_settings_audits_path(page: @audits.prev_page),
+        label: "#{@audits.current_page - 1} of #{@audits.total_pages}",
+        title: "Previous page" } if @audits.prev_page
+
+        pages[:next_page] = {
+        url: admin_settings_audits_path(page: @audits.next_page),
+        label: "#{@audits.current_page + 1} of #{@audits.total_pages}",
+        title: "Next page" } if @audits.next_page
+      %>
+
+      <%= render "govuk_publishing_components/components/previous_and_next_navigation", pages %>
+    <% else %>
+      <%= render "govuk_publishing_components/components/inset_text", {
+        text: "No audits.",
+      } %>
+    <% end %>
+  </div>
+</div>
