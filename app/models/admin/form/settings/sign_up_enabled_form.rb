@@ -13,6 +13,6 @@ class Admin::Form::Settings::SignUpEnabledForm < Admin::Form::Settings::BaseForm
 private
 
   def action
-    "Sign up enabled set to #{enabled}."
+    "Sign up enabled set to #{enabled}"
   end
 end

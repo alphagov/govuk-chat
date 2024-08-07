@@ -10,9 +10,9 @@ private
 
   def action(setting)
     if places.positive?
-      "Added #{places} #{setting}."
+      "Added #{places} #{setting}"
     else
-      "Removed #{places * -1} #{setting}."
+      "Removed #{places * -1} #{setting}"
     end
   end
 
