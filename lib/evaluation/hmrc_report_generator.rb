@@ -33,12 +33,8 @@ module Evaluation
       Question.new(message: question_message, conversation: Conversation.new)
     end
 
-    def full_url(path)
-      "https://www.gov.uk#{path}"
-    end
-
     def build_source(source)
-      full_url(source.exact_path)
+      Plek.website_root + source.exact_path
     end
   end
 end

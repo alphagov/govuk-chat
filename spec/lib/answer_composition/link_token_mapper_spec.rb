@@ -10,7 +10,7 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
       <ul>
         <li>get updated about <a href="/tax-news">Tax News</a></li>
         <li>prove you're self-employed, for example to claim Tax-Free Childcare</li>
-        <li>make voluntary <a id="foo" href="/national-insurance/what-national-insurance-is">National Insurance</a> payments</li>
+        <li>make voluntary <a id="foo" href="https://www.gov.uk/national-insurance/what-national-insurance-is">National Insurance</a> payments</li>
         <li>fill in a <a href="/tax-returns">Tax return</a> each tax year.</li>
       </ul>
     HTML
@@ -46,12 +46,7 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
       token = mapper.map_link_to_token(link)
 
       expect(token).to eq("link_1")
-
-      replaced_markdown = mapper.replace_tokens_with_links(
-        "This is a [link](link_1)",
-      )
-
-      expect(replaced_markdown).to eq("This is a [link](/tax-returns)")
+      expect(mapper.link_for_token(token)).to eq(link)
     end
 
     it "returns the same token if the link is already in the mapping" do
@@ -63,7 +58,7 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
   end
 
   describe "#replace_tokens_with_links" do
-    it "replaces token-based links with stored links" do
+    it "replaces token-based links with stored links that are absolute URIs" do
       mapper = described_class.new
       mapper.map_links_to_tokens(html)
 
@@ -82,28 +77,37 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
         [1]: link_2
       MARKDOWN
 
-      output = mapper.replace_tokens_with_links(source).squish
-
-      expect(output).to include("[Tax return](/tax-returns \"Tax return\")")
-      expect(output).to include("[National Insurance](/national-insurance/what-national-insurance-is)")
+      output = mapper.replace_tokens_with_links(source)
 
       #  Ensure we can handle reference-style links
-      expect(output).to include("[Tax News](/tax-news)")
+      expect(output)
+        .to include("[Tax News][1]")
+        .and include("[1]: https://www.test.gov.uk/tax-news")
+
+      # Ensure we can handle a link with a title
+      expect(output)
+        .to include("[Tax return][2]")
+        .and include("[2]: https://www.test.gov.uk/tax-returns \"Tax return\"")
+
+      # Ensure we don't rewrite an existing absolute URL
+      expect(output)
+        .to include("[National Insurance][3]")
+        .and include("[3]: https://www.gov.uk/national-insurance/what-national-insurance-is")
     end
 
     it "strips the trailing newlines" do
       expect(described_class.new.replace_tokens_with_links("Some text\n\n")).to eq("Some text")
     end
-  end
 
-  it "strips out any links that are not in the mapping" do
-    source = "Some text with a [link](link_1) and something that [looks like] a link (but is not). A link with [`code`](https://example.com)"
+    it "strips out any links that are not in the mapping" do
+      source = "Some text with a [link](link_1) and something that [looks like] a link (but is not). A link with [`code`](https://example.com)"
 
-    output = described_class.new.replace_tokens_with_links(source).squish
+      output = described_class.new.replace_tokens_with_links(source).squish
 
-    expect(output).to eq(
-      "Some text with a link and something that \\[looks like\\] a link (but is not). A link with `code`",
-    )
+      expect(output).to eq(
+        "Some text with a link and something that \\[looks like\\] a link (but is not). A link with `code`",
+      )
+    end
   end
 
   describe "#link_for_token" do

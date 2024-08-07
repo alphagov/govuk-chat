@@ -103,8 +103,8 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
         heading_hierarchy: ["VAT", "Late payments"],
         description: "Paying your VAT bill",
         html_content: "<p>Some content</p>",
-        exact_path: "https://www.gov.uk/vat-payments/late-payments",
-        base_path: "https://www.gov.uk/vat-payments",
+        exact_path: "https://www.test.gov.uk/vat-payments/late-payments",
+        base_path: "https://www.test.gov.uk/vat-payments",
       })
     end
 

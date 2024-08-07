@@ -59,7 +59,9 @@ module AnswerComposition
 
       if (url = link_for_token(token))
         link_element.tap do |el|
-          el.attr["href"] = url
+          # We frequently host GOV.UK chat in environments off www.gov.uk
+          # and need links not to be relative so that they will work.
+          el.attr["href"] = ensure_absolute_govuk_url(url)
         end
       else
         # We don't have the link mapping stored, so we want to strip out the link
@@ -68,6 +70,17 @@ module AnswerComposition
         # node or it might be a whole sub-tree of nodes
         link_element.children.first
       end
+    end
+
+    def ensure_absolute_govuk_url(url)
+      relative_uri = URI(url)
+      return url if relative_uri.absolute?
+
+      absolute_uri = URI(Plek.website_root)
+      absolute_uri.path = relative_uri.path
+      absolute_uri.query = relative_uri.query
+      absolute_uri.fragment = relative_uri.fragment
+      absolute_uri.to_s
     end
   end
 end

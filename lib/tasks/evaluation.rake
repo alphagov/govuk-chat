@@ -3,6 +3,8 @@ namespace :evaluation do
   task :generate_report, %i[output_path] => :environment do |_, args|
     output_path = args[:output_path]
 
+    ENV["GOVUK_WEBSITE_ROOT"] ||= "https://www.gov.uk"
+
     results = Evaluation::ReportGenerator.call do |total, current, evaluation_question|
       puts "(#{current} / #{total}): #{evaluation_question}"
     end
@@ -20,6 +22,8 @@ namespace :evaluation do
   desc "Export CSV for HMRC evaluation"
   task :generate_hmrc_report, %i[output_path] => :environment do |_, args|
     output_path = args[:output_path]
+
+    ENV["GOVUK_WEBSITE_ROOT"] ||= "https://www.gov.uk"
 
     results = Evaluation::HmrcReportGenerator.call do |total, current, evaluation_question|
       puts "(#{current} / #{total}): #{evaluation_question}"

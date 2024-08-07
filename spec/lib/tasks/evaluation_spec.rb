@@ -1,4 +1,22 @@
 RSpec.describe "rake evaluation tasks" do
+  shared_examples "sets GOVUK_WEBSITE_ROOT when not set" do
+    it "sets GOVUK_WEBSITE_ROOT, if not set, to specify https://www.gov.uk links" do
+      ClimateControl.modify(GOVUK_WEBSITE_ROOT: nil) do
+        expect { Rake::Task[task_name].invoke }.to output.to_stdout
+
+        expect(ENV["GOVUK_WEBSITE_ROOT"]).to eq("https://www.gov.uk")
+      end
+    end
+
+    it "doesn't change GOVUK_WEBSITE_ROOT when already set" do
+      ClimateControl.modify(GOVUK_WEBSITE_ROOT: "http://test.gov.uk") do
+        expect { Rake::Task[task_name].invoke }.to output.to_stdout
+
+        expect(ENV["GOVUK_WEBSITE_ROOT"]).to eq("http://test.gov.uk")
+      end
+    end
+  end
+
   describe "generate_report" do
     let(:task_name) { "evaluation:generate_report" }
     let(:evaluation_data) do
@@ -36,6 +54,8 @@ RSpec.describe "rake evaluation tasks" do
         temp.unlink
       end
     end
+
+    include_examples "sets GOVUK_WEBSITE_ROOT when not set"
   end
 
   describe "generate_hmrc_report" do
@@ -75,5 +95,7 @@ RSpec.describe "rake evaluation tasks" do
         temp.unlink
       end
     end
+
+    include_examples "sets GOVUK_WEBSITE_ROOT when not set"
   end
 end

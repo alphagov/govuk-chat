@@ -55,6 +55,10 @@ RSpec.configure do |config|
     driven_by Capybara.javascript_driver
   end
 
+  config.around do |example|
+    ClimateControl.modify(GOVUK_WEBSITE_ROOT: "https://www.test.gov.uk") { example.run }
+  end
+
   config.before(:each, :dismiss_cookie_banner, type: :system) do
     # The cookie banner for the session as it can break tests due to
     # them running in a small viewport.
