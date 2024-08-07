@@ -1,0 +1,20 @@
+<%
+  user ||= "unknown user"
+  author_comment ||= nil
+%>
+
+<div class="app-c-settings-audit-entry">
+  <h2 class="app-c-settings-audit-entry__action">
+    <%= action %>
+  </h2>
+
+  <% if author_comment.present? %>
+    <p class="app-c-settings-audit-entry__author_comment">
+      <%= author_comment %>
+    </p>
+  <% end %>
+
+  <p class="app-c-settings-audit-entry__authored">
+    Changed at <%= created_at %> by <%= user %>
+  </p>
+</div>

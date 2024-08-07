@@ -1,0 +1,20 @@
+.app-c-settings-audit-entry {
+  margin-bottom: govuk-spacing(6);
+}
+
+.app-c-settings-audit-entry__action {
+  margin-bottom: govuk-spacing(2);
+  @include govuk-font($size: 19, $weight: bold);
+}
+
+.app-c-settings-audit-entry__author_comment {
+  margin-bottom: govuk-spacing(2);
+  margin-top: govuk-spacing(2);
+  @include govuk-font($size: 19, $weight: regular);
+}
+
+.app-c-settings-audit-entry__authored {
+  color: govuk-colour("dark-grey");
+  margin-top: govuk-spacing(2);
+  @include govuk-font($size: 19, $weight: regular);
+}
