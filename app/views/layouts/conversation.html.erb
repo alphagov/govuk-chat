@@ -1,4 +1,7 @@
-<% @conversation_data_attributes ||= {} %>
+<%
+  @conversation_data_attributes ||= {}
+  page_title = (content_for?(:page_title) ? yield(:page_title) : yield(:title)).presence
+%>
 
 <% content_for :alerts do %>
   <% if content_for?(:error_summary) %>
@@ -31,7 +34,7 @@
         <div class="app-conversation-layout__width-container">
           <%= yield(:alerts) if content_for?(:alerts) %>
 
-          <h1 class="govuk-visually-hidden js-title"><%= yield(:title) %></h1>
+          <h1 class="govuk-visually-hidden js-title"><%= page_title %></h1>
 
           <ul class="app-conversation-layout__list js-conversation-list">
             <%= yield %>

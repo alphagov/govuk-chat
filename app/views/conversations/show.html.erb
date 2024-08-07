@@ -2,7 +2,10 @@
 if @questions.last && !@questions.last.answer
   @conversation_data_attributes[:"pending-answer-url"] = answer_question_path(@questions.last)
 end
-content_for(:title, @title)
+
+# Expected that only users without JS will see this prefixed browser title
+content_for(:browser_title, (@create_question.errors.any? ? "Error - " : "") + @title)
+content_for(:page_title, @title)
 %>
 
 <% content_for :error_summary do %>
