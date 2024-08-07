@@ -34,5 +34,14 @@ RSpec.describe "ChatController" do
 
       expect(response.headers["Cache-Control"]).to eq("max-age=300, public")
     end
+
+    it "skips regenerating session so the resource can be cached" do
+      # create a session
+      get show_conversation_path
+      expect(response.cookies.keys).to include("_govuk_chat_session")
+
+      get chat_path
+      expect(response.cookies).to be_empty
+    end
   end
 end
