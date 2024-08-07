@@ -105,14 +105,25 @@ module Admin
       end
 
       if answer&.sources.present?
-        source_links = answer.sources.map do |source|
+        used_source_links = answer.sources.used.map do |source|
+          tag.a(source.title, href: source.url, class: "govuk-link")
+        end
+
+        unused_source_links = answer.sources.unused.map do |source|
           tag.a(source.title, href: source.url, class: "govuk-link")
         end
 
         rows << {
-          field: "Sources",
-          value: safe_join(source_links, tag.br),
+          field: "Used sources",
+          value: safe_join(used_source_links, tag.br),
         }
+
+        if unused_source_links.present?
+          rows << {
+            field: "Unused sources",
+            value: safe_join(unused_source_links, tag.br),
+          }
+        end
       end
 
       if answer&.feedback.present?

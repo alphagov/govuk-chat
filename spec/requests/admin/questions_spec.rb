@@ -44,14 +44,17 @@ RSpec.describe "Admin::QuestionsController" do
 
     it "renders the sources for an answer when present" do
       question = create(:question)
-      answer = create(:answer, question:, sources: [create(:answer_source)])
-      source = answer.sources.first
+      answer = create(:answer, question:, sources: [create(:answer_source), create(:answer_source, used: false)])
+      used_source = answer.sources.first
+      unused_source = answer.sources.last
 
       get admin_show_question_path(question)
 
       expect(response.body)
-        .to have_content("Sources")
-        .and have_link(source.title, href: source.url)
+        .to have_content("Used sources")
+        .and have_link(used_source.title, href: used_source.url)
+        .and have_content("Unused sources")
+        .and have_link(unused_source.title, href: unused_source.url)
     end
 
     it "renders the feedback for an answer when present" do
