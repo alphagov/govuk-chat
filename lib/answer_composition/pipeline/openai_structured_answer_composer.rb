@@ -27,14 +27,7 @@ module AnswerComposition::Pipeline
         status: "success",
         llm_response: raw_structured_response,
       )
-    rescue JSON::Schema::ValidationError => e
-      context.abort_pipeline!(
-        message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
-        status: "error_invalid_llm_response",
-        error_message: error_message(e),
-        llm_response: raw_structured_response,
-      )
-    rescue JSON::ParserError => e
+    rescue JSON::Schema::ValidationError, JSON::ParserError => e
       context.abort_pipeline!(
         message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
         status: "error_invalid_llm_response",
