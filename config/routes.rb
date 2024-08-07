@@ -23,6 +23,9 @@ Rails.application.routes.draw do
     get "sign-in/email_sent", to: "signin#email_sent"
     get "sign-in/:id/:token", to: "signin#confirm", as: :sign_in_confirm
     get "sign-in/failure", to: "signin#failure", as: :sign_in_failure
+    get "early-access-entry", to: "early_access_entry#new"
+    post "early-access-entry", to: "early_access_entry#create"
+    get "early-access-entry/email_sent", to: "early_access_entry#email_sent"
 
     scope :onboarding do
       get "", to: "onboarding#limitations", as: :onboarding_limitations

@@ -1,0 +1,5 @@
+<%= form_with model: @early_access_entry_form, url: early_access_entry_path do |f| %>
+  <%= f.label :email %>
+  <%= f.email_field :email %>
+  <%= f.submit "Try GOV.UK Chat" %>
+<% end %>

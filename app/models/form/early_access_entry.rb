@@ -1,15 +1,14 @@
-class Form::SigninUser
+class Form::EarlyAccessEntry
   include ActiveModel::Model
   include ActiveModel::Attributes
 
   attribute :email
-  attribute :user
 
   def submit
-    user = EarlyAccessUser.find_by(email:)
-    #check
+    user = EarlyAccessUser.find_or_create_by!(email:)
+    # check revoked status
     session = Passwordless::Session.new(authenticatable: user)
     session.save!
-    SigninMailer.call(session).deliver_now
+    EarlyAccessAuthMailer.sign_in(session).deliver_now
   end
 end

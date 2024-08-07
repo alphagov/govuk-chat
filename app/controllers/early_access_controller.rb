@@ -12,6 +12,6 @@ private
     return if current_user
 
     save_passwordless_redirect_location!(EarlyAccessUser)
-    redirect_to sign_in_path
+    redirect_to early_access_entry_path
   end
 end
