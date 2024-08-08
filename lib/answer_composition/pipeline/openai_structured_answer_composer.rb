@@ -1,6 +1,6 @@
 module AnswerComposition::Pipeline
   class OpenAIStructuredAnswerComposer
-    OPENAI_MODEL = "gpt-4o".freeze
+    OPENAI_MODEL = "gpt-4o-2024-08-06".freeze
 
     def self.call(...) = new(...).call
 
