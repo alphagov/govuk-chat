@@ -15,17 +15,13 @@ Rails.application.routes.draw do
 
   scope :chat do
     get "", to: "chat#index", as: :chat
-    get "sign-up", to: "signup#new"
-    post "sign-up", to: "signup#create"
-    get "sign-in", to: "signin#new"
-    get "sign-out", to: "signin#destroy"
-    post "sign-in", to: "signin#create"
-    get "sign-in/email_sent", to: "signin#email_sent"
-    get "sign-in/:id/:token", to: "signin#confirm", as: :sign_in_confirm
-    get "sign-in/failure", to: "signin#failure", as: :sign_in_failure
     get "early-access-entry", to: "early_access_entry#new"
     post "early-access-entry", to: "early_access_entry#create"
     get "early-access-entry/email_sent", to: "early_access_entry#email_sent"
+    get "sign-out", to: "sessions#destroy"
+    get "sign-in/email_sent", to: "sessions#email_sent"
+    get "sign-in/:id/:token", to: "sessions#confirm", as: :magic_link
+    get "sign-in/session-timeout", to: "sessions#timeout", as: :session_timeout
 
     scope :onboarding do
       get "", to: "onboarding#limitations", as: :onboarding_limitations
