@@ -4,7 +4,7 @@ class SessionsController < EarlyAccessController
     return head(:ok) if request.head?
 
     # if the user is already signed in just redirect to the chat page
-    return redirect_to(chat_path) if current_user.present?
+    return redirect_to(chat_path) if current_early_access_user.present?
 
     artificially_slow_down_brute_force_attacks(params[:token])
     passwordless_session = Passwordless::Session.find_by(identifier: params[:id],
