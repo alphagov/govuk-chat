@@ -5,7 +5,18 @@ class BaseController < ApplicationController
 private
 
   def current_early_access_user
-    @current_early_access_user ||= authenticate_by_session(EarlyAccessUser)
+    @current_early_access_user ||= authenticate_early_access_user
+  end
+
+  def authenticate_early_access_user
+    user = authenticate_by_session(EarlyAccessUser)
+
+    if user&.access_revoked?
+      sign_out(EarlyAccessUser)
+      nil
+    else
+      user
+    end
   end
 
   def require_early_access_user!

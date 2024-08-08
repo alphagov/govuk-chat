@@ -19,4 +19,18 @@ RSpec.describe "accessing resources with passwordless" do
                           .and have_attributes(body: /You got here/)
     end
   end
+
+  context "when logged in but user has had their access revoked" do
+    let(:user) { create :early_access_user }
+
+    before do
+      passwordless_sign_in(user)
+      user.touch(:revoked_at)
+    end
+
+    it "prevents access and redirects to a sign in page" do
+      get protected_path
+      expect(response).to redirect_to(early_access_entry_path)
+    end
+  end
 end
