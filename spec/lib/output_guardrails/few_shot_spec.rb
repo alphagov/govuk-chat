@@ -32,8 +32,8 @@ RSpec.describe OutputGuardrails::FewShot do
         { role: "user", content: Regexp.new(input) },
       ]
       openai_request = stub_openai_chat_completion(messages, "False | None", chat_options: {
-        model: "gpt-4o",
-        max_tokens: 25,
+        model: OutputGuardrails::FewShot::OPENAI_MODEL,
+        max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
       })
 
       described_class.call(input)
@@ -43,8 +43,8 @@ RSpec.describe OutputGuardrails::FewShot do
     it "returns triggered: true with human readable guardrails" do
       guardrail_result = 'True | "1, 5"'
       stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
-        model: "gpt-4o",
-        max_tokens: 25,
+        model: OutputGuardrails::FewShot::OPENAI_MODEL,
+        max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
       })
       expect(described_class.call(input)).to be_a(OutputGuardrails::FewShot::Result)
         .and(having_attributes(
@@ -57,8 +57,8 @@ RSpec.describe OutputGuardrails::FewShot do
     it "returns triggered: false with empty guardrails" do
       guardrail_result = "False | None"
       stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
-        model: "gpt-4o",
-        max_tokens: 25,
+        model: OutputGuardrails::FewShot::OPENAI_MODEL,
+        max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
       })
       expect(described_class.call(input)).to be_a(OutputGuardrails::FewShot::Result)
         .and(having_attributes(
@@ -72,8 +72,8 @@ RSpec.describe OutputGuardrails::FewShot do
       it "throws a AnswerComposition::OutputGuardrails::ResponseError" do
         guardrail_result = 'False | "1, 2"'
         stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
-          model: "gpt-4o",
-          max_tokens: 25,
+          model: OutputGuardrails::FewShot::OPENAI_MODEL,
+          max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
         })
         expect { described_class.call(input) }
           .to raise_error(
@@ -88,8 +88,8 @@ RSpec.describe OutputGuardrails::FewShot do
       it "throws a AnswerComposition::OutputGuardrails::ResponseError" do
         guardrail_result = 'False | "1, 8"'
         stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
-          model: "gpt-4o",
-          max_tokens: 25,
+          model: OutputGuardrails::FewShot::OPENAI_MODEL,
+          max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
         })
         expect { described_class.call(input) }
           .to raise_error(

@@ -70,8 +70,12 @@ module StubOpenAIChat
   end
 
   def stub_openai_output_guardrail_pass(answer)
-    messages = array_including({ "role" => "user", "content" => Regexp.new(answer) })
-    stub_openai_chat_completion(messages, "False | None", chat_options: { model: "gpt-4o", max_tokens: 25 })
+    stub_openai_chat_completion(
+      array_including({ "role" => "user", "content" => Regexp.new(answer) }),
+      "False | None",
+      chat_options: { model: OutputGuardrails::FewShot::OPENAI_MODEL,
+                      max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS },
+    )
   end
 
   def self.response_body(answer, tool_calls:)
