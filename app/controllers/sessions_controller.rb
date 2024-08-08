@@ -10,11 +10,10 @@ class SessionsController < EarlyAccessController
     passwordless_session = Passwordless::Session.find_by(identifier: params[:id],
                                                          authenticatable_type: "EarlyAccessUser")
 
-    if !passwordless_session || !passwordless_session.authenticate(params[:token])
-      # exit early
-      # TODO how should this actually behave?
-      return render plain: "session not found"
-    end
+    # TODO: how should this actually behave?
+    return render plain: "session not found" if passwordless_session.nil?
+    # TODO: how should this actually behave? we know the user
+    return render plain: "invalid token" unless passwordless_session.authenticate(params[:token])
 
     Passwordless::Session.transaction do
       sign_in(passwordless_session)
@@ -28,7 +27,7 @@ class SessionsController < EarlyAccessController
     redirect_to redirect_location
   rescue Passwordless::Errors::TokenAlreadyClaimedError
     # TODO: how should this actually behave?
-    render plain: "token already claimed"
+    render plain: "magic link used"
   rescue Passwordless::Errors::SessionTimedOutError
     # TODO: how should this actually behave?
     redirect_to action: :timeout
