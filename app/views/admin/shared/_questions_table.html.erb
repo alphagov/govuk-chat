@@ -37,21 +37,12 @@
     end,
   } %>
 
-  <%
-    pages = {}
-
-    pages[:previous_page] = {
-    url: public_send(path, filter.previous_page_params),
-    label: "#{questions.current_page - 1} of #{questions.total_pages}",
-    title: "Previous page" } if questions.prev_page
-
-    pages[:next_page] = {
-    url: public_send(path, filter.next_page_params),
-    label: "#{questions.current_page + 1} of #{questions.total_pages}",
-    title: "Next page" } if questions.next_page
-  %>
-
-  <%= render "govuk_publishing_components/components/previous_and_next_navigation", pages %>
+  <%= render "govuk_publishing_components/components/previous_and_next_navigation",
+    previous_and_next_page_hash(
+      questions,
+      previous_page_url: public_send(path, filter.previous_page_params),
+      next_page_url: public_send(path, filter.next_page_params),
+    ) %>
 <% else %>
   <%= render "govuk_publishing_components/components/inset_text", {
     text: "No questions found.",

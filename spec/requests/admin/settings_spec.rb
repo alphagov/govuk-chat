@@ -14,6 +14,49 @@ RSpec.describe "Settings endpoints" do
         expect(response.body).to have_selector(".govuk-heading-xl", text: "Settings")
       end
     end
+
+    describe "GET :audits" do
+      it "renders a list of audits :desc successfully" do
+        create(:settings_audit, created_at: 2.days.ago, action: "Appears second")
+        create(:settings_audit, created_at: 1.day.ago, action: "Appears first")
+
+        get admin_settings_audits_path
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to have_content(/Appears first.*Appears second/m)
+      end
+
+      it "renders 'No audits.' when there are no audits" do
+        get admin_settings_audits_path
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to have_content("No audits.")
+      end
+
+      context "when there are more than 25 audits" do
+        it "paginates the audits correctly on page 1" do
+          create_list(:settings_audit, 26)
+
+          get admin_settings_audits_path
+
+          expect(response.body)
+            .to have_link("Next page", href: admin_settings_audits_path(page: 2))
+            .and have_selector(".govuk-pagination__link-label", text: "2 of 2")
+            .and have_no_content("Previous page")
+        end
+
+        it "paginates the audits correctly on page 2" do
+          create_list(:settings_audit, 26)
+
+          get admin_settings_audits_path(page: 2)
+
+          expect(response.body)
+          .to have_link("Previous page", href: admin_settings_audits_path(page: 1))
+          .and have_selector(".govuk-pagination__link-label", text: "1 of 2")
+          .and have_no_content("Next page")
+        end
+      end
+    end
   end
 
   describe "Admin::Settings::InstantAccessPlacesController" do

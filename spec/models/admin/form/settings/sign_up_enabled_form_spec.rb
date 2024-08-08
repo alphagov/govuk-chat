@@ -15,7 +15,7 @@ RSpec.describe Admin::Form::Settings::SignUpEnabledForm do
         .to have_attributes(
           user: form.user,
           author_comment: form.author_comment,
-          action: "Sign up enabled set to true.",
+          action: "Sign up enabled set to true",
         )
     end
 

@@ -1,0 +1,19 @@
+name: Settings audit entry
+description: Renders a settings audit entry
+accessibility_criteria: |
+  All text must have a contrast ratio higher than 4.5:1 against the background colour to meet [WCAG AA](https://www.w3.org/TR/WCAG20/#visual-audio-contrast-contrast)
+examples:
+  default:
+    data:
+      action: Added 10 instant access places
+      created_at: 11:00am on 1 January 2024
+  with_an_author_comment:
+    data:
+      action: Added 10 instant access places
+      created_at: 11:00am on 1 January 2024
+      author_comment: This is a comment provided by the author when created.
+  with_a_user:
+    data:
+      action: Added 10 instant access places
+      created_at: 11:00am on 1 January 2024
+      user: Test user

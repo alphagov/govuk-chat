@@ -27,7 +27,7 @@ RSpec.describe Admin::Form::Settings::DelayedAccessPlacesForm do
         .to have_attributes(
           user: form.user,
           author_comment: form.author_comment,
-          action: "Added 5 delayed access places.",
+          action: "Added 5 delayed access places",
         )
     end
 
@@ -43,7 +43,7 @@ RSpec.describe Admin::Form::Settings::DelayedAccessPlacesForm do
       form.submit
 
       expect(settings.reload.delayed_access_places).to eq 5
-      expect(SettingsAudit.last.action).to eq "Removed 5 delayed access places."
+      expect(SettingsAudit.last.action).to eq "Removed 5 delayed access places"
     end
 
     it "sets delayed access places to 0 if the result is negative as a failsafe" do
@@ -53,7 +53,7 @@ RSpec.describe Admin::Form::Settings::DelayedAccessPlacesForm do
       form.submit
 
       expect(settings.reload.delayed_access_places).to eq 0
-      expect(SettingsAudit.last.action).to eq "Removed 10 delayed access places."
+      expect(SettingsAudit.last.action).to eq "Removed 10 delayed access places"
     end
   end
 end

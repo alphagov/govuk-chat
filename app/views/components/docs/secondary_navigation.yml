@@ -1,0 +1,29 @@
+name: Secondary navigation
+description: Displays a secondary navigation with the current page marked accordingly
+accessibility_criteria: |
+  The component must:
+  * indicate that it is navigation landmark
+  * indicate if a navigation item links to the currently-displayed page
+shared_accessibility_criteria:
+  - link
+examples:
+  default:
+    data:
+      aria_label: Settings navigation
+      items:
+        - label: Settings
+          href: /settings
+          current: true
+        - label: Audits
+          href: /audits
+  with_data_attributes:
+    data:
+      aria_label: Settings navigation with data attributes
+      items:
+        - label: Settings
+          href: /settings
+          current: true
+        - label: Audits
+          href: /audits
+          data_attributes:
+            tracking: GTM-123AB
