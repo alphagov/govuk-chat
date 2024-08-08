@@ -37,8 +37,7 @@ Rails.application.configure do
 
     config.cache_store = :null_store
   end
-  config.action_mailer.default_url_options = { host: Plek.website_root }
-  routes.default_url_options[:host] ||= Plek.website_root
+  config.action_mailer.default_url_options = { host: Plek.find("govuk-chat") }
 
   ## use these 2 lines to output to the console
   config.action_mailer.delivery_method = :test
