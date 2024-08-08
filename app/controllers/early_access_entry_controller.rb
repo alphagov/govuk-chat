@@ -6,6 +6,7 @@ class EarlyAccessEntryController < ApplicationController
   def create
     @early_access_entry_form = Form::EarlyAccessEntry.new(form_params)
     @early_access_entry_form.submit
+    ## TODO there will be other possible redirects here
     redirect_to action: :email_sent
   end
 
