@@ -1,4 +1,4 @@
-class EarlyAccessEntryController < ApplicationController
+class EarlyAccessEntryController < BaseController
   def new
     @early_access_entry_form = Form::EarlyAccessEntry.new
   end

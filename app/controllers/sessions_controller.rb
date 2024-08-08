@@ -1,5 +1,6 @@
 require "bcrypt"
-class SessionsController < EarlyAccessController
+
+class SessionsController < BaseController
   def confirm
     return head(:ok) if request.head?
 
