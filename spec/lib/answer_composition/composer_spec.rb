@@ -35,6 +35,7 @@ RSpec.describe AnswerComposition::Composer do
           expected_pipeline = [
             AnswerComposition::Pipeline::QuestionRephraser,
             AnswerComposition::Pipeline::ForbiddenWordsChecker,
+            AnswerComposition::Pipeline::QuestionRouter,
             AnswerComposition::Pipeline::SearchResultFetcher,
             AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer,
             AnswerComposition::Pipeline::OutputGuardrails,

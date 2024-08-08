@@ -22,6 +22,7 @@ module AnswerComposition
         OpenAIAnswer.call(question:, pipeline: [
           Pipeline::QuestionRephraser,
           Pipeline::ForbiddenWordsChecker,
+          Pipeline::QuestionRouter,
           Pipeline::SearchResultFetcher,
           Pipeline::OpenAIStructuredAnswerComposer,
           Pipeline::OutputGuardrails,

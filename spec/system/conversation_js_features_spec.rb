@@ -269,6 +269,8 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
       build(:chunked_content_record, openai_embedding: mock_openai_embedding(question)),
     ])
 
+    stub_openai_chat_question_routing(question)
+
     stub_openai_chat_completion_structured_response(
       array_including({ "role" => "user", "content" => question }),
       answer,
