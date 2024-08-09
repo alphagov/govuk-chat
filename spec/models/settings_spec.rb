@@ -21,7 +21,7 @@ RSpec.describe Settings do
   end
 
   describe "#locked_audited_update" do
-    let(:audit_user) { build(:user) }
+    let(:audit_user) { build(:admin_user) }
     let(:audit_action) { "Added 5 instant access places." }
     let(:audit_comment) { "We've run out of places so it's time to add more." }
     let(:call_locked_audit_update) do
