@@ -255,10 +255,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     if rephrase_question
       rephrased_question = "Rephrased #{question}"
 
-      stub_openai_chat_completion(
-        array_including({ "role" => "user", "content" => question }),
-        rephrased_question,
-      )
+      stub_openai_question_rephrasing(question, rephrased_question)
 
       question = rephrased_question
     end

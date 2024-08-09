@@ -62,10 +62,8 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
   def when_the_second_answer_is_generated
     rephrased_question = "Rephrased How much tax should I be paying?"
 
-    stub_openai_chat_completion(
-      array_including({ "role" => "user", "content" => "Are you sure?" }),
-      rephrased_question,
-    )
+    stub_openai_question_rephrasing("Are you sure?", rephrased_question)
+
     stub_openai_chat_question_routing(
       array_including({ "role" => "user", "content" => rephrased_question }),
     )

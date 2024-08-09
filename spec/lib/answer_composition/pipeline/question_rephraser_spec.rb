@@ -14,13 +14,32 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
 
     context "when there is a valid response from OpenAI" do
       let(:expected_messages) do
+        message_history = <<~HISTORY.strip
+          user:
+          """
+          How do I pay my tax
+          """
+          assistant:
+          """
+          What type of tax
+          """
+          user:
+          """
+          What types are there
+          """
+          assistant:
+          """
+          Self-assessment, PAYE, Corporation tax
+          """
+        HISTORY
+
+        user_prompt = config[:user_prompt]
+                      .sub("{message_history}", message_history)
+                      .sub("{question}", "corporation tax")
+
         [
-          { role: "system", content: system_prompt },
-          { role: "user", content: "How do I pay my tax" },
-          { role: "assistant", content:  "What type of tax" },
-          { role: "user", content: "What types are there" },
-          { role: "assistant", content: "Self-assessment, PAYE, Corporation tax" },
-          { role: "user", content: "corporation tax" },
+          { role: "system", content: config[:system_prompt] },
+          { role: "user", content: user_prompt },
         ]
       end
       let(:rephrased) { "How do I pay my corporation tax" }
@@ -77,25 +96,35 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
 
     context "with a long history" do
       let(:conversation) { create(:conversation) }
-      let(:question) { create(:question, message: "Question 6", conversation:) }
+      let(:question) { create(:question, message: "Question 7", conversation:) }
       let(:context) { build(:answer_pipeline_context, question:) }
+      let(:user_prompt) do
+        message_history = (2..6).map do |n|
+          <<~MESSAGE.strip
+            user:
+            """
+            Question #{n}
+            """
+            assistant:
+            """
+            Answer #{n}
+            """
+          MESSAGE
+        end
+
+        config[:user_prompt]
+          .sub("{message_history}", message_history.join("\n"))
+          .sub("{question}", "Question 7")
+      end
       let(:expected_messages) do
         [
-          { role: "system", content: system_prompt },
-          { role: "user", content: "Question 2" },
-          { role: "assistant", content: "Answer 2" },
-          { role: "user", content: "Question 3" },
-          { role: "assistant", content: "Answer 3" },
-          { role: "user", content: "Question 4" },
-          { role: "assistant", content: "Answer 4" },
-          { role: "user", content: "Question 5" },
-          { role: "assistant", content: "Answer 5" },
-          { role: "user", content: "Question 6" },
+          { role: "system", content: config[:system_prompt] },
+          { role: "user", content: user_prompt },
         ]
       end
 
       before do
-        (1..5).each do |n|
+        (1..6).each do |n|
           answer = build(:answer, message: "Answer #{n}")
           create(:question, answer:, conversation:, message: "Question #{n}")
         end
@@ -109,7 +138,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
     end
   end
 
-  def system_prompt
-    Rails.configuration.llm_prompts.question_rephraser[:system_prompt]
+  def config
+    Rails.configuration.llm_prompts.question_rephraser
   end
 end

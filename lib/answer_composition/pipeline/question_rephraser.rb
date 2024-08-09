@@ -37,23 +37,26 @@ module AnswerComposition
 
       def messages
         [
-          { role: "system", content: system_prompt },
-        ] + message_history
+          { role: "system", content: config[:system_prompt] },
+          { role: "user", content: user_prompt },
+        ]
+      end
+
+      def message_records
+        Question.where(conversation: question.conversation)
+                .includes(:answer)
+                .joins(:answer)
+                .last(5)
       end
 
       def message_history
-        Question.where(conversation: question.conversation)
-                .includes(:answer)
-                .last(5)
-                .flat_map(&method(:map_question))
+        message_records.flat_map(&method(:map_question)).join("\n")
       end
 
       def map_question(question)
-        return [{ role: "user", content: question.message }] if question.answer.nil?
-
         [
-          { role: "user", content: question.message },
-          { role: "assistant", content: question.answer.message },
+          format_messsage("user", question.message),
+          format_messsage("assistant", question.answer.message),
         ]
       end
 
@@ -61,12 +64,22 @@ module AnswerComposition
         question.conversation.questions.count < 2
       end
 
-      def system_prompt
-        Rails.configuration.llm_prompts.question_rephraser[:system_prompt]
+      def config
+        Rails.configuration.llm_prompts.question_rephraser
+      end
+
+      def user_prompt
+        config[:user_prompt]
+          .sub("{question}", question.message)
+          .sub("{message_history}", message_history)
       end
 
       def openai_client
         @openai_client ||= OpenAIClient.build
+      end
+
+      def format_messsage(actor, message)
+        ["#{actor}:", '"""', message, '"""'].join("\n")
       end
     end
   end
