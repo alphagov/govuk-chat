@@ -3,10 +3,6 @@ RSpec.describe "sessions controller" do
     let(:session) { create :passwordless_session }
     let(:magic_link) { magic_link_url(session.to_param, session.token) }
 
-    before do
-      allow(Passwordless::Session).to receive(:find_by)
-    end
-
     # some mail clients make this request to check a link is safe
     it "returns head: OK" do
       head magic_link
@@ -16,8 +12,9 @@ RSpec.describe "sessions controller" do
 
     # We don't want to sign-in the user in this situation
     it "does nothing else" do
+      allow(Passwordless::Session).to receive(:lock)
       head magic_link
-      expect(Passwordless::Session).not_to have_received(:find_by)
+      expect(Passwordless::Session).not_to have_received(:lock)
     end
   end
 
@@ -30,6 +27,12 @@ RSpec.describe "sessions controller" do
       it "allows access" do
         get magic_link
         expect(response).to redirect_to(chat_path)
+      end
+
+      it "locks the Password::Session resource to prevent concurrent login activity" do
+        allow(Passwordless::Session).to receive(:lock).and_call_original
+        get magic_link
+        expect(Passwordless::Session).to have_received(:lock)
       end
 
       context "with a stored redirect location" do
