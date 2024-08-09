@@ -24,7 +24,7 @@ module Chunking::ContentItemParsing
       structured_content = details_field!("step_by_step_nav")
 
       html_content = []
-      html_content << "<p>#{structured_content.dig('introduction', 0, 'content')}</p>"
+      html_content << tag.p(structured_content.dig("introduction", 0, "content"))
 
       nav_steps = structured_content["steps"]
       nav_steps.each do |nav_step|
@@ -36,8 +36,8 @@ module Chunking::ContentItemParsing
 
     def parse_nav_step(nav_step)
       html_content = []
-      html_content << "\n<p>and</p>\n" if nav_step["logic"] == "and"
-      html_content << "\n<p>or</p>\n" if nav_step["logic"] == "or"
+      html_content << "\n#{tag.p('and')}\n" if nav_step["logic"] == "and"
+      html_content << "\n#{tag.p('or')}\n" if nav_step["logic"] == "or"
       html_content << tag.h2(nav_step["title"])
 
       nav_step["contents"].each do |content|
@@ -64,7 +64,7 @@ module Chunking::ContentItemParsing
       end
 
       list_type = content["style"] == "choice" ? "ul" : "ol"
-      ["<#{list_type}>", list_items, "</#{list_type}>"].join("\n")
+      content_tag(list_type, safe_join(list_items, "\n"))
     end
   end
 end

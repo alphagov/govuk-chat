@@ -114,11 +114,9 @@ RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
             <p>Should be the first bit of content.</p>
             <h2>A step with a list of ordered links</h2>
             <p>This step contains a non-bulleted list.</p>
-            <ol>
-            <li><a href="/link-1">Link 1</a><span>rendered in span</span></li>
+            <ol><li><a href="/link-1">Link 1</a><span>rendered in span</span></li>
             <li><a href="/link-2">Link 2</a></li>
-            <li><a href="/link-3">Link 3</a></li>
-            </ol>
+            <li><a href="/link-3">Link 3</a></li></ol>
           HTML
           .strip
 
@@ -155,11 +153,9 @@ RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
             <p>Should be the first bit of content.</p>
             <h2>This step has a bulleted list</h2>
             <p>Bulleted lists are also allowed.</p>
-            <ul>
-            <li><a href="/link-4">Link 4</a><span>rendered in span</span></li>
+            <ul><li><a href="/link-4">Link 4</a><span>rendered in span</span></li>
             <li><a href="/link-5">Link 5</a></li>
-            <li><a href="/link-6">Link 6</a></li>
-            </ul>
+            <li><a href="/link-6">Link 6</a></li></ul>
           HTML
           .strip
 
@@ -227,6 +223,55 @@ RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
 
           <h2>This step contains or logic</h2>
           <p>Or you can do this other thing.</p>
+        HTML
+        .strip
+
+        expect(chunk.html_content).to eq(expected_html_content)
+      end
+    end
+
+    context "when the step has unsanitized HTML" do
+      let(:details) do
+        {
+          "step_by_step_nav" => {
+            "steps" => [unsanitized_step],
+            "title" => "Step by step nav title",
+            "introduction" => [
+              {
+                "content" => "<script>script tag in introduction</script>",
+                "content_type" => "text/govspeak",
+              },
+            ],
+          },
+        }
+      end
+      let(:unsanitized_step) do
+        {
+          "title" => "Maybe I will try and sneak <script>unsanitized HTML in here </script>",
+          "contents" => [
+            {
+              "text" => "Sneaky script in a paragraph <script>xss attempt</script>", "type" => "paragraph"
+            },
+            {
+              "type" => "list",
+              "contents" => [
+                { "href" => "/sneaky", "text" => "<script>sneaky script</script>" },
+                { "href" => "/extra-sneaky", "text" => "nothing to see here", "context" => "<script>extra sneaky script</script>" },
+              ],
+            },
+          ],
+        }
+      end
+
+      it "sanitises the HTML" do
+        chunk = described_class.call(content_item).first
+
+        expected_html_content = <<~HTML
+          <p>&lt;script&gt;script tag in introduction&lt;/script&gt;</p>
+          <h2>Maybe I will try and sneak &lt;script&gt;unsanitized HTML in here &lt;/script&gt;</h2>
+          <p>Sneaky script in a paragraph &lt;script&gt;xss attempt&lt;/script&gt;</p>
+          <ol><li><a href="/sneaky">&lt;script&gt;sneaky script&lt;/script&gt;</a></li>
+          <li><a href="/extra-sneaky">nothing to see here</a><span>&lt;script&gt;extra sneaky script&lt;/script&gt;</span></li></ol>
         HTML
         .strip
 
