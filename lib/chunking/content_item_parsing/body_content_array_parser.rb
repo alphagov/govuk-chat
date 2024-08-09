@@ -12,6 +12,7 @@ module Chunking::ContentItemParsing
       },
       "manual" => ANY_DOCUMENT_TYPE,
       "manual_section" => ANY_DOCUMENT_TYPE,
+      "simple_smart_answer" => ANY_DOCUMENT_TYPE,
     }.freeze
 
     def call
