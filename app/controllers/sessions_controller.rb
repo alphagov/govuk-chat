@@ -23,7 +23,7 @@ class SessionsController < BaseController
 
       redirect_to redirect_location
     rescue EarlyAccessUser::AccessRevokedError
-      sign_out(EarlyAccessUser)
+      sign_out_early_access_user
       # TODO: how should this actually behave?
       render plain: "access revoked"
     rescue Passwordless::Errors::TokenAlreadyClaimedError
@@ -36,7 +36,7 @@ class SessionsController < BaseController
   end
 
   def destroy
-    sign_out(EarlyAccessUser)
+    sign_out_early_access_user
 
     redirect_to early_access_entry_path
   end
