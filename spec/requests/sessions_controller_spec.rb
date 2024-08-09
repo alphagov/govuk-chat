@@ -1,4 +1,26 @@
 RSpec.describe "sessions controller" do
+  describe "HEAD :confirm" do
+    let(:session) { create :passwordless_session }
+    let(:magic_link) { magic_link_url(session.to_param, session.token) }
+
+    before do
+      allow(Passwordless::Session).to receive(:find_by)
+    end
+
+    # some mail clients make this request to check a link is safe
+    it "returns head: OK" do
+      head magic_link
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to be_empty
+    end
+
+    # We don't want to sign-in the user in this situation
+    it "does nothing else" do
+      head magic_link
+      expect(Passwordless::Session).not_to have_received(:find_by)
+    end
+  end
+
   describe "GET :confirm" do
     let(:magic_link) { magic_link_url(session.to_param, session.token) }
 
