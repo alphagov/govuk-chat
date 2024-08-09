@@ -167,5 +167,71 @@ RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
         end
       end
     end
+
+    context "when the step has 'and' logic" do
+      let(:and_step) do
+        {
+          "logic" => "and",
+          "title" => "This step contains and logic",
+          "contents" => [
+            {
+              "text" => "And you should do this other thing too.", "type" => "paragraph"
+            },
+          ],
+        }
+      end
+      let(:steps) { [numbered_step, and_step] }
+
+      it "renders the steps with an 'and' paragraph at the start of the 'and' step" do
+        chunk = described_class.call(content_item).first
+
+        expected_html_content = <<~HTML
+          <p>Should be the first bit of content.</p>
+          <h2>A numbered step</h2>
+          <p>This is a step with only a para.</p>
+
+          <p>and</p>
+
+          <h2>This step contains and logic</h2>
+          <p>And you should do this other thing too.</p>
+        HTML
+        .strip
+
+        expect(chunk.html_content).to eq(expected_html_content)
+      end
+    end
+
+    context "when the step has 'or' logic" do
+      let(:or_step) do
+        {
+          "logic" => "or",
+          "title" => "This step contains or logic",
+          "contents" => [
+            {
+              "text" => "Or you can do this other thing.", "type" => "paragraph"
+            },
+          ],
+        }
+      end
+      let(:steps) { [numbered_step, or_step] }
+
+      it "renders the steps with an 'or' paragraph at the start of the 'or' step" do
+        chunk = described_class.call(content_item).first
+
+        expected_html_content = <<~HTML
+          <p>Should be the first bit of content.</p>
+          <h2>A numbered step</h2>
+          <p>This is a step with only a para.</p>
+
+          <p>or</p>
+
+          <h2>This step contains or logic</h2>
+          <p>Or you can do this other thing.</p>
+        HTML
+        .strip
+
+        expect(chunk.html_content).to eq(expected_html_content)
+      end
+    end
   end
 end

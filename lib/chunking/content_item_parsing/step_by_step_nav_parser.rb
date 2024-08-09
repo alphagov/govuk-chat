@@ -36,6 +36,8 @@ module Chunking::ContentItemParsing
 
     def parse_nav_step(nav_step)
       html_content = []
+      html_content << "\n<p>and</p>\n" if nav_step["logic"] == "and"
+      html_content << "\n<p>or</p>\n" if nav_step["logic"] == "or"
       html_content << tag.h2(nav_step["title"])
 
       nav_step["contents"].each do |content|
