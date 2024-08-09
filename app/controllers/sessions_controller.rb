@@ -31,7 +31,7 @@ class SessionsController < BaseController
     render plain: "magic link used"
   rescue Passwordless::Errors::SessionTimedOutError
     # TODO: how should this actually behave?
-    redirect_to action: :timeout
+    render plain: "session timed out"
   end
 
   def destroy
@@ -43,8 +43,6 @@ class SessionsController < BaseController
       notice: I18n.t("passwordless.sessions.destroy.signed_out"),
     )
   end
-
-  def timeout; end
 
 private
 

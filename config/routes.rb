@@ -20,7 +20,6 @@ Rails.application.routes.draw do
     get "early-access-entry/email_sent", to: "early_access_entry#email_sent"
     get "sign-out", to: "sessions#destroy"
     get "sign-in/:id/:token", to: "sessions#confirm", as: :magic_link
-    get "sign-in/session-timeout", to: "sessions#timeout", as: :session_timeout
 
     scope :onboarding do
       get "", to: "onboarding#limitations", as: :onboarding_limitations

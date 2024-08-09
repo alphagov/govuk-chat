@@ -47,7 +47,7 @@ RSpec.describe "sessions controller" do
 
       it "shows session timeout page" do
         get magic_link
-        expect(response).to redirect_to(session_timeout_path)
+        expect(response.body).to include("session timed out")
       end
     end
 
