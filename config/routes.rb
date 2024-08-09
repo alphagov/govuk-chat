@@ -19,7 +19,6 @@ Rails.application.routes.draw do
     post "early-access-entry", to: "early_access_entry#create"
     get "early-access-entry/email_sent", to: "early_access_entry#email_sent"
     get "sign-out", to: "sessions#destroy"
-    get "sign-in/email_sent", to: "sessions#email_sent"
     get "sign-in/:id/:token", to: "sessions#confirm", as: :magic_link
     get "sign-in/session-timeout", to: "sessions#timeout", as: :session_timeout
 
