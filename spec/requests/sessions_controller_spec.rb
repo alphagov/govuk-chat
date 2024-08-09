@@ -31,6 +31,15 @@ RSpec.describe "sessions controller" do
         get magic_link
         expect(response).to redirect_to(chat_path)
       end
+
+      context "with a stored redirect location" do
+        it "redirects to the stored location" do
+          get protected_path
+          follow_redirect!
+          get magic_link
+          expect(response).to redirect_to(protected_path)
+        end
+      end
     end
 
     context "with a timed out magic link" do
