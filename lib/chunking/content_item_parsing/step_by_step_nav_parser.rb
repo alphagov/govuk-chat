@@ -42,12 +42,27 @@ module Chunking::ContentItemParsing
         case content["type"]
         when "paragraph"
           html_content << tag.p(content["text"])
+        when "list"
+          html_content << list_html(content)
         else
           raise "Unknown content type: #{content['type']}"
         end
       end
 
       html_content.join("\n")
+    end
+
+    def list_html(content)
+      links = content["contents"]
+
+      list_items = links.map do |link|
+        link_html = tag.a(link["text"], href: link["href"])
+        link_html << tag.span(link["context"]) if link["context"].present?
+        tag.li(link_html)
+      end
+
+      list_type = content["style"] == "choice" ? "ul" : "ol"
+      ["<#{list_type}>", list_items, "</#{list_type}>"].join("\n")
     end
   end
 end

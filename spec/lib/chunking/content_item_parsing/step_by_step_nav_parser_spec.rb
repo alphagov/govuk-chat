@@ -84,5 +84,88 @@ RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
         expect { described_class.call(content_item) }.to raise_error("Unknown content type: td")
       end
     end
+
+    context "when the document contains a step with a list" do
+      context "and the list style is not 'choice'" do
+        let(:step_with_list) do
+          {
+            "title" => "A step with a list of ordered links",
+            "contents" => [
+              {
+                "text" => "This step contains a non-bulleted list.", "type" => "paragraph"
+              },
+              {
+                "type" => "list",
+                "contents" => [
+                  { "href" => "/link-1", "text" => "Link 1", "context" => "rendered in span" },
+                  { "href" => "/link-2", "text" => "Link 2" },
+                  { "href" => "/link-3", "text" => "Link 3" },
+                ],
+              },
+            ],
+          }
+        end
+        let(:steps) { [step_with_list] }
+
+        it "constucts an ordered list based on the links contained in the list" do
+          chunk = described_class.call(content_item).first
+
+          expected_html_content = <<~HTML
+            <p>Should be the first bit of content.</p>
+            <h2>A step with a list of ordered links</h2>
+            <p>This step contains a non-bulleted list.</p>
+            <ol>
+            <li><a href="/link-1">Link 1</a><span>rendered in span</span></li>
+            <li><a href="/link-2">Link 2</a></li>
+            <li><a href="/link-3">Link 3</a></li>
+            </ol>
+          HTML
+          .strip
+
+          expect(chunk.html_content).to eq(expected_html_content)
+        end
+      end
+
+      context "and the list style is 'choice'" do
+        let(:step_with_bulleted_list) do
+          {
+            "title" => "This step has a bulleted list",
+            "contents" => [
+              {
+                "text" => "Bulleted lists are also allowed.", "type" => "paragraph"
+              },
+              {
+                "type" => "list",
+                "style" => "choice",
+                "contents" => [
+                  { "href" => "/link-4", "text" => "Link 4", "context" => "rendered in span" },
+                  { "href" => "/link-5", "text" => "Link 5" },
+                  { "href" => "/link-6", "text" => "Link 6" },
+                ],
+              },
+            ],
+          }
+        end
+        let(:steps) { [step_with_bulleted_list] }
+
+        it "constucts an unordered list based on the links contained when the lists style is 'choice'" do
+          chunk = described_class.call(content_item).first
+
+          expected_html_content = <<~HTML
+            <p>Should be the first bit of content.</p>
+            <h2>This step has a bulleted list</h2>
+            <p>Bulleted lists are also allowed.</p>
+            <ul>
+            <li><a href="/link-4">Link 4</a><span>rendered in span</span></li>
+            <li><a href="/link-5">Link 5</a></li>
+            <li><a href="/link-6">Link 6</a></li>
+            </ul>
+          HTML
+          .strip
+
+          expect(chunk.html_content).to eq(expected_html_content)
+        end
+      end
+    end
   end
 end
