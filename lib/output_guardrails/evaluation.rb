@@ -6,14 +6,16 @@ module OutputGuardrails
 
   class Evaluation
     class Example
-      attr_reader :input, :expected, :actual, :category, :latency
+      attr_reader :input, :expected, :actual, :category, :latency, :expected_bool, :actual_bool
 
-      def initialize(input:, expected:, actual:, category:, latency:)
+      def initialize(input:, expected:, actual:, category:, latency:, actual_bool:, expected_bool:)
         @input = input
         @expected = expected
         @actual = actual
         @category = category
         @latency = latency
+        @expected_bool = expected_bool
+        @actual_bool = actual_bool
       end
 
       def exact_match?
@@ -23,15 +25,28 @@ module OutputGuardrails
       def failure?
         !exact_match?
       end
+
+      def true_positive?
+        expected_bool && actual_bool
+      end
+
+      def false_positive?
+        !expected_bool && actual_bool
+      end
+
+      def false_negative?
+        expected_bool && !actual_bool
+      end
     end
 
-    attr_reader :examples, :file_path
+    attr_reader :examples, :file_path, :true_eval
 
-    def initialize(file_path, &block)
+    def initialize(file_path, true_eval:, &block)
       raise ArgumentError, "You should pass a block to #{self.class.name}.call that can process each input" unless block_given?
 
       @guardrail_block = block
       @file_path = file_path
+      @true_eval = true_eval
       @examples = []
     end
 
@@ -43,6 +58,8 @@ module OutputGuardrails
         count:,
         percent_correct:,
         exact_match_count:,
+        precision:,
+        recall:,
         failure_count:,
         average_latency:,
         max_latency:,
@@ -71,6 +88,8 @@ module OutputGuardrails
           category: row["category"],
           actual:,
           latency:,
+          actual_bool: true_eval.call(actual),
+          expected_bool: true_eval.call(expected),
         )
         examples << entry
       end
@@ -105,6 +124,18 @@ module OutputGuardrails
       examples.select(&:failure?).map do |example|
         { input: example.input, expected: example.expected, actual: example.actual }
       end
+    end
+
+    def precision
+      true_positive_count = examples.count(&:true_positive?)
+      false_positive_count = examples.count(&:false_positive?)
+      (true_positive_count.to_f / (true_positive_count + false_positive_count)).round(2)
+    end
+
+    def recall
+      true_positive_count = examples.count(&:true_positive?)
+      false_negative_count = examples.count(&:false_negative?)
+      (true_positive_count.to_f / (true_positive_count + false_negative_count)).round(2)
     end
 
     def run_guardrail(input)
