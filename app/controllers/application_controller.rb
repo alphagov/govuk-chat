@@ -13,6 +13,6 @@ class ApplicationController < ActionController::Base
 private
 
   def set_current
-    Current.user = current_user
+    Current.admin_user = current_user
   end
 end
