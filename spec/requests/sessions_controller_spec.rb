@@ -49,7 +49,8 @@ RSpec.describe "sessions controller" do
 
         it "disallows access" do
           get magic_link
-          expect(response.body).to include("access revoked")
+          expect(response).to have_http_status(:forbidden)
+          expect(response.body).to include("You aren’t eligible to use GOV.UK Chat")
         end
 
         it "doesn't sign a user in" do
@@ -76,7 +77,8 @@ RSpec.describe "sessions controller" do
 
       it "shows session timeout page" do
         get magic_link
-        expect(response.body).to include("session timed out")
+        expect(response).to have_http_status(:gone)
+        expect(response.body).to include("This link has expired or been used already")
       end
     end
 
@@ -85,8 +87,8 @@ RSpec.describe "sessions controller" do
 
       it "disallows access" do
         get magic_link
-        # TODO: change this to assert actual response from content designers
-        expect(response.body).to include("magic link used")
+        expect(response).to have_http_status(:conflict)
+        expect(response.body).to include("This link has expired or been used already")
       end
     end
 
@@ -99,9 +101,8 @@ RSpec.describe "sessions controller" do
 
       it "disallows access" do
         get magic_link
-        # TODO: change this to assert actual response from content designers
-        # We don't know who the user is
-        expect(response.body).to include("session not found")
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to include("This link has expired or been used already")
       end
     end
 
@@ -110,9 +111,8 @@ RSpec.describe "sessions controller" do
 
       it "disallows access" do
         get magic_link_path(session.to_param, "the-wrong-token")
-        # TODO: change this to assert actual response from content designers
-        # We do know who the user is maybe they messed up the link
-        expect(response.body).to include("invalid token")
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to include("This link has expired or been used already")
       end
     end
   end

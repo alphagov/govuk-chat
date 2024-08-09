@@ -11,10 +11,9 @@ class SessionsController < BaseController
       passwordless_session = Passwordless::Session.lock.find_by(identifier: params[:id],
                                                                 authenticatable_type: "EarlyAccessUser")
 
-      # TODO: how should this actually behave?
-      return render plain: "session not found" if passwordless_session.nil?
-      # TODO: how should this actually behave? we know the user
-      return render plain: "invalid token" unless passwordless_session.authenticate(params[:token])
+      if passwordless_session.nil? || !passwordless_session.authenticate(params[:token])
+        return render :link_expired, status: :not_found
+      end
 
       sign_in(passwordless_session)
       early_access_user = passwordless_session.authenticatable
@@ -23,14 +22,11 @@ class SessionsController < BaseController
       redirect_to redirect_location
     rescue EarlyAccessUser::AccessRevokedError
       sign_out_early_access_user
-      # TODO: how should this actually behave?
-      render plain: "access revoked"
+      render :access_revoked, status: :forbidden
     rescue Passwordless::Errors::TokenAlreadyClaimedError
-      # TODO: how should this actually behave?
-      render plain: "magic link used"
+      render :link_expired, status: :conflict
     rescue Passwordless::Errors::SessionTimedOutError
-      # TODO: how should this actually behave?
-      render plain: "session timed out"
+      render :link_expired, status: :gone
     end
   end
 
