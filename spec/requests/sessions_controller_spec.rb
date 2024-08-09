@@ -1,4 +1,4 @@
-RSpec.describe "magic link access" do
+RSpec.describe "sessions controller" do
   let(:magic_link) { magic_link_url(session.to_param, session.token) }
 
   context "with a valid magic link" do
