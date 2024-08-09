@@ -58,4 +58,5 @@ Rails.application.configure do
   config.openai_access_token = "fake-openai-access-token"
 
   config.action_mailer.delivery_method = :test
+  config.action_mailer.default_url_options = { host: "www.example.com" }
 end

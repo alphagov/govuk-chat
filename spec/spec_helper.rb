@@ -34,6 +34,7 @@ RSpec.configure do |config|
   config.include Capybara::RSpecMatchers, type: :request
   config.include FactoryBot::Syntax::Methods
   config.include StubOpenAIChat
+  config.include PasswordlessHelpers
   config.include StubOpenAIEmbedding
   config.include SystemSpecHelpers, type: :system
 

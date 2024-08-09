@@ -80,6 +80,7 @@ GEM
     amq-protocol (2.3.2)
     ast (2.4.2)
     base64 (0.2.0)
+    bcrypt (3.1.20)
     better_html (2.1.1)
       actionview (>= 6.0)
       activesupport (>= 6.0)
@@ -559,6 +560,9 @@ GEM
     parser (3.3.4.0)
       ast (~> 2.4.1)
       racc
+    passwordless (1.7.0)
+      bcrypt (>= 3.1.11)
+      rails (>= 5.1.4)
     pg (1.5.7)
     plek (5.2.0)
     prometheus_exporter (2.1.1)
@@ -825,6 +829,7 @@ DEPENDENCIES
   mail-notify
   nokogiri
   opensearch-ruby
+  passwordless
   pg
   pry-byebug
   pry-rails

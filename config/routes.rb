@@ -15,6 +15,11 @@ Rails.application.routes.draw do
 
   scope :chat do
     get "", to: "chat#index", as: :chat
+    get "early-access-entry", to: "early_access_entry#new"
+    post "early-access-entry", to: "early_access_entry#create"
+    get "early-access-entry/email_sent", to: "early_access_entry#email_sent"
+    get "sign-out", to: "sessions#destroy"
+    get "sign-in/:id/:token", to: "sessions#confirm", as: :magic_link
 
     scope :onboarding do
       get "", to: "onboarding#limitations", as: :onboarding_limitations
@@ -31,6 +36,8 @@ Rails.application.routes.draw do
 
       post "/answers/:answer_id/feedback", to: "conversations#answer_feedback", as: :answer_feedback
     end
+
+    get "protected", to: "protected#index"
   end
 
   namespace :admin do

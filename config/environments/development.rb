@@ -37,6 +37,15 @@ Rails.application.configure do
 
     config.cache_store = :null_store
   end
+  config.action_mailer.default_url_options = { host: Plek.find("govuk-chat") }
+
+  ## use these 2 lines to output to the console
+  config.action_mailer.delivery_method = :test
+  config.action_mailer.logger = Logger.new($stdout)
+
+  ## use these 2 lines to send for real via Notify
+  # config.action_mailer.delivery_method = :notify
+  # config.action_mailer.notify_settings = { api_key: ENV["GOVUK_NOTIFY_API_KEY"] }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
