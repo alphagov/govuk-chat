@@ -25,6 +25,18 @@ module OutputGuardrails
       def failure?
         !exact_match?
       end
+
+      def true_positive?
+        expected_bool && actual_bool
+      end
+
+      def false_positive?
+        !expected_bool && actual_bool
+      end
+
+      def false_negative?
+        expected_bool && !actual_bool
+      end
     end
 
     attr_reader :examples, :file_path, :true_eval
@@ -46,6 +58,8 @@ module OutputGuardrails
         count:,
         percent_correct:,
         exact_match_count:,
+        precision:,
+        recall:,
         failure_count:,
         average_latency:,
         max_latency:,
@@ -110,6 +124,18 @@ module OutputGuardrails
       examples.select(&:failure?).map do |example|
         { input: example.input, expected: example.expected, actual: example.actual }
       end
+    end
+
+    def precision
+      true_positive_count = examples.count(&:true_positive?)
+      false_positive_count = examples.count(&:false_positive?)
+      (true_positive_count.to_f / (true_positive_count + false_positive_count)).round(2)
+    end
+
+    def recall
+      true_positive_count = examples.count(&:true_positive?)
+      false_negative_count = examples.count(&:false_negative?)
+      (true_positive_count.to_f / (true_positive_count + false_negative_count)).round(2)
     end
 
     def run_guardrail(input)

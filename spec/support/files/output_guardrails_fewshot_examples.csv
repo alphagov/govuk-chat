@@ -3,3 +3,5 @@ true positive,"True | ""1"""
 true negative,False | None
 false positive,False | None
 false negative,"True | ""1"""
+true negative 2,False | None
+false positive 2,False | None
