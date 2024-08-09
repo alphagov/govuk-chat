@@ -9,7 +9,6 @@ gem "rails", "7.1.3.4"
 gem "bootsnap"
 gem "csv"
 gem "dartsass-rails"
-gem "erb_lint", require: false
 gem "faraday"
 gem "faraday-typhoeus"
 gem "flipper"
@@ -50,6 +49,7 @@ end
 
 group :development, :test do
   gem "dotenv"
+  gem "erb_lint", require: false
   gem "factory_bot_rails"
   gem "govuk_test"
   gem "pry-byebug"
