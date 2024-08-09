@@ -6,14 +6,14 @@ RSpec.describe "accessing resources with passwordless" do
     end
   end
 
-  context "when logged in an EarlyAccessuser" do
+  context "when logged in as an EarlyAccessuser" do
     let(:user) { create :early_access_user }
 
     before do
       passwordless_sign_in(user)
     end
 
-    it "Allows access" do
+    it "allows access" do
       get protected_path
       expect(response).to have_http_status(:ok)
                           .and have_attributes(body: /You got here/)
