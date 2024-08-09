@@ -6,14 +6,16 @@ module OutputGuardrails
 
   class Evaluation
     class Example
-      attr_reader :input, :expected, :actual, :category, :latency
+      attr_reader :input, :expected, :actual, :category, :latency, :expected_bool, :actual_bool
 
-      def initialize(input:, expected:, actual:, category:, latency:)
+      def initialize(input:, expected:, actual:, category:, latency:, actual_bool:, expected_bool:)
         @input = input
         @expected = expected
         @actual = actual
         @category = category
         @latency = latency
+        @expected_bool = expected_bool
+        @actual_bool = actual_bool
       end
 
       def exact_match?
@@ -25,13 +27,14 @@ module OutputGuardrails
       end
     end
 
-    attr_reader :examples, :file_path
+    attr_reader :examples, :file_path, :true_eval
 
-    def initialize(file_path, &block)
+    def initialize(file_path, true_eval:, &block)
       raise ArgumentError, "You should pass a block to #{self.class.name}.call that can process each input" unless block_given?
 
       @guardrail_block = block
       @file_path = file_path
+      @true_eval = true_eval
       @examples = []
     end
 
@@ -71,6 +74,8 @@ module OutputGuardrails
           category: row["category"],
           actual:,
           latency:,
+          actual_bool: true_eval.call(actual),
+          expected_bool: true_eval.call(expected),
         )
         examples << entry
       end
