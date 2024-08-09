@@ -9,9 +9,7 @@ RSpec.describe "accessing resources with passwordless" do
   context "when logged in as an EarlyAccessuser" do
     let(:user) { create :early_access_user }
 
-    before do
-      passwordless_sign_in(user)
-    end
+    before { sign_in_early_access_user(user) }
 
     it "allows access" do
       get protected_path
@@ -24,7 +22,7 @@ RSpec.describe "accessing resources with passwordless" do
     let(:user) { create :early_access_user }
 
     before do
-      passwordless_sign_in(user)
+      sign_in_early_access_user(user)
       user.touch(:revoked_at)
     end
 
