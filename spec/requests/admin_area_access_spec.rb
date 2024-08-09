@@ -2,7 +2,7 @@ RSpec.describe "Admin area access" do
   describe "GET /admin" do
     context "when a signed in user has 'admin-area' permission" do
       it "returns a successful response" do
-        user = create(:user, :admin)
+        user = create(:admin_user, :admin)
         login_as(user)
 
         get "/admin"
@@ -13,7 +13,7 @@ RSpec.describe "Admin area access" do
 
     context "when the user does not have the 'admin-area' permission" do
       it "returns a forbidden response" do
-        user = create(:user)
+        user = create(:admin_user)
         login_as(user)
 
         get "/admin"

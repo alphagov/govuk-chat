@@ -12,6 +12,10 @@ RSpec.describe "Admin user searches and views chunks", :chunked_content_index do
     then_the_search_page_has_the_correct_search_term
   end
 
+  def given_i_am_an_admin
+    login_as(create(:admin_user, :admin))
+  end
+
   def and_there_is_a_pax_my_tax_chunk_to_find
     openai_embedding = mock_openai_embedding("how to pay tax")
     stub_openai_embedding("how to pay tax")

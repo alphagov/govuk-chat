@@ -11,6 +11,10 @@ RSpec.describe "Admin user views conversation history" do
     then_i_see_the_other_questions_for_this_conversation
   end
 
+  def given_i_am_an_admin
+    login_as(create(:admin_user, :admin))
+  end
+
   def and_there_are_questions_submitted
     conversation = build(:conversation)
     @question1 = create(:question, conversation:)

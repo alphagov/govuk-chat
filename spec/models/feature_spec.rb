@@ -1,5 +1,5 @@
 RSpec.describe Feature do
-  let(:user) { build(:user) }
+  let(:user) { build(:admin_user) }
   let(:feature) { :my_feature }
 
   context "when the feature is enabled for everyone" do
@@ -33,23 +33,23 @@ RSpec.describe Feature do
       expect(described_class.enabled?(feature, user)).to be(true)
     end
 
-    it "returns true when the user is Current.user" do
-      allow(Current).to receive(:user).and_return(user)
+    it "returns true when the user is Current.admin_user" do
+      allow(Current).to receive(:admin_user).and_return(user)
       expect(described_class.enabled?(feature)).to be(true)
     end
 
-    it "returns false when a different user is Current.user" do
-      allow(Current).to receive(:user).and_return(build(:user))
+    it "returns false when a different user is Current.admin_user" do
+      allow(Current).to receive(:admin_user).and_return(build(:admin_user))
       expect(described_class.enabled?(feature)).to be(false)
     end
 
-    it "returns true when a different user is Current.user but the actual user is passed in" do
-      allow(Current).to receive(:user).and_return(build(:user))
+    it "returns true when a different user is Current.admin_user but the actual user is passed in" do
+      allow(Current).to receive(:admin_user).and_return(build(:admin_user))
       expect(described_class.enabled?(feature, user)).to be(true)
     end
 
-    it "returns false when a nil user argument is passed in to replace Current.user" do
-      allow(Current).to receive(:user).and_return(user)
+    it "returns false when a nil user argument is passed in to replace Current.admin_user" do
+      allow(Current).to receive(:admin_user).and_return(user)
       expect(described_class.enabled?(feature, nil)).to be(false)
     end
   end

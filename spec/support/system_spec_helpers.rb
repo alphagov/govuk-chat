@@ -24,6 +24,6 @@ module SystemSpecHelpers
   end
 
   def given_i_am_an_admin
-    login_as(create(:user, :admin))
+    login_as(create(:admin_user, :admin))
   end
 end

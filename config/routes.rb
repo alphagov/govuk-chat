@@ -72,7 +72,7 @@ Rails.application.routes.draw do
     match "/500" => "errors#internal_server_error"
   end
 
-  constraints(GDS::SSO::AuthorisedUserConstraint.new(User::Permissions::DEVELOPER_TOOLS)) do
+  constraints(GDS::SSO::AuthorisedUserConstraint.new(AdminUser::Permissions::DEVELOPER_TOOLS)) do
     mount Flipper::UI.app(Flipper, {
       # GOV.UK infrastructure causes false positives on IP spoofing
       # We can remove this when X-Real-IP reflects the user client IP and the following is changed:

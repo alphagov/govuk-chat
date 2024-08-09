@@ -10,7 +10,7 @@ RSpec.describe "Developer Tools Access" do
       end
 
       context "when the user lacks the permission" do
-        before { User.first.update!(permissions: []) }
+        before { AdminUser.first.update!(permissions: []) }
 
         it "returns a forbidden response" do
           get path

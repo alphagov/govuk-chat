@@ -22,6 +22,20 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_07_102055) do
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "content_not_govuk", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar"]
   create_enum "status", ["success", "error_non_specific", "error_answer_service_error", "abort_forbidden_words", "error_context_length_exceeded", "abort_no_govuk_content", "error_invalid_llm_response", "abort_output_guardrails", "error_output_guardrails", "abort_timeout", "abort_llm_cannot_answer", "abort_question_routing", "error_question_routing"]
 
+  create_table "admin_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "uid"
+    t.string "organisation_slug"
+    t.string "organisation_content_id"
+    t.string "app_name"
+    t.string "permissions", default: [], array: true
+    t.boolean "remotely_signed_out", default: false
+    t.boolean "disabled", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "answer_feedback", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
     t.boolean "useful", null: false
@@ -149,23 +163,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_07_102055) do
     t.index ["user_id"], name: "index_settings_audits_on_user_id"
   end
 
-  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.string "uid"
-    t.string "organisation_slug"
-    t.string "organisation_content_id"
-    t.string "app_name"
-    t.string "permissions", default: [], array: true
-    t.boolean "remotely_signed_out", default: false
-    t.boolean "disabled", default: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade
   add_foreign_key "answer_sources", "answers", on_delete: :cascade
   add_foreign_key "answers", "questions", on_delete: :cascade
   add_foreign_key "questions", "conversations"
-  add_foreign_key "settings_audits", "users", on_delete: :nullify
+  add_foreign_key "settings_audits", "admin_users", column: "user_id", on_delete: :nullify
 end
