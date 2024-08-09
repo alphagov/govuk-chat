@@ -38,11 +38,7 @@ class SessionsController < BaseController
   def destroy
     sign_out(EarlyAccessUser)
 
-    # TODO: expect we want to customise this redirect and flash
-    redirect_to(
-      early_access_entry_path,
-      notice: I18n.t("passwordless.sessions.destroy.signed_out"),
-    )
+    redirect_to early_access_entry_path
   end
 
 private

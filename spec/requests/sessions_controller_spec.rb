@@ -107,18 +107,19 @@ RSpec.describe "sessions controller" do
   end
 
   describe "GET :destroy" do
-    let(:session) { create :passwordless_session }
-    let(:magic_link) { magic_link_url(session.to_param, session.token) }
+    before { sign_in_early_access_user(create(:early_access_user)) }
 
-    before do
-      get magic_link
-      follow_redirect!
+    it "redirects the user to early access entry point" do
+      get sign_out_path
+      expect(response).to redirect_to(early_access_entry_path)
     end
 
     it "signs out the user" do
       get protected_path
       expect(response).to have_http_status(:ok)
+
       get sign_out_path
+
       get protected_path
       expect(response).to redirect_to(early_access_entry_path)
     end
