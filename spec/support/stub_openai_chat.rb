@@ -37,17 +37,32 @@ module StubOpenAIChat
     )
 
     tool_calls = [
-      {
-        id: "call_#{SecureRandom.hex(12)}",
-        type: "function",
-        function: {
-          name: "generate_answer_using_retrieved_contexts",
-          arguments: answer,
-        },
-      },
+      StubOpenAIChat.tool_call("generate_answer_using_retrieved_contexts", answer),
     ]
 
     stub_openai_chat_completion(chat_history, nil, chat_options: structured_generation_chat_options, tool_calls:)
+  end
+
+  def stub_openai_chat_question_routing(question_or_history, tools: an_instance_of(Array), function_name: "genuine_rag", function_arguments: {})
+    history = if question_or_history.is_a?(String)
+                array_including({ "role" => "user", "content" => question_or_history })
+              else
+                question_or_history
+              end
+    function_arguments = function_arguments.to_json unless function_arguments.is_a?(String)
+
+    chat_options = {
+      model: AnswerComposition::Pipeline::QuestionRouter::OPENAI_MODEL,
+      tools:,
+      tool_choice: "required",
+    }
+
+    stub_openai_chat_completion(
+      history,
+      nil,
+      chat_options:,
+      tool_calls: [StubOpenAIChat.tool_call(function_name, function_arguments)],
+    )
   end
 
   def stub_openai_chat_completion_error(status: 400, type: "invalid_request_error", code: nil)
@@ -117,5 +132,16 @@ module StubOpenAIChat
       messages:,
       temperature: 0.0,
     }.merge(chat_options)
+  end
+
+  def self.tool_call(name, arguments)
+    {
+      id: "call_#{SecureRandom.hex(12)}",
+      type: "function",
+      function: {
+        name:,
+        arguments:,
+      },
+    }
   end
 end

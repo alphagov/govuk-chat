@@ -52,16 +52,25 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
     )
     stub_openai_output_guardrail_pass("Lots of tax.")
 
+    stub_openai_chat_question_routing(
+      array_including({ "role" => "user", "content" => "How much tax should I be paying?" }),
+    )
+
     perform_enqueued_jobs
   end
 
   def when_the_second_answer_is_generated
+    rephrased_question = "Rephrased How much tax should I be paying?"
+
     stub_openai_chat_completion(
       array_including({ "role" => "user", "content" => "Are you sure?" }),
-      "Rephrased How much tax should I be paying?",
+      rephrased_question,
+    )
+    stub_openai_chat_question_routing(
+      array_including({ "role" => "user", "content" => rephrased_question }),
     )
     stub_openai_chat_completion_structured_response(
-      array_including({ "role" => "user", "content" => "Rephrased How much tax should I be paying?" }),
+      array_including({ "role" => "user", "content" => rephrased_question }),
       {
         answer: "Even more tax.",
         answered: true,

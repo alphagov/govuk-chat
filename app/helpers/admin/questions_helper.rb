@@ -73,6 +73,18 @@ module Admin
                       ),
                   },
                   {
+                    field: "Question routing label",
+                    value: answer.question_routing_label,
+                  },
+                  {
+                    field: "Question routing confidence score",
+                    value: answer.question_routing_confidence_score,
+                  },
+                  {
+                    field: "Question routing LLM Response",
+                    value: render("components/code_snippet", content: answer.question_routing_llm_response),
+                  },
+                  {
                     field: "LLM Response",
                     value: render("components/code_snippet", content: answer.llm_response),
                   },
