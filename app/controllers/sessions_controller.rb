@@ -4,8 +4,7 @@ class SessionsController < BaseController
   def confirm
     return head(:ok) if request.head?
 
-    # if the user is already signed in just redirect to the chat page
-    return redirect_to(chat_path) if current_early_access_user.present?
+    return redirect_to(show_conversation_path) if current_early_access_user.present?
 
     artificially_slow_down_brute_force_attacks(params[:token])
     Passwordless::Session.transaction do
@@ -51,7 +50,6 @@ private
   end
 
   def redirect_location
-    # TODO: how should this actually behave?
-    reset_passwordless_redirect_location!(EarlyAccessUser) || chat_path
+    reset_passwordless_redirect_location!(EarlyAccessUser) || onboarding_limitations_path
   end
 end

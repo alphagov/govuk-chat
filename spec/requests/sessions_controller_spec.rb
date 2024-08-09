@@ -26,7 +26,7 @@ RSpec.describe "sessions controller" do
 
       it "allows access" do
         get magic_link
-        expect(response).to redirect_to(chat_path)
+        expect(response).to redirect_to(onboarding_limitations_path)
       end
 
       it "locks the Password::Session resource to prevent concurrent login activity" do
@@ -57,6 +57,17 @@ RSpec.describe "sessions controller" do
           get protected_path
           expect(response).to redirect_to(early_access_entry_path)
         end
+      end
+    end
+
+    context "when a user is already signed in" do
+      let(:session) { create :passwordless_session }
+
+      before { sign_in_early_access_user(session.authenticatable) }
+
+      it "redirects the user to their conversation" do
+        get magic_link
+        expect(response).to redirect_to(show_conversation_path)
       end
     end
 
