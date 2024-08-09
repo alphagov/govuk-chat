@@ -20,12 +20,13 @@ class SessionsController < BaseController
       sign_in(passwordless_session)
       early_access_user = passwordless_session.authenticatable
       early_access_user.sign_in(passwordless_session)
-      # rescue EarlyAccessUser::AbortSignInError
-      #   sign_out(EarlyAccessUser)
-      #   # TODO how should this actually behave?
-      #   return render plain: "sign in failed"
     end
     redirect_to redirect_location
+
+  rescue EarlyAccessUser::AccessRevokedError
+    sign_out(EarlyAccessUser)
+    # TODO: how should this actually behave?
+    render plain: "access revoked"
   rescue Passwordless::Errors::TokenAlreadyClaimedError
     # TODO: how should this actually behave?
     render plain: "magic link used"

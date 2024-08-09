@@ -40,6 +40,21 @@ RSpec.describe "sessions controller" do
           expect(response).to redirect_to(protected_path)
         end
       end
+
+      context "and the user has had access revoked" do
+        before { session.authenticatable.touch(:revoked_at) }
+
+        it "disallows access" do
+          get magic_link
+          expect(response.body).to include("access revoked")
+        end
+
+        it "doesn't sign a user in" do
+          get magic_link
+          get protected_path
+          expect(response).to redirect_to(early_access_entry_path)
+        end
+      end
     end
 
     context "with a timed out magic link" do
