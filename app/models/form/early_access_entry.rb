@@ -3,9 +3,10 @@ class Form::EarlyAccessEntry
   include ActiveModel::Attributes
 
   attribute :email
+  attribute :source
 
   def submit
-    user = EarlyAccessUser.find_or_create_by!(email:)
+    user = EarlyAccessUser.find_or_create_by!(email:, source:)
     # check revoked status
     session = Passwordless::Session.new(authenticatable: user)
     session.save!
