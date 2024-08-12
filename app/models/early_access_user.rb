@@ -3,6 +3,13 @@ class EarlyAccessUser < ApplicationRecord
 
   passwordless_with :email
 
+  enum :source,
+       {
+         admin_added: "admin_added",
+         instant_signup: "instant_signup",
+       },
+       prefix: true
+
   def access_revoked?
     revoked_at.present?
   end
