@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_12_134538) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_12_135104) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -107,6 +107,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_12_134538) do
     t.enum "source", null: false, enum_type: "early_access_user_source"
     t.enum "user_description", enum_type: "ur_question_user_description"
     t.enum "reason_for_visit", enum_type: "ur_question_reason_for_visit"
+    t.integer "questions_count", default: 0
     t.index ["email"], name: "index_early_access_users_on_email", unique: true
   end
 
