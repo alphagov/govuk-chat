@@ -54,8 +54,10 @@ module AnswerComposition
       end
 
       def map_question(question)
+        question_message = question.answer.rephrased_question || question.message
+
         [
-          format_messsage("user", question.message),
+          format_messsage("user", question_message),
           format_messsage("assistant", question.answer.message),
         ]
       end

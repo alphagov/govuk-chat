@@ -94,6 +94,26 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
       end
     end
 
+    context "when a question has been rephrased" do
+      let(:conversation) { create(:conversation) }
+      let(:question) { create(:question, conversation:) }
+      let(:context) { build(:answer_pipeline_context, question:) }
+
+      before do
+        answer = build(:answer, rephrased_question: "A rephrased question")
+        create(:question, conversation:, answer:)
+      end
+
+      it "includes the rephrased question in the history" do
+        stub_openai_chat_completion(
+          array_including({ "role" => "user", "content" => a_string_including("A rephrased question") }),
+          "Answer from OpenAI",
+        )
+
+        expect(described_class.call(context)).to eq("Answer from OpenAI")
+      end
+    end
+
     context "with a long history" do
       let(:conversation) { create(:conversation) }
       let(:question) { create(:question, message: "Question 7", conversation:) }
