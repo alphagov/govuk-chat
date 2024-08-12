@@ -4,18 +4,16 @@ class SessionsController < BaseController
   def confirm
     return head(:ok) if request.head?
 
-    # if the user is already signed in just redirect to the chat page
-    return redirect_to(chat_path) if current_early_access_user.present?
+    return redirect_to(show_conversation_path) if current_early_access_user.present?
 
     artificially_slow_down_brute_force_attacks(params[:token])
     Passwordless::Session.transaction do
       passwordless_session = Passwordless::Session.lock.find_by(identifier: params[:id],
                                                                 authenticatable_type: "EarlyAccessUser")
 
-      # TODO: how should this actually behave?
-      return render plain: "session not found" if passwordless_session.nil?
-      # TODO: how should this actually behave? we know the user
-      return render plain: "invalid token" unless passwordless_session.authenticate(params[:token])
+      if passwordless_session.nil? || !passwordless_session.authenticate(params[:token])
+        return render :link_expired, status: :not_found
+      end
 
       sign_in(passwordless_session)
       early_access_user = passwordless_session.authenticatable
@@ -23,26 +21,19 @@ class SessionsController < BaseController
 
       redirect_to redirect_location
     rescue EarlyAccessUser::AccessRevokedError
-      sign_out(EarlyAccessUser)
-      # TODO: how should this actually behave?
-      render plain: "access revoked"
+      sign_out_early_access_user
+      render :access_revoked, status: :forbidden
     rescue Passwordless::Errors::TokenAlreadyClaimedError
-      # TODO: how should this actually behave?
-      render plain: "magic link used"
+      render :link_expired, status: :conflict
     rescue Passwordless::Errors::SessionTimedOutError
-      # TODO: how should this actually behave?
-      render plain: "session timed out"
+      render :link_expired, status: :gone
     end
   end
 
   def destroy
-    sign_out(EarlyAccessUser)
+    sign_out_early_access_user
 
-    # TODO: expect we want to customise this redirect and flash
-    redirect_to(
-      early_access_entry_path,
-      notice: I18n.t("passwordless.sessions.destroy.signed_out"),
-    )
+    redirect_to early_access_entry_path
   end
 
 private
@@ -55,7 +46,6 @@ private
   end
 
   def redirect_location
-    # TODO: how should this actually behave?
-    reset_passwordless_redirect_location!(EarlyAccessUser) || chat_path
+    reset_passwordless_redirect_location!(EarlyAccessUser) || onboarding_limitations_path
   end
 end

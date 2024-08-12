@@ -8,11 +8,16 @@ private
     @current_early_access_user ||= authenticate_early_access_user
   end
 
+  def sign_out_early_access_user
+    sign_out(EarlyAccessUser)
+    @current_early_access_user = nil
+  end
+
   def authenticate_early_access_user
     user = authenticate_by_session(EarlyAccessUser)
 
     if user&.access_revoked?
-      sign_out(EarlyAccessUser)
+      sign_out_early_access_user
       nil
     else
       user
