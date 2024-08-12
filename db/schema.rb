@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_12_134029) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_12_134538) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -22,6 +22,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_12_134029) do
   create_enum "output_guardrails_status", ["pass", "fail", "error"]
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "content_not_govuk", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar"]
   create_enum "status", ["success", "error_non_specific", "error_answer_service_error", "abort_forbidden_words", "error_context_length_exceeded", "abort_no_govuk_content", "error_invalid_llm_response", "abort_output_guardrails", "error_output_guardrails", "abort_timeout", "abort_llm_cannot_answer", "abort_question_routing", "error_question_routing"]
+  create_enum "ur_question_reason_for_visit", ["find_specific_answer", "complete_task", "understand_process", "research_topic", "other"]
+  create_enum "ur_question_user_description", ["business_owner_or_self_employed", "starting_business_or_becoming_self_employed", "business_advisor", "business_administrator", "none"]
 
   create_table "admin_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
@@ -103,6 +105,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_12_134029) do
     t.datetime "updated_at", null: false
     t.datetime "revoked_at"
     t.enum "source", null: false, enum_type: "early_access_user_source"
+    t.enum "user_description", enum_type: "ur_question_user_description"
+    t.enum "reason_for_visit", enum_type: "ur_question_reason_for_visit"
     t.index ["email"], name: "index_early_access_users_on_email", unique: true
   end
 
