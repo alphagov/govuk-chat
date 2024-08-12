@@ -84,6 +84,18 @@ module StubOpenAIChat
       )
   end
 
+  def stub_openai_question_rephrasing(original_question, rephrased_question)
+    config = Rails.configuration.llm_prompts.question_rephraser
+
+    stub_openai_chat_completion(
+      array_including(
+        { "role" => "system", "content" => config[:system_prompt] },
+        { "role" => "user", "content" => a_string_including(original_question) },
+      ),
+      rephrased_question,
+    )
+  end
+
   def stub_openai_output_guardrail_pass(answer)
     stub_openai_chat_completion(
       array_including({ "role" => "user", "content" => Regexp.new(answer) }),

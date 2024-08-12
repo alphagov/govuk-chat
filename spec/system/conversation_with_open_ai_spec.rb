@@ -67,12 +67,12 @@ RSpec.describe "Conversation with OpenAI", :chunked_content_index do
   end
 
   def when_the_second_answer_is_generated
+    rephrased = "Rephrased How much tax should I be paying?"
+
+    stub_openai_question_rephrasing("Are you sure?", rephrased)
+
     stub_openai_chat_completion(
-      array_including({ "role" => "user", "content" => "Are you sure?" }),
-      "Rephrased How much tax should I be paying?",
-    )
-    stub_openai_chat_completion(
-      array_including({ "role" => "user", "content" => "Rephrased How much tax should I be paying?" }),
+      array_including({ "role" => "user", "content" => rephrased }),
       "Second answer from OpenAI",
     )
     stub_openai_output_guardrail_pass("Second answer from OpenAI")
