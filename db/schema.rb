@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_08_074441) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_12_133835) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -18,6 +18,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_08_074441) do
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "early_access_user_source", ["admin_added", "instant_signup"]
   create_enum "output_guardrails_status", ["pass", "fail", "error"]
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "content_not_govuk", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar"]
   create_enum "status", ["success", "error_non_specific", "error_answer_service_error", "abort_forbidden_words", "error_context_length_exceeded", "abort_no_govuk_content", "error_invalid_llm_response", "abort_output_guardrails", "error_output_guardrails", "abort_timeout", "abort_llm_cannot_answer", "abort_question_routing", "error_question_routing"]
