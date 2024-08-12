@@ -1,0 +1,69 @@
+<%= content_for :title, "Edit public access" %>
+<%= content_for :title_context, "Settings" %>
+<%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
+                                   href: admin_settings_path) ) %>
+<%= render "admin/shared/error_summary",
+  model: @form,
+  anchor_mappings: {
+    downtime_type: "#public_access_form_downtime_type",
+    author_comment: "#public_access_form_author_comment",
+  } %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <%= form_with url: admin_update_public_access_path, method: :patch do |f| %>
+      <%= render "govuk_publishing_components/components/radio", {
+        heading: "Public access enabled",
+        heading_size: "l",
+        heading_level: 2,
+        margin_bottom: 8,
+        name: "public_access_form[enabled]",
+        hint: 'Be very cautious, settings this option to "No" will prevent users from accessing GOV.UK Chat.',
+        items: [
+          {
+            value: "true",
+            text: "Yes",
+            checked: @form.enabled,
+
+          },
+          {
+            value: "false",
+            text: "No",
+            checked: !@form.enabled,
+          },
+        ],
+      } %>
+
+      <%= render "govuk_publishing_components/components/radio", {
+        heading: "Downtime type",
+        heading_size: "l",
+        heading_level: 2,
+        margin_bottom: 8,
+        name: "public_access_form[downtime_type]",
+        id: "public_access_form_downtime_type",
+        hint: "This setting only has an effect when the 'Public access enabled' is set to 'No'.",
+        error_items: error_items(@form, :downtime_type),
+        items: [
+          {
+            value: "temporary",
+            text: "Temporary - short term downtime",
+            checked: @form.downtime_type == "temporary",
+            hint_text: "This causes the error page to return a status code indicating short term offline",
+          },
+          {
+            value: "permanent",
+            text: "Permanent - long term downtime",
+            checked: @form.downtime_type == "permanent",
+            hint_text: "This causes the error page to return a status code indicating long term offline",
+          },
+        ],
+      } %>
+
+      <%= render "admin/settings/shared/author_comment", form: @form, setting: "public_access" %>
+
+      <%= render "govuk_publishing_components/components/button", {
+        text: "Submit",
+      } %>
+    <% end %>
+  </div>
+</div>
