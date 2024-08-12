@@ -35,7 +35,7 @@
             field: "Enabled",
             value: @settings.public_access_enabled ? "Yes" : "No - #{downtime_message}",
             edit: {
-              href: admin_edit_public_access_path,
+              href: admin_settings_edit_public_access_path,
               link_text: "Edit",
             },
           },
@@ -57,7 +57,7 @@
             field: "Available instant access places",
             value: @settings.instant_access_places,
             edit: {
-              href: admin_edit_instant_access_places_path,
+              href: admin_settings_edit_instant_access_places_path,
               link_text: "Edit",
             },
 
@@ -80,7 +80,7 @@
             field: "Available delayed access places",
             value: @settings.delayed_access_places,
             edit: {
-              href: admin_edit_delayed_access_places_path,
+              href: admin_settings_edit_delayed_access_places_path,
               link_text: "Edit",
             },
           },
@@ -103,7 +103,7 @@
             field: "Enabled",
             value: @settings.sign_up_enabled ? "Yes" : "No",
             edit: {
-              href: admin_edit_sign_up_enabled_path,
+              href: admin_settings_edit_sign_up_enabled_path,
               link_text: "Edit",
             },
           },

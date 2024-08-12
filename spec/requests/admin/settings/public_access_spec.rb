@@ -1,7 +1,7 @@
 RSpec.describe "Admin::Settings::PublicAccessController" do
   describe "GET :edit" do
     it "renders the edit page successfully" do
-      get admin_update_public_access_path
+      get admin_settings_update_public_access_path
 
       expect(response).to have_http_status(:ok)
       expect(response.body)
@@ -14,7 +14,7 @@ RSpec.describe "Admin::Settings::PublicAccessController" do
       settings = create(:settings, public_access_enabled: false, downtime_type: :temporary)
 
       expect {
-        patch admin_update_public_access_path,
+        patch admin_settings_update_public_access_path,
               params: { public_access_form: { enabled: "true", downtime_type: "permanent" } }
       }
         .to change(SettingsAudit, :count).by(1)
@@ -25,7 +25,7 @@ RSpec.describe "Admin::Settings::PublicAccessController" do
     end
 
     it "re-renders the edit page when given invalid params" do
-      patch admin_update_public_access_path,
+      patch admin_settings_update_public_access_path,
             params: { public_access_form: { enabled: "true", downtime_type: "not-an-option" } }
 
       expect(response).to have_http_status(:unprocessable_entity)

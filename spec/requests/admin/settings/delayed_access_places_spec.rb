@@ -1,7 +1,7 @@
 RSpec.describe "Admin::Settings::DelayedAccessPlacesController" do
   describe "GET :edit" do
     it "renders the edit page successfully" do
-      get admin_edit_delayed_access_places_path
+      get admin_settings_edit_delayed_access_places_path
 
       expect(response).to have_http_status(:ok)
       expect(response.body)
@@ -14,7 +14,7 @@ RSpec.describe "Admin::Settings::DelayedAccessPlacesController" do
       settings = create(:settings, delayed_access_places: 10)
 
       expect {
-        patch admin_update_delayed_access_places_path,
+        patch admin_settings_update_delayed_access_places_path,
               params: { delayed_access_places_form: { places: 5 } }
       }
         .to change(SettingsAudit, :count).by(1)
@@ -24,7 +24,7 @@ RSpec.describe "Admin::Settings::DelayedAccessPlacesController" do
     end
 
     it "re-renders the edit page when given invalid params" do
-      patch admin_update_delayed_access_places_path,
+      patch admin_settings_update_delayed_access_places_path,
             params: { delayed_access_places_form: { places: "" } }
 
       expect(response).to have_http_status(:unprocessable_entity)
