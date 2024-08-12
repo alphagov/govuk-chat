@@ -177,7 +177,7 @@ RSpec.describe "Settings endpoints" do
     end
 
     describe "PATCH :update" do
-      it "updates the instant access places and redirects to the settings page with valid params" do
+      it "updates the sign up enabled attribute and redirects to the settings page with valid params" do
         settings = create(:settings, sign_up_enabled: false)
 
         expect {
