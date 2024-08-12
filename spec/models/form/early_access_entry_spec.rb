@@ -6,7 +6,7 @@ RSpec.describe Form::EarlyAccessEntry do
 
     context "when the user exists" do
       let(:user) { create :early_access_user }
-      let(:form) { described_class.new(email: user.email) }
+      let(:form) { described_class.new(email: user.email, source: user.source) }
 
       it "creates a session" do
         expect { form.submit }.to change(Passwordless::Session, :count).by(1)
@@ -26,7 +26,9 @@ RSpec.describe Form::EarlyAccessEntry do
 
     ## TODO this will change - we will be asking some questions as eligibility check
     context "with a new user" do
-      let(:form) { described_class.new(email: "non.existent.email@example.com") }
+      let(:form) do
+        described_class.new(email: "non.existent.email@example.com", source: "instant_signup")
+      end
 
       it "creates a session and early access user" do
         expect { form.submit }.to change(Passwordless::Session, :count).by(1)
@@ -38,9 +40,13 @@ RSpec.describe Form::EarlyAccessEntry do
         expect(Passwordless::Session.last.authenticatable).to eq(EarlyAccessUser.last)
       end
 
-      it "assigns the early access user email" do
+      it "assigns the early access user attributes" do
         form.submit
-        expect(EarlyAccessUser.last.email).to eq("non.existent.email@example.com")
+
+        expect(EarlyAccessUser.last).to have_attributes(
+          email: "non.existent.email@example.com",
+          source: "instant_signup",
+        )
       end
 
       it "calls the mailer with the new session" do
