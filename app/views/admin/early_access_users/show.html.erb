@@ -1,0 +1,66 @@
+<%= content_for :title, "User details" %>
+
+<%= content_for :breadcrumbs do %>
+  <%= render "govuk_publishing_components/components/breadcrumbs", {
+    collapse_on_mobile: true,
+    breadcrumbs: [
+      {
+        title: "Early access users",
+        url: admin_early_access_users_path,
+      },
+      {
+        title: "User details",
+      },
+    ],
+  } %>
+<% end %>
+
+<%
+  summary_items = [
+    {
+      field: "Email",
+      value: @user.email,
+    },
+    {
+      field: "Last login",
+      value: @user.last_login_at ? @user.last_login_at.to_fs(:time_and_date) : "Never",
+    },
+    {
+      field: "Source",
+      value: @user.source.humanize
+    },
+    {
+      field: "User research: description",
+      value: @user.user_description,
+    },
+    {
+      field: "User research: reason for visit",
+      value: @user.reason_for_visit,
+    },
+    {
+      field: "Questions asked",
+      value: @user.questions_count,
+    },
+    {
+      field: "Revoked?",
+      value: @user.access_revoked? ? "Yes" : "No",
+    },
+  ]
+
+  if @user.access_revoked?
+    summary_items << [
+      {
+        field: "Revoked on",
+        value: @user.revoked_at.to_fs(:time_and_date),
+      },
+      {
+        field: "Revoked reason",
+        value: @user.revoked_reason,
+      }
+    ]
+  end
+%>
+
+<%= render "govuk_publishing_components/components/summary_list", {
+  items: summary_items.flatten,
+} %>

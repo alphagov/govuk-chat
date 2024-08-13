@@ -24,6 +24,15 @@ RSpec.describe "Admin::EarlyAccessController" do
         .and have_selector(".govuk-table__header", text: "Access revoked?")
     end
 
+    it "renders the table body correctly" do
+      user = create(:early_access_user, email: "alice@example.com")
+
+      get admin_early_access_users_path
+
+      expect(response.body)
+        .to have_link("alice@example.com", href: admin_show_early_access_user_path(user))
+    end
+
     context "when there are multiple pages of users" do
       before do
         create_list(:early_access_user, 26)
@@ -151,6 +160,42 @@ RSpec.describe "Admin::EarlyAccessController" do
           .and have_link("Last login", href: admin_early_access_users_path(sort: "-last_login_at"))
           .and have_no_selector(".govuk-table__header--active", text: "Last login")
       end
+    end
+  end
+
+  describe "GET :show" do
+    it "renders the user details" do
+      user = create(
+        :early_access_user,
+        email: "alice@example.com",
+        last_login_at: Time.zone.parse("2024-1-1 12:13:14"),
+        user_description: :business_owner_or_self_employed,
+        reason_for_visit: :find_specific_answer,
+        revoked_at: nil,
+      )
+
+      get admin_show_early_access_user_path(user)
+
+      expect(response.body)
+        .to have_content("User details")
+        .and have_content("alice@example.com")
+        .and have_content("12:13pm on 1 January 2024")
+        .and have_content("business_owner_or_self_employed")
+        .and have_content("find_specific_answer")
+    end
+
+    it "renders the revoked details" do
+      user = create(
+        :early_access_user,
+        revoked_at: Time.zone.parse("2024-1-2 09:10:11"),
+        revoked_reason: "Asking too many questions",
+      )
+
+      get admin_show_early_access_user_path(user)
+
+      expect(response.body)
+        .to have_content("9:10am on 2 January 2024")
+        .and have_content("Asking too many questions")
     end
   end
 end

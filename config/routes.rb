@@ -53,7 +53,9 @@ Rails.application.routes.draw do
     get "/conversations/:id", to: "conversations#show", as: :show_conversation
     get "/search", to: "search#index", as: :search
     get "/search/chunk/:id", to: "chunks#show", as: :chunk
+
     get "/early-access-users", to: "early_access_users#index", as: :early_access_users
+    get "/early-access-users/:id", to: "early_access_users#show", as: :show_early_access_user
 
     scope :settings do
       get "", to: "settings#show", as: :settings
