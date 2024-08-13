@@ -1,7 +1,17 @@
 RSpec.describe "early access entry point" do
-  let(:early_access_user) { create :early_access_user }
+  describe "GET :new" do
+    it "renders successfully" do
+      get early_access_entry_path
+      expect(response).to have_http_status(:ok)
+      expect(response.body)
+        .to have_selector(".govuk-heading-xl", text: "Try GOV.UK Chat")
+        .and have_selector("form[action='#{early_access_entry_path}']")
+    end
+  end
 
   describe "POST :create" do
+    let(:early_access_user) { create :early_access_user }
+
     context "when valid params are passed" do
       context "and the user doesn't have an account" do
         it "sets the users email_address in the session" do
