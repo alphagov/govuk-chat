@@ -48,6 +48,13 @@ RSpec.describe "Admin::EarlyAccessController" do
       end
     end
 
+    context "when filter parameters are provided" do
+      it "renders the page successfully" do
+        get admin_early_access_users_path(source: "instant_signup")
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
     context "when sorting" do
       it "orders the users correctly when the sort param is 'last_login_at'" do
         create(:early_access_user, email: "a@example.com", last_login_at: 1.hour.ago)

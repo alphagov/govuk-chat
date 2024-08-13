@@ -1,0 +1,62 @@
+<%= form_with(url: admin_early_access_users_path, method: :get) do %>
+  <%= render "govuk_publishing_components/components/input", {
+    label: {
+      text: "Email address",
+    },
+    name: "email",
+    id: "email",
+    value: params[:email],
+    heading_size: "s",
+    full_width: true,
+  } %>
+
+  <%= render "govuk_publishing_components/components/select", {
+    id: "source",
+    name: "source",
+    label: "Source",
+    full_width: true,
+    heading_size: "s",
+    options: ([""] + EarlyAccessUser.sources.keys).map do |source|
+      {
+        text: source.humanize,
+        value: source,
+        selected: params[:source] == source,
+      }
+    end,
+  } %>
+
+  <%= render "govuk_publishing_components/components/select", {
+    id: "revoked",
+    name: "revoked",
+    label: "Revoked",
+    heading_size: "s",
+    full_width: true,
+    options: [
+      {
+        text: "",
+        value: "",
+      },
+      {
+        text: "Revoked",
+        value: "true",
+        selected: params[:revoked] == "true",
+      },
+      {
+        text: "Not revoked",
+        value: "false",
+        selected: params[:revoked] == "false",
+      },
+    ],
+  } %>
+
+  <%= render "govuk_publishing_components/components/button", {
+    text: "Filter",
+    margin_bottom: true,
+  } %>
+
+  <p class="govuk-body">
+    <%= link_to "Clear all filters",
+                admin_early_access_users_path,
+                class: "govuk-link govuk-link--no-visited-state" %>
+  </p>
+<% end %>
