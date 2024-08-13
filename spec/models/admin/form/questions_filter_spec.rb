@@ -229,24 +229,9 @@ RSpec.describe Admin::Form::QuestionsFilter do
     end
   end
 
+  it_behaves_like "a paginatable filter", :question
+
   describe "#previous_page_params" do
-    it "returns any empty hash if there is no previous page to link to" do
-      filter = described_class.new
-      expect(filter.previous_page_params).to eq({})
-    end
-
-    it "constructs the previous pages url based on the path passed in when a previous page is present" do
-      create_list(:question, 51)
-      filter = described_class.new(page: 3)
-      expect(filter.previous_page_params).to eq({ page: 2 })
-    end
-
-    it "removes the page param from the url correctly when it links to the first page of questions" do
-      create_list(:question, 26)
-      filter = described_class.new(page: 2)
-      expect(filter.previous_page_params).to eq({})
-    end
-
     it "retains all other query params when constructing the params" do
       create_list(:answer, 26, :with_feedback)
       today = Date.current
@@ -268,17 +253,6 @@ RSpec.describe Admin::Form::QuestionsFilter do
   end
 
   describe "#next_page_params" do
-    it "returns any empty hash if there is no next page to link to" do
-      filter = described_class.new
-      expect(filter.next_page_params).to eq({})
-    end
-
-    it "constructs the next page based on the path passed in when a next page is present" do
-      create_list(:question, 26)
-      filter = described_class.new(page: 1)
-      expect(filter.next_page_params).to eq({ page: 2 })
-    end
-
     it "retains all other query params when constructing the params" do
       create_list(:answer, 26, :with_feedback)
       today = Date.current
@@ -298,46 +272,5 @@ RSpec.describe Admin::Form::QuestionsFilter do
     end
   end
 
-  describe "#sort_direction" do
-    it "returns nil when sort does not match the field passed in" do
-      filter = described_class.new(sort: "message")
-      expect(filter.sort_direction("created_at")).to be_nil
-    end
-
-    it "returns 'ascending' when sort equals the field passed in" do
-      filter = described_class.new(sort: "message")
-      expect(filter.sort_direction("message")).to eq("ascending")
-    end
-
-    it "returns 'descending' when sort prefixed with '-' equals the field passed in" do
-      filter = described_class.new(sort: "-message")
-      expect(filter.sort_direction("message")).to eq("descending")
-    end
-  end
-
-  describe "#toggleable_sort_params" do
-    it "sets the page param to nil" do
-      filter = described_class.new(sort: "-created_at", page: 2)
-      expect(filter.toggleable_sort_params("-created_at")).to eq({ sort: "created_at", page: nil })
-    end
-
-    context "when the sort attribute does not match the default_field_sort" do
-      it "sets the sort_param to the default_field_sort" do
-        filter = described_class.new(sort: "created_at")
-        expect(filter.toggleable_sort_params("-created_at")).to eq({ sort: "-created_at", page: nil })
-      end
-    end
-
-    context "when the sort attribute matches the default_field_sort" do
-      it "sets the sort_param to 'ascending' if the sort attribute is 'descending'" do
-        filter = described_class.new(sort: "-created_at")
-        expect(filter.toggleable_sort_params("-created_at")).to eq({ sort: "created_at", page: nil })
-      end
-
-      it "sets the sort_param to 'descending' if the sort attribute is 'ascending'" do
-        filter = described_class.new(sort: "message")
-        expect(filter.toggleable_sort_params("message")).to eq({ sort: "-message", page: nil })
-      end
-    end
-  end
+  it_behaves_like "a sortable filter", "created_at"
 end
