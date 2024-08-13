@@ -1,6 +1,4 @@
 RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_content_index do
-  include ActiveJob::TestHelper
-
   scenario do
     given_i_have_confirmed_i_understand_chat_risks
     when_i_visit_the_conversation_page
@@ -56,7 +54,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
       array_including({ "role" => "user", "content" => "How much tax should I be paying?" }),
     )
 
-    perform_enqueued_jobs
+    execute_queued_sidekiq_jobs
   end
 
   def when_the_second_answer_is_generated
@@ -77,7 +75,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
     )
     stub_openai_output_guardrail_pass("Even more tax.")
 
-    perform_enqueued_jobs
+    execute_queued_sidekiq_jobs
   end
 
   def and_i_click_on_the_check_answer_button

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
@@ -53,6 +51,9 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
 
+  # Skip http-to-https redirect for the default health check endpoint.
+  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new($stdout)
                                        .tap  { |logger| logger.formatter = ::Logger::Formatter.new }
@@ -76,6 +77,14 @@ Rails.application.configure do
   # Send log notifications to the Sidekiq logger rather than using the Rails
   # default
   config.active_job.logger = Sidekiq.logger
+
+  # Disable caching for Action Mailer templates even if Action Controller
+  # caching is enabled.
+  config.action_mailer.perform_caching = false
+
+  # Ignore bad email addresses and do not raise email delivery errors.
+  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
+  # config.action_mailer.raise_delivery_errors = false
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

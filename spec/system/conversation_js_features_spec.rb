@@ -1,6 +1,4 @@
 RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dismiss_cookie_banner, :js do
-  include ActiveJob::TestHelper
-
   scenario "questions with answers" do
     given_i_have_confirmed_i_understand_chat_risks
     when_i_enter_a_first_question
@@ -146,7 +144,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     }.to_json
     stubs_for_mock_answer(@first_question, answer)
 
-    perform_enqueued_jobs
+    Sidekiq::Worker.drain_all
   end
   alias_method :and_the_first_answer_is_generated, :when_the_first_answer_is_generated
 
@@ -176,7 +174,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
     stubs_for_mock_answer(@second_question, answer, rephrase_question: true)
 
-    perform_enqueued_jobs
+    execute_queued_sidekiq_jobs
   end
 
   def then_i_can_see_the_second_answer

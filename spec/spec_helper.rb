@@ -36,6 +36,7 @@ RSpec.configure do |config|
   config.include StubOpenAIChat
   config.include PasswordlessHelpers::RequestSpecHelpers, type: :request
   config.include StubOpenAIEmbedding
+  config.include SidekiqHelpers
   config.include SystemSpecHelpers, type: :system
 
   config.before(:each, :chunked_content_index) do

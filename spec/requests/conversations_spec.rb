@@ -1,6 +1,4 @@
 RSpec.describe "ConversationsController" do
-  include ActiveJob::TestHelper
-
   delegate :helpers, to: ConversationsController
 
   it_behaves_like "requires user to have completed onboarding", routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }

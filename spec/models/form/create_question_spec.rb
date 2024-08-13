@@ -1,6 +1,4 @@
 RSpec.describe Form::CreateQuestion do
-  include ActiveJob::TestHelper
-
   describe "validations" do
     it "is valid when user_question is present and 300 chars of less" do
       form = described_class.new(user_question: SecureRandom.alphanumeric(300))
@@ -78,12 +76,9 @@ RSpec.describe Form::CreateQuestion do
 
       it "enqueues a ComposeAnswerJob" do
         form = described_class.new(user_question: "How much tax should I be paying?")
-        expect { form.submit }.to change(enqueued_jobs, :size).by(1)
-        expect(enqueued_jobs.last)
-          .to include(
-            job: ComposeAnswerJob,
-            args: [Question.last.id],
-          )
+        expect { form.submit }.to change(Sidekiq::Queues["default"], :size).by(1)
+        expect(Sidekiq::Queues["default"].last["args"])
+          .to include(hash_including("job_class" => "ComposeAnswerJob", "arguments" => [Question.last.id]))
       end
     end
 
