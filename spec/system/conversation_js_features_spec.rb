@@ -146,7 +146,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     }.to_json
     stubs_for_mock_answer(@first_question, answer)
 
-    Sidekiq::Worker.drain_all
+    execute_queued_sidekiq_jobs
   end
   alias_method :and_the_first_answer_is_generated, :when_the_first_answer_is_generated
 
