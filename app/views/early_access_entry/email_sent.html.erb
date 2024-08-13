@@ -1,2 +1,15 @@
-<h2>We sent you a link to use GOV.UK Chat</h2>
-<p>Please check your email</p>
+<%= content_for :title, "You've been sent a new link" %>
+<%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
+                                  href: early_access_entry_path) ) %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body">
+      Please check your email. You have been sent a new unique link to access GOV.UK Chat.
+    </p>
+
+    <p class="govuk-body">
+      You must use the link within 24 hours.
+    </p>
+  </div>
+</div>
