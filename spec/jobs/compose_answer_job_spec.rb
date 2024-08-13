@@ -1,5 +1,4 @@
 RSpec.describe ComposeAnswerJob do
-  include ActiveJob::TestHelper
   let(:question) { create(:question, message: user_input) }
   let(:user_input) { "hello" }
   let(:returned_answer) { build :answer, :with_sources, question:, message: "Hello, how can I help you?" }

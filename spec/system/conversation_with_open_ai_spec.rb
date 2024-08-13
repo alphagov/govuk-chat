@@ -1,6 +1,4 @@
 RSpec.describe "Conversation with OpenAI", :chunked_content_index do
-  include ActiveJob::TestHelper
-
   before do
     stub_text_to_embedding
     populate_opensearch
@@ -63,7 +61,7 @@ RSpec.describe "Conversation with OpenAI", :chunked_content_index do
       "First answer from OpenAI",
     )
     stub_openai_output_guardrail_pass("First answer from OpenAI")
-    perform_enqueued_jobs
+    Sidekiq::Worker.drain_all
   end
 
   def when_the_second_answer_is_generated
@@ -76,7 +74,7 @@ RSpec.describe "Conversation with OpenAI", :chunked_content_index do
       "Second answer from OpenAI",
     )
     stub_openai_output_guardrail_pass("Second answer from OpenAI")
-    perform_enqueued_jobs
+    Sidekiq::Worker.drain_all
   end
 
   def and_i_click_on_the_check_answer_button
