@@ -4,19 +4,27 @@ class EarlyAccessEntryController < BaseController
   end
 
   def create
-    @early_access_entry_form = Form::EarlyAccessEntry.new(
-      form_params.merge(source: "instant_signup"),
-    )
-    @early_access_entry_form.submit
-    ## TODO there will be other possible redirects here
-    redirect_to action: :email_sent
-  end
+    @early_access_entry_form = Form::EarlyAccessEntry.new(form_params)
 
-  def email_sent; end
+    if @early_access_entry_form.valid?
+      result = @early_access_entry_form.submit
+
+      if result.outcome == :new_user
+        session["sign_up"] = { "email" => result.email }
+        redirect_to early_access_entry_user_description_path
+      elsif result.outcome == :user_revoked
+        render "shared/access_revoked", status: :forbidden
+      else
+        render :email_sent
+      end
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
 
 private
 
   def form_params
-    params.require(:form_early_access_entry).permit(:email)
+    params.require(:early_access_entry_form).permit(:email)
   end
 end
