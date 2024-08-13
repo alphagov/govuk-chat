@@ -54,7 +54,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
       array_including({ "role" => "user", "content" => "How much tax should I be paying?" }),
     )
 
-    Sidekiq::Worker.drain_all
+    execute_queued_sidekiq_jobs
   end
 
   def when_the_second_answer_is_generated
@@ -75,7 +75,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
     )
     stub_openai_output_guardrail_pass("Even more tax.")
 
-    Sidekiq::Worker.drain_all
+    execute_queued_sidekiq_jobs
   end
 
   def and_i_click_on_the_check_answer_button

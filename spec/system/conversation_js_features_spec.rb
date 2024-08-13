@@ -174,7 +174,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
     stubs_for_mock_answer(@second_question, answer, rephrase_question: true)
 
-    Sidekiq::Worker.drain_all
+    execute_queued_sidekiq_jobs
   end
 
   def then_i_can_see_the_second_answer
