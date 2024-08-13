@@ -1,4 +1,9 @@
 <%= content_for :title, "Try GOV.UK Chat" %>
+<%= render "shared/error_summary",
+  model: @early_access_entry_form,
+  anchor_mappings: {
+    email: "#early_access_entry_form_email",
+  } %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
