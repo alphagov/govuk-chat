@@ -16,12 +16,15 @@ Rails.application.routes.draw do
   scope :chat do
     get "", to: "chat#index", as: :chat
 
-    scope "early-access-entry" do
+    scope "try-chat" do
       get "", to: "early_access_entry#new", as: :early_access_entry
       post "", to: "early_access_entry#create"
 
-      get "/user-description", to: "early_access_entry#user_description", as: :early_access_entry_user_description
-      post "/user-description", to: "early_access_entry#confirm_user_description"
+      get "/you", to: "early_access_entry#user_description", as: :early_access_entry_user_description
+      post "/you", to: "early_access_entry#confirm_user_description"
+
+      get "/your-visit", to: "early_access_entry#reason_for_visit", as: :early_access_entry_reason_for_visit
+      post "/your-visit", to: "early_access_entry#confirm_reason_for_visit"
     end
 
     get "sign-out", to: "sessions#destroy"
