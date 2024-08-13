@@ -1,0 +1,23 @@
+<%= content_for :title, "You do not have access to this page" %>
+<%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
+                                  href: early_access_entry_path) ) %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body">
+      You do not have access to GOV.UK Chat.
+    </p>
+
+    <p class="govuk-body">
+      If you think this a mistake, you can:
+    </p>
+
+    <%= render "govuk_publishing_components/components/list", {
+      visible_counters: true,
+      items: [
+        "request help by replying to any email from GOV.UK Chat",
+        link_to("report a technical fault", "#{Plek.website_root}/contact/govuk", class: "govuk-link"),
+      ],
+    } %>
+  </div>
+</div>
