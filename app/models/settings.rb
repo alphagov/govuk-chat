@@ -1,5 +1,11 @@
 class Settings < ApplicationRecord
   validates :singleton_guard, inclusion: { in: [0] }, strict: true
+  enum :downtime_type,
+       {
+         temporary: "temporary",
+         permanent: "permanent",
+       },
+       prefix: true
 
   def self.instance
     first_or_create!

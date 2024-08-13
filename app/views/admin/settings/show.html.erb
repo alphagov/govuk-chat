@@ -18,6 +18,36 @@
     } %>
 
     <div class="govuk-!-margin-bottom-8">
+      <%
+        downtime_message = if @settings.downtime_type_temporary?
+                             "temporarily offline"
+                           else
+                             "permanently offline"
+                           end
+      %>
+      <%= render "govuk_publishing_components/components/summary_list", {
+        title: "Public access",
+        id: "public-access",
+        heading_level: 2,
+        heading_size: "l",
+        items: [
+          {
+            field: "Enabled",
+            value: @settings.public_access_enabled ? "Yes" : "No - #{downtime_message}",
+            edit: {
+              href: admin_settings_edit_public_access_path,
+              link_text: "Edit",
+            },
+          },
+          {
+            field: "Description",
+            value: "Whether the public can use GOV.UK Chat.",
+          },
+        ],
+      } %>
+    </div>
+
+    <div class="govuk-!-margin-bottom-8">
       <%= render "govuk_publishing_components/components/summary_list", {
         title: "Instant access places",
         heading_level: 2,
@@ -27,7 +57,7 @@
             field: "Available instant access places",
             value: @settings.instant_access_places,
             edit: {
-              href: admin_edit_instant_access_places_path,
+              href: admin_settings_edit_instant_access_places_path,
               link_text: "Edit",
             },
 
@@ -50,7 +80,7 @@
             field: "Available delayed access places",
             value: @settings.delayed_access_places,
             edit: {
-              href: admin_edit_delayed_access_places_path,
+              href: admin_settings_edit_delayed_access_places_path,
               link_text: "Edit",
             },
           },
@@ -65,6 +95,7 @@
     <div class="govuk-!-margin-bottom-8">
       <%= render "govuk_publishing_components/components/summary_list", {
         title: "Sign up enabled",
+        id: "sign-up-enabled",
         heading_level: 2,
         heading_size: "l",
         items: [
@@ -72,7 +103,7 @@
             field: "Enabled",
             value: @settings.sign_up_enabled ? "Yes" : "No",
             edit: {
-              href: admin_edit_sign_up_enabled_path,
+              href: admin_settings_edit_sign_up_enabled_path,
               link_text: "Edit",
             },
           },

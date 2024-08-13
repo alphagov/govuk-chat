@@ -7,6 +7,7 @@ RSpec.describe "Admin user updates settings" do
     then_i_should_see_there_are_ten_instant_access_places
     and_i_should_see_there_are_ten_delayed_access_places
     and_i_should_see_the_sign_up_enabled_setting_is_disabled
+    and_i_should_see_the_public_access_enabled_setting_is_enabled
 
     when_i_click_the_edit_link_for_instant_access_places
     and_i_add_five_instant_access_places
@@ -20,6 +21,10 @@ RSpec.describe "Admin user updates settings" do
     and_i_choose_to_enable_signups
     then_i_see_that_signups_are_enabled
 
+    when_i_click_the_edit_link_for_public_access
+    and_i_disable_public_access
+    then_i_see_that_public_access_is_disabled
+
     when_i_click_on_the_audits_link
     then_i_can_see_the_audits_for_my_changes
   end
@@ -27,6 +32,8 @@ RSpec.describe "Admin user updates settings" do
   def and_a_settings_instance_exists
     create(
       :settings,
+      public_access_enabled: true,
+      downtime_type: "temporary",
       instant_access_places: 10,
       delayed_access_places: 10,
       sign_up_enabled: false,
@@ -46,7 +53,15 @@ RSpec.describe "Admin user updates settings" do
   end
 
   def and_i_should_see_the_sign_up_enabled_setting_is_disabled
-    expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled No")
+    within("#sign-up-enabled") do
+      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled No")
+    end
+  end
+
+  def and_i_should_see_the_public_access_enabled_setting_is_enabled
+    within("#public-access") do
+      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled Yes")
+    end
   end
 
   def when_i_click_the_edit_link_for_instant_access_places
@@ -72,7 +87,7 @@ RSpec.describe "Admin user updates settings" do
   end
 
   def when_i_click_the_edit_link_for_sign_up_enabled
-    click_on "Edit Enabled"
+    within("#sign-up-enabled") { click_on "Edit Enabled" }
   end
 
   def and_i_choose_to_enable_signups
@@ -81,7 +96,25 @@ RSpec.describe "Admin user updates settings" do
   end
 
   def then_i_see_that_signups_are_enabled
-    expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled Yes")
+    within("#sign-up-enabled") do
+      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled Yes")
+    end
+  end
+
+  def when_i_click_the_edit_link_for_public_access
+    within("#public-access") { click_on "Edit Enabled" }
+  end
+
+  def and_i_disable_public_access
+    choose "No"
+    choose "Permanent"
+    click_on "Submit"
+  end
+
+  def then_i_see_that_public_access_is_disabled
+    within("#public-access") do
+      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled No - permanently offline")
+    end
   end
 
   def when_i_click_on_the_audits_link
@@ -89,8 +122,10 @@ RSpec.describe "Admin user updates settings" do
   end
 
   def then_i_can_see_the_audits_for_my_changes
-    expect(page).to have_content("Added 5 instant access places")
-    expect(page).to have_content("Added 5 delayed access places")
-    expect(page).to have_content("Sign up enabled set to true")
+    expect(page)
+      .to have_content("Added 5 instant access places")
+      .and have_content("Added 5 delayed access places")
+      .and have_content("Sign up enabled set to true")
+      .and have_content("Public access enabled set to false, downtime type permanent")
   end
 end

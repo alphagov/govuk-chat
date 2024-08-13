@@ -1,8 +1,23 @@
 class BaseController < ApplicationController
   include Passwordless::ControllerHelpers
-  helper_method :current_early_access_user
+  before_action :check_chat_public_access
+  helper_method :current_early_access_user, :settings
 
 private
+
+  def check_chat_public_access
+    return if settings.public_access_enabled
+
+    expires_in(1.minute, public: true) unless Rails.env.development?
+    request.session_options[:skip] = true
+
+    status = settings.downtime_type_temporary? ? :service_unavailable : :gone
+    render "downtime/unavailable", status:
+  end
+
+  def settings
+    Settings.instance
+  end
 
   def current_early_access_user
     @current_early_access_user ||= authenticate_early_access_user
