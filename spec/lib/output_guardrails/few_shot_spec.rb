@@ -27,10 +27,10 @@ RSpec.describe OutputGuardrails::FewShot do
     end
 
     it "calls OpenAI to check for guardrail violations, including the date in the system prompt and the input in the user prompt" do
-      messages = [
-        { role: "system", content: Regexp.new(formatted_date) },
-        { role: "user", content: Regexp.new(input) },
-      ]
+      messages = array_including(
+        { "role" => "system", "content" => a_string_including(formatted_date) },
+        { "role" => "user", "content" => a_string_including(input) },
+      )
       openai_request = stub_openai_chat_completion(messages, "False | None", chat_options: {
         model: OutputGuardrails::FewShot::OPENAI_MODEL,
         max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
