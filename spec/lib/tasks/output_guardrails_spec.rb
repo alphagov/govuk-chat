@@ -1,11 +1,18 @@
 RSpec.describe "rake guardrails tasks" do
   describe "output_guardrails:evaluate_fewshot" do
     let(:task_name) { "output_guardrails:evaluate_fewshot" }
-    let(:llm_response) do
+    let(:false_response) do
       OutputGuardrails::FewShot::Result.new(
         llm_response: "False | None",
         triggered: false,
         guardrails: [],
+      )
+    end
+    let(:true_response) do
+      OutputGuardrails::FewShot::Result.new(
+        llm_response: 'True | "1"',
+        triggered: true,
+        guardrails: %w[sensitive_financial_matters],
       )
     end
     let(:model_name) { OutputGuardrails::FewShot::OPENAI_MODEL }
@@ -13,7 +20,7 @@ RSpec.describe "rake guardrails tasks" do
 
     before do
       Rake::Task[task_name].reenable
-      allow(OutputGuardrails::FewShot).to receive(:call).and_return(llm_response)
+      allow(OutputGuardrails::FewShot).to receive(:call).and_return(false_response, true_response)
       File.delete(output_file) if File.exist?(output_file)
     end
 
@@ -32,7 +39,7 @@ RSpec.describe "rake guardrails tasks" do
       expect(results).to include("count", "model")
       expect(results["model"]).to eq(model_name)
 
-      expect(OutputGuardrails::FewShot).to have_received(:call).at_least(100).times
+      expect(OutputGuardrails::FewShot).to have_received(:call).at_least(110).times
     end
   end
 end
