@@ -22,7 +22,7 @@ class SessionsController < BaseController
       redirect_to redirect_location
     rescue EarlyAccessUser::AccessRevokedError
       sign_out_early_access_user
-      render :access_revoked, status: :forbidden
+      render "shared/access_revoked", status: :forbidden
     rescue Passwordless::Errors::TokenAlreadyClaimedError
       render :link_expired, status: :conflict
     rescue Passwordless::Errors::SessionTimedOutError

@@ -50,7 +50,7 @@ RSpec.describe "sessions controller" do
         it "disallows access" do
           get magic_link
           expect(response).to have_http_status(:forbidden)
-          expect(response.body).to include("You aren’t eligible to use GOV.UK Chat")
+          expect(response.body).to include("You do not have access to this page")
         end
 
         it "doesn't sign a user in" do

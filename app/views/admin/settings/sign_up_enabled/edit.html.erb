@@ -2,7 +2,7 @@
 <%= content_for :title_context, "Settings" %>
  <%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
                                     href: admin_settings_path) ) %>
-<%= render "admin/shared/error_summary",
+<%= render "shared/error_summary",
   model: @form,
   anchor_mappings: {
     author_comment: "#sign_up_enabled_form_author_comment",
