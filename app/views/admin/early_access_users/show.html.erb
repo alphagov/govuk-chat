@@ -27,7 +27,7 @@
     },
     {
       field: "Source",
-      value: @user.source.humanize
+      value: @user.source.humanize,
     },
     {
       field: "User research: description",
@@ -41,10 +41,6 @@
       field: "Questions asked",
       value: @user.questions_count,
     },
-    {
-      field: "Revoked?",
-      value: @user.access_revoked? ? "Yes" : "No",
-    },
   ]
 
   if @user.access_revoked?
@@ -56,11 +52,30 @@
       {
         field: "Revoked reason",
         value: @user.revoked_reason,
-      }
+      },
     ]
+  else
+    summary_items << {
+      field: "Revoked?",
+      value:  "No",
+    }
   end
 %>
 
 <%= render "govuk_publishing_components/components/summary_list", {
   items: summary_items.flatten,
 } %>
+
+<% if @user.access_revoked? %>
+  <%= form_with url: admin_early_access_user_restore_path(@user), method: :patch do |f| %>
+    <%= render "govuk_publishing_components/components/button", {
+      text: "Restore access",
+    } %>
+  <% end %>
+<% else %>
+  <%= render "govuk_publishing_components/components/button", {
+    text: "Revoke access",
+    href: admin_early_access_user_revoke_path(@user),
+    destructive: true,
+  } %>
+<% end %>
