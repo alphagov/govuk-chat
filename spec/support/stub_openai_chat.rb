@@ -1,5 +1,5 @@
 module StubOpenAIChat
-  def stub_openai_chat_completion(question_or_history, answer, chat_options: {}, tool_calls: nil)
+  def stub_openai_chat_completion(question_or_history, answer: nil, chat_options: {}, tool_calls: nil)
     history = if question_or_history.is_a?(String)
                 array_including({ "role" => "user", "content" => question_or_history })
               else
@@ -55,7 +55,7 @@ module StubOpenAIChat
 
     tool_calls = [openai_chat_completion_tool_call("generate_answer_using_retrieved_contexts", answer)]
 
-    stub_openai_chat_completion(question_or_history, nil, chat_options: structured_generation_chat_options, tool_calls:)
+    stub_openai_chat_completion(question_or_history, chat_options: structured_generation_chat_options, tool_calls:)
   end
 
   def stub_openai_chat_question_routing(question_or_history, tools: an_instance_of(Array), function_name: "genuine_rag", function_arguments: {})
@@ -69,7 +69,6 @@ module StubOpenAIChat
 
     stub_openai_chat_completion(
       question_or_history,
-      nil,
       chat_options:,
       tool_calls: [openai_chat_completion_tool_call(function_name, function_arguments)],
     )
@@ -99,14 +98,14 @@ module StubOpenAIChat
         { "role" => "system", "content" => config[:system_prompt] },
         { "role" => "user", "content" => a_string_including(original_question) },
       ),
-      rephrased_question,
+      answer: rephrased_question,
     )
   end
 
   def stub_openai_output_guardrail_pass(answer)
     stub_openai_chat_completion(
       array_including({ "role" => "user", "content" => a_string_including(answer) }),
-      "False | None",
+      answer: "False | None",
       chat_options: { model: OutputGuardrails::FewShot::OPENAI_MODEL,
                       max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS },
     )

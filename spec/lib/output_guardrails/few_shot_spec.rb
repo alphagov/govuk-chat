@@ -31,7 +31,7 @@ RSpec.describe OutputGuardrails::FewShot do
         { "role" => "system", "content" => a_string_including(formatted_date) },
         { "role" => "user", "content" => a_string_including(input) },
       )
-      openai_request = stub_openai_chat_completion(messages, "False | None", chat_options: {
+      openai_request = stub_openai_chat_completion(messages, answer: "False | None", chat_options: {
         model: OutputGuardrails::FewShot::OPENAI_MODEL,
         max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
       })
@@ -42,7 +42,7 @@ RSpec.describe OutputGuardrails::FewShot do
 
     it "returns triggered: true with human readable guardrails" do
       guardrail_result = 'True | "1, 5"'
-      stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
+      stub_openai_chat_completion(expected_messages, answer: guardrail_result, chat_options: {
         model: OutputGuardrails::FewShot::OPENAI_MODEL,
         max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
       })
@@ -56,7 +56,7 @@ RSpec.describe OutputGuardrails::FewShot do
 
     it "returns triggered: false with empty guardrails" do
       guardrail_result = "False | None"
-      stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
+      stub_openai_chat_completion(expected_messages, answer: guardrail_result, chat_options: {
         model: OutputGuardrails::FewShot::OPENAI_MODEL,
         max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
       })
@@ -71,7 +71,7 @@ RSpec.describe OutputGuardrails::FewShot do
     context "when the OpenAI response format is incorrect" do
       it "throws a AnswerComposition::OutputGuardrails::ResponseError" do
         guardrail_result = 'False | "1, 2"'
-        stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
+        stub_openai_chat_completion(expected_messages, answer: guardrail_result, chat_options: {
           model: OutputGuardrails::FewShot::OPENAI_MODEL,
           max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
         })
@@ -87,7 +87,7 @@ RSpec.describe OutputGuardrails::FewShot do
     context "when the OpenAI response contains an unknown guardrail number" do
       it "throws a AnswerComposition::OutputGuardrails::ResponseError" do
         guardrail_result = 'False | "1, 8"'
-        stub_openai_chat_completion(expected_messages, guardrail_result, chat_options: {
+        stub_openai_chat_completion(expected_messages, answer: guardrail_result, chat_options: {
           model: OutputGuardrails::FewShot::OPENAI_MODEL,
           max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
         })

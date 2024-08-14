@@ -45,7 +45,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
       let(:rephrased) { "How do I pay my corporation tax" }
 
       before do
-        stub_openai_chat_completion(expected_messages, rephrased)
+        stub_openai_chat_completion(expected_messages, answer: rephrased)
       end
 
       it "calls openAI with the correct payload and returns the rephrased answer" do
@@ -107,7 +107,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
       it "includes the rephrased question in the history" do
         stub_openai_chat_completion(
           array_including({ "role" => "user", "content" => a_string_including("A rephrased question") }),
-          "Answer from OpenAI",
+          answer: "Answer from OpenAI",
         )
 
         expect(described_class.call(context)).to eq("Answer from OpenAI")
@@ -152,7 +152,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
 
       it "truncates the history to the last 5 Q/A pairs" do
         rephrased = "How do I pay my corporation tax"
-        stub_openai_chat_completion(expected_messages, rephrased)
+        stub_openai_chat_completion(expected_messages, answer: rephrased)
         expect(described_class.call(context)).to eq(rephrased)
       end
     end

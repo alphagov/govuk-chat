@@ -40,7 +40,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIUnstructuredAnswerComposer, :c
       ]
       .flatten
 
-      request = stub_openai_chat_completion(expected_message_history, openai_response)
+      request = stub_openai_chat_completion(expected_message_history, answer: openai_response)
 
       described_class.call(context)
 
@@ -48,7 +48,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIUnstructuredAnswerComposer, :c
     end
 
     it "calls OpenAI chat endpoint updates the message, status and llm response on the context's answer" do
-      stub_openai_chat_completion(expected_message_history, openai_response)
+      stub_openai_chat_completion(expected_message_history, answer: openai_response)
 
       described_class.call(context)
 
