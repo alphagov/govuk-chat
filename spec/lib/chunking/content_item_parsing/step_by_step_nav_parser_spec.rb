@@ -20,6 +20,10 @@ RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
             "content" => "Should be the first bit of content.",
             "content_type" => "text/govspeak",
           },
+          {
+            "content" => "<p>Should be the first bit of content.</p>\n",
+            "content_type" => "text/html",
+          },
         ],
       },
     }
@@ -238,8 +242,12 @@ RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
             "title" => "Step by step nav title",
             "introduction" => [
               {
-                "content" => "<script>script tag in introduction</script>",
+                "content" => "Sneaking a script<script>xss attack</script> in the introduction.",
                 "content_type" => "text/govspeak",
+              },
+              {
+                "content" => "<p>Sneaking a script<script>xss attack</script> in the introduction.</p>\n",
+                "content_type" => "text/html",
               },
             ],
           },
@@ -267,7 +275,7 @@ RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
         chunk = described_class.call(content_item).first
 
         expected_html_content = <<~HTML
-          <p>&lt;script&gt;script tag in introduction&lt;/script&gt;</p>
+          <p>Sneaking a script in the introduction.</p>
           <h2>Maybe I will try and sneak &lt;script&gt;unsanitized HTML in here &lt;/script&gt;</h2>
           <p>Sneaky script in a paragraph &lt;script&gt;xss attempt&lt;/script&gt;</p>
           <ol><li><a href="/sneaky">&lt;script&gt;sneaky script&lt;/script&gt;</a></li>

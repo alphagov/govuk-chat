@@ -22,9 +22,11 @@ module Chunking::ContentItemParsing
 
     def parse_details_field
       structured_content = details_field!("step_by_step_nav")
-
       html_content = []
-      html_content << tag.p(structured_content.dig("introduction", 0, "content"))
+
+      introduction = structured_content.dig("introduction", 1, "content")
+      sanitsed_introduction = Chunking::HtmlSanitiser.new(introduction).call.strip
+      html_content << sanitsed_introduction
 
       nav_steps = structured_content["steps"]
       nav_steps.each do |nav_step|
