@@ -1,0 +1,58 @@
+RSpec.describe Admin::Form::EarlyAccessUsers::CreateEarlyAccessUserForm do
+  describe "validations" do
+    it "returns false when the email is missing" do
+      form = described_class.new
+
+      expect(form).to be_invalid
+      expect(form.errors.count).to eq(1)
+      expect(form.errors.messages[:email]).to eq(["Enter an email address"])
+    end
+
+    it "returns false when the email is invalid" do
+      form = described_class.new(email: "test")
+
+      expect(form).to be_invalid
+      expect(form.errors.count).to eq(1)
+      expect(form.errors.messages[:email]).to eq(["Enter a valid email address"])
+    end
+  end
+
+  describe "#submit" do
+    it "raises an error when the form object is invalid" do
+      form = described_class.new
+      expect { form.submit }.to raise_error(ActiveModel::ValidationError)
+    end
+
+    it "creates the user" do
+      form = described_class.new(email: "foo@bar.com")
+
+      expect { form.submit }
+        .to change(EarlyAccessUser, :count).by(1)
+
+      expect(EarlyAccessUser.last).to have_attributes(
+        email: "foo@bar.com",
+        source: "admin_added",
+      )
+    end
+
+    it "creates a passwordless session and assigns the new user" do
+      form = described_class.new(email: "foo@bar.com")
+
+      expect { form.submit }
+        .to change(Passwordless::Session, :count).by(1)
+
+      expect(Passwordless::Session.last.authenticatable).to eq(EarlyAccessUser.last)
+    end
+
+    it "calls the mailer with the new session" do
+      allow(EarlyAccessAuthMailer).to receive(:sign_in).and_call_original
+
+      form = described_class.new(email: "foo@bar.com")
+
+      expect { form.submit }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
+
+      created_session = Passwordless::Session.last
+      expect(EarlyAccessAuthMailer).to have_received(:sign_in).with(created_session)
+    end
+  end
+end
