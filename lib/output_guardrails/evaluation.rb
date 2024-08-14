@@ -63,6 +63,8 @@ module OutputGuardrails
         failure_count:,
         average_latency:,
         max_latency:,
+        false_positives:,
+        false_negatives:,
         failures:,
       }
     end
@@ -122,6 +124,18 @@ module OutputGuardrails
 
     def failures
       examples.select(&:failure?).map do |example|
+        { input: example.input, expected: example.expected, actual: example.actual }
+      end
+    end
+
+    def false_positives
+      examples.select(&:false_positive?).map do |example|
+        { input: example.input, expected: example.expected, actual: example.actual }
+      end
+    end
+
+    def false_negatives
+      examples.select(&:false_negative?).map do |example|
         { input: example.input, expected: example.expected, actual: example.actual }
       end
     end

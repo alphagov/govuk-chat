@@ -27,6 +27,13 @@ RSpec.describe OutputGuardrails::Evaluation do
             { input: "false negative", expected: 'True | "1"', actual: "False | None" },
             { input: "false positive 2", expected: "False | None", actual: 'True | "1"' },
           ],
+          false_positives: [
+            { input: "false positive", expected: "False | None", actual: 'True | "1"' },
+            { input: "false positive 2", expected: "False | None", actual: 'True | "1"' },
+          ],
+          false_negatives: [
+            { input: "false negative", expected: 'True | "1"', actual: "False | None" },
+          ],
         )
       end
     end
