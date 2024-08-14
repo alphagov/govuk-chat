@@ -42,6 +42,45 @@ RSpec.describe Admin::Form::EarlyAccessUsersFilter do
     end
   end
 
+  describe "filtering" do
+    it "filters by email" do
+      alice = create(:early_access_user, email: "alice@example.com")
+      bob = create(:early_access_user, email: "bob@example.com")
+      lisa = create(:early_access_user, email: "lisa@example.com")
+
+      filter = described_class.new(email: "alice")
+      expect(filter.users).to eq([alice])
+
+      filter = described_class.new(email: "bob")
+      expect(filter.users).to eq([bob])
+
+      filter = described_class.new(email: "li")
+      expect(filter.users).to contain_exactly(alice, lisa)
+    end
+
+    it "filters by source" do
+      instant_signup_user = create(:early_access_user, source: :instant_signup)
+      admin_added_user = create(:early_access_user, source: :admin_added)
+
+      filter = described_class.new(source: :instant_signup)
+      expect(filter.users).to eq([instant_signup_user])
+
+      filter = described_class.new(source: :admin_added)
+      expect(filter.users).to eq([admin_added_user])
+    end
+
+    it "filters by revoked status" do
+      active_user = create(:early_access_user, revoked_at: nil)
+      revoked_user = create(:early_access_user, revoked_at: 1.minute.ago)
+
+      filter = described_class.new(revoked: "true")
+      expect(filter.users).to eq([revoked_user])
+
+      filter = described_class.new(revoked: "false")
+      expect(filter.users).to eq([active_user])
+    end
+  end
+
   it_behaves_like "a paginatable filter", :early_access_user
 
   it_behaves_like "a sortable filter", "last_login_at"
