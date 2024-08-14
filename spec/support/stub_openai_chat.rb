@@ -102,10 +102,10 @@ module StubOpenAIChat
     )
   end
 
-  def stub_openai_output_guardrail_pass(answer)
+  def stub_openai_output_guardrail(to_check, response = "False | None")
     stub_openai_chat_completion(
-      array_including({ "role" => "user", "content" => a_string_including(answer) }),
-      answer: "False | None",
+      array_including({ "role" => "user", "content" => a_string_including(to_check) }),
+      answer: response,
       chat_options: { model: OutputGuardrails::FewShot::OPENAI_MODEL,
                       max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS },
     )

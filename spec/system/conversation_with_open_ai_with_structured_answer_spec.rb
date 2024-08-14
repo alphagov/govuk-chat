@@ -40,19 +40,16 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
     populate_chunked_content_index([
       build(:chunked_content_record, openai_embedding: @openai_embedding, exact_path: "/pay-more-tax#yes-really"),
     ])
+    stub_openai_chat_question_routing("How much tax should I be paying?")
     stub_openai_chat_completion_structured_response(
-      array_including({ "role" => "user", "content" => "How much tax should I be paying?" }),
+      "How much tax should I be paying?",
       {
         answer: "Lots of tax.",
         answered: true,
         sources_used: ["/pay-more-tax#yes-really"],
       }.to_json,
     )
-    stub_openai_output_guardrail_pass("Lots of tax.")
-
-    stub_openai_chat_question_routing(
-      array_including({ "role" => "user", "content" => "How much tax should I be paying?" }),
-    )
+    stub_openai_output_guardrail("Lots of tax.")
 
     execute_queued_sidekiq_jobs
   end
@@ -62,18 +59,16 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
 
     stub_openai_question_rephrasing("Are you sure?", rephrased_question)
 
-    stub_openai_chat_question_routing(
-      array_including({ "role" => "user", "content" => rephrased_question }),
-    )
+    stub_openai_chat_question_routing(rephrased_question)
     stub_openai_chat_completion_structured_response(
-      array_including({ "role" => "user", "content" => rephrased_question }),
+      rephrased_question,
       {
         answer: "Even more tax.",
         answered: true,
         sources_used: ["/pay-more-tax#yes-really"],
       }.to_json,
     )
-    stub_openai_output_guardrail_pass("Even more tax.")
+    stub_openai_output_guardrail("Even more tax.")
 
     execute_queued_sidekiq_jobs
   end

@@ -267,12 +267,9 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     ])
 
     stub_openai_chat_question_routing(question)
+    stub_openai_chat_completion_structured_response(question, answer)
 
-    stub_openai_chat_completion_structured_response(
-      array_including({ "role" => "user", "content" => question }),
-      answer,
-    )
     parsed_answer = JSON.parse(answer)["answer"]
-    stub_openai_output_guardrail_pass(parsed_answer)
+    stub_openai_output_guardrail(parsed_answer)
   end
 end
