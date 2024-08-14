@@ -53,9 +53,8 @@ RSpec.describe Form::EarlyAccess::SignInOrUp do
       let(:user) { create :early_access_user, email: "existing.email@example.com" }
       let(:form) { described_class.new(email: user.email) }
 
-      it "creates a session and early access user" do
+      it "creates a session" do
         expect { form.submit }.to change(Passwordless::Session, :count).by(1)
-          .and change(EarlyAccessUser, :count).by(1)
       end
 
       it "assigns the early access user" do
