@@ -1,5 +1,5 @@
 class EarlyAccessEntryController < BaseController
-  before_action :ensure_sign_up_flow_position, only: %i[user_description confirm_user_description]
+  before_action :ensure_sign_up_flow_position, except: %i[new create]
 
   def new
     @early_access_entry_form = Form::EarlyAccess::SignInOrUp.new
@@ -53,7 +53,11 @@ private
 
   def ensure_sign_up_flow_position
     if session.dig("sign_up", "email").blank?
-      redirect_to early_access_entry_path
+      return redirect_to early_access_entry_path
+    end
+
+    if session.dig("sign_up", "user_description").blank? && action_name.match?(/reason_for_visit/)
+      redirect_to early_access_entry_user_description_path
     end
   end
 end

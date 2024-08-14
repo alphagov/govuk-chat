@@ -180,4 +180,56 @@ RSpec.describe "early access entry point" do
       end
     end
   end
+
+  describe "GET :reason_for_visit" do
+    context "when a user email is not in session['sign_up']" do
+      it "redirects to the early_access_entry path" do
+        get early_access_entry_reason_for_visit_path(
+          reason_for_visit_form: { choice: "business_owner_or_self_employed" },
+        )
+        expect(response).to redirect_to(early_access_entry_path)
+      end
+    end
+
+    context "when the user description is not set in session['sign_up'] session but email is" do
+      before do
+        post early_access_entry_path(
+          early_access_entry_form: { email: "email@test.com" },
+        )
+      end
+
+      it "redirects to the user_description path" do
+        get early_access_entry_reason_for_visit_path(
+          reason_for_visit_form: { choice: "business_owner_or_self_employed" },
+        )
+        expect(response).to redirect_to(early_access_entry_user_description_path)
+      end
+    end
+  end
+
+  describe "POST :confirm_reason_for_visit" do
+    context "when a user email is not in session['sign_up']" do
+      it "redirects to the early_access_entry path" do
+        post early_access_entry_reason_for_visit_path(
+          reason_for_visit_form: { choice: "business_owner_or_self_employed" },
+        )
+        expect(response).to redirect_to(early_access_entry_path)
+      end
+    end
+
+    context "when the user description is not in session['sign_up'] session but email is" do
+      before do
+        post early_access_entry_path(
+          early_access_entry_form: { email: "email@test.com" },
+        )
+      end
+
+      it "redirects to the user_description path" do
+        post early_access_entry_reason_for_visit_path(
+          reason_for_visit_form: { choice: "business_owner_or_self_employed" },
+        )
+        expect(response).to redirect_to(early_access_entry_user_description_path)
+      end
+    end
+  end
 end
