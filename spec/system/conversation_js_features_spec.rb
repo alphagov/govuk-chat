@@ -45,7 +45,9 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   scenario "User gives feedback on an answer" do
     given_i_have_confirmed_i_understand_chat_risks
     when_i_enter_a_first_question
-    and_the_first_answer_is_generated
+    then_i_see_the_first_question_was_accepted
+
+    when_the_first_answer_is_generated
     and_i_click_that_the_answer_was_useful
     then_i_am_thanked_for_my_feedback
 
@@ -144,7 +146,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     }.to_json
     stubs_for_mock_answer(@first_question, answer)
 
-    Sidekiq::Worker.drain_all
+    execute_queued_sidekiq_jobs
   end
   alias_method :and_the_first_answer_is_generated, :when_the_first_answer_is_generated
 
