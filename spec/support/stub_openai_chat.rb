@@ -110,7 +110,7 @@ module StubOpenAIChat
       id: "chatcmpl-abc123",
       object: "chat.completion",
       created: 1_677_858_242,
-      model: "gpt-3.5-turbo-0613",
+      model: "gpt-4o-mini-2024-07-18",
       usage: {
         prompt_tokens: 13,
         completion_tokens: 7,
@@ -140,7 +140,7 @@ module StubOpenAIChat
 
   def self.request_body(messages, chat_options:)
     {
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o-mini",
       messages:,
       temperature: 0.0,
     }.merge(chat_options)
