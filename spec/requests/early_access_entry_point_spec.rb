@@ -1,4 +1,13 @@
 RSpec.describe "early access entry point" do
+  it_behaves_like "redirects user to instant access start page when email is not in the sign_up session",
+                  routes: {
+                    early_access_entry_user_description_path: %i[get post],
+                    early_access_entry_reason_for_visit_path: %i[get post],
+                  }
+
+  it_behaves_like "redirects user to user description path when email is set in the session but user description isn't",
+                  routes: { early_access_entry_reason_for_visit_path: %i[get post] }
+
   describe "GET :new" do
     it "renders successfully" do
       get early_access_entry_path
@@ -103,27 +112,12 @@ RSpec.describe "early access entry point" do
   end
 
   describe "GET :user_description" do
-    context "when a user email is not in the sign_up session" do
-      it "redirects to the reason_for_visit path" do
-        get early_access_entry_user_description_path(
-          user_description_form: { choice: "business_owner_or_self_employed" },
-        )
-        expect(response).to redirect_to(early_access_entry_path)
-      end
-    end
+    include_context "with early access user email provided"
 
-    context "when a user email is in the sign_up session" do
-      before do
-        post early_access_entry_path(
-          early_access_entry_form: { email: "email@test.com" },
-        )
-      end
-
-      it "renders successfully" do
-        get early_access_entry_user_description_path
-        expect(response).to have_http_status(:ok)
-        expect(response.body).to have_selector(".gem-c-radio__heading-text", text: "Which of the following best describes you?")
-      end
+    it "renders successfully" do
+      get early_access_entry_user_description_path
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to have_selector(".gem-c-radio__heading-text", text: "Which of the following best describes you?")
     end
   end
 
@@ -150,86 +144,17 @@ RSpec.describe "early access entry point" do
         post early_access_entry_user_description_path(
           user_description_form: { choice: "business_owner_or_self_employed" },
         )
-        expect(response).to redirect_to(early_access_entry_path)
-      end
-    end
-
-    context "when a user email is in session['sign_up']" do
-      before do
-        post early_access_entry_path(
-          early_access_entry_form: { email: "email@test.com" },
-        )
-      end
-
-      context "and invalid params are passed" do
-        it "renders the user_description page with errors" do
-          post early_access_entry_user_description_path(user_description_form: { choice: "" })
-          expect(response).to have_http_status(:unprocessable_entity)
-          expect(response.body).to have_selector(".govuk-error-summary")
-        end
-      end
-
-      context "and valid params are passed" do
-        it "adds the user description to session['sign_up']" do
-          post early_access_entry_user_description_path(
-            user_description_form: { choice: "business_owner_or_self_employed" },
-          )
-          expect(session["sign_up"])
-            .to eq({ "email" => "email@test.com", "user_description" => "business_owner_or_self_employed" })
-        end
+        expect(session["sign_up"])
+          .to eq({ "email" => "email@test.com", "user_description" => "business_owner_or_self_employed" })
       end
     end
   end
 
   describe "GET :reason_for_visit" do
-    context "when a user email is not in session['sign_up']" do
-      it "redirects to the early_access_entry path" do
-        get early_access_entry_reason_for_visit_path(
-          reason_for_visit_form: { choice: "business_owner_or_self_employed" },
-        )
-        expect(response).to redirect_to(early_access_entry_path)
-      end
-    end
-
-    context "when the user description is not set in session['sign_up'] session but email is" do
-      before do
-        post early_access_entry_path(
-          early_access_entry_form: { email: "email@test.com" },
-        )
-      end
-
-      it "redirects to the user_description path" do
-        get early_access_entry_reason_for_visit_path(
-          reason_for_visit_form: { choice: "business_owner_or_self_employed" },
-        )
-        expect(response).to redirect_to(early_access_entry_user_description_path)
-      end
-    end
+    include_context "with early access user email and user description provided"
   end
 
   describe "POST :confirm_reason_for_visit" do
-    context "when a user email is not in session['sign_up']" do
-      it "redirects to the early_access_entry path" do
-        post early_access_entry_reason_for_visit_path(
-          reason_for_visit_form: { choice: "business_owner_or_self_employed" },
-        )
-        expect(response).to redirect_to(early_access_entry_path)
-      end
-    end
-
-    context "when the user description is not in session['sign_up'] session but email is" do
-      before do
-        post early_access_entry_path(
-          early_access_entry_form: { email: "email@test.com" },
-        )
-      end
-
-      it "redirects to the user_description path" do
-        post early_access_entry_reason_for_visit_path(
-          reason_for_visit_form: { choice: "business_owner_or_self_employed" },
-        )
-        expect(response).to redirect_to(early_access_entry_user_description_path)
-      end
-    end
+    include_context "with early access user email and user description provided"
   end
 end
