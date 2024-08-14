@@ -1,5 +1,6 @@
 <%
   navigation_items ||= []
+  chat_path = "/chat"
 %>
 
 <%= content_tag :header, class: "app-c-header govuk-header", role: "banner", data: { module: "chat-header" } do %>
@@ -7,7 +8,7 @@
     <div class="app-c-header-row govuk-grid-row">
       <div class="app-c-header__logo govuk-grid-column-two-thirds">
         <%= link_to(
-          "/",
+          chat_path,
           class: "app-c-header__link app-c-header__link--homepage govuk-header__link govuk-header__link--homepage",
           data: {
             module: "ga4-link-tracker",
