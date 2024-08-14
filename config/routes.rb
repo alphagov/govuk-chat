@@ -56,6 +56,8 @@ Rails.application.routes.draw do
 
     scope :early_access_users do
       get "", to: "early_access_users#index", as: :early_access_users
+      get "/new", to: "early_access_users#new", as: :new_early_access_user
+      post "", to: "early_access_users#create", as: :create_early_access_user
       get "/:id", to: "early_access_users#show", as: :show_early_access_user
       get "/:id/revoke", to: "early_access_users/access#revoke", as: :early_access_user_revoke
       patch "/:id/revoke", to: "early_access_users/access#revoke_confirm", as: :early_access_user_revoke_confirm

@@ -198,4 +198,32 @@ RSpec.describe "Admin::EarlyAccessController" do
         .and have_content("Asking too many questions")
     end
   end
+
+  describe "GET :new" do
+    it "renders the form" do
+      get new_admin_early_access_user_path
+      expect(response).to have_http_status(:ok)
+
+      expect(response.body).to have_content("New early access user")
+    end
+  end
+
+  describe "POST :create" do
+    it "creates a new user" do
+      post admin_early_access_users_path, params: { create_early_access_user_form: { email: "new.user@example.com" } }
+
+      expect(response).to redirect_to(admin_early_access_users_path)
+      expect(EarlyAccessUser.last).to have_attributes(
+        email: "new.user@example.com",
+        source: "admin_added",
+      )
+    end
+
+    it "renders the form with errors" do
+      post admin_early_access_users_path, params: { create_early_access_user_form: { email: "" } }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to have_content("Enter an email address")
+    end
+  end
 end
