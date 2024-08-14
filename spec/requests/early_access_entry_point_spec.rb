@@ -53,14 +53,6 @@ RSpec.describe "early access entry point" do
           expect(response.body).to have_selector(".govuk-heading-xl", text: "You've been sent a new link")
         end
 
-        it "creates a passwordless session" do
-          expect {
-            post early_access_entry_path(
-              early_access_entry_form: { email: early_access_user.email },
-            )
-          }.to change(Passwordless::Session, :count).by(1)
-        end
-
         it "emails a magic link to the user" do
           expect {
             post early_access_entry_path(
@@ -152,9 +144,55 @@ RSpec.describe "early access entry point" do
 
   describe "GET :reason_for_visit" do
     include_context "with early access user email and user description provided"
+
+    it "renders successfully" do
+      get early_access_entry_reason_for_visit_path
+      expect(response).to have_http_status(:ok)
+      expect(response.body)
+        .to have_selector(".gem-c-radio__heading-text", text: "Why did you visit GOV.UK today?")
+    end
   end
 
   describe "POST :confirm_reason_for_visit" do
     include_context "with early access user email and user description provided"
+
+    context "when invalid params are passed" do
+      it "renders the reason_for_visit page with errors" do
+        post early_access_entry_reason_for_visit_path(reason_for_visit_form: { choice: "" })
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to have_selector(".govuk-error-summary")
+      end
+    end
+
+    context "when valid params are passed" do
+      it "responds with a successful status" do
+        post early_access_entry_reason_for_visit_path(
+          reason_for_visit_form: { choice: "find_specific_answer" },
+        )
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "renders the sign_up_successful template" do
+        post early_access_entry_reason_for_visit_path(
+          reason_for_visit_form: { choice: "find_specific_answer" },
+        )
+        expect(response.body).to have_selector(".govuk-heading-xl", text: "You can now start using GOV.UK Chat")
+      end
+
+      it "emails a magic link to the user" do
+        expect {
+          post early_access_entry_reason_for_visit_path(
+            reason_for_visit_form: { choice: "find_specific_answer" },
+          )
+        }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
+      end
+
+      it "deletes the session['sign_up'] variable" do
+        post early_access_entry_reason_for_visit_path(
+          reason_for_visit_form: { choice: "find_specific_answer" },
+        )
+        expect(session["sign_up"]).to be_nil
+      end
+    end
   end
 end

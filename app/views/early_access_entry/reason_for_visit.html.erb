@@ -1,0 +1,50 @@
+<%= render "shared/error_summary",
+  model: @reason_for_visit_form,
+  anchor_mappings: {
+    choice: "#reason_for_visit_form_choice",
+  } %>
+<%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
+                                  href: early_access_entry_user_description_path) ) %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <%= form_with url: early_access_entry_reason_for_visit_path do %>
+      <%= hidden_field_tag "reason_for_visit_form[choice]" %>
+
+      <%= render "govuk_publishing_components/components/radio", {
+        id: "reason_for_visit_form_choice",
+        name: "reason_for_visit_form[choice]",
+        heading: "Why did you visit GOV.UK today?",
+        heading_caption: "Question 2 of 2",
+        heading_level: 1,
+        error_items: error_items(@reason_for_visit_form, :choice),
+        items: [
+          {
+            value: "find_specific_answer",
+            text: "To find a specific answer, like when the next bank holiday is",
+          },
+          {
+            value: "complete_task",
+            text: "To complete a task, like applying for a passport",
+          },
+            {
+            value: "understand_process",
+            text: "To figure out a process, like starting a business",
+          },
+            {
+            value: "research_topic",
+            text: "To learn about a topic, like student finance or cost of living",
+          },
+          {
+            value: "other",
+            text: "Other",
+          },
+        ],
+      } %>
+
+      <%= render "components/blue_button", {
+        text: "Submit answers",
+      } %>
+    <% end %>
+  </div>
+</div>

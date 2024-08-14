@@ -41,6 +41,22 @@ class EarlyAccessEntryController < BaseController
     end
   end
 
+  def reason_for_visit
+    @reason_for_visit_form = Form::EarlyAccess::ReasonForVisit.new
+  end
+
+  def confirm_reason_for_visit
+    @reason_for_visit_form = Form::EarlyAccess::ReasonForVisit.new(reason_for_visit_form_params)
+
+    if @reason_for_visit_form.valid?
+      @reason_for_visit_form.submit
+      session.delete("sign_up")
+      render :sign_up_successful
+    else
+      render :reason_for_visit, status: :unprocessable_entity
+    end
+  end
+
 private
 
   def sign_in_or_up_form_params
@@ -49,6 +65,16 @@ private
 
   def user_description_form_params
     params.require(:user_description_form).permit(:choice)
+  end
+
+  def reason_for_visit_form_params
+    params
+      .require(:reason_for_visit_form)
+      .permit(:choice)
+      .merge(
+        email: session.dig("sign_up", "email"),
+        user_description: session.dig("sign_up", "user_description"),
+      )
   end
 
   def ensure_sign_up_flow_position
