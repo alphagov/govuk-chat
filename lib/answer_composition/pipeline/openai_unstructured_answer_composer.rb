@@ -1,6 +1,6 @@
 module AnswerComposition::Pipeline
   class OpenAIUnstructuredAnswerComposer
-    OPENAI_MODEL = "gpt-3.5-turbo".freeze
+    OPENAI_MODEL = "gpt-4o-mini".freeze
 
     def self.call(...) = new(...).call
 

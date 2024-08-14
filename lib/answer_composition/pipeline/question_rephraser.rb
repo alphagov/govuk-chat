@@ -1,7 +1,7 @@
 module AnswerComposition
   module Pipeline
     class QuestionRephraser
-      OPENAI_MODEL = "gpt-3.5-turbo".freeze
+      OPENAI_MODEL = "gpt-4o-mini".freeze
 
       delegate :question, to: :context
 
