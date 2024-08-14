@@ -1,9 +1,7 @@
 module Chunking
   class HtmlHierarchicalChunker
-    # block elements to extract content from
-    ELEMENTS_TO_FLATTEN = %w[div section article main details nav header footer summary].freeze
     def initialize(html)
-      @doc = Nokogiri::HTML::DocumentFragment.parse(html)
+      @html = html
       @headers = []
       @chunks = []
       @content = []
@@ -12,19 +10,16 @@ module Chunking
     def self.call(...) = new(...).call
 
     def call
-      remove_footnotes
-      clean_attributes
-      remove_h1s
-      nodes = flatten_html(doc.children)
-      split_nodes(nodes)
-      chunks
+      sanitised_html = HtmlSanitiser.call(html)
+      document = Nokogiri::HTML::DocumentFragment.parse(sanitised_html)
+      build_chunks(document.children)
     end
 
   private
 
-    attr_reader :doc, :headers, :content, :chunks
+    attr_reader :html, :headers, :content, :chunks
 
-    def split_nodes(child_nodes)
+    def build_chunks(child_nodes)
       child_nodes.each do |node|
         if header?(node)
           save_chunk
@@ -34,17 +29,7 @@ module Chunking
         end
       end
       save_chunk
-    end
-
-    def flatten_html(child_nodes)
-      child_nodes.inject([]) do |memo, node|
-        if ELEMENTS_TO_FLATTEN.include?(node.name)
-          memo += flatten_html(node.children)
-        else
-          memo << node
-        end
-        memo
-      end
+      chunks
     end
 
     def header?(node)
@@ -65,31 +50,10 @@ module Chunking
       @content = []
     end
 
-    def new_chunk(header_node)
-      save_chunk
-      headers_to_keep = headers.keys.select { |h| h < header_node.name }
-      @headers = headers.slice(*headers_to_keep)
-      add_header(header_node.name, header_node.text)
-    end
-
     def add_content(html)
       return if html.strip.empty?
 
       content.append(html.strip)
-    end
-
-    def clean_attributes
-      doc.css("*").each do |node|
-        AttributeStripper.call(node)
-      end
-    end
-
-    def remove_footnotes
-      doc.css("div.footnotes").each(&:remove)
-    end
-
-    def remove_h1s
-      doc.css("h1").each(&:remove)
     end
   end
 end
