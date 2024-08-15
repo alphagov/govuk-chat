@@ -1,5 +1,5 @@
 ---
 :verbose: false
-:concurrency: 25
+:concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY", 25).to_i %>
 :max_retries: 0
 :queues:
