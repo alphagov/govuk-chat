@@ -30,7 +30,7 @@ class ConversationsController < BaseController
   end
 
   def update
-    @conversation ||= Conversation.new
+    @conversation ||= Conversation.new(user: current_early_access_user)
     @create_question = Form::CreateQuestion.new(user_question_params.merge(conversation: @conversation))
 
     if @create_question.valid?
