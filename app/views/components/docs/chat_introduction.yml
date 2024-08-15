@@ -7,8 +7,8 @@ accessibility_criteria: |
   - be semantically represented as a heading
   - convey the heading level
 
-  The lead paragraph must: 
-  
+  The lead paragraph must:
+
   - be visually distinct from other paragraphs.
   - must have a text contrast ratio higher than 4.5:1 against the background colour to meet WCAG AA
 
@@ -17,6 +17,4 @@ shared_accessibility_criteria:
 examples:
   default:
     data:
-      title_text: Page title
-      lead_paragraph_text: Lead paragraph
-      info_text: Some additional information
+      start_button_href: "#"
