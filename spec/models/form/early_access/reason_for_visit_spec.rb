@@ -1,4 +1,6 @@
 RSpec.describe Form::EarlyAccess::ReasonForVisit do
+  let!(:settings) { create(:settings) }
+
   describe "validations" do
     it "is valid with a choice" do
       form = described_class.new(choice: "find_specific_answer")
@@ -29,6 +31,17 @@ RSpec.describe Form::EarlyAccess::ReasonForVisit do
     it "raises an error when the form object is invalid" do
       form = described_class.new(choice: "")
       expect { form.submit }.to raise_error(ActiveModel::ValidationError)
+    end
+
+    it "raises an error when there are no places available" do
+      settings.update!(instant_access_places: 0)
+      expect { form.submit }.to raise_error("No places available")
+    end
+
+    it "locks the settings instance and decrements the instant access places by 1" do
+      allow(Settings).to receive(:instance).and_return(settings)
+      expect(settings).to receive(:with_lock).and_call_original
+      expect { form.submit }.to change { settings.reload.instant_access_places }.by(-1)
     end
 
     it "creates an EarlyAccessUser with the correct attributes" do
