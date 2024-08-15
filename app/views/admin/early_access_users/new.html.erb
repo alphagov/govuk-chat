@@ -1,4 +1,4 @@
-<%= content_for :title, "Revoke access" %>
+<%= content_for :title, "New early access user" %>
 
 <%= content_for :breadcrumbs do %>
   <%= render "govuk_publishing_components/components/breadcrumbs", {
@@ -9,11 +9,7 @@
         url: admin_early_access_users_path,
       },
       {
-        title: "User details",
-        url: admin_early_access_user_path(@user),
-      },
-      {
-        title: "Revoke access",
+        title: "New early access user",
       },
     ],
   } %>
@@ -22,20 +18,20 @@
 <%= render "shared/error_summary",
   model: @form,
   anchor_mappings: {
-    revoke_reason: "#revoke-reason",
+    email: "#create_early_access_user_form",
   } %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <%= form_with url: revoke_confirm_admin_early_access_user_path(@user), method: :patch do |f| %>
-      <%= render "govuk_publishing_components/components/textarea", {
+    <%= form_with url: admin_early_access_users_path, method: :post do |f| %>
+      <%= render "govuk_publishing_components/components/input", {
         label: {
-          heading_size: "l",
-          heading_level: 2,
-          text: "Reason for revoking access",
+          text: "Email address",
         },
-        name: "access_form[revoke_reason]",
-        id: "revoke-reason",
+        name: "create_early_access_user_form[email]",
+        id: "create_early_access_user_form",
+        value: @form.email,
+        error_items: error_items(@form, :email),
       } %>
 
       <%= render "govuk_publishing_components/components/button", {

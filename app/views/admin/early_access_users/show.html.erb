@@ -67,7 +67,7 @@
 } %>
 
 <% if @user.access_revoked? %>
-  <%= form_with url: admin_early_access_user_restore_path(@user), method: :patch do |f| %>
+  <%= form_with url: restore_admin_early_access_user_path(@user), method: :patch do |f| %>
     <%= render "govuk_publishing_components/components/button", {
       text: "Restore access",
     } %>
@@ -75,7 +75,7 @@
 <% else %>
   <%= render "govuk_publishing_components/components/button", {
     text: "Revoke access",
-    href: admin_early_access_user_revoke_path(@user),
+    href: revoke_admin_early_access_user_path(@user),
     destructive: true,
   } %>
 <% end %>

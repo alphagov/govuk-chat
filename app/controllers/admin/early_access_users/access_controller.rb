@@ -10,7 +10,7 @@ class Admin::EarlyAccessUsers::AccessController < Admin::BaseController
 
     if @form.valid?
       @form.submit
-      redirect_to admin_show_early_access_user_path(@user), notice: "Access revoked"
+      redirect_to admin_early_access_user_path(@user), notice: "Access revoked"
     else
       render :revoke, status: :unprocessable_entity
     end
@@ -20,7 +20,7 @@ class Admin::EarlyAccessUsers::AccessController < Admin::BaseController
     user = EarlyAccessUser.find(params[:id])
     user.update!(revoked_at: nil, revoked_reason: nil)
 
-    redirect_to admin_show_early_access_user_path(user), notice: "Access restored"
+    redirect_to admin_early_access_user_path(user), notice: "Access restored"
   end
 
 private

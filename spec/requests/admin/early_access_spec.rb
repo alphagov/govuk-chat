@@ -30,7 +30,7 @@ RSpec.describe "Admin::EarlyAccessController" do
       get admin_early_access_users_path
 
       expect(response.body)
-        .to have_link("alice@example.com", href: admin_show_early_access_user_path(user))
+        .to have_link("alice@example.com", href: admin_early_access_user_path(user))
     end
 
     context "when there are multiple pages of users" do
@@ -174,7 +174,7 @@ RSpec.describe "Admin::EarlyAccessController" do
         revoked_at: nil,
       )
 
-      get admin_show_early_access_user_path(user)
+      get admin_early_access_user_path(user)
 
       expect(response.body)
         .to have_content("User details")
@@ -191,11 +191,39 @@ RSpec.describe "Admin::EarlyAccessController" do
         revoked_reason: "Asking too many questions",
       )
 
-      get admin_show_early_access_user_path(user)
+      get admin_early_access_user_path(user)
 
       expect(response.body)
         .to have_content("9:10am on 2 January 2024")
         .and have_content("Asking too many questions")
+    end
+  end
+
+  describe "GET :new" do
+    it "renders the form" do
+      get new_admin_early_access_user_path
+      expect(response).to have_http_status(:ok)
+
+      expect(response.body).to have_content("New early access user")
+    end
+  end
+
+  describe "POST :create" do
+    it "creates a new user and redirects" do
+      post admin_early_access_users_path, params: { create_early_access_user_form: { email: "new.user@example.com" } }
+
+      expect(EarlyAccessUser.last).to have_attributes(
+        email: "new.user@example.com",
+        source: "admin_added",
+      )
+      expect(response).to redirect_to(admin_early_access_user_path(EarlyAccessUser.last))
+    end
+
+    it "renders the form with errors" do
+      post admin_early_access_users_path, params: { create_early_access_user_form: { email: "" } }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to have_content("Enter an email address")
     end
   end
 end
