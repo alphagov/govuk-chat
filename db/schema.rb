@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_12_135420) do
+ActiveRecord::Schema[7.2].define(version: 2024_08_15_125106) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -96,7 +96,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_12_135420) do
   create_table "conversations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "early_access_user_id"
     t.index ["created_at"], name: "index_conversations_on_created_at"
+    t.index ["early_access_user_id"], name: "index_conversations_on_early_access_user_id"
   end
 
   create_table "early_access_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -178,6 +180,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_12_135420) do
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade
   add_foreign_key "answer_sources", "answers", on_delete: :cascade
   add_foreign_key "answers", "questions", on_delete: :cascade
+  add_foreign_key "conversations", "early_access_users"
   add_foreign_key "questions", "conversations"
   add_foreign_key "settings_audits", "admin_users", column: "user_id", on_delete: :nullify
 end

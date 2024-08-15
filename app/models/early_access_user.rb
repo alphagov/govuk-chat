@@ -1,6 +1,7 @@
 class EarlyAccessUser < ApplicationRecord
   class AccessRevokedError < RuntimeError; end
 
+  has_many :conversations
   passwordless_with :email
 
   enum :source,
