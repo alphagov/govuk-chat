@@ -56,63 +56,62 @@
     <% if conversation_layout %>
       <%= yield(:content) %>
     <% else %>
-      <main class="govuk-main-wrapper" id="content" role="main">
-        <div class="govuk-width-container">
-          <% if content_for?(:back_link) %>
-            <div class="govuk-!-margin-bottom-8">
-              <%= yield(:back_link) %>
-            </div>
-          <% end %>
-          <div class="govuk-grid-row">
-            <% if content_for?(:error_summary) %>
-              <%= yield(:error_summary) %>
-            <% end %>
-          </div>
-        </div>
-
-        <% if page_title %>
+      <div class="app-landing-page-layout__flex-container">
+        <main class="govuk-main-wrapper" id="content" role="main">
           <div class="govuk-width-container">
+            <%= yield(:back_link) %>
+
             <div class="govuk-grid-row">
-              <div class="govuk-grid-column-two-thirds">
-                <%= render "govuk_publishing_components/components/title", {
-                  title: page_title,
-                } %>
+              <% if content_for?(:error_summary) %>
+                <%= yield(:error_summary) %>
+              <% end %>
+            </div>
+          </div>
+
+          <% if page_title %>
+            <div class="govuk-width-container">
+              <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                  <%= render "govuk_publishing_components/components/title", {
+                    title: page_title,
+                  } %>
+                </div>
               </div>
             </div>
+          <% end %>
+
+          <div class="govuk-width-container">
+            <%= yield %>
           </div>
-        <% end %>
+        </main>
 
-        <div class="govuk-width-container">
-          <%= yield %>
-        </div>
-      </main>
-
-      <%= render "govuk_publishing_components/components/layout_footer", {
-        navigation: [
-          {
-            title: "GOV.UK Chat",
-            columns: 3,
-            items: [
-              {
-                href: "/chat/about",
-                text: "About",
-              },
-              {
-                href: "/chat/support",
-                text: "Help and support",
-              },
-              {
-                href: "/chat/privacy",
-                text: "Privacy",
-              },
-              {
-                href: "#{Plek.website_root}/help/accessibility-statement",
-                text: "Accessibility",
-              },
-            ],
-          },
-        ],
-      } %>
+        <%= render "govuk_publishing_components/components/layout_footer", {
+          navigation: [
+            {
+              title: "GOV.UK Chat",
+              columns: 3,
+              items: [
+                {
+                  href: "/chat/about",
+                  text: "About",
+                },
+                {
+                  href: "/chat/support",
+                  text: "Help and support",
+                },
+                {
+                  href: "/chat/privacy",
+                  text: "Privacy",
+                },
+                {
+                  href: "#{Plek.website_root}/help/accessibility-statement",
+                  text: "Accessibility",
+                },
+              ],
+            },
+          ],
+        } %>
+      </div>
     <% end %>
 
     <%= javascript_include_tag "application-legacy", nonce: true %>
