@@ -1,4 +1,4 @@
-class Form::EarlyAccessEntry
+class Form::EarlyAccess::SignInOrUp
   include ActiveModel::Model
   include ActiveModel::Attributes
 
@@ -21,8 +21,7 @@ class Form::EarlyAccessEntry
     return Result.new(outcome: :new_user, email:, user: nil) unless user
     return Result.new(outcome: :user_revoked, email:, user:) if user.access_revoked?
 
-    session = Passwordless::Session.new(authenticatable: user)
-    session.save!
+    session = Passwordless::Session.create!(authenticatable: user)
     EarlyAccessAuthMailer.sign_in(session).deliver_now
     Result.new(outcome: :existing_user, email:, user:)
   end

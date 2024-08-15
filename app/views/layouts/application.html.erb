@@ -56,8 +56,11 @@
     <% else %>
       <main class="govuk-main-wrapper" id="content" role="main">
         <div class="govuk-width-container">
-          <%= yield(:back_link) %>
-
+          <% if content_for?(:back_link) %>
+            <div class="govuk-!-margin-bottom-8">
+              <%= yield(:back_link) %>
+            </div>
+          <% end %>
           <div class="govuk-grid-row">
             <% if content_for?(:error_summary) %>
               <%= yield(:error_summary) %>
