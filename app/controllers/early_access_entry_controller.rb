@@ -7,6 +7,7 @@ class EarlyAccessEntryController < BaseController
   end
 
   def confirm_sign_in_or_up
+    sign_out_early_access_user if current_early_access_user
     @sign_in_or_up_form = Form::EarlyAccess::SignInOrUp.new(sign_in_or_up_form_params)
 
     if @sign_in_or_up_form.valid?

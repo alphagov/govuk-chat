@@ -130,6 +130,20 @@ RSpec.describe "early access entry point" do
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to have_selector(".govuk-error-summary")
       end
+
+      context "when a user is already signed in" do
+        let(:session) { create :passwordless_session }
+
+        before { sign_in_early_access_user(session.authenticatable) }
+
+        it "signs the user out" do
+          post early_access_entry_sign_in_or_up_path(
+            sign_in_or_up_form: { email: "email@test.com" },
+          )
+          get protected_path
+          expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
+        end
+      end
     end
 
     context "when valid params are passed" do
