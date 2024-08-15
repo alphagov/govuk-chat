@@ -18,7 +18,7 @@ RSpec.describe "Admin user revokes early access user" do
   end
 
   def when_i_view_the_user
-    visit admin_show_early_access_user_path(@user)
+    visit admin_early_access_user_path(@user)
   end
 
   def then_i_see_the_user_is_not_revoked

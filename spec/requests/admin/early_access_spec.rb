@@ -30,7 +30,7 @@ RSpec.describe "Admin::EarlyAccessController" do
       get admin_early_access_users_path
 
       expect(response.body)
-        .to have_link("alice@example.com", href: admin_show_early_access_user_path(user))
+        .to have_link("alice@example.com", href: admin_early_access_user_path(user))
     end
 
     context "when there are multiple pages of users" do
@@ -174,7 +174,7 @@ RSpec.describe "Admin::EarlyAccessController" do
         revoked_at: nil,
       )
 
-      get admin_show_early_access_user_path(user)
+      get admin_early_access_user_path(user)
 
       expect(response.body)
         .to have_content("User details")
@@ -191,7 +191,7 @@ RSpec.describe "Admin::EarlyAccessController" do
         revoked_reason: "Asking too many questions",
       )
 
-      get admin_show_early_access_user_path(user)
+      get admin_early_access_user_path(user)
 
       expect(response.body)
         .to have_content("9:10am on 2 January 2024")

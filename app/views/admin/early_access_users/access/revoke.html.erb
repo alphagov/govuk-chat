@@ -10,7 +10,7 @@
       },
       {
         title: "User details",
-        url: admin_show_early_access_user_path(@user),
+        url: admin_early_access_user_path(@user),
       },
       {
         title: "Revoke access",
@@ -27,7 +27,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <%= form_with url: admin_early_access_user_revoke_confirm_path(@user), method: :patch do |f| %>
+    <%= form_with url: revoke_confirm_admin_early_access_user_path(@user), method: :patch do |f| %>
       <%= render "govuk_publishing_components/components/textarea", {
         label: {
           heading_size: "l",

@@ -54,14 +54,10 @@ Rails.application.routes.draw do
     get "/search", to: "search#index", as: :search
     get "/search/chunk/:id", to: "chunks#show", as: :chunk
 
-    scope :early_access_users do
-      get "", to: "early_access_users#index", as: :early_access_users
-      get "/new", to: "early_access_users#new", as: :new_early_access_user
-      post "", to: "early_access_users#create", as: :create_early_access_user
-      get "/:id", to: "early_access_users#show", as: :show_early_access_user
-      get "/:id/revoke", to: "early_access_users/access#revoke", as: :early_access_user_revoke
-      patch "/:id/revoke", to: "early_access_users/access#revoke_confirm", as: :early_access_user_revoke_confirm
-      patch "/:id/restore", to: "early_access_users/access#restore", as: :early_access_user_restore
+    resources :early_access_users, path: "/early-access-users", only: %i[index new create show] do
+      get "/access/revoke", to: "early_access_users/access#revoke", as: :revoke, on: :member
+      patch "/access/revoke", to: "early_access_users/access#revoke_confirm", as: :revoke_confirm, on: :member
+      patch "/access/restore", to: "early_access_users/access#restore", as: :restore, on: :member
     end
 
     scope :settings do
