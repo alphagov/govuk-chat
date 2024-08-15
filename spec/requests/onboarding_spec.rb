@@ -47,7 +47,7 @@ RSpec.describe "OnboardingController" do
           post onboarding_limitations_confirm_path(more_information: true)
         end
 
-        it "returns a successful response the the correct JSON" do
+        it "returns a successful response with the correct JSON" do
           get onboarding_limitations_path, params: { format: :json }
 
           expect(response).to have_http_status(:ok)
@@ -119,7 +119,7 @@ RSpec.describe "OnboardingController" do
           "fragment" => "i-understand",
           "conversation_data" => { "module" => "onboarding" },
           "conversation_append_html" => /You can always find information about my limitations in.*about GOV.UK Chat/,
-          "form_html" => /<button class="app-c-blue-button govuk-button">Okay, start chatting<\/button>/,
+          "form_html" => /Okay, start chatting/,
         })
       end
     end

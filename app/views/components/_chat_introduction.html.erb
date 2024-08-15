@@ -12,6 +12,10 @@
     href: "/chat/onboarding",
     start: true,
     aria_describedby: "info-text",
+    data_attributes: {
+      "module": "ga4-link-tracker",
+      "ga4-link": '{ "event_name": "navigation", "type": "start button", "index_link": 1, "index_total": 1, "section": "Landing page" }',
+    },
   } %>
 
   <%= content_tag(:p, "Your chat history will be available for #{Rails.configuration.conversations.max_question_age_days} days", {id: "info-text", class: "govuk-body govuk-!-margin-top-5"}) %>

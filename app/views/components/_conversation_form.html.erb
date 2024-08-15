@@ -36,7 +36,7 @@
 %>
 
 <%= tag.div class: "app-c-conversation-form js-conversation-form-wrapper", data: data_attributes do %>
-  <%= form_with url: url, class: "app-c-conversation-form__form js-conversation-form" do |f| %>
+  <%= form_with url: url, class: "app-c-conversation-form__form js-conversation-form", data: { module: "ga4-form-tracker", ga4_form: { "event_name": "form_response", "type": "GOV.UK Chat user input", "section": "Enter your question" } } do |f| %>
     <%= tag.ul(
       id: error_id,
       class: %w[govuk-list govuk-error-message js-conversation-form-errors-wrapper app-c-conversation-form__error-list],
@@ -98,5 +98,15 @@
     class: "govuk-body govuk-link govuk-link--no-visited-state app-c-conversation-form__survey-link js-survey-link",
     target: "_blank",
     rel: "noopener noreferrer",
+    data: {
+      module: "ga4-link-tracker",
+      ga4_link: {
+        "event_name": "navigation",
+        "index": {
+          "index_link": 1,
+        },
+        "index_total": 1,
+      },
+    },
   ) %>
 <% end %>

@@ -7,6 +7,10 @@
   <% if privacy_onboarding %>
     <%= render "components/blue_button", {
       text: "Okay, start chatting",
+      data_attributes: {
+        "module": "ga4-event-tracker",
+        "ga4-event": { "event_name": "navigation", "type": "chat button", "index": "1", "index_total": "1" },
+      },
     } %>
   <% else %>
       <% i_understand_text = capture do %>
@@ -17,12 +21,20 @@
     <% if more_information %>
       <%= render "components/blue_button", {
         text: i_understand_text,
+        data_attributes: {
+          "module": "ga4-event-tracker",
+          "ga4-event": { "event_name": "navigation", "type": "chat button", "index": "1", "index_total": "1" },
+        },
       } %>
 
-      <%= link_to "Take me to GOV.UK", Plek.website_root, class: "govuk-link" %>
+      <%= link_to "Take me to GOV.UK", Plek.website_root, class: "govuk-link", data: { module: "ga4-link-tracker", ga4_link: { "event_name": "navigation", "type": "generic link", "index": { index_link: 1 } , "index_total": "1" } } %>
     <% else %>
       <%= render "components/blue_button", {
         text: i_understand_text,
+        data_attributes: {
+          "module": "ga4-event-tracker",
+          "ga4-event": { "event_name": "navigation", "type": "chat button", "index": "1", "index_total": "2" },
+        },
       } %>
 
       <% tell_me_more_text = capture do %>
@@ -36,6 +48,10 @@
         name: "more_information",
         value: "true",
         secondary_solid: true,
+        data_attributes: {
+          "module": "ga4-event-tracker",
+          "ga4-event": { "event_name": "navigation", "type": "chat button", "index": "2", "index_total": "2" },
+        },
       } %>
     <% end %>
   <% end %>
