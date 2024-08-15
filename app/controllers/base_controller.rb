@@ -12,7 +12,7 @@ private
     request.session_options[:skip] = true
 
     status = settings.downtime_type_temporary? ? :service_unavailable : :gone
-    render "downtime/unavailable", status:
+    render "downtime/unavailable", status:, layout: "application"
   end
 
   def settings
