@@ -15,6 +15,11 @@ RSpec.describe "early access entry point" do
                     early_access_entry_user_description_path: %i[get post],
                     early_access_entry_reason_for_visit_path: %i[get post],
                   }
+  it_behaves_like "redirects the user to the sign in or up page when the user is signed in",
+                  routes: {
+                    early_access_entry_user_description_path: %i[get post],
+                    early_access_entry_reason_for_visit_path: %i[get post],
+                  }
 
   describe "GET :sign_in_or_up" do
     it "renders successfully" do

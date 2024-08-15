@@ -49,6 +49,23 @@ module EarlyAccessEntryPointRequestExamples
     end
   end
 
+  shared_examples "redirects the user to the sign in or up page when the user is signed in" do |routes:|
+    include_context "with early access user email and user description provided"
+
+    routes.each do |path, methods|
+      describe "early access user gets signed out when completing sign up flow" do
+        methods.each do |method|
+          it "redirects the user to the early_access_entry_sign_in_or_up_path when signed in for #{method} #{path}" do
+            session = create(:passwordless_session)
+            sign_in_early_access_user(session.authenticatable)
+            process(method.to_sym, public_send(path.to_sym))
+            expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
+          end
+        end
+      end
+    end
+  end
+
   shared_context "with early access user email provided" do
     before do
       post early_access_entry_sign_in_or_up_path(

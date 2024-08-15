@@ -1,4 +1,5 @@
 class EarlyAccessEntryController < BaseController
+  before_action :redirect_to_sign_in_or_up_page_if_signed_in, except: %i[sign_in_or_up confirm_sign_in_or_up]
   before_action :ensure_sign_up_flow_position, except: %i[sign_in_or_up confirm_sign_in_or_up]
   before_action :render_not_accepting_signups_if_sign_ups_disabled, except: %i[sign_in_or_up confirm_sign_in_or_up]
 
@@ -95,5 +96,9 @@ private
 
   def render_not_accepting_signups_if_sign_ups_disabled
     render :not_accepting_signups, status: :forbidden if sign_ups_disabled?
+  end
+
+  def redirect_to_sign_in_or_up_page_if_signed_in
+    redirect_to early_access_entry_sign_in_or_up_path if current_early_access_user
   end
 end
