@@ -27,8 +27,11 @@ shared_accessibility_criteria:
   - link
 examples:
   default:
+    data:
+      logo_href: /chat
   with_navigation_items:
     data:
+      logo_href: /chat
       navigation_items:
       - text: Navigation item 1
         href: "item-1"
