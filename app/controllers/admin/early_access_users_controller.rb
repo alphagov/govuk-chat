@@ -17,9 +17,9 @@ class Admin::EarlyAccessUsersController < Admin::BaseController
     @form = Admin::Form::EarlyAccessUsers::CreateEarlyAccessUserForm.new(create_params)
 
     if @form.valid?
-      @form.submit
+      user = @form.submit
 
-      redirect_to admin_early_access_users_path, notice: "User created"
+      redirect_to admin_early_access_user_path(user), notice: "User created"
     else
       render :new, status: :unprocessable_entity
     end

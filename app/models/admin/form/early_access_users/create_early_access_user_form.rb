@@ -14,5 +14,7 @@ class Admin::Form::EarlyAccessUsers::CreateEarlyAccessUserForm
 
     session = Passwordless::Session.create!(authenticatable: user)
     EarlyAccessAuthMailer.sign_in(session).deliver_now
+
+    user
   end
 end

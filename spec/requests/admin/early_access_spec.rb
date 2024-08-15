@@ -209,14 +209,14 @@ RSpec.describe "Admin::EarlyAccessController" do
   end
 
   describe "POST :create" do
-    it "creates a new user" do
+    it "creates a new user and redirects" do
       post admin_early_access_users_path, params: { create_early_access_user_form: { email: "new.user@example.com" } }
 
-      expect(response).to redirect_to(admin_early_access_users_path)
       expect(EarlyAccessUser.last).to have_attributes(
         email: "new.user@example.com",
         source: "admin_added",
       )
+      expect(response).to redirect_to(admin_early_access_user_path(EarlyAccessUser.last))
     end
 
     it "renders the form with errors" do

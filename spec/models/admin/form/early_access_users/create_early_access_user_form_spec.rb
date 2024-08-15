@@ -35,6 +35,11 @@ RSpec.describe Admin::Form::EarlyAccessUsers::CreateEarlyAccessUserForm do
       )
     end
 
+    it "returns the user" do
+      form = described_class.new(email: "foo@bar.com")
+      expect(form.submit).to eq(EarlyAccessUser.last)
+    end
+
     it "creates a passwordless session and assigns the new user" do
       form = described_class.new(email: "foo@bar.com")
 
