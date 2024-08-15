@@ -1,6 +1,6 @@
 RSpec.describe "components/_chat_header.html.erb" do
   it "renders the chat header component correctly" do
-    render("components/chat_header")
+    render("components/chat_header", logo_href: "/chat")
 
     expect(rendered)
       .to have_selector(".app-c-header")
@@ -8,13 +8,14 @@ RSpec.describe "components/_chat_header.html.erb" do
       .and have_selector(".app-c-header__container")
       .and have_selector(".app-c-header-row")
       .and have_selector(".app-c-header__logo")
-      .and have_selector(".app-c-header__link.app-c-header__link--homepage")
+      .and have_selector(".app-c-header__link.app-c-header__link--homepage[href='/chat']")
       .and have_selector(".app-c-header__logotype")
       .and have_selector(".app-c-header__product-name")
   end
 
   it "renders the chat header with links when navigation_items are specified" do
     render("components/chat_header", {
+      logo_href: "#",
       navigation_items: [
         {
           text: "Item 1",
