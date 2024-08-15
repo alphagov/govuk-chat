@@ -21,6 +21,7 @@ module Chunking
 
     def call
       remove_footnotes
+      remove_script_tags
       strip_attributes
       remove_h1s
       flatten_html
@@ -33,6 +34,10 @@ module Chunking
 
     def remove_footnotes
       doc.css("div.footnotes").each(&:remove)
+    end
+
+    def remove_script_tags
+      doc.css("script").each(&:remove)
     end
 
     def strip_attributes

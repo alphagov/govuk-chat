@@ -4,6 +4,7 @@ module Chunking
       ContentItemParsing::BodyContentArrayParser,
       ContentItemParsing::BodyContentParser,
       ContentItemParsing::PartsContentParser,
+      ContentItemParsing::StepByStepNavParser,
       ContentItemParsing::TransactionParser,
     ].freeze
 

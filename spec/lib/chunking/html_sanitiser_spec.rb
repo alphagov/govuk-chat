@@ -16,6 +16,17 @@ RSpec.describe Chunking::HtmlSanitiser do
         .to eq("<h2>First subheading</h2>\n\n<h2>Heading after footnotes</h2>\n")
     end
 
+    it "strips any script tags" do
+      html = <<~HTML
+        <h2>First subheading</h2>
+        <script>alert('hello')</script>
+        <h2>Heading after script tag</h2>
+      HTML
+
+      expect(described_class.call(html))
+        .to eq("<h2>First subheading</h2>\n\n<h2>Heading after script tag</h2>\n")
+    end
+
     describe "stripping attributes" do
       %w[h2 h3 h4 h5 h6].each do |element|
         it "strips out everything but id for a <#{element}>" do
