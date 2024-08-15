@@ -56,7 +56,7 @@ RSpec.describe "sessions controller" do
         it "doesn't sign a user in" do
           get magic_link
           get protected_path
-          expect(response).to redirect_to(early_access_entry_path)
+          expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
         end
       end
     end
@@ -122,7 +122,7 @@ RSpec.describe "sessions controller" do
 
     it "redirects the user to early access entry point" do
       get sign_out_path
-      expect(response).to redirect_to(early_access_entry_path)
+      expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
     end
 
     it "signs out the user" do
@@ -132,7 +132,7 @@ RSpec.describe "sessions controller" do
       get sign_out_path
 
       get protected_path
-      expect(response).to redirect_to(early_access_entry_path)
+      expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
     end
   end
 end

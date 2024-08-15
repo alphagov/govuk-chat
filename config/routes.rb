@@ -17,8 +17,8 @@ Rails.application.routes.draw do
     get "", to: "chat#index", as: :chat
 
     scope "try-chat" do
-      get "", to: "early_access_entry#new", as: :early_access_entry
-      post "", to: "early_access_entry#create"
+      get "", to: "early_access_entry#sign_in_or_up", as: :early_access_entry_sign_in_or_up
+      post "", to: "early_access_entry#confirm_sign_in_or_up"
 
       get "/you", to: "early_access_entry#user_description", as: :early_access_entry_user_description
       post "/you", to: "early_access_entry#confirm_user_description"

@@ -43,7 +43,7 @@ private
     return if current_early_access_user
 
     save_passwordless_redirect_location!(EarlyAccessUser)
-    redirect_to early_access_entry_path
+    redirect_to early_access_entry_sign_in_or_up_path
   end
 
   def require_onboarding_completed

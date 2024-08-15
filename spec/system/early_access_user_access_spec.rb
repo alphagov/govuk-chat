@@ -28,7 +28,7 @@ RSpec.describe "Early access user access" do
   end
 
   def when_i_visit_the_early_access_signup_page
-    visit early_access_entry_path
+    visit early_access_entry_sign_in_or_up_path
   end
 
   def and_i_enter_my_email_address

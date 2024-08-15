@@ -1,15 +1,15 @@
 class EarlyAccessEntryController < BaseController
-  before_action :ensure_sign_up_flow_position, except: %i[new create]
+  before_action :ensure_sign_up_flow_position, except: %i[sign_in_or_up confirm_sign_in_or_up]
 
-  def new
-    @early_access_entry_form = Form::EarlyAccess::SignInOrUp.new
+  def sign_in_or_up
+    @sign_in_or_up_form = Form::EarlyAccess::SignInOrUp.new
   end
 
-  def create
-    @early_access_entry_form = Form::EarlyAccess::SignInOrUp.new(sign_in_or_up_form_params)
+  def confirm_sign_in_or_up
+    @sign_in_or_up_form = Form::EarlyAccess::SignInOrUp.new(sign_in_or_up_form_params)
 
-    if @early_access_entry_form.valid?
-      result = @early_access_entry_form.submit
+    if @sign_in_or_up_form.valid?
+      result = @sign_in_or_up_form.submit
 
       if result.outcome == :new_user
         session["sign_up"] = { "email" => result.email }
@@ -20,7 +20,7 @@ class EarlyAccessEntryController < BaseController
         render :email_sent
       end
     else
-      render :new, status: :unprocessable_entity
+      render :sign_in_or_up, status: :unprocessable_entity
     end
   end
 
@@ -60,7 +60,7 @@ class EarlyAccessEntryController < BaseController
 private
 
   def sign_in_or_up_form_params
-    params.require(:early_access_entry_form).permit(:email)
+    params.require(:sign_in_or_up_form).permit(:email)
   end
 
   def user_description_form_params
@@ -79,7 +79,7 @@ private
 
   def ensure_sign_up_flow_position
     if session.dig("sign_up", "email").blank?
-      return redirect_to early_access_entry_path
+      return redirect_to early_access_entry_sign_in_or_up_path
     end
 
     if session.dig("sign_up", "user_description").blank? && action_name.match?(/reason_for_visit/)
