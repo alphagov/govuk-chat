@@ -220,6 +220,17 @@ RSpec.describe "early access entry point" do
         )
         expect(session["sign_up"]).to be_nil
       end
+
+      context "and the user already exists in the database" do
+        it "responds with a conflict status and tells the user an account already exists" do
+          create(:early_access_user, email: "email@test.com")
+          post early_access_entry_reason_for_visit_path(
+            reason_for_visit_form: { choice: "find_specific_answer" },
+          )
+          expect(response).to have_http_status(:conflict)
+          expect(response.body).to have_selector(".govuk-heading-xl", text: "Account already exists")
+        end
+      end
     end
   end
 end

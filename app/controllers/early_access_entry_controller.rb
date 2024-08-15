@@ -58,6 +58,8 @@ class EarlyAccessEntryController < BaseController
     else
       render :reason_for_visit, status: :unprocessable_entity
     end
+  rescue Form::EarlyAccess::ReasonForVisit::EarlyAccessUserConflictError
+    render :account_already_exists, status: :conflict
   end
 
 private

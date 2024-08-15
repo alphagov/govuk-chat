@@ -38,6 +38,11 @@ RSpec.describe Form::EarlyAccess::ReasonForVisit do
       expect { form.submit }.to raise_error("No places available")
     end
 
+    it "raises an error when the user already exists" do
+      create(:early_access_user, email: "email@test.com")
+      expect { form.submit }.to raise_error(described_class::EarlyAccessUserConflictError)
+    end
+
     it "locks the settings instance and decrements the instant access places by 1" do
       allow(Settings).to receive(:instance).and_return(settings)
       expect(settings).to receive(:with_lock).and_call_original
