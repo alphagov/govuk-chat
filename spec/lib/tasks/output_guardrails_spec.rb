@@ -33,7 +33,8 @@ RSpec.describe "rake guardrails tasks" do
           expect(results).to include("count", "model")
           expect(results["model"]).to eq(model_name)
 
-          expect(OutputGuardrails::FewShot).to have_received(:call).at_least(110).times
+          examples = CSV.read(Rails.root.join("lib/data/output_guardrails/fewshot_examples.csv"), headers: true).length
+          expect(OutputGuardrails::FewShot).to have_received(:call).exactly(examples).times
         ensure
           temp.close
           temp.unlink
