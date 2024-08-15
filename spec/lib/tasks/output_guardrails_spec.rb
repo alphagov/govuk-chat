@@ -16,30 +16,35 @@ RSpec.describe "rake guardrails tasks" do
       )
     end
     let(:model_name) { OutputGuardrails::FewShot::OPENAI_MODEL }
-    let(:output_file) { Rails.root.join("tmp/output_guardrails_results_#{model_name}.json") }
 
     before do
       Rake::Task[task_name].reenable
       allow(OutputGuardrails::FewShot).to receive(:call).and_return(false_response, true_response)
-      File.delete(output_file) if File.exist?(output_file)
     end
 
-    after do
-      File.delete(output_file) if File.exist?(output_file)
+    context "when given an output path" do
+      it "runs successfully, outputs summary, and saves the results to a file with the given path" do
+        temp = Tempfile.new
+        begin
+          expect { Rake::Task[task_name].invoke(temp.path) }.to output(/count=>[\s\S]*Full results/).to_stdout
+          results = JSON.parse(File.read(temp.path))
+
+          expect(results).to be_a(Hash)
+          expect(results).to include("count", "model")
+          expect(results["model"]).to eq(model_name)
+
+          expect(OutputGuardrails::FewShot).to have_received(:call).at_least(110).times
+        ensure
+          temp.close
+          temp.unlink
+        end
+      end
     end
 
-    it "runs successfully, outputs results, and saves the results to a file with the model name in the path" do
-      expect { Rake::Task[task_name].invoke }.to output.to_stdout
-
-      expect(File).to exist(output_file)
-
-      results = JSON.parse(File.read(output_file))
-
-      expect(results).to be_a(Hash)
-      expect(results).to include("count", "model")
-      expect(results["model"]).to eq(model_name)
-
-      expect(OutputGuardrails::FewShot).to have_received(:call).at_least(110).times
+    context "without an output path" do
+      it "outputs the full structure to the console" do
+        expect { Rake::Task[task_name].invoke }.to output(/count=>[\s\S]*failures=>/).to_stdout
+      end
     end
   end
 end
