@@ -1,4 +1,4 @@
-RSpec.describe Form::EarlyAccessEntry do
+RSpec.describe Form::EarlyAccess::SignInOrUp do
   describe "validations" do
     it "is invalid without an email address" do
       form = described_class.new(email: nil)

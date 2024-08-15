@@ -1,10 +1,10 @@
 class EarlyAccessEntryController < BaseController
   def new
-    @early_access_entry_form = Form::EarlyAccessEntry.new
+    @early_access_entry_form = Form::EarlyAccess::SignInOrUp.new
   end
 
   def create
-    @early_access_entry_form = Form::EarlyAccessEntry.new(form_params)
+    @early_access_entry_form = Form::EarlyAccess::SignInOrUp.new(form_params)
 
     if @early_access_entry_form.valid?
       result = @early_access_entry_form.submit
