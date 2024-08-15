@@ -56,11 +56,8 @@ RSpec.describe "Conversation with OpenAI", :chunked_content_index do
   end
 
   def when_the_first_answer_is_generated
-    stub_openai_chat_completion(
-      array_including({ "role" => "user", "content" => "How much tax should I be paying?" }),
-      "First answer from OpenAI",
-    )
-    stub_openai_output_guardrail_pass("First answer from OpenAI")
+    stub_openai_chat_completion("How much tax should I be paying?", answer: "First answer from OpenAI")
+    stub_openai_output_guardrail("First answer from OpenAI")
     execute_queued_sidekiq_jobs
   end
 
@@ -68,12 +65,8 @@ RSpec.describe "Conversation with OpenAI", :chunked_content_index do
     rephrased = "Rephrased How much tax should I be paying?"
 
     stub_openai_question_rephrasing("Are you sure?", rephrased)
-
-    stub_openai_chat_completion(
-      array_including({ "role" => "user", "content" => rephrased }),
-      "Second answer from OpenAI",
-    )
-    stub_openai_output_guardrail_pass("Second answer from OpenAI")
+    stub_openai_chat_completion(rephrased, answer: "Second answer from OpenAI")
+    stub_openai_output_guardrail("Second answer from OpenAI")
     execute_queued_sidekiq_jobs
   end
 

@@ -1,18 +1,35 @@
 module StubOpenAIChat
-  def stub_openai_chat_completion(chat_history, answer, chat_options: {}, tool_calls: [])
+  def stub_openai_chat_completion(question_or_history, answer: nil, chat_options: {}, tool_calls: nil)
+    history = if question_or_history.is_a?(String)
+                array_including({ "role" => "user", "content" => question_or_history })
+              else
+                question_or_history
+              end
+
+    request_body = hash_including(
+      {
+        "model" => /^gpt/,
+        "messages" => history,
+        "temperature" => 0.0,
+      }.merge(chat_options),
+    )
+
     stub_request(:post, "https://api.openai.com/v1/chat/completions")
       .with(
-        headers: StubOpenAIChat.headers,
-        body: StubOpenAIChat.request_body(chat_history, chat_options:),
+        headers: {
+          "Content-Type" => "application/json",
+          "Authorization" => "Bearer #{Rails.configuration.openai_access_token}",
+        },
+        body: request_body,
       )
       .to_return_json(
         status: 200,
-        body: StubOpenAIChat.response_body(answer, tool_calls:),
+        body: openai_chat_completion_response_body(answer:, tool_calls:),
         headers: {},
       )
   end
 
-  def stub_openai_chat_completion_structured_response(chat_history, answer, chat_options: {})
+  def stub_openai_chat_completion_structured_response(question_or_history, answer, chat_options: {})
     output_schema = Rails.configuration.llm_prompts.openai_structured_answer[:output_schema]
 
     structured_generation_chat_options = chat_options.merge(
@@ -36,19 +53,12 @@ module StubOpenAIChat
       },
     )
 
-    tool_calls = [
-      StubOpenAIChat.tool_call("generate_answer_using_retrieved_contexts", answer),
-    ]
+    tool_calls = [openai_chat_completion_tool_call("generate_answer_using_retrieved_contexts", answer)]
 
-    stub_openai_chat_completion(chat_history, nil, chat_options: structured_generation_chat_options, tool_calls:)
+    stub_openai_chat_completion(question_or_history, chat_options: structured_generation_chat_options, tool_calls:)
   end
 
   def stub_openai_chat_question_routing(question_or_history, tools: an_instance_of(Array), function_name: "genuine_rag", function_arguments: {})
-    history = if question_or_history.is_a?(String)
-                array_including({ "role" => "user", "content" => question_or_history })
-              else
-                question_or_history
-              end
     function_arguments = function_arguments.to_json unless function_arguments.is_a?(String)
 
     chat_options = {
@@ -58,18 +68,14 @@ module StubOpenAIChat
     }
 
     stub_openai_chat_completion(
-      history,
-      nil,
+      question_or_history,
       chat_options:,
-      tool_calls: [StubOpenAIChat.tool_call(function_name, function_arguments)],
+      tool_calls: [openai_chat_completion_tool_call(function_name, function_arguments)],
     )
   end
 
   def stub_openai_chat_completion_error(status: 400, type: "invalid_request_error", code: nil)
     stub_request(:post, "https://api.openai.com/v1/chat/completions")
-      .with(
-        headers: StubOpenAIChat.headers,
-      )
       .to_return_json(
         status:,
         body: {
@@ -92,20 +98,20 @@ module StubOpenAIChat
         { "role" => "system", "content" => config[:system_prompt] },
         { "role" => "user", "content" => a_string_including(original_question) },
       ),
-      rephrased_question,
+      answer: rephrased_question,
     )
   end
 
-  def stub_openai_output_guardrail_pass(answer)
+  def stub_openai_output_guardrail(to_check, response = "False | None")
     stub_openai_chat_completion(
-      array_including({ "role" => "user", "content" => Regexp.new(answer) }),
-      "False | None",
+      array_including({ "role" => "user", "content" => a_string_including(to_check) }),
+      answer: response,
       chat_options: { model: OutputGuardrails::FewShot::OPENAI_MODEL,
                       max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS },
     )
   end
 
-  def self.response_body(answer, tool_calls:)
+  def openai_chat_completion_response_body(answer: nil, tool_calls: nil)
     {
       id: "chatcmpl-abc123",
       object: "chat.completion",
@@ -121,32 +127,20 @@ module StubOpenAIChat
           message: {
             role: "assistant",
             content: answer,
-            tool_calls:,
           },
           logprobs: nil,
           finish_reason: "stop",
           index: 0,
         },
       ],
-    }
+    }.tap do |body|
+      next unless tool_calls
+
+      body.dig(:choices, 0, :message).merge!(tool_calls:)
+    end
   end
 
-  def self.headers
-    {
-      "Content-Type" => "application/json",
-      "Authorization" => "Bearer #{Rails.configuration.openai_access_token}",
-    }
-  end
-
-  def self.request_body(messages, chat_options:)
-    {
-      model: "gpt-4o-mini",
-      messages:,
-      temperature: 0.0,
-    }.merge(chat_options)
-  end
-
-  def self.tool_call(name, arguments)
+  def openai_chat_completion_tool_call(name, arguments)
     {
       id: "call_#{SecureRandom.hex(12)}",
       type: "function",
