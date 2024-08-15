@@ -1,4 +1,6 @@
 RSpec.describe "early access entry point" do
+  before { create(:settings) }
+
   it_behaves_like "redirects user to instant access start page when email is not in the sign_up session",
                   routes: {
                     early_access_entry_user_description_path: %i[get post],
@@ -7,6 +9,12 @@ RSpec.describe "early access entry point" do
 
   it_behaves_like "redirects user to user description path when email is set in the session but user description isn't",
                   routes: { early_access_entry_reason_for_visit_path: %i[get post] }
+
+  it_behaves_like "renders not_accepting_signups page when Settings#sign_up_enabled is false",
+                  routes: {
+                    early_access_entry_user_description_path: %i[get post],
+                    early_access_entry_reason_for_visit_path: %i[get post],
+                  }
 
   describe "GET :sign_in_or_up" do
     it "renders successfully" do

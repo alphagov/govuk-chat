@@ -1,5 +1,6 @@
 RSpec.describe "Early access user access" do
   scenario "new user signs up" do
+    given_sign_ups_are_enabled
     when_i_visit_the_early_access_signup_page
     and_i_enter_my_email_address
     and_i_choose_my_description
@@ -11,7 +12,8 @@ RSpec.describe "Early access user access" do
   end
 
   scenario "returning user signs in" do
-    given_i_am_a_returning_user
+    given_sign_ups_are_enabled
+    and_i_am_a_returning_user
     when_i_visit_the_early_access_signup_page
     and_i_enter_my_email_address
     then_i_am_told_i_have_been_sent_an_email_address
@@ -21,10 +23,24 @@ RSpec.describe "Early access user access" do
   end
 
   scenario "revoked user attempts to sign in" do
-    given_i_am_a_returning_user_with_revoked_access
+    given_sign_ups_are_enabled
+    and_i_am_a_returning_user_with_revoked_access
     when_i_visit_the_early_access_signup_page
     and_i_enter_my_email_address
     then_i_am_told_i_do_not_have_access
+  end
+
+  scenario "signups are disabled by an admin mid flow" do
+    given_sign_ups_are_enabled
+    when_i_visit_the_early_access_signup_page
+    and_i_enter_my_email_address
+    and_an_admin_toggles_off_signups
+    and_i_choose_my_description
+    then_i_see_the_signups_are_disabled_page
+  end
+
+  def given_sign_ups_are_enabled
+    @settings = create(:settings, sign_up_enabled: true)
   end
 
   def when_i_visit_the_early_access_signup_page
@@ -61,17 +77,25 @@ RSpec.describe "Early access user access" do
     expect(page).to have_content("Introduction to GOV.UK Chat and its limitations")
   end
 
-  def given_i_am_a_returning_user
+  def and_i_am_a_returning_user
     user = create(:early_access_user)
     @email = user.email
   end
 
-  def given_i_am_a_returning_user_with_revoked_access
+  def and_i_am_a_returning_user_with_revoked_access
     user = create(:early_access_user, :revoked)
     @email = user.email
   end
 
   def then_i_am_told_i_do_not_have_access
     expect(page).to have_content("You do not have access to GOV.UK Chat.")
+  end
+
+  def and_an_admin_toggles_off_signups
+    @settings.update!(sign_up_enabled: false)
+  end
+
+  def then_i_see_the_signups_are_disabled_page
+    expect(page).to have_content("GOV.UK Chat is no longer open for new users")
   end
 end
