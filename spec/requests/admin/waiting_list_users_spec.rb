@@ -200,4 +200,41 @@ RSpec.describe "Admin::WaitingListUsersController" do
         .and have_content("find_specific_answer")
     end
   end
+
+  describe "GET :new" do
+    it "renders the form" do
+      get new_admin_waiting_list_user_path
+      expect(response).to have_http_status(:ok)
+
+      expect(response.body).to have_content("New waiting list user")
+    end
+  end
+
+  describe "POST :create" do
+    it "creates a new user and redirects" do
+      post admin_waiting_list_users_path,
+           params: {
+             create_waiting_list_user_form: {
+               email: "new.user@example.com",
+               user_description: "business_administrator",
+               reason_for_visit: "research_topic",
+             },
+           }
+
+      expect(WaitingListUser.last).to have_attributes(
+        email: "new.user@example.com",
+        user_description: "business_administrator",
+        reason_for_visit: "research_topic",
+        source: "admin_added",
+      )
+      expect(response).to redirect_to(admin_waiting_list_user_path(WaitingListUser.last))
+    end
+
+    it "renders the form with errors" do
+      post admin_waiting_list_users_path, params: { create_waiting_list_user_form: { email: "" } }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to have_content("Enter an email address")
+    end
+  end
 end

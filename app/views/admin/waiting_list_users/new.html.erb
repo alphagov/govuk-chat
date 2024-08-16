@@ -1,0 +1,68 @@
+<%= content_for :title, "New waiting list user" %>
+
+<%= content_for :breadcrumbs do %>
+  <%= render "govuk_publishing_components/components/breadcrumbs", {
+    collapse_on_mobile: true,
+    breadcrumbs: [
+      {
+        title: "Waiting list users",
+        url: admin_waiting_list_users_path,
+      },
+      {
+        title: "New waiting list user",
+      },
+    ],
+  } %>
+<% end %>
+
+<%= render "shared/error_summary",
+  model: @form,
+  anchor_mappings: {
+    email: "#create_waiting_list_user_form_email",
+  } %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <%= form_with url: admin_waiting_list_users_path, method: :post do |f| %>
+      <%= render "govuk_publishing_components/components/input", {
+        label: {
+          text: "Email address",
+        },
+        name: "create_waiting_list_user_form[email]",
+        id: "create_waiting_list_user_form_email",
+        value: @form.email,
+        error_items: error_items(@form, :email),
+      } %>
+
+      <%= render "govuk_publishing_components/components/select", {
+        id: "create_waiting_list_user_form_user_description",
+        name: "create_waiting_list_user_form[user_description]",
+        label: "User research description",
+        full_width: true,
+        options: ([""] + WaitingListUser.user_descriptions.keys).map do |description|
+          {
+            text: description.humanize,
+            value: description,
+          }
+        end,
+      } %>
+
+      <%= render "govuk_publishing_components/components/select", {
+        id: "create_waiting_list_user_form_reason_for_visit",
+        name: "create_waiting_list_user_form[reason_for_visit]",
+        label: "User research reason for visit",
+        full_width: true,
+        options: ([""] + WaitingListUser.reason_for_visits.keys).map do |description|
+          {
+            text: description.humanize,
+            value: description,
+          }
+        end,
+      } %>
+
+      <%= render "govuk_publishing_components/components/button", {
+        text: "Submit",
+      } %>
+    <% end %>
+  </div>
+</div>
