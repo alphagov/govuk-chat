@@ -30,15 +30,23 @@
 <% content_for :content do %>
   <main class="app-conversation-layout__main" id="content" role="main" data-module="conversation-onboarding-flow">
     <%= tag.div(class: "app-conversation-layout__wrapper js-module-wrapper", data: @conversation_data_attributes) do %>
-      <div class="app-conversation-layout__message-container">
+      <div class="app-conversation-layout__message-container" aria-labelledby="chat-history" role="region">
         <div class="app-conversation-layout__width-container">
           <%= yield(:alerts) if content_for?(:alerts) %>
 
           <h1 class="govuk-visually-hidden js-title"><%= page_title %></h1>
 
-          <ul class="app-conversation-layout__list js-conversation-list">
-            <%= yield %>
+          <h2 id="chat-history" class="govuk-visually-hidden">Chat history</h2>
+          <ul class="app-conversation-layout__list js-chat-history-list">
+            <%= yield(:message_history) %>
           </ul>
+
+          <div tabindex="-1" role="region" aria-labelledby="new-messages">
+            <h2 id="new-messages" class="govuk-visually-hidden">New messages</h2>
+            <ul class="app-conversation-layout__list">
+              <%= yield(:new_messages) %>
+            </ul>
+          </div>
         </div>
       </div>
 
