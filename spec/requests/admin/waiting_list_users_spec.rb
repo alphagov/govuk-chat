@@ -6,6 +6,12 @@ RSpec.describe "Admin::WaitingListUsersController" do
       expect(response).to have_http_status(:ok)
     end
 
+    it "renders a link to the new user form" do
+      get admin_waiting_list_users_path
+
+      expect(response.body).to have_link("Add user", href: new_admin_waiting_list_user_path)
+    end
+
     it "renders an empty state" do
       get admin_waiting_list_users_path
 
