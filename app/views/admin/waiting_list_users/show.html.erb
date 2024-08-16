@@ -1,0 +1,45 @@
+<%= content_for :title, "User details" %>
+
+<%= content_for :breadcrumbs do %>
+  <%= render "govuk_publishing_components/components/breadcrumbs", {
+    collapse_on_mobile: true,
+    breadcrumbs: [
+      {
+        title: "Waiting list users",
+        url: admin_waiting_list_users_path,
+      },
+      {
+        title: "User details",
+      },
+    ],
+  } %>
+<% end %>
+
+<%
+  summary_items = [
+    {
+      field: "Email",
+      value: @user.email,
+    },
+    {
+      field: "Created",
+      value: @user.created_at.to_fs(:time_and_date),
+    },
+    {
+      field: "Source",
+      value: @user.source.humanize,
+    },
+    {
+      field: "User research: description",
+      value: @user.user_description,
+    },
+    {
+      field: "User research: reason for visit",
+      value: @user.reason_for_visit,
+    },
+  ]
+%>
+
+<%= render "govuk_publishing_components/components/summary_list", {
+  items: summary_items,
+} %>
