@@ -9,5 +9,6 @@
 //= require components/chat-header
 //= require components/conversation-form
 //= require modules/chat-conversation
+//= require modules/conversation-message-lists
 //= require modules/conversation-onboarding-flow
 //= require modules/onboarding

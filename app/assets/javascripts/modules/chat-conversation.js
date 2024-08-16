@@ -7,26 +7,30 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.module = module
       this.formComponent = this.module.querySelector('.js-conversation-form-wrapper')
       this.form = this.module.querySelector('.js-conversation-form')
-      this.conversationList = this.module.querySelector('.js-conversation-list')
+      this.messageLists = new Modules.ConversationMessageLists(this.module.querySelector('.js-conversation-message-lists'))
       this.pendingAnswerUrl = this.module.dataset.pendingAnswerUrl
       this.ANSWER_INTERVAL = 500
-
-      this.QUESTION_LOADNG_TIMEOUT = 500
-      this.loadingAnswerTemplate = this.module.querySelector('#js-loading-answer')
-      this.loadingQuestionTemplate = this.module.querySelector('#js-loading-question')
     }
 
     init () {
-      // if there is an existing conversation on page load, scroll to the latest message
-      if (this.conversationList.children.length > 0) {
-        this.scrollToMessage(this.conversationList.lastElementChild)
-      }
-
+      this.module.addEventListener('conversation-append', e => this.conversationAppend(e))
       this.formComponent.addEventListener('submit', e => this.handleFormSubmission(e))
+
+      // existing new messages indicates we are in onboarding
+      if (this.messageLists.hasNewMessages()) {
+        this.formComponent.classList.add('govuk-visually-hidden')
+        this.messageLists.progressivelyDiscloseMessages().then(() => {
+          this.formComponent.classList.remove('govuk-visually-hidden')
+          this.messageLists.scrollToLastNewMessage()
+        })
+      } else {
+        this.messageLists.scrollToLastMessageInHistory()
+      }
 
       if (!this.pendingAnswerUrl) return
 
       const loadPendingAnswer = () => {
+        this.messageLists.renderAnswerLoading()
         this.checkAnswer()
         this.formComponent.dispatchEvent(new Event('question-accepted'))
       }
@@ -44,10 +48,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       try {
         this.formComponent.dispatchEvent(new Event('question-pending'))
 
-        let questionLoadingElement
-        const loadingTimeout = setTimeout(() => {
-          questionLoadingElement = this.startLoading(this.loadingQuestionTemplate)
-        }, this.QUESTION_LOADNG_TIMEOUT)
+        this.messageLists.moveNewMessagesToHistory()
+        this.messageLists.renderQuestionLoading()
 
         const formData = new FormData(this.form)
         const response = await fetch(this.form.action, {
@@ -57,12 +59,11 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
             Accept: 'application/json'
           }
         })
-        clearTimeout(loadingTimeout)
-        if (questionLoadingElement) this.conversationList.removeChild(questionLoadingElement)
+
         await this.handleQuestionResponse(response)
-        this.answerLoadingElement = this.startLoading(this.loadingAnswerTemplate)
 
         if (this.pendingAnswerUrl) {
+          this.messageLists.renderAnswerLoading()
           setTimeout(() => this.checkAnswer(), this.ANSWER_INTERVAL)
         }
       } catch (error) {
@@ -75,9 +76,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       switch (response.status) {
         case 201: {
           const responseJson = await response.json()
-
-          this.conversationList.insertAdjacentHTML('beforeend', responseJson.question_html)
-          this.scrollToMessage(this.conversationList.lastElementChild)
+          this.messageLists.renderQuestion(responseJson.question_html)
 
           this.formComponent.dispatchEvent(new Event('question-accepted'))
 
@@ -86,6 +85,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         }
         case 422: {
           const responseJson = await response.json()
+          this.messageLists.resetQuestionLoading()
 
           this.formComponent.dispatchEvent(
             new CustomEvent('question-rejected', {
@@ -110,18 +110,11 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
           case 200: {
             const responseJson = await response.json()
 
-            if (this.answerLoadingElement) this.conversationList.removeChild(this.answerLoadingElement)
-
-            this.conversationList.insertAdjacentHTML('beforeend', responseJson.answer_html)
-            const answer = this.conversationList.lastElementChild
-            answer.classList.add('app-c-conversation-message--fade-in')
-
-            window.GOVUK.modules.start(this.conversationList)
+            this.messageLists.renderAnswer(responseJson.answer_html)
 
             this.pendingAnswerUrl = null
 
             this.formComponent.dispatchEvent(new Event('answer-received'))
-            this.scrollToMessage(answer)
             break
           }
           case 202: {
@@ -137,21 +130,15 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       }
     }
 
+    async conversationAppend (event) {
+      this.formComponent.classList.add('govuk-visually-hidden')
+      await this.messageLists.appendNewProgressivelyDisclosedMessages(event.detail.html)
+      this.formComponent.classList.remove('govuk-visually-hidden')
+      this.messageLists.scrollToLastNewMessage()
+    }
+
     redirect (url) {
       window.location.href = url
-    }
-
-    scrollToMessage (lastElementChild) {
-      lastElementChild.scrollIntoView()
-    }
-
-    startLoading (template) {
-      this.conversationList.appendChild(template.content.cloneNode(true))
-
-      const loadingElement = this.conversationList.lastElementChild
-      this.scrollToMessage(loadingElement)
-
-      return loadingElement
     }
   }
 

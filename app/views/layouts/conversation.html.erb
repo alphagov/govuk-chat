@@ -36,16 +36,20 @@
 
           <h1 class="govuk-visually-hidden js-title"><%= page_title %></h1>
 
-          <h2 id="chat-history" class="govuk-visually-hidden">Chat history</h2>
-          <ul class="app-conversation-layout__list js-chat-history-list">
-            <%= yield(:message_history) %>
-          </ul>
-
-          <div tabindex="-1" role="region" aria-labelledby="new-messages">
-            <h2 id="new-messages" class="govuk-visually-hidden">New messages</h2>
-            <ul class="app-conversation-layout__list">
-              <%= yield(:new_messages) %>
+          <div class="js-conversation-message-lists">
+            <h2 id="chat-history" class="govuk-visually-hidden">Chat history</h2>
+            <ul class="app-conversation-layout__list js-message-history-list">
+              <%= yield(:message_history) %>
             </ul>
+
+            <div tabindex="-1" role="region" aria-labelledby="new-messages">
+              <h2 id="new-messages" class="govuk-visually-hidden">New messages</h2>
+              <ul class="app-conversation-layout__list js-new-messages-list">
+                <%= yield(:new_messages) %>
+              </ul>
+            </div>
+
+            <%= render "conversations/loading_messages" %>
           </div>
         </div>
       </div>
@@ -56,7 +60,6 @@
         </div>
       </div>
 
-      <%= render "conversations/loading_messages" %>
     <% end %>
   </main>
 <% end %>

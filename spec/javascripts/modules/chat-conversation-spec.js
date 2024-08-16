@@ -1,27 +1,24 @@
-/* global asymmetricMatchers */
-
 describe('ChatConversation module', () => {
-  let moduleElement, module, conversationList, formComponent, form
+  let moduleElement, module, formComponent, form
+  const longWaitForProgressiveDisclosure = 60000
 
   beforeEach(() => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
-      <ul class="js-conversation-list"></ul>
+      <div class="js-conversation-message-lists">
+        <ul class="js-message-history-list"></ul>
+        <ul class="js-new-messages-list"></ul>
+        <template class="js-loading-question"><li>Loading</li></template>
+        <template class="js-loading-answer"><li>Loading</li></template>
+      </div>
       <div class="js-conversation-form-wrapper">
         <form action="/conversation" class="js-conversation-form">
           <input type="text" name="question" value="How can I setup a new business?">
         </form>
       </div>
-      <template id="js-loading-question">
-        <p id="loading-question-content">Loading question...</p>
-      </template>
-      <template id="js-loading-answer">
-        <p id="loading-answer-content">Loading answer...</p>
-      </template>
     `
 
     document.body.appendChild(moduleElement)
-    conversationList = moduleElement.querySelector('.js-conversation-list')
     formComponent = moduleElement.querySelector('.js-conversation-form-wrapper')
     form = moduleElement.querySelector('.js-conversation-form')
 
@@ -33,6 +30,15 @@ describe('ChatConversation module', () => {
   })
 
   describe('init', () => {
+    it('executes conversationAppend on the conversation-append event', () => {
+      const conversationAppendSpy = spyOn(module, 'conversationAppend')
+
+      module.init()
+      moduleElement.dispatchEvent(new Event('conversation-append'))
+
+      expect(conversationAppendSpy).toHaveBeenCalled()
+    })
+
     it('adds an event listener for handleFormSubmission for form component submit events', () => {
       const handleFormSubmissionSpy = spyOn(module, 'handleFormSubmission')
 
@@ -42,14 +48,70 @@ describe('ChatConversation module', () => {
       expect(handleFormSubmissionSpy).toHaveBeenCalled()
     })
 
+    describe('when initialised with existing new messages to indicate an onboarding status', () => {
+      beforeEach(() => {
+        const newMessagesList = moduleElement.querySelector('.js-new-messages-list')
+        newMessagesList.innerHTML = `
+          <li class="js-conversation-message">Message 1</li>
+          <li class="js-conversation-message">Message 2</li>
+        `
+      })
+
+      it('delegates to messageLists to progressively disclose messages', () => {
+        const progressivelyDiscloseMessagesSpy = spyOn(module.messageLists, 'progressivelyDiscloseMessages').and.resolveTo()
+
+        module.init()
+
+        expect(progressivelyDiscloseMessagesSpy).toHaveBeenCalled()
+      })
+
+      it('hides the form component prior to disclosing messages and then shows it', done => {
+        jasmine.clock().install()
+
+        module.init()
+
+        // using toHaveClass matcher was triggering a "stale element" error so using other matcher
+        expect(formComponent.classList).toContain('govuk-visually-hidden')
+
+        jasmine.clock().tick(longWaitForProgressiveDisclosure)
+        jasmine.clock().uninstall()
+
+        // timeout to ensure promise callbacks are executed
+        window.setTimeout(() => {
+          expect(formComponent.classList).not.toContain('govuk-visually-hidden')
+          done()
+        }, 0)
+      })
+    })
+
+    describe('when initialised without existing new messages', () => {
+      it('delegates to messageLists to scroll to last message', () => {
+        const scrollToLastMessageInHistorySpy = spyOn(module.messageLists, 'scrollToLastMessageInHistory')
+
+        module.init()
+
+        expect(scrollToLastMessageInHistorySpy).toHaveBeenCalled()
+      })
+    })
+
     describe('when there is a pendingAnswerUrl and the form component is initialised', () => {
+      let checkAnswerSpy
+
       beforeEach(() => {
         module.pendingAnswerUrl = '/answer'
         formComponent.dataset.conversationFormModuleStarted = 'true'
+        checkAnswerSpy = spyOn(module, 'checkAnswer')
+      })
+
+      it('delegates to messageLists to render an answer loading state', () => {
+        const renderAnswerLoadingSpy = spyOn(module.messageLists, 'renderAnswerLoading')
+
+        module.init()
+
+        expect(renderAnswerLoadingSpy).toHaveBeenCalled()
       })
 
       it('starts checking for an answer and dispatches an event so the form is in the correct state', () => {
-        const checkAnswerSpy = spyOn(module, 'checkAnswer')
         const formComponentEventSpy = spyOn(formComponent, 'dispatchEvent')
 
         module.init()
@@ -79,32 +141,6 @@ describe('ChatConversation module', () => {
         expect(checkAnswerSpy).toHaveBeenCalled()
         const expectedEvent = jasmine.objectContaining({ type: 'question-accepted' })
         expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
-      })
-    })
-
-    describe('if there are pre-existing chat messages', () => {
-      it('scrolls the most recent question into view if an answer has not yet been generated', () => {
-        conversationList.innerHTML = '<li class="js-conversation-message" id="question_321"></li>'
-
-        // declare a new instance of module so it can take the above HTML into account when it's instantiated
-        module = new window.GOVUK.Modules.ChatConversation(moduleElement)
-        const scrollToMessageSpy = spyOn(module, 'scrollToMessage')
-
-        module.init()
-
-        expect(scrollToMessageSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#question_321'))
-      })
-
-      it('scrolls the most recent answer into view if the answer has been generated', () => {
-        conversationList.innerHTML = '<li class="js-conversation-message" id="answer_321"></li>'
-
-        // declare a new instance of module so it can take the above HTML into account when it's instantiated
-        module = new window.GOVUK.Modules.ChatConversation(moduleElement)
-        const scrollToMessageSpy = spyOn(module, 'scrollToMessage')
-
-        module.init()
-
-        expect(scrollToMessageSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#answer_321'))
       })
     })
   })
@@ -143,37 +179,22 @@ describe('ChatConversation module', () => {
       expect(preventDefaultSpy).toHaveBeenCalled()
     })
 
-    describe('question loading message', () => {
-      let startLoadingSpy, scrollToMessageSpy
+    it('delegates to messageLists to move any new messages to history', async () => {
+      const moveNewMessagesToHistorySpy = spyOn(module.messageLists, 'moveNewMessagesToHistory')
+      const event = new Event('submit')
 
-      beforeEach(() => {
-        startLoadingSpy = spyOn(module, 'startLoading').and.callThrough()
-        scrollToMessageSpy = spyOn(module, 'scrollToMessage')
-      })
+      await module.handleFormSubmission(event)
 
-      it('shows the question loading message when the request is slow', async () => {
-        fetchSpy.and.callFake(() => {
-          return new Promise(resolve => {
-            // slow down the question submission request so the question loading message appears
-            jasmine.clock().tick(1000)
-            resolve(new Response(JSON.stringify(successfulQuestionResponseJson), { status: 201 }))
-          })
-        })
+      expect(moveNewMessagesToHistorySpy).toHaveBeenCalled()
+    })
 
-        await module.handleFormSubmission(new Event('submit'))
+    it('delegates to messageLists to render a loading question state', async () => {
+      const renderQuestionLoadingSpy = spyOn(module.messageLists, 'renderQuestionLoading')
+      const event = new Event('submit')
 
-        expect(startLoadingSpy).toHaveBeenCalledWith(module.loadingQuestionTemplate)
-        expect(scrollToMessageSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#loading-question-content'))
+      await module.handleFormSubmission(event)
 
-        // the loading message should have been cleared from the DOM
-        expect(conversationList.textContent).not.toContain('Loading question...')
-      })
-
-      it('does not show the question loading message when the request is fast', async () => {
-        await module.handleFormSubmission(new Event('submit'))
-
-        expect(startLoadingSpy).not.toHaveBeenCalledWith(module.loadingQuestionTemplate)
-      })
+      expect(renderQuestionLoadingSpy).toHaveBeenCalled()
     })
 
     it('submits a JSON fetch request to the action of the form', async () => {
@@ -201,32 +222,18 @@ describe('ChatConversation module', () => {
     })
 
     describe('when receiving a successful question response', () => {
-      it('appends the question HTML to the conversation list', async () => {
+      it('delegates to messageLists to render the question', async () => {
+        const renderQuestionSpy = spyOn(module.messageLists, 'renderQuestion')
         await module.handleFormSubmission(new Event('submit'))
 
-        expect(conversationList.textContent).toContain('How can I setup a new business?')
+        expect(renderQuestionSpy).toHaveBeenCalledWith(successfulQuestionResponseJson.question_html)
       })
 
-      it('appends the answer loading message to the conversation list', async () => {
+      it('delegates to messageLists to render loading an answer', async () => {
+        const renderAnswerLoadingSpy = spyOn(module.messageLists, 'renderAnswerLoading')
         await module.handleFormSubmission(new Event('submit'))
 
-        expect(conversationList.textContent).toContain('Loading answer...')
-      })
-
-      it('scrolls the answer loading message into view', async () => {
-        const scrollToMessageSpy = spyOn(module, 'scrollToMessage')
-
-        await module.handleFormSubmission(new Event('submit'))
-
-        expect(scrollToMessageSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#loading-answer-content'))
-      })
-
-      it('scrolls the question into view', async () => {
-        const scrollToMessageSpy = spyOn(module, 'scrollToMessage')
-
-        await module.handleFormSubmission(new Event('submit'))
-
-        expect(scrollToMessageSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#question_123'))
+        expect(renderAnswerLoadingSpy).toHaveBeenCalled()
       })
 
       it('dispatches a "question-accepted" event on the form component element', async () => {
@@ -249,7 +256,7 @@ describe('ChatConversation module', () => {
     })
 
     describe('when receiving an unproccessible entity response', () => {
-      it('dispatches a "question-rejected" event on the form component element', async () => {
+      beforeEach(() => {
         const responseJson = {
           error_messages: ['form error']
         }
@@ -257,13 +264,23 @@ describe('ChatConversation module', () => {
         fetchSpy.and.resolveTo(
           new Response(JSON.stringify(responseJson), { status: 422 })
         )
+      })
 
+      it('dispatches a "question-rejected" event on the form component element', async () => {
         const formComponentEventSpy = spyOn(module.formComponent, 'dispatchEvent')
 
         await module.handleFormSubmission(new Event('submit'))
 
         const expectedEvent = jasmine.objectContaining({ type: 'question-rejected', detail: { errorMessages: ['form error'] } })
         expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
+      })
+
+      it('delegates to messageLists to reset question loading', async () => {
+        const resetQuestionLoadingSpy = spyOn(module.messageLists, 'resetQuestionLoading')
+
+        await module.handleFormSubmission(new Event('submit'))
+
+        expect(resetQuestionLoadingSpy).toHaveBeenCalled()
       })
     })
 
@@ -314,12 +331,14 @@ describe('ChatConversation module', () => {
     })
 
     describe('when the answer is ready', () => {
+      let answerHtml
+
       beforeEach(() => {
         module.pendingAnswerUrl = '/answer'
 
-        const responseJson = {
-          answer_html: '<li id="answer_123">Your answer</li>'
-        }
+        answerHtml = '<li id="answer_123">your answer</li>'
+
+        const responseJson = { answer_html: answerHtml }
 
         spyOn(window, 'fetch').and.resolveTo(
           new Response(JSON.stringify(responseJson), {
@@ -328,19 +347,12 @@ describe('ChatConversation module', () => {
         )
       })
 
-      it('appends the answer to the conversation list', async () => {
-        await module.checkAnswer()
-
-        expect(conversationList.children.length).toEqual(1)
-        expect(conversationList.textContent).toContain('Your answer')
-      })
-
-      it('scrolls the answer into view', async () => {
-        const scrollToMessageSpy = spyOn(module, 'scrollToMessage')
+      it('delegates to messageLists to render the answer', async () => {
+        const renderAnswerSpy = spyOn(module.messageLists, 'renderAnswer')
 
         await module.checkAnswer()
 
-        expect(scrollToMessageSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#answer_123'))
+        expect(renderAnswerSpy).toHaveBeenCalledWith(answerHtml)
       })
 
       it('resets the "pendingAnswerUrl" value', async () => {
@@ -356,27 +368,6 @@ describe('ChatConversation module', () => {
 
         const expectedEvent = jasmine.objectContaining({ type: 'answer-received' })
         expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
-      })
-
-      it('starts any nested modules', async () => {
-        const startSpy = spyOn(window.GOVUK.modules, 'start')
-
-        await module.checkAnswer()
-
-        expect(startSpy).toHaveBeenCalledWith(conversationList)
-      })
-
-      it('removes the answer loading message', async () => {
-        const answerElement = document.createElement('li')
-        answerElement.innerHTML = 'Loading answer'
-        conversationList.appendChild(answerElement)
-        module.answerLoadingElement = answerElement
-
-        expect(conversationList.textContent).toContain('Loading answer')
-
-        await module.checkAnswer()
-
-        expect(conversationList.textContent).not.toContain('Loading answer')
       })
     })
 
@@ -413,6 +404,56 @@ describe('ChatConversation module', () => {
 
         expect(redirectSpy).toHaveBeenCalledWith(answerUrl)
       })
+    })
+  })
+
+  describe('handle conversationAppend event', () => {
+    let event
+
+    beforeEach(() => {
+      event = new CustomEvent(
+        'conversation-append',
+        {
+          detail: {
+            html: `
+              <li class="js-conversation-message">To show</li>
+              <li class="js-conversation-message">To disclose</li>
+            `
+          }
+        }
+      )
+    })
+
+    it('delegates to messageLists to append new progressively disclosed messages', () => {
+      module.init()
+
+      const appendNewProgressivelyDisclosedMessagesSpy = spyOn(
+        module.messageLists,
+        'appendNewProgressivelyDisclosedMessages'
+      )
+
+      moduleElement.dispatchEvent(event)
+
+      expect(appendNewProgressivelyDisclosedMessagesSpy).toHaveBeenCalled()
+    })
+
+    it('hides the formComponent prior to disclosing messages and then shows it after', done => {
+      jasmine.clock().install()
+
+      module.init()
+
+      moduleElement.dispatchEvent(event)
+
+      expect(formComponent).toHaveClass('govuk-visually-hidden')
+
+      jasmine.clock().tick(longWaitForProgressiveDisclosure)
+      jasmine.clock().uninstall()
+
+      // timeout to ensure promise callbacks are executed
+      window.setTimeout(() => {
+        expect(formComponent).not.toHaveClass('govuk-visually-hidden')
+        done()
+      }, 0)
     })
   })
 })
