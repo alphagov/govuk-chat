@@ -199,6 +199,14 @@ RSpec.describe "Admin::WaitingListUsersController" do
         .and have_content("business_owner_or_self_employed")
         .and have_content("find_specific_answer")
     end
+
+    it "includes a link to the edit page" do
+      user = create(:waiting_list_user)
+
+      get admin_waiting_list_user_path(user)
+
+      expect(response.body).to have_link("Edit user", href: edit_admin_waiting_list_user_path(user))
+    end
   end
 
   describe "GET :new" do
