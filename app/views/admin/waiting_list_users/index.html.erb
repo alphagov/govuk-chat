@@ -1,0 +1,14 @@
+<%= content_for :title, "Waiting list users" %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-third">
+    <%= render "user_filters", filter: @filter %>
+  </div>
+
+  <div class="govuk-grid-column-two-thirds">
+    <%= render "users_table", {
+      filter: @filter,
+      path: :admin_waiting_list_users_path,
+    } %>
+  </div>
+</div>
