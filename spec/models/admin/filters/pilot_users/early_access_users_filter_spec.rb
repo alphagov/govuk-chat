@@ -1,4 +1,4 @@
-RSpec.describe Admin::Form::EarlyAccessUsersFilter do
+RSpec.describe Admin::Filters::PilotUsers::EarlyAccessUsersFilter do
   describe "#users" do
     describe "ordering" do
       let!(:logged_in_1_min_ago) { create(:early_access_user, email: "alice@example.com", last_login_at: 1.minute.ago) }
