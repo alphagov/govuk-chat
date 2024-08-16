@@ -200,12 +200,14 @@ RSpec.describe "Admin::WaitingListUsersController" do
         .and have_content("find_specific_answer")
     end
 
-    it "includes a link to the edit page" do
+    it "includes a link to the edit and delete pages" do
       user = create(:waiting_list_user)
 
       get admin_waiting_list_user_path(user)
 
-      expect(response.body).to have_link("Edit user", href: edit_admin_waiting_list_user_path(user))
+      expect(response.body)
+        .to have_link("Edit user", href: edit_admin_waiting_list_user_path(user))
+        .and have_link("Delete user", href: delete_admin_waiting_list_user_path(user))
     end
   end
 
@@ -297,6 +299,29 @@ RSpec.describe "Admin::WaitingListUsersController" do
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to have_content("There is already an early access user with this email address")
+    end
+  end
+
+  describe "GET :delete" do
+    it "renders the delete confirmation page" do
+      user = create(:waiting_list_user)
+
+      get delete_admin_waiting_list_user_path(user)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to have_content("Are you sure you want to delete this user?")
+    end
+  end
+
+  describe "DELETE :destroy" do
+    it "deletes the user and redirects" do
+      user = create(:waiting_list_user)
+
+      expect { delete admin_waiting_list_user_path(user) }.to change(WaitingListUser, :count).by(-1)
+
+      expect(WaitingListUser.find_by_id(user.id)).to be_nil
+
+      expect(response).to redirect_to(admin_waiting_list_users_path)
     end
   end
 end

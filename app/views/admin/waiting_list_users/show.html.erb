@@ -46,6 +46,12 @@
   margin_bottom: true,
 } %>
 
+<%= render "govuk_publishing_components/components/button", {
+  text: "Delete user",
+  href: delete_admin_waiting_list_user_path(@user),
+  destructive: true,
+} %>
+
 <%= render "govuk_publishing_components/components/summary_list", {
   items: summary_items,
 } %>

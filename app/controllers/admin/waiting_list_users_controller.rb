@@ -50,6 +50,18 @@ class Admin::WaitingListUsersController < Admin::BaseController
     end
   end
 
+  def delete
+    @user = WaitingListUser.find(params[:id])
+  end
+
+  def destroy
+    user = WaitingListUser.find(params[:id])
+
+    user.destroy!
+
+    redirect_to admin_waiting_list_users_path, notice: "User deleted"
+  end
+
 private
 
   def user_params
