@@ -1,5 +1,5 @@
 .app-c-chat-introduction {
-  padding: 100px 0 govuk-spacing(6); // setting the padding top directly as per the designs (and there isn't a mixin for this much padding)
+  padding: 80px 0; // setting the padding top using px as there isn't a mixin for this much padding
 }
 
 .app-c-chat-introduction__svg-container {
