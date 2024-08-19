@@ -10,7 +10,7 @@ module OutputGuardrails
       end
     end
 
-    OPENAI_MODEL = "gpt-4o-2024-08-06".freeze
+    OPENAI_MODEL = "gpt-4o-mini".freeze
     OPENAI_MAX_TOKENS = 25 # It takes 23 tokens for True | "1, 2, 3, 4, 5, 6, 7"
 
     def self.call(...) = new(...).call
