@@ -15,6 +15,15 @@ RSpec.describe Admin::Form::EarlyAccessUsers::CreateEarlyAccessUserForm do
       expect(form.errors.count).to eq(1)
       expect(form.errors.messages[:email]).to eq(["Enter a valid email address"])
     end
+
+    it "returns false when the email already exists" do
+      create(:early_access_user, email: "user@example.com")
+      form = described_class.new(email: "user@example.com")
+
+      expect(form).to be_invalid
+      expect(form.errors.count).to eq(1)
+      expect(form.errors.messages[:email]).to eq(["Email address already exists"])
+    end
   end
 
   describe "#submit" do

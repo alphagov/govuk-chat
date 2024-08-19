@@ -1,11 +1,13 @@
 class Admin::Form::EarlyAccessUsers::CreateEarlyAccessUserForm
   include ActiveModel::Model
+  include ActiveModel::Attributes
 
-  attr_accessor :email
+  attribute :email
 
   validates :email, presence: { message: "Enter an email address" }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "Enter a valid email address" },
                     if: -> { email.present? }
+  validate :email_must_be_unique, if: -> { email.present? }
 
   def submit
     validate!
@@ -16,5 +18,13 @@ class Admin::Form::EarlyAccessUsers::CreateEarlyAccessUserForm
     EarlyAccessAuthMailer.sign_in(session).deliver_now
 
     user
+  end
+
+private
+
+  def email_must_be_unique
+    return if EarlyAccessUser.where(email:).blank?
+
+    errors.add(:email, "Email address already exists")
   end
 end
