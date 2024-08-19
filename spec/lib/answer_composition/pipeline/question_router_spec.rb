@@ -2,7 +2,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
   let(:classification_attributes) do
     {
       name: "greetings",
-      description: "Use this function to identify user requests that are greetings.",
+      description: "A classification description",
       properties: {
         answer: {
           type: "string",
