@@ -7,7 +7,9 @@ describe('ChatConversation module', () => {
     moduleElement.innerHTML = `
       <div class="js-conversation-message-lists">
         <ul class="js-message-history-list"></ul>
-        <ul class="js-new-messages-list"></ul>
+        <div class="js-new-messages-region">
+          <ul class="js-new-messages-list"></ul>
+        </div>
         <template class="js-loading-question"><li>Loading</li></template>
         <template class="js-loading-answer"><li>Loading</li></template>
       </div>

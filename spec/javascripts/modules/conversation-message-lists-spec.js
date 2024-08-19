@@ -6,7 +6,9 @@ describe('ConversationMessageLists module', () => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
       <ul class="js-message-history-list"></ul>
-      <ul class="js-new-messages-list"></ul>
+      <div class="js-new-messages-region">
+        <ul class="js-new-messages-list"></ul>
+      </div>
       <template class="js-loading-question">
         <li>Loading question</li>
       </template>
@@ -139,6 +141,12 @@ describe('ConversationMessageLists module', () => {
         jasmine.clock().uninstall()
         done()
       })
+    })
+
+    it('focuses the new messages region', () => {
+      const focusSpy = spyOn(module.newMessagesRegion, 'focus')
+      module.appendNewProgressivelyDisclosedMessages('<li>Message</li>')
+      expect(focusSpy).toHaveBeenCalled()
     })
 
     it('delegates to progressivelyDiscloseMessages to do the progressive disclosure', () => {
@@ -325,6 +333,14 @@ describe('ConversationMessageLists module', () => {
 
       expect(newMessagesList.children).toHaveSize(1)
       expect(newMessagesList.children[0].textContent).toEqual('New answer')
+    })
+
+    it('focuses the new messages region', () => {
+      const focusSpy = spyOn(module.newMessagesRegion, 'focus')
+
+      module.renderAnswer('<li>New answer</li>')
+
+      expect(focusSpy).toHaveBeenCalled()
     })
 
     it('scrolls to the new answer', () => {

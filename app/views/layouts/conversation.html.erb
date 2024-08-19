@@ -42,7 +42,7 @@
               <%= yield(:message_history) %>
             </ul>
 
-            <div tabindex="-1" role="region" aria-labelledby="new-messages">
+            <div tabindex="-1" role="region" aria-labelledby="new-messages" class="js-new-messages-region">
               <h2 id="new-messages" class="govuk-visually-hidden">New messages</h2>
               <ul class="app-conversation-layout__list js-new-messages-list">
                 <%= yield(:new_messages) %>

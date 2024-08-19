@@ -8,7 +8,9 @@ describe('Onboarding module', () => {
       <div class="js-module-wrapper">
         <div class="js-conversation-message-lists">
           <ul class="js-message-history-list"></ul>
-          <ul class="js-new-messages-list"></ul>
+          <div class="js-new-messages-region">
+            <ul class="js-new-messages-list"></ul>
+          </div>
         </div>
         <div class="js-form-container">
           <form class="js-onboarding-form" action="/chat/onboarding">
