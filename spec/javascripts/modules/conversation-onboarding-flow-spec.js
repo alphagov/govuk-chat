@@ -44,7 +44,6 @@ describe('ConversationOnboardingFlow module', () => {
           conversationAppendHtml: '<li>Message</li>',
           conversationData: { module: 'onboarding' },
           formHtml: '<form><button>Okay, start chatting</button></form>',
-          fragment: 'i-understand',
           path: '/chat/onboarding/privacy',
           title: 'Title'
         }

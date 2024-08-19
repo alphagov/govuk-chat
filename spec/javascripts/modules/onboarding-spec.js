@@ -108,7 +108,6 @@ describe('Onboarding module', () => {
         conversation_append_html: '<p>Message</p>',
         conversation_data: { module: 'onboarding' },
         form_html: '<form></form>',
-        fragment: 'i-understand',
         title: 'Title'
       }
 
@@ -170,7 +169,6 @@ describe('Onboarding module', () => {
           type: 'onboarding-transition',
           detail: {
             path: '/chat/conversation',
-            fragment: 'i-understand',
             conversationAppendHtml: '<p>Message</p>',
             conversationData: { module: 'onboarding' },
             formHtml: '<form></form>',

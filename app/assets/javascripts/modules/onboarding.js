@@ -56,7 +56,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
       const eventDetail = {
         path: url.pathname, // just use pathname as URL could have fragment, unclear if supposed to: https://github.com/whatwg/fetch/issues/214
-        fragment: responseJson.fragment, // ideally we'd get fragment from URL but browsers seem to strip it
         conversationData: responseJson.conversation_data,
         conversationAppendHtml: responseJson.conversation_append_html,
         formHtml: responseJson.form_html,
