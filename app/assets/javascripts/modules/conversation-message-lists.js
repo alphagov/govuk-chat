@@ -78,13 +78,19 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     resetQuestionLoading () {
       if (this.questionLoadingTimeout) window.clearTimeout(this.questionLoadingTimeout)
-      if (this.questionLoadingElement) this.newMessagesList.removeChild(this.questionLoadingElement)
+      if (this.questionLoadingElement) {
+        this.newMessagesList.removeChild(this.questionLoadingElement)
+        this.questionLoadingElement = null
+      }
     }
 
     renderQuestion (questionHtml) {
+      const toFadeIn = this.questionLoadingElement === null
       this.resetQuestionLoading()
       this.newMessagesList.insertAdjacentHTML('beforeend', questionHtml)
-      this.scrollIntoView(this.newMessagesList.lastElementChild)
+      const question = this.newMessagesList.lastElementChild
+      if (toFadeIn) question.classList.add('app-c-conversation-message--fade-in')
+      this.scrollIntoView(question)
     }
 
     renderAnswerLoading () {
@@ -106,6 +112,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.newMessagesList.appendChild(template.content.cloneNode(true))
 
       const loadingElement = this.newMessagesList.lastElementChild
+      loadingElement.classList.add('app-c-conversation-message--fade-in')
       this.scrollIntoView(loadingElement)
 
       return loadingElement

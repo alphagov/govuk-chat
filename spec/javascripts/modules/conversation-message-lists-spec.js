@@ -257,6 +257,14 @@ describe('ConversationMessageLists module', () => {
       expect(newMessagesList.children[0].textContent).toEqual('Loading question')
     })
 
+    it('fades the loading answer element in', () => {
+      module.renderQuestionLoading()
+
+      jasmine.clock().tick(500)
+
+      expect(newMessagesList.firstElementChild).toHaveClass('app-c-conversation-message--fade-in')
+    })
+
     it('scrolls to the loading element', () => {
       module.renderQuestionLoading()
 
@@ -310,6 +318,32 @@ describe('ConversationMessageLists module', () => {
 
       expect(resetQuestionLoadingSpy).toHaveBeenCalled()
     })
+
+    describe('when the question loading element is shown', () => {
+      beforeEach(() => {
+        jasmine.clock().install()
+        module.renderQuestionLoading()
+        jasmine.clock().tick(500)
+      })
+
+      afterEach(() => {
+        jasmine.clock().uninstall()
+      })
+
+      it("doesn't fade the question in", () => {
+        module.renderQuestion('<li>New question</li>')
+
+        expect(newMessagesList.firstElementChild).not.toHaveClass('app-c-conversation-message--fade-in')
+      })
+    })
+
+    describe('when the question loading element is not shown', () => {
+      it('fades the question in', () => {
+        module.renderQuestion('<li>New question</li>')
+
+        expect(newMessagesList.firstElementChild).toHaveClass('app-c-conversation-message--fade-in')
+      })
+    })
   })
 
   describe('renderAnswerLoading', () => {
@@ -318,6 +352,12 @@ describe('ConversationMessageLists module', () => {
 
       expect(newMessagesList.children).toHaveSize(1)
       expect(newMessagesList.children[0].textContent).toEqual('Loading answer')
+    })
+
+    it('fades the loading answer element in', () => {
+      module.renderAnswerLoading()
+
+      expect(newMessagesList.firstElementChild).toHaveClass('app-c-conversation-message--fade-in')
     })
 
     it('scrolls to the loading element', () => {
