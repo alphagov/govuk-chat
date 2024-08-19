@@ -68,6 +68,7 @@ class OnboardingController < BaseController
 
   def privacy_confirm
     session[:onboarding] = "conversation"
+    current_early_access_user.update!(onboarding_completed: true) if current_early_access_user
     redirect_to show_conversation_path(anchor: "start-chatting")
   end
 
