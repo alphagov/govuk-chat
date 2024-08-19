@@ -11,6 +11,7 @@
   classes << " app-c-blue-button--conversation-form js-conversation-form-button" if conversation_form_button
 
   options = { class: classes }
+  options[:type] = "submit" if href.blank?
   options[:role] = "button" if href.present?
   options[:data] = data_attributes if data_attributes
   options[:aria] = {}

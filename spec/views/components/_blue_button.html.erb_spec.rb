@@ -5,8 +5,8 @@ RSpec.describe "components/_blue_button.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector(".app-c-blue-button.govuk-button")
-      .and have_selector(".app-c-blue-button.govuk-button", text: "Button")
+      .to have_selector(".app-c-blue-button.govuk-button[type='submit']")
+      .and have_selector(".app-c-blue-button.govuk-button[type='submit']", text: "Button")
   end
 
   it "renders the blue button start variant correctly" do
@@ -16,8 +16,8 @@ RSpec.describe "components/_blue_button.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector(".app-c-blue-button.govuk-button--start")
-      .and have_selector(".app-c-blue-button.govuk-button--start", text: "Start button")
+      .to have_selector(".app-c-blue-button.govuk-button--start[type='submit']")
+      .and have_selector(".app-c-blue-button.govuk-button--start[type='submit']", text: "Start button")
   end
 
   it "renders the blue button conversation form variant correctly" do
@@ -27,8 +27,8 @@ RSpec.describe "components/_blue_button.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector(".app-c-blue-button.govuk-button")
-      .and have_selector(".app-c-blue-button.govuk-button.app-c-blue-button--conversation-form.js-conversation-form-button", text: "Submit button")
+      .to have_selector(".app-c-blue-button.govuk-button[type='submit']")
+      .and have_selector(".app-c-blue-button.govuk-button.app-c-blue-button--conversation-form.js-conversation-form-button[type='submit']", text: "Submit button")
   end
 
   it "renders an anchor tag if href is set" do
@@ -39,6 +39,9 @@ RSpec.describe "components/_blue_button.html.erb" do
 
     expect(rendered)
       .to have_selector("a.app-c-blue-button.govuk-button")
+
+    expect(rendered)
+      .not_to have_selector("a.app-c-blue-button.govuk-button[type='submit']")
   end
 
   it "renders with aria-describedby" do
@@ -48,7 +51,7 @@ RSpec.describe "components/_blue_button.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector(".app-c-blue-button.govuk-button[aria-describedby='Testing aria-describedby']")
+      .to have_selector(".app-c-blue-button.govuk-button[type='submit'][aria-describedby='Testing aria-describedby']")
   end
 
   it "applies data attributes when provided" do
@@ -62,8 +65,8 @@ RSpec.describe "components/_blue_button.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector(".app-c-blue-button[data-track-category='track-category']")
-      .and have_selector(".app-c-blue-button[data-track-action='track-action']")
-      .and have_selector(".app-c-blue-button[data-track-label='track-label']")
+      .to have_selector(".app-c-blue-button[type='submit'][data-track-category='track-category']")
+      .and have_selector(".app-c-blue-button[type='submit'][data-track-action='track-action']")
+      .and have_selector(".app-c-blue-button[type='submit'][data-track-label='track-label']")
   end
 end
