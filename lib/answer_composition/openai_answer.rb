@@ -37,8 +37,11 @@ module AnswerComposition
     attr_reader :context, :pipeline
 
     def error_message(error)
-      body_error_message = if error.response
-                             error.response[:body]&.dig("error", "message")
+      response_body = error.response[:body] if error.response
+      body_error_message = if response_body.respond_to?(:dig)
+                             response_body.dig("error", "message")
+                           else
+                             response_body
                            end
 
       "class: #{error.class} message: #{body_error_message || error.message}"
