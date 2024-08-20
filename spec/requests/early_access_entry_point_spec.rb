@@ -1,4 +1,6 @@
 RSpec.describe "early access entry point" do
+  before { create(:settings) }
+
   it_behaves_like "redirects user to instant access start page when email is not in the sign_up session",
                   routes: {
                     early_access_entry_user_description_path: %i[get post],
@@ -7,6 +9,17 @@ RSpec.describe "early access entry point" do
 
   it_behaves_like "redirects user to user description path when email is set in the session but user description isn't",
                   routes: { early_access_entry_reason_for_visit_path: %i[get post] }
+
+  it_behaves_like "renders not_accepting_signups page when Settings#sign_up_enabled is false",
+                  routes: {
+                    early_access_entry_user_description_path: %i[get post],
+                    early_access_entry_reason_for_visit_path: %i[get post],
+                  }
+  it_behaves_like "redirects the user to the sign in or up page when the user is signed in",
+                  routes: {
+                    early_access_entry_user_description_path: %i[get post],
+                    early_access_entry_reason_for_visit_path: %i[get post],
+                  }
 
   describe "GET :sign_in_or_up" do
     it "renders successfully" do
@@ -122,6 +135,20 @@ RSpec.describe "early access entry point" do
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to have_selector(".govuk-error-summary")
       end
+
+      context "when a user is already signed in" do
+        let(:session) { create :passwordless_session }
+
+        before { sign_in_early_access_user(session.authenticatable) }
+
+        it "signs the user out" do
+          post early_access_entry_sign_in_or_up_path(
+            sign_in_or_up_form: { email: "email@test.com" },
+          )
+          get protected_path
+          expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
+        end
+      end
     end
 
     context "when valid params are passed" do
@@ -192,6 +219,17 @@ RSpec.describe "early access entry point" do
           reason_for_visit_form: { choice: "find_specific_answer" },
         )
         expect(session["sign_up"]).to be_nil
+      end
+
+      context "and the user already exists in the database" do
+        it "responds with a conflict status and tells the user an account already exists" do
+          create(:early_access_user, email: "email@test.com")
+          post early_access_entry_reason_for_visit_path(
+            reason_for_visit_form: { choice: "find_specific_answer" },
+          )
+          expect(response).to have_http_status(:conflict)
+          expect(response.body).to have_selector(".govuk-heading-xl", text: "Account already exists")
+        end
       end
     end
   end

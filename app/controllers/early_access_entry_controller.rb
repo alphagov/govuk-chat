@@ -1,11 +1,14 @@
 class EarlyAccessEntryController < BaseController
+  before_action :redirect_to_sign_in_or_up_page_if_signed_in, except: %i[sign_in_or_up confirm_sign_in_or_up]
   before_action :ensure_sign_up_flow_position, except: %i[sign_in_or_up confirm_sign_in_or_up]
+  before_action :render_not_accepting_signups_if_sign_ups_disabled, except: %i[sign_in_or_up confirm_sign_in_or_up]
 
   def sign_in_or_up
     @sign_in_or_up_form = Form::EarlyAccess::SignInOrUp.new
   end
 
   def confirm_sign_in_or_up
+    sign_out_early_access_user if current_early_access_user
     @sign_in_or_up_form = Form::EarlyAccess::SignInOrUp.new(sign_in_or_up_form_params)
 
     if @sign_in_or_up_form.valid?
@@ -55,6 +58,8 @@ class EarlyAccessEntryController < BaseController
     else
       render :reason_for_visit, status: :unprocessable_entity
     end
+  rescue Form::EarlyAccess::ReasonForVisit::EarlyAccessUserConflictError
+    render :account_already_exists, status: :conflict
   end
 
 private
@@ -85,5 +90,17 @@ private
     if session.dig("sign_up", "user_description").blank? && action_name.match?(/reason_for_visit/)
       redirect_to early_access_entry_user_description_path
     end
+  end
+
+  def sign_ups_disabled?
+    !Settings.instance.sign_up_enabled
+  end
+
+  def render_not_accepting_signups_if_sign_ups_disabled
+    render :not_accepting_signups, status: :forbidden if sign_ups_disabled?
+  end
+
+  def redirect_to_sign_in_or_up_page_if_signed_in
+    redirect_to early_access_entry_sign_in_or_up_path if current_early_access_user
   end
 end
