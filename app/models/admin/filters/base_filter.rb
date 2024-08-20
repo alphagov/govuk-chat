@@ -5,6 +5,12 @@ class Admin::Filters::BaseFilter
   attribute :sort
   attribute :page, :integer
 
+  def initialize(...)
+    super
+
+    self.sort = self.class.default_sort unless self.class.valid_sort_values.include?(sort)
+  end
+
   def previous_page_params
     if results.prev_page == 1 || results.prev_page.nil?
       pagination_query_params
@@ -41,5 +47,13 @@ class Admin::Filters::BaseFilter
     return scope if email.blank?
 
     scope.where("email ILIKE ?", "%#{email}%")
+  end
+
+protected
+
+  def ordering_scope(scope)
+    column = sort.delete_prefix("-")
+    direction = sort.start_with?("-") ? :desc : :asc
+    scope.order("#{column}": direction)
   end
 end

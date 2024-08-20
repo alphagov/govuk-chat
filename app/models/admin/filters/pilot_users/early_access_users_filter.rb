@@ -1,14 +1,14 @@
 class Admin::Filters::PilotUsers::EarlyAccessUsersFilter < Admin::Filters::BaseFilter
-  DEFAULT_SORT = "-last_login_at".freeze
-  VALID_SORT_VALUES = ["last_login_at", "-last_login_at", "email", "-email"].freeze
-
   attribute :email
   attribute :source
   attribute :revoked, :boolean
 
-  def initialize(...)
-    super
-    self.sort = DEFAULT_SORT unless VALID_SORT_VALUES.include?(sort)
+  def self.default_sort
+    "-last_login_at"
+  end
+
+  def self.valid_sort_values
+    ["last_login_at", "-last_login_at", "email", "-email"]
   end
 
   def results
@@ -28,7 +28,7 @@ private
     filters = {}
     filters[:email] = email if email.present?
     filters[:source] = source if source.present?
-    filters[:sort] = sort if sort != DEFAULT_SORT
+    filters[:sort] = sort if sort != self.class.default_sort
 
     filters
   end

@@ -1,12 +1,12 @@
 class Admin::Filters::PilotUsers::WaitingListUsersFilter < Admin::Filters::BaseFilter
-  DEFAULT_SORT = "-created_at".freeze
-  VALID_SORT_VALUES = ["created_at", "-created_at", "email", "-email"].freeze
-
   attribute :email
 
-  def initialize(...)
-    super
-    self.sort = DEFAULT_SORT unless VALID_SORT_VALUES.include?(sort)
+  def self.default_sort
+    "-created_at"
+  end
+
+  def self.valid_sort_values
+    ["created_at", "-created_at", "email", "-email"]
   end
 
   def results
@@ -23,14 +23,8 @@ private
   def pagination_query_params
     filters = {}
     filters[:email] = email if email.present?
-    filters[:sort] = sort if sort != DEFAULT_SORT
+    filters[:sort] = sort if sort != self.class.default_sort
 
     filters
-  end
-
-  def ordering_scope(scope)
-    column = sort.delete_prefix("-")
-    direction = sort.start_with?("-") ? :desc : :asc
-    scope.order("#{column}": direction)
   end
 end
