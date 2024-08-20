@@ -70,7 +70,12 @@ RSpec.describe AnswerComposition::OpenAIAnswer do # rubocop:disable RSpec/SpecFi
     end
 
     context "when the step raises an OpenAIClient::RequestError" do
-      let(:error) { OpenAIClient::RequestError.new("error message") }
+      let(:error) do
+        OpenAIClient::RequestError.new(
+          "error message",
+          body: { "error" => { "message" => "nested error message" } },
+        )
+      end
       let(:pipeline_step) { ->(_context) { raise error } }
 
       it "notifies sentry" do
@@ -87,8 +92,31 @@ RSpec.describe AnswerComposition::OpenAIAnswer do # rubocop:disable RSpec/SpecFi
             question:,
             status: "error_answer_service_error",
             message: Answer::CannedResponses::OPENAI_CLIENT_ERROR_RESPONSE,
-            error_message: "class: OpenAIClient::RequestError message: error message",
+            error_message: "class: OpenAIClient::RequestError message: nested error message",
           )
+      end
+
+      context "when the errors response body is a string" do
+        let(:error) { OpenAIClient::RequestError.new("error message") }
+
+        it "returns the nested error message from the respond body" do
+          result = described_class.call(question:, pipeline: [pipeline_step])
+          expect(result.error_message).to eq "class: OpenAIClient::RequestError message: error message"
+        end
+      end
+
+      context "when the errors response body is a hash in an unexpected format" do
+        let(:error) do
+          OpenAIClient::RequestError.new(
+            "default error message",
+            body: { "error" => { "random_key" => "won't be found" } },
+          )
+        end
+
+        it "defaults to using the error message" do
+          result = described_class.call(question:, pipeline: [pipeline_step])
+          expect(result.error_message).to eq "class: OpenAIClient::RequestError message: default error message"
+        end
       end
     end
   end
