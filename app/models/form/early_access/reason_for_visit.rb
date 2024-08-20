@@ -4,7 +4,7 @@ class Form::EarlyAccess::ReasonForVisit
 
   class EarlyAccessUserConflictError < StandardError; end
 
-  CHOICE_PRESENCE_ERROR_MESSAGE = "Choose why you visited GOV.UK today".freeze
+  CHOICE_PRESENCE_ERROR_MESSAGE = "Select why you visited GOV.UK today".freeze
 
   attribute :choice
   attribute :user_description

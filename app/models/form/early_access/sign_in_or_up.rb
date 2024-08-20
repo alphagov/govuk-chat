@@ -6,7 +6,7 @@ class Form::EarlyAccess::SignInOrUp
 
   EMAIL_ADDRESS_PRESENCE_ERROR_MESSAGE = "Enter an email address".freeze
   EMAIL_ADDRESS_LENGTH_ERROR_MESSAGE = "Email must be %{count} characters or less".freeze
-  EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE = "Enter a valid email address".freeze
+  EMAIL_ADDRESS_FORMAT_ERROR_MESSAGE = "Enter an email address in the correct format, like name@example.com".freeze
 
   attribute :email
 
