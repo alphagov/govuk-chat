@@ -1,4 +1,4 @@
-class Admin::Filters::PilotUsers::WaitingListUsersFilter < Admin::Filters::PilotUsers::BaseFilter
+class Admin::Filters::PilotUsers::WaitingListUsersFilter < Admin::Filters::BaseFilter
   DEFAULT_SORT = "-created_at".freeze
   VALID_SORT_VALUES = ["created_at", "-created_at", "email", "-email"].freeze
 
@@ -9,8 +9,8 @@ class Admin::Filters::PilotUsers::WaitingListUsersFilter < Admin::Filters::Pilot
     self.sort = DEFAULT_SORT unless VALID_SORT_VALUES.include?(sort)
   end
 
-  def users
-    @users ||= begin
+  def results
+    @results ||= begin
       scope = WaitingListUser
       scope = email_scope(scope)
       scope = ordering_scope(scope)

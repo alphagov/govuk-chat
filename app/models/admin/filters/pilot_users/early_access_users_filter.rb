@@ -1,4 +1,4 @@
-class Admin::Filters::PilotUsers::EarlyAccessUsersFilter < Admin::Filters::PilotUsers::BaseFilter
+class Admin::Filters::PilotUsers::EarlyAccessUsersFilter < Admin::Filters::BaseFilter
   DEFAULT_SORT = "-last_login_at".freeze
   VALID_SORT_VALUES = ["last_login_at", "-last_login_at", "email", "-email"].freeze
 
@@ -11,8 +11,8 @@ class Admin::Filters::PilotUsers::EarlyAccessUsersFilter < Admin::Filters::Pilot
     self.sort = DEFAULT_SORT unless VALID_SORT_VALUES.include?(sort)
   end
 
-  def users
-    @users ||= begin
+  def results
+    @results ||= begin
       scope = EarlyAccessUser
       scope = email_scope(scope)
       scope = source_scope(scope)

@@ -1,4 +1,4 @@
-class Admin::Filters::PilotUsers::BaseFilter
+class Admin::Filters::BaseFilter
   include ActiveModel::Model
   include ActiveModel::Attributes
 
@@ -6,16 +6,16 @@ class Admin::Filters::PilotUsers::BaseFilter
   attribute :page, :integer
 
   def previous_page_params
-    if users.prev_page == 1 || users.prev_page.nil?
+    if results.prev_page == 1 || results.prev_page.nil?
       pagination_query_params
     else
-      pagination_query_params.merge(page: users.prev_page)
+      pagination_query_params.merge(page: results.prev_page)
     end
   end
 
   def next_page_params
-    if users.next_page.present?
-      pagination_query_params.merge(page: users.next_page)
+    if results.next_page.present?
+      pagination_query_params.merge(page: results.next_page)
     else
       pagination_query_params
     end
