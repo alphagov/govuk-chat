@@ -9,7 +9,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <%= form_with url: early_access_entry_user_description_path do %>
-      <%= hidden_field_tag "user_description_form[choice]" %>
+      <%= hidden_field_tag "user_description_form[choice]", nil, id: "user_description_form_choice_hidden_field" %>
 
       <%= render "govuk_publishing_components/components/radio", {
         id: "user_description_form_choice",
