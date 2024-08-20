@@ -13,7 +13,6 @@ module AnswerComposition
       when "open_ai_rag_completion"
         OpenAIAnswer.call(question:, pipeline: [
           Pipeline::QuestionRephraser,
-          Pipeline::ForbiddenWordsChecker,
           Pipeline::SearchResultFetcher,
           Pipeline::OpenAIUnstructuredAnswerComposer,
           Pipeline::OutputGuardrails,
@@ -21,7 +20,6 @@ module AnswerComposition
       when "openai_structured_answer"
         OpenAIAnswer.call(question:, pipeline: [
           Pipeline::QuestionRephraser,
-          Pipeline::ForbiddenWordsChecker,
           Pipeline::QuestionRouter,
           Pipeline::SearchResultFetcher,
           Pipeline::OpenAIStructuredAnswerComposer,
