@@ -1,22 +1,57 @@
-<%= content_tag :div, class: "app-c-chat-introduction" do %>
+<%
+  early_access ||= false
+  input_error_items ||= []
+  input_value ||= nil
+
+  wrapper_classes = "app-c-chat-introduction"
+  wrapper_classes += " app-c-chat-introduction--with-errors" if input_error_items.any?
+%>
+
+<%= content_tag :div, class: wrapper_classes do %>
   <%= content_tag :div, class: "app-c-chat-introduction__svg-container" do %>
     <%= inline_svg_tag "components/chat_introduction/govuk-chat-chat-introduction-icon.svg", aria_hidden: true %>
   <% end %>
 
-  <%= content_tag(:h1, "GOV.UK Chat", class: "app-c-chat-introduction__title") %>
+  <% if early_access %>
+    <% info_text = "If you’ve already signed up, you’ll be able to request new links to access GOV.UK Chat." %>
+    <%= content_tag(:h1, "Try GOV.UK Chat", class: "app-c-chat-introduction__title") %>
+    <%= content_tag(:p, "An experimental new way to find answers to your business questions, powered by AI", class: "app-c-chat-introduction__lead-paragraph govuk-body") %>
 
-  <%= content_tag(:p, "An experimental new way to find answers to your business questions, powered by AI", class: "app-c-chat-introduction__lead-paragraph govuk-body") %>
+    <%= form_with url: Rails.application.routes.url_helpers.homepage_path, class: "app-c-chat-introduction__form" do |f| %>
+      <%= render "govuk_publishing_components/components/input", {
+        label: {
+          text: "To get started, enter your email address.",
+        },
+        name: "sign_in_or_up_form[email]",
+        id: "sign_in_or_up_form_email",
+        value: input_value,
+        heading_level: 2,
+        heading_size: "l",
+        error_items: input_error_items,
+      } %>
 
-  <%= render "components/blue_button", {
-    text: "Try GOV.UK Chat",
-    href: start_button_href,
-    start: true,
-    aria_describedby: "info-text",
-    data_attributes: {
-      "module": "ga4-link-tracker",
-      "ga4-link": '{ "event_name": "navigation", "type": "start button", "index_link": 1, "index_total": 1, "section": "Landing page" }',
-    },
-  } %>
+      <%= render "components/blue_button", {
+        text: "Get started",
+        start: true,
+        aria_describedby: "info-text",
+      } %>
+    <% end %>
+  <% else %>
+    <% info_text = "Your chat history will be available for #{Rails.configuration.conversations.max_question_age_days} days" %>
+    <%= content_tag(:h1, "GOV.UK Chat", class: "app-c-chat-introduction__title") %>
+    <%= content_tag(:p, "An experimental new way to find answers to your business questions, powered by AI", class: "app-c-chat-introduction__lead-paragraph govuk-body") %>
 
-  <%= content_tag(:p, "Your chat history will be available for #{Rails.configuration.conversations.max_question_age_days} days", {id: "info-text", class: "govuk-body govuk-!-margin-top-5"}) %>
+    <%= render "components/blue_button", {
+      text: "Try GOV.UK Chat",
+      href: start_button_href,
+      start: true,
+      aria_describedby: "info-text",
+      data_attributes: {
+        "module": "ga4-link-tracker",
+        "ga4-link": '{ "event_name": "navigation", "type": "start button", "index_link": 1, "index_total": 1, "section": "Landing page" }',
+      },
+    } %>
+  <% end %>
+
+  <%= content_tag(:p, info_text, {id: "info-text", class: "govuk-body govuk-!-margin-top-5"}) %>
 <% end %>
