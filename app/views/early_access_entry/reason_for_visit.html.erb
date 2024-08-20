@@ -9,7 +9,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <%= form_with url: early_access_entry_reason_for_visit_path do %>
-      <%= hidden_field_tag "reason_for_visit_form[choice]" %>
+      <%= hidden_field_tag "reason_for_visit_form[choice]", nil, id: "reason_for_visit_form_choice_hidden_field" %>
 
       <%= render "govuk_publishing_components/components/radio", {
         id: "reason_for_visit_form_choice",
