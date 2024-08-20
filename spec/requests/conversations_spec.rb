@@ -62,6 +62,27 @@ RSpec.describe "ConversationsController" do
       end
     end
 
+    context "when the conversation exists but is not associated with a signed in early access user" do
+      before do
+        user = create(:early_access_user)
+        sign_in_early_access_user(user)
+        conversation = create(:conversation)
+        cookies[:conversation_id] = conversation.id
+      end
+
+      it "deletes the conversation_id cookie" do
+        get show_conversation_path
+        expect(cookies[:conversation_id]).to be_blank
+      end
+
+      it "redirects to the onboarding limitations page" do
+        get show_conversation_path
+
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(onboarding_limitations_path)
+      end
+    end
+
     context "when the conversation cookie has expired" do
       let(:conversation) { create(:conversation, :expired) }
 

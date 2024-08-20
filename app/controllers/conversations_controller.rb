@@ -107,7 +107,7 @@ private
   def find_conversation
     return if cookies[:conversation_id].blank?
 
-    @conversation = Conversation.active.find(cookies[:conversation_id])
+    @conversation = Conversation.active.find_by!(id: cookies[:conversation_id], user: current_early_access_user)
     set_conversation_cookie(@conversation)
   rescue ActiveRecord::RecordNotFound
     cookies.delete(:conversation_id)
