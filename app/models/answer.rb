@@ -1,7 +1,5 @@
 class Answer < ApplicationRecord
   module CannedResponses
-    FORBIDDEN_WORDS_RESPONSE = "Sorry, I cannot answer that. Ask me a question about " \
-      "business or trade and I'll use GOV.UK guidance to answer it.".freeze
     NO_CONTENT_FOUND_REPONSE = "Sorry, I can’t find anything on GOV.UK to help me answer your question. " \
       "Please try asking a different question.".freeze
     CONTEXT_LENGTH_EXCEEDED_RESPONSE = "Sorry, your last question was too complex for me to answer. " \
@@ -32,6 +30,7 @@ class Answer < ApplicationRecord
 
   enum :status,
        {
+         # TODO: remove this status from DB once we're confident this isn't coming back
          abort_forbidden_words: "abort_forbidden_words",
          abort_llm_cannot_answer: "abort_llm_cannot_answer",
          abort_no_govuk_content: "abort_no_govuk_content",
