@@ -2,7 +2,7 @@ class Form::EarlyAccess::UserDescription
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  CHOICE_PRESENCE_ERROR_MESSAGE = "Choose which option best describes you".freeze
+  CHOICE_PRESENCE_ERROR_MESSAGE = "Select an option that best describes you".freeze
 
   attribute :choice
 
