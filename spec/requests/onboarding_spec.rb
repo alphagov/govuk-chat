@@ -13,6 +13,13 @@ RSpec.describe "OnboardingController" do
                     onboarding_privacy_path: %i[get],
                     onboarding_privacy_confirm_path: %i[post],
                   }
+  it_behaves_like "redirects user to the conversation when an early access user has completed onboarding",
+                  routes: {
+                    onboarding_limitations_path: %i[get],
+                    onboarding_limitations_confirm_path: %i[post],
+                    onboarding_privacy_path: %i[get],
+                    onboarding_privacy_confirm_path: %i[post],
+                  }
   it_behaves_like "redirects user to the privacy page when onboarding limitations has been completed",
                   routes: { onboarding_limitations_path: %i[get], onboarding_limitations_confirm_path: %i[post] }
 

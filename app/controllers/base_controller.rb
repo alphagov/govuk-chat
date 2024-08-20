@@ -47,7 +47,9 @@ private
   end
 
   def require_onboarding_completed
-    return if session[:onboarding] == "conversation" || cookies[:conversation_id].present?
+    return if session[:onboarding] == "conversation" ||
+      cookies[:conversation_id].present? ||
+      current_early_access_user&.onboarding_completed
 
     redirect_to onboarding_limitations_path
   end

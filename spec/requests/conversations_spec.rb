@@ -215,6 +215,19 @@ RSpec.describe "ConversationsController" do
         end
       end
     end
+
+    context "when an early access users onboarding has been completed" do
+      before do
+        user = create(:early_access_user, onboarding_completed: true)
+        sign_in_early_access_user(user)
+      end
+
+      it "renders the page successfully" do
+        get show_conversation_path
+        expect(response).to have_http_status(:success)
+        expect(response.body).to render_create_question_form
+      end
+    end
   end
 
   describe "POST :update" do
