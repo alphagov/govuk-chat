@@ -1,4 +1,4 @@
-class Admin::Filters::PilotUsers::EarlyAccessUsersFilter < Admin::Filters::BaseFilter
+class Admin::Filters::EarlyAccessUsersFilter < Admin::Filters::BaseFilter
   attribute :email
   attribute :source
   attribute :revoked, :boolean

@@ -1,4 +1,4 @@
-RSpec.describe Admin::Filters::PilotUsers::WaitingListUsersFilter do
+RSpec.describe Admin::Filters::WaitingListUsersFilter do
   describe "#results" do
     describe "ordering" do
       let!(:created_1_min_ago) { create(:waiting_list_user, email: "alice@example.com", created_at: 1.minute.ago) }

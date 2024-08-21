@@ -1,4 +1,4 @@
-class Admin::Filters::PilotUsers::WaitingListUsersFilter < Admin::Filters::BaseFilter
+class Admin::Filters::WaitingListUsersFilter < Admin::Filters::BaseFilter
   attribute :email
 
   def self.default_sort
