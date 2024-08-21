@@ -23,4 +23,11 @@ RSpec.describe AnswerSource do
       expect(described_class.unused).to eq([unused_source])
     end
   end
+
+  describe "#serialize for export" do
+    it "returns a source serialzed as json" do
+      source = create(:answer_feedback)
+      expect(source.serialize_for_export).to eq(source.as_json)
+    end
+  end
 end

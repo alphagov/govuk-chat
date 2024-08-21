@@ -35,4 +35,8 @@ class Question < ApplicationRecord
       )
     end
   end
+
+  def serialize_for_export
+    as_json.merge("answer" => answer&.serialize_for_export)
+  end
 end

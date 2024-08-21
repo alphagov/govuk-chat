@@ -57,4 +57,15 @@ RSpec.describe Answer do
       expect(answer.sources.first).to have_attributes(exact_path: search_result.exact_path)
     end
   end
+
+  describe "#serialize_for_export" do
+    it "returns a serialized answer with its sources" do
+      answer = create(:answer, :with_sources)
+      serialized_answer = answer.serialize_for_export
+
+      expect(serialized_answer)
+        .to include(answer.as_json)
+        .and include("sources" => answer.sources.map(&:serialize_for_export))
+    end
+  end
 end

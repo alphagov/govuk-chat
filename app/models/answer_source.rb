@@ -7,4 +7,8 @@ class AnswerSource < ApplicationRecord
   def url
     "#{Plek.website_root}#{exact_path}"
   end
+
+  def serialize_for_export
+    as_json
+  end
 end

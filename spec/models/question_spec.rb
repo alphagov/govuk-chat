@@ -60,4 +60,25 @@ RSpec.describe Question do
       end
     end
   end
+
+  describe "#serialize_for_export" do
+    context "when the question has an answer" do
+      it "returns a serialized question with its answer" do
+        question = create(:question, :with_answer)
+
+        expect(question.serialize_for_export)
+          .to include(question.as_json)
+          .and include("answer" => question.answer.serialize_for_export)
+      end
+    end
+  end
+
+  context "when the question does not have an answer" do
+    it "returns a serialized question with its answer" do
+      question = create(:question)
+
+      expect(question.serialize_for_export)
+        .to include(question.as_json)
+    end
+  end
 end
