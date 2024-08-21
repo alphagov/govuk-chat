@@ -1,6 +1,8 @@
 require "bcrypt"
 
 class SessionsController < BaseController
+  skip_before_action :require_early_access_user!
+
   def confirm
     return head(:ok) if request.head?
 

@@ -1,6 +1,7 @@
 class BaseController < ApplicationController
   include Passwordless::ControllerHelpers
   before_action :check_chat_public_access
+  before_action :require_early_access_user!
   helper_method :current_early_access_user, :settings
 
 private

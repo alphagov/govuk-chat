@@ -49,8 +49,6 @@ Rails.application.routes.draw do
 
       post "/answers/:answer_id/feedback", to: "conversations#answer_feedback", as: :answer_feedback
     end
-
-    get "protected", to: "protected#index"
   end
 
   namespace :admin do
