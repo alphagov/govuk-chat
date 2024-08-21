@@ -16,6 +16,7 @@ describe('ChatConversation module', () => {
       <div class="js-conversation-form-wrapper">
         <form action="/conversation" class="js-conversation-form">
           <input type="text" name="question" value="How can I setup a new business?">
+          <button class="js-conversation-form-button">Send</button>
         </form>
       </div>
     `
