@@ -1,0 +1,2 @@
+class BigqueryExport < ApplicationRecord
+end
