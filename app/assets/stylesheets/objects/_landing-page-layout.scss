@@ -8,6 +8,13 @@
   z-index: 0;
 }
 
+.app-landing-page-layout__flex-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+}
+
 .app-landing-page-layout__animation {
   animation: landing-page-animation 0.75s ease-in-out;
   position: absolute;

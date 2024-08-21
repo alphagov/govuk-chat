@@ -12,6 +12,12 @@
     }
   }
 
+  .govuk-header__navigation-list {
+    @include govuk-media-query($until: tablet) {
+      margin-top: govuk-spacing(4);
+    }
+  }
+
   .govuk-header__navigation-item {
     border-bottom: none;
     display: inline-block;
@@ -117,6 +123,10 @@
 
 .app-c-header__container {
   border-bottom: govuk-spacing(2) solid govuk-colour("yellow");
+  
+  @include govuk-media-query($until: desktop) {
+    padding-bottom: govuk-spacing(2);
+  }
 }
 
 .app-c-header__link--homepage {
