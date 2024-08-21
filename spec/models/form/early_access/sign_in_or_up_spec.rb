@@ -62,15 +62,6 @@ RSpec.describe Form::EarlyAccess::SignInOrUp do
         expect(Passwordless::Session.last.authenticatable).to eq(EarlyAccessUser.last)
       end
 
-      it "assigns the early access user attributes" do
-        form.submit
-
-        expect(EarlyAccessUser.last).to have_attributes(
-          email: "existing.email@example.com",
-          source: "instant_signup",
-        )
-      end
-
       it "calls the mailer with the new session" do
         expect { form.submit }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
         created_session = Passwordless::Session.last
@@ -82,7 +73,23 @@ RSpec.describe Form::EarlyAccess::SignInOrUp do
         expect(result)
           .to be_a(described_class::Result)
           .and have_attributes(
-            outcome: :existing_user,
+            outcome: :existing_early_access_user,
+            email: user.email,
+            user:,
+          )
+      end
+    end
+
+    context "when the user has a waiting list account" do
+      let(:user) { create(:waiting_list_user, email: "existing.email@example.com") }
+      let(:form) { described_class.new(email: user.email) }
+
+      it "returns a Result instance with the correct attributes" do
+        result = form.submit
+        expect(result)
+          .to be_a(described_class::Result)
+          .and have_attributes(
+            outcome: :existing_waiting_list_user,
             email: user.email,
             user:,
           )

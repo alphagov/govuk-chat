@@ -14,14 +14,12 @@ class EarlyAccessEntryController < BaseController
     if @sign_in_or_up_form.valid?
       result = @sign_in_or_up_form.submit
 
-      if result.outcome == :new_user
-        session["sign_up"] = { "email" => result.email }
-        redirect_to early_access_entry_user_description_path
-      elsif result.outcome == :user_revoked
-        render "shared/access_revoked", status: :forbidden
-      else
-        render :email_sent
-      end
+      return render :email_sent if result.outcome == :existing_early_access_user
+      return render :already_on_waitlist if result.outcome == :existing_waiting_list_user
+      return render "shared/access_revoked", status: :forbidden if result.outcome == :user_revoked
+
+      session["sign_up"] = { "email" => result.email }
+      redirect_to early_access_entry_user_description_path
     else
       render :sign_in_or_up, status: :unprocessable_entity
     end

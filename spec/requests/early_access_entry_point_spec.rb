@@ -75,6 +75,24 @@ RSpec.describe "early access entry point" do
         end
       end
 
+      context "and the user is on the waiting list" do
+        let!(:waiting_list_user) { create :waiting_list_user }
+
+        it "responds with a successful status" do
+          post early_access_entry_sign_in_or_up_path(
+            sign_in_or_up_form: { email: waiting_list_user.email },
+          )
+          expect(response).to have_http_status(:ok)
+        end
+
+        it "renders the already_on_waitlist template" do
+          post early_access_entry_sign_in_or_up_path(
+            sign_in_or_up_form: { email: waiting_list_user.email },
+          )
+          expect(response.body).to have_selector(".govuk-heading-xl", text: "You're already on the waitlist")
+        end
+      end
+
       context "and the user has a revoked account" do
         before do
           early_access_user.touch(:revoked_at)
