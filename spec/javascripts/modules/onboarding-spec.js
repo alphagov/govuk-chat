@@ -58,36 +58,46 @@ describe('Onboarding module', () => {
       expect(conversationAppendSpy).toHaveBeenCalled()
     })
 
-    it('delegates to messageLists to progressively disclose messages', () => {
-      const progressivelyDiscloseMessagesSpy = spyOn(module.messageLists, 'progressivelyDiscloseMessages').and.resolveTo()
+    describe('when initialised with existing new messages', () => {
+      beforeEach(() => {
+        const newMessagesList = moduleElement.querySelector('.js-new-messages-list')
+        newMessagesList.innerHTML = `
+          <li class="js-conversation-message">Message 1</li>
+          <li class="js-conversation-message">Message 2</li>
+        `
+      })
 
-      module.init()
+      it('delegates to messageLists to progressively disclose messages', () => {
+        const progressivelyDiscloseMessagesSpy = spyOn(module.messageLists, 'progressivelyDiscloseMessages').and.resolveTo()
 
-      expect(progressivelyDiscloseMessagesSpy).toHaveBeenCalled()
-    })
+        module.init()
 
-    it('hides the form prior to disclosing messages and then shows it', done => {
-      jasmine.clock().install()
+        expect(progressivelyDiscloseMessagesSpy).toHaveBeenCalled()
+      })
 
-      // add some messages to disclose
-      const newMessagesList = moduleElement.querySelector('.js-new-messages-list')
-      newMessagesList.innerHTML = `
-        <li class="js-conversation-message">To show</li>
-        <li class="js-conversation-message">To disclose</li>
-      `
-      module.init()
+      it('hides the form prior to disclosing messages and then shows it', done => {
+        jasmine.clock().install()
 
-      // using toHaveClass matcher was triggering a "stale element" error so using other matcher
-      expect(form.classList).toContain('govuk-visually-hidden')
+        // add some messages to disclose
+        const newMessagesList = moduleElement.querySelector('.js-new-messages-list')
+        newMessagesList.innerHTML = `
+          <li class="js-conversation-message">To show</li>
+          <li class="js-conversation-message">To disclose</li>
+        `
+        module.init()
 
-      jasmine.clock().tick(longWaitForProgressiveDisclosure)
-      jasmine.clock().uninstall()
+        // using toHaveClass matcher was triggering a "stale element" error so using other matcher
+        expect(form.classList).toContain('govuk-visually-hidden')
 
-      // timeout to ensure promise callbacks are executed
-      window.setTimeout(() => {
-        expect(form.classList).not.toContain('govuk-visually-hidden')
-        done()
-      }, 0)
+        jasmine.clock().tick(longWaitForProgressiveDisclosure)
+        jasmine.clock().uninstall()
+
+        // timeout to ensure promise callbacks are executed
+        window.setTimeout(() => {
+          expect(form.classList).not.toContain('govuk-visually-hidden')
+          done()
+        }, 0)
+      })
     })
   })
 

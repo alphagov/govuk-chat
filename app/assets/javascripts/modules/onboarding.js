@@ -15,11 +15,13 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.addEventListener(this.module, 'deinit', () => this.deinit())
       this.addEventListener(this.module, 'conversation-append', e => this.conversationAppend(e))
 
-      this.form.classList.add('govuk-visually-hidden')
-      this.messageLists.progressivelyDiscloseMessages().then(() => {
-        this.form.classList.remove('govuk-visually-hidden')
-        this.messageLists.scrollToLastNewMessage()
-      })
+      if (this.messageLists.hasNewMessages()) {
+        this.form.classList.add('govuk-visually-hidden')
+        this.messageLists.progressivelyDiscloseMessages().then(() => {
+          this.form.classList.remove('govuk-visually-hidden')
+          this.messageLists.scrollToLastNewMessage()
+        })
+      }
     }
 
     async handleSubmit (event) {
