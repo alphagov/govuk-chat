@@ -3,6 +3,7 @@ class Form::EarlyAccess::ReasonForVisit
   include ActiveModel::Attributes
 
   class EarlyAccessUserConflictError < StandardError; end
+  class WaitingListUserConflictError < StandardError; end
   Result = Data.define(:outcome, :user)
 
   CHOICE_PRESENCE_ERROR_MESSAGE = "Select why you visited GOV.UK today".freeze
@@ -15,6 +16,9 @@ class Form::EarlyAccess::ReasonForVisit
 
   def submit
     validate!
+
+    raise EarlyAccessUserConflictError if EarlyAccessUser.exists?(email:)
+    raise WaitingListUserConflictError if WaitingListUser.exists?(email:)
 
     settings = Settings.instance
     settings.with_lock do
@@ -37,8 +41,6 @@ class Form::EarlyAccess::ReasonForVisit
         settings.update!(instant_access_places: settings.instant_access_places - 1)
         @result = Result.new(outcome: :early_access_user, user:)
       end
-    rescue ActiveRecord::RecordNotUnique
-      raise EarlyAccessUserConflictError
     end
 
     if @result.outcome == :early_access_user

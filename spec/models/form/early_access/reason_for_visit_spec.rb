@@ -29,9 +29,14 @@ RSpec.describe Form::EarlyAccess::ReasonForVisit do
       expect { form.submit }.to raise_error(ActiveModel::ValidationError)
     end
 
-    it "raises an error when the user already exists" do
+    it "raises an error when an early access user already exists for the email" do
       create(:early_access_user, email: "email@test.com")
       expect { form.submit }.to raise_error(described_class::EarlyAccessUserConflictError)
+    end
+
+    it "raises an error when a waiting list user already exists for the email" do
+      create(:waiting_list_user, email: "email@test.com")
+      expect { form.submit }.to raise_error(described_class::WaitingListUserConflictError)
     end
 
     context "when there are instant access places available" do

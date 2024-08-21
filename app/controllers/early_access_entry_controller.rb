@@ -62,6 +62,8 @@ class EarlyAccessEntryController < BaseController
     end
   rescue Form::EarlyAccess::ReasonForVisit::EarlyAccessUserConflictError
     render :account_already_exists, status: :conflict
+  rescue Form::EarlyAccess::ReasonForVisit::WaitingListUserConflictError
+    render :already_on_waitlist, status: :conflict
   end
 
 private
