@@ -1,5 +1,6 @@
 RSpec.describe "Chat Onboarding" do
   scenario "without JS" do
+    given_i_am_a_signed_in_early_access_user
     when_i_visit_the_root_path
     then_i_see_the_landing_page
 
@@ -17,6 +18,7 @@ RSpec.describe "Chat Onboarding" do
   end
 
   scenario "with JS", :dismiss_cookie_banner, :js do
+    given_i_am_a_signed_in_early_access_user
     when_i_visit_the_root_path
     then_i_see_the_landing_page
 
