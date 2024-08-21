@@ -52,9 +52,13 @@ class EarlyAccessEntryController < BaseController
     @reason_for_visit_form = Form::EarlyAccess::ReasonForVisit.new(reason_for_visit_form_params)
 
     if @reason_for_visit_form.valid?
-      @reason_for_visit_form.submit
+      result = @reason_for_visit_form.submit
       session.delete("sign_up")
-      render :sign_up_successful
+      if result.outcome == :early_access_user
+        render :sign_up_successful
+      else
+        render :waitlist
+      end
     else
       render :reason_for_visit, status: :unprocessable_entity
     end
