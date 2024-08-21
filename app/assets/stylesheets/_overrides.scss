@@ -3,6 +3,13 @@
   overflow-x: hidden;
 }
 
+// Usually, we restrict the height of the viewport however this was causing issues on
+// the landing page where the footer's grey background was extending beyond its boundary.
+// Therefore, we don't restrict the height on the landing page and instead set it to auto.
+.govuk-template__body.app-landing-page-layout {
+  height: auto;
+}
+
 // We're not using a typical grey footer (except on the landing page and help pages) 
 // and we therefore want the body element to span the whole page to not reveal the 
 // background colour of the html element
