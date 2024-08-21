@@ -3,7 +3,7 @@ module OnboardingRequestExamples
     let(:route_params) { [] }
 
     routes.each do |path, methods|
-      describe "Requires onboarding to have been completed for for #{path} route" do
+      describe "Requires onboarding to have been completed for #{path} route" do
         methods.each do |method|
           it "requires onboarding to have been completed for #{method} #{path}" do
             process(method.to_sym, public_send(path.to_sym, *route_params))
@@ -54,6 +54,25 @@ module OnboardingRequestExamples
           it "redirects user to the new conversation page when session[:onboarding] is 'conversation' for #{method} #{path}" do
             process(method.to_sym, public_send(path.to_sym))
 
+            expect(response).to have_http_status(:redirect)
+            expect(response).to redirect_to(show_conversation_path)
+          end
+        end
+      end
+    end
+  end
+
+  shared_examples "redirects user to the conversation when an early access user has completed onboarding" do |routes:|
+    routes.each do |path, methods|
+      describe "Redirects user to the conversation the early access users completed onboarding" do
+        before do
+          user = create(:early_access_user, onboarding_completed: true)
+          sign_in_early_access_user(user)
+        end
+
+        methods.each do |method|
+          it "redirects user to the conversation when EarlyAccessUser#onboarding_completed is true for #{method} #{path}" do
+            process(method.to_sym, public_send(path.to_sym))
             expect(response).to have_http_status(:redirect)
             expect(response).to redirect_to(show_conversation_path)
           end

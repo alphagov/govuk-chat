@@ -3,7 +3,7 @@ class Form::CreateQuestion
   include ActiveModel::Attributes
 
   attribute :user_question
-  attribute :conversation, default: -> { Conversation.new }
+  attribute :conversation
 
   USER_QUESTION_PRESENCE_ERROR_MESSAGE = "Ask a question. For example, 'how do I register for VAT?'".freeze
   USER_QUESTION_LENGTH_MAXIMUM = 300
@@ -20,6 +20,7 @@ class Form::CreateQuestion
     question = Question.new(message: user_question, conversation:)
     question.answer_strategy = :open_ai_rag_completion if Feature.enabled?(:unstructured_answer_generation)
     question.save!
+    conversation.user.increment!(:questions_count) if conversation.user.present?
     ComposeAnswerJob.perform_later(question.id)
     question
   end

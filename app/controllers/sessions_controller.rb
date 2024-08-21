@@ -18,6 +18,7 @@ class SessionsController < BaseController
       sign_in(passwordless_session)
       early_access_user = passwordless_session.authenticatable
       early_access_user.sign_in(passwordless_session)
+      configure_session_and_conversation_cookie(early_access_user)
 
       redirect_to redirect_location
     rescue EarlyAccessUser::AccessRevokedError
@@ -47,5 +48,15 @@ private
 
   def redirect_location
     reset_passwordless_redirect_location!(EarlyAccessUser) || onboarding_limitations_path
+  end
+
+  def configure_session_and_conversation_cookie(early_access_user)
+    cookies.delete(:conversation_id) if cookies[:conversation_id].present?
+    session[:onboarding] = "conversation" if early_access_user.onboarding_completed
+    cookies[:conversation_id] = Conversation
+                                  .active
+                                  .where(user: early_access_user)
+                                  .order(created_at: :desc)
+                                  .pick(:id)
   end
 end

@@ -1,6 +1,7 @@
 class Conversation < ApplicationRecord
   has_many :questions
   has_many :answers, through: :questions
+  belongs_to :user, optional: true, class_name: "EarlyAccessUser", foreign_key: :early_access_user_id
 
   scope :active, -> { where(Question.active.where("questions.conversation_id = conversations.id").arel.exists) }
 

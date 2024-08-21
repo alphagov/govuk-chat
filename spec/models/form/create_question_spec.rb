@@ -1,19 +1,30 @@
 RSpec.describe Form::CreateQuestion do
   describe "validations" do
+    let(:conversation) { build(:conversation) }
+
     it "is valid when user_question is present and 300 chars of less" do
-      form = described_class.new(user_question: SecureRandom.alphanumeric(300))
+      form = described_class.new(
+        conversation:,
+        user_question: SecureRandom.alphanumeric(300),
+      )
       expect(form).to be_valid
     end
 
     it "is invalid when user_question has more than 300 chars" do
-      form = described_class.new(user_question: SecureRandom.alphanumeric(301))
+      form = described_class.new(
+        conversation:,
+        user_question: SecureRandom.alphanumeric(301),
+      )
       form.validate
 
       expect(form.errors.messages[:user_question]).to eq(["Question must be 300 characters or less"])
     end
 
     it "is invalid when user_question is blank" do
-      form = described_class.new(user_question: "")
+      form = described_class.new(
+        conversation:,
+        user_question: "",
+      )
       form.validate
 
       expect(form.errors.messages[:user_question]).to eq(["Ask a question. For example, 'how do I register for VAT?'"])
@@ -22,8 +33,10 @@ RSpec.describe Form::CreateQuestion do
     it "is invalid when the conversation passed in has an unanswered question" do
       pending_question = build(:question)
       conversation = create(:conversation, questions: [pending_question])
-
-      form = described_class.new(user_question: "How much tax should I be paying?", conversation:)
+      form = described_class.new(
+        conversation:,
+        user_question: "How much tax should I be paying?",
+      )
       form.validate
 
       expect(form.errors.messages[:base]).to eq(["Previous question pending. Please wait for a response"])
@@ -35,14 +48,20 @@ RSpec.describe Form::CreateQuestion do
       end
 
       it "adds an error message when pii is present" do
-        form = described_class.new(user_question: "My email address is email@gmail.com")
+        form = described_class.new(
+          conversation:,
+          user_question: "My email address is email@gmail.com",
+        )
         form.validate
 
         expect(form.errors.messages[:user_question]).to eq([pii_error_message])
       end
 
       it "doesn't add an error message when no pii is present" do
-        form = described_class.new(user_question: "This doesn't have an email address")
+        form = described_class.new(
+          conversation:,
+          user_question: "This doesn't have an email address",
+        )
 
         expect(form).to be_valid
       end
@@ -51,16 +70,17 @@ RSpec.describe Form::CreateQuestion do
 
   describe "#submit" do
     it "raises an error when the form object is invalid" do
-      form = described_class.new
+      conversation = build(:conversation)
+      form = described_class.new(conversation:)
 
       expect { form.submit }.to raise_error(ActiveModel::ValidationError)
     end
 
-    context "when a conversation is passed in on initialisation" do
-      it "adds a new question with the correct attributes to the conversation" do
-        existing_question = build(:question, :with_answer)
-        conversation = create(:conversation, questions: [existing_question])
+    context "when the conversation passed in on initialisation is persisted" do
+      let(:user) { create(:early_access_user) }
+      let(:conversation) { create(:conversation, user:, questions: [create(:question, :with_answer)]) }
 
+      it "adds a new question with the correct attributes to the conversation" do
         described_class.new(
           user_question: "How much tax should I be paying?",
           conversation:,
@@ -75,16 +95,27 @@ RSpec.describe Form::CreateQuestion do
       end
 
       it "enqueues a ComposeAnswerJob" do
-        form = described_class.new(user_question: "How much tax should I be paying?")
+        form = described_class.new(conversation:, user_question: "How much tax should I be paying?")
         expect { form.submit }.to change(Sidekiq::Queues["default"], :size).by(1)
         expect(Sidekiq::Queues["default"].last["args"])
           .to include(hash_including("job_class" => "ComposeAnswerJob", "arguments" => [Question.last.id]))
       end
+
+      it "increments the user's questions_count by 1 if a user is associated with the conversation" do
+        form = described_class.new(
+          user_question: "How much tax should I be paying?",
+          conversation:,
+        )
+        expect { form.submit }.to change { user.reload.questions_count }.by(1)
+      end
     end
 
-    context "when no conversation is passed in on initialisation" do
-      it "creates a new conversation and question" do
-        form = described_class.new(user_question: "How much tax should I be paying?")
+    context "when the conversation that is passed is a new record" do
+      let(:user) { create(:early_access_user) }
+      let(:conversation) { build(:conversation, user:) }
+
+      it "persists the conversation with the users question" do
+        form = described_class.new(user_question: "How much tax should I be paying?", conversation:)
 
         expect { form.submit }
           .to change(Conversation, :count).by(1)
@@ -92,7 +123,7 @@ RSpec.describe Form::CreateQuestion do
       end
 
       it "returns the created question with the correct attributes" do
-        form = described_class.new(user_question: "How much tax should I be paying?")
+        form = described_class.new(user_question: "How much tax should I be paying?", conversation:)
         question = form.submit
 
         expect(question)
@@ -100,6 +131,19 @@ RSpec.describe Form::CreateQuestion do
             message: "How much tax should I be paying?",
             answer_strategy: "openai_structured_answer",
           )
+      end
+
+      it "associates the conversation with an early access user if present on the conversation" do
+        form = described_class.new(user_question: "How much tax should I be paying?", conversation:)
+        expect { form.submit }.to change { user.reload.conversations.count }.by(1)
+      end
+
+      it "increments the user's questions_count by 1" do
+        form = described_class.new(
+          user_question: "How much tax should I be paying?",
+          conversation:,
+        )
+        expect { form.submit }.to change { user.reload.questions_count }.by(1)
       end
     end
   end
