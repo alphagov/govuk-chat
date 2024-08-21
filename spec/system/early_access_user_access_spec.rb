@@ -39,6 +39,17 @@ RSpec.describe "Early access user access" do
     then_i_see_the_signups_are_disabled_page
   end
 
+  scenario "no instant access places are available" do
+    given_sign_ups_are_enabled
+    and_there_are_no_instant_access_places_available
+    when_i_visit_the_early_access_signup_page
+    and_i_enter_my_email_address
+    and_i_choose_my_description
+    and_i_choose_my_reason_for_visit
+    then_i_am_told_i_have_been_added_to_the_waitlist
+    and_i_receive_an_email_telling_me_i_am_on_the_waitlist
+  end
+
   def given_sign_ups_are_enabled
     @settings = create(:settings, sign_up_enabled: true)
   end
@@ -67,10 +78,8 @@ RSpec.describe "Early access user access" do
   end
 
   def when_i_click_the_link_in_the_email
-    email_body = ActionMailer::Base.deliveries.last.body.raw_source
-    # URI.extract infers that the closing link markdown parenthesis ")" is part of the href
-    magic_link = URI.extract(email_body).first.gsub(")", "")
-    visit magic_link
+    email_links = extract_links_from_last_email
+    visit email_links.first
   end
 
   def then_i_arrive_on_the_onboarding_limitations_page
@@ -97,5 +106,18 @@ RSpec.describe "Early access user access" do
 
   def then_i_see_the_signups_are_disabled_page
     expect(page).to have_content("GOV.UK Chat is no longer open for new users")
+  end
+
+  def and_there_are_no_instant_access_places_available
+    Settings.instance.update!(instant_access_places: 0)
+  end
+
+  def then_i_am_told_i_have_been_added_to_the_waitlist
+    expect(page).to have_content("You have been added to the waitlist")
+  end
+
+  def and_i_receive_an_email_telling_me_i_am_on_the_waitlist
+    expect(ActionMailer::Base.deliveries.last.body.raw_source)
+      .to include("Thanks for joining our early access waitlist.")
   end
 end
