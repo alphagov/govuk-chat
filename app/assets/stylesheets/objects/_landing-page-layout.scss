@@ -1,0 +1,111 @@
+.app-landing-page-layout {
+  display: flex;
+  flex-direction: column;
+
+  // In order to prevent the landing animation from overlaying other elements, we establish a new stacking context here 
+  // and set the animation container's z-index to -1 to push it behind the content in the body
+  position: relative;
+  z-index: 0;
+}
+
+.app-landing-page-layout__animation {
+  animation: landing-page-animation 0.75s ease-in-out;
+  position: absolute;
+  right: -10rem;
+  z-index: -1;
+  margin-top: -7rem;
+
+  @include govuk-media-query($from: mobile, $until: tablet) {
+    right: -38rem;
+    margin-top: -45rem;
+  }
+
+  @include govuk-media-query($from: tablet, $until: desktop) {
+    right: -35rem;
+    margin-top: -10rem;
+  }
+
+  @include govuk-media-query($from: desktop, $until: 1919px) {
+    right: -10rem;
+    margin-top: -8rem;
+  }
+
+  @include govuk-media-query($from: 1919px) {
+    right: -15rem;
+    margin-top: -8rem;
+  }
+}
+
+@keyframes landing-page-animation {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  // The translations at 60% and 80% give the bounce effect
+  60% {
+    transform: translateY(30px);
+  }
+
+  80% { 
+    transform: translateY(-3px); 
+  }
+
+  100% { 
+    transform: translateY(0); 
+  }
+}
+
+@media (prefers-reduced-motion) {
+  .app-landing-page-layout__animation {
+    animation: none;
+  }
+}
+
+.app-landing-page-layout__animation-message-container {
+  transform: rotate(5deg) scale(0.7);
+  max-width: 56.25rem;
+  overflow: hidden;
+
+  @include govuk-media-query($from: tablet) {
+    transform: rotate(5deg) scale(1);
+  }
+
+  // This is a bit of a hack to stop the animation boxes from extending beyond the footer and
+  // creating additional whitespace under it on wider screens
+  @include govuk-media-query($from: desktop) {
+    max-height: 100vh;
+  }
+
+  @include govuk-media-query($from: 1919px) {
+    transform: rotate(5deg) scale(1.25);
+  }
+}
+
+.app-landing-page-layout__animation-message {
+  height: 12.5rem;
+  width: 46.875rem;
+  margin: 1rem 0;
+  background-color: govuk-tint(govuk-colour("light-blue"), 75%);
+  float: right;
+
+  &:first-of-type {
+    width: 48.125rem;
+    height: 12.5rem;
+    margin: 1.5rem;
+  }
+
+  &:last-of-type {
+    height: 19rem;
+    width: 48.125rem;
+    margin: 1.5rem;
+  }
+}
+
+.app-landing-page-layout__animation-message--alt {
+  background-color: govuk-colour("light-grey");
+  float: left;
+
+  @include govuk-media-query($from: desktop, $until: 1919px) {
+    width: 37.5rem;
+  }
+}
