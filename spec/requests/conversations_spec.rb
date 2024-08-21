@@ -1,5 +1,9 @@
 RSpec.describe "ConversationsController" do
+  let(:user) { create(:early_access_user) }
+
   delegate :helpers, to: ConversationsController
+
+  before { sign_in_early_access_user(user) }
 
   it_behaves_like "requires user to have completed onboarding", routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
   it_behaves_like "requires user to have completed onboarding", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
@@ -83,7 +87,7 @@ RSpec.describe "ConversationsController" do
     end
 
     context "when the conversation cookie has expired" do
-      let(:conversation) { create(:conversation, :expired) }
+      let(:conversation) { create(:conversation, :expired, user:) }
 
       before do
         cookies[:conversation_id] = conversation.id
@@ -103,7 +107,7 @@ RSpec.describe "ConversationsController" do
     end
 
     context "when the conversation is active" do
-      let(:conversation) { create(:conversation, :not_expired) }
+      let(:conversation) { create(:conversation, :not_expired, user:) }
 
       before do
         cookies[:conversation_id] = conversation.id
@@ -117,7 +121,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there is a question without an answer" do
-        let(:conversation) { create(:conversation) }
+        let(:conversation) { create(:conversation, user:) }
 
         it "renders the question and pending answer url correctly" do
           question = create(:question, conversation:)
@@ -131,7 +135,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there is a question with an answer that doesn't have feedback" do
-        let(:conversation) { create(:conversation) }
+        let(:conversation) { create(:conversation, user:) }
 
         it "renders the answer and an answer feedback form" do
           question = create(:question, :with_answer, conversation:)
@@ -149,7 +153,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there is a question with an answer that has feedback" do
-        let(:conversation) { create(:conversation) }
+        let(:conversation) { create(:conversation, user:) }
 
         it "doesn't render a feedback form" do
           question = create(:question, :with_answer, conversation:)
@@ -164,7 +168,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there is a question with an answer that has sources" do
-        let(:conversation) { create(:conversation) }
+        let(:conversation) { create(:conversation, user:) }
 
         it "renders the sources correctly for answers with the success status" do
           question = create(:question, conversation:)
@@ -207,7 +211,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there are more questions than the max number of questions" do
-        let(:conversation) { create(:conversation) }
+        let(:conversation) { create(:conversation, user:) }
 
         it "only renders the max number of question from rails config" do
           allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(1)
@@ -223,7 +227,7 @@ RSpec.describe "ConversationsController" do
 
       context "and the response format is JSON" do
         before do
-          conversation = create(:conversation, :not_expired)
+          conversation = create(:conversation, :not_expired, user:)
           cookies[:conversation_id] = conversation.id
         end
 
@@ -252,7 +256,7 @@ RSpec.describe "ConversationsController" do
 
   describe "POST :update" do
     include_context "with onboarding completed"
-    let(:conversation) { create(:conversation, :not_expired) }
+    let(:conversation) { create(:conversation, :not_expired, user:) }
 
     it "sets the converation_id cookie with valid params" do
       freeze_time do
@@ -286,7 +290,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and the params are invalid while the last question is not answered" do
-        let(:conversation) { create(:conversation, questions: [create(:question)]) }
+        let(:conversation) { create(:conversation, questions: [create(:question)], user:) }
 
         before do
           cookies[:conversation_id] = conversation.id
@@ -359,7 +363,7 @@ RSpec.describe "ConversationsController" do
 
   describe "GET :answer" do
     include_context "with onboarding completed"
-    let(:conversation) { create(:conversation) }
+    let(:conversation) { create(:conversation, user:) }
 
     before do
       cookies[:conversation_id] = conversation.id
@@ -440,7 +444,7 @@ RSpec.describe "ConversationsController" do
 
   describe "POST :answer_feedback" do
     include_context "with onboarding completed"
-    let(:conversation) { create(:conversation) }
+    let(:conversation) { create(:conversation, user:) }
     let(:question) { create(:question, conversation:) }
 
     before do

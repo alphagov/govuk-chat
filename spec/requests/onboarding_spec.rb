@@ -1,4 +1,8 @@
 RSpec.describe "OnboardingController" do
+  let(:user) { create(:early_access_user) }
+
+  before { sign_in_early_access_user(user) }
+
   it_behaves_like "redirects user to the conversation when conversation_id is set on cookie",
                   routes: {
                     onboarding_limitations_path: %i[get],
@@ -19,7 +23,9 @@ RSpec.describe "OnboardingController" do
                     onboarding_limitations_confirm_path: %i[post],
                     onboarding_privacy_path: %i[get],
                     onboarding_privacy_confirm_path: %i[post],
-                  }
+                  } do
+                    let(:user) { create(:early_access_user, onboarding_completed: true) }
+                  end
   it_behaves_like "redirects user to the privacy page when onboarding limitations has been completed",
                   routes: { onboarding_limitations_path: %i[get], onboarding_limitations_confirm_path: %i[post] }
 
@@ -145,15 +151,10 @@ RSpec.describe "OnboardingController" do
       expect(response).to redirect_to(show_conversation_path(anchor: "start-chatting"))
     end
 
-    context "when the user is an early access user" do
-      it "updates the onboarding_completed attribute to true" do
-        user = create(:early_access_user)
-        sign_in_early_access_user(user)
+    it "updates the onboarding_completed attribute to true" do
+      post onboarding_privacy_confirm_path
 
-        post onboarding_privacy_confirm_path
-
-        expect(user.reload.onboarding_completed).to be(true)
-      end
+      expect(user.reload.onboarding_completed).to be(true)
     end
   end
 end

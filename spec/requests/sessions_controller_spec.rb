@@ -37,10 +37,10 @@ RSpec.describe "sessions controller" do
 
       context "with a stored redirect location" do
         it "redirects to the stored location" do
-          get protected_path
+          get show_conversation_path
           follow_redirect!
           get magic_link
-          expect(response).to redirect_to(protected_path)
+          expect(response).to redirect_to(show_conversation_path)
         end
       end
 
@@ -55,7 +55,7 @@ RSpec.describe "sessions controller" do
 
         it "doesn't sign a user in" do
           get magic_link
-          get protected_path
+          get show_conversation_path
           expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
         end
       end
@@ -153,12 +153,12 @@ RSpec.describe "sessions controller" do
     end
 
     it "signs out the user" do
-      get protected_path
+      get onboarding_limitations_path
       expect(response).to have_http_status(:ok)
 
       get sign_out_path
 
-      get protected_path
+      get onboarding_limitations_path
       expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
     end
   end

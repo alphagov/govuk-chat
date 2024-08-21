@@ -14,7 +14,7 @@ module OnboardingRequestExamples
 
           context "when conversation_id is set on the cookie" do
             it "does not redirect to the onboarding flow for #{method} #{path}" do
-              conversation = create(:conversation, :not_expired)
+              conversation = create(:conversation, :not_expired, user:)
               cookies[:conversation_id] = conversation.id
 
               process(method.to_sym, public_send(path.to_sym, *route_params))
@@ -32,7 +32,7 @@ module OnboardingRequestExamples
       describe "Redirects user to the conversation when conversation_id is set on cookie" do
         methods.each do |method|
           it "redirects user to the conversation when conversation_id is present for #{method} #{path}" do
-            conversation = create(:conversation)
+            conversation = create(:conversation, :not_expired, user:)
             cookies[:conversation_id] = conversation.id
 
             process(method.to_sym, public_send(path.to_sym))
@@ -65,11 +65,6 @@ module OnboardingRequestExamples
   shared_examples "redirects user to the conversation when an early access user has completed onboarding" do |routes:|
     routes.each do |path, methods|
       describe "Redirects user to the conversation the early access users completed onboarding" do
-        before do
-          user = create(:early_access_user, onboarding_completed: true)
-          sign_in_early_access_user(user)
-        end
-
         methods.each do |method|
           it "redirects user to the conversation when EarlyAccessUser#onboarding_completed is true for #{method} #{path}" do
             process(method.to_sym, public_send(path.to_sym))

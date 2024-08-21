@@ -163,7 +163,7 @@ RSpec.describe "early access entry point" do
           post early_access_entry_sign_in_or_up_path(
             sign_in_or_up_form: { email: "email@test.com" },
           )
-          get protected_path
+          get onboarding_limitations_path
           expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
         end
       end
