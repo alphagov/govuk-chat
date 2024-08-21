@@ -13,7 +13,7 @@
   <div class="govuk-grid-column-two-thirds">
     <%= render "admin/shared/questions_table",
       filter: @filter,
-      questions: @filter.questions,
+      questions: @filter.results,
       path: :admin_questions_path %>
   </div>
 </div>

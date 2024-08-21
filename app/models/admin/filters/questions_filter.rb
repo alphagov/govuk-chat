@@ -1,29 +1,28 @@
-class Admin::Form::QuestionsFilter
-  include ActiveModel::Model
-  include ActiveModel::Attributes
-
-  DEFAULT_SORT = "-created_at".freeze
-  VALID_SORT_VALUES = ["created_at", "-created_at", "message", "-message"].freeze
-
+class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :status
   attribute :search
   attribute :start_date_params, default: {}
   attribute :end_date_params, default: {}
   attribute :conversation
-  attribute :page, :integer
-  attribute :sort
   attribute :answer_feedback_useful, :boolean
 
   validate :validate_dates
 
+  def self.default_sort
+    "-created_at"
+  end
+
+  def self.valid_sort_values
+    ["created_at", "-created_at", "message", "-message"]
+  end
+
   def initialize(...)
     super
-    self.sort = DEFAULT_SORT unless VALID_SORT_VALUES.include?(sort)
     validate
   end
 
-  def questions
-    @questions ||= begin
+  def results
+    @results ||= begin
       scope = Question.includes(answer: :feedback)
                       .left_outer_joins(:answer)
       scope = search_scope(scope)
@@ -38,38 +37,6 @@ class Admin::Form::QuestionsFilter
     end
   end
 
-  def previous_page_params
-    if questions.prev_page == 1 || questions.prev_page.nil?
-      pagination_query_params
-    else
-      pagination_query_params.merge(page: questions.prev_page)
-    end
-  end
-
-  def next_page_params
-    if questions.next_page.present?
-      pagination_query_params.merge(page: questions.next_page)
-    else
-      pagination_query_params
-    end
-  end
-
-  def sort_direction(field)
-    return unless sort.delete_prefix("-") == field
-
-    sort.starts_with?("-") ? "descending" : "ascending"
-  end
-
-  def toggleable_sort_params(default_field_sort)
-    sort_param = if sort == default_field_sort
-                   sort.starts_with?("-") ? sort.delete_prefix("-") : "-#{sort}"
-                 else
-                   default_field_sort
-                 end
-
-    pagination_query_params.merge(sort: sort_param, page: nil)
-  end
-
 private
 
   def pagination_query_params
@@ -78,7 +45,7 @@ private
     filters[:search] = search if search.present?
     filters[:start_date_params] = start_date_params if start_date_params.values.any?(&:present?)
     filters[:end_date_params] = end_date_params if end_date_params.values.any?(&:present?)
-    filters[:sort] = sort if sort != DEFAULT_SORT
+    filters[:sort] = sort if sort != self.class.default_sort
     filters[:answer_feedback_useful] = answer_feedback_useful unless answer_feedback_useful.nil?
 
     filters
@@ -122,12 +89,6 @@ private
     return scope if conversation.blank?
 
     scope.where(conversation_id: conversation.id)
-  end
-
-  def ordering_scope(scope)
-    column = sort.delete_prefix("-")
-    direction = sort.start_with?("-") ? :desc : :asc
-    scope.order("#{column}": direction)
   end
 
   def validate_dates

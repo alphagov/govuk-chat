@@ -1,0 +1,23 @@
+<%= form_with(url: admin_waiting_list_users_path, method: :get) do %>
+  <%= render "govuk_publishing_components/components/input", {
+    label: {
+      text: "Email address",
+    },
+    name: "email",
+    id: "email",
+    value: params[:email],
+    heading_size: "s",
+    full_width: true,
+  } %>
+
+  <%= render "govuk_publishing_components/components/button", {
+    text: "Filter",
+    margin_bottom: true,
+  } %>
+
+  <p class="govuk-body">
+    <%= link_to "Clear all filters",
+                admin_waiting_list_users_path,
+                class: "govuk-link govuk-link--no-visited-state" %>
+  </p>
+<% end %>

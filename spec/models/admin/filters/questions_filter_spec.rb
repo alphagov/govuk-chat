@@ -1,4 +1,4 @@
-RSpec.describe Admin::Form::QuestionsFilter do
+RSpec.describe Admin::Filters::QuestionsFilter do
   describe "validations" do
     describe "#validate_dates" do
       it "is valid if the start date and end date are valid dates" do
@@ -70,44 +70,44 @@ RSpec.describe Admin::Form::QuestionsFilter do
     end
   end
 
-  describe "#questions" do
+  describe "#results" do
     describe "ordering" do
       let!(:question_1_min_ago) { create(:question, message: "Hello world", created_at: 1.minute.ago) }
       let!(:question_2_mins_ago) { create(:question, :with_answer, message: "World hello", created_at: 2.minutes.ago) }
       let!(:question_3_mins_ago) { create(:question, :with_answer, message: "Sup moon", created_at: 3.minutes.ago) }
 
-      it "orders the questions by the most recently created" do
-        questions = described_class.new.questions
-        expect(questions).to eq([question_1_min_ago, question_2_mins_ago, question_3_mins_ago])
+      it "orders the results by the most recently created" do
+        results = described_class.new.results
+        expect(results).to eq([question_1_min_ago, question_2_mins_ago, question_3_mins_ago])
       end
 
-      it "orders the questions by the most recently created when the sort param is '-created_at'" do
-        questions = described_class.new(sort: "-created_at").questions
-        expect(questions).to eq([question_1_min_ago, question_2_mins_ago, question_3_mins_ago])
+      it "orders the results by the most recently created when the sort param is '-created_at'" do
+        results = described_class.new(sort: "-created_at").results
+        expect(results).to eq([question_1_min_ago, question_2_mins_ago, question_3_mins_ago])
       end
 
-      it "orders the questions by the most recently created if the sort param is invalid" do
-        questions = described_class.new(sort: "invalid").questions
-        expect(questions).to eq([question_1_min_ago, question_2_mins_ago, question_3_mins_ago])
+      it "orders the results by the most recently created if the sort param is invalid" do
+        results = described_class.new(sort: "invalid").results
+        expect(results).to eq([question_1_min_ago, question_2_mins_ago, question_3_mins_ago])
       end
 
-      it "orders the questions by the oldest first when the sort param is 'created_at'" do
-        questions = described_class.new(sort: "created_at").questions
-        expect(questions).to eq([question_3_mins_ago, question_2_mins_ago, question_1_min_ago])
+      it "orders the results by the oldest first when the sort param is 'created_at'" do
+        results = described_class.new(sort: "created_at").results
+        expect(results).to eq([question_3_mins_ago, question_2_mins_ago, question_1_min_ago])
       end
 
-      it "orders the questions alphabetically when the sort param is 'message'" do
-        questions = described_class.new(sort: "message").questions
-        expect(questions).to eq([question_1_min_ago, question_3_mins_ago, question_2_mins_ago])
+      it "orders the results alphabetically when the sort param is 'message'" do
+        results = described_class.new(sort: "message").results
+        expect(results).to eq([question_1_min_ago, question_3_mins_ago, question_2_mins_ago])
       end
 
-      it "orders the questions reverse alphabetically when the sort param is '-message'" do
-        questions = described_class.new(sort: "-message").questions
-        expect(questions).to eq([question_2_mins_ago, question_3_mins_ago, question_1_min_ago])
+      it "orders the results reverse alphabetically when the sort param is '-message'" do
+        results = described_class.new(sort: "-message").results
+        expect(results).to eq([question_2_mins_ago, question_3_mins_ago, question_1_min_ago])
       end
     end
 
-    it "filters the questions by search" do
+    it "filters the results by search" do
       question1 = create(:question, message: "hello world", created_at: 1.minute.ago)
       question2 = create(:question, created_at: 2.minutes.ago)
       create(:answer, message: "hello moon", question: question2)
@@ -116,21 +116,21 @@ RSpec.describe Admin::Form::QuestionsFilter do
       create(:question, message: "goodbye")
 
       filter = described_class.new(search: "hello")
-      expect(filter.questions).to eq([question1, question2, question3])
+      expect(filter.results).to eq([question1, question2, question3])
     end
 
-    it "filters the questions by status" do
+    it "filters the results by status" do
       question1 = create(:question)
       question2 = create(:answer, status: "success").question
 
       filter = described_class.new(status: "pending")
-      expect(filter.questions).to eq([question1])
+      expect(filter.results).to eq([question1])
 
       filter = described_class.new(status: "success")
-      expect(filter.questions).to eq([question2])
+      expect(filter.results).to eq([question2])
     end
 
-    it "filters the questions by start date" do
+    it "filters the results by start date" do
       question = create(:question)
       create(:question, created_at: 2.days.ago)
       today = Date.current
@@ -138,17 +138,17 @@ RSpec.describe Admin::Form::QuestionsFilter do
         start_date_params: { day: today.day, month: today.month, year: today.year },
       )
 
-      expect(filter.questions).to eq([question])
+      expect(filter.results).to eq([question])
     end
 
-    it "filters the questions by end date" do
+    it "filters the results by end date" do
       question = create(:question, created_at: 2.days.ago)
       create(:question)
 
       today = Date.current
       filter = described_class.new(end_date_params: { day: today.day, month: today.month, year: today.year })
 
-      expect(filter.questions).to eq([question])
+      expect(filter.results).to eq([question])
     end
 
     it "does not filter on the start date when start date is invalid" do
@@ -161,7 +161,7 @@ RSpec.describe Admin::Form::QuestionsFilter do
         end_date_params: { day: today.day, month: today.month, year: today.year - 1 },
       )
 
-      expect(filter.questions).to eq([question])
+      expect(filter.results).to eq([question])
     end
 
     it "does not filter on the end date when end date is invalid" do
@@ -174,10 +174,10 @@ RSpec.describe Admin::Form::QuestionsFilter do
         end_date_params: { day: today.day, month: "invalid", year: today.year },
       )
 
-      expect(filter.questions).to eq([question])
+      expect(filter.results).to eq([question])
     end
 
-    it "filters the questions between the start and end dates" do
+    it "filters the results between the start and end dates" do
       question = create(:question, created_at: 3.years.ago)
       create(:question, created_at: 1.year.ago)
       create(:question, created_at: 5.years.ago)
@@ -188,10 +188,10 @@ RSpec.describe Admin::Form::QuestionsFilter do
         end_date_params: { day: today.day, month: today.month, year: today.year - 2 },
       )
 
-      expect(filter.questions).to eq([question])
+      expect(filter.results).to eq([question])
     end
 
-    it "filters the questions by answer feedback" do
+    it "filters the results by answer feedback" do
       useful_question = create(:question)
       answer1 = create(:answer, question: useful_question)
       create(:answer_feedback, answer: answer1, useful: true)
@@ -201,30 +201,30 @@ RSpec.describe Admin::Form::QuestionsFilter do
       create(:answer_feedback, answer: answer2, useful: false)
 
       filter = described_class.new(answer_feedback_useful: "true")
-      expect(filter.questions).to eq([useful_question])
+      expect(filter.results).to eq([useful_question])
 
       filter = described_class.new(answer_feedback_useful: "false")
-      expect(filter.questions).to eq([useless_question])
+      expect(filter.results).to eq([useless_question])
     end
 
-    it "paginates the questions" do
+    it "paginates the results" do
       create_list(:question, 26)
 
-      questions = described_class.new(page: 1).questions
+      questions = described_class.new(page: 1).results
       expect(questions.count).to eq(25)
 
-      questions = described_class.new(page: 2).questions
+      questions = described_class.new(page: 2).results
       expect(questions.count).to eq(1)
     end
 
     context "when a conversation is passed in on initilisation" do
-      it "scopes the questions to the conversation" do
+      it "scopes the results to the conversation" do
         question1 = create(:question, created_at: 2.minutes.ago)
         create(:question, created_at: 1.minute.ago)
 
         filter = described_class.new(conversation: question1.conversation)
 
-        expect(filter.questions).to eq([question1])
+        expect(filter.results).to eq([question1])
       end
     end
   end

@@ -25,6 +25,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_19_093754) do
   create_enum "status", ["success", "error_non_specific", "error_answer_service_error", "abort_forbidden_words", "error_context_length_exceeded", "abort_no_govuk_content", "error_invalid_llm_response", "abort_output_guardrails", "error_output_guardrails", "abort_timeout", "abort_llm_cannot_answer", "abort_question_routing", "error_question_routing"]
   create_enum "ur_question_reason_for_visit", ["find_specific_answer", "complete_task", "understand_process", "research_topic", "other"]
   create_enum "ur_question_user_description", ["business_owner_or_self_employed", "starting_business_or_becoming_self_employed", "business_advisor", "business_administrator", "none"]
+  create_enum "waiting_list_users_source", ["admin_added", "insufficient_instant_places"]
 
   create_table "admin_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
@@ -176,6 +177,16 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_19_093754) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_settings_audits_on_created_at"
     t.index ["user_id"], name: "index_settings_audits_on_user_id"
+  end
+
+  create_table "waiting_list_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.citext "email", null: false
+    t.enum "user_description", enum_type: "ur_question_user_description"
+    t.enum "reason_for_visit", enum_type: "ur_question_reason_for_visit"
+    t.enum "source", null: false, enum_type: "waiting_list_users_source"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_waiting_list_users_on_email", unique: true
   end
 
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade

@@ -13,6 +13,6 @@ private
       :sort,
     )
 
-    Admin::Form::QuestionsFilter.new(filter_params.merge(conversation:))
+    Admin::Filters::QuestionsFilter.new(filter_params.merge(conversation:))
   end
 end

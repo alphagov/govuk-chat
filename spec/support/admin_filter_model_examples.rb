@@ -37,7 +37,7 @@ module AdminFilterModelExamples
     describe "#sort_direction" do
       it "returns nil when sort does not match the field passed in" do
         filter = described_class.new(sort: sort_field)
-        other_sort_field = described_class::VALID_SORT_VALUES.reject { |v| v == sort_field }.sample
+        other_sort_field = described_class.valid_sort_values.reject { |v| v == sort_field }.sample
         expect(filter.sort_direction(other_sort_field)).to be_nil
       end
 

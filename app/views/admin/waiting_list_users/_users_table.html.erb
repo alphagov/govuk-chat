@@ -14,15 +14,9 @@
         href: public_send(path, filter.toggleable_sort_params("email")),
       },
       {
-        text: "Questions asked",
-      },
-      {
-        text: "Last login",
-        sort_direction: filter.sort_direction("last_login_at"),
-        href: public_send(path, filter.toggleable_sort_params("-last_login_at")),
-      },
-      {
-        text: "Access revoked?",
+        text: "Created",
+        sort_direction: filter.sort_direction("created_at"),
+        href: public_send(path, filter.toggleable_sort_params("-created_at")),
       },
     ],
     rows: users.map do |user|
@@ -30,19 +24,12 @@
         {
           text: link_to(
             user.email,
-            admin_early_access_user_path(user),
+            "#",
             class: "govuk-link",
           ),
         },
         {
-          text: user.questions_count,
-        },
-        {
-          text: user.last_login_at ? user.last_login_at.to_fs(:time_and_date) : "Never",
-          format: user.last_login_at ? nil : "empty",
-        },
-        {
-          text: user.access_revoked? ? "Yes" : "No",
+          text: user.created_at.to_fs(:time_and_date),
         },
       ]
     end,
