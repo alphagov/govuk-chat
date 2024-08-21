@@ -36,7 +36,7 @@
 
           <h1 class="govuk-visually-hidden js-title"><%= page_title %></h1>
 
-          <div class="js-conversation-message-lists">
+          <div class="js-conversation-message-lists" data-progressive-disclosure-delay="<%= Rails.configuration.conversation_js_progressive_disclosure_delay || 2000 %>">
             <h2 id="chat-history" class="govuk-visually-hidden">Chat history</h2>
             <ul class="app-conversation-layout__list js-message-history-list">
               <%= yield(:message_history) %>

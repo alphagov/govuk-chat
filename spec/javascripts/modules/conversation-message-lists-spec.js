@@ -15,6 +15,7 @@ describe('ConversationMessageLists module', () => {
       </template>
     `
 
+    moduleElement.dataset.progressiveDisclosureDelay = 2000
     document.body.appendChild(moduleElement)
     messageHistoryList = moduleElement.querySelector('.js-message-history-list')
     newMessagesList = moduleElement.querySelector('.js-new-messages-list')
@@ -90,8 +91,20 @@ describe('ConversationMessageLists module', () => {
         expect(messages[2]).toHaveClass('app-c-conversation-message--fade-in')
         expect(scrollIntoViewSpy).toHaveBeenCalledWith(messages[2])
 
-        // there is a delay after all work is done before promise is resolved
         jasmine.clock().tick(progressiveDisclosureDelay)
+        promise.then(() => done())
+      })
+
+      it('can be configured to not have a delay and show all the messages rapidly', done => {
+        module.PROGRESSIVE_DISCLOSURE_DELAY = 0
+        const promise = module.progressivelyDiscloseMessages()
+
+        jasmine.clock().tick(1)
+
+        const messages = newMessagesList.querySelectorAll('.js-conversation-message')
+        expect(messages[1]).not.toHaveClass('govuk-visually-hidden')
+        expect(messages[2]).not.toHaveClass('govuk-visually-hidden')
+
         promise.then(() => done())
       })
     })

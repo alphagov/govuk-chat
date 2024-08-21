@@ -4,7 +4,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 (function (Modules) {
   class ConversationMessageLists {
     constructor (module) {
-      this.PROGRESSIVE_DISCLOSURE_DELAY = 2000
+      this.PROGRESSIVE_DISCLOSURE_DELAY = parseInt(module.dataset.progressiveDisclosureDelay, 10)
       this.MESSAGE_SELECTOR = '.js-conversation-message'
       this.QUESTION_LOADING_TIMEOUT = 500
 
@@ -13,6 +13,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.newMessagesList = module.querySelector('.js-new-messages-list')
       this.loadingQuestionTemplate = this.module.querySelector('.js-loading-question')
       this.loadingAnswerTemplate = this.module.querySelector('.js-loading-answer')
+
       this.questionLoadingTimeout = null
       this.questionLoadingElement = null
       this.answerLoadingElement = null
