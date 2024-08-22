@@ -14,11 +14,10 @@ Rails.application.routes.draw do
   )
 
   scope :chat do
-    get "", to: "chat#index", as: :chat
+    get "", to: "homepage#index", as: :homepage
+    post "", to: "homepage#sign_in_or_up"
 
     scope "try-chat" do
-      post "", to: "chat#sign_in_or_up", as: :sign_in_or_up
-
       get "/you", to: "early_access_entry#user_description", as: :early_access_entry_user_description
       post "/you", to: "early_access_entry#confirm_user_description"
 

@@ -1,6 +1,6 @@
 class EarlyAccessEntryController < BaseController
   skip_before_action :ensure_early_access_user_if_auth_required!
-  before_action :redirect_to_chat_path_if_auth_not_required
+  before_action :redirect_to_homepage_if_auth_not_required
   before_action :redirect_to_homepage_if_signed_in
   before_action :ensure_sign_up_flow_position
   before_action :render_not_accepting_signups_if_sign_ups_disabled
@@ -64,7 +64,7 @@ private
 
   def ensure_sign_up_flow_position
     if session.dig("sign_up", "email").blank?
-      return redirect_to chat_path
+      return redirect_to homepage_path
     end
 
     if session.dig("sign_up", "user_description").blank? && action_name.match?(/reason_for_visit/)
@@ -81,10 +81,10 @@ private
   end
 
   def redirect_to_homepage_if_signed_in
-    redirect_to chat_path if current_early_access_user
+    redirect_to homepage_path if current_early_access_user
   end
 
-  def redirect_to_chat_path_if_auth_not_required
-    redirect_to chat_path if Rails.configuration.available_without_early_access_authentication
+  def redirect_to_homepage_if_auth_not_required
+    redirect_to homepage_path if Rails.configuration.available_without_early_access_authentication
   end
 end

@@ -1,4 +1,4 @@
-class ChatController < BaseController
+class HomepageController < BaseController
   skip_before_action :ensure_early_access_user_if_auth_required!
 
   def index
@@ -14,7 +14,7 @@ class ChatController < BaseController
   end
 
   def sign_in_or_up
-    return redirect_to chat_path if Rails.configuration.available_without_early_access_authentication
+    return redirect_to homepage_path if Rails.configuration.available_without_early_access_authentication
 
     sign_out_early_access_user if current_early_access_user
     @sign_in_or_up_form = Form::EarlyAccess::SignInOrUp.new(sign_in_or_up_form_params)
@@ -23,7 +23,7 @@ class ChatController < BaseController
       result = @sign_in_or_up_form.submit
 
       return render :email_sent if result.outcome == :existing_early_access_user
-      return render :already_on_waitlist if result.outcome == :existing_waiting_list_user
+      return render "shared/already_on_waitlist" if result.outcome == :existing_waiting_list_user
       return render "shared/access_revoked", status: :forbidden if result.outcome == :user_revoked
 
       session["sign_up"] = { "email" => result.email }

@@ -44,7 +44,7 @@ private
     return if current_early_access_user
 
     save_passwordless_redirect_location!(EarlyAccessUser)
-    redirect_to chat_path
+    redirect_to homepage_path
   end
 
   def ensure_early_access_user_if_auth_required!

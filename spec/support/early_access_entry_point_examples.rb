@@ -1,13 +1,13 @@
 module EarlyAccessEntryPointRequestExamples
   shared_examples "redirects user to instant access start page when email is not in the sign_up session" do |routes:|
     routes.each do |path, methods|
-      describe "Redirects user to chat_path when session['sign_up']['email'] is blank" do
+      describe "Redirects user to homepage_path when session['sign_up']['email'] is blank" do
         methods.each do |method|
-          it "redirects user to the chat_path for #{method} #{path}" do
+          it "redirects user to the homepage_path for #{method} #{path}" do
             process(method.to_sym, public_send(path.to_sym))
 
             expect(response).to have_http_status(:redirect)
-            expect(response).to redirect_to(chat_path)
+            expect(response).to redirect_to(homepage_path)
           end
         end
       end
@@ -55,11 +55,11 @@ module EarlyAccessEntryPointRequestExamples
     routes.each do |path, methods|
       describe "early access user gets signed out when completing sign up flow" do
         methods.each do |method|
-          it "redirects the user to the chat_path when signed in for #{method} #{path}" do
+          it "redirects the user to the homepage_path when signed in for #{method} #{path}" do
             session = create(:passwordless_session)
             sign_in_early_access_user(session.authenticatable)
             process(method.to_sym, public_send(path.to_sym))
-            expect(response).to redirect_to(chat_path)
+            expect(response).to redirect_to(homepage_path)
           end
         end
       end
@@ -82,7 +82,7 @@ module EarlyAccessEntryPointRequestExamples
             process(method.to_sym, public_send(path.to_sym, *route_params))
 
             expect(response).to have_http_status(:redirect)
-            expect(response).to redirect_to(chat_path)
+            expect(response).to redirect_to(homepage_path)
           end
 
           context "when auth is not required" do
@@ -94,7 +94,7 @@ module EarlyAccessEntryPointRequestExamples
 
             it "does not redirect to the onboarding flow for #{method} #{path}" do
               process(method.to_sym, public_send(path.to_sym, *route_params))
-              expect(response).not_to redirect_to(chat_path)
+              expect(response).not_to redirect_to(homepage_path)
             end
           end
         end
@@ -102,7 +102,7 @@ module EarlyAccessEntryPointRequestExamples
     end
   end
 
-  shared_examples "redirects to chat path if auth is not required" do |routes:|
+  shared_examples "redirects to homepage if auth is not required" do |routes:|
     let(:route_params) { [] }
 
     before do
@@ -112,13 +112,13 @@ module EarlyAccessEntryPointRequestExamples
     end
 
     routes.each do |path, methods|
-      describe "Redirects to chat path if auth is not required for #{path} route" do
+      describe "Redirects to homepage if auth is not required for #{path} route" do
         methods.each do |method|
-          it "redirects to chat path if auth is not required for #{method} #{path}" do
+          it "redirects to homepage if auth is not required for #{method} #{path}" do
             process(method.to_sym, public_send(path.to_sym, *route_params))
 
             expect(response).to have_http_status(:redirect)
-            expect(response).to redirect_to(chat_path)
+            expect(response).to redirect_to(homepage_path)
           end
         end
       end
@@ -127,7 +127,7 @@ module EarlyAccessEntryPointRequestExamples
 
   shared_context "with early access user email provided" do
     before do
-      post sign_in_or_up_path(
+      post homepage_path(
         sign_in_or_up_form: { email: "email@test.com" },
       )
     end
@@ -135,7 +135,7 @@ module EarlyAccessEntryPointRequestExamples
 
   shared_context "with early access user email and user description provided" do
     before do
-      post sign_in_or_up_path(
+      post homepage_path(
         sign_in_or_up_form: { email: "email@test.com" },
       )
       post early_access_entry_user_description_path(

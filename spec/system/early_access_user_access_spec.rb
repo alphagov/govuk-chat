@@ -60,7 +60,7 @@ RSpec.describe "Early access user access" do
   end
 
   def when_i_visit_the_homepage
-    visit chat_path
+    visit homepage_path
   end
 
   def and_i_enter_my_email_address

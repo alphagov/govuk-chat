@@ -8,7 +8,7 @@ module SystemSpecHelpers
   alias_method :and_i_have_confirmed_i_understand_chat_risks, :given_i_have_confirmed_i_understand_chat_risks
 
   def dismiss_cookie_banner
-    visit root_path
+    visit homepage_path
 
     within(".gem-c-cookie-banner") do
       click_button "Reject additional cookies"
