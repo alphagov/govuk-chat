@@ -1,5 +1,5 @@
 class EarlyAccessEntryController < BaseController
-  skip_before_action :require_early_access_user!
+  skip_before_action :ensure_early_access_user_if_auth_required!
   before_action :redirect_to_sign_in_or_up_page_if_signed_in, except: %i[sign_in_or_up confirm_sign_in_or_up]
   before_action :ensure_sign_up_flow_position, except: %i[sign_in_or_up confirm_sign_in_or_up]
   before_action :render_not_accepting_signups_if_sign_ups_disabled, except: %i[sign_in_or_up confirm_sign_in_or_up]

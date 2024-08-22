@@ -1,5 +1,5 @@
 class ChatController < BaseController
-  skip_before_action :require_early_access_user!
+  skip_before_action :ensure_early_access_user_if_auth_required!
   after_action { request.session_options[:skip] = true }
 
   def index
