@@ -36,7 +36,7 @@ class SessionsController < BaseController
   def destroy
     sign_out_early_access_user
 
-    redirect_to early_access_entry_sign_in_or_up_path
+    redirect_to chat_path
   end
 
 private

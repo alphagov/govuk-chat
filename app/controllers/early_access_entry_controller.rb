@@ -1,31 +1,9 @@
 class EarlyAccessEntryController < BaseController
   skip_before_action :ensure_early_access_user_if_auth_required!
   before_action :redirect_to_chat_path_if_auth_not_required
-  before_action :redirect_to_sign_in_or_up_page_if_signed_in, except: %i[sign_in_or_up confirm_sign_in_or_up]
-  before_action :ensure_sign_up_flow_position, except: %i[sign_in_or_up confirm_sign_in_or_up]
-  before_action :render_not_accepting_signups_if_sign_ups_disabled, except: %i[sign_in_or_up confirm_sign_in_or_up]
-
-  def sign_in_or_up
-    @sign_in_or_up_form = Form::EarlyAccess::SignInOrUp.new
-  end
-
-  def confirm_sign_in_or_up
-    sign_out_early_access_user if current_early_access_user
-    @sign_in_or_up_form = Form::EarlyAccess::SignInOrUp.new(sign_in_or_up_form_params)
-
-    if @sign_in_or_up_form.valid?
-      result = @sign_in_or_up_form.submit
-
-      return render :email_sent if result.outcome == :existing_early_access_user
-      return render :already_on_waitlist if result.outcome == :existing_waiting_list_user
-      return render "shared/access_revoked", status: :forbidden if result.outcome == :user_revoked
-
-      session["sign_up"] = { "email" => result.email }
-      redirect_to early_access_entry_user_description_path
-    else
-      render :sign_in_or_up, status: :unprocessable_entity
-    end
-  end
+  before_action :redirect_to_homepage_if_signed_in
+  before_action :ensure_sign_up_flow_position
+  before_action :render_not_accepting_signups_if_sign_ups_disabled
 
   def user_description
     @user_description_form = Form::EarlyAccess::UserDescription.new(
@@ -65,14 +43,10 @@ class EarlyAccessEntryController < BaseController
   rescue Form::EarlyAccess::ReasonForVisit::EarlyAccessUserConflictError
     render :account_already_exists, status: :conflict
   rescue Form::EarlyAccess::ReasonForVisit::WaitingListUserConflictError
-    render :already_on_waitlist, status: :conflict
+    render "shared/already_on_waitlist", status: :conflict
   end
 
 private
-
-  def sign_in_or_up_form_params
-    params.require(:sign_in_or_up_form).permit(:email)
-  end
 
   def user_description_form_params
     params.require(:user_description_form).permit(:choice)
@@ -90,7 +64,7 @@ private
 
   def ensure_sign_up_flow_position
     if session.dig("sign_up", "email").blank?
-      return redirect_to early_access_entry_sign_in_or_up_path
+      return redirect_to chat_path
     end
 
     if session.dig("sign_up", "user_description").blank? && action_name.match?(/reason_for_visit/)
@@ -106,8 +80,8 @@ private
     render :not_accepting_signups, status: :forbidden if sign_ups_disabled?
   end
 
-  def redirect_to_sign_in_or_up_page_if_signed_in
-    redirect_to early_access_entry_sign_in_or_up_path if current_early_access_user
+  def redirect_to_homepage_if_signed_in
+    redirect_to chat_path if current_early_access_user
   end
 
   def redirect_to_chat_path_if_auth_not_required

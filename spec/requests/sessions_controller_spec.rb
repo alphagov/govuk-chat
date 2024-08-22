@@ -56,7 +56,7 @@ RSpec.describe "sessions controller" do
         it "doesn't sign a user in" do
           get magic_link
           get show_conversation_path
-          expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
+          expect(response).to redirect_to(chat_path)
         end
       end
 
@@ -149,7 +149,7 @@ RSpec.describe "sessions controller" do
 
     it "redirects the user to early access entry point" do
       get sign_out_path
-      expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
+      expect(response).to redirect_to(chat_path)
     end
 
     it "signs out the user" do
@@ -159,7 +159,7 @@ RSpec.describe "sessions controller" do
       get sign_out_path
 
       get onboarding_limitations_path
-      expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
+      expect(response).to redirect_to(chat_path)
     end
   end
 end

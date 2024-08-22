@@ -1,7 +1,8 @@
 RSpec.describe "Early access user access" do
   scenario "new user signs up" do
     given_sign_ups_are_enabled
-    when_i_visit_the_early_access_signup_page
+
+    when_i_visit_the_homepage
     and_i_enter_my_email_address
     and_i_choose_my_description
     and_i_choose_my_reason_for_visit
@@ -14,7 +15,8 @@ RSpec.describe "Early access user access" do
   scenario "returning user signs in" do
     given_sign_ups_are_enabled
     and_i_am_a_returning_user
-    when_i_visit_the_early_access_signup_page
+
+    when_i_visit_the_homepage
     and_i_enter_my_email_address
     then_i_am_told_i_have_been_sent_an_email_address
 
@@ -25,14 +27,15 @@ RSpec.describe "Early access user access" do
   scenario "revoked user attempts to sign in" do
     given_sign_ups_are_enabled
     and_i_am_a_returning_user_with_revoked_access
-    when_i_visit_the_early_access_signup_page
+
+    when_i_visit_the_homepage
     and_i_enter_my_email_address
     then_i_am_told_i_do_not_have_access
   end
 
   scenario "signups are disabled by an admin mid flow" do
     given_sign_ups_are_enabled
-    when_i_visit_the_early_access_signup_page
+    when_i_visit_the_homepage
     and_i_enter_my_email_address
     and_an_admin_toggles_off_signups
     and_i_choose_my_description
@@ -42,10 +45,12 @@ RSpec.describe "Early access user access" do
   scenario "no instant access places are available" do
     given_sign_ups_are_enabled
     and_there_are_no_instant_access_places_available
-    when_i_visit_the_early_access_signup_page
+
+    when_i_visit_the_homepage
     and_i_enter_my_email_address
     and_i_choose_my_description
     and_i_choose_my_reason_for_visit
+
     then_i_am_told_i_have_been_added_to_the_waitlist
     and_i_receive_an_email_telling_me_i_am_on_the_waitlist
   end
@@ -54,8 +59,8 @@ RSpec.describe "Early access user access" do
     @settings = create(:settings, sign_up_enabled: true)
   end
 
-  def when_i_visit_the_early_access_signup_page
-    visit early_access_entry_sign_in_or_up_path
+  def when_i_visit_the_homepage
+    visit chat_path
   end
 
   def and_i_enter_my_email_address

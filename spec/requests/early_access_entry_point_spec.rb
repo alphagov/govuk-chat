@@ -22,123 +22,9 @@ RSpec.describe "early access entry point" do
                   }
   it_behaves_like "redirects to chat path if auth is not required",
                   routes: {
-                    early_access_entry_sign_in_or_up_path: %i[get post],
                     early_access_entry_user_description_path: %i[get post],
                     early_access_entry_reason_for_visit_path: %i[get post],
                   }
-
-  describe "GET :sign_in_or_up" do
-    it "renders successfully" do
-      get early_access_entry_sign_in_or_up_path
-      expect(response).to have_http_status(:ok)
-      expect(response.body)
-        .to have_selector(".govuk-heading-xl", text: "Try GOV.UK Chat")
-        .and have_selector("form[action='#{early_access_entry_sign_in_or_up_path}']")
-    end
-  end
-
-  describe "POST :confirm_sign_in_or_up" do
-    let(:early_access_user) { create :early_access_user }
-
-    context "when valid params are passed" do
-      context "and the user doesn't have an account" do
-        it "sets the users email_address in the session" do
-          post early_access_entry_sign_in_or_up_path(
-            sign_in_or_up_form: { email: "email@test.com" },
-          )
-          expect(session["sign_up"]).to eq({ "email" => "email@test.com" })
-        end
-
-        it "redirects to the user_description path" do
-          post early_access_entry_sign_in_or_up_path(
-            sign_in_or_up_form: { email: "email@test.com" },
-          )
-          expect(response).to redirect_to(early_access_entry_user_description_path)
-        end
-      end
-
-      context "and the user already has an account" do
-        it "responds with a successful status" do
-          post early_access_entry_sign_in_or_up_path(
-            sign_in_or_up_form: { email: early_access_user.email },
-          )
-          expect(response).to have_http_status(:ok)
-        end
-
-        it "renders the email_sent template" do
-          post early_access_entry_sign_in_or_up_path(
-            sign_in_or_up_form: { email: early_access_user.email },
-          )
-          expect(response.body).to have_selector(".govuk-heading-xl", text: "You've been sent a new link")
-        end
-
-        it "emails a magic link to the user" do
-          expect {
-            post early_access_entry_sign_in_or_up_path(
-              sign_in_or_up_form: { email: early_access_user.email },
-            )
-          }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-        end
-      end
-
-      context "and the user is on the waiting list" do
-        let!(:waiting_list_user) { create :waiting_list_user }
-
-        it "responds with a successful status" do
-          post early_access_entry_sign_in_or_up_path(
-            sign_in_or_up_form: { email: waiting_list_user.email },
-          )
-          expect(response).to have_http_status(:ok)
-        end
-
-        it "renders the already_on_waitlist template" do
-          post early_access_entry_sign_in_or_up_path(
-            sign_in_or_up_form: { email: waiting_list_user.email },
-          )
-          expect(response.body).to have_selector(".govuk-heading-xl", text: "You're already on the waitlist")
-        end
-      end
-
-      context "and the user has a revoked account" do
-        before do
-          early_access_user.touch(:revoked_at)
-        end
-
-        it "responds with a forbidden status" do
-          post early_access_entry_sign_in_or_up_path(
-            sign_in_or_up_form: { email: early_access_user.email },
-          )
-          expect(response).to have_http_status(:forbidden)
-        end
-
-        it "renders the access revoked template" do
-          post early_access_entry_sign_in_or_up_path(
-            sign_in_or_up_form: { email: early_access_user.email },
-          )
-          expect(response.body)
-            .to have_selector(".govuk-heading-xl", text: "You do not have access to this page")
-            .and have_link("report a technical fault", href: "https://surveys.publishing.service.gov.uk/s/govuk-chat-support")
-        end
-
-        it "doesn't send a magic link to the user" do
-          expect {
-            post early_access_entry_sign_in_or_up_path(
-              sign_in_or_up_form: { email: early_access_user.email },
-            )
-          }.not_to change(EarlyAccessAuthMailer.deliveries, :count)
-        end
-      end
-    end
-
-    context "when invalid params are passed" do
-      it "renders the sign_in_or_up page with errors" do
-        post early_access_entry_sign_in_or_up_path(sign_in_or_up_form: { email: "" })
-
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to have_selector(".govuk-error-summary")
-      end
-    end
-  end
 
   describe "GET :user_description" do
     include_context "with early access user email provided"
@@ -158,20 +44,6 @@ RSpec.describe "early access entry point" do
         post early_access_entry_user_description_path(user_description_form: { choice: "" })
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to have_selector(".govuk-error-summary")
-      end
-
-      context "when a user is already signed in" do
-        let(:session) { create :passwordless_session }
-
-        before { sign_in_early_access_user(session.authenticatable) }
-
-        it "signs the user out" do
-          post early_access_entry_sign_in_or_up_path(
-            sign_in_or_up_form: { email: "email@test.com" },
-          )
-          get onboarding_limitations_path
-          expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
-        end
       end
     end
 
@@ -228,19 +100,12 @@ RSpec.describe "early access entry point" do
       end
 
       context "and the user is already on the waiting list" do
-        let!(:waiting_list_user) { create :waiting_list_user }
-
-        it "responds with a successful status" do
-          post early_access_entry_sign_in_or_up_path(
-            sign_in_or_up_form: { email: waiting_list_user.email },
+        it "responds with a conflict status and tells the user an account already exists" do
+          create(:waiting_list_user, email: "email@test.com")
+          post early_access_entry_reason_for_visit_path(
+            reason_for_visit_form: { choice: "find_specific_answer" },
           )
-          expect(response).to have_http_status(:ok)
-        end
-
-        it "renders the already_on_waitlist template" do
-          post early_access_entry_sign_in_or_up_path(
-            sign_in_or_up_form: { email: waiting_list_user.email },
-          )
+          expect(response).to have_http_status(:conflict)
           expect(response.body).to have_selector(".govuk-heading-xl", text: "You're already on the waitlist")
         end
       end

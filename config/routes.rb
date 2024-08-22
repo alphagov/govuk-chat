@@ -15,14 +15,9 @@ Rails.application.routes.draw do
 
   scope :chat do
     get "", to: "chat#index", as: :chat
-    get "/about", to: "static#about"
-    get "/support", to: "static#support"
-    get "/privacy", to: redirect("#{Plek.website_root}/government/publications/govuk-chat-privacy-notice/govuk-chat-privacy-notice", status: 302)
-    get "/accessibility", to: "static#accessibility"
 
     scope "try-chat" do
-      get "", to: "early_access_entry#sign_in_or_up", as: :early_access_entry_sign_in_or_up
-      post "", to: "early_access_entry#confirm_sign_in_or_up"
+      post "", to: "chat#sign_in_or_up", as: :sign_in_or_up
 
       get "/you", to: "early_access_entry#user_description", as: :early_access_entry_user_description
       post "/you", to: "early_access_entry#confirm_user_description"
@@ -49,6 +44,11 @@ Rails.application.routes.draw do
 
       post "/answers/:answer_id/feedback", to: "conversations#answer_feedback", as: :answer_feedback
     end
+
+    get "/about", to: "static#about"
+    get "/support", to: "static#support"
+    get "/privacy", to: redirect("#{Plek.website_root}/government/publications/govuk-chat-privacy-notice/govuk-chat-privacy-notice", status: 302)
+    get "/accessibility", to: "static#accessibility"
   end
 
   namespace :admin do
