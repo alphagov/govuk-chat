@@ -102,6 +102,29 @@ module EarlyAccessEntryPointRequestExamples
     end
   end
 
+  shared_examples "redirects to chat path if auth is not required" do |routes:|
+    let(:route_params) { [] }
+
+    before do
+      allow(Rails.configuration)
+        .to receive(:available_without_early_access_authentication)
+        .and_return(true)
+    end
+
+    routes.each do |path, methods|
+      describe "Redirects to chat path if auth is not required for #{path} route" do
+        methods.each do |method|
+          it "redirects to chat path if auth is not required for #{method} #{path}" do
+            process(method.to_sym, public_send(path.to_sym, *route_params))
+
+            expect(response).to have_http_status(:redirect)
+            expect(response).to redirect_to(chat_path)
+          end
+        end
+      end
+    end
+  end
+
   shared_context "with early access user email provided" do
     before do
       post early_access_entry_sign_in_or_up_path(

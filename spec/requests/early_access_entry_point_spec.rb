@@ -20,6 +20,12 @@ RSpec.describe "early access entry point" do
                     early_access_entry_user_description_path: %i[get post],
                     early_access_entry_reason_for_visit_path: %i[get post],
                   }
+  it_behaves_like "redirects to chat path if auth is not required",
+                  routes: {
+                    early_access_entry_sign_in_or_up_path: %i[get post],
+                    early_access_entry_user_description_path: %i[get post],
+                    early_access_entry_reason_for_visit_path: %i[get post],
+                  }
 
   describe "GET :sign_in_or_up" do
     it "renders successfully" do
