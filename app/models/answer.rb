@@ -6,11 +6,9 @@ class Answer < ApplicationRecord
       "Could you make your question more specific? You can also try splitting it into multiple " \
       "smaller questions and asking them separately.".freeze
     OPENAI_CLIENT_ERROR_RESPONSE = <<~MESSAGE.freeze
-      Sorry, there is a problem with OpenAI's API. Try again later.
+      Sorry, something went wrong while trying to answer your question. Try again later.
 
-      We saved your conversation.
-
-      Check [GOV.UK guidance for businesses](https://www.gov.uk/browse/business) if you need information now.
+      We saved your conversation. Check [GOV.UK guidance for businesses](https://www.gov.uk/browse/business) if you need information now.
     MESSAGE
     TIMED_OUT_RESPONSE = "Sorry, something went wrong and I could not find an answer in time. " \
       "Please try again.".freeze
