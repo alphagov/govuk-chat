@@ -66,6 +66,23 @@ module EarlyAccessEntryPointRequestExamples
     end
   end
 
+  shared_examples "redirects to sign in page if no user signed in unless auth not required" do |routes:|
+    let(:route_params) { [] }
+
+    routes.each do |path, methods|
+      describe "Requires signed in early access user for #{path} route" do
+        methods.each do |method|
+          it "requires a signed in early access user for #{method} #{path}" do
+            process(method.to_sym, public_send(path.to_sym, *route_params))
+
+            expect(response).to have_http_status(:redirect)
+            expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
+          end
+        end
+      end
+    end
+  end
+
   shared_context "with early access user email provided" do
     before do
       post early_access_entry_sign_in_or_up_path(

@@ -1,5 +1,10 @@
 module PasswordlessHelpers
   module RequestSpecHelpers
+    shared_context "when signed in" do
+      let(:user) { create(:early_access_user) }
+      before { sign_in_early_access_user(user) }
+    end
+
     def sign_in_early_access_user(early_access_user)
       session = create(:passwordless_session, authenticatable: early_access_user)
 

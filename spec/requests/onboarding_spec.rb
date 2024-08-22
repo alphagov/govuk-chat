@@ -1,8 +1,4 @@
 RSpec.describe "OnboardingController" do
-  let(:user) { create(:early_access_user) }
-
-  before { sign_in_early_access_user(user) }
-
   it_behaves_like "redirects user to the conversation when conversation_id is set on cookie",
                   routes: {
                     onboarding_limitations_path: %i[get],
@@ -23,16 +19,22 @@ RSpec.describe "OnboardingController" do
                     onboarding_limitations_confirm_path: %i[post],
                     onboarding_privacy_path: %i[get],
                     onboarding_privacy_confirm_path: %i[post],
-                  } do
-                    let(:user) { create(:early_access_user, onboarding_completed: true) }
-                  end
+                  }
   it_behaves_like "redirects user to the privacy page when onboarding limitations has been completed",
                   routes: { onboarding_limitations_path: %i[get], onboarding_limitations_confirm_path: %i[post] }
-
   it_behaves_like "redirects user to the onboarding limitations page when onboarding not started",
                   routes: { onboarding_privacy_path: %i[get], onboarding_privacy_confirm_path: %i[post] }
+  it_behaves_like "redirects to sign in page if no user signed in unless auth not required",
+                  routes: {
+                    onboarding_limitations_path: %i[get],
+                    onboarding_limitations_confirm_path: %i[post],
+                    onboarding_privacy_path: %i[get],
+                    onboarding_privacy_confirm_path: %i[post],
+                  }
 
   describe "GET :limitations" do
+    include_context "when signed in"
+
     it "renders the limitations page" do
       get onboarding_limitations_path
 
@@ -85,6 +87,8 @@ RSpec.describe "OnboardingController" do
   end
 
   describe "POST :limitations_confirm" do
+    include_context "when signed in"
+
     it "redirects to the privacy page" do
       post onboarding_limitations_confirm_path
 
@@ -111,6 +115,7 @@ RSpec.describe "OnboardingController" do
   end
 
   describe "GET :privacy" do
+    include_context "when signed in"
     include_context "with onboarding limitations completed"
 
     it "renders the privacy page" do
@@ -137,6 +142,7 @@ RSpec.describe "OnboardingController" do
   end
 
   describe "POST :privacy_confirm" do
+    include_context "when signed in"
     include_context "with onboarding limitations completed"
 
     it "sets the session[:onboarding] to 'conversation'" do

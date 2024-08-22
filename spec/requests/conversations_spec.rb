@@ -1,16 +1,17 @@
 RSpec.describe "ConversationsController" do
-  let(:user) { create(:early_access_user) }
-
   delegate :helpers, to: ConversationsController
-
-  before { sign_in_early_access_user(user) }
 
   it_behaves_like "requires user to have completed onboarding", routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
   it_behaves_like "requires user to have completed onboarding", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
     let(:route_params) { [SecureRandom.uuid] }
   end
+  it_behaves_like "redirects to sign in page if no user signed in unless auth not required", routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+  it_behaves_like "redirects to sign in page if no user signed in unless auth not required", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
+    let(:route_params) { [SecureRandom.uuid] }
+  end
 
   describe "GET :show" do
+    include_context "when signed in"
     include_context "with onboarding completed"
 
     context "when there is no conversation cookie" do
@@ -255,6 +256,7 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "POST :update" do
+    include_context "when signed in"
     include_context "with onboarding completed"
     let(:conversation) { create(:conversation, :not_expired, user:) }
 
@@ -362,6 +364,7 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "GET :answer" do
+    include_context "when signed in"
     include_context "with onboarding completed"
     let(:conversation) { create(:conversation, user:) }
 
@@ -443,7 +446,9 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "POST :answer_feedback" do
+    include_context "when signed in"
     include_context "with onboarding completed"
+
     let(:conversation) { create(:conversation, user:) }
     let(:question) { create(:question, conversation:) }
 

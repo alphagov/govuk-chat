@@ -1,5 +1,6 @@
 module OnboardingRequestExamples
   shared_examples "requires user to have completed onboarding" do |routes:|
+    include_context "when signed in"
     let(:route_params) { [] }
 
     routes.each do |path, methods|
@@ -28,6 +29,8 @@ module OnboardingRequestExamples
   end
 
   shared_examples "redirects user to the conversation when conversation_id is set on cookie" do |routes:|
+    include_context "when signed in"
+
     routes.each do |path, methods|
       describe "Redirects user to the conversation when conversation_id is set on cookie" do
         methods.each do |method|
@@ -46,6 +49,7 @@ module OnboardingRequestExamples
   end
 
   shared_examples "redirects user to the conversation page when onboarded and no conversation cookie" do |routes:|
+    include_context "when signed in"
     include_context "with onboarding completed"
 
     routes.each do |path, methods|
@@ -63,6 +67,9 @@ module OnboardingRequestExamples
   end
 
   shared_examples "redirects user to the conversation when an early access user has completed onboarding" do |routes:|
+    include_context "when signed in"
+    before { user.update!(onboarding_completed: true) }
+
     routes.each do |path, methods|
       describe "Redirects user to the conversation the early access users completed onboarding" do
         methods.each do |method|
@@ -77,6 +84,7 @@ module OnboardingRequestExamples
   end
 
   shared_examples "redirects user to the privacy page when onboarding limitations has been completed" do |routes:|
+    include_context "when signed in"
     include_context "with onboarding limitations completed"
 
     routes.each do |path, methods|
@@ -94,6 +102,8 @@ module OnboardingRequestExamples
   end
 
   shared_examples "redirects user to the onboarding limitations page when onboarding not started" do |routes:|
+    include_context "when signed in"
+
     routes.each do |path, methods|
       describe "Redirects user to the limitations page when session[:onboarding] isn't 'privacy' or 'conversation'" do
         methods.each do |method|
