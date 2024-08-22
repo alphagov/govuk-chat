@@ -53,4 +53,32 @@ RSpec.describe "rake evaluation tasks" do
       end
     end
   end
+
+  describe "generate_answer" do
+    let(:task_name) { "evaluation:generate_answer" }
+
+    before do
+      Rake::Task[task_name].reenable
+    end
+
+    it "requires a QUESTION env var" do
+      expect { Rake::Task[task_name].invoke }
+        .to raise_error("requires a QUESTION env var")
+    end
+
+    it "outputs the answer as JSON to stdout" do
+      answer = build(:answer)
+
+      allow(AnswerComposition::Composer)
+        .to receive(:call)
+        .with(an_instance_of(Question))
+        .and_return(answer)
+
+      ClimateControl.modify(QUESTION: "What is the current VAT rate?") do
+        answer_json = { message: answer.message }.to_json
+        expect { Rake::Task[task_name].invoke }
+          .to output("#{answer_json}\n").to_stdout
+      end
+    end
+  end
 end
