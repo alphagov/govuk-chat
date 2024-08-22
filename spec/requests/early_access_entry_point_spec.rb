@@ -111,7 +111,7 @@ RSpec.describe "early access entry point" do
           )
           expect(response.body)
             .to have_selector(".govuk-heading-xl", text: "You do not have access to this page")
-            .and have_link("report a technical fault", href: "#{Plek.website_root}/contact/govuk")
+            .and have_link("report a technical fault", href: "https://surveys.publishing.service.gov.uk/s/govuk-chat-support")
         end
 
         it "doesn't send a magic link to the user" do
