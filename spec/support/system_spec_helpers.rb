@@ -26,4 +26,10 @@ module SystemSpecHelpers
   def given_i_am_an_admin
     login_as(create(:admin_user, :admin))
   end
+
+  def extract_links_from_last_email
+    email_body = ActionMailer::Base.deliveries.last.body.raw_source
+    # URI.extract infers that the closing link markdown parenthesis ")" is part of the href
+    URI.extract(email_body).map { |link| link.gsub(")", "") }
+  end
 end

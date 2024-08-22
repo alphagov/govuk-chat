@@ -17,12 +17,16 @@ class Form::EarlyAccess::SignInOrUp
 
   def submit
     validate!
-    user = EarlyAccessUser.find_by(email:)
+    user = EarlyAccessUser.find_by(email:) || WaitingListUser.find_by(email:)
     return Result.new(outcome: :new_user, email:, user: nil) unless user
-    return Result.new(outcome: :user_revoked, email:, user:) if user.access_revoked?
+    return Result.new(outcome: :user_revoked, email:, user:) if user.try(:access_revoked?)
 
-    session = Passwordless::Session.create!(authenticatable: user)
-    EarlyAccessAuthMailer.sign_in(session).deliver_now
-    Result.new(outcome: :existing_user, email:, user:)
+    if user.is_a?(EarlyAccessUser)
+      session = Passwordless::Session.create!(authenticatable: user)
+      EarlyAccessAuthMailer.sign_in(session).deliver_now
+      Result.new(outcome: :existing_early_access_user, email:, user:)
+    else
+      Result.new(outcome: :existing_waiting_list_user, email:, user:)
+    end
   end
 end

@@ -68,5 +68,16 @@ RSpec.describe Admin::Form::EarlyAccessUsers::CreateEarlyAccessUserForm do
       created_session = Passwordless::Session.last
       expect(EarlyAccessAuthMailer).to have_received(:sign_in).with(created_session)
     end
+
+    context "when a waiting list user exists for the email" do
+      it "deletes the waiting list user" do
+        user = create(:waiting_list_user, email: "foo@bar.com")
+
+        form = described_class.new(email: "foo@bar.com")
+
+        expect { form.submit }.to change(WaitingListUser, :count).by(-1)
+        expect { user.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 end

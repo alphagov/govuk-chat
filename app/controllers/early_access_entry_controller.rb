@@ -14,14 +14,12 @@ class EarlyAccessEntryController < BaseController
     if @sign_in_or_up_form.valid?
       result = @sign_in_or_up_form.submit
 
-      if result.outcome == :new_user
-        session["sign_up"] = { "email" => result.email }
-        redirect_to early_access_entry_user_description_path
-      elsif result.outcome == :user_revoked
-        render "shared/access_revoked", status: :forbidden
-      else
-        render :email_sent
-      end
+      return render :email_sent if result.outcome == :existing_early_access_user
+      return render :already_on_waitlist if result.outcome == :existing_waiting_list_user
+      return render "shared/access_revoked", status: :forbidden if result.outcome == :user_revoked
+
+      session["sign_up"] = { "email" => result.email }
+      redirect_to early_access_entry_user_description_path
     else
       render :sign_in_or_up, status: :unprocessable_entity
     end
@@ -52,14 +50,20 @@ class EarlyAccessEntryController < BaseController
     @reason_for_visit_form = Form::EarlyAccess::ReasonForVisit.new(reason_for_visit_form_params)
 
     if @reason_for_visit_form.valid?
-      @reason_for_visit_form.submit
+      result = @reason_for_visit_form.submit
       session.delete("sign_up")
-      render :sign_up_successful
+      if result.outcome == :early_access_user
+        render :sign_up_successful
+      else
+        render :waitlist
+      end
     else
       render :reason_for_visit, status: :unprocessable_entity
     end
   rescue Form::EarlyAccess::ReasonForVisit::EarlyAccessUserConflictError
     render :account_already_exists, status: :conflict
+  rescue Form::EarlyAccess::ReasonForVisit::WaitingListUserConflictError
+    render :already_on_waitlist, status: :conflict
   end
 
 private
