@@ -78,5 +78,7 @@ module GovukChat
 
     # Make session length predictable to reduce confusion of when session data is lost.
     config.session_store :cookie_store, key: "_govuk_chat_session", expire_after: 30.days
+
+    config.conversation_js_progressive_disclosure_delay = nil
   end
 end

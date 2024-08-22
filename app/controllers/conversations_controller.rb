@@ -14,7 +14,6 @@ class ConversationsController < BaseController
         if cookies[:conversation_id].blank?
           render json: {
             title: @title,
-            fragment: "start-chatting",
             conversation_data: @conversation_data_attributes,
             conversation_append_html: render_to_string(partial: "get_started_messages",
                                                        formats: :html),

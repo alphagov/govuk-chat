@@ -35,7 +35,6 @@ RSpec.describe "ConversationsController" do
           expect(response).to have_http_status(:success)
           expect(JSON.parse(response.body)).to match({
             "title" => "Your conversation",
-            "fragment" => "start-chatting",
             "conversation_data" => { "module" => "chat-conversation" },
             "conversation_append_html" => /<p>Thanks! To get started, ask me a question.<\/p>/,
             "form_html" => /<button class="app-c-blue-button govuk-button app-c-blue-button--conversation-form js-conversation-form-button" type="submit">\s*Send\s*\n\s*<span class="govuk-visually-hidden">message to GOV.UK Chat<\/span>\n<\/button/,

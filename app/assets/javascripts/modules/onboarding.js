@@ -6,24 +6,30 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     constructor (module) {
       this.module = module
       this.form = this.module.querySelector('.js-onboarding-form')
-      this.conversationList = this.module.querySelector('.js-conversation-list')
+      this.messageLists = new Modules.ConversationMessageLists(this.module.querySelector('.js-conversation-message-lists'))
       this.eventListeners = []
     }
 
     init () {
-      // if a user revisits or refreshes an ongoing onboarding process, scroll to the latest onboarding message
-      if (this.conversationList.children.length > 0) {
-        this.scrollIntoView(this.conversationList.lastElementChild)
-      }
-
       this.addEventListener(this.module, 'submit', e => this.handleSubmit(e))
       this.addEventListener(this.module, 'deinit', () => this.deinit())
+      this.addEventListener(this.module, 'conversation-append', e => this.conversationAppend(e))
+
+      if (this.messageLists.hasNewMessages()) {
+        this.form.classList.add('govuk-visually-hidden')
+        this.messageLists.progressivelyDiscloseMessages().then(() => {
+          this.form.classList.remove('govuk-visually-hidden')
+          this.messageLists.scrollToLastNewMessage()
+        })
+      }
     }
 
     async handleSubmit (event) {
       event.preventDefault()
 
       try {
+        this.messageLists.moveNewMessagesToHistory()
+
         const formData = new FormData(this.form)
         formData.append(event.submitter.name, event.submitter.value)
 
@@ -52,12 +58,12 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
       const eventDetail = {
         path: url.pathname, // just use pathname as URL could have fragment, unclear if supposed to: https://github.com/whatwg/fetch/issues/214
-        fragment: responseJson.fragment, // ideally we'd get fragment from URL but browsers seem to strip it
         conversationData: responseJson.conversation_data,
         conversationAppendHtml: responseJson.conversation_append_html,
         formHtml: responseJson.form_html,
         title: responseJson.title
       }
+
       const event = new CustomEvent('onboarding-transition', { detail: eventDetail })
       this.module.dispatchEvent(event)
     }
@@ -66,6 +72,13 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.eventListeners.forEach(([element, event, handler]) => {
         element.removeEventListener(event, handler)
       })
+    }
+
+    async conversationAppend (event) {
+      this.form.classList.add('govuk-visually-hidden')
+      await this.messageLists.appendNewProgressivelyDisclosedMessages(event.detail.html)
+      this.form.classList.remove('govuk-visually-hidden')
+      this.messageLists.scrollToLastNewMessage()
     }
 
     addEventListener (element, event, handler) {

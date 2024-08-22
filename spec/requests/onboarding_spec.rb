@@ -60,7 +60,6 @@ RSpec.describe "OnboardingController" do
           expect(response).to have_http_status(:ok)
           expect(JSON.parse(response.body)).to match({
             "title" => "More information on GOV.UK Chat and its limitations",
-            "fragment" => "tell-me-more",
             "conversation_data" => { "module" => "onboarding" },
             "conversation_append_html" => /I combine the same technology used on ChatGPT with GOV.UK guidance./,
             "form_html" => /Take me to GOV.UK/,
@@ -123,7 +122,6 @@ RSpec.describe "OnboardingController" do
         expect(response).to have_http_status(:ok)
         expect(JSON.parse(response.body)).to match({
           "title" => "Privacy on GOV.UK Chat",
-          "fragment" => "i-understand",
           "conversation_data" => { "module" => "onboarding" },
           "conversation_append_html" => /You can always find information about my limitations in.*about GOV.UK Chat/,
           "form_html" => /Okay, start chatting/,

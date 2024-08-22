@@ -18,7 +18,6 @@ class OnboardingController < BaseController
         if @more_information
           render json: {
             title: @title,
-            fragment: "tell-me-more",
             conversation_data: @conversation_data_attributes,
             conversation_append_html: render_to_string(partial: "tell_me_more_messages",
                                                        formats: :html),
@@ -55,7 +54,6 @@ class OnboardingController < BaseController
       format.json do
         render json: {
           title: @title,
-          fragment: "i-understand",
           conversation_data: @conversation_data_attributes,
           conversation_append_html: render_to_string(partial: "privacy_messages",
                                                      formats: :html),

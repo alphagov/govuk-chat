@@ -6,7 +6,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     constructor (module) {
       this.module = module
       this.moduleWrapper = this.module.querySelector('.js-module-wrapper')
-      this.conversationList = this.module.querySelector('.js-conversation-list')
       this.formContainer = this.module.querySelector('.js-form-container')
       this.title = this.module.querySelector('.js-title')
     }
@@ -16,7 +15,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     handleOnboardingTransition (event) {
-      const { path, fragment, conversationData, conversationAppendHtml, formHtml, title } = event.detail
+      const { path, conversationData, conversationAppendHtml, formHtml, title } = event.detail
 
       try {
         this.moduleWrapper.dispatchEvent(new Event('deinit'))
@@ -24,20 +23,17 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         history.replaceState(null, '', path)
         this.updateBrowserTitle(title)
 
-        this.updateHtml(conversationData, conversationAppendHtml, formHtml, title)
+        this.updateHtml(conversationData, formHtml, title)
 
         window.GOVUK.modules.start(this.module)
-
-        if (fragment) {
-          this.scrollIntoView(this.conversationList.querySelector(`#${fragment}`))
-        }
+        this.moduleWrapper.dispatchEvent(new CustomEvent('conversation-append', { detail: { html: conversationAppendHtml } }))
       } catch (error) {
         console.error(error)
         this.redirect(path)
       }
     }
 
-    updateHtml (conversationData, conversationAppendHtml, formHtml, title) {
+    updateHtml (conversationData, formHtml, title) {
       const dataset = this.moduleWrapper.dataset
       for (const key in dataset) {
         if (conversationData[key]) {
@@ -47,7 +43,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         }
       }
 
-      this.conversationList.insertAdjacentHTML('beforeend', conversationAppendHtml)
       this.formContainer.innerHTML = formHtml
       this.title.textContent = title
     }

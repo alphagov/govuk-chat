@@ -1,14 +1,11 @@
-/* global asymmetricMatchers */
-
 describe('ConversationOnboardingFlow module', () => {
-  let moduleElement, module, moduleWrapper, conversationList, formContainer, titleElement
+  let moduleElement, module, moduleWrapper, formContainer, titleElement
 
   beforeEach(() => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
       <div class="js-module-wrapper" data-module="foo" data-other="bar">
         <h1 class="js-title"></h1>
-        <ul class="js-conversation-list"></ul>
         <div class="js-form-container">
           <form class="js-onboarding-form" action="/chat/onboarding" method="post">
             <button>I understand</button>
@@ -19,7 +16,6 @@ describe('ConversationOnboardingFlow module', () => {
 
     document.body.appendChild(moduleElement)
     moduleWrapper = moduleElement.querySelector('.js-module-wrapper')
-    conversationList = moduleElement.querySelector('.js-conversation-list')
     formContainer = moduleElement.querySelector('.js-form-container')
     titleElement = moduleElement.querySelector('.js-title')
 
@@ -45,13 +41,9 @@ describe('ConversationOnboardingFlow module', () => {
     beforeEach(() => {
       event = {
         detail: {
-          conversationAppendHtml: `
-            <li id="i-understand">I understand</li>
-            <li>Message</li>
-          `,
+          conversationAppendHtml: '<li>Message</li>',
           conversationData: { module: 'onboarding' },
           formHtml: '<form><button>Okay, start chatting</button></form>',
-          fragment: 'i-understand',
           path: '/chat/onboarding/privacy',
           title: 'Title'
         }
@@ -95,12 +87,15 @@ describe('ConversationOnboardingFlow module', () => {
       expect(moduleWrapper.dataset.other).toBeUndefined()
     })
 
-    it('appends the new messages to the conversation list', () => {
+    it('fires an event to the module with the details of the conversation HTML to append', () => {
+      const moduleWrapperEventSpy = spyOn(moduleWrapper, 'dispatchEvent')
       module.handleOnboardingTransition(event)
 
-      expect(conversationList.children.length).toEqual(2)
-      expect(conversationList.innerHTML).toContain('<li id="i-understand">I understand</li>')
-      expect(conversationList.innerHTML).toContain('<li>Message</li>')
+      const expectedEvent = jasmine.objectContaining({
+        type: 'conversation-append',
+        detail: { html: event.detail.conversationAppendHtml }
+      })
+      expect(moduleWrapperEventSpy).toHaveBeenCalledWith(expectedEvent)
     })
 
     it('replaces the form', () => {
@@ -129,20 +124,10 @@ describe('ConversationOnboardingFlow module', () => {
       expect(modulesStartSpy).toHaveBeenCalledWith(moduleElement)
     })
 
-    it('scrolls the fragment into view', () => {
-      const scrollIntoViewSpy = spyOn(module, 'scrollIntoView')
-
-      module.handleOnboardingTransition(event)
-
-      expect(scrollIntoViewSpy).toHaveBeenCalledWith(asymmetricMatchers.matchElementBySelector('#i-understand'))
-    })
-
     describe('and an error occurs', () => {
       it('logs the error and redirects', () => {
         const consoleErrorSpy = spyOn(console, 'error')
-
-        // A fragment that references an id that doesn't exist will cause an error
-        event.detail.fragment = 'invalid-fragment'
+        historyReplaceStateSpy.and.throwError()
 
         module.handleOnboardingTransition(event)
 
