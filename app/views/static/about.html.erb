@@ -1,0 +1,101 @@
+<%= content_for :title, "About GOV.UK Chat" %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body">
+      GOV.UK Chat is an experimental tool that uses artificial intelligence
+      (AI). It’s designed to answer questions about business and trade and help
+      you find information on GOV.UK.
+    </p>
+
+    <h2 class="govuk-heading-m">How GOV.UK Chat works</h2>
+
+    <p class="govuk-body">
+      GOV.UK Chat is powered by the same large language model (LLM) used on
+      <%= link_to("OpenAI’s ChatGPT (opens in new tab)",
+                  "https://openai.com/index/chatgpt/",
+                  class: "govuk-link",
+                  target: "_blank",
+                  rel: "noopener noreferrer") %>.
+    </p>
+
+    <p class="govuk-body">
+      OpenAI used millions of articles, books and other pieces of text to train
+      the LLM. This is how ChatGPT has the language skills to respond like a human.
+    </p>
+
+    <p class="govuk-body">
+      GOV.UK Chat combines these language skills with relevant information from
+      GOV.UK to answer your questions.
+    </p>
+
+    <h2 class="govuk-heading-m">Risks and limitations of GOV.UK Chat</h2>
+
+    <p class="govuk-body">
+      GOV.UK Chat provides links to official GOV.UK guidance with each answer.
+    </p>
+
+    <p class="govuk-body">
+      Before acting on anything GOV.UK Chat tells you, use those links to check
+      the answer is right.
+    </p>
+
+    <h3 class="govuk-heading-s">Hallucination</h3>
+
+    <p class="govuk-body">
+      The biggest limitation of emerging technologies like ChatGPT and GOV.UK
+      Chat is a problem known as
+      <%= link_to("hallucination (opens in new tab)",
+                  "https://www.ibm.com/topics/ai-hallucinations",
+                  class: "govuk-link",
+                  target: "_blank",
+                  rel: "noopener noreferrer") %>.
+    </p>
+
+    <p class="govuk-body">
+      This is when an AI system gives false information or facts in its answers,
+      but presents them confidently.
+    </p>
+
+    <p class="govuk-body">
+      Hallucinations happen for lots of reasons. For example, if an AI system
+      has gaps in its knowledge, it might hallucinate information to seem up to date.
+    </p>
+
+    <h3 class="govuk-heading-s">Use of training data</h3>
+
+    <p class="govuk-body">
+      GOV.UK Chat is designed to only use GOV.UK guidance. Occasionally, it
+      tries to answer questions using information from the LLM’s training. For
+      example, if it cannot find relevant information on GOV.UK.
+    </p>
+
+    <p class="govuk-body">
+      If the training information is false or outdated, this could cause
+      GOV.UK Chat to give an inaccurate answer.
+    </p>
+
+    <h2 class="govuk-heading-m">More information</h2>
+
+    <p class="govuk-body">
+      For more information, read the
+      <%= link_to("findings of our first generative AI experiment: GOV.UK Chat (opens in new tab)",
+                  "https://insidegovuk.blog.gov.uk/2024/01/18/the-findings-of-our-first-generative-ai-experiment-gov-uk-chat/",
+                  class: "govuk-link",
+                  target: "_blank",
+                  rel: "noopener") %>
+      and
+      <%= link_to("subscribe to the Inside GOV.UK blog (opens in new tab)",
+                  "https://insidegovuk.blog.gov.uk/subscribe/",
+                  class: "govuk-link",
+                  target: "_blank",
+                  rel: "noopener") %>
+      for updates.
+    </p>
+
+    <p class="govuk-body">
+      If you have a question or problem,
+      <%= link_to("get help and support with GOV.UK Chat", support_path, class: "govuk-link") %>.
+    </p>
+  </div>
+</div>
