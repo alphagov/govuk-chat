@@ -28,7 +28,7 @@ RSpec.describe "Admin::WaitingListUsersController" do
       get admin_waiting_list_users_path
 
       expect(response.body)
-        .to have_link("alice@example.com", href: "#")
+        .to have_link("alice@example.com", href: admin_waiting_list_user_path(user))
         .and have_selector(".govuk-table__cell", text: user.created_at.to_fs(:time_and_date))
     end
 
@@ -172,6 +172,26 @@ RSpec.describe "Admin::WaitingListUsersController" do
           .and have_link("Created", href: admin_waiting_list_users_path(sort: "-created_at"))
           .and have_no_selector(".govuk-table__header--active", text: "Created")
       end
+    end
+  end
+
+  describe "GET :show" do
+    it "renders the user details" do
+      user = create(
+        :waiting_list_user,
+        email: "alice@example.com",
+        user_description: :business_owner_or_self_employed,
+        reason_for_visit: :find_specific_answer,
+      )
+
+      get admin_waiting_list_user_path(user)
+
+      expect(response.body)
+        .to have_content("User details")
+        .and have_content("alice@example.com")
+        .and have_content(user.created_at.to_fs(:time_and_date))
+        .and have_content("business_owner_or_self_employed")
+        .and have_content("find_specific_answer")
     end
   end
 end
