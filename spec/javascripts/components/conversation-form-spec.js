@@ -1,7 +1,7 @@
 describe('ConversationForm component', () => {
   'use strict'
 
-  let div, form, formGroup, label, input, button, presenceErrorMessage,
+  let div, form, formGroup, label, input, button, buttonResponseStatus, presenceErrorMessage,
     lengthErrorMessage, errorsWrapper, surveyLink, module
 
   beforeEach(function () {
@@ -21,7 +21,10 @@ describe('ConversationForm component', () => {
           <div id="create_question_user_question-info" class="gem-c-hint govuk-hint govuk-visually-hidden">
             Please limit your question to 300 characters.
           </div>
-          <button class="js-conversation-form-button">Submit</button>
+          <button class="js-conversation-form-button">
+            Submit
+            <span class="js-conversation-form-button__response-status" data-awaiting-response-text="GOV.UK Chat is generating a response to your question"></span>
+          </button>
         </div>
       </form>
       <a href="/survey" class="js-survey-link">Survey</a>
@@ -30,6 +33,8 @@ describe('ConversationForm component', () => {
     label = div.querySelector('.js-conversation-form-label')
     input = div.querySelector('.js-conversation-form-input')
     button = div.querySelector('.js-conversation-form-button')
+    button = div.querySelector('.js-conversation-form-button')
+    buttonResponseStatus = div.querySelector('.js-conversation-form-button__response-status')
     errorsWrapper = div.querySelector('.js-conversation-form-errors-wrapper')
     formGroup = div.querySelector('.js-conversation-form-group')
     surveyLink = div.querySelector('.js-survey-link')
@@ -159,7 +164,9 @@ describe('ConversationForm component', () => {
       div.dispatchEvent(new Event('question-pending'))
 
       expect(input.readOnly).toBe(true)
-      expect(button.disabled).toBe(true)
+      expect(button.hasAttribute('aria-disabled')).toBe(true)
+      expect(button.classList).toContain('app-c-blue-button--disabled')
+      expect(buttonResponseStatus.textContent).toContain('GOV.UK Chat is generating a response to your question')
     })
 
     it("doesn't update the input value", () => {
@@ -177,7 +184,9 @@ describe('ConversationForm component', () => {
       div.dispatchEvent(new Event('question-accepted'))
 
       expect(input.readOnly).toBe(true)
-      expect(button.disabled).toBe(true)
+      expect(button.hasAttribute('aria-disabled')).toBe(true)
+      expect(button.classList).toContain('app-c-blue-button--disabled')
+      expect(buttonResponseStatus.textContent).toContain('GOV.UK Chat is generating a response to your question')
     })
 
     it('resets the input value', () => {
@@ -220,12 +229,16 @@ describe('ConversationForm component', () => {
 
     it('enables any disabled controls', () => {
       input.readOnly = true
-      button.disabled = true
+      button.setAttribute('aria-disabled', true)
+      button.classList.add('app-c-blue-button--disabled')
+      buttonResponseStatus.textContent = 'Visually hidden text content'
 
       div.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
 
       expect(input.readOnly).toBe(false)
-      expect(button.disabled).toBe(false)
+      expect(button.hasAttribute('aria-disabled')).toBe(false)
+      expect(button.classList).not.toContain('app-c-blue-button--disabled')
+      expect(buttonResponseStatus.textContent).toEqual('')
     })
 
     it("doesn't update the input value", () => {
@@ -291,12 +304,16 @@ describe('ConversationForm component', () => {
 
     it('enables any disabled controls', () => {
       input.readOnly = true
-      button.disabled = true
+      button.setAttribute('aria-disabled', true)
+      button.classList.add('app-c-blue-button--disabled')
+      buttonResponseStatus.textContent = 'Visually hidden text content'
 
       div.dispatchEvent(new Event('answer-received'))
 
       expect(input.readOnly).toBe(false)
-      expect(button.disabled).toBe(false)
+      expect(button.hasAttribute('aria-disabled')).toBe(false)
+      expect(button.classList).not.toContain('app-c-blue-button--disabled')
+      expect(buttonResponseStatus.textContent).toEqual('')
     })
 
     it('resets the value of the input', () => {

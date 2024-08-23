@@ -16,6 +16,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.input = module.querySelector('.js-conversation-form-input')
       this.label = module.querySelector('.js-conversation-form-label')
       this.button = module.querySelector('.js-conversation-form-button')
+      this.buttonResponseStatus = module.querySelector('.js-conversation-form-button__response-status')
       this.errorsWrapper = module.querySelector('.js-conversation-form-errors-wrapper')
       this.formGroup = module.querySelector('.js-conversation-form-group')
       this.surveyLink = module.querySelector('.js-survey-link')
@@ -42,6 +43,12 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     handleSubmit (event) {
+      if (this.button.hasAttribute('aria-disabled')) {
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        return
+      }
+
       const errors = []
 
       if (this.input.value.trim() === '') {
@@ -85,13 +92,24 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     disableControls () {
       this.input.readOnly = true
-      this.button.disabled = true
+      this.toggleDisabledSettings(true)
     }
 
     enableControls () {
       this.input.readOnly = false
-      this.button.disabled = false
-      this.button.focus()
+      this.toggleDisabledSettings(false)
+    }
+
+    toggleDisabledSettings (isDisabled) {
+      if (isDisabled) {
+        this.button.setAttribute('aria-disabled', 'true')
+        this.button.classList.add('app-c-blue-button--disabled')
+        this.buttonResponseStatus.textContent = this.buttonResponseStatus.dataset.awaitingResponseText
+      } else {
+        this.button.removeAttribute('aria-disabled')
+        this.button.classList.remove('app-c-blue-button--disabled')
+        this.buttonResponseStatus.textContent = ''
+      }
     }
 
     resetInput () {
