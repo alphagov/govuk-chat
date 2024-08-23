@@ -15,6 +15,10 @@ Rails.application.routes.draw do
 
   scope :chat do
     get "", to: "chat#index", as: :chat
+    get "/about", to: "static#about"
+    get "/support", to: "static#support"
+    get "/privacy", to: redirect("#{Plek.website_root}/government/publications/govuk-chat-privacy-notice/govuk-chat-privacy-notice", status: 302)
+    get "/accessibility", to: "static#accessibility"
 
     scope "try-chat" do
       get "", to: "early_access_entry#sign_in_or_up", as: :early_access_entry_sign_in_or_up
