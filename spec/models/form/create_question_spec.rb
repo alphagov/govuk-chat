@@ -66,6 +66,41 @@ RSpec.describe Form::CreateQuestion do
         expect(form).to be_valid
       end
     end
+
+    describe "#within_question_limit?" do
+      let(:question_limit_error_message) { "You have asked the maximum number of questions. You cannot ask any more." }
+
+      before do
+        allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(2)
+      end
+
+      it "adds a error message if over the question limit" do
+        conversation.user = build(:early_access_user, questions_count: 2)
+        form = described_class.new(
+          conversation:,
+          user_question: "Anything",
+        )
+        form.validate
+        expect(form.errors.messages[:base]).to eq([question_limit_error_message])
+      end
+
+      it "is valid when under the question limit" do
+        conversation.user = build(:early_access_user, questions_count: 1)
+        form = described_class.new(
+          conversation:,
+          user_question: "Anything",
+        )
+        expect(form).to be_valid
+      end
+
+      it "is valid when the conversation has no user" do
+        form = described_class.new(
+          conversation:,
+          user_question: "Anything",
+        )
+        expect(form).to be_valid
+      end
+    end
   end
 
   describe "#submit" do

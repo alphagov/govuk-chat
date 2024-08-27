@@ -53,6 +53,7 @@ module GovukChat
       answer_timeout_in_seconds: 120,
       max_question_age_days: 30,
       max_question_count: 500,
+      max_questions_per_user: 50,
     )
 
     config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]

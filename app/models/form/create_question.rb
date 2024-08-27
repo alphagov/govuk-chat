@@ -13,6 +13,7 @@ class Form::CreateQuestion
   validates :user_question, length: { maximum: USER_QUESTION_LENGTH_MAXIMUM, message: USER_QUESTION_LENGTH_ERROR_MESSAGE }
   validate :all_questions_answered?
   validate :no_pii_present?, if: -> { user_question.present? }
+  validate :within_question_limit?
 
   def submit
     validate!
@@ -39,6 +40,13 @@ private
 
       errors.add(:user_question, error_message)
     end
+  end
+
+  def within_question_limit?
+    return if conversation.user.nil?
+    return if conversation.user.questions_count < Rails.configuration.conversations.max_questions_per_user
+
+    errors.add(:base, "You have asked the maximum number of questions. You cannot ask any more.")
   end
 
   def answer_strategy
