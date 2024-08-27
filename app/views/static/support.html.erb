@@ -27,23 +27,29 @@
     <h2 class="govuk-heading-m">If you have a question about something on GOV.UK</h2>
 
     <p class="govuk-body">
-      Contact the
-      <%= link_to("government department (opens in a new tab)",
-                  "#{Plek.website_root}/government/organisations",
-                  class: "govuk-link",
-                  target: "_blank",
-                  rel: "noopener") %>
-      directly if your question is about is about a service or policy, like tax or visas.
+      Contact the government department directly if your question is about a service or policy, like tax or visas.
     </p>
 
     <p class="govuk-body">
-      You can
-      <%= link_to("find contact details for common services on GOV.UK (opens in a new tab)",
-                  "#{Plek.website_root}/contact",
-                  class: "govuk-link",
-                  target: "_blank",
-                  rel: "noopener") %>.
+      Use GOV.UK to:
     </p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>
+        <%= link_to("search for a government department (opens in a new tab)",
+          "#{Plek.website_root}/government/organisations",
+          class: "govuk-link",
+          target: "_blank",
+          rel: "noopener") %>
+      </li>
+      <li>
+        <%= link_to("find contact details for common services (opens in a new tab)",
+          "#{Plek.website_root}/contact",
+          class: "govuk-link",
+          target: "_blank",
+          rel: "noopener") %>
+      </li>
+    </ul>
 
     <h2 class="govuk-heading-m">If you'd like to know more about GOV.UK Chat</h2>
 
@@ -52,8 +58,7 @@
       to learn how the tool works, its limitations and how to use it safely.</p>
 
     <p class="govuk-body">
-      Subscribe to the
-      <%= link_to("Inside GOV.UK blog (opens in a new tab)",
+      <%= link_to("Subscribe to the Inside GOV.UK blog (opens in a new tab)",
                   "https://insidegovuk.blog.gov.uk/subscribe/",
                   class: "govuk-link",
                   target: "_blank",
