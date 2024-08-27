@@ -16,6 +16,10 @@
 .govuk-template__body {
   height: 100%;
   height: 100dvh;
+
+  @media print {
+    height: auto;
+  }
 }
 
 // Footer overrides
