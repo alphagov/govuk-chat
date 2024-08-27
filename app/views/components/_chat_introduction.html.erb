@@ -3,6 +3,8 @@
   input_error_items ||= []
   input_value ||= nil
   title_text = early_access ? "Try GOV.UK Chat" : "GOV.UK Chat"
+  form_url = Rails.application.routes.url_helpers.homepage_path
+  start_button_href = Rails.application.routes.url_helpers.onboarding_limitations_path
 
   wrapper_classes = "app-c-chat-introduction"
   wrapper_classes += " app-c-chat-introduction--error" if input_error_items.any?
@@ -19,7 +21,7 @@
   <% if early_access %>
     <% info_text = "If you’ve already signed up, you’ll be able to request new links to access GOV.UK Chat." %>
 
-    <%= form_with url: Rails.application.routes.url_helpers.homepage_path, class: "app-c-chat-introduction__form" do |f| %>
+    <%= form_with url: form_url, class: "app-c-chat-introduction__form" do |f| %>
       <%= render "govuk_publishing_components/components/input", {
         label: {
           text: "To get started, enter your email address.",

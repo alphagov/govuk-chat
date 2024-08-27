@@ -16,8 +16,6 @@ shared_accessibility_criteria:
   - link
 examples:
   default:
-    data:
-      start_button_href: "#"
   with_early_access:
     data:
       early_access: true
