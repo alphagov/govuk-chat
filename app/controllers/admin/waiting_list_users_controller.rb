@@ -62,6 +62,21 @@ class Admin::WaitingListUsersController < Admin::BaseController
     redirect_to admin_waiting_list_users_path, notice: "User deleted"
   end
 
+  def promote
+    @user = WaitingListUser.find(params[:id])
+  end
+
+  def promote_confirm
+    user = WaitingListUser.find(params[:id])
+
+    new_user = EarlyAccessUser.promote_waiting_list_user(user)
+
+    session = Passwordless::Session.create!(authenticatable: new_user)
+    EarlyAccessAuthMailer.waitlist_promoted(session).deliver_now
+
+    redirect_to admin_early_access_user_path(new_user), notice: "User promoted"
+  end
+
 private
 
   def user_params

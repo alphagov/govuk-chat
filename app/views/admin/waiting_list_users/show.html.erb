@@ -41,6 +41,11 @@
 %>
 
 <%= render "govuk_publishing_components/components/button", {
+  text: "Promote to Early Access User",
+  href: promote_admin_waiting_list_user_path(@user),
+} %>
+
+<%= render "govuk_publishing_components/components/button", {
   text: "Edit user",
   href: edit_admin_waiting_list_user_path(@user),
   margin_bottom: true,
