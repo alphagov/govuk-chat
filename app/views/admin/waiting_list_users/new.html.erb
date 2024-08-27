@@ -39,10 +39,12 @@
         name: "create_waiting_list_user_form[user_description]",
         label: "User research description",
         full_width: true,
+        error_id: @form.errors.key?(:user_description) ? "create_waiting_list_user_form_user_description" : nil,
         options: ([""] + WaitingListUser.user_descriptions.keys).map do |description|
           {
             text: description.humanize,
             value: description,
+            selected: @form.user_description == description,
           }
         end,
       } %>
@@ -52,10 +54,12 @@
         name: "create_waiting_list_user_form[reason_for_visit]",
         label: "User research reason for visit",
         full_width: true,
+        error_id: @form.errors.key?(:reason_for_visit) ? "create_waiting_list_user_form_reason_for_visit" : nil,
         options: ([""] + WaitingListUser.reason_for_visits.keys).map do |description|
           {
             text: description.humanize,
             value: description,
+            selected: @form.reason_for_visit == description,
           }
         end,
       } %>
