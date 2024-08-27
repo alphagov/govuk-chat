@@ -2,7 +2,7 @@
   padding: 80px 0; // setting the padding top using px as there isn't a mixin for this much padding
 }
 
-.app-c-chat-introduction--with-errors {
+.app-c-chat-introduction--error {
   padding: 0 0 govuk-spacing(6); // top padding needs to be removed when error summary component is rendered
 }
 

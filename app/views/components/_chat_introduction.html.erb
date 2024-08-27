@@ -4,7 +4,7 @@
   input_value ||= nil
 
   wrapper_classes = "app-c-chat-introduction"
-  wrapper_classes += " app-c-chat-introduction--with-errors" if input_error_items.any?
+  wrapper_classes += " app-c-chat-introduction--error" if input_error_items.any?
 %>
 
 <%= content_tag :div, class: wrapper_classes do %>
