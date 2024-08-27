@@ -1,5 +1,11 @@
 <%= content_for :title, "Waiting list users" %>
 
+<%= render "govuk_publishing_components/components/button", {
+  text: "Add user",
+  href: new_admin_waiting_list_user_path,
+  margin_bottom: true,
+} %>
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-third">
     <%= render "user_filters", filter: @filter %>
