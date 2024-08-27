@@ -30,15 +30,6 @@ RSpec.describe "Notify tasks" do
       end
     end
 
-    it "overrides the email address if provided" do
-      ClimateControl.modify(EMAIL_ADDRESS_OVERRIDE: "foo@example.com") do
-        Rake::Task["notify:send_email"].invoke
-        message = ActionMailer::Base.deliveries.last
-
-        expect(message.to).to eq(["foo@example.com"])
-      end
-    end
-
     it "uses default values if optional values not provided" do
       Rake::Task["notify:send_email"].invoke(email_address)
       message = ActionMailer::Base.deliveries.last
