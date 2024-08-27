@@ -3,12 +3,18 @@ class Admin::Form::WaitingListUsers::CreateWaitingListUserForm
   include ActiveModel::Attributes
 
   attribute :email
-  attribute :user_description
-  attribute :reason_for_visit
+  attribute :user_description, :string
+  attribute :reason_for_visit, :string
 
   validates :email, presence: { message: "Enter an email address" }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "Enter a valid email address" },
                     if: -> { email.present? }
+  validates :reason_for_visit, inclusion: { in: WaitingListUser.reason_for_visits.keys,
+                                            message: "Reason for visit option must be selected" },
+                               allow_blank: true
+  validates :user_description, inclusion: { in: WaitingListUser.user_descriptions.keys,
+                                            message: "User description option must be selected" },
+                               allow_blank: true
   validate :pilot_user_does_not_exist, if: -> { email.present? }
 
   def submit
