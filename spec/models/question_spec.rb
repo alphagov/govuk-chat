@@ -19,6 +19,52 @@ RSpec.describe Question do
     end
   end
 
+  describe ".exportable" do
+    context "when new answers have been created since the last export" do
+      it "returns questions with answers created since the last export time" do
+        new_question = create(:question, created_at: 2.days.ago)
+        old_question = create(:question, created_at: 4.days.ago - 20.seconds)
+        new_question.answer = create(:answer, created_at: 2.days.ago)
+        old_question.answer = create(:answer, created_at: 4.days.ago - 20.seconds)
+
+        last_export = 4.days.ago
+        current_time = Time.current
+
+        exportable_questions = described_class.exportable(last_export, current_time)
+
+        expect(exportable_questions.size).to eq(1)
+        expect(exportable_questions).to include(new_question)
+      end
+    end
+
+    context "when new questions without answers have been created since the last export" do
+      it "does not return any questions" do
+        create(:question, created_at: 2.days.ago)
+
+        last_export = 4.days.ago
+        current_time = Time.current
+
+        exportable_questions = described_class.exportable(last_export, current_time)
+
+        expect(exportable_questions.size).to eq(0)
+      end
+    end
+
+    context "when no new answers were created since the last export" do
+      it "does not return any questions" do
+        old_question = create(:question, created_at: 4.days.ago - 20.seconds)
+        old_question.answer = create(:answer, created_at: 4.days.ago - 20.seconds)
+
+        last_export = 4.days.ago
+        current_time = Time.current
+
+        exportable_questions = described_class.exportable(last_export, current_time)
+
+        expect(exportable_questions.size).to eq(0)
+      end
+    end
+  end
+
   describe "#answer_status" do
     it "returns the status of the answer" do
       question = create(:question, :with_answer)
@@ -58,6 +104,27 @@ RSpec.describe Question do
           question:,
         )
       end
+    end
+  end
+
+  describe "#serialize_for_export" do
+    context "when the question has an answer" do
+      it "returns a serialized question with its answer" do
+        question = create(:question, :with_answer)
+
+        expect(question.serialize_for_export)
+          .to include(question.as_json)
+          .and include("answer" => question.answer.serialize_for_export)
+      end
+    end
+  end
+
+  context "when the question does not have an answer" do
+    it "returns a serialized question with its answer" do
+      question = create(:question)
+
+      expect(question.serialize_for_export)
+        .to include(question.as_json)
     end
   end
 end

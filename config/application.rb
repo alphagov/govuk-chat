@@ -80,5 +80,7 @@ module GovukChat
     config.session_store :cookie_store, key: "_govuk_chat_session", expire_after: 30.days
 
     config.conversation_js_progressive_disclosure_delay = nil
+
+    config.bigquery_dataset_id = ENV["BIGQUERY_DATASET"]
   end
 end

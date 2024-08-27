@@ -62,4 +62,8 @@ class Answer < ApplicationRecord
       )
     end
   end
+
+  def serialize_for_export
+    as_json.merge("sources" => sources.map(&:serialize_for_export))
+  end
 end

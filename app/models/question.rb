@@ -15,6 +15,10 @@ class Question < ApplicationRecord
 
   scope :unanswered, -> { where.missing(:answer) }
 
+  scope :exportable, lambda { |start_date, end_date|
+                       joins(:answer).includes(answer: %i[sources]).where("answer.created_at": start_date...end_date)
+                     }
+
   scope :active, lambda {
     max_age = Rails.configuration.conversations.max_question_age_days.days.ago
     where("questions.created_at >= :max_age", max_age:)
@@ -34,5 +38,9 @@ class Question < ApplicationRecord
         status: :abort_timeout,
       )
     end
+  end
+
+  def serialize_for_export
+    as_json.merge("answer" => answer&.serialize_for_export)
   end
 end

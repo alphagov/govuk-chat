@@ -16,6 +16,7 @@ gem "flipper-active_record"
 gem "flipper-ui"
 gem "gds-api-adapters"
 gem "gds-sso"
+gem "google-cloud-bigquery", require: false
 gem "govuk_app_config"
 gem "govuk_message_queue_consumer"
 gem "govuk_publishing_components"

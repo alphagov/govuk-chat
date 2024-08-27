@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_08_19_093754) do
+ActiveRecord::Schema[7.2].define(version: 2024_08_21_134632) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -92,6 +92,13 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_19_093754) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["base_path"], name: "index_base_path_versions_on_base_path", unique: true
+  end
+
+  create_table "bigquery_exports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "exported_until", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exported_until"], name: "index_bigquery_exports_on_exported_until", unique: true
   end
 
   create_table "conversations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
