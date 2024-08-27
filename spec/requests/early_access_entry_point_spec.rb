@@ -140,7 +140,7 @@ RSpec.describe "early access entry point" do
     it "renders successfully" do
       get early_access_entry_user_description_path
       expect(response).to have_http_status(:ok)
-      expect(response.body).to have_selector(".gem-c-radio__heading-text", text: "Which of the following best describes you?")
+      expect(response.body).to have_selector(".gem-c-radio__heading-text", text: PilotUser::USER_RESEARCH_QUESTION_DESCRIPTION)
     end
   end
 
@@ -194,7 +194,7 @@ RSpec.describe "early access entry point" do
       get early_access_entry_reason_for_visit_path
       expect(response).to have_http_status(:ok)
       expect(response.body)
-        .to have_selector(".gem-c-radio__heading-text", text: "Why did you visit GOV.UK today?")
+        .to have_selector(".gem-c-radio__heading-text", text: PilotUser::USER_RESEARCH_QUESTION_REASON_FOR_VISIT)
     end
   end
 

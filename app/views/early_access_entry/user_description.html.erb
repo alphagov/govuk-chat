@@ -1,6 +1,5 @@
 <%
-  title = "Which of the following best describes you?"
-  content_for(:browser_title, title)
+  content_for(:browser_title, PilotUser::USER_RESEARCH_QUESTION_DESCRIPTION)
 %>
 <%= render "shared/error_summary",
   model: @user_description_form,
@@ -18,7 +17,7 @@
       <%= render "govuk_publishing_components/components/radio", {
         id: "user_description_form_choice",
         name: "user_description_form[choice]",
-        heading: title,
+        heading: PilotUser::USER_RESEARCH_QUESTION_DESCRIPTION,
         heading_caption: "Question 1 of 2",
         heading_level: 1,
         error_items: error_items(@user_description_form, :choice),

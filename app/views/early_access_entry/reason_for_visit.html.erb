@@ -1,6 +1,5 @@
 <%
-  title = "Why did you visit GOV.UK today?"
-  content_for(:browser_title, title)
+  content_for(:browser_title, PilotUser::USER_RESEARCH_QUESTION_REASON_FOR_VISIT)
 %>
 <%= render "shared/error_summary",
   model: @reason_for_visit_form,
@@ -18,7 +17,7 @@
       <%= render "govuk_publishing_components/components/radio", {
         id: "reason_for_visit_form_choice",
         name: "reason_for_visit_form[choice]",
-        heading: title,
+        heading: PilotUser::USER_RESEARCH_QUESTION_REASON_FOR_VISIT,
         heading_caption: "Question 2 of 2",
         heading_level: 1,
         error_items: error_items(@reason_for_visit_form, :choice),
