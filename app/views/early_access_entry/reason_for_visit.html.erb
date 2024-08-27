@@ -1,3 +1,7 @@
+<%
+  title = "Why did you visit GOV.UK today?"
+  content_for(:browser_title, title)
+%>
 <%= render "shared/error_summary",
   model: @reason_for_visit_form,
   anchor_mappings: {
@@ -14,7 +18,7 @@
       <%= render "govuk_publishing_components/components/radio", {
         id: "reason_for_visit_form_choice",
         name: "reason_for_visit_form[choice]",
-        heading: "Why did you visit GOV.UK today?",
+        heading: title,
         heading_caption: "Question 2 of 2",
         heading_level: 1,
         error_items: error_items(@reason_for_visit_form, :choice),

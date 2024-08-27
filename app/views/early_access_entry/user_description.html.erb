@@ -1,3 +1,7 @@
+<%
+  title = "Which of the following best describes you?"
+  content_for(:browser_title, title)
+%>
 <%= render "shared/error_summary",
   model: @user_description_form,
   anchor_mappings: {
@@ -14,7 +18,7 @@
       <%= render "govuk_publishing_components/components/radio", {
         id: "user_description_form_choice",
         name: "user_description_form[choice]",
-        heading: "Which of the following best describes you?",
+        heading: title,
         heading_caption: "Question 1 of 2",
         heading_level: 1,
         error_items: error_items(@user_description_form, :choice),
