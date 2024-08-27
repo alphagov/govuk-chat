@@ -2,6 +2,7 @@
   early_access ||= false
   input_error_items ||= []
   input_value ||= nil
+  title_text = early_access ? "Try GOV.UK Chat" : "GOV.UK Chat"
 
   wrapper_classes = "app-c-chat-introduction"
   wrapper_classes += " app-c-chat-introduction--error" if input_error_items.any?
@@ -12,10 +13,11 @@
     <%= inline_svg_tag "components/chat_introduction/govuk-chat-chat-introduction-icon.svg", aria_hidden: true %>
   <% end %>
 
+  <%= content_tag(:h1, title_text, class: "app-c-chat-introduction__title") %>
+  <%= content_tag(:p, "An experimental new way to find answers to your business questions, powered by AI", class: "app-c-chat-introduction__lead-paragraph govuk-body") %>
+
   <% if early_access %>
     <% info_text = "If you’ve already signed up, you’ll be able to request new links to access GOV.UK Chat." %>
-    <%= content_tag(:h1, "Try GOV.UK Chat", class: "app-c-chat-introduction__title") %>
-    <%= content_tag(:p, "An experimental new way to find answers to your business questions, powered by AI", class: "app-c-chat-introduction__lead-paragraph govuk-body") %>
 
     <%= form_with url: Rails.application.routes.url_helpers.homepage_path, class: "app-c-chat-introduction__form" do |f| %>
       <%= render "govuk_publishing_components/components/input", {
@@ -38,8 +40,6 @@
     <% end %>
   <% else %>
     <% info_text = "Your chat history will be available for #{Rails.configuration.conversations.max_question_age_days} days" %>
-    <%= content_tag(:h1, "GOV.UK Chat", class: "app-c-chat-introduction__title") %>
-    <%= content_tag(:p, "An experimental new way to find answers to your business questions, powered by AI", class: "app-c-chat-introduction__lead-paragraph govuk-body") %>
 
     <%= render "components/blue_button", {
       text: "Try GOV.UK Chat",
