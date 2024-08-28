@@ -1,8 +1,8 @@
 RSpec.describe "ConversationsController" do
   delegate :helpers, to: ConversationsController
 
-  it_behaves_like "requires user to have completed onboarding", routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "requires user to have completed onboarding", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
+  it_behaves_like "handles a request for a user who hasn't completed onboarding", routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+  it_behaves_like "handles a request for a user who hasn't completed onboarding", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
     let(:route_params) { [SecureRandom.uuid] }
   end
 
