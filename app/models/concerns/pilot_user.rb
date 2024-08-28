@@ -1,6 +1,9 @@
 module PilotUser
   extend ActiveSupport::Concern
 
+  USER_RESEARCH_QUESTION_DESCRIPTION = "Which of the following best describes you?".freeze
+  USER_RESEARCH_QUESTION_REASON_FOR_VISIT = "Why did you visit GOV.UK today?".freeze
+
   included do
     enum :user_description,
          {
