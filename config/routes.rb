@@ -14,21 +14,15 @@ Rails.application.routes.draw do
   )
 
   scope :chat do
-    get "", to: "chat#index", as: :chat
-    get "/about", to: "static#about"
-    get "/support", to: "static#support"
-    get "/privacy", to: redirect("#{Plek.website_root}/government/publications/govuk-chat-privacy-notice/govuk-chat-privacy-notice", status: 302)
-    get "/accessibility", to: "static#accessibility"
+    get "", to: "homepage#index", as: :homepage
+    post "", to: "homepage#sign_in_or_up"
 
     scope "try-chat" do
-      get "", to: "early_access_entry#sign_in_or_up", as: :early_access_entry_sign_in_or_up
-      post "", to: "early_access_entry#confirm_sign_in_or_up"
+      get "/you", to: "sign_up#user_description", as: :sign_up_user_description
+      post "/you", to: "sign_up#confirm_user_description"
 
-      get "/you", to: "early_access_entry#user_description", as: :early_access_entry_user_description
-      post "/you", to: "early_access_entry#confirm_user_description"
-
-      get "/your-visit", to: "early_access_entry#reason_for_visit", as: :early_access_entry_reason_for_visit
-      post "/your-visit", to: "early_access_entry#confirm_reason_for_visit"
+      get "/your-visit", to: "sign_up#reason_for_visit", as: :sign_up_reason_for_visit
+      post "/your-visit", to: "sign_up#confirm_reason_for_visit"
     end
 
     get "sign-out", to: "sessions#destroy"
@@ -50,7 +44,10 @@ Rails.application.routes.draw do
       post "/answers/:answer_id/feedback", to: "conversations#answer_feedback", as: :answer_feedback
     end
 
-    get "protected", to: "protected#index"
+    get "/about", to: "static#about"
+    get "/support", to: "static#support"
+    get "/privacy", to: redirect("#{Plek.website_root}/government/publications/govuk-chat-privacy-notice/govuk-chat-privacy-notice", status: 302)
+    get "/accessibility", to: "static#accessibility"
   end
 
   namespace :admin do

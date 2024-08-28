@@ -1,6 +1,7 @@
 class BaseController < ApplicationController
   include Passwordless::ControllerHelpers
   before_action :check_chat_public_access
+  before_action :ensure_early_access_user_if_auth_required!
   helper_method :current_early_access_user, :settings
 
 private
@@ -43,7 +44,13 @@ private
     return if current_early_access_user
 
     save_passwordless_redirect_location!(EarlyAccessUser)
-    redirect_to early_access_entry_sign_in_or_up_path
+    redirect_to homepage_path
+  end
+
+  def ensure_early_access_user_if_auth_required!
+    return if Rails.configuration.available_without_early_access_authentication
+
+    require_early_access_user!
   end
 
   def require_onboarding_completed

@@ -1,12 +1,8 @@
 RSpec.describe "Chat Onboarding" do
   scenario "without JS" do
-    when_i_visit_the_root_path
-    then_i_see_the_landing_page
-
-    when_i_click_on_the_try_govuk_chat_button
-    then_i_see_the_onboarding_page
-
-    when_i_click_tell_me_more
+    given_i_am_a_signed_in_early_access_user
+    when_i_visit_the_onboarding_limitations_page
+    and_i_click_tell_me_more
     then_i_see_additional_information
 
     when_i_click_that_i_understand
@@ -17,13 +13,9 @@ RSpec.describe "Chat Onboarding" do
   end
 
   scenario "with JS", :dismiss_cookie_banner, :js do
-    when_i_visit_the_root_path
-    then_i_see_the_landing_page
-
-    when_i_click_on_the_try_govuk_chat_button
-    then_i_see_the_onboarding_page
-
-    when_i_click_tell_me_more
+    given_i_am_a_signed_in_early_access_user
+    when_i_visit_the_onboarding_limitations_page
+    and_i_click_tell_me_more
     then_i_see_additional_information
 
     when_i_click_that_i_understand
@@ -33,23 +25,11 @@ RSpec.describe "Chat Onboarding" do
     then_i_see_the_chat_prompt
   end
 
-  def when_i_visit_the_root_path
-    visit root_path
+  def when_i_visit_the_onboarding_limitations_page
+    visit onboarding_limitations_path
   end
 
-  def then_i_see_the_landing_page
-    expect(page).to have_content("GOV.UK Chat")
-  end
-
-  def when_i_click_on_the_try_govuk_chat_button
-    click_on "Try GOV.UK Chat"
-  end
-
-  def then_i_see_the_onboarding_page
-    expect(page).to have_content(/Hello 👋 I’m GOV.UK Chat/)
-  end
-
-  def when_i_click_tell_me_more
+  def and_i_click_tell_me_more
     click_on "Tell me more"
   end
 

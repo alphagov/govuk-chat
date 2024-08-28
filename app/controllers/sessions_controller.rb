@@ -1,6 +1,8 @@
 require "bcrypt"
 
 class SessionsController < BaseController
+  skip_before_action :ensure_early_access_user_if_auth_required!
+
   def confirm
     return head(:ok) if request.head?
 
@@ -34,7 +36,7 @@ class SessionsController < BaseController
   def destroy
     sign_out_early_access_user
 
-    redirect_to early_access_entry_sign_in_or_up_path
+    redirect_to homepage_path
   end
 
 private

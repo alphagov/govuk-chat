@@ -1,5 +1,5 @@
 Passwordless.configure do |config|
-  config.combat_brute_force_attacks = true
+  config.combat_brute_force_attacks = !Rails.env.test? # this setting makes tests slow
   config.default_from_address = "something@www.gov.uk"
   config.restrict_token_reuse = true
   config.expires_at = -> { 30.days.from_now } # How long until a signed in session expires.

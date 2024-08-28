@@ -29,6 +29,15 @@ RSpec.describe "sessions controller" do
         expect(response).to redirect_to(onboarding_limitations_path)
       end
 
+      it "can artificially slow down requests with Bcrypt" do
+        allow(Passwordless.config).to receive(:combat_brute_force_attacks).and_return(true)
+        allow(BCrypt::Password).to receive(:create).and_call_original
+
+        get magic_link
+
+        expect(BCrypt::Password).to have_received(:create).with(passwordless_session.token)
+      end
+
       it "locks the Password::Session resource to prevent concurrent login activity" do
         allow(Passwordless::Session).to receive(:lock).and_call_original
         get magic_link
@@ -37,10 +46,10 @@ RSpec.describe "sessions controller" do
 
       context "with a stored redirect location" do
         it "redirects to the stored location" do
-          get protected_path
+          get show_conversation_path
           follow_redirect!
           get magic_link
-          expect(response).to redirect_to(protected_path)
+          expect(response).to redirect_to(show_conversation_path)
         end
       end
 
@@ -55,8 +64,8 @@ RSpec.describe "sessions controller" do
 
         it "doesn't sign a user in" do
           get magic_link
-          get protected_path
-          expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
+          get show_conversation_path
+          expect(response).to redirect_to(homepage_path)
         end
       end
 
@@ -149,17 +158,17 @@ RSpec.describe "sessions controller" do
 
     it "redirects the user to early access entry point" do
       get sign_out_path
-      expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
+      expect(response).to redirect_to(homepage_path)
     end
 
     it "signs out the user" do
-      get protected_path
+      get onboarding_limitations_path
       expect(response).to have_http_status(:ok)
 
       get sign_out_path
 
-      get protected_path
-      expect(response).to redirect_to(early_access_entry_sign_in_or_up_path)
+      get onboarding_limitations_path
+      expect(response).to redirect_to(homepage_path)
     end
   end
 end

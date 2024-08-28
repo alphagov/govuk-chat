@@ -1,13 +1,13 @@
 RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" do
   shared_examples "prevents access to routes" do |status|
     it "renders service unavailable content, with a #{status} status" do
-      get chat_path
+      get homepage_path
       expect(response).to have_http_status(status)
       expect(response.body).to match(/Sorry, this service is unavailable/)
     end
 
     it "caches the response for 1 minute" do
-      get chat_path
+      get homepage_path
       expect(response.headers["Cache-Control"]).to eq("max-age=60, public")
     end
 
@@ -18,7 +18,7 @@ RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" 
       expect(response.cookies.keys).to include("_govuk_chat_session")
       Settings.instance.update!(public_access_enabled: false)
 
-      get chat_path
+      get homepage_path
       expect(response.cookies).to be_empty
     end
   end
@@ -39,7 +39,7 @@ RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" 
     before { create(:settings, public_access_enabled: true) }
 
     it "doesn't impact routes" do
-      get chat_path
+      get homepage_path
       expect(response).not_to have_http_status(:service_unavailable)
       expect(response).not_to have_http_status(:gone)
     end

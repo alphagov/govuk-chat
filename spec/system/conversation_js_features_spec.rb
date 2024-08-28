@@ -1,6 +1,7 @@
 RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dismiss_cookie_banner, :js do
   scenario "questions with answers" do
-    given_i_have_confirmed_i_understand_chat_risks
+    given_i_am_a_signed_in_early_access_user
+    and_i_have_confirmed_i_understand_chat_risks
     when_i_enter_a_first_question
     then_i_see_the_first_question_was_accepted
 
@@ -15,7 +16,8 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "client side validation" do
-    given_i_have_confirmed_i_understand_chat_risks
+    given_i_am_a_signed_in_early_access_user
+    and_i_have_confirmed_i_understand_chat_risks
     when_i_enter_an_empty_question
     then_i_see_a_presence_validation_message
 
@@ -24,7 +26,8 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "server side validation" do
-    given_i_have_confirmed_i_understand_chat_risks
+    given_i_am_a_signed_in_early_access_user
+    and_i_have_confirmed_i_understand_chat_risks
     when_i_enter_a_question_with_pii
     then_i_see_a_pii_validation_message
 
@@ -33,7 +36,8 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "reloading the page while an answer is pending" do
-    given_i_have_confirmed_i_understand_chat_risks
+    given_i_am_a_signed_in_early_access_user
+    and_i_have_confirmed_i_understand_chat_risks
     when_i_enter_a_first_question
     then_i_see_the_first_question_was_accepted
 
@@ -43,7 +47,8 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "User gives feedback on an answer" do
-    given_i_have_confirmed_i_understand_chat_risks
+    given_i_am_a_signed_in_early_access_user
+    and_i_have_confirmed_i_understand_chat_risks
     when_i_enter_a_first_question
     then_i_see_the_first_question_was_accepted
 
@@ -56,7 +61,8 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "character limits" do
-    given_i_have_confirmed_i_understand_chat_risks
+    given_i_am_a_signed_in_early_access_user
+    and_i_have_confirmed_i_understand_chat_risks
     when_i_type_in_a_question_approaching_the_character_count_limit
     then_i_see_a_character_count_warning
 
@@ -65,7 +71,8 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "loading messages" do
-    given_i_have_confirmed_i_understand_chat_risks
+    given_i_am_a_signed_in_early_access_user
+    and_i_have_confirmed_i_understand_chat_risks
     when_i_enter_a_first_question_with_a_slow_response
     then_i_see_a_question_loading_message
 
@@ -86,7 +93,8 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
   def when_i_enter_a_first_question_with_a_slow_response
     @first_question = "How do I setup a workplace pension?"
-    prepared_question = create(:question, message: @first_question)
+    conversation = build(:conversation, user: @user)
+    prepared_question = create(:question, message: @first_question, conversation:)
 
     allow(Question).to receive(:new).and_return(prepared_question)
     # delay the server side response to provide time for a delayed loading state
