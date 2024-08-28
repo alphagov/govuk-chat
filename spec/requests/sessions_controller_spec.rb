@@ -29,6 +29,15 @@ RSpec.describe "sessions controller" do
         expect(response).to redirect_to(onboarding_limitations_path)
       end
 
+      it "can artificially slow down requests with Bcrypt" do
+        allow(Passwordless.config).to receive(:combat_brute_force_attacks).and_return(true)
+        allow(BCrypt::Password).to receive(:create).and_call_original
+
+        get magic_link
+
+        expect(BCrypt::Password).to have_received(:create).with(passwordless_session.token)
+      end
+
       it "locks the Password::Session resource to prevent concurrent login activity" do
         allow(Passwordless::Session).to receive(:lock).and_call_original
         get magic_link
