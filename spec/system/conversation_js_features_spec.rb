@@ -55,15 +55,6 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     then_i_no_longer_see_the_thank_you_message
   end
 
-  scenario "survey link populated with conversation id" do
-    given_i_have_confirmed_i_understand_chat_risks
-    then_i_see_the_survey_url_lacks_a_conversation_id
-
-    when_i_enter_a_valid_question
-    then_i_see_the_valid_question_was_accepted
-    and_i_see_the_survey_url_has_a_conversation_id
-  end
-
   scenario "character limits" do
     given_i_have_confirmed_i_understand_chat_risks
     when_i_type_in_a_question_approaching_the_character_count_limit
@@ -220,17 +211,6 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   def then_i_no_longer_see_the_thank_you_message
     expect(page).not_to have_content("Thanks for your feedback.")
     expect(page).not_to have_content("Hide this message")
-  end
-
-  def then_i_see_the_survey_url_lacks_a_conversation_id
-    expect(page)
-      .to have_link("Share your feedback (opens in a new tab)", href: /\?conversation=\z/)
-  end
-
-  def and_i_see_the_survey_url_has_a_conversation_id
-    conversation_id = Conversation.last.id
-    expect(page)
-      .to have_link("Share your feedback (opens in a new tab)", href: /\?conversation=#{conversation_id}\z/)
   end
 
   def when_i_type_in_a_question_approaching_the_character_count_limit

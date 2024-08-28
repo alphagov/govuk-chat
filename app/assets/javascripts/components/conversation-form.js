@@ -73,7 +73,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     handleQuestionAccepted () {
       this.disableControls()
       this.resetInput()
-      this.updateSurveyLink()
     }
 
     handleQuestionRejected (event) {
@@ -158,18 +157,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         this.input.classList.remove('app-c-conversation-form__input--error')
         this.formGroup.classList.remove('app-c-conversation-form__form-group--error')
       }
-    }
-
-    updateSurveyLink () {
-      const conversationId = window.GOVUK.cookie('conversation_id')
-
-      if (conversationId === this.conversationId) return
-
-      const url = new URL(this.surveyLink.href)
-      url.searchParams.set('conversation', conversationId)
-      this.surveyLink.href = url.toString()
-
-      this.conversationId = conversationId
     }
   }
 
