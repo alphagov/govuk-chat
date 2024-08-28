@@ -1,4 +1,34 @@
 RSpec.describe EarlyAccessUser do
+  describe ".promote_waiting_list_user" do
+    it "creates the early access user and deletes the waiting list user" do
+      waiting_list_user = create(:waiting_list_user)
+
+      described_class.promote_waiting_list_user(waiting_list_user)
+
+      expect(WaitingListUser.find_by_id(waiting_list_user.id)).to be_nil
+
+      early_access_user = described_class.find_by_email(waiting_list_user.email)
+
+      expect(early_access_user).to have_attributes(
+        email: waiting_list_user.email,
+        user_description: waiting_list_user.user_description,
+        reason_for_visit: waiting_list_user.reason_for_visit,
+        source: "admin_promoted",
+      )
+    end
+
+    it "does not make any changes if an exception is raised" do
+      waiting_list_user = create(:waiting_list_user)
+      allow(described_class).to receive(:create!).and_raise(ActiveRecord::RecordInvalid)
+
+      expect { described_class.promote_waiting_list_user(waiting_list_user) }
+        .to raise_error(ActiveRecord::RecordInvalid)
+
+      expect(described_class.find_by_email(waiting_list_user.email)).to be_nil
+      expect(WaitingListUser.find_by_id(waiting_list_user.id)).to eq(waiting_list_user)
+    end
+  end
+
   describe "#access_revoked?" do
     it "returns true when revoked_at has a value" do
       instance = described_class.new(revoked_at: Time.current)

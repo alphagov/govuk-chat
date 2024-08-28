@@ -16,6 +16,17 @@ class EarlyAccessUser < ApplicationRecord
 
   passwordless_with :email
 
+  def self.promote_waiting_list_user(waiting_list_user, source = :admin_promoted)
+    transaction do
+      waiting_list_user.destroy!
+
+      create!(
+        **waiting_list_user.slice(:email, :user_description, :reason_for_visit),
+        source:,
+      )
+    end
+  end
+
   def access_revoked?
     revoked_at.present?
   end
