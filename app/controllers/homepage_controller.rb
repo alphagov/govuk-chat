@@ -1,5 +1,6 @@
 class HomepageController < BaseController
   skip_before_action :ensure_early_access_user_if_auth_required!
+  skip_forgery_protection # as we cache the form we can't verify the token
 
   def index
     request.session_options[:skip] = true
