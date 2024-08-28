@@ -6,6 +6,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     constructor (module) {
       this.module = module
       this.form = this.module.querySelector('.js-onboarding-form')
+      this.conversationFormRegion = this.module.querySelector('.js-conversation-form-region')
       this.messageLists = new Modules.ConversationMessageLists(this.module.querySelector('.js-conversation-message-lists'))
       this.eventListeners = []
     }
@@ -16,9 +17,10 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.addEventListener(this.module, 'conversation-append', e => this.conversationAppend(e))
 
       if (this.messageLists.hasNewMessages()) {
-        this.form.classList.add('govuk-visually-hidden')
+        this.conversationFormRegion.classList.add('govuk-visually-hidden')
         this.messageLists.progressivelyDiscloseMessages().then(() => {
-          this.form.classList.remove('govuk-visually-hidden')
+          this.conversationFormRegion.classList.add('app-conversation-layout__form-region--slide-in')
+          this.conversationFormRegion.classList.remove('govuk-visually-hidden')
           this.messageLists.scrollToLastNewMessage()
         })
       }
@@ -26,6 +28,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     async handleSubmit (event) {
       event.preventDefault()
+      this.conversationFormRegion.classList.add('app-conversation-layout__form-region--slide-out')
 
       try {
         this.messageLists.moveNewMessagesToHistory()
@@ -75,9 +78,12 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     async conversationAppend (event) {
-      this.form.classList.add('govuk-visually-hidden')
+      this.conversationFormRegion.classList.add('govuk-visually-hidden')
+      this.conversationFormRegion.classList.remove('app-conversation-layout__form-region--slide-in')
       await this.messageLists.appendNewProgressivelyDisclosedMessages(event.detail.html)
-      this.form.classList.remove('govuk-visually-hidden')
+      this.conversationFormRegion.classList.add('app-conversation-layout__form-region--slide-in')
+      this.conversationFormRegion.classList.remove('app-conversation-layout__form-region--slide-out')
+      this.conversationFormRegion.classList.remove('govuk-visually-hidden')
       this.messageLists.scrollToLastNewMessage()
     }
 

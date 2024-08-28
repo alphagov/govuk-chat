@@ -1,5 +1,5 @@
 describe('ChatConversation module', () => {
-  let moduleElement, module, formContainer, form
+  let conversationFormRegion, moduleElement, module, formContainer, form
   const longWaitForProgressiveDisclosure = 60000
 
   beforeEach(() => {
@@ -13,15 +13,18 @@ describe('ChatConversation module', () => {
         <template class="js-loading-question"><li>Loading</li></template>
         <template class="js-loading-answer"><li>Loading</li></template>
       </div>
-      <div class="js-question-form-container">
-        <form action="/conversation" class="js-question-form">
-          <input type="text" name="question" value="How can I setup a new business?">
-          <button class="js-question-form-button">Send</button>
-        </form>
+      <div class="js-conversation-form-region">
+        <div class="js-question-form-container">
+          <form action="/conversation" class="js-question-form">
+            <input type="text" name="question" value="How can I setup a new business?">
+            <button class="js-question-form-button">Send</button>
+          </form>
+        </div>
       </div>
     `
 
     document.body.appendChild(moduleElement)
+    conversationFormRegion = moduleElement.querySelector('.js-conversation-form-region')
     formContainer = moduleElement.querySelector('.js-question-form-container')
     form = moduleElement.querySelector('.js-question-form')
 
@@ -74,14 +77,15 @@ describe('ChatConversation module', () => {
         module.init()
 
         // using toHaveClass matcher was triggering a "stale element" error so using other matcher
-        expect(formContainer.classList).toContain('govuk-visually-hidden')
+        expect(conversationFormRegion.classList).toContain('govuk-visually-hidden')
 
         jasmine.clock().tick(longWaitForProgressiveDisclosure)
         jasmine.clock().uninstall()
 
         // timeout to ensure promise callbacks are executed
         window.setTimeout(() => {
-          expect(formContainer.classList).not.toContain('govuk-visually-hidden')
+          expect(conversationFormRegion.classList).not.toContain('govuk-visually-hidden')
+          expect(conversationFormRegion.classList).toContain('app-conversation-layout__form-region--slide-in')
           done()
         }, 0)
       })
@@ -440,21 +444,21 @@ describe('ChatConversation module', () => {
       expect(appendNewProgressivelyDisclosedMessagesSpy).toHaveBeenCalled()
     })
 
-    it('hides the formContainer prior to disclosing messages and then shows it after', done => {
+    it('hides the conversationFormRegion.classList prior to disclosing messages and then shows it after', done => {
       jasmine.clock().install()
 
       module.init()
 
       moduleElement.dispatchEvent(event)
 
-      expect(formContainer).toHaveClass('govuk-visually-hidden')
+      expect(conversationFormRegion.classList).toContain('govuk-visually-hidden')
 
       jasmine.clock().tick(longWaitForProgressiveDisclosure)
       jasmine.clock().uninstall()
 
       // timeout to ensure promise callbacks are executed
       window.setTimeout(() => {
-        expect(formContainer).not.toHaveClass('govuk-visually-hidden')
+        expect(conversationFormRegion.classList).not.toContain('govuk-visually-hidden')
         done()
       }, 0)
     })

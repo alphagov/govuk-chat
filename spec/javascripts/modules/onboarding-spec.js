@@ -1,5 +1,5 @@
 describe('Onboarding module', () => {
-  let moduleElement, module, form
+  let moduleElement, module, form, conversationFormRegion
   const longWaitForProgressiveDisclosure = 60000
 
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('Onboarding module', () => {
             <ul class="js-new-conversation-messages-list"></ul>
           </div>
         </div>
-        <div class="js-conversation-form-width-restrictor">
+        <div class="js-conversation-form-region">
           <form class="js-onboarding-form" action="/chat/onboarding">
             <button>I understand</button>
           </form>
@@ -22,6 +22,7 @@ describe('Onboarding module', () => {
 
     document.body.appendChild(moduleElement)
     form = moduleElement.querySelector('.js-onboarding-form')
+    conversationFormRegion = moduleElement.querySelector('.js-conversation-form-region')
 
     module = new window.GOVUK.Modules.Onboarding(moduleElement)
   })
@@ -86,15 +87,15 @@ describe('Onboarding module', () => {
         `
         module.init()
 
-        // using toHaveClass matcher was triggering a "stale element" error so using other matcher
-        expect(form.classList).toContain('govuk-visually-hidden')
+        expect(conversationFormRegion).toHaveClass('govuk-visually-hidden')
 
         jasmine.clock().tick(longWaitForProgressiveDisclosure)
         jasmine.clock().uninstall()
 
         // timeout to ensure promise callbacks are executed
         window.setTimeout(() => {
-          expect(form.classList).not.toContain('govuk-visually-hidden')
+          expect(conversationFormRegion).not.toHaveClass('govuk-visually-hidden')
+          expect(conversationFormRegion).toHaveClass('app-conversation-layout__form-region--slide-in')
           done()
         }, 0)
       })
@@ -250,14 +251,14 @@ describe('Onboarding module', () => {
 
       moduleElement.dispatchEvent(event)
 
-      expect(form).toHaveClass('govuk-visually-hidden')
+      expect(conversationFormRegion).toHaveClass('govuk-visually-hidden')
 
       jasmine.clock().tick(longWaitForProgressiveDisclosure)
       jasmine.clock().uninstall()
 
       // timeout to ensure promise callbacks are executed
       window.setTimeout(() => {
-        expect(form).not.toHaveClass('govuk-visually-hidden')
+        expect(conversationFormRegion).not.toHaveClass('govuk-visually-hidden')
         done()
       }, 0)
     })
