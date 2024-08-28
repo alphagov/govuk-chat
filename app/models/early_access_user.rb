@@ -9,11 +9,23 @@ class EarlyAccessUser < ApplicationRecord
   enum :source,
        {
          admin_added: "admin_added",
+         admin_promoted: "admin_promoted",
          instant_signup: "instant_signup",
        },
        prefix: true
 
   passwordless_with :email
+
+  def self.promote_waiting_list_user(waiting_list_user, source = :admin_promoted)
+    transaction do
+      waiting_list_user.destroy!
+
+      create!(
+        **waiting_list_user.slice(:email, :user_description, :reason_for_visit),
+        source:,
+      )
+    end
+  end
 
   def access_revoked?
     revoked_at.present?
