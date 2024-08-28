@@ -52,15 +52,4 @@ private
 
     require_early_access_user!
   end
-
-  def require_onboarding_completed
-    return if session[:onboarding] == "conversation" ||
-      cookies[:conversation_id].present? ||
-      current_early_access_user&.onboarding_completed
-
-    respond_to do |format|
-      format.html { redirect_to onboarding_limitations_path }
-      format.json { render json: { error: "Onboarding incomplete" }, status: :bad_request }
-    end
-  end
 end

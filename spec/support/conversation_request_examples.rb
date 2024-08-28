@@ -1,4 +1,32 @@
 module ConversationRequestExamples
+  shared_examples "handles a request for a user who hasn't completed onboarding" do |routes:|
+    include_context "when signed in"
+    let(:route_params) { [] }
+
+    routes.each do |path, methods|
+      describe "requires onboarding to have been completed for #{path} route" do
+        methods.each do |method|
+          context "when it is a HTML request" do
+            it "redirects users who aren't onboarded for #{method} #{path}" do
+              process(method.to_sym, public_send(path.to_sym, *route_params), params: { format: :html })
+
+              expect(response).to have_http_status(:redirect)
+              expect(response).to redirect_to(onboarding_limitations_path)
+            end
+          end
+
+          context "when it is a JSON request" do
+            it "responds with a bad request for users who aren't onboarded for #{method} #{path}" do
+              process(method.to_sym, public_send(path.to_sym, *route_params), params: { format: :json })
+
+              expect(response).to have_http_status(:bad_request)
+            end
+          end
+        end
+      end
+    end
+  end
+
   shared_examples "requires a users conversation cookie to reference an active conversation" do |routes:|
     let(:route_params) { [] }
     include_context "when signed in"
