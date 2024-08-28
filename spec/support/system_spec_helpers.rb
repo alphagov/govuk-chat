@@ -7,6 +7,11 @@ module SystemSpecHelpers
   end
   alias_method :and_i_have_confirmed_i_understand_chat_risks, :given_i_have_confirmed_i_understand_chat_risks
 
+  def given_i_am_an_authenticated_early_access_user
+    @user = create :early_access_user
+    sign_in_early_access_user(@user)
+  end
+
   def dismiss_cookie_banner
     visit root_path
 
