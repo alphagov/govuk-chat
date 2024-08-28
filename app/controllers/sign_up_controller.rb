@@ -27,6 +27,11 @@ class SignUpController < BaseController
   end
 
   def confirm_reason_for_visit
+    if session["sign_up"]["user_description"] == "none"
+      session.delete("sign_up")
+      return render :sign_up_denied, status: :forbidden
+    end
+
     @reason_for_visit_form = Form::EarlyAccess::ReasonForVisit.new(reason_for_visit_form_params)
 
     if @reason_for_visit_form.valid?

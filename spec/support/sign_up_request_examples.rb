@@ -142,13 +142,13 @@ module SignUpRequestExamples
     end
   end
 
-  shared_context "with early access user email and user description provided" do
+  shared_context "with early access user email and user description provided" do |user_description = "business_owner_or_self_employed"|
     before do
       post homepage_path(
         sign_in_or_up_form: { email: "email@test.com" },
       )
       post sign_up_user_description_path(
-        user_description_form: { choice: "business_owner_or_self_employed" },
+        user_description_form: { choice: user_description },
       )
     end
   end

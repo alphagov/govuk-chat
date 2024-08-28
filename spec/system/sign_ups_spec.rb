@@ -55,6 +55,15 @@ RSpec.describe "Sign ups" do
     and_i_receive_an_email_telling_me_i_am_on_the_waitlist
   end
 
+  scenario "answering the first question incorrectly" do
+    given_sign_ups_are_enabled
+    when_i_visit_the_homepage
+    and_i_enter_my_email_address
+    and_i_choose_an_invalid_description
+    and_i_choose_my_reason_for_visit
+    then_i_am_told_i_have_been_prevented_access
+  end
+
   def given_sign_ups_are_enabled
     @settings = create(:settings, sign_up_enabled: true)
   end
@@ -70,6 +79,11 @@ RSpec.describe "Sign ups" do
 
   def and_i_choose_my_description
     choose "I own a business or am self-employed"
+    click_on "Next question"
+  end
+
+  def and_i_choose_an_invalid_description
+    choose "None of the above"
     click_on "Next question"
   end
 
@@ -124,5 +138,9 @@ RSpec.describe "Sign ups" do
   def and_i_receive_an_email_telling_me_i_am_on_the_waitlist
     expect(ActionMailer::Base.deliveries.last.body.raw_source)
       .to include("Thanks for joining our early access waitlist.")
+  end
+
+  def then_i_am_told_i_have_been_prevented_access
+    expect(page).to have_content("You cannot currently use GOV.UK Chat")
   end
 end
