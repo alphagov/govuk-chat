@@ -21,12 +21,15 @@ RSpec.describe Question do
 
   describe ".exportable" do
     context "when new answers have been created since the last export" do
-      it "returns questions with answers created since the last export time" do
-        new_question = create(:question, created_at: 2.days.ago)
+      let(:new_question) { create(:question, created_at: 2.days.ago) }
+
+      before do
         old_question = create(:question, created_at: 4.days.ago - 20.seconds)
         new_question.answer = create(:answer, created_at: 2.days.ago)
         old_question.answer = create(:answer, created_at: 4.days.ago - 20.seconds)
+      end
 
+      it "returns questions with answers created since the last export time" do
         last_export = 4.days.ago
         current_time = Time.current
 
@@ -34,6 +37,15 @@ RSpec.describe Question do
 
         expect(exportable_questions.size).to eq(1)
         expect(exportable_questions).to include(new_question)
+      end
+
+      it "includes the conversation a question belongs to" do
+        last_export = 4.days.ago
+        current_time = Time.current
+
+        exportable_questions = described_class.exportable(last_export, current_time)
+
+        expect(exportable_questions.first.association(:conversation).loaded?).to be(true)
       end
     end
 
@@ -109,12 +121,15 @@ RSpec.describe Question do
 
   describe "#serialize_for_export" do
     context "when the question has an answer" do
-      it "returns a serialized question with its answer" do
+      it "returns a serialized question with its answer and user id" do
         question = create(:question, :with_answer)
+        question.conversation = create(:conversation)
+        question.conversation.user = create(:early_access_user)
 
         expect(question.serialize_for_export)
           .to include(question.as_json)
           .and include("answer" => question.answer.serialize_for_export)
+          .and include("early_access_user_id" => question.conversation.early_access_user_id)
       end
     end
   end

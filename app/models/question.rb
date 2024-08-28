@@ -16,7 +16,9 @@ class Question < ApplicationRecord
   scope :unanswered, -> { where.missing(:answer) }
 
   scope :exportable, lambda { |start_date, end_date|
-                       joins(:answer).includes(answer: %i[sources]).where("answer.created_at": start_date...end_date)
+                       joins(:conversation, :answer)
+                       .includes(:conversation, answer: %i[sources])
+                       .where("answer.created_at": start_date...end_date)
                      }
 
   scope :active, lambda {
@@ -41,6 +43,9 @@ class Question < ApplicationRecord
   end
 
   def serialize_for_export
-    as_json.merge("answer" => answer&.serialize_for_export)
+    as_json.merge(
+      "answer" => answer&.serialize_for_export,
+      "early_access_user_id" => conversation.early_access_user_id,
+    )
   end
 end
