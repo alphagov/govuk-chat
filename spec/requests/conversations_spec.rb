@@ -6,8 +6,13 @@ RSpec.describe "ConversationsController" do
     let(:route_params) { [SecureRandom.uuid] }
   end
 
-  it_behaves_like "redirects to sign in page if no user signed in unless auth not required", routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "redirects to sign in page if no user signed in unless auth not required", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
+  it_behaves_like "redirects unauthenticated requests when authentication is required", routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+  it_behaves_like "redirects unauthenticated requests when authentication is required", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
+    let(:route_params) { [SecureRandom.uuid] }
+  end
+
+  it_behaves_like "denies unauthenticated JSON requests when authentication is required", routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+  it_behaves_like "denies unauthenticated JSON requests when authentication is required", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
     let(:route_params) { [SecureRandom.uuid] }
   end
 

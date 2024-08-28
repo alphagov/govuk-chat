@@ -10,7 +10,14 @@ RSpec.describe "OnboardingController" do
                   routes: { onboarding_limitations_path: %i[get], onboarding_limitations_confirm_path: %i[post] }
   it_behaves_like "handles a user accessing onboarding privacy when onboarding isn't started",
                   routes: { onboarding_privacy_path: %i[get], onboarding_privacy_confirm_path: %i[post] }
-  it_behaves_like "redirects to sign in page if no user signed in unless auth not required",
+  it_behaves_like "redirects unauthenticated requests when authentication is required",
+                  routes: {
+                    onboarding_limitations_path: %i[get],
+                    onboarding_limitations_confirm_path: %i[post],
+                    onboarding_privacy_path: %i[get],
+                    onboarding_privacy_confirm_path: %i[post],
+                  }
+  it_behaves_like "denies unauthenticated JSON requests when authentication is required",
                   routes: {
                     onboarding_limitations_path: %i[get],
                     onboarding_limitations_confirm_path: %i[post],

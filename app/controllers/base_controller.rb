@@ -43,8 +43,13 @@ private
   def require_early_access_user!
     return if current_early_access_user
 
-    save_passwordless_redirect_location!(EarlyAccessUser)
-    redirect_to homepage_path
+    respond_to do |format|
+      format.html do
+        save_passwordless_redirect_location!(EarlyAccessUser)
+        redirect_to homepage_path
+      end
+      format.json { render json: { error: "User not authenticated" }, status: :bad_request }
+    end
   end
 
   def ensure_early_access_user_if_auth_required!
