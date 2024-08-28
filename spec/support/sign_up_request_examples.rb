@@ -1,4 +1,4 @@
-module EarlyAccessEntryPointRequestExamples
+module SignUpRequestExamples
   shared_examples "redirects user to instant access start page when email is not in the sign_up session" do |routes:|
     routes.each do |path, methods|
       describe "Redirects user to homepage_path when session['sign_up']['email'] is blank" do
@@ -24,7 +24,7 @@ module EarlyAccessEntryPointRequestExamples
             process(method.to_sym, public_send(path.to_sym))
 
             expect(response).to have_http_status(:redirect)
-            expect(response).to redirect_to(early_access_entry_user_description_path)
+            expect(response).to redirect_to(sign_up_user_description_path)
           end
         end
       end
@@ -138,7 +138,7 @@ module EarlyAccessEntryPointRequestExamples
       post homepage_path(
         sign_in_or_up_form: { email: "email@test.com" },
       )
-      post early_access_entry_user_description_path(
+      post sign_up_user_description_path(
         user_description_form: { choice: "business_owner_or_self_employed" },
       )
     end

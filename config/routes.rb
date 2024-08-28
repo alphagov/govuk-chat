@@ -18,11 +18,11 @@ Rails.application.routes.draw do
     post "", to: "homepage#sign_in_or_up"
 
     scope "try-chat" do
-      get "/you", to: "early_access_entry#user_description", as: :early_access_entry_user_description
-      post "/you", to: "early_access_entry#confirm_user_description"
+      get "/you", to: "sign_up#user_description", as: :sign_up_user_description
+      post "/you", to: "sign_up#confirm_user_description"
 
-      get "/your-visit", to: "early_access_entry#reason_for_visit", as: :early_access_entry_reason_for_visit
-      post "/your-visit", to: "early_access_entry#confirm_reason_for_visit"
+      get "/your-visit", to: "sign_up#reason_for_visit", as: :sign_up_reason_for_visit
+      post "/your-visit", to: "sign_up#confirm_reason_for_visit"
     end
 
     get "sign-out", to: "sessions#destroy"

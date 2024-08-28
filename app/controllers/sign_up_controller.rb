@@ -1,4 +1,4 @@
-class EarlyAccessEntryController < BaseController
+class SignUpController < BaseController
   skip_before_action :ensure_early_access_user_if_auth_required!
   before_action :redirect_to_homepage_if_auth_not_required
   before_action :redirect_to_homepage_if_signed_in
@@ -16,7 +16,7 @@ class EarlyAccessEntryController < BaseController
 
     if @user_description_form.valid?
       session["sign_up"]["user_description"] = @user_description_form.choice
-      redirect_to early_access_entry_reason_for_visit_path
+      redirect_to sign_up_reason_for_visit_path
     else
       render :user_description, status: :unprocessable_entity
     end
@@ -68,7 +68,7 @@ private
     end
 
     if session.dig("sign_up", "user_description").blank? && action_name.match?(/reason_for_visit/)
-      redirect_to early_access_entry_user_description_path
+      redirect_to sign_up_user_description_path
     end
   end
 

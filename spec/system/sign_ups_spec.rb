@@ -1,4 +1,4 @@
-RSpec.describe "Early access user access" do
+RSpec.describe "Sign ups" do
   scenario "new user signs up" do
     given_sign_ups_are_enabled
 

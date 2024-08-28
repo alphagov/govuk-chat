@@ -62,7 +62,7 @@ RSpec.describe "HomepageController" do
           post homepage_path(
             sign_in_or_up_form: { email: "email@test.com" },
           )
-          expect(response).to redirect_to(early_access_entry_user_description_path)
+          expect(response).to redirect_to(sign_up_user_description_path)
         end
       end
 

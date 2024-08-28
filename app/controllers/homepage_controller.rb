@@ -27,7 +27,7 @@ class HomepageController < BaseController
       return render "shared/access_revoked", status: :forbidden if result.outcome == :user_revoked
 
       session["sign_up"] = { "email" => result.email }
-      redirect_to early_access_entry_user_description_path
+      redirect_to sign_up_user_description_path
     else
       render :index_early_access, status: :unprocessable_entity
     end
