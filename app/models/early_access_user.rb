@@ -9,6 +9,7 @@ class EarlyAccessUser < ApplicationRecord
   enum :source,
        {
          admin_added: "admin_added",
+         admin_promoted: "admin_promoted",
          instant_signup: "instant_signup",
        },
        prefix: true
