@@ -1,15 +1,15 @@
 .app-c-onboarding-form {
   display: flex;
   justify-content: space-between;
-  margin-bottom: govuk-spacing(2);
-  padding-top: govuk-spacing(3);
+  margin-bottom: govuk-spacing(4);
+  padding-top: govuk-spacing(4);
 
   .govuk-button, .govuk-link {
     flex: auto;
     margin: govuk-spacing(2);
 
     @include govuk-media-query($until: tablet) {
-      margin: 0 0 govuk-spacing(4);
+      margin: 0 0 govuk-spacing(2);
     }
   }
 
@@ -21,5 +21,7 @@
 
   @include govuk-media-query($until: tablet) {
     flex-direction: column;
+    margin-bottom: govuk-spacing(1);
+    padding-top: govuk-spacing(3);
   }
 }
