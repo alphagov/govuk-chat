@@ -6,15 +6,17 @@ class Answer < ApplicationRecord
       "Could you make your question more specific? You can also try splitting it into multiple " \
       "smaller questions and asking them separately.".freeze
     OPENAI_CLIENT_ERROR_RESPONSE = <<~MESSAGE.freeze
-      Sorry, there is a problem with OpenAI's API. Try again later.
+      Sorry, something went wrong while trying to answer your question. Try again later.
 
-      We saved your conversation.
-
-      Check [GOV.UK guidance for businesses](https://www.gov.uk/browse/business) if you need information now.
+      We saved your conversation. Check [GOV.UK guidance for businesses](https://www.gov.uk/browse/business) if you need information now.
     MESSAGE
     TIMED_OUT_RESPONSE = "Sorry, something went wrong and I could not find an answer in time. " \
       "Please try again.".freeze
-    UNSUCCESSFUL_REQUEST_MESSAGE = "There's been a problem retrieving a response to your question.".freeze
+    UNSUCCESSFUL_REQUEST_MESSAGE = <<~MESSAGE.freeze
+      Sorry, something went wrong while trying to answer your question. Try again later.
+
+      We saved your conversation. Check [GOV.UK guidance for businesses](https://www.gov.uk/browse/business) if you need information now.
+    MESSAGE
     GUARDRAILS_FAILED_MESSAGE = <<~MESSAGE.freeze
       Sorry, the answer does not meet the GOV.UK Chat content guidelines.
       This might be because it contains unclear, misleading or inappropriate information.
