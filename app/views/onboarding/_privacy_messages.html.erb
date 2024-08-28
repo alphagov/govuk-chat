@@ -1,12 +1,15 @@
 <% privacy_messages = [] %>
 
-<% privacy_messages << capture do %>
-  <p>Great. You can always find information about my limitations in <a href="/chat/about">about GOV.UK Chat</a>.</p>
+<% if !@more_information %>
+  <% privacy_messages << capture do %>
+  Great. You can always find information about my limitations in [about GOV.UK Chat](<%= about_path %>).
+  <% end %>
 <% end %>
 
 <% privacy_messages << capture do %>
-  <p>One more thing - please do not include any sensitive or personal information in your questions.</p>
-  <p>You can read the <a href="/chat/privacy">privacy notice</a> to find out how your data is used.</p>
+One more thing - please do not include any sensitive or personal information in your questions.
+
+You can read the [privacy notice](<%= privacy_path %>) to find out how your data is used.
 <% end %>
 
 <%= render "components/conversation_message", {
