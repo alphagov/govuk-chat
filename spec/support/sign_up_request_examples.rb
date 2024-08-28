@@ -111,7 +111,7 @@ module SignUpRequestExamples
     end
   end
 
-  shared_examples "redirects to homepage if auth is not required" do |routes:|
+  shared_examples "redirects to homepage if authentication is not enabled" do |routes:|
     let(:route_params) { [] }
 
     before do
@@ -121,9 +121,9 @@ module SignUpRequestExamples
     end
 
     routes.each do |path, methods|
-      describe "Redirects to homepage if auth is not required for #{path} route" do
+      describe "accessing an authentication route when authenication is not required for #{path} route" do
         methods.each do |method|
-          it "redirects to homepage if auth is not required for #{method} #{path}" do
+          it "redirects to homepage for #{method} #{path}" do
             process(method.to_sym, public_send(path.to_sym, *route_params))
 
             expect(response).to have_http_status(:redirect)

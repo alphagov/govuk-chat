@@ -1,15 +1,4 @@
 RSpec.describe "OnboardingController" do
-  it_behaves_like "handles a user accessing onboarding when onboarded",
-                  routes: {
-                    onboarding_limitations_path: %i[get],
-                    onboarding_limitations_confirm_path: %i[post],
-                    onboarding_privacy_path: %i[get],
-                    onboarding_privacy_confirm_path: %i[post],
-                  }
-  it_behaves_like "handles a user accessing onboarding limitations once completed",
-                  routes: { onboarding_limitations_path: %i[get], onboarding_limitations_confirm_path: %i[post] }
-  it_behaves_like "handles a user accessing onboarding privacy when onboarding isn't started",
-                  routes: { onboarding_privacy_path: %i[get], onboarding_privacy_confirm_path: %i[post] }
   it_behaves_like "redirects unauthenticated requests when authentication is required",
                   routes: {
                     onboarding_limitations_path: %i[get],
@@ -24,6 +13,17 @@ RSpec.describe "OnboardingController" do
                     onboarding_privacy_path: %i[get],
                     onboarding_privacy_confirm_path: %i[post],
                   }
+  it_behaves_like "handles a user accessing onboarding when onboarded",
+                  routes: {
+                    onboarding_limitations_path: %i[get],
+                    onboarding_limitations_confirm_path: %i[post],
+                    onboarding_privacy_path: %i[get],
+                    onboarding_privacy_confirm_path: %i[post],
+                  }
+  it_behaves_like "handles a user accessing onboarding limitations once completed",
+                  routes: { onboarding_limitations_path: %i[get], onboarding_limitations_confirm_path: %i[post] }
+  it_behaves_like "handles a user accessing onboarding privacy when onboarding isn't started",
+                  routes: { onboarding_privacy_path: %i[get], onboarding_privacy_confirm_path: %i[post] }
 
   describe "GET :limitations" do
     include_context "when signed in"

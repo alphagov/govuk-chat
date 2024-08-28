@@ -22,7 +22,7 @@ RSpec.describe "SignUpController" do
                     sign_up_reason_for_visit_path: %i[get post],
                   }
 
-  it_behaves_like "redirects to homepage if auth is not required",
+  it_behaves_like "redirects to homepage if authentication is not enabled",
                   routes: {
                     sign_up_user_description_path: %i[get post],
                     sign_up_reason_for_visit_path: %i[get post],
