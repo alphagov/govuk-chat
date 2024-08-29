@@ -17,14 +17,15 @@ class EarlyAccessUser < ApplicationRecord
 
   passwordless_with :email
 
-  def self.promote_waiting_list_user(waiting_list_user, source = :admin_promoted)
+  def self.promote_waiting_list_user(waiting_list_user, source = :admin_promoted, &block)
     transaction do
       waiting_list_user.destroy!
 
-      create!(
+      new_user = create!(
         **waiting_list_user.slice(:email, :user_description, :reason_for_visit),
         source:,
       )
+      block.call(new_user) if block_given?
     end
   end
 
