@@ -172,6 +172,7 @@ RSpec.describe "Admin::EarlyAccessController" do
         user_description: :business_owner_or_self_employed,
         reason_for_visit: :find_specific_answer,
         revoked_at: nil,
+        question_limit: 0,
       )
 
       get admin_early_access_user_path(user)
@@ -182,6 +183,15 @@ RSpec.describe "Admin::EarlyAccessController" do
         .and have_content("12:13pm on 1 January 2024")
         .and have_content("business_owner_or_self_employed")
         .and have_content("find_specific_answer")
+        .and have_content("Unlimited")
+    end
+
+    it "renders the edit user link" do
+      user = create(:early_access_user)
+
+      get admin_early_access_user_path(user)
+
+      expect(response.body).to have_link("Edit user", href: edit_admin_early_access_user_path(user))
     end
 
     it "renders the revoked details" do
@@ -224,6 +234,60 @@ RSpec.describe "Admin::EarlyAccessController" do
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to have_content("Enter an email address")
+    end
+  end
+
+  describe "GET :edit" do
+    it "renders the form" do
+      get edit_admin_early_access_user_path(create(:early_access_user))
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body)
+        .to have_content("Edit early access user")
+        .and have_content("Question limit")
+    end
+
+    it "renders the input field with the default value if is is null" do
+      user = create(:early_access_user, question_limit: nil)
+      get edit_admin_early_access_user_path(user)
+
+      default_limit = Rails.configuration.conversations.max_questions_per_user
+
+      expect(response.body)
+        .to have_selector("input[id=update_early_access_user_form_question_limit][value=#{default_limit}]")
+    end
+  end
+
+  describe "PATCH :update" do
+    it "updates the user and redirects" do
+      user = create(:early_access_user, question_limit: 2)
+
+      patch admin_early_access_user_path(user),
+            params: {
+              update_early_access_user_form: {
+                question_limit: 3,
+              },
+            }
+
+      expect(user.reload).to have_attributes(
+        question_limit: 3,
+      )
+
+      expect(response).to redirect_to(admin_early_access_user_path(user))
+    end
+
+    it "renders the form with errors" do
+      user = create(:early_access_user)
+
+      patch admin_early_access_user_path(user),
+            params: {
+              update_early_access_user_form: {
+                question_limit: "invalid",
+              },
+            }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to have_content("Question limit must be a number or blank")
     end
   end
 end

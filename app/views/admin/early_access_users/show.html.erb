@@ -16,6 +16,8 @@
 <% end %>
 
 <%
+  question_limit = @user.question_limit.nil? ? Rails.configuration.conversations.max_questions_per_user : @user.question_limit
+
   summary_items = [
     {
       field: "Email",
@@ -41,6 +43,10 @@
       field: "Questions asked",
       value: @user.questions_count,
     },
+    {
+      field: "Question limit",
+      value: question_limit.zero? ? "Unlimited" : question_limit,
+    },
   ]
 
   if @user.access_revoked?
@@ -64,6 +70,11 @@
 
 <%= render "govuk_publishing_components/components/summary_list", {
   items: summary_items.flatten,
+} %>
+
+<%= render "govuk_publishing_components/components/button", {
+  text: "Edit user",
+  href: edit_admin_early_access_user_path(@user),
 } %>
 
 <% if @user.access_revoked? %>

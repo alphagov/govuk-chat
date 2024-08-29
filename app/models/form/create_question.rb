@@ -44,7 +44,7 @@ private
 
   def within_question_limit?
     return if conversation.user.nil?
-    return if conversation.user.questions_count < Rails.configuration.conversations.max_questions_per_user
+    return unless conversation.user.question_limit_reached?
 
     errors.add(:base, "You have asked the maximum number of questions. You cannot ask any more.")
   end

@@ -73,4 +73,47 @@ RSpec.describe EarlyAccessUser do
         .and(not_change { Passwordless::Session.exists?(other_user_session.id) })
     end
   end
+
+  describe "#question_limit_reached?" do
+    it "returns false if the the question limit is zero" do
+      user = build(:early_access_user, question_limit: 0)
+      expect(user.question_limit_reached?).to be(false)
+    end
+
+    context "when the question_limit is nil" do
+      let(:user) { build(:early_access_user, question_limit: nil, questions_count: 5) }
+
+      it "returns false if the question count is less than the default" do
+        allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(10)
+        expect(user.question_limit_reached?).to be(false)
+      end
+
+      it "returns true if the question count equals the default" do
+        allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(5)
+        expect(user.question_limit_reached?).to be(true)
+      end
+
+      it "returns true if the question count exceeds the default" do
+        allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(3)
+        expect(user.question_limit_reached?).to be(true)
+      end
+    end
+
+    context "when the question_limit is not nil" do
+      it "returns false if the question count is less than the limit" do
+        user = build(:early_access_user, question_limit: 10, questions_count: 5)
+        expect(user.question_limit_reached?).to be(false)
+      end
+
+      it "returns true if the question count equals the limit" do
+        user = build(:early_access_user, question_limit: 5, questions_count: 5)
+        expect(user.question_limit_reached?).to be(true)
+      end
+
+      it "returns true if the question count exceeds the limit" do
+        user = build(:early_access_user, question_limit: 5, questions_count: 10)
+        expect(user.question_limit_reached?).to be(true)
+      end
+    end
+  end
 end
