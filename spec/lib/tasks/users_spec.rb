@@ -16,8 +16,8 @@ RSpec.describe "users rake tasks" do
 
       it "copies the attributes across correctly" do
         Rake::Task[task_name].invoke
-        expected = waiting_list_users.take(expected_promotions).map { |u| [u.email, u.user_description, u.reason_for_visit] }
-        actual = early_access_users.pluck(:email, :user_description, :reason_for_visit)
+        expected = waiting_list_users.take(expected_promotions).map { |u| [u.email, u.user_description, u.reason_for_visit, "delayed_signup"] }
+        actual = early_access_users.pluck(:email, :user_description, :reason_for_visit, :source)
         expect(actual).to eq(expected)
       end
 

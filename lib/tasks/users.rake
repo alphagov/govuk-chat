@@ -11,7 +11,7 @@ namespace :users do
       settings.with_lock do
         ActiveRecord::Base.transaction do
           WaitingListUser.limit(max_promotions).each do |waiting_list_user|
-            EarlyAccessUser.promote_waiting_list_user(waiting_list_user) do |early_access_user|
+            EarlyAccessUser.promote_waiting_list_user(waiting_list_user, :delayed_signup) do |early_access_user|
               users_to_notify << early_access_user
               settings.delayed_access_places -= 1
             end
