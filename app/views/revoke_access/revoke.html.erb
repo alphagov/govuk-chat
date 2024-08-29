@@ -1,0 +1,15 @@
+<%= content_for :title, "Revoke early access to GOV.UK Chat" %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body">
+      This will revoke your account to GOV.UK Chat.
+    </p>
+  </div>
+</div>
+
+<%= form_with url: early_access_user_revoke_access_confirm_path(@token), method: :post do |f| %>
+  <%= render "components/blue_button", {
+    text: "Revoke Access",
+  } %>
+<% end %>

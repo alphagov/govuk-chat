@@ -29,6 +29,9 @@ Rails.application.routes.draw do
     get "sign-in/:id/:token", to: "sessions#confirm", as: :magic_link
 
     get "waiting-list-unsubscribe/:id/:token", to: "waiting_list_unsubscribe#unsubscribe", as: :waiting_list_user_unsubscribe
+    post "waiting-list-unsubscribe/:id/:token", to: "waiting_list_unsubscribe#unsubscribe_confirm", as: :waiting_list_user_unsubscribe_confirm
+    get "revoke_access/revoke", to: "revoke_access#revoke", as: :early_access_user_revoke_access
+    post "revoke_access/revoke_confirm", to: "revoke_access#revoke_confirm", as: :early_access_user_revoke_access_confirm
 
     scope :onboarding do
       get "", to: "onboarding#limitations", as: :onboarding_limitations
