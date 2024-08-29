@@ -25,6 +25,14 @@ class Admin::EarlyAccessUsersController < Admin::BaseController
     end
   end
 
+  def edit
+    @user = EarlyAccessUser.find(params[:id])
+    @form = Admin::Form::EarlyAccessUsers::UpdateForm.new(
+      user: @user,
+      question_limit: @user.question_limit,
+    )
+  end
+
 private
 
   def create_params

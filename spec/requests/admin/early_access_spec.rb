@@ -236,4 +236,15 @@ RSpec.describe "Admin::EarlyAccessController" do
       expect(response.body).to have_content("Enter an email address")
     end
   end
+
+  describe "GET :edit" do
+    it "renders the form" do
+      get edit_admin_early_access_user_path(create(:early_access_user))
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body)
+        .to have_content("Edit early access user")
+        .and have_content("Question limit")
+    end
+  end
 end
