@@ -4,9 +4,10 @@
 }
 
 // Usually, we restrict the height of the viewport however this was causing issues on
-// the landing page where the footer's grey background was extending beyond its boundary.
-// Therefore, we don't restrict the height on the landing page and instead set it to auto.
-.govuk-template__body.app-landing-page-layout {
+// the landing page and static pages (e.g. about page) where the footer's grey background was 
+// extending beyond its boundary. Therefore, we don't restrict the height on these pages 
+// and instead set it to auto.
+.govuk-template__body.app-landing-page-layout, .govuk-template__body.app-static-page-layout {
   height: auto;
 }
 
