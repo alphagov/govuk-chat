@@ -72,6 +72,11 @@
   items: summary_items.flatten,
 } %>
 
+<%= render "govuk_publishing_components/components/button", {
+  text: "Edit user",
+  href: edit_admin_early_access_user_path(@user),
+} %>
+
 <% if @user.access_revoked? %>
   <%= form_with url: restore_admin_early_access_user_path(@user), method: :patch do |f| %>
     <%= render "govuk_publishing_components/components/button", {

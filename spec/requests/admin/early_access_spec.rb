@@ -186,6 +186,14 @@ RSpec.describe "Admin::EarlyAccessController" do
         .and have_content("Unlimited")
     end
 
+    it "renders the edit user link" do
+      user = create(:early_access_user)
+
+      get admin_early_access_user_path(user)
+
+      expect(response.body).to have_link("Edit user", href: edit_admin_early_access_user_path(user))
+    end
+
     it "renders the revoked details" do
       user = create(
         :early_access_user,
