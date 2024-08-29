@@ -56,5 +56,17 @@ RSpec.describe "users rake tasks" do
 
       it_behaves_like "makes the correct changes", 1
     end
+
+    context "when there are delayed access places available" do
+      before do
+        settings = create :settings, delayed_access_places: 0
+        allow(Settings).to receive(:instance).and_return(settings)
+      end
+
+      it "does not continue processing" do
+        expect(Rails.configuration).not_to receive(:early_access_users)
+        expect { Rake::Task[task_name].invoke }.to output("No delayed access places available\n").to_stdout
+      end
+    end
   end
 end
