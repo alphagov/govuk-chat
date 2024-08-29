@@ -3,18 +3,39 @@ description: A branded introduction to GOV.UK Chat for use on the landing page.
 accessibility_criteria: |
   The page title must:
 
-  - be part of a correct heading structure for a page
-  - be semantically represented as a heading
-  - convey the heading level
+  * be part of a correct heading structure for a page
+  * be semantically represented as a heading
+  * convey the heading level
 
   The lead paragraph must:
 
-  - be visually distinct from other paragraphs.
-  - must have a text contrast ratio higher than 4.5:1 against the background colour to meet WCAG AA
+  * be visually distinct from other paragraphs.
+  * must have a text contrast ratio higher than 4.5:1 against the background colour to meet WCAG AA
+
+  Form elements in the component must:
+
+  * accept focus
+  * be focusable with a keyboard
+  * be usable with a keyboard
+  * be usable with touch
+  * indicate when they have focus
+  * be recognisable as form input elements
+  * have correctly associated labels
 
 shared_accessibility_criteria:
   - link
 examples:
   default:
+  with_early_access:
     data:
-      start_button_href: "#"
+      early_access: true
+  early_access_with_input_error_items:
+    data:
+      early_access: true
+      input_error_items:
+        - text: "Error item 1"
+        - text: "Error item 2"
+  early_access_with_input_value:
+    data:
+      early_access: true
+      input_value: "Example input value"

@@ -12,7 +12,8 @@ RSpec.describe "HomepageController" do
         get homepage_path
 
         expect(response).to have_http_status(:ok)
-        expect(response.body).to have_selector(".govuk-heading-xl", text: "Try GOV.UK Chat")
+        expect(response.body)
+          .to have_selector(".app-c-chat-introduction__title", text: "Try GOV.UK Chat")
       end
     end
 
