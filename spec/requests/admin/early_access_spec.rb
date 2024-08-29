@@ -246,6 +246,16 @@ RSpec.describe "Admin::EarlyAccessController" do
         .to have_content("Edit early access user")
         .and have_content("Question limit")
     end
+
+    it "renders the input field with the default value if is is null" do
+      user = create(:early_access_user, question_limit: nil)
+      get edit_admin_early_access_user_path(user)
+
+      default_limit = Rails.configuration.conversations.max_questions_per_user
+
+      expect(response.body)
+        .to have_selector("input[id=update_early_access_user_form_question_limit][value=#{default_limit}]")
+    end
   end
 
   describe "PATCH :update" do

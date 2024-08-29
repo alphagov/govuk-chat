@@ -40,7 +40,7 @@
         hint: question_limit_hint,
         name: "update_early_access_user_form[question_limit]",
         id: "update_early_access_user_form_question_limit",
-        value: @form.question_limit,
+        value: @form.question_limit || Rails.configuration.conversations.max_questions_per_user,
         error_items: error_items(@form, :question_limit),
       } %>
 
