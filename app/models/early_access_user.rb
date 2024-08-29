@@ -43,4 +43,12 @@ class EarlyAccessUser < ApplicationRecord
                          .where.not(id: session.id)
                          .delete_all
   end
+
+  def question_limit_reached?
+    limit = question_limit || Rails.configuration.conversations.max_questions_per_user
+
+    return false if limit.zero? # 0 means a user can ask as many questions as they want
+
+    questions_count >= limit
+  end
 end
