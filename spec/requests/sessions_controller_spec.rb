@@ -114,7 +114,7 @@ RSpec.describe "sessions controller" do
       it "shows session timeout page" do
         get magic_link
         expect(response).to have_http_status(:gone)
-        expect(response.body).to include("This link has expired or been used already")
+        expect(response.body).to include("There is a problem with your link")
       end
     end
 
@@ -124,7 +124,7 @@ RSpec.describe "sessions controller" do
       it "disallows access" do
         get magic_link
         expect(response).to have_http_status(:conflict)
-        expect(response.body).to include("This link has expired or been used already")
+        expect(response.body).to include("There is a problem with your link")
       end
     end
 
@@ -138,7 +138,7 @@ RSpec.describe "sessions controller" do
       it "disallows access" do
         get magic_link
         expect(response).to have_http_status(:not_found)
-        expect(response.body).to include("This link has expired or been used already")
+        expect(response.body).to include("There is a problem with your link")
       end
     end
 
@@ -148,7 +148,7 @@ RSpec.describe "sessions controller" do
       it "disallows access" do
         get magic_link_path(passwordless_session.to_param, "the-wrong-token")
         expect(response).to have_http_status(:not_found)
-        expect(response.body).to include("This link has expired or been used already")
+        expect(response.body).to include("There is a problem with your link")
       end
     end
   end

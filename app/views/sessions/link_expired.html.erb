@@ -1,27 +1,15 @@
-<%= content_for :title, "This link has expired or been used already" %>
+<%= content_for :title, "There is a problem with your link" %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <p class="govuk-body">
+      Your link might have expired or been used already. If you pasted the link,
+      check you copied all of it.
+    </p>
+
+    <p class="govuk-body">
       You can <%= link_to("get a new link for GOV.UK Chat", homepage_path, class: "govuk-link") %>
       using the email address you signed up with.
-    </p>
-
-    <p class="govuk-body">
-      You must use the link within 24 hours. It will be sent via email and can
-      only be used once.
-    </p>
-
-    <p class="govuk-body">
-      After this, you’ll stay logged into GOV.UK Chat on your browser for 30
-      days. From there, you can use the tool any time by visiting
-      <%= link_to("gov.uk/chat/conversation", show_conversation_path, class: "govuk-link") %>.
-    </p>
-
-    <p class="govuk-body">
-      You can only access GOV.UK Chat from one browser at at time. If you’d
-      like to use GOV.UK Chat on a different browser or device, you’ll need
-      to <%= link_to("get a new link for GOV.UK Chat", homepage_path, class: "govuk-link") %>.
     </p>
   </div>
 </div>
