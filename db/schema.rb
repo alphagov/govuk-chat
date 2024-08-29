@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_08_28_132358) do
+ActiveRecord::Schema[7.2].define(version: 2024_08_29_080935) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -121,6 +121,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_28_132358) do
     t.integer "questions_count", default: 0
     t.string "revoked_reason"
     t.boolean "onboarding_completed", default: false, null: false
+    t.integer "question_limit"
     t.index ["email"], name: "index_early_access_users_on_email", unique: true
   end
 
