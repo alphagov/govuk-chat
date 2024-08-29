@@ -2,7 +2,7 @@ RSpec.describe "ConversationsController" do
   delegate :helpers, to: ConversationsController
 
   it_behaves_like "redirects unauthenticated requests when authentication is required",
-                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+                  routes: { clear_conversation_path: %i[get post], show_conversation_path: %i[get], update_conversation_path: %i[post] }
   it_behaves_like "redirects unauthenticated requests when authentication is required",
                   routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
     let(:route_params) { [SecureRandom.uuid] }
@@ -16,14 +16,14 @@ RSpec.describe "ConversationsController" do
   end
 
   it_behaves_like "handles a request for a user who hasn't completed onboarding",
-                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+                  routes: { clear_conversation_path: %i[get post], show_conversation_path: %i[get], update_conversation_path: %i[post] }
   it_behaves_like "handles a request for a user who hasn't completed onboarding",
                   routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
     let(:route_params) { [SecureRandom.uuid] }
   end
 
   it_behaves_like "requires a users conversation cookie to reference an active conversation",
-                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+                  routes: { clear_conversation_path: %i[get post], show_conversation_path: %i[get], update_conversation_path: %i[post] }
   it_behaves_like "requires a users conversation cookie to reference an active conversation",
                   routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
     let(:route_params) { [SecureRandom.uuid] }
@@ -491,6 +491,47 @@ RSpec.describe "ConversationsController" do
         .not_to change(AnswerFeedback, :count)
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to eq({ "error_messages" => ["Feedback already provided"] })
+      end
+    end
+  end
+
+  describe "GET :clear" do
+    include_context "when signed in"
+    include_context "with onboarding completed"
+
+    context "when the conversation is active" do
+      let(:conversation) { create(:conversation, :not_expired, user:) }
+
+      before do
+        cookies[:conversation_id] = conversation.id
+      end
+
+      it "renders the clear confirmation page" do
+        get clear_conversation_path
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body)
+          .to have_selector(".gem-c-title__text", text: "Do you want to start a new chat?")
+      end
+    end
+  end
+
+  describe "POST :clear" do
+    include_context "when signed in"
+    include_context "with onboarding completed"
+
+    context "when the conversation is active" do
+      let(:conversation) { create(:conversation, :not_expired, user:) }
+
+      before do
+        cookies[:conversation_id] = conversation.id
+      end
+
+      it "clears the conversation cookie" do
+        post clear_conversation_path
+
+        expect(cookies[:conversation_id]).to(be_empty)
+        expect(response).to redirect_to(show_conversation_path)
       end
     end
   end

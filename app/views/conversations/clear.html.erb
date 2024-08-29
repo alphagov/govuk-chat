@@ -1,0 +1,18 @@
+<%= content_for :title, "Do you want to start a new chat?" %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body">Starting a new chat will permanently clear your chat history.</p>
+
+    <%= form_with url: clear_path, class: "app-c-onboarding-form" do |f| %>
+      <%= render "components/blue_button", {
+        text: "Start a new chat (clears history)",
+      } %>
+      <%= render "govuk_publishing_components/components/button", {
+        secondary_solid: true,
+        text: "Continue last chat",
+        href: show_conversation_path,
+      } %>
+    <% end %>
+  </div>
+</div>
