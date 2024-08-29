@@ -79,104 +79,120 @@ RSpec.describe "SignUpController" do
   end
 
   describe "POST :confirm_reason_for_visit" do
-    include_context "with early access user email and user description provided"
+    context "when the user description given was 'none'" do
+      include_context "with early access user email and user description provided", "none"
 
-    context "when invalid params are passed" do
-      it "renders the reason_for_visit page with errors" do
-        post sign_up_reason_for_visit_path(reason_for_visit_form: { choice: "" })
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to have_selector(".govuk-error-summary")
+      it "shows a denied page" do
+        post sign_up_reason_for_visit_path(
+          reason_for_visit_form: { choice: "find_specific_answer" },
+        )
+
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).to have_content("You cannot currently use GOV.UK Chat")
+        expect(session["sign_up"]).to be_nil
       end
     end
 
-    context "when valid params are passed" do
-      context "and user already has access" do
-        it "responds with a conflict status and tells the user an account already exists" do
-          create(:early_access_user, email: "email@test.com")
-          post sign_up_reason_for_visit_path(
-            reason_for_visit_form: { choice: "find_specific_answer" },
-          )
-          expect(response).to have_http_status(:conflict)
-          expect(response.body).to have_selector(".govuk-heading-xl", text: "Account already exists")
+    context "when email and user description are valid" do
+      include_context "with early access user email and user description provided"
+
+      context "and invalid params are passed" do
+        it "renders the reason_for_visit page with errors" do
+          post sign_up_reason_for_visit_path(reason_for_visit_form: { choice: "" })
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body).to have_selector(".govuk-error-summary")
         end
       end
 
-      context "and the user is already on the waiting list" do
-        it "responds with a conflict status and tells the user an account already exists" do
-          create(:waiting_list_user, email: "email@test.com")
-          post sign_up_reason_for_visit_path(
-            reason_for_visit_form: { choice: "find_specific_answer" },
-          )
-          expect(response).to have_http_status(:conflict)
-          expect(response.body).to have_selector(".govuk-heading-xl", text: "You're already on the waitlist")
-        end
-      end
-
-      context "and there are instant access places available" do
-        it "responds with a successful status" do
-          post sign_up_reason_for_visit_path(
-            reason_for_visit_form: { choice: "find_specific_answer" },
-          )
-          expect(response).to have_http_status(:ok)
-        end
-
-        it "renders the sign_up_successful template" do
-          post sign_up_reason_for_visit_path(
-            reason_for_visit_form: { choice: "find_specific_answer" },
-          )
-          expect(response.body).to have_selector(".govuk-heading-xl", text: "You can now start using GOV.UK Chat")
-        end
-
-        it "emails a magic link to the user" do
-          expect {
+      context "and valid params are passed" do
+        context "and user already has access" do
+          it "responds with a conflict status and tells the user an account already exists" do
+            create(:early_access_user, email: "email@test.com")
             post sign_up_reason_for_visit_path(
               reason_for_visit_form: { choice: "find_specific_answer" },
             )
-          }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-          expect(EarlyAccessAuthMailer.deliveries.last.subject).to eq("Sign in")
+            expect(response).to have_http_status(:conflict)
+            expect(response.body).to have_selector(".govuk-heading-xl", text: "Account already exists")
+          end
         end
 
-        it "deletes the session['sign_up'] variable" do
-          post sign_up_reason_for_visit_path(
-            reason_for_visit_form: { choice: "find_specific_answer" },
-          )
-          expect(session["sign_up"]).to be_nil
-        end
-      end
-
-      context "and there are no instant access places available" do
-        before do
-          Settings.instance.update!(instant_access_places: 0)
-        end
-
-        it "responds with a successful status" do
-          post sign_up_reason_for_visit_path(
-            reason_for_visit_form: { choice: "find_specific_answer" },
-          )
-          expect(response).to have_http_status(:ok)
-        end
-
-        it "renders the waitlist template" do
-          post sign_up_reason_for_visit_path(
-            reason_for_visit_form: { choice: "find_specific_answer" },
-          )
-          expect(response.body).to have_selector(".govuk-heading-xl", text: "You have been added to the waitlist")
-        end
-
-        it "emails the user informing them they've been added to the waitlist" do
-          expect {
+        context "and the user is already on the waiting list" do
+          it "responds with a conflict status and tells the user an account already exists" do
+            create(:waiting_list_user, email: "email@test.com")
             post sign_up_reason_for_visit_path(
               reason_for_visit_form: { choice: "find_specific_answer" },
             )
-          }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-          expect(EarlyAccessAuthMailer.deliveries.last.subject).to eq("Thanks for joining the waitlist")
+            expect(response).to have_http_status(:conflict)
+            expect(response.body).to have_selector(".govuk-heading-xl", text: "You're already on the waitlist")
+          end
         end
 
-        it "deletes the session['sign_up'] variable" do
-          post sign_up_reason_for_visit_path(
-            reason_for_visit_form: { choice: "find_specific_answer" },
-          )
-          expect(session["sign_up"]).to be_nil
+        context "and there are instant access places available" do
+          it "responds with a successful status" do
+            post sign_up_reason_for_visit_path(
+              reason_for_visit_form: { choice: "find_specific_answer" },
+            )
+            expect(response).to have_http_status(:ok)
+          end
+
+          it "renders the sign_up_successful template" do
+            post sign_up_reason_for_visit_path(
+              reason_for_visit_form: { choice: "find_specific_answer" },
+            )
+            expect(response.body).to have_selector(".govuk-heading-xl", text: "You can now start using GOV.UK Chat")
+          end
+
+          it "emails a magic link to the user" do
+            expect {
+              post sign_up_reason_for_visit_path(
+                reason_for_visit_form: { choice: "find_specific_answer" },
+              )
+            }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
+            expect(EarlyAccessAuthMailer.deliveries.last.subject).to eq("Sign in")
+          end
+
+          it "deletes the session['sign_up'] variable" do
+            post sign_up_reason_for_visit_path(
+              reason_for_visit_form: { choice: "find_specific_answer" },
+            )
+            expect(session["sign_up"]).to be_nil
+          end
+        end
+
+        context "and there are no instant access places available" do
+          before do
+            Settings.instance.update!(instant_access_places: 0)
+          end
+
+          it "responds with a successful status" do
+            post sign_up_reason_for_visit_path(
+              reason_for_visit_form: { choice: "find_specific_answer" },
+            )
+            expect(response).to have_http_status(:ok)
+          end
+
+          it "renders the waitlist template" do
+            post sign_up_reason_for_visit_path(
+              reason_for_visit_form: { choice: "find_specific_answer" },
+            )
+            expect(response.body).to have_selector(".govuk-heading-xl", text: "You have been added to the waitlist")
+          end
+
+          it "emails the user informing them they've been added to the waitlist" do
+            expect {
+              post sign_up_reason_for_visit_path(
+                reason_for_visit_form: { choice: "find_specific_answer" },
+              )
+            }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
+            expect(EarlyAccessAuthMailer.deliveries.last.subject).to eq("Thanks for joining the waitlist")
+          end
+
+          it "deletes the session['sign_up'] variable" do
+            post sign_up_reason_for_visit_path(
+              reason_for_visit_form: { choice: "find_specific_answer" },
+            )
+            expect(session["sign_up"]).to be_nil
+          end
         end
       end
     end
