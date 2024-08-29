@@ -1,19 +1,19 @@
 <% tell_me_more_messages = [] %>
 
 <% tell_me_more_messages << capture do %>
-  <p>I combine the same technology used on ChatGPT with GOV.UK guidance.</p>
+I combine the same technology used on ChatGPT with GOV.UK guidance.
 <% end %>
 
 <% tell_me_more_messages << capture do %>
-  <p>ChatGPT is trained using millions of articles, books and other pieces of text. This is how I’m able to respond like a human.</p>
+ChatGPT is trained using millions of articles, books and other pieces of text. This is how I’m able to respond like a human.
 <% end %>
 
 <% tell_me_more_messages << capture do %>
-  <p>Sometimes I use information from my training instead of GOV.UK. This information could be false or misleading.</p>
+Sometimes I use information from my training instead of GOV.UK. This information could be false or misleading.
 <% end %>
 
 <% tell_me_more_messages << capture do %>
-  <p>To learn more about these limitations, read <a href="/chat/about">about GOV.UK Chat</a>.</p>
+To learn more about these limitations, read [about GOV.UK Chat](<%= about_path %>).
 <% end %>
 
 <%= render "components/conversation_message", {
