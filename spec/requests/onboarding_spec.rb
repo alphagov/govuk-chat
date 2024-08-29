@@ -1,36 +1,29 @@
 RSpec.describe "OnboardingController" do
-  it_behaves_like "redirects user to the conversation when conversation_id is set on cookie",
+  it_behaves_like "redirects unauthenticated requests when authentication is required",
                   routes: {
                     onboarding_limitations_path: %i[get],
                     onboarding_limitations_confirm_path: %i[post],
                     onboarding_privacy_path: %i[get],
                     onboarding_privacy_confirm_path: %i[post],
                   }
-  it_behaves_like "redirects user to the conversation page when onboarded and no conversation cookie",
+  it_behaves_like "denies unauthenticated JSON requests when authentication is required",
                   routes: {
                     onboarding_limitations_path: %i[get],
                     onboarding_limitations_confirm_path: %i[post],
                     onboarding_privacy_path: %i[get],
                     onboarding_privacy_confirm_path: %i[post],
                   }
-  it_behaves_like "redirects user to the conversation when an early access user has completed onboarding",
+  it_behaves_like "handles a user accessing onboarding when onboarded",
                   routes: {
                     onboarding_limitations_path: %i[get],
                     onboarding_limitations_confirm_path: %i[post],
                     onboarding_privacy_path: %i[get],
                     onboarding_privacy_confirm_path: %i[post],
                   }
-  it_behaves_like "redirects user to the privacy page when onboarding limitations has been completed",
+  it_behaves_like "handles a user accessing onboarding limitations once completed",
                   routes: { onboarding_limitations_path: %i[get], onboarding_limitations_confirm_path: %i[post] }
-  it_behaves_like "redirects user to the onboarding limitations page when onboarding not started",
+  it_behaves_like "handles a user accessing onboarding privacy when onboarding isn't started",
                   routes: { onboarding_privacy_path: %i[get], onboarding_privacy_confirm_path: %i[post] }
-  it_behaves_like "redirects to sign in page if no user signed in unless auth not required",
-                  routes: {
-                    onboarding_limitations_path: %i[get],
-                    onboarding_limitations_confirm_path: %i[post],
-                    onboarding_privacy_path: %i[get],
-                    onboarding_privacy_confirm_path: %i[post],
-                  }
 
   describe "GET :limitations" do
     include_context "when signed in"

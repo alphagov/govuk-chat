@@ -2,6 +2,7 @@ class ConversationsController < BaseController
   layout "conversation", except: :answer
   before_action :require_onboarding_completed
   before_action :find_conversation
+  before_action :require_conversation, only: %i[answer answer_feedback]
 
   def show
     @conversation ||= Conversation.new
@@ -53,8 +54,6 @@ class ConversationsController < BaseController
   end
 
   def answer
-    return redirect_to onboarding_limitations_path unless @conversation
-
     @question = Question.where(conversation: @conversation)
                         .includes(answer: %i[sources feedback])
                         .find(params[:question_id])
@@ -79,8 +78,6 @@ class ConversationsController < BaseController
   end
 
   def answer_feedback
-    return redirect_to onboarding_limitations_path unless @conversation
-
     answer = @conversation.answers.includes(:feedback).find(params[:answer_id])
     feedback_form = Form::CreateAnswerFeedback.new(answer_feedback_params.merge(answer:))
 
@@ -110,7 +107,18 @@ private
     set_conversation_cookie(@conversation)
   rescue ActiveRecord::RecordNotFound
     cookies.delete(:conversation_id)
-    redirect_to onboarding_limitations_path
+    conversation_not_found
+  end
+
+  def require_conversation
+    conversation_not_found unless @conversation
+  end
+
+  def conversation_not_found
+    respond_to do |format|
+      format.html { redirect_to onboarding_limitations_path }
+      format.json { render json: { error: "Conversation not found" }, status: :not_found }
+    end
   end
 
   def question_success_json(question)
@@ -159,5 +167,16 @@ private
     @questions = conversation.questions_for_showing_conversation
     @more_information = session[:more_information].present?
     @conversation_data_attributes = { module: "chat-conversation" }
+  end
+
+  def require_onboarding_completed
+    return if session[:onboarding] == "conversation" ||
+      cookies[:conversation_id].present? ||
+      current_early_access_user&.onboarding_completed
+
+    respond_to do |format|
+      format.html { redirect_to onboarding_limitations_path }
+      format.json { render json: { error: "Onboarding incomplete" }, status: :bad_request }
+    end
   end
 end

@@ -1,12 +1,35 @@
 RSpec.describe "ConversationsController" do
   delegate :helpers, to: ConversationsController
 
-  it_behaves_like "requires user to have completed onboarding", routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "requires user to have completed onboarding", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
+  it_behaves_like "redirects unauthenticated requests when authentication is required",
+                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+  it_behaves_like "redirects unauthenticated requests when authentication is required",
+                  routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
     let(:route_params) { [SecureRandom.uuid] }
   end
-  it_behaves_like "redirects to sign in page if no user signed in unless auth not required", routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "redirects to sign in page if no user signed in unless auth not required", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
+
+  it_behaves_like "denies unauthenticated JSON requests when authentication is required",
+                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+  it_behaves_like "denies unauthenticated JSON requests when authentication is required",
+                  routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
+    let(:route_params) { [SecureRandom.uuid] }
+  end
+
+  it_behaves_like "handles a request for a user who hasn't completed onboarding",
+                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+  it_behaves_like "handles a request for a user who hasn't completed onboarding",
+                  routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
+    let(:route_params) { [SecureRandom.uuid] }
+  end
+
+  it_behaves_like "requires a users conversation cookie to reference an active conversation",
+                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+  it_behaves_like "requires a users conversation cookie to reference an active conversation",
+                  routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
+    let(:route_params) { [SecureRandom.uuid] }
+  end
+
+  it_behaves_like "requires a conversation", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
     let(:route_params) { [SecureRandom.uuid] }
   end
 
@@ -45,65 +68,6 @@ RSpec.describe "ConversationsController" do
             "form_html" => /<div class="app-c-conversation-form/,
           })
         end
-      end
-    end
-
-    context "when the conversation cannot be found" do
-      before do
-        cookies[:conversation_id] = "unknown-id"
-      end
-
-      it "deletes the conversation_id cookie" do
-        get show_conversation_path
-        expect(cookies[:conversation_id]).to be_blank
-      end
-
-      it "redirects to the onboarding limitations page" do
-        get show_conversation_path
-
-        expect(response).to have_http_status(:redirect)
-        expect(response).to redirect_to(onboarding_limitations_path)
-      end
-    end
-
-    context "when the conversation exists but is not associated with a signed in early access user" do
-      before do
-        user = create(:early_access_user)
-        sign_in_early_access_user(user)
-        conversation = create(:conversation)
-        cookies[:conversation_id] = conversation.id
-      end
-
-      it "deletes the conversation_id cookie" do
-        get show_conversation_path
-        expect(cookies[:conversation_id]).to be_blank
-      end
-
-      it "redirects to the onboarding limitations page" do
-        get show_conversation_path
-
-        expect(response).to have_http_status(:redirect)
-        expect(response).to redirect_to(onboarding_limitations_path)
-      end
-    end
-
-    context "when the conversation cookie has expired" do
-      let(:conversation) { create(:conversation, :expired, user:) }
-
-      before do
-        cookies[:conversation_id] = conversation.id
-      end
-
-      it "deletes the conversation_id cookie" do
-        get show_conversation_path
-        expect(cookies[:conversation_id]).to be_blank
-      end
-
-      it "redirects to the onboarding limitations page" do
-        get show_conversation_path
-
-        expect(response).to have_http_status(:redirect)
-        expect(response).to redirect_to(onboarding_limitations_path)
       end
     end
 

@@ -1,5 +1,5 @@
 RSpec.describe "HomepageController" do
-  it_behaves_like "redirects to homepage if auth is not required",
+  it_behaves_like "redirects to homepage if authentication is not enabled",
                   routes: { homepage_path: %i[post] }
 
   describe "GET :index" do

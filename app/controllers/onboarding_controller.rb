@@ -77,15 +77,22 @@ private
         session[:onboarding] == "conversation" ||
         current_early_access_user&.onboarding_completed
 
-      return redirect_to show_conversation_path
+      return redirect_or_error(show_conversation_path)
     end
 
     if session[:onboarding] == "privacy" && !action_name.match?(/privacy/)
-      return redirect_to onboarding_privacy_path
+      return redirect_or_error(onboarding_privacy_path)
     end
 
     if %w[privacy conversation].exclude?(session[:onboarding]) && !action_name.match?(/limitations/)
-      redirect_to onboarding_limitations_path
+      redirect_or_error(onboarding_limitations_path)
+    end
+  end
+
+  def redirect_or_error(redirect_url)
+    respond_to do |format|
+      format.html { redirect_to redirect_url }
+      format.json { render json: { error: "Expected user to be requesting #{redirect_url}" }, status: :bad_request }
     end
   end
 end

@@ -43,21 +43,18 @@ private
   def require_early_access_user!
     return if current_early_access_user
 
-    save_passwordless_redirect_location!(EarlyAccessUser)
-    redirect_to homepage_path
+    respond_to do |format|
+      format.html do
+        save_passwordless_redirect_location!(EarlyAccessUser)
+        redirect_to homepage_path
+      end
+      format.json { render json: { error: "User not authenticated" }, status: :bad_request }
+    end
   end
 
   def ensure_early_access_user_if_auth_required!
     return if Rails.configuration.available_without_early_access_authentication
 
     require_early_access_user!
-  end
-
-  def require_onboarding_completed
-    return if session[:onboarding] == "conversation" ||
-      cookies[:conversation_id].present? ||
-      current_early_access_user&.onboarding_completed
-
-    redirect_to onboarding_limitations_path
   end
 end
