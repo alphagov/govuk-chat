@@ -16,25 +16,35 @@ RSpec.describe "users rake tasks" do
 
       it "copies the attributes across correctly" do
         Rake::Task[task_name].invoke
-        expected = waiting_list_users.map { |u| [u.email, u.user_description, u.reason_for_visit] }
+        expected = waiting_list_users.take(expected_promotions).map { |u| [u.email, u.user_description, u.reason_for_visit] }
         actual = early_access_users.pluck(:email, :user_description, :reason_for_visit)
         expect(actual).to eq(expected)
       end
 
       it "locks the settings and decrements the available places" do
-        settings = create :settings
+        settings = create :settings, delayed_access_places: expected_promotions
         allow(Settings).to receive(:instance).and_return(settings)
         expect(settings).to receive(:with_lock).and_call_original
         expect { Rake::Task[task_name].invoke }.to change(settings, :delayed_access_places).by(-expected_promotions)
       end
     end
 
-    context "when number of waiting list users is with limits" do
+    context "when number of waiting list users is within limits" do
       before do
-        Settings.instance.update!(delayed_access_places: 50)
+        settings = create :settings
+        allow(Settings).to receive(:instance).and_return(settings)
       end
 
       it_behaves_like "makes the correct changes", 3
+    end
+
+    context "when the number of places is limited" do
+      before do
+        settings = create :settings, delayed_access_places: 2
+        allow(Settings).to receive(:instance).and_return(settings)
+      end
+
+      it_behaves_like "makes the correct changes", 2
     end
   end
 end
