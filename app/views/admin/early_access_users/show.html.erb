@@ -16,6 +16,8 @@
 <% end %>
 
 <%
+  question_limit = @user.question_limit.nil? ? Rails.configuration.conversations.max_questions_per_user : @user.question_limit
+
   summary_items = [
     {
       field: "Email",
@@ -40,6 +42,10 @@
     {
       field: "Questions asked",
       value: @user.questions_count,
+    },
+    {
+      field: "Question limit",
+      value: question_limit.zero? ? "Unlimited" : question_limit,
     },
   ]
 

@@ -172,6 +172,7 @@ RSpec.describe "Admin::EarlyAccessController" do
         user_description: :business_owner_or_self_employed,
         reason_for_visit: :find_specific_answer,
         revoked_at: nil,
+        question_limit: 0,
       )
 
       get admin_early_access_user_path(user)
@@ -182,6 +183,7 @@ RSpec.describe "Admin::EarlyAccessController" do
         .and have_content("12:13pm on 1 January 2024")
         .and have_content("business_owner_or_self_employed")
         .and have_content("find_specific_answer")
+        .and have_content("Unlimited")
     end
 
     it "renders the revoked details" do
