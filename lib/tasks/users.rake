@@ -3,7 +3,8 @@ namespace :users do
   task promote_waiting_list: :environment do
     users_to_notify = []
     settings = Settings.instance
-    max_promotions = [settings.delayed_access_places, 50].min
+    max_batch_size = Rails.configuration.early_access_users.max_waiting_list_promotions_per_run
+    max_promotions = [settings.delayed_access_places, max_batch_size].min
     settings.with_lock do
       ActiveRecord::Base.transaction do
         WaitingListUser.limit(max_promotions).each do |waiting_list_user|
