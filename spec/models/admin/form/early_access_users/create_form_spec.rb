@@ -1,4 +1,4 @@
-RSpec.describe Admin::Form::EarlyAccessUsers::CreateEarlyAccessUserForm do
+RSpec.describe Admin::Form::EarlyAccessUsers::CreateForm do
   describe "validations" do
     it "returns false when the email is missing" do
       form = described_class.new

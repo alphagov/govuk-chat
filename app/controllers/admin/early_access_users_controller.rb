@@ -10,11 +10,11 @@ class Admin::EarlyAccessUsersController < Admin::BaseController
 
   def new
     @user = EarlyAccessUser.new
-    @form = Admin::Form::EarlyAccessUsers::CreateEarlyAccessUserForm.new
+    @form = Admin::Form::EarlyAccessUsers::CreateForm.new
   end
 
   def create
-    @form = Admin::Form::EarlyAccessUsers::CreateEarlyAccessUserForm.new(create_params)
+    @form = Admin::Form::EarlyAccessUsers::CreateForm.new(create_params)
 
     if @form.valid?
       user = @form.submit

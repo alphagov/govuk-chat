@@ -1,4 +1,4 @@
-class Admin::Form::EarlyAccessUsers::CreateEarlyAccessUserForm
+class Admin::Form::EarlyAccessUsers::CreateForm
   include ActiveModel::Model
   include ActiveModel::Attributes
 
