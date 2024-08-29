@@ -33,9 +33,29 @@ class Admin::EarlyAccessUsersController < Admin::BaseController
     )
   end
 
+  def update
+    @user = EarlyAccessUser.find(params[:id])
+    @form = Admin::Form::EarlyAccessUsers::UpdateForm.new(
+      user: @user,
+      question_limit: update_params[:question_limit].presence,
+    )
+
+    if @form.valid?
+      @form.submit
+
+      redirect_to admin_early_access_user_path(@user), notice: "User updated"
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
 private
 
   def create_params
     params.require(:create_early_access_user_form).permit(:email)
+  end
+
+  def update_params
+    params.require(:update_early_access_user_form).permit(:question_limit)
   end
 end

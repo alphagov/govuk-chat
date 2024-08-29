@@ -247,4 +247,37 @@ RSpec.describe "Admin::EarlyAccessController" do
         .and have_content("Question limit")
     end
   end
+
+  describe "PATCH :update" do
+    it "updates the user and redirects" do
+      user = create(:early_access_user, question_limit: 2)
+
+      patch admin_early_access_user_path(user),
+            params: {
+              update_early_access_user_form: {
+                question_limit: 3,
+              },
+            }
+
+      expect(user.reload).to have_attributes(
+        question_limit: 3,
+      )
+
+      expect(response).to redirect_to(admin_early_access_user_path(user))
+    end
+
+    it "renders the form with errors" do
+      user = create(:early_access_user)
+
+      patch admin_early_access_user_path(user),
+            params: {
+              update_early_access_user_form: {
+                question_limit: "invalid",
+              },
+            }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to have_content("Question limit must be a number or blank")
+    end
+  end
 end
