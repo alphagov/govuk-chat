@@ -1,5 +1,8 @@
-.govuk-template {
-  // Used to hide horizontal scrollbars caused by the landing page animation
+.govuk-template, .govuk-template__body.app-landing-page-layout {
+  // Used to hide horizontal scrollbars caused by the landing page animation.
+  // In all browsers except Safari, adding this rule to .govuk-template seemed
+  // to work. In Safari, you could still scroll horizontally unless this rule was
+  // also applied to the body element.
   overflow-x: hidden;
 }
 
