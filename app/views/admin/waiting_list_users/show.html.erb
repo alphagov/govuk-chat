@@ -40,6 +40,12 @@
   ]
 %>
 
+<%= render "govuk_publishing_components/components/button", {
+  text: "Edit user",
+  href: edit_admin_waiting_list_user_path(@user),
+  margin_bottom: true,
+} %>
+
 <%= render "govuk_publishing_components/components/summary_list", {
   items: summary_items,
 } %>

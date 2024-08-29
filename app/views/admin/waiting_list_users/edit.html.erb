@@ -1,4 +1,4 @@
-<%= content_for :title, "New waiting list user" %>
+<%= content_for :title, "Edit waiting list user" %>
 
 <%= content_for :breadcrumbs do %>
   <%= render "govuk_publishing_components/components/breadcrumbs", {
@@ -9,7 +9,11 @@
         url: admin_waiting_list_users_path,
       },
       {
-        title: "New waiting list user",
+        title: "User details",
+        url: admin_waiting_list_user_path(@user),
+      },
+      {
+        title: "Edit user",
       },
     ],
   } %>
@@ -23,6 +27,6 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <%= render "form", form: @form, url: admin_waiting_list_users_path, method: :post %>
+    <%= render "form", form: @form, url: admin_waiting_list_user_path(@user), method: :patch %>
   </div>
 </div>

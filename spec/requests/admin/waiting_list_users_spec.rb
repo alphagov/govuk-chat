@@ -199,6 +199,14 @@ RSpec.describe "Admin::WaitingListUsersController" do
         .and have_content("business_owner_or_self_employed")
         .and have_content("find_specific_answer")
     end
+
+    it "includes a link to the edit page" do
+      user = create(:waiting_list_user)
+
+      get admin_waiting_list_user_path(user)
+
+      expect(response.body).to have_link("Edit user", href: edit_admin_waiting_list_user_path(user))
+    end
   end
 
   describe "GET :new" do
@@ -214,7 +222,7 @@ RSpec.describe "Admin::WaitingListUsersController" do
     it "creates a new user and redirects" do
       post admin_waiting_list_users_path,
            params: {
-             create_waiting_list_user_form: {
+             waiting_list_user_form: {
                email: "new.user@example.com",
                user_description: "business_administrator",
                reason_for_visit: "research_topic",
@@ -231,10 +239,64 @@ RSpec.describe "Admin::WaitingListUsersController" do
     end
 
     it "renders the form with errors" do
-      post admin_waiting_list_users_path, params: { create_waiting_list_user_form: { email: "" } }
+      post admin_waiting_list_users_path, params: { waiting_list_user_form: { email: "" } }
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to have_content("Enter an email address")
+    end
+  end
+
+  describe "GET :edit" do
+    it "renders the form" do
+      user = create(:waiting_list_user)
+
+      get edit_admin_waiting_list_user_path(user)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to have_content("Edit waiting list user")
+    end
+  end
+
+  describe "PATCH :update" do
+    it "updates the user and redirects" do
+      user = create(
+        :waiting_list_user,
+        email: "old.email@example.com",
+        user_description: "business_owner_or_self_employed",
+        reason_for_visit: "find_specific_answer",
+      )
+
+      patch admin_waiting_list_user_path(user),
+            params: {
+              waiting_list_user_form: {
+                email: "new.user@example.com",
+                user_description: "business_administrator",
+                reason_for_visit: "research_topic",
+              },
+            }
+
+      expect(user.reload).to have_attributes(
+        email: "new.user@example.com",
+        user_description: "business_administrator",
+        reason_for_visit: "research_topic",
+      )
+
+      expect(response).to redirect_to(admin_waiting_list_user_path(user))
+    end
+
+    it "renders the form with errors" do
+      existing_user = create(:early_access_user)
+      user = create(:waiting_list_user)
+
+      patch admin_waiting_list_user_path(user),
+            params: {
+              waiting_list_user_form: {
+                email: existing_user.email,
+              },
+            }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to have_content("There is already an early access user with this email address")
     end
   end
 end

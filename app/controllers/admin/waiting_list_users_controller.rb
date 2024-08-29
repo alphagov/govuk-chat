@@ -10,11 +10,11 @@ class Admin::WaitingListUsersController < Admin::BaseController
 
   def new
     @user = WaitingListUser.new
-    @form = Admin::Form::WaitingListUsers::CreateWaitingListUserForm.new
+    @form = Admin::Form::WaitingListUserForm.new
   end
 
   def create
-    @form = Admin::Form::WaitingListUsers::CreateWaitingListUserForm.new(create_params)
+    @form = Admin::Form::WaitingListUserForm.new(user_params)
 
     if @form.valid?
       user = @form.submit
@@ -25,11 +25,36 @@ class Admin::WaitingListUsersController < Admin::BaseController
     end
   end
 
+  def edit
+    @user = WaitingListUser.find(params[:id])
+    @form = Admin::Form::WaitingListUserForm.new(
+      user: @user,
+      email: @user.email,
+      user_description: @user.user_description,
+      reason_for_visit: @user.reason_for_visit,
+    )
+  end
+
+  def update
+    @user = WaitingListUser.find(params[:id])
+    @form = Admin::Form::WaitingListUserForm.new(
+      user: @user,
+      **user_params,
+    )
+
+    if @form.valid?
+      @form.submit
+      redirect_to admin_waiting_list_user_path(@user), notice: "User updated"
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
 private
 
-  def create_params
+  def user_params
     params
-      .require(:create_waiting_list_user_form)
+      .require(:waiting_list_user_form)
       .permit(:email, :user_description, :reason_for_visit)
   end
 end
