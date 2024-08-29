@@ -64,7 +64,9 @@ Rails.application.routes.draw do
       patch "/access/restore", to: "early_access_users/access#restore", as: :restore, on: :member
     end
 
-    resources :waiting_list_users, path: "/waiting-list-users", only: %i[index show new create edit update]
+    resources :waiting_list_users, path: "/waiting-list-users" do
+      get "/delete", to: "waiting_list_users#delete", as: :delete, on: :member
+    end
 
     scope :settings do
       get "", to: "settings#show", as: :settings
