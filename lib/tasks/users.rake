@@ -19,6 +19,10 @@ namespace :users do
           settings.save!
         end
       end
+      users_to_notify.each do |user|
+        session = Passwordless::Session.create!(authenticatable: user)
+        EarlyAccessAuthMailer.waitlist_promoted(session).deliver_now
+      end
     end
   end
 end
