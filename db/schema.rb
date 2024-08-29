@@ -123,6 +123,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_04_151153) do
     t.string "revoked_reason"
     t.boolean "onboarding_completed", default: false, null: false
     t.integer "question_limit"
+    t.string "revoke_access_token", default: -> { "gen_random_uuid()" }, null: false
     t.index ["email"], name: "index_early_access_users_on_email", unique: true
   end
 
