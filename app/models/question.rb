@@ -17,7 +17,7 @@ class Question < ApplicationRecord
 
   scope :exportable, lambda { |start_date, end_date|
                        joins(:conversation, :answer)
-                       .includes(:conversation, answer: %i[sources])
+                       .preload(:conversation, answer: %i[sources])
                        .where("answer.created_at": start_date...end_date)
                      }
 
