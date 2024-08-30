@@ -42,7 +42,7 @@ module SignUpRequestExamples
             process(method.to_sym, public_send(path.to_sym))
             expect(response).to have_http_status(:forbidden)
             expect(response.body)
-              .to have_selector(".govuk-heading-xl", text: "GOV.UK Chat is no longer open for new users")
+              .to have_selector(".govuk-heading-xl", text: "Sign up is currently closed")
           end
         end
       end
