@@ -3,6 +3,8 @@
   body_classes = %w[govuk-template__body]
   body_classes << "app-conversation-layout__body" if conversation_layout
   body_classes << yield(:body_class)
+  main_classes = %w[govuk-main-wrapper]
+  main_classes << yield(:main_class)
   browser_title = (content_for?(:browser_title) ? yield(:browser_title) : yield(:title)).presence
   page_title = (content_for?(:page_title) ? yield(:page_title) : yield(:title)).presence
 %>
@@ -58,7 +60,7 @@
       <%= yield(:content) %>
     <% else %>
       <div class="app-landing-page-layout__flex-container">
-        <main class="govuk-main-wrapper" id="content" role="main">
+        <%= tag.main(class: main_classes, id: "content", role: "main") do %>
           <div class="govuk-width-container">
             <%= yield(:back_link) %>
 
@@ -84,7 +86,7 @@
           <div class="govuk-width-container">
             <%= yield %>
           </div>
-        </main>
+        <% end %>
 
         <%= render "govuk_publishing_components/components/layout_footer", {
           navigation: [

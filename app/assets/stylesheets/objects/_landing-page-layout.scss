@@ -6,6 +6,17 @@
   // and set the animation container's z-index to -1 to push it behind the content in the body
   position: relative;
   z-index: 0;
+
+  // This is to mask any whitespace that can appear beneath the footer
+  background-color: govuk-colour("light-grey");
+}
+
+.app-landing-page-layout__main {
+  // This is to offset the grey background on .app-landing-page-layout so that the white background on the main element
+  // is maintained
+  background-color: govuk-colour("white");
+  // This is to prevent the background ruleset from overlaying the animation boxes
+  z-index: -1;
 }
 
 .app-landing-page-layout__flex-container {
