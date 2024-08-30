@@ -124,7 +124,7 @@ RSpec.describe "Sign ups" do
   end
 
   def then_i_see_the_signups_are_disabled_page
-    expect(page).to have_content("GOV.UK Chat is no longer open for new users")
+    expect(page).to have_content("Sign up is currently closed")
   end
 
   def and_there_are_no_instant_access_places_available
