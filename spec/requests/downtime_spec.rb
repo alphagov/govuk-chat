@@ -3,7 +3,7 @@ RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" 
     it "renders service unavailable content, with a #{status} status" do
       get homepage_path
       expect(response).to have_http_status(status)
-      expect(response.body).to match(/Sorry, this service is unavailable/)
+      expect(response.body).to match(/GOV.UK Chat is not currently available/)
     end
 
     it "caches the response for 1 minute" do
