@@ -65,9 +65,11 @@
             <%= yield(:back_link) %>
 
             <div class="govuk-grid-row">
-              <% if content_for?(:error_summary) %>
-                <%= yield(:error_summary) %>
-              <% end %>
+              <div class="govuk-grid-column-full">
+                <% if content_for?(:error_summary) %>
+                  <%= yield(:error_summary) %>
+                <% end %>
+              </div>
             </div>
           </div>
 
