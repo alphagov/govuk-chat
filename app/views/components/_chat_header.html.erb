@@ -1,5 +1,8 @@
 <%
   navigation_items ||= []
+  conversation_layout ||= false
+  navigation_items_classes = %w[app-c-header__nav-container app-c-header__nav-container--float-right-desktop js-header-nav-container govuk-grid-column-full]
+  navigation_items_classes << "js-add-print-utility" if conversation_layout
 %>
 
 <%= content_tag :header, class: "app-c-header govuk-header", role: "banner", data: { module: "chat-header" } do %>
@@ -34,7 +37,7 @@
       <% if navigation_items.any? %>
         <%= content_tag(
           :div,
-          class: "app-c-header__nav-container app-c-header__nav-container--float-right-desktop js-header-nav-container govuk-grid-column-full",
+          class: navigation_items_classes,
           data: {
             module: "ga4-link-tracker",
             ga4_link: {

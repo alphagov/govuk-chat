@@ -11,6 +11,8 @@ RSpec.describe "components/_chat_header.html.erb" do
       .and have_selector(".app-c-header__link.app-c-header__link--homepage[href='/chat']")
       .and have_selector(".app-c-header__logotype")
       .and have_selector(".app-c-header__product-name")
+
+    expect(rendered).not_to have_selector(".js-add-print-utility")
   end
 
   it "renders the chat header with links when navigation_items are specified" do
@@ -35,5 +37,26 @@ RSpec.describe "components/_chat_header.html.erb" do
       .and have_selector(".govuk-header__navigation[aria-label='Top level']")
       .and have_selector(".govuk-header__menu-button[aria-controls='navigation']", visible: :hidden)
       .and have_selector(".govuk-header__menu-button[aria-label='Show or hide Top Level Navigation']", visible: :hidden)
+
+    expect(rendered).not_to have_selector(".js-add-print-utility")
+  end
+
+  it "renders the chat header with a '.js-add-print-utility' class when passed conversation_layout: true" do
+    render("components/chat_header", {
+      logo_href: "#",
+      navigation_items: [
+        {
+          text: "Item 1",
+          href: "/item-1",
+        },
+        {
+          text: "Item 2",
+          href: "/item-2",
+        },
+      ],
+      conversation_layout: true,
+    })
+
+    expect(rendered).to have_selector(".js-add-print-utility")
   end
 end

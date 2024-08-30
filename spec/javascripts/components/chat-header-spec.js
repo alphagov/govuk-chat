@@ -95,4 +95,42 @@ describe('ChatHeader component', () => {
       })
     })
   })
+
+  describe('print button', () => {
+    describe('when ".add-js-print-utility" is not present', () => {
+      it('does not add the print button', () => {
+        const addPrintButtonSpy = spyOn(module, 'addPrintButton')
+        module.init()
+        const printButton = header.querySelector('.js-print-button')
+
+        expect(addPrintButtonSpy).not.toHaveBeenCalled()
+        expect(printButton).toBeNull()
+      })
+    })
+
+    describe('when ".add-js-print-utility" is present', () => {
+      beforeEach(function () {
+        navContainer.classList.add('js-add-print-utility')
+      })
+
+      it('adds the print button', () => {
+        const addPrintButtonSpy = spyOn(module, 'addPrintButton').and.callThrough()
+        module.init()
+        const printButton = header.querySelector('.js-print-button')
+
+        expect(addPrintButtonSpy).toHaveBeenCalled()
+        expect(printButton).toBeTruthy()
+      })
+
+      it('calls the DOM print API when clicked', () => {
+        const printDialogSpy = spyOn(window, 'print')
+        module.init()
+        const printButton = header.querySelector('.js-print-button')
+
+        printButton.dispatchEvent(new Event('click'))
+
+        expect(printDialogSpy).toHaveBeenCalled()
+      })
+    })
+  })
 })

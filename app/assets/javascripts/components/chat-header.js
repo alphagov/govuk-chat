@@ -14,6 +14,10 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     init () {
+      if (this.module.querySelector('.js-add-print-utility')) {
+        this.addPrintButton()
+      }
+
       this.menuButton.addEventListener('click', e => this.handleClick(e))
 
       // set the initial state of the navigation menu
@@ -32,6 +36,21 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.navList.hidden = !this.navList.hidden
       this.menuButton.ariaExpanded = !this.navList.hidden
       this.menuButton.classList.toggle('app-c-header__menu-button--expanded')
+    }
+
+    addPrintButton () {
+      const li = document.createElement('li')
+      li.className = 'govuk-header__navigation-item js-header-navigation-item'
+
+      const button = document.createElement('button')
+      button.textContent = 'Print or save this chat'
+      button.className = 'app-c-header__button app-c-header__button--print js-print-button'
+      button.addEventListener('click', e => {
+        window.print()
+      })
+
+      li.appendChild(button)
+      this.navList.appendChild(li)
     }
   }
 
