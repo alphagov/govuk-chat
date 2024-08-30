@@ -78,9 +78,13 @@
   }
 
   // This is a bit of a hack to stop the animation boxes from extending beyond the footer and
-  // creating additional whitespace under it on wider screens
+  // creating additional whitespace under it on wider screens. The max-height rule also only
+  // kicks once the viewport height is greater than 820px to prevent the animation boxes from
+  // being cut off prematurely.
   @include govuk-media-query($from: desktop) {
-    max-height: 100vh;
+    @media screen and (min-height: 820px) {
+      max-height: 100vh;
+    }
   }
 
   @include govuk-media-query($from: 1919px) {
