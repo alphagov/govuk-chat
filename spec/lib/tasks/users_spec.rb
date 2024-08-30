@@ -35,8 +35,7 @@ RSpec.describe "users rake tasks" do
 
     context "when number of waiting list users is within limits" do
       before do
-        settings = create :settings
-        allow(Settings).to receive(:instance).and_return(settings)
+        Settings.instance.update!(delayed_access_places: 10)
       end
 
       it_behaves_like "promotes waiting list users", 3
@@ -44,8 +43,7 @@ RSpec.describe "users rake tasks" do
 
     context "when the number of delayed_access_places is limited" do
       before do
-        settings = create :settings, delayed_access_places: 2
-        allow(Settings).to receive(:instance).and_return(settings)
+        Settings.instance.update!(delayed_access_places: 2)
       end
 
       it_behaves_like "promotes waiting list users", 2
@@ -53,8 +51,7 @@ RSpec.describe "users rake tasks" do
 
     context "when the number of waiting list users exceeds the batch size" do
       before do
-        settings = create :settings, delayed_access_places: 50
-        allow(Settings).to receive(:instance).and_return(settings)
+        Settings.instance.update!(delayed_access_places: 10)
         allow(Rails.configuration.early_access_users).to receive(:max_waiting_list_promotions_per_run).and_return(1)
       end
 
