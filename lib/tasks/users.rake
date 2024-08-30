@@ -21,6 +21,7 @@ namespace :users do
         session = Passwordless::Session.create!(authenticatable: user)
         EarlyAccessAuthMailer.waitlist_promoted(session).deliver_now
       end
+      puts "Promoted #{users_to_notify.length} user(s)"
     end
   end
 end

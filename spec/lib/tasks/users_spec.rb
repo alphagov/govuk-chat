@@ -12,10 +12,11 @@ RSpec.describe "users rake tasks" do
       it "add EarlyAccessUsers and deletes WaitingListUsers" do
         expect { Rake::Task[task_name].invoke }.to change(EarlyAccessUser, :count).by(expected_promotions)
           .and change(WaitingListUser, :count).by(-expected_promotions)
+          .and output.to_stdout
       end
 
       it "copies the attributes across correctly" do
-        Rake::Task[task_name].invoke
+        expect { Rake::Task[task_name].invoke }.to output.to_stdout
         expected = waiting_list_users.take(expected_promotions).map { |u| [u.email, u.user_description, u.reason_for_visit, "delayed_signup"] }
         actual = early_access_users.last(expected_promotions).pluck(:email, :user_description, :reason_for_visit, :source)
         expect(actual).to eq(expected)
@@ -26,10 +27,12 @@ RSpec.describe "users rake tasks" do
         allow(Settings).to receive(:instance).and_return(settings)
         expect(settings).to receive(:with_lock).and_call_original
         expect { Rake::Task[task_name].invoke }.to change(settings, :delayed_access_places).by(-expected_promotions)
+          .and output.to_stdout
       end
 
       it "sends an email to each user" do
         expect { Rake::Task[task_name].invoke }.to change(EarlyAccessAuthMailer.deliveries, :count).by(expected_promotions)
+          .and output.to_stdout
       end
     end
 
@@ -47,6 +50,10 @@ RSpec.describe "users rake tasks" do
       end
 
       it_behaves_like "promotes waiting list users", 2
+
+      it "outputs number of promoted users" do
+        expect { Rake::Task[task_name].invoke }.to output("Promoted 2 user(s)\n").to_stdout
+      end
     end
 
     context "when the number of waiting list users exceeds the batch size" do
@@ -60,8 +67,7 @@ RSpec.describe "users rake tasks" do
 
     context "when there are delayed access places available" do
       before do
-        settings = create :settings, delayed_access_places: 0
-        allow(Settings).to receive(:instance).and_return(settings)
+        Settings.instance.update!(delayed_access_places: 0)
       end
 
       it "does not continue processing" do
