@@ -131,3 +131,20 @@
     width: 37.5rem;
   }
 }
+
+.app-landing-page-layout__animation--early-access {
+  @include govuk-media-query($from: mobile, $until: tablet) {
+    margin-top: -52rem;
+  }
+
+  // Remove the height restriction on the animation container when the early access
+  // version of the chat introduction component is rendered because whitespace beneath
+  // the footer doesn't occur in this scenario (and the height restriction also causes
+  // the animation boxes to get cut off prematurely). This is because the early access
+  // version contains additional content, therefore increasing the height of the introduction
+  // component and pushes the footer further down - meaning that the greatest extent of the
+  // animation boxes doesn't extend beyond the footer i.e. no additional whitespace is created.
+  .app-landing-page-layout__animation-message-container {
+    max-height: none;
+  }
+}
