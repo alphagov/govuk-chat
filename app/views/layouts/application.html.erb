@@ -89,30 +89,26 @@
         <% end %>
 
         <%= render "govuk_publishing_components/components/layout_footer", {
-          navigation: [
-            {
-              title: "GOV.UK Chat",
-              columns: 3,
-              items: [
-                {
-                  href: about_url,
-                  text: "About",
-                },
-                {
-                  href: support_url,
-                  text: "Help and support",
-                },
-                {
-                  href: privacy_url,
-                  text: "Privacy",
-                },
-                {
-                  href: accessibility_url,
-                  text: "Accessibility",
-                },
-              ],
-            },
-          ],
+          meta: {
+            items: [
+              {
+                href: about_url,
+                text: "About GOV.UK Chat",
+              },
+              {
+                href: support_url,
+                text: "Help and support",
+              },
+              {
+                href: privacy_url,
+                text: "Privacy",
+              },
+              {
+                href: accessibility_url,
+                text: "Accessibility",
+              },
+            ],
+          },
         } %>
       </div>
     <% end %>
