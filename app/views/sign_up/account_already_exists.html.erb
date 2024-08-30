@@ -1,10 +1,12 @@
-<%= content_for :title, "Account already exists" %>
+<%= content_for :title, "You already have access to GOV.UK Chat" %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <p class="govuk-body">
-      An account for this email address already exists.
-      Visit the <%= link_to("sign in page", homepage_path, class: "govuk-link") %> to access GOV.UK Chat.
+      You’ve already signed up for GOV.UK Chat on another browser or device.
+    </p>
+    <p class="govuk-body">
+      You can <%= link_to("get a new link for GOV.UK Chat", homepage_path, class: "govuk-link") %> using the email address you signed up with.
     </p>
   </div>
 </div>

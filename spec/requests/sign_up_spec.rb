@@ -112,7 +112,7 @@ RSpec.describe "SignUpController" do
               reason_for_visit_form: { choice: "find_specific_answer" },
             )
             expect(response).to have_http_status(:conflict)
-            expect(response.body).to have_selector(".govuk-heading-xl", text: "Account already exists")
+            expect(response.body).to have_selector(".govuk-heading-xl", text: "You already have access to GOV.UK Chat")
           end
         end
 
