@@ -39,12 +39,14 @@ RSpec.describe Admin::QuestionsHelper do
   end
 
   describe "#question_show_summary_list_rows" do
-    let(:question) { create(:question) }
+    let(:conversation) { create(:conversation, user: create(:early_access_user)) }
+    let(:question) { create(:question, conversation:) }
 
     it "returns the correct rows when question is unanswered" do
       result = helper.question_show_summary_list_rows(question, nil, 1, 1)
       expected_keys = [
         "Conversation id",
+        "Early access user",
         "Question number",
         "Question id",
         "Question created at",
@@ -62,6 +64,7 @@ RSpec.describe Admin::QuestionsHelper do
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
       expected_keys = [
         "Conversation id",
+        "Early access user",
         "Question number",
         "Question id",
         "Question created at",

@@ -48,6 +48,14 @@ module Admin
         },
       ]
 
+      user = conversation.user
+      if user.present?
+        rows << {
+          field: "Early access user",
+          value: link_to(user.email, admin_early_access_user_path(user), class: "govuk-link"),
+        }
+      end
+
       rows << if answer.present?
                 [
                   {
