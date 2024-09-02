@@ -41,7 +41,7 @@
     },
     {
       field: "Questions asked",
-      value: @user.questions_count,
+      value: @user.questions_count.zero? ? "0" : link_to(@user.questions_count, admin_questions_path(user_id: @user.id), class: "govuk-link"),
     },
     {
       field: "Question limit",

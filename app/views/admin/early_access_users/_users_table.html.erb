@@ -35,7 +35,7 @@
           ),
         },
         {
-          text: user.questions_count,
+          text: user.questions_count.zero? ? "0" : link_to(user.questions_count, admin_questions_path(user_id: user.id), class: "govuk-link"),
         },
         {
           text: user.last_login_at ? user.last_login_at.to_fs(:time_and_date) : "Never",
