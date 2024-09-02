@@ -11,6 +11,7 @@ private
       :answer_feedback_useful,
       :page,
       :sort,
+      :user_id,
     )
 
     Admin::Filters::QuestionsFilter.new(filter_params.merge(conversation:))

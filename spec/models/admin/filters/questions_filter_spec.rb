@@ -207,6 +207,19 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([useless_question])
     end
 
+    it "filters the results by user" do
+      alice = create(:early_access_user, email: "alice@example.com")
+      bob = create(:early_access_user, email: "bob@example.com")
+      alice_question = create(:question, conversation: create(:conversation, user: alice))
+      bob_question = create(:question, conversation: create(:conversation, user: bob))
+
+      filter = described_class.new(user_id: alice.id)
+      expect(filter.results).to eq([alice_question])
+
+      filter = described_class.new(user_id: bob.id)
+      expect(filter.results).to eq([bob_question])
+    end
+
     it "paginates the results" do
       create_list(:question, 26)
 
