@@ -55,6 +55,9 @@ module GovukChat
       max_question_count: 500,
       max_questions_per_user: 50,
     )
+    config.early_access_users = Hashie::Mash.new(
+      max_waiting_list_promotions_per_run: 50,
+    )
 
     config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]
 

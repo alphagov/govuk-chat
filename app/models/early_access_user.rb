@@ -10,6 +10,7 @@ class EarlyAccessUser < ApplicationRecord
        {
          admin_added: "admin_added",
          admin_promoted: "admin_promoted",
+         delayed_signup: "delayed_signup",
          instant_signup: "instant_signup",
        },
        prefix: true
