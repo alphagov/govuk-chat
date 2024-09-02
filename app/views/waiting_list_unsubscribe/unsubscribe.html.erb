@@ -1,0 +1,15 @@
+<%= content_for :title, "Remove yourself from the waiting list?" %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body">
+      You will no longer receive any emails from GOV.UK Chat.
+    </p>
+  </div>
+</div>
+
+<%= form_with url: waiting_list_user_unsubscribe_confirm_path(@user.id, @user.unsubscribe_token), method: :post do |f| %>
+  <%= render "components/blue_button", {
+    text: "Unsubscribe",
+  } %>
+<% end %>

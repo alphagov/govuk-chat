@@ -194,6 +194,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_29_080935) do
     t.enum "source", null: false, enum_type: "waiting_list_users_source"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "unsubscribe_token", default: -> { "gen_random_uuid()" }, null: false
     t.index ["email"], name: "index_waiting_list_users_on_email", unique: true
   end
 
