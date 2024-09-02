@@ -1,4 +1,9 @@
 RSpec.describe "StaticController" do
+  before do
+    ## These should all work with chat public access turned off
+    Settings.instance.update!(public_access_enabled: false)
+  end
+
   shared_examples "caches the page for 5 minutes" do |path_method|
     it "sets the cache headers to 5 mins" do
       get public_send(path_method)
