@@ -37,11 +37,38 @@ RSpec.describe "Admin user filters questions" do
     then_i_see_the_pending_question
   end
 
+  scenario "filtered by a user" do
+    given_i_am_an_admin
+    and_there_are_early_access_users
+    and_there_are_questions_associated_with_users
+
+    when_i_visit_the_questions_section_filtered_by_a_user
+    then_i_see_that_users_details_in_the_sidebar
+    and_i_see_all_the_questions_for_that_user
+
+    when_i_search_for_a_question_from_the_user
+    then_i_see_the_filtered_questions_for_that_user
+  end
+
+  def and_there_are_early_access_users
+    @user = create(:early_access_user)
+    @user2 = create(:early_access_user)
+  end
+
   def and_there_are_questions
     conversation = build(:conversation)
     @question1 = create(:question, conversation:, message: "Hello world", created_at: 2.years.ago)
     @question2 = create(:question, :with_answer, message: "World", conversation:)
     create(:answer_feedback, answer: @question2.answer, useful: true)
+  end
+
+  def and_there_are_questions_associated_with_users
+    conversation1 = build(:conversation, user: @user)
+    create(:question, conversation: conversation1, message: "Hello world")
+    create(:question, conversation: conversation1, message: "Greetings world")
+
+    conversation2 = build(:conversation, user: @user2)
+    create(:question, conversation: conversation2, message: "Goodbye")
   end
 
   def when_i_visit_the_admin_area
@@ -82,6 +109,26 @@ RSpec.describe "Admin user filters questions" do
     end
   end
 
+  def then_i_see_that_users_details_in_the_sidebar
+    expect(page).to have_content("Filtering by user: #{@user.email}")
+  end
+
+  def and_i_see_all_the_questions_for_that_user
+    within(".govuk-table") do
+      expect(page).to have_content("Hello world")
+      expect(page).to have_content("Greetings world")
+      expect(page).not_to have_content("Goodbye")
+    end
+  end
+
+  def then_i_see_the_filtered_questions_for_that_user
+    within(".govuk-table") do
+      expect(page).to have_content("Greetings")
+      expect(page).not_to have_content("Hello")
+      expect(page).not_to have_content("Goodbye")
+    end
+  end
+
   def when_i_reorder_the_questions
     click_link "Created at"
   end
@@ -94,6 +141,11 @@ RSpec.describe "Admin user filters questions" do
 
   def when_i_search_for_a_question
     fill_in "Search", with: "Hello"
+    click_button "Filter"
+  end
+
+  def when_i_search_for_a_question_from_the_user
+    fill_in "Search", with: "Greetings"
     click_button "Filter"
   end
 
@@ -143,5 +195,9 @@ RSpec.describe "Admin user filters questions" do
   def when_i_view_the_questions_conversation
     click_on @question2.message
     click_on @question2.conversation.id
+  end
+
+  def when_i_visit_the_questions_section_filtered_by_a_user
+    visit admin_questions_path(user_id: @user.id)
   end
 end
