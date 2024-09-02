@@ -21,7 +21,7 @@
   <% if early_access %>
     <% info_text = "If you’ve already signed up, you’ll be able to request new links to access GOV.UK Chat." %>
 
-    <%= form_with url: form_url, class: "app-c-chat-introduction__form" do |f| %>
+    <%= form_with url: form_url, class: "app-c-chat-introduction__form", authenticity_token: false do |f| %>
       <%= render "govuk_publishing_components/components/input", {
         label: {
           text: "To get started, enter your email address.",
