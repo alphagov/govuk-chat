@@ -10,11 +10,7 @@ class RevokeAccessController < BaseController
 
   def revoke_confirm
     EarlyAccessUser
-      .find_by(revoke_access_token: params[:token])
-      &.update!(
-        revoked_at: Time.zone.now,
-        revoked_reason: "User requested",
-      )
+      .find_by(revoke_access_token: params[:token])&.destroy!
 
     redirect_to homepage_path
   end

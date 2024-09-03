@@ -17,15 +17,24 @@ RSpec.describe "RevokeAccessController" do
   end
 
   describe "POST :revoke_confirm" do
-    it "sets revoked_at on the user if the token is valid" do
-      freeze_time do
-        user = create(:early_access_user)
-        token = user.revoke_access_token
-        post early_access_user_revoke_access_confirm_path(token:)
+    let(:user) { create(:early_access_user) }
+    let(:token) { user.revoke_access_token }
 
-        expect(EarlyAccessUser.find_by(revoke_access_token: token).revoked_at).to eq(Time.zone.now)
-        expect(response).to redirect_to(homepage_path)
-      end
+    before do
+      create :conversation, user:
+    end
+
+    it "deletes the early access user" do
+      expect { post early_access_user_revoke_access_confirm_path(token:) }.to change(EarlyAccessUser, :count).by(-1)
+    end
+
+    it "leaves the conversations in place" do
+      expect { post early_access_user_revoke_access_confirm_path(token:) }.not_to change(Conversation, :count)
+    end
+
+    it "redirects to the homepage" do
+      post early_access_user_revoke_access_confirm_path(token:)
+      expect(response).to redirect_to(homepage_path)
     end
 
     it "does not revoke access for any user" do
