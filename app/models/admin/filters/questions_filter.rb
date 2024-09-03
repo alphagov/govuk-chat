@@ -40,7 +40,9 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   end
 
   def user
-    @user ||= EarlyAccessUser.find_by(id: user_id)
+    return @user if defined?(@user)
+
+    @user = EarlyAccessUser.find_by(id: user_id)
   end
 
 private
