@@ -12,7 +12,8 @@ RSpec.describe "RevokeAccessController" do
       get early_access_user_revoke_access_path(token: user.revoke_access_token)
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to have_selector(".govuk-button", text: "Unsubscribe")
+      expect(response.body).to have_selector("form[action='#{early_access_user_revoke_access_confirm_path(user.revoke_access_token)}']")
+      expect(response.body).to have_selector("form .govuk-button", text: "Unsubscribe")
     end
   end
 
