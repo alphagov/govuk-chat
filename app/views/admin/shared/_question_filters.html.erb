@@ -3,9 +3,16 @@
 %>
 
 <%= form_with(url:, method: :get) do %>
-  <% if user.present? %>
-    <p class="govuk-body">Filtering by user: <%= link_to user.email, admin_early_access_user_path(user), class: "govuk-link" %></p>
-    <input type="hidden" name="user_id" value="<%= user.id %>">
+  <% if params[:user_id].present? %>
+    <p class="govuk-body">
+      Filtering by user:
+      <% if user.present? %>
+        <%= link_to user.email, admin_early_access_user_path(user), class: "govuk-link" %>
+      <% else %>
+        <%= params[:user_id] %> (Deleted user)
+      <% end %>
+    </p>
+    <%= hidden_field_tag(:user_id, params[:user_id]) %>
   <% end %>
 
   <%= render "govuk_publishing_components/components/input", {
