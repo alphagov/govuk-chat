@@ -3,7 +3,6 @@ class Admin::QuestionsController < Admin::BaseController
 
   def index
     @filter = questions_filter
-    @user = EarlyAccessUser.find_by(id: params[:user_id])
     render :index, status: :unprocessable_entity if @filter.errors.present?
   end
 

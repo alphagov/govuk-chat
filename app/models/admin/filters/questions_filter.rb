@@ -39,6 +39,10 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
     end
   end
 
+  def user
+    @user ||= EarlyAccessUser.find_by(id: user_id)
+  end
+
 private
 
   def pagination_query_params
