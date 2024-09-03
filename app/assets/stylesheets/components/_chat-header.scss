@@ -169,3 +169,29 @@
     float: right;
   }
 }
+
+.app-c-header__button {
+  @include govuk-typography-common;
+  @include govuk-typography-weight-bold($important: false);
+  font-size: 16px; // directly set the font size to prevent govuk-font mixins from reducing it on smaller screens
+  background: none;
+  color: govuk-colour("white");
+  border: none;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    cursor: pointer;
+  }
+
+  &:focus {
+    background-color: $govuk-focus-colour;
+    color: govuk-colour("black");
+    outline: none;
+  }
+
+  &:focus:hover {
+    text-decoration: none;
+  }
+}

@@ -1,8 +1,11 @@
 <%
   navigation_items ||= []
+  print_utility ||= false
+  data_attributes = { module: "chat-header" }
+  data_attributes[:add_print_utility] = true if print_utility
 %>
 
-<%= content_tag :header, class: "app-c-header govuk-header", role: "banner", data: { module: "chat-header" } do %>
+<%= content_tag :header, class: "app-c-header govuk-header govuk-!-display-none-print", role: "banner", data: data_attributes do %>
   <div class="app-c-header__container govuk-header__container govuk-width-container">
     <div class="app-c-header-row govuk-grid-row">
       <div class="app-c-header__logo govuk-grid-column-two-thirds">

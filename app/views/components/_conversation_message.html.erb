@@ -77,7 +77,7 @@
   <% end %>
 
   <% if feedback_url.present? %>
-    <div class="app-c-conversation-message__feedback">
+    <div class="app-c-conversation-message__feedback govuk-!-display-none-print">
 
       <%= render "components/answer_feedback", {
         url: feedback_url,

@@ -1,5 +1,9 @@
 .app-conversation-layout {
   overflow-y: hidden;
+
+  @media print {
+    overflow-y: unset;
+  }
 }
 
 .app-conversation-layout__body {
@@ -12,6 +16,10 @@
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
+
+  @media print {
+    overflow-y: unset;
+  }
 }
 
 .app-conversation-layout__wrapper {
@@ -27,6 +35,10 @@
   position: relative;
   @media (prefers-reduced-motion: no-preference) {
     scroll-behavior: smooth;
+  }
+
+  @media print {
+    overflow-y: unset;
   }
 }
 
