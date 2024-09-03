@@ -200,7 +200,7 @@ RSpec.describe "Admin::WaitingListUsersController" do
         .and have_content("find_specific_answer")
     end
 
-    it "includes a link to the edit and delete pages" do
+    it "includes links to manage the user" do
       user = create(:waiting_list_user)
 
       get admin_waiting_list_user_path(user)
@@ -208,6 +208,7 @@ RSpec.describe "Admin::WaitingListUsersController" do
       expect(response.body)
         .to have_link("Edit user", href: edit_admin_waiting_list_user_path(user))
         .and have_link("Delete user", href: delete_admin_waiting_list_user_path(user))
+        .and have_link("Promote to Early Access User", href: promote_admin_waiting_list_user_path(user))
     end
   end
 
@@ -322,6 +323,58 @@ RSpec.describe "Admin::WaitingListUsersController" do
       expect(WaitingListUser.find_by_id(user.id)).to be_nil
 
       expect(response).to redirect_to(admin_waiting_list_users_path)
+    end
+  end
+
+  describe "GET :promote" do
+    it "renders the form" do
+      user = create(:waiting_list_user)
+
+      get promote_admin_waiting_list_user_path(user)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to have_content("Are you sure you want to promote this user to an early access user?")
+    end
+  end
+
+  describe "POST :promote_confirm" do
+    it "creates the early access user and deletes the waiting list user" do
+      user = create(:waiting_list_user)
+
+      post promote_confirm_admin_waiting_list_user_path(user)
+
+      expect(WaitingListUser.find_by_id(user.id)).to be_nil
+      expect(EarlyAccessUser.find_by_email(user.email)).to be_present
+    end
+
+    it "creates a passwordless session and assigns the new user" do
+      user = create(:waiting_list_user)
+
+      post promote_confirm_admin_waiting_list_user_path(user)
+
+      new_user = EarlyAccessUser.find_by_email(user.email)
+      expect(Passwordless::Session.last.authenticatable).to eq(new_user)
+    end
+
+    it "calls the mailer with the new session" do
+      user = create(:waiting_list_user)
+      allow(EarlyAccessAuthMailer).to receive(:waitlist_promoted).and_call_original
+
+      expect { post promote_confirm_admin_waiting_list_user_path(user) }
+        .to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
+
+      created_session = Passwordless::Session.last
+      expect(EarlyAccessAuthMailer).to have_received(:waitlist_promoted).with(created_session)
+    end
+
+    it "redirects to the early access user details" do
+      user = create(:waiting_list_user)
+
+      post promote_confirm_admin_waiting_list_user_path(user)
+
+      expect(response).to(
+        redirect_to(admin_early_access_user_path(EarlyAccessUser.find_by_email(user.email))),
+      )
     end
   end
 end
