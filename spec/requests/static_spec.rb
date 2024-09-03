@@ -1,14 +1,18 @@
 RSpec.describe "StaticController" do
-  before do
-    ## These should all work with chat public access turned off
-    Settings.instance.update!(public_access_enabled: false)
-  end
-
   shared_examples "caches the page for 5 minutes" do |path_method|
     it "sets the cache headers to 5 mins" do
       get public_send(path_method)
 
       expect(response.headers["Cache-Control"]).to eq("max-age=300, public")
+    end
+  end
+
+  shared_examples "operates when public access is disabled" do |path_method|
+    before { Settings.instance.update!(public_access_enabled: false) }
+
+    it "returns a success despite the application having public access disabled" do
+      get public_send(path_method)
+      expect(response).to have_http_status(:success)
     end
   end
 
@@ -20,6 +24,7 @@ RSpec.describe "StaticController" do
     end
 
     include_examples "caches the page for 5 minutes", :about_path
+    include_examples "operates when public access is disabled", :about_path
   end
 
   describe "GET :support" do
@@ -30,6 +35,7 @@ RSpec.describe "StaticController" do
     end
 
     include_examples "caches the page for 5 minutes", :support_path
+    include_examples "operates when public access is disabled", :support_path
   end
 
   describe "GET :accessibility" do
@@ -40,5 +46,6 @@ RSpec.describe "StaticController" do
     end
 
     include_examples "caches the page for 5 minutes", :accessibility_path
+    include_examples "operates when public access is disabled", :accessibility_path
   end
 end
