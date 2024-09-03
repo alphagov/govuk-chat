@@ -61,7 +61,8 @@ Rails.application.routes.draw do
     get "/search", to: "search#index", as: :search
     get "/search/chunk/:id", to: "chunks#show", as: :chunk
 
-    resources :early_access_users, path: "/early-access-users", except: %i[destroy] do
+    resources :early_access_users, path: "/early-access-users" do
+      get "/delete", to: "early_access_users#delete", as: :delete, on: :member
       get "/access/revoke", to: "early_access_users/access#revoke", as: :revoke, on: :member
       patch "/access/revoke", to: "early_access_users/access#revoke_confirm", as: :revoke_confirm, on: :member
       patch "/access/restore", to: "early_access_users/access#restore", as: :restore, on: :member

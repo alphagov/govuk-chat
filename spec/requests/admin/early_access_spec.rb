@@ -292,4 +292,42 @@ RSpec.describe "Admin::EarlyAccessController" do
       expect(response.body).to have_content("Question limit must be a number or blank")
     end
   end
+
+  describe "GET :delete" do
+    it "renders the delete confirmation page" do
+      user = create(:early_access_user)
+
+      get delete_admin_early_access_user_path(user)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body)
+        .to have_content("Are you sure you want to delete this user?")
+        .and have_content("Revoke access instead")
+    end
+  end
+
+  describe "DELETE :destroy" do
+    it "deletes the user and redirects" do
+      user = create(:early_access_user)
+
+      expect { delete admin_early_access_user_path(user) }
+        .to change(EarlyAccessUser, :count).by(-1)
+
+      expect(EarlyAccessUser.find_by_id(user.id)).to be_nil
+
+      expect(response).to redirect_to(admin_early_access_users_path)
+    end
+
+    it "keeps the user's conversations" do
+      user = create(:early_access_user)
+      conversation = create(:conversation, :with_history, user:)
+      questions = conversation.questions
+
+      delete admin_early_access_user_path(user)
+
+      existing_record = Conversation.find_by_id(conversation.id)
+      expect(existing_record).not_to be_nil
+      expect(existing_record.questions.count).to eq(questions.count)
+    end
+  end
 end
