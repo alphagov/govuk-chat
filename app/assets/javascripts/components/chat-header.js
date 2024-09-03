@@ -14,7 +14,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     init () {
-      if (this.module.querySelector('.js-add-print-utility')) {
+      if (this.module.dataset.addPrintUtility) {
         this.addPrintButton()
       }
 
@@ -45,9 +45,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       const button = document.createElement('button')
       button.textContent = 'Print or save this chat'
       button.className = 'app-c-header__button app-c-header__button--print js-print-button'
-      button.addEventListener('click', e => {
-        window.print()
-      })
+      button.addEventListener('click', e => window.print())
 
       li.appendChild(button)
       this.navList.appendChild(li)

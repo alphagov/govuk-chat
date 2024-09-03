@@ -12,7 +12,7 @@ RSpec.describe "components/_chat_header.html.erb" do
       .and have_selector(".app-c-header__logotype")
       .and have_selector(".app-c-header__product-name")
 
-    expect(rendered).not_to have_selector(".js-add-print-utility")
+    expect(rendered).not_to have_selector("[data-add-print-utility]")
   end
 
   it "renders the chat header with links when navigation_items are specified" do
@@ -38,10 +38,10 @@ RSpec.describe "components/_chat_header.html.erb" do
       .and have_selector(".govuk-header__menu-button[aria-controls='navigation']", visible: :hidden)
       .and have_selector(".govuk-header__menu-button[aria-label='Show or hide Top Level Navigation']", visible: :hidden)
 
-    expect(rendered).not_to have_selector(".js-add-print-utility")
+    expect(rendered).not_to have_selector("[data-add-print-utility]")
   end
 
-  it "renders the chat header with a '.js-add-print-utility' class when passed conversation_layout: true" do
+  it "renders the chat header with a data-add-print-utility attribute when passed print_utility: true" do
     render("components/chat_header", {
       logo_href: "#",
       navigation_items: [
@@ -54,9 +54,9 @@ RSpec.describe "components/_chat_header.html.erb" do
           href: "/item-2",
         },
       ],
-      conversation_layout: true,
+      print_utility: true,
     })
 
-    expect(rendered).to have_selector(".js-add-print-utility")
+    expect(rendered).to have_selector("[data-add-print-utility]")
   end
 end
