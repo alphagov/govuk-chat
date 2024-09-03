@@ -5,6 +5,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :end_date_params, default: {}
   attribute :conversation
   attribute :answer_feedback_useful, :boolean
+  attribute :user_id
 
   validate :validate_dates
 
@@ -32,9 +33,16 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
       scope = answer_feedback_useful_scope(scope)
       scope = conversation_scope(scope)
       scope = ordering_scope(scope)
+      scope = user_scope(scope)
       scope.page(page)
            .per(25)
     end
+  end
+
+  def user
+    return @user if defined?(@user)
+
+    @user = EarlyAccessUser.find_by(id: user_id)
   end
 
 private
@@ -89,6 +97,12 @@ private
     return scope if conversation.blank?
 
     scope.where(conversation_id: conversation.id)
+  end
+
+  def user_scope(scope)
+    return scope if user_id.blank?
+
+    scope.joins(:conversation).where("conversations.early_access_user_id = ?", user_id)
   end
 
   def validate_dates

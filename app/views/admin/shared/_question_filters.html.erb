@@ -1,4 +1,13 @@
+<%
+  user = filter.user
+%>
+
 <%= form_with(url:, method: :get) do %>
+  <% if user.present? %>
+    <p class="govuk-body">Filtering by user: <%= link_to user.email, admin_early_access_user_path(user), class: "govuk-link" %></p>
+    <input type="hidden" name="user_id" value="<%= user.id %>">
+  <% end %>
+
   <%= render "govuk_publishing_components/components/input", {
     label: {
       text: "Search",
