@@ -7,6 +7,15 @@ RSpec.describe "StaticController" do
     end
   end
 
+  shared_examples "operates when public access is disabled" do |path_method|
+    before { Settings.instance.update!(public_access_enabled: false) }
+
+    it "returns a success despite the application having public access disabled" do
+      get public_send(path_method)
+      expect(response).to have_http_status(:success)
+    end
+  end
+
   describe "GET :about" do
     it "renders the view correctly" do
       get about_path
@@ -15,6 +24,7 @@ RSpec.describe "StaticController" do
     end
 
     include_examples "caches the page for 5 minutes", :about_path
+    include_examples "operates when public access is disabled", :about_path
   end
 
   describe "GET :support" do
@@ -25,6 +35,7 @@ RSpec.describe "StaticController" do
     end
 
     include_examples "caches the page for 5 minutes", :support_path
+    include_examples "operates when public access is disabled", :support_path
   end
 
   describe "GET :accessibility" do
@@ -35,5 +46,6 @@ RSpec.describe "StaticController" do
     end
 
     include_examples "caches the page for 5 minutes", :accessibility_path
+    include_examples "operates when public access is disabled", :accessibility_path
   end
 end
