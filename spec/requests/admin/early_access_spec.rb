@@ -188,12 +188,14 @@ RSpec.describe "Admin::EarlyAccessController" do
         .and have_link("7", href: admin_questions_path(user_id: user.id))
     end
 
-    it "renders the edit user link" do
+    it "renders the links to manage the user" do
       user = create(:early_access_user)
 
       get admin_early_access_user_path(user)
 
-      expect(response.body).to have_link("Edit user", href: edit_admin_early_access_user_path(user))
+      expect(response.body)
+        .to have_link("Edit user", href: edit_admin_early_access_user_path(user))
+        .and have_link("Delete user", href: delete_admin_early_access_user_path(user))
     end
 
     it "renders the revoked details" do
