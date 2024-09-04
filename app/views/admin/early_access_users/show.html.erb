@@ -77,6 +77,12 @@
   href: edit_admin_early_access_user_path(@user),
 } %>
 
+<%= render "govuk_publishing_components/components/button", {
+  text: "Delete user",
+  href: delete_admin_early_access_user_path(@user),
+  destructive: true,
+} %>
+
 <% if @user.access_revoked? %>
   <%= form_with url: restore_admin_early_access_user_path(@user), method: :patch do |f| %>
     <%= render "govuk_publishing_components/components/button", {

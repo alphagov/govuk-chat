@@ -49,6 +49,16 @@ class Admin::EarlyAccessUsersController < Admin::BaseController
     end
   end
 
+  def delete
+    @user = EarlyAccessUser.find(params[:id])
+  end
+
+  def destroy
+    EarlyAccessUser.find(params[:id]).destroy!
+
+    redirect_to admin_early_access_users_path, notice: "User deleted"
+  end
+
 private
 
   def create_params

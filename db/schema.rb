@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_08_29_080935) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_03_074927) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -201,7 +201,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_29_080935) do
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade
   add_foreign_key "answer_sources", "answers", on_delete: :cascade
   add_foreign_key "answers", "questions", on_delete: :cascade
-  add_foreign_key "conversations", "early_access_users"
   add_foreign_key "questions", "conversations"
   add_foreign_key "settings_audits", "admin_users", column: "user_id", on_delete: :nullify
 end

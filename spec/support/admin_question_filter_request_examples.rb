@@ -79,6 +79,25 @@ module AdminQuestionFilterRequestExamples
 
           expect_unprocessible_entity_with_errors
         end
+
+        it "renders the user's details when filtering by a non-deleted user" do
+          user = create(:early_access_user)
+          conversation = find_or_create_conversation
+          conversation.update!(early_access_user_id: user.id)
+          get public_send(path, conversation, user_id: user.id)
+
+          expect(response.body.squish).to have_content("Filtering by user: #{user.email}")
+        end
+
+        it "renders the user's ID when filtering by a deleted user" do
+          user = create(:early_access_user)
+          conversation = find_or_create_conversation
+          conversation.update!(early_access_user_id: user.id)
+          user.destroy!
+          get public_send(path, conversation, user_id: user.id)
+
+          expect(response.body.squish).to have_content("Filtering by user: #{user.id} (Deleted user)")
+        end
       end
 
       context "when the sort param is not the default value" do
