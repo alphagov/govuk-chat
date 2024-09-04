@@ -68,4 +68,9 @@ class Answer < ApplicationRecord
   def serialize_for_export
     as_json.merge("sources" => sources.map(&:serialize_for_export))
   end
+
+  def assign_metrics(namespace, values)
+    self.metrics ||= {}
+    self.metrics[namespace] = values
+  end
 end
