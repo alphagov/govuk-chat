@@ -14,7 +14,17 @@ module AnswerComposition
       def call
         return if first_question?
 
+        start_time = context.current_time
+
         context.question_message = openai_response.dig("choices", 0, "message", "content")
+
+        context.answer.assign_metrics("question_rephrasing", {
+          duration: context.current_time - start_time,
+          llm_prompt_tokens: openai_response.dig("usage", "prompt_tokens"),
+          llm_completion_tokens: openai_response.dig("usage", "completion_tokens"),
+        })
+
+        context.question_message
       rescue OpenAIClient::ContextLengthExceededError => e
         raise OpenAIClient::ContextLengthExceededError.new("Exceeded context length rephrasing #{question.message}", e.response)
       rescue OpenAIClient::RequestError => e
@@ -26,7 +36,7 @@ module AnswerComposition
       attr_reader :context
 
       def openai_response
-        openai_client.chat(
+        @openai_response ||= openai_client.chat(
           parameters: {
             model: OPENAI_MODEL,
             messages:,

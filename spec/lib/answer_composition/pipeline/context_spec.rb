@@ -189,4 +189,15 @@ RSpec.describe AnswerComposition::Pipeline::Context do
       expect(unused_source.relevancy).to eq(1)
     end
   end
+
+  describe "#current_time" do
+    it "returns the time" do
+      allow(Process)
+        .to receive(:clock_gettime)
+        .and_return(83_804.50095)
+
+      context = described_class.new(build(:question))
+      expect(context.current_time).to eq(83_804.50095)
+    end
+  end
 end

@@ -56,6 +56,18 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
         described_class.call(context)
         expect(context.question_message).to eq(rephrased)
       end
+
+      it "assigns metrics to the answer" do
+        allow(context).to receive(:current_time).and_return(100.0, 101.5)
+
+        described_class.call(context)
+
+        expect(context.answer.metrics["question_rephrasing"]).to eq({
+          duration: 1.5,
+          llm_prompt_tokens: 13,
+          llm_completion_tokens: 7,
+        })
+      end
     end
 
     context "when there is an OpenAIClient::ClientError" do
