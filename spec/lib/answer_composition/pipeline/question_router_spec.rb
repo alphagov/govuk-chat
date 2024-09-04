@@ -77,12 +77,26 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
         )
       end
 
+      it "assigns metrics to the answer" do
+        stub_openai_chat_question_routing(expected_message_history, tools:)
+        allow(context).to receive(:current_time).and_return(100.0, 101.5)
+
+        described_class.call(context)
+
+        expect(context.answer.metrics["question_routing"]).to eq({
+          duration: 1.5,
+          llm_prompt_tokens: 13,
+          llm_completion_tokens: 7,
+        })
+      end
+
       it "aborts the pipeline and assigns the correct values to the context's answer when not genuine_rag" do
         classification_response = {
           answer: "Hello!",
           confidence: 0.85,
         }
 
+        allow(context).to receive(:current_time).and_return(100.0, 101.5)
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
@@ -98,6 +112,11 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           message: "Hello! How can I help you today?",
           question_routing_confidence_score: 0.85,
           question_routing_llm_response: { name: "greetings", arguments: classification_response.to_json }.to_json,
+          metrics: a_hash_including("question_routing" => {
+            duration: 1.5,
+            llm_prompt_tokens: 13,
+            llm_completion_tokens: 7,
+          }),
         )
       end
 
@@ -145,6 +164,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           main_topic: "This is the main topic",
         }
 
+        allow(context).to receive(:current_time).and_return(100.0, 101.5)
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
@@ -159,6 +179,11 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           message: "Hi there",
           question_routing_confidence_score: 0.9,
           question_routing_llm_response: { name: "greetings", arguments: classification_response.to_json }.to_json,
+          metrics: a_hash_including("question_routing" => {
+            duration: 1.5,
+            llm_prompt_tokens: 13,
+            llm_completion_tokens: 7,
+          }),
         )
       end
 
@@ -185,6 +210,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
       it "aborts the pipeline" do
         classification_response = { something: "irrelevant" }
 
+        allow(context).to receive(:current_time).and_return(100.0, 101.5)
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
@@ -197,6 +223,11 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           error_message: "class: JSON::Schema::ValidationError message: The property '#/' did not contain a required property of 'answer'",
           llm_response: { "arguments" => classification_response.to_json, "name" => "greetings" },
+          metrics: a_hash_including("question_routing" => {
+            duration: 1.5,
+            llm_prompt_tokens: 13,
+            llm_completion_tokens: 7,
+          }),
         )
 
         described_class.call(context)
@@ -207,6 +238,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
       it "aborts the pipeline" do
         classification_response = "this will blow up"
 
+        allow(context).to receive(:current_time).and_return(100.0, 101.5)
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
@@ -219,6 +251,11 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           error_message: "class: JSON::ParserError message: unexpected token at 'this will blow up'",
           llm_response: { "arguments" => classification_response, "name" => "greetings" },
+          metrics: a_hash_including("question_routing" => {
+            duration: 1.5,
+            llm_prompt_tokens: 13,
+            llm_completion_tokens: 7,
+          }),
         )
 
         described_class.call(context)

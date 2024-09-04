@@ -12,6 +12,10 @@ module AnswerComposition::Pipeline
     def abort_pipeline(**answer_attrs)
       @aborted = true
 
+      if (metrics = answer_attrs.delete(:metrics))
+        metrics.each { |key, values| answer.assign_metrics(key, values) }
+      end
+
       answer.sources.each { |source| source.used = false }
       answer.assign_attributes(answer_attrs)
       answer

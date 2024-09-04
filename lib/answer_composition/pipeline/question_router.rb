@@ -12,11 +12,14 @@ module AnswerComposition
       end
 
       def call
+        start_time = context.current_time
+
         if valid_question?
           context.answer.assign_attributes(
             question_routing_label: "genuine_rag",
             question_routing_llm_response: llm_classification_function.to_json,
           )
+          context.answer.assign_metrics("question_routing", build_metrics(start_time))
         else
           validate_schema
 
@@ -26,6 +29,7 @@ module AnswerComposition
             question_routing_label:,
             question_routing_llm_response: llm_classification_function.to_json,
             question_routing_confidence_score: llm_classification_data["confidence"],
+            metrics: { "question_routing" => build_metrics(start_time) },
           )
         end
       rescue JSON::Schema::ValidationError, JSON::ParserError => e
@@ -34,6 +38,7 @@ module AnswerComposition
           status: "error_question_routing",
           error_message: error_message(e),
           llm_response: llm_classification_function,
+          metrics: { "question_routing" => build_metrics(start_time) },
         )
       end
 
@@ -142,6 +147,14 @@ module AnswerComposition
 
       def error_message(error)
         "class: #{error.class} message: #{error.message}"
+      end
+
+      def build_metrics(start_time)
+        {
+          duration: context.current_time - start_time,
+          llm_prompt_tokens: openai_response.dig("usage", "prompt_tokens"),
+          llm_completion_tokens: openai_response.dig("usage", "completion_tokens"),
+        }
       end
     end
   end
