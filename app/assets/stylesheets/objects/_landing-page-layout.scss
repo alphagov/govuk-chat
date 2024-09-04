@@ -35,7 +35,7 @@
 
   @include govuk-media-query($from: mobile, $until: tablet) {
     right: -38rem;
-    margin-top: -45rem;
+    margin-top: -47rem;
   }
 
   @include govuk-media-query($from: tablet, $until: desktop) {
@@ -134,7 +134,7 @@
 
 .app-landing-page-layout__animation--early-access {
   @include govuk-media-query($from: mobile, $until: tablet) {
-    margin-top: -52rem;
+    margin-top: -58rem;
   }
 
   // Remove the height restriction on the animation container when the early access
