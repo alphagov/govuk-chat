@@ -1,15 +1,13 @@
-<%= content_for :title, "Remove yourself from the waiting list?" %>
+<%= content_for :title, "You’ve opted out of GOV.UK Chat" %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <p class="govuk-body">
-      You will no longer receive any emails from GOV.UK Chat.
+      Thanks for your interest. You’ve been removed from the waitlist and your email address will no longer be stored.
+    </p>
+
+    <p class="govuk-body">
+      If you change your mind, you can <%= link_to("sign up for GOV.UK Chat", Plek.website_root, class: "govuk-link") %> again.
     </p>
   </div>
 </div>
-
-<%= form_with url: waiting_list_user_unsubscribe_confirm_path(@user.id, @user.unsubscribe_token), method: :post do |f| %>
-  <%= render "components/blue_button", {
-    text: "Unsubscribe",
-  } %>
-<% end %>

@@ -12,7 +12,6 @@ RSpec.describe "Waiting list user unsubscribes" do
 
   def when_i_unsubscribe
     visit waiting_list_user_unsubscribe_path(@user.id, @user.unsubscribe_token)
-    click_button "Unsubscribe"
   end
 
   def then_my_user_is_deleted
@@ -20,6 +19,6 @@ RSpec.describe "Waiting list user unsubscribes" do
   end
 
   def and_i_see_a_confirmation_page
-    expect(page).to have_content("You have been removed from the waiting list")
+    expect(page).to have_content("You’ve opted out of GOV.UK Chat")
   end
 end
