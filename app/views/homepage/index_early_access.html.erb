@@ -1,7 +1,8 @@
 <%
   # View that is rendered when early access authentication is on (e.g. production)
   content_for(:browser_title, "Try GOV.UK Chat")
-  content_for(:body_class, "app-landing-page-layout")
+  content_for(:html_class, "app-landing-page-layout")
+  content_for(:body_class, "app-landing-page-layout__body")
   content_for(:main_class, "app-landing-page-layout__main")
   early_access = true
 %>

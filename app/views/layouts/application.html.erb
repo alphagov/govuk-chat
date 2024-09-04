@@ -1,5 +1,8 @@
 <%
   conversation_layout ||= false
+  html_classes = %w[govuk-template]
+  html_classes << yield(:html_class)
+  html_classes << "app-conversation-layout" if conversation_layout
   body_classes = %w[govuk-template__body]
   body_classes << "app-conversation-layout__body" if conversation_layout
   body_classes << yield(:body_class)
@@ -8,8 +11,7 @@
   browser_title = (content_for?(:browser_title) ? yield(:browser_title) : yield(:title)).presence
   page_title = (content_for?(:page_title) ? yield(:page_title) : yield(:title)).presence
 %>
-<%= tag.html(class: %w[govuk-template] + (conversation_layout ? %w[app-conversation-layout] : []),
-             lang: "en") do %>
+<%= tag.html(class: html_classes, lang: "en") do %>
   <head>
     <meta charset="utf-8">
     <title><%= browser_title %><%= browser_title ? " - " : "" %>GOV.UK Chat</title>

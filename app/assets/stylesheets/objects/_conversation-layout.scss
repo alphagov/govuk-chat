@@ -9,6 +9,12 @@
 .app-conversation-layout__body {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  height: 100dvh;
+
+  @media print {
+    height: auto;
+  }
 }
 
 .app-conversation-layout__main {

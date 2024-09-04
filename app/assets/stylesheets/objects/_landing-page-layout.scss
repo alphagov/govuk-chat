@@ -1,4 +1,12 @@
-.app-landing-page-layout {
+.app-landing-page-layout, .app-landing-page-layout__body {
+  // Used to hide horizontal scrollbars caused by the landing page animation.
+  // In all browsers except Safari, adding this rule to the html element seemed
+  // to work. In Safari, you could still scroll horizontally unless this rule was
+  // also applied to the body element.
+  overflow-x: hidden;
+}
+
+.app-landing-page-layout__body {
   display: flex;
   flex-direction: column;
 
@@ -9,6 +17,10 @@
 
   // This is to mask any whitespace that can appear beneath the footer
   background-color: govuk-colour("light-grey");
+
+  // This is to prevent double vertical scrollbars from appearing when applying overflow-x: hidden on both the
+  // html and body elements
+  overflow-y: hidden;
 }
 
 .app-landing-page-layout__main {
@@ -24,6 +36,11 @@
   flex-direction: column;
   flex: 1;
   justify-content: space-between;
+  
+  // This is to include .app-landing-page-layout__flex-container in the stacking context of the landing page.
+  // Without this z-index property, this element was overlaying the main element and therefore preventing interactive 
+  // elements, such as the start button, from being used.
+  z-index: -1;
 }
 
 .app-landing-page-layout__animation {

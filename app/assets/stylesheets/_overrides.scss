@@ -1,31 +1,3 @@
-.govuk-template, .govuk-template__body.app-landing-page-layout {
-  // Used to hide horizontal scrollbars caused by the landing page animation.
-  // In all browsers except Safari, adding this rule to .govuk-template seemed
-  // to work. In Safari, you could still scroll horizontally unless this rule was
-  // also applied to the body element.
-  overflow-x: hidden;
-}
-
-// Usually, we restrict the height of the viewport however this was causing issues on
-// the landing page and static pages (e.g. about page) where the footer's grey background was 
-// extending beyond its boundary. Therefore, we don't restrict the height on these pages 
-// and instead set it to auto.
-.govuk-template__body.app-landing-page-layout, .govuk-template__body.app-static-page-layout {
-  height: auto;
-}
-
-// We're not using a typical grey footer (except on the landing page and help pages) 
-// and we therefore want the body element to span the whole page to not reveal the 
-// background colour of the html element
-.govuk-template__body {
-  height: 100%;
-  height: 100dvh;
-
-  @media print {
-    height: auto;
-  }
-}
-
 // Footer overrides
 .gem-c-layout-footer {
   .govuk-footer__inline-list {
