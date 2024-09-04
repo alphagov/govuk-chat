@@ -19,6 +19,16 @@ class Metrics
     end
   end
 
+  def self.increment_counter(name, labels = {})
+    if COUNTERS.none? { |counter| counter[:name] == name }
+      GovukError.notify("#{name} is not defined in Metrics::COUNTERS")
+      return
+    end
+
+    metric = PrometheusExporter::Client.default.find_registered_metric(name_with_prefix(name))
+    metric.observe(1, labels)
+  end
+
   def self.name_with_prefix(name)
     "#{PREFIX}#{name}"
   end

@@ -26,4 +26,31 @@ RSpec.describe Metrics do
         .to eq("govuk_chat_early_access_user_accounts_total")
     end
   end
+
+  describe ".increment_counter" do
+    let(:metric) { instance_double(PrometheusExporter::Client::RemoteMetric) }
+
+    before do
+      allow(metric).to receive(:observe)
+    end
+
+    it "increments the counter if a counter with that name exists" do
+      allow(PrometheusExporter::Client.default).to receive(:find_registered_metric).and_return(metric)
+
+      described_class.increment_counter("early_access_user_accounts_total", source: "instant_signup")
+
+      expect(metric).to have_received(:observe).with(1, source: "instant_signup")
+    end
+
+    it "notifies sentry and returns if the counter does not exist" do
+      allow(GovukError).to receive(:notify)
+
+      described_class.increment_counter("non_existant_counter", source: "instant_signup")
+
+      expect(GovukError)
+        .to have_received(:notify)
+        .with("non_existant_counter is not defined in Metrics::COUNTERS")
+      expect(metric).not_to have_received(:observe)
+    end
+  end
 end
