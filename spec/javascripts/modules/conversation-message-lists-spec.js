@@ -1,4 +1,4 @@
-describe('ConversationMessageLists module', () => {
+describe('conversationMessageLists module', () => {
   let moduleElement, module, messageHistoryList, newMessagesList, scrollIntoViewSpy,
     progressiveDisclosureDelay, questionLoadingTimeout
 
@@ -6,7 +6,7 @@ describe('ConversationMessageLists module', () => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
       <ul class="js-message-history-list"></ul>
-      <div class="js-new-messages-region">
+      <div class="js-new-messages-container">
         <ul class="js-new-messages-list"></ul>
       </div>
       <template class="js-loading-question">
@@ -144,7 +144,7 @@ describe('ConversationMessageLists module', () => {
     })
 
     it('focuses the new messages region', () => {
-      const focusSpy = spyOn(module.newMessagesRegion, 'focus')
+      const focusSpy = spyOn(module.newMessagesContainer, 'focus')
       module.appendNewProgressivelyDisclosedMessages('<li>Message</li>')
       expect(focusSpy).toHaveBeenCalled()
     })
@@ -376,7 +376,7 @@ describe('ConversationMessageLists module', () => {
     })
 
     it('focuses the new messages region', () => {
-      const focusSpy = spyOn(module.newMessagesRegion, 'focus')
+      const focusSpy = spyOn(module.newMessagesContainer, 'focus')
 
       module.renderAnswer('<li>New answer</li>')
 

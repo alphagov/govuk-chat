@@ -1,20 +1,20 @@
-RSpec.describe "components/_conversation_form.html.erb" do
+RSpec.describe "components/_question_form.html.erb" do
   it "renders the conversation form component correctly" do
-    render("components/conversation_form", {
+    render("components/question_form", {
       url: "/conversation",
       input_id: "id",
       name: "name",
       value: "Value",
     })
 
-    expect(rendered).to have_selector('.app-c-conversation-form__form[action="/conversation"]') do |rendered_form|
+    expect(rendered).to have_selector('.app-c-question-form__form[action="/conversation"]') do |rendered_form|
       expect(rendered_form)
-        .to have_selector(".app-c-conversation-form__label.govuk-visually-hidden", text: /Enter your question/)
-        .and have_selector(".app-c-conversation-form__input[id=id][name=name][value=Value]")
+        .to have_selector(".app-c-question-form__label.govuk-visually-hidden", text: /Enter your question/)
+        .and have_selector(".app-c-question-form__input[id=id][name=name][value=Value]")
         .and have_selector(".gem-c-hint", text: /Please limit your question/)
         .and have_selector(".govuk-error-message[hidden]", visible: :hidden)
         .and have_selector(".app-c-blue-button")
-      expect(rendered).not_to have_selector(".app-c-conversation-form__error-message")
+      expect(rendered).not_to have_selector(".app-c-question-form__error-message")
     end
 
     expect(rendered).to have_link("Share your feedback (opens in a new tab)")
@@ -22,7 +22,7 @@ RSpec.describe "components/_conversation_form.html.erb" do
 
   it "includes a user id if one is provided" do
     user_id = SecureRandom.uuid
-    render("components/conversation_form", {
+    render("components/question_form", {
       url: "/conversation",
       name: "name",
       user_id:,
@@ -33,7 +33,7 @@ RSpec.describe "components/_conversation_form.html.erb" do
   end
 
   it "includes data attributes of server side validation parameters" do
-    render("components/conversation_form", {
+    render("components/question_form", {
       url: "/conversation",
       input_id: "id",
       name: "name",
@@ -43,11 +43,11 @@ RSpec.describe "components/_conversation_form.html.erb" do
     presence_error_message = Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE.gsub("\'", "\\\\'")
 
     expect(rendered)
-      .to have_selector(".app-c-conversation-form[data-presence-error-message='#{presence_error_message}']")
+      .to have_selector(".app-c-question-form[data-presence-error-message='#{presence_error_message}']")
   end
 
   it "renders error messages when there is a problem" do
-    render("components/conversation_form", {
+    render("components/question_form", {
       url: "/conversation",
       input_id: "id",
       name: "name",
@@ -59,8 +59,8 @@ RSpec.describe "components/_conversation_form.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector(".app-c-conversation-form .govuk-error-message:not([hidden])", text: /Error:\s+Error 1/)
-      .and have_selector(".app-c-conversation-form__error-message", text: /Error 1/)
-      .and have_selector(".app-c-conversation-form__input[aria-describedby~=id-error]")
+      .to have_selector(".app-c-question-form .govuk-error-message:not([hidden])", text: /Error:\s+Error 1/)
+      .and have_selector(".app-c-question-form__error-message", text: /Error 1/)
+      .and have_selector(".app-c-question-form__input[aria-describedby~=id-error]")
   end
 end

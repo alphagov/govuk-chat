@@ -65,7 +65,7 @@ RSpec.describe "ConversationsController" do
             "title" => "Your conversation",
             "conversation_data" => { "module" => "chat-conversation" },
             "conversation_append_html" => /<p>Thanks! To get started, ask me a question.<\/p>/,
-            "form_html" => /<div class="app-c-conversation-form/,
+            "form_html" => /<div class="app-c-question-form/,
           })
         end
       end
@@ -251,7 +251,7 @@ RSpec.describe "ConversationsController" do
             .to have_title(/^Error -/)
             .and have_selector(".govuk-error-summary a[href='#create_question_user_question']",
                                text: Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
-            .and have_selector(".app-c-conversation-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+            .and have_selector(".app-c-question-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
         end
       end
 
@@ -347,7 +347,7 @@ RSpec.describe "ConversationsController" do
 
       follow_redirect!
       expect(response.body)
-        .to have_selector(".app-c-conversation-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+        .to have_selector(".app-c-question-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
     end
 
     it "renders the pending page when a question doesn't have an answer" do
@@ -496,7 +496,7 @@ RSpec.describe "ConversationsController" do
   end
 
   def render_create_question_form
-    have_selector(".app-c-conversation-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
+    have_selector(".app-c-question-form__label", text: "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)")
   end
 
   def expect_conversation_id_set_on_cookie(conversation)

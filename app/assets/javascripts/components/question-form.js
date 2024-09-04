@@ -9,16 +9,16 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
   // workaround for https://github.com/alphagov/govuk-frontend/issues/5047
   const CharacterCount = window.GOVUKFrontend.CharacterCount
 
-  class ConversationForm {
+  class QuestionForm {
     constructor (module) {
       this.module = module
-      this.form = module.querySelector('.js-conversation-form')
-      this.input = module.querySelector('.js-conversation-form-input')
-      this.label = module.querySelector('.js-conversation-form-label')
-      this.button = module.querySelector('.js-conversation-form-button')
-      this.buttonResponseStatus = module.querySelector('.js-conversation-form-button__response-status')
-      this.errorsWrapper = module.querySelector('.js-conversation-form-errors-wrapper')
-      this.formGroup = module.querySelector('.js-conversation-form-group')
+      this.form = module.querySelector('.js-question-form')
+      this.input = module.querySelector('.js-question-form-input')
+      this.label = module.querySelector('.js-question-form-label')
+      this.button = module.querySelector('.js-question-form-button')
+      this.buttonResponseStatus = module.querySelector('.js-question-form-button__response-status')
+      this.errorsWrapper = module.querySelector('.js-question-form-errors-wrapper')
+      this.formGroup = module.querySelector('.js-question-form-group')
       this.surveyLink = module.querySelector('.js-survey-link')
       this.conversationId = null
     }
@@ -125,7 +125,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         const li = document.createElement('li')
         li.innerHTML = '<span class="govuk-visually-hidden">Error:</span>'
         li.appendChild(document.createTextNode(error))
-        li.className = 'app-c-conversation-form__error-message'
+        li.className = 'app-c-question-form__error-message'
         return li
       })
 
@@ -151,14 +151,14 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     toggleErrorStyles (hasErrors) {
       if (hasErrors) {
-        this.input.classList.add('app-c-conversation-form__input--error')
-        this.formGroup.classList.add('app-c-conversation-form__form-group--error')
+        this.input.classList.add('app-c-question-form__input--error')
+        this.formGroup.classList.add('app-c-question-form__form-group--error')
       } else {
-        this.input.classList.remove('app-c-conversation-form__input--error')
-        this.formGroup.classList.remove('app-c-conversation-form__form-group--error')
+        this.input.classList.remove('app-c-question-form__input--error')
+        this.formGroup.classList.remove('app-c-question-form__form-group--error')
       }
     }
   }
 
-  Modules.ConversationForm = ConversationForm
+  Modules.QuestionForm = QuestionForm
 })(window.GOVUK.Modules)

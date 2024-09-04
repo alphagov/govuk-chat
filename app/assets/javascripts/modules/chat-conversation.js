@@ -5,8 +5,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
   class ChatConversation {
     constructor (module) {
       this.module = module
-      this.formComponent = this.module.querySelector('.js-conversation-form-wrapper')
-      this.form = this.module.querySelector('.js-conversation-form')
+      this.formContainer = this.module.querySelector('.js-question-form-container')
+      this.form = this.module.querySelector('.js-question-form')
       this.messageLists = new Modules.ConversationMessageLists(this.module.querySelector('.js-conversation-message-lists'))
       this.pendingAnswerUrl = this.module.dataset.pendingAnswerUrl
       this.ANSWER_INTERVAL = 500
@@ -14,13 +14,13 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     init () {
       this.module.addEventListener('conversation-append', e => this.conversationAppend(e))
-      this.formComponent.addEventListener('submit', e => this.handleFormSubmission(e))
+      this.formContainer.addEventListener('submit', e => this.handleFormSubmission(e))
 
       // existing new messages indicates we are in onboarding
       if (this.messageLists.hasNewMessages()) {
-        this.formComponent.classList.add('govuk-visually-hidden')
+        this.formContainer.classList.add('govuk-visually-hidden')
         this.messageLists.progressivelyDiscloseMessages().then(() => {
-          this.formComponent.classList.remove('govuk-visually-hidden')
+          this.formContainer.classList.remove('govuk-visually-hidden')
           this.messageLists.scrollToLastNewMessage()
         })
       } else {
@@ -32,13 +32,13 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       const loadPendingAnswer = () => {
         this.messageLists.renderAnswerLoading()
         this.checkAnswer()
-        this.formComponent.dispatchEvent(new Event('question-accepted'))
+        this.formContainer.dispatchEvent(new Event('question-accepted'))
       }
 
-      if (this.formComponent.dataset.conversationFormModuleStarted) {
+      if (this.formContainer.dataset.conversationFormModuleStarted) {
         loadPendingAnswer()
       } else {
-        this.formComponent.addEventListener('init', loadPendingAnswer)
+        this.formContainer.addEventListener('init', loadPendingAnswer)
       }
     }
 
@@ -46,7 +46,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       event.preventDefault()
 
       try {
-        this.formComponent.dispatchEvent(new Event('question-pending'))
+        this.formContainer.dispatchEvent(new Event('question-pending'))
 
         this.messageLists.moveNewMessagesToHistory()
         this.messageLists.renderQuestionLoading()
@@ -78,7 +78,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
           const responseJson = await response.json()
           this.messageLists.renderQuestion(responseJson.question_html)
 
-          this.formComponent.dispatchEvent(new Event('question-accepted'))
+          this.formContainer.dispatchEvent(new Event('question-accepted'))
 
           this.pendingAnswerUrl = responseJson.answer_url
           break
@@ -87,7 +87,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
           const responseJson = await response.json()
           this.messageLists.resetQuestionLoading()
 
-          this.formComponent.dispatchEvent(
+          this.formContainer.dispatchEvent(
             new CustomEvent('question-rejected', {
               detail: { errorMessages: responseJson.error_messages }
             })
@@ -114,7 +114,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
             this.pendingAnswerUrl = null
 
-            this.formComponent.dispatchEvent(new Event('answer-received'))
+            this.formContainer.dispatchEvent(new Event('answer-received'))
             break
           }
           case 202: {
@@ -131,9 +131,9 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     async conversationAppend (event) {
-      this.formComponent.classList.add('govuk-visually-hidden')
+      this.formContainer.classList.add('govuk-visually-hidden')
       await this.messageLists.appendNewProgressivelyDisclosedMessages(event.detail.html)
-      this.formComponent.classList.remove('govuk-visually-hidden')
+      this.formContainer.classList.remove('govuk-visually-hidden')
       this.messageLists.scrollToLastNewMessage()
     }
 

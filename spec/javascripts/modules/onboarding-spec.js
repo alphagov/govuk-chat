@@ -5,14 +5,14 @@ describe('Onboarding module', () => {
   beforeEach(() => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
-      <div class="js-module-wrapper">
+      <div class="js-conversation-message-region">
         <div class="js-conversation-message-lists">
           <ul class="js-message-history-list"></ul>
-          <div class="js-new-messages-region">
+          <div class="js-new-messages-container">
             <ul class="js-new-messages-list"></ul>
           </div>
         </div>
-        <div class="js-form-container">
+        <div class="js-conversation-form-width-restrictor">
           <form class="js-onboarding-form" action="/chat/onboarding">
             <button>I understand</button>
           </form>

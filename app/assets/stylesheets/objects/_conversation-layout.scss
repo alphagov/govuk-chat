@@ -42,7 +42,7 @@
   }
 }
 
-.app-conversation-layout__width-container {
+.app-conversation-layout__width-restrictor {
   box-sizing: border-box;
   max-width: 585px;
   margin: 0 auto;
@@ -50,7 +50,7 @@
   width: 100%;
 }
 
-.app-conversation-layout__form-container {
+.app-conversation-layout__form-region {
   &::before {
     content: "";
     position: absolute;

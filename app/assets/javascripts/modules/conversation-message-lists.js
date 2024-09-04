@@ -10,7 +10,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
       this.module = module
       this.messageHistoryList = module.querySelector('.js-message-history-list')
-      this.newMessagesRegion = module.querySelector('.js-new-messages-region')
+      this.newMessagesContainer = module.querySelector('.js-new-messages-container')
       this.newMessagesList = module.querySelector('.js-new-messages-list')
       this.loadingQuestionTemplate = this.module.querySelector('.js-loading-question')
       this.loadingAnswerTemplate = this.module.querySelector('.js-loading-answer')
@@ -49,7 +49,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     async appendNewProgressivelyDisclosedMessages (messagesHtml) {
       this.newMessagesList.innerHTML = messagesHtml
-      this.newMessagesRegion.focus()
+      this.newMessagesContainer.focus()
       await this.progressivelyDiscloseMessages()
     }
 
@@ -101,7 +101,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       if (this.answerLoadingElement) this.newMessagesList.removeChild(this.answerLoadingElement)
 
       this.newMessagesList.insertAdjacentHTML('beforeend', answerHtml)
-      this.newMessagesRegion.focus()
+      this.newMessagesContainer.focus()
       window.GOVUK.modules.start(this.newMessagesList)
       this.scrollIntoView(this.newMessagesList.lastElementChild)
     }
