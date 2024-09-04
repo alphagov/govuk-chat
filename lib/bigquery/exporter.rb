@@ -4,6 +4,17 @@ module Bigquery
   class Exporter
     class UploadFailedError < StandardError; end
 
+    def self.remove_nil_values(json)
+      case json
+      when Array
+        json.map { |el| remove_nil_values(el) }.compact
+      when Hash
+        json.transform_values { |v| remove_nil_values(v) }.compact
+      else
+        json
+      end
+    end
+
     def self.call(...) = new(...).call
 
     def initialize
@@ -37,7 +48,7 @@ module Bigquery
 
         next unless records_to_export.any?
 
-        tempfile = save_tables_to_json(records_to_export)
+        tempfile = save_tables_to_json(self.class.remove_nil_values(records_to_export))
         upload_to_bigquery(tempfile, table_id)
       end
       exported_records

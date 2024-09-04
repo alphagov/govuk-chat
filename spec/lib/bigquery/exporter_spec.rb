@@ -56,7 +56,9 @@ RSpec.describe Bigquery::Exporter do
           first_json_record = JSON.parse(file.readline.chomp)
 
           expect(table_id).to eq("questions")
-          expect(first_json_record).to match(question.serialize_for_export)
+          expect(first_json_record).to match(
+            described_class.remove_nil_values(question.serialize_for_export),
+          )
         end
       end
 
@@ -68,6 +70,18 @@ RSpec.describe Bigquery::Exporter do
         expect(dataset).to have_received(:load_job).with("questions", any_args)
         expect(dataset).to have_received(:load_job).with("answer_feedback", any_args)
         expect(result[:tables]).to match(questions: 1, answer_feedback: 1)
+      end
+
+      it "removes nil values" do
+        answer.update!(question_routing_confidence_score: nil)
+
+        described_class.call
+
+        expect(dataset).to have_received(:load_job) do |_, file, _config|
+          first_json_record = JSON.parse(file.readline.chomp)
+          answer_json = first_json_record["answer"]
+          expect(answer_json.keys).not_to include("question_routing_confidence_score")
+        end
       end
 
       it "configures the load_job appropriately" do
