@@ -148,7 +148,7 @@ RSpec.describe "SignUpController" do
                 reason_for_visit_form: { choice: "find_specific_answer" },
               )
             }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-            expect(EarlyAccessAuthMailer.deliveries.last.subject).to eq("Sign in")
+            expect(EarlyAccessAuthMailer.deliveries.last.subject).to eq("You can now access GOV.UK Chat")
           end
 
           it "deletes the session['sign_up'] variable" do

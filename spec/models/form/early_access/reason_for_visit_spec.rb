@@ -40,7 +40,7 @@ RSpec.describe Form::EarlyAccess::ReasonForVisit do
     end
 
     context "when there are instant access places available" do
-      before { allow(EarlyAccessAuthMailer).to receive(:sign_in).and_call_original }
+      before { allow(EarlyAccessAuthMailer).to receive(:access_granted).and_call_original }
 
       it "locks the settings instance and decrements the instant access places by 1" do
         allow(Settings).to receive(:instance).and_return(settings)
@@ -70,7 +70,7 @@ RSpec.describe Form::EarlyAccess::ReasonForVisit do
       it "calls the mailer with the new session" do
         expect { form.submit }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
         created_session = Passwordless::Session.last
-        expect(EarlyAccessAuthMailer).to have_received(:sign_in).with(created_session)
+        expect(EarlyAccessAuthMailer).to have_received(:access_granted).with(created_session)
       end
 
       it "returns a result object with the correct attributes" do
