@@ -1,4 +1,12 @@
-.app-landing-page-layout {
+.app-landing-page-layout, .app-landing-page-layout__body {
+  // Used to hide horizontal scrollbars caused by the landing page animation.
+  // In all browsers except Safari, adding this rule to the html element seemed
+  // to work. In Safari, you could still scroll horizontally unless this rule was
+  // also applied to the body element.
+  overflow-x: hidden;
+}
+
+.app-landing-page-layout__body {
   display: flex;
   flex-direction: column;
 
@@ -6,6 +14,21 @@
   // and set the animation container's z-index to -1 to push it behind the content in the body
   position: relative;
   z-index: 0;
+
+  // This is to mask any whitespace that can appear beneath the footer
+  background-color: govuk-colour("light-grey");
+
+  // This is to prevent double vertical scrollbars from appearing when applying overflow-x: hidden on both the
+  // html and body elements
+  overflow-y: hidden;
+}
+
+.app-landing-page-layout__main {
+  // This is to offset the grey background on .app-landing-page-layout so that the white background on the main element
+  // is maintained
+  background-color: govuk-colour("white");
+  // This is to prevent the background ruleset from overlaying the animation boxes
+  z-index: -1;
 }
 
 .app-landing-page-layout__flex-container {
@@ -13,6 +36,11 @@
   flex-direction: column;
   flex: 1;
   justify-content: space-between;
+  
+  // This is to include .app-landing-page-layout__flex-container in the stacking context of the landing page.
+  // Without this z-index property, this element was overlaying the main element and therefore preventing interactive 
+  // elements, such as the start button, from being used.
+  z-index: -1;
 }
 
 .app-landing-page-layout__animation {
@@ -24,7 +52,7 @@
 
   @include govuk-media-query($from: mobile, $until: tablet) {
     right: -38rem;
-    margin-top: -45rem;
+    margin-top: -47rem;
   }
 
   @include govuk-media-query($from: tablet, $until: desktop) {
@@ -78,9 +106,13 @@
   }
 
   // This is a bit of a hack to stop the animation boxes from extending beyond the footer and
-  // creating additional whitespace under it on wider screens
+  // creating additional whitespace under it on wider screens. The max-height rule also only
+  // kicks once the viewport height is greater than 820px to prevent the animation boxes from
+  // being cut off prematurely.
   @include govuk-media-query($from: desktop) {
-    max-height: 100vh;
+    @media screen and (min-height: 820px) {
+      max-height: 100vh;
+    }
   }
 
   @include govuk-media-query($from: 1919px) {
@@ -114,5 +146,22 @@
 
   @include govuk-media-query($from: desktop, $until: 1919px) {
     width: 37.5rem;
+  }
+}
+
+.app-landing-page-layout__animation--early-access {
+  @include govuk-media-query($from: mobile, $until: tablet) {
+    margin-top: -58rem;
+  }
+
+  // Remove the height restriction on the animation container when the early access
+  // version of the chat introduction component is rendered because whitespace beneath
+  // the footer doesn't occur in this scenario (and the height restriction also causes
+  // the animation boxes to get cut off prematurely). This is because the early access
+  // version contains additional content, therefore increasing the height of the introduction
+  // component and pushes the footer further down - meaning that the greatest extent of the
+  // animation boxes doesn't extend beyond the footer i.e. no additional whitespace is created.
+  .app-landing-page-layout__animation-message-container {
+    max-height: none;
   }
 }
