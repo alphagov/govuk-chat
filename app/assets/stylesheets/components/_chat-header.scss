@@ -27,6 +27,20 @@
       margin-right: 0;
     }
 
+    // This is a bit of a hack to add the header divider line and it's very brittle - it will break if
+    // we wanted to add additional navigation links above the link and it will need updating any time
+    // there's a change to the number of navigation links. We'll want to revisit this at a later date
+    // to make the addition of the divider line more flexible.
+    &:nth-child(3) {
+      border-top: 1px solid govuk-colour("mid-grey");
+      padding-top: govuk-spacing(4);
+      margin: govuk-spacing(4) 0 0;
+  
+      @include govuk-media-query($until: tablet) {
+        margin-top: govuk-spacing(2);
+      }
+    }
+
     .govuk-header__link {
       font-size: 16px; // directly set the font size to prevent govuk-font mixins from reducing it on smaller screens
     }
