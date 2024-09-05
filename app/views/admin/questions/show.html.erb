@@ -24,5 +24,24 @@
         link_text: "View conversation",
       },
     } %>
+
+    <% if @answer&.metrics&.present? %>
+      <%= render "govuk_publishing_components/components/details", {
+        title: "Metrics",
+      } do %>
+        <% @answer.metrics.sort.each do |namespace, metrics| %>
+          <%= render "govuk_publishing_components/components/summary_list", {
+            title: namespace,
+            items: metrics.map do |metric, value|
+              {
+                field: metric,
+                value: value,
+              }
+            end,
+            borderless: true,
+          } %>
+        <% end %>
+      <% end %>
+    <% end %>
   </div>
 </div>

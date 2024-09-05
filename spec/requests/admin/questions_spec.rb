@@ -68,5 +68,29 @@ RSpec.describe "Admin::QuestionsController" do
         .to have_content("Feedback created at")
         .and have_content("Useful")
     end
+
+    it "renders the metrics" do
+      metrics = {
+        "answer_composition" => { duration: 1.55556 },
+        "question_rephrasing" => { duration: 0.55, llm_prompt_tokens: 400, llm_completion_tokens: 101 },
+      }
+
+      question = create(:question)
+      create(:answer, question:, metrics:)
+
+      get admin_show_question_path(question)
+
+      expect(response.body).to have_content("Metrics")
+
+      expect(response.body.squish)
+        .to have_content("answer_composition")
+        .and have_content(/duration.*1\.55556/)
+
+      expect(response.body.squish)
+        .to have_content("question_rephrasing")
+        .and have_content(/duration.*0\.55/)
+        .and have_content(/llm_prompt_tokens.*400/)
+        .and have_content(/llm_completion_tokens.*101/)
+    end
   end
 end
