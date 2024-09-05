@@ -12,9 +12,7 @@ module AnswerComposition
       start_time = AnswerComposition.monotonic_time
 
       compose_answer.tap do |answer|
-        answer.assign_metrics("answer_composition", {
-          duration: AnswerComposition.monotonic_time - start_time,
-        })
+        answer.assign_metrics("answer_composition", build_metrics(start_time))
       end
     rescue StandardError => e
       GovukError.notify(e)
@@ -22,6 +20,7 @@ module AnswerComposition
         message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
         status: "error_non_specific",
         error_message: "class: #{e.class} message: #{e.message}",
+        metrics: { answer_composition: build_metrics(start_time) },
       )
     end
 
@@ -49,6 +48,10 @@ module AnswerComposition
       else
         raise "Answer strategy #{answer_strategy} not configured"
       end
+    end
+
+    def build_metrics(start_time)
+      { duration: AnswerComposition.monotonic_time - start_time }
     end
   end
 end
