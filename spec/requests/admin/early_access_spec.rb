@@ -20,7 +20,7 @@ RSpec.describe "Admin::EarlyAccessController" do
       expect(response.body)
         .to have_link("Email", href: admin_early_access_users_path(sort: "email"))
         .and have_link("Last login", href: admin_early_access_users_path(sort: "last_login_at"))
-        .and have_selector(".govuk-table__header", text: "Questions asked")
+        .and have_link("Questions", href: admin_early_access_users_path(sort: "-questions_count"))
         .and have_selector(".govuk-table__header", text: "Access revoked?")
     end
 
@@ -84,9 +84,11 @@ RSpec.describe "Admin::EarlyAccessController" do
 
         expect(response.body)
           .to have_link("Last login", href: admin_early_access_users_path(sort: "-last_login_at"))
+          .and have_link("Questions", href: admin_early_access_users_path(sort: "-questions_count"))
           .and have_selector(".govuk-table__header--active .app-table__sort-link--ascending", text: "Last login")
           .and have_link("Email", href: admin_early_access_users_path(sort: "email"))
           .and have_no_selector(".govuk-table__header--active", text: "Email")
+          .and have_no_selector(".govuk-table__header--active", text: "Questions")
       end
 
       it "orders the users correctly when the sort param is '-last_login_at'" do
@@ -108,9 +110,11 @@ RSpec.describe "Admin::EarlyAccessController" do
 
         expect(response.body)
           .to have_link("Last login", href: admin_early_access_users_path(sort: "last_login_at"))
+          .and have_link("Questions", href: admin_early_access_users_path(sort: "-questions_count"))
           .and have_selector(".govuk-table__header--active .app-table__sort-link--descending", text: "Last login")
           .and have_link("Email", href: admin_early_access_users_path(sort: "email"))
           .and have_no_selector(".govuk-table__header--active", text: "Email")
+          .and have_no_selector(".govuk-table__header--active", text: "Questions")
       end
 
       it "orders the users correctly when the sort param is 'email'" do
@@ -132,9 +136,11 @@ RSpec.describe "Admin::EarlyAccessController" do
 
         expect(response.body)
           .to have_link("Email", href: admin_early_access_users_path(sort: "-email"))
+          .and have_link("Questions", href: admin_early_access_users_path(sort: "-questions_count"))
           .and have_selector(".govuk-table__header--active .app-table__sort-link--ascending", text: "Email")
           .and have_link("Last login", href: admin_early_access_users_path(sort: "-last_login_at"))
           .and have_no_selector(".govuk-table__header--active", text: "Last login")
+          .and have_no_selector(".govuk-table__header--active", text: "Questions")
       end
 
       it "orders the users correctly when the sort param is '-email'" do
@@ -156,9 +162,63 @@ RSpec.describe "Admin::EarlyAccessController" do
 
         expect(response.body)
           .to have_link("Email", href: admin_early_access_users_path(sort: "email"))
+          .and have_link("Questions", href: admin_early_access_users_path(sort: "-questions_count"))
           .and have_selector(".govuk-table__header--active .app-table__sort-link--descending", text: "Email")
           .and have_link("Last login", href: admin_early_access_users_path(sort: "-last_login_at"))
           .and have_no_selector(".govuk-table__header--active", text: "Last login")
+          .and have_no_selector(".govuk-table__header--active", text: "Questions")
+      end
+
+      it "orders the users correctly when the sort param is 'questions_count'" do
+        create(:early_access_user, email: "a@example.com", questions_count: 2)
+        create(:early_access_user, email: "c@example.com", questions_count: 0)
+        create(:early_access_user, email: "b@example.com", questions_count: 1)
+
+        get admin_early_access_users_path(sort: "questions_count")
+
+        expect(response.body).to have_selector(".govuk-table") do |match|
+          expect(match).to have_content(/c@example\.com.*b@example\.com.*a@example\.com/m)
+        end
+      end
+
+      it "renders the sortable table headers correctly when the sort param is 'questions_count'" do
+        create(:early_access_user)
+
+        get admin_early_access_users_path(sort: "questions_count")
+
+        expect(response.body)
+          .to have_link("Email", href: admin_early_access_users_path(sort: "email"))
+          .and have_link("Questions", href: admin_early_access_users_path(sort: "-questions_count"))
+          .and have_selector(".govuk-table__header--active .app-table__sort-link--ascending", text: "Questions")
+          .and have_link("Last login", href: admin_early_access_users_path(sort: "-last_login_at"))
+          .and have_no_selector(".govuk-table__header--active", text: "Last login")
+          .and have_no_selector(".govuk-table__header--active", text: "Email")
+      end
+
+      it "orders the users correctly when the sort param is '-questions_count'" do
+        create(:early_access_user, email: "a@example.com", questions_count: 0)
+        create(:early_access_user, email: "c@example.com", questions_count: 2)
+        create(:early_access_user, email: "b@example.com", questions_count: 1)
+
+        get admin_early_access_users_path(sort: "-questions_count")
+
+        expect(response.body).to have_selector(".govuk-table") do |match|
+          expect(match).to have_content(/c@example\.com.*b@example\.com.*a@example\.com/m)
+        end
+      end
+
+      it "renders the sortable table headers correctly when the sort param is '-questions_count'" do
+        create(:early_access_user)
+
+        get admin_early_access_users_path(sort: "-questions_count")
+
+        expect(response.body)
+          .to have_link("Email", href: admin_early_access_users_path(sort: "email"))
+          .and have_link("Questions", href: admin_early_access_users_path(sort: "questions_count"))
+          .and have_selector(".govuk-table__header--active .app-table__sort-link--descending", text: "Questions")
+          .and have_link("Last login", href: admin_early_access_users_path(sort: "-last_login_at"))
+          .and have_no_selector(".govuk-table__header--active", text: "Last login")
+          .and have_no_selector(".govuk-table__header--active", text: "Email")
       end
     end
   end

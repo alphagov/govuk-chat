@@ -29,6 +29,18 @@ RSpec.describe Admin::Filters::EarlyAccessUsersFilter do
         results = described_class.new(sort: "-email").results
         expect(results).to eq([logged_in_1_hour_ago, never_logged_in, logged_in_1_min_ago])
       end
+
+      it "orders the results by questions_count when the sort param is 'questions_count'" do
+        user = create :early_access_user, questions_count: 2
+        results = described_class.new(sort: "questions_count").results
+        expect(results.last).to eq(user)
+      end
+
+      it "orders the results by reverse questions_count when the sort param is '-questions_count'" do
+        user = create :early_access_user, questions_count: 2
+        results = described_class.new(sort: "-questions_count").results
+        expect(results.first).to eq(user)
+      end
     end
 
     it "paginates the results" do
