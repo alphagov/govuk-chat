@@ -5,9 +5,9 @@ describe('conversationMessageLists module', () => {
   beforeEach(() => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
-      <ul class="js-message-history-list"></ul>
-      <div class="js-new-messages-container">
-        <ul class="js-new-messages-list"></ul>
+      <ul class="js-conversation-message-history-list"></ul>
+      <div class="js-new-conversation-messages-container">
+        <ul class="js-new-conversation-messages-list"></ul>
       </div>
       <template class="js-loading-question">
         <li>Loading question</li>
@@ -19,8 +19,8 @@ describe('conversationMessageLists module', () => {
 
     moduleElement.dataset.progressiveDisclosureDelay = 2000
     document.body.appendChild(moduleElement)
-    messageHistoryList = moduleElement.querySelector('.js-message-history-list')
-    newMessagesList = moduleElement.querySelector('.js-new-messages-list')
+    messageHistoryList = moduleElement.querySelector('.js-conversation-message-history-list')
+    newMessagesList = moduleElement.querySelector('.js-new-conversation-messages-list')
 
     module = new window.GOVUK.Modules.ConversationMessageLists(moduleElement)
     progressiveDisclosureDelay = module.PROGRESSIVE_DISCLOSURE_DELAY

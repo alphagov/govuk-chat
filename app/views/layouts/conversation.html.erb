@@ -38,13 +38,13 @@
 
           <div class="js-conversation-message-lists" data-progressive-disclosure-delay="<%= Rails.configuration.conversation_js_progressive_disclosure_delay || 2000 %>">
             <h2 id="chat-history" class="govuk-visually-hidden">Chat history</h2>
-            <ul class="app-conversation-layout__list js-message-history-list">
+            <ul class="app-conversation-layout__list js-conversation-message-history-list">
               <%= yield(:message_history) %>
             </ul>
 
-            <div tabindex="-1" role="region" aria-labelledby="new-messages" class="js-new-messages-container">
+            <div tabindex="-1" role="region" aria-labelledby="new-messages" class="js-new-conversation-messages-container">
               <h2 id="new-messages" class="govuk-visually-hidden">New messages</h2>
-              <ul class="app-conversation-layout__list js-new-messages-list">
+              <ul class="app-conversation-layout__list js-new-conversation-messages-list">
                 <%= yield(:new_messages) %>
               </ul>
             </div>

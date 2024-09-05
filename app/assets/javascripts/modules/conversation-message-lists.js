@@ -9,9 +9,9 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.QUESTION_LOADING_TIMEOUT = 500
 
       this.module = module
-      this.messageHistoryList = module.querySelector('.js-message-history-list')
-      this.newMessagesContainer = module.querySelector('.js-new-messages-container')
-      this.newMessagesList = module.querySelector('.js-new-messages-list')
+      this.messageHistoryList = module.querySelector('.js-conversation-message-history-list')
+      this.newMessagesContainer = module.querySelector('.js-new-conversation-messages-container')
+      this.newMessagesList = module.querySelector('.js-new-conversation-messages-list')
       this.loadingQuestionTemplate = this.module.querySelector('.js-loading-question')
       this.loadingAnswerTemplate = this.module.querySelector('.js-loading-answer')
 

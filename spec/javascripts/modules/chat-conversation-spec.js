@@ -6,9 +6,9 @@ describe('ChatConversation module', () => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
       <div class="js-conversation-message-lists">
-        <ul class="js-message-history-list"></ul>
-        <div class="js-new-messages-container">
-          <ul class="js-new-messages-list"></ul>
+        <ul class="js-conversation-message-history-list"></ul>
+        <div class="js-new-conversation-messages-container">
+          <ul class="js-new-conversation-messages-list"></ul>
         </div>
         <template class="js-loading-question"><li>Loading</li></template>
         <template class="js-loading-answer"><li>Loading</li></template>
@@ -53,7 +53,7 @@ describe('ChatConversation module', () => {
 
     describe('when initialised with existing new messages to indicate an onboarding status', () => {
       beforeEach(() => {
-        const newMessagesList = moduleElement.querySelector('.js-new-messages-list')
+        const newMessagesList = moduleElement.querySelector('.js-new-conversation-messages-list')
         newMessagesList.innerHTML = `
           <li class="js-conversation-message">Message 1</li>
           <li class="js-conversation-message">Message 2</li>
