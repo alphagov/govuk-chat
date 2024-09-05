@@ -114,6 +114,7 @@ RSpec.describe Question do
           message: Answer::CannedResponses::TIMED_OUT_RESPONSE,
           status: "abort_timeout",
           question:,
+          feedback: nil,
         )
       end
     end

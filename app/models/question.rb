@@ -38,6 +38,7 @@ class Question < ApplicationRecord
       create_answer(
         message: Answer::CannedResponses::TIMED_OUT_RESPONSE,
         status: :abort_timeout,
+        feedback: nil,
       )
     end
   end

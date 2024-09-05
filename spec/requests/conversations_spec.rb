@@ -374,18 +374,25 @@ RSpec.describe "ConversationsController" do
     end
 
     context "when the answer generation has timed out" do
-      it "creates the answer with a status of abort_timeout" do
-        question = create(
+      let(:question) do
+        create(
           :question,
           conversation:,
           created_at: Rails.configuration.conversations.answer_timeout_in_seconds.seconds.ago,
         )
+      end
 
+      it "creates the answer with a status of abort_timeout" do
         expect { get answer_question_path(question) }.to change { question.reload.answer }.from(nil)
         expect(question.answer).to have_attributes(
           message: Answer::CannedResponses::TIMED_OUT_RESPONSE,
           status: "abort_timeout",
         )
+      end
+
+      it "redirects to the conversation show page" do
+        get answer_question_path(question)
+        expect(response).to redirect_to(show_conversation_path)
       end
     end
 
@@ -405,6 +412,21 @@ RSpec.describe "ConversationsController" do
 
         expect(response).to have_http_status(:accepted)
         expect(JSON.parse(response.body)).to eq({ "answer_html" => nil })
+      end
+
+      context "when the answer generation has timed out" do
+        it "responds successfully with the correct JSON" do
+          question = create(
+            :question,
+            conversation:,
+            created_at: Rails.configuration.conversations.answer_timeout_in_seconds.seconds.ago,
+          )
+
+          get answer_question_path(question, format: :json)
+
+          expect(response).to have_http_status(:success)
+          expect(JSON.parse(response.body)).to match({ "answer_html" => /app-c-conversation-message/ })
+        end
       end
     end
   end
