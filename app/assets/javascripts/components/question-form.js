@@ -14,7 +14,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.module = module
       this.form = module.querySelector('.js-question-form')
       this.input = module.querySelector('.js-question-form-input')
-      this.label = module.querySelector('.js-question-form-label')
       this.button = module.querySelector('.js-question-form-button')
       this.buttonResponseStatus = module.querySelector('.js-question-form-button__response-status')
       this.errorsWrapper = module.querySelector('.js-question-form-errors-wrapper')
@@ -29,12 +28,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.module.addEventListener('question-accepted', () => this.handleQuestionAccepted())
       this.module.addEventListener('question-rejected', e => this.handleQuestionRejected(e))
       this.module.addEventListener('answer-received', () => this.handleAnswerReceived())
-      // By default, the aria-describedby attribute references hint text and errors associated with the input.
-      // Here, we set aria-described to only reference the hint text as we handle errors differently when JS is enabled
-      // in order to achieve consistent behaviour (see announceErrors() for further details).
-      // The error id hasn't been removed from aria-describedby in the template because we need it for when JS is
-      // unavailable/disabled.
-      this.input.setAttribute('aria-describedby', this.module.dataset.hintId)
 
       // used to inform other components that this component is initialised.
       this.module.dispatchEvent(new Event('init'))
@@ -136,16 +129,11 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       if (errors.length) this.input.focus()
     }
 
-    // This function changes the label of the input field to the list of error messages if errors are present.
-    // This is to get errors re-announced if the same erroneous input is submitted (e.g. repeatedly submitting a blank input).
-    // Aria-live won't work in this scenario because repeated errors aren't re-announced.
     announceErrors (hasErrors) {
       if (hasErrors) {
-        this.label.ariaHidden = true
-        this.input.setAttribute('aria-labelledby', this.errorsWrapper.id)
+        this.input.setAttribute('aria-describedby', `${this.module.dataset.hintId} ${this.errorsWrapper.id}`)
       } else {
-        this.input.removeAttribute('aria-labelledby')
-        this.label.ariaHidden = false
+        this.input.setAttribute('aria-describedby', this.module.dataset.hintId)
       }
     }
 
