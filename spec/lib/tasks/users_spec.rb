@@ -77,7 +77,7 @@ RSpec.describe "users rake tasks" do
       end
     end
 
-    context "when there are delayed access places available" do
+    context "when there are no delayed access places available" do
       before do
         Settings.instance.update!(delayed_access_places: 0)
       end
