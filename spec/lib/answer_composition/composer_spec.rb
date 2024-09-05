@@ -108,13 +108,11 @@ RSpec.describe AnswerComposition::Composer do
   it "assigns metrics to the answer" do
     answer = create(:answer)
     allow(AnswerComposition::OpenAIAnswer).to receive(:call).and_return(answer)
+    allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
 
     described_class.call(answer.question)
-
-    # It's tricky to stub the clock time here because it's called in so many other places.
-    # So we'll just assert that a duration is set
     expect(answer.metrics["answer_composition"]).to match({
-      duration: a_kind_of(Float),
+      duration: 1.5,
     })
   end
 end

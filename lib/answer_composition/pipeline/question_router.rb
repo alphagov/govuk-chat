@@ -12,7 +12,7 @@ module AnswerComposition
       end
 
       def call
-        start_time = context.current_time
+        start_time = AnswerComposition.monotonic_time
 
         if valid_question?
           context.answer.assign_attributes(
@@ -151,7 +151,7 @@ module AnswerComposition
 
       def build_metrics(start_time)
         {
-          duration: context.current_time - start_time,
+          duration: AnswerComposition.monotonic_time - start_time,
           llm_prompt_tokens: openai_response.dig("usage", "prompt_tokens"),
           llm_completion_tokens: openai_response.dig("usage", "completion_tokens"),
         }

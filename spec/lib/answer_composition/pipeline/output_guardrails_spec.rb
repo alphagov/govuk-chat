@@ -39,7 +39,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
     end
 
     it "assigns metrics to the answer" do
-      allow(context).to receive(:current_time).and_return(100.0, 101.5)
+      allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
 
       described_class.call(context)
 
@@ -76,7 +76,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
     end
 
     it "assigns metrics to the answer" do
-      allow(context).to receive(:current_time).and_return(100.0, 101.5)
+      allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
 
       expect { described_class.call(context) }.to throw_symbol(:abort)
 
@@ -107,7 +107,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
     end
 
     it "assigns metrics to the answer" do
-      allow(context).to receive(:current_time).and_return(100.0, 101.5)
+      allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
 
       expect { described_class.call(context) }.to throw_symbol(:abort)
 

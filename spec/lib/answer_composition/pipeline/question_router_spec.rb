@@ -79,7 +79,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
 
       it "assigns metrics to the answer" do
         stub_openai_chat_question_routing(expected_message_history, tools:)
-        allow(context).to receive(:current_time).and_return(100.0, 101.5)
+        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
 
         described_class.call(context)
 
@@ -96,7 +96,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           confidence: 0.85,
         }
 
-        allow(context).to receive(:current_time).and_return(100.0, 101.5)
+        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
@@ -164,7 +164,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           main_topic: "This is the main topic",
         }
 
-        allow(context).to receive(:current_time).and_return(100.0, 101.5)
+        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
@@ -210,7 +210,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
       it "aborts the pipeline" do
         classification_response = { something: "irrelevant" }
 
-        allow(context).to receive(:current_time).and_return(100.0, 101.5)
+        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
@@ -238,7 +238,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
       it "aborts the pipeline" do
         classification_response = "this will blow up"
 
-        allow(context).to receive(:current_time).and_return(100.0, 101.5)
+        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,

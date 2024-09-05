@@ -10,7 +10,7 @@ module AnswerComposition
       end
 
       def call
-        start_time = context.current_time
+        start_time = AnswerComposition.monotonic_time
 
         if search_results.blank?
           context.abort_pipeline!(
@@ -34,7 +34,7 @@ module AnswerComposition
       end
 
       def build_metrics(start_time)
-        { duration: context.current_time - start_time }
+        { duration: AnswerComposition.monotonic_time - start_time }
       end
     end
   end

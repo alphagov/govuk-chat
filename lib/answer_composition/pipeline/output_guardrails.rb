@@ -8,7 +8,7 @@ module AnswerComposition
       end
 
       def call
-        start_time = context.current_time
+        start_time = AnswerComposition.monotonic_time
 
         response = ::OutputGuardrails::FewShot.call(context.answer.message)
         if response.triggered
@@ -44,7 +44,7 @@ module AnswerComposition
 
       def build_metrics(start_time, response_or_error)
         {
-          duration: context.current_time - start_time,
+          duration: AnswerComposition.monotonic_time - start_time,
           llm_prompt_tokens: response_or_error.llm_token_usage["prompt_tokens"],
           llm_completion_tokens: response_or_error.llm_token_usage["completion_tokens"],
         }

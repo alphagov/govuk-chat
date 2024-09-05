@@ -86,7 +86,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
       end
 
       it "assigns metrics to the answer" do
-        allow(context).to receive(:current_time).and_return(100.0, 101.5)
+        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
         stub_openai_chat_completion_structured_response(
           expected_message_history,
           structured_response,
@@ -123,7 +123,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
         end
 
         it "assigns metrics to the answer" do
-          allow(context).to receive(:current_time).and_return(100.0, 101.5)
+          allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
           stub_openai_chat_completion_structured_response(
             expected_message_history,
             structured_response,
@@ -147,7 +147,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
       end
 
       it "aborts the pipeline" do
-        allow(context).to receive(:current_time).and_return(100.0, 101.5)
+        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
         stub_openai_chat_completion_structured_response(
           expected_message_history,
           structured_response,
@@ -178,7 +178,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
       end
 
       it "aborts the pipeline" do
-        allow(context).to receive(:current_time).and_return(100.0, 101.5)
+        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
         stub_openai_chat_completion_structured_response(
           expected_message_history,
           structured_response,

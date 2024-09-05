@@ -10,7 +10,7 @@ module AnswerComposition::Pipeline
     end
 
     def call
-      start_time = context.current_time
+      start_time = AnswerComposition.monotonic_time
 
       unless parsed_structured_response["answered"]
         return context.abort_pipeline!(
@@ -145,7 +145,7 @@ module AnswerComposition::Pipeline
 
     def build_metrics(start_time)
       {
-        duration: context.current_time - start_time,
+        duration: AnswerComposition.monotonic_time - start_time,
         llm_prompt_tokens: openai_response.dig("usage", "prompt_tokens"),
         llm_completion_tokens: openai_response.dig("usage", "completion_tokens"),
       }

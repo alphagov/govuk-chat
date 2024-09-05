@@ -9,7 +9,7 @@ module AnswerComposition
     end
 
     def call
-      start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      start_time = AnswerComposition.monotonic_time
 
       answer = case answer_strategy
                when "open_ai_rag_completion"
@@ -31,10 +31,8 @@ module AnswerComposition
                  raise "Answer strategy #{answer_strategy} not configured"
                end
 
-      end_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-
       answer.assign_metrics("answer_composition", {
-        duration: end_time - start_time,
+        duration: AnswerComposition.monotonic_time - start_time,
       })
 
       answer

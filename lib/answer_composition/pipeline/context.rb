@@ -64,9 +64,5 @@ module AnswerComposition::Pipeline
 
       answer.sources = used_sources + unused_sources
     end
-
-    def current_time
-      Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    end
   end
 end
