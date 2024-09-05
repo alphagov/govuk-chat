@@ -19,10 +19,6 @@
   <div class="govuk-grid-column-three-quarters">
     <%= render "govuk_publishing_components/components/summary_list", {
       items: question_show_summary_list_rows(@question, @answer, @question_number, @total_questions),
-      edit: {
-        href: admin_show_conversation_path(@question.conversation),
-        link_text: "View conversation",
-      },
     } %>
 
     <% if @answer&.metrics&.present? %>
