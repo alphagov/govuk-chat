@@ -23,8 +23,6 @@ module AnswerComposition
           llm_prompt_tokens: openai_response.dig("usage", "prompt_tokens"),
           llm_completion_tokens: openai_response.dig("usage", "completion_tokens"),
         })
-
-        context.question_message
       rescue OpenAIClient::ContextLengthExceededError => e
         raise OpenAIClient::ContextLengthExceededError.new("Exceeded context length rephrasing #{question.message}", e.response)
       rescue OpenAIClient::RequestError => e
