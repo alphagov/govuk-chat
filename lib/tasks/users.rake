@@ -2,6 +2,7 @@ namespace :users do
   desc "Promote batch of WaitingListUsers to be EarlyAccessUsers"
   task promote_waiting_list: :environment do
     settings = Settings.instance
+    next puts "Not promoting while public access is disabled" unless settings.public_access_enabled?
     next puts "No delayed access places available" if settings.delayed_access_places.zero?
 
     users_to_notify = []

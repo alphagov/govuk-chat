@@ -65,6 +65,18 @@ RSpec.describe "users rake tasks" do
       it_behaves_like "promotes waiting list users", 1
     end
 
+    context "when public access is disabled" do
+      before do
+        Settings.instance.update!(public_access_enabled: false)
+      end
+
+      it "does not continue processing" do
+        expect(Rails.configuration).not_to receive(:early_access_users)
+        expect { Rake::Task[task_name].invoke }
+          .to output("Not promoting while public access is disabled\n").to_stdout
+      end
+    end
+
     context "when there are delayed access places available" do
       before do
         Settings.instance.update!(delayed_access_places: 0)
