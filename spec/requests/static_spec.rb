@@ -57,7 +57,7 @@ RSpec.describe "StaticController" do
     it "renders the view correctly" do
       get accessibility_path
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("Accessibilty heading one")
+      expect(response.body).to include("How accessible this website is")
     end
 
     include_examples "caches the page", :accessibility_path
