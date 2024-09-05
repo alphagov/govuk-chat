@@ -8,7 +8,7 @@ class Admin::Filters::EarlyAccessUsersFilter < Admin::Filters::BaseFilter
   end
 
   def self.valid_sort_values
-    ["last_login_at", "-last_login_at", "email", "-email"]
+    ["last_login_at", "-last_login_at", "email", "-email", "questions_count", "-questions_count"]
   end
 
   def results
