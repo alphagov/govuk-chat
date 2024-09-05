@@ -22,8 +22,8 @@ describe('QuestionForm component', () => {
           </div>
           <button class="js-question-form-button">
             Submit
-            <span class="js-question-form-button__response-status" data-awaiting-response-text="GOV.UK Chat is generating a response to your question"></span>
           </button>
+          <span data-loading-question-text="Loading your question" data-loading-answer-text="Loading your answer" class="js-question-form-button__response-status"></span>
         </div>
       </form>
       <a href="/survey" class="js-survey-link">Survey</a>
@@ -152,7 +152,7 @@ describe('QuestionForm component', () => {
       expect(input.readOnly).toBe(true)
       expect(button.hasAttribute('aria-disabled')).toBe(true)
       expect(button.classList).toContain('app-c-blue-button--disabled')
-      expect(buttonResponseStatus.textContent).toContain('GOV.UK Chat is generating a response to your question')
+      expect(buttonResponseStatus.textContent).toContain('Loading your question')
     })
 
     it("doesn't update the input value", () => {
@@ -172,7 +172,7 @@ describe('QuestionForm component', () => {
       expect(input.readOnly).toBe(true)
       expect(button.hasAttribute('aria-disabled')).toBe(true)
       expect(button.classList).toContain('app-c-blue-button--disabled')
-      expect(buttonResponseStatus.textContent).toContain('GOV.UK Chat is generating a response to your question')
+      expect(buttonResponseStatus.textContent).toContain('Loading your answer')
     })
 
     it('resets the input value', () => {
