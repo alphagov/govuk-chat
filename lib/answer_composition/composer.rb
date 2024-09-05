@@ -9,25 +9,35 @@ module AnswerComposition
     end
 
     def call
-      case answer_strategy
-      when "open_ai_rag_completion"
-        OpenAIAnswer.call(question:, pipeline: [
-          Pipeline::QuestionRephraser,
-          Pipeline::SearchResultFetcher,
-          Pipeline::OpenAIUnstructuredAnswerComposer,
-          Pipeline::OutputGuardrails,
-        ])
-      when "openai_structured_answer"
-        OpenAIAnswer.call(question:, pipeline: [
-          Pipeline::QuestionRephraser,
-          Pipeline::QuestionRouter,
-          Pipeline::SearchResultFetcher,
-          Pipeline::OpenAIStructuredAnswerComposer,
-          Pipeline::OutputGuardrails,
-        ])
-      else
-        raise "Answer strategy #{answer_strategy} not configured"
-      end
+      start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+      answer = case answer_strategy
+               when "open_ai_rag_completion"
+                 OpenAIAnswer.call(question:, pipeline: [
+                   Pipeline::QuestionRephraser,
+                   Pipeline::SearchResultFetcher,
+                   Pipeline::OpenAIUnstructuredAnswerComposer,
+                   Pipeline::OutputGuardrails,
+                 ])
+               when "openai_structured_answer"
+                 OpenAIAnswer.call(question:, pipeline: [
+                   Pipeline::QuestionRephraser,
+                   Pipeline::QuestionRouter,
+                   Pipeline::SearchResultFetcher,
+                   Pipeline::OpenAIStructuredAnswerComposer,
+                   Pipeline::OutputGuardrails,
+                 ])
+               else
+                 raise "Answer strategy #{answer_strategy} not configured"
+               end
+
+      end_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+      answer.assign_metrics("answer_composition", {
+        duration: end_time - start_time,
+      })
+
+      answer
     rescue StandardError => e
       GovukError.notify(e)
       question.build_answer(
