@@ -1,9 +1,9 @@
 RSpec.describe "RevokeAccessController" do
   describe "GET :revoke" do
-    it "redirects to the homepage if the token is invalid" do
+    it "return a 404 homepage if the token is invalid" do
       get early_access_user_unsubscribe_path("invalid-token")
 
-      expect(response).to redirect_to(homepage_path)
+      expect(response).to have_http_status(:not_found)
     end
 
     it "renders the unsubscribe page if the token is valid" do
