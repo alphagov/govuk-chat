@@ -1,6 +1,7 @@
 class BaseController < ApplicationController
   include Passwordless::ControllerHelpers
   before_action :check_chat_public_access
+  before_action :ensure_signon_user_if_required
   before_action :ensure_early_access_user_if_auth_required!
   helper_method :current_early_access_user, :settings
 
@@ -56,5 +57,11 @@ private
     return if Rails.configuration.available_without_early_access_authentication
 
     require_early_access_user!
+  end
+
+  def ensure_signon_user_if_required
+    return if Rails.configuration.available_without_signon_authentication
+
+    authenticate_user!
   end
 end
