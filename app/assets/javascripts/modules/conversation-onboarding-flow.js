@@ -5,20 +5,20 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
   class ConversationOnboardingFlow {
     constructor (module) {
       this.module = module
-      this.moduleWrapper = this.module.querySelector('.js-module-wrapper')
-      this.formContainer = this.module.querySelector('.js-form-container')
+      this.conversationMessageRegion = this.module.querySelector('.js-conversation-message-region')
+      this.conversationFromWidthRestrictor = this.module.querySelector('.js-conversation-form-width-restrictor')
       this.title = this.module.querySelector('.js-title')
     }
 
     init () {
-      this.moduleWrapper.addEventListener('onboarding-transition', e => this.handleOnboardingTransition(e))
+      this.conversationMessageRegion.addEventListener('onboarding-transition', e => this.handleOnboardingTransition(e))
     }
 
     handleOnboardingTransition (event) {
       const { path, conversationData, conversationAppendHtml, formHtml, title } = event.detail
 
       try {
-        this.moduleWrapper.dispatchEvent(new Event('deinit'))
+        this.conversationMessageRegion.dispatchEvent(new Event('deinit'))
 
         history.replaceState(null, '', path)
         this.updateBrowserTitle(title)
@@ -26,7 +26,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         this.updateHtml(conversationData, formHtml, title)
 
         window.GOVUK.modules.start(this.module)
-        this.moduleWrapper.dispatchEvent(new CustomEvent('conversation-append', { detail: { html: conversationAppendHtml } }))
+        this.conversationMessageRegion.dispatchEvent(new CustomEvent('conversation-append', { detail: { html: conversationAppendHtml } }))
       } catch (error) {
         console.error(error)
         this.redirect(path)
@@ -34,7 +34,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     updateHtml (conversationData, formHtml, title) {
-      const dataset = this.moduleWrapper.dataset
+      const dataset = this.conversationMessageRegion.dataset
       for (const key in dataset) {
         if (conversationData[key]) {
           dataset[key] = conversationData[key]
@@ -43,7 +43,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         }
       }
 
-      this.formContainer.innerHTML = formHtml
+      this.conversationFromWidthRestrictor.innerHTML = formHtml
       this.title.textContent = title
     }
 

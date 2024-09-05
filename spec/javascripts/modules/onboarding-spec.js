@@ -5,14 +5,14 @@ describe('Onboarding module', () => {
   beforeEach(() => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
-      <div class="js-module-wrapper">
+      <div class="js-conversation-message-region">
         <div class="js-conversation-message-lists">
-          <ul class="js-message-history-list"></ul>
-          <div class="js-new-messages-region">
-            <ul class="js-new-messages-list"></ul>
+          <ul class="js-conversation-message-history-list"></ul>
+          <div class="js-new-conversation-messages-container">
+            <ul class="js-new-conversation-messages-list"></ul>
           </div>
         </div>
-        <div class="js-form-container">
+        <div class="js-conversation-form-width-restrictor">
           <form class="js-onboarding-form" action="/chat/onboarding">
             <button>I understand</button>
           </form>
@@ -60,7 +60,7 @@ describe('Onboarding module', () => {
 
     describe('when initialised with existing new messages', () => {
       beforeEach(() => {
-        const newMessagesList = moduleElement.querySelector('.js-new-messages-list')
+        const newMessagesList = moduleElement.querySelector('.js-new-conversation-messages-list')
         newMessagesList.innerHTML = `
           <li class="js-conversation-message">Message 1</li>
           <li class="js-conversation-message">Message 2</li>
@@ -79,7 +79,7 @@ describe('Onboarding module', () => {
         jasmine.clock().install()
 
         // add some messages to disclose
-        const newMessagesList = moduleElement.querySelector('.js-new-messages-list')
+        const newMessagesList = moduleElement.querySelector('.js-new-conversation-messages-list')
         newMessagesList.innerHTML = `
           <li class="js-conversation-message">To show</li>
           <li class="js-conversation-message">To disclose</li>

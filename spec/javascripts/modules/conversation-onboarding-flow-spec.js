@@ -1,12 +1,12 @@
 describe('ConversationOnboardingFlow module', () => {
-  let moduleElement, module, moduleWrapper, formContainer, titleElement
+  let moduleElement, module, conversationMessageRegion, conversationFormWidthRestrictor, titleElement
 
   beforeEach(() => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
-      <div class="js-module-wrapper" data-module="foo" data-other="bar">
+      <div class="js-conversation-message-region" data-module="foo" data-other="bar">
         <h1 class="js-title"></h1>
-        <div class="js-form-container">
+        <div class="js-conversation-form-width-restrictor">
           <form class="js-onboarding-form" action="/chat/onboarding" method="post">
             <button>I understand</button>
           </form>
@@ -15,8 +15,8 @@ describe('ConversationOnboardingFlow module', () => {
     `
 
     document.body.appendChild(moduleElement)
-    moduleWrapper = moduleElement.querySelector('.js-module-wrapper')
-    formContainer = moduleElement.querySelector('.js-form-container')
+    conversationMessageRegion = moduleElement.querySelector('.js-conversation-message-region')
+    conversationFormWidthRestrictor = moduleElement.querySelector('.js-conversation-form-width-restrictor')
     titleElement = moduleElement.querySelector('.js-title')
 
     module = new window.GOVUK.Modules.ConversationOnboardingFlow(moduleElement)
@@ -28,7 +28,7 @@ describe('ConversationOnboardingFlow module', () => {
 
   describe('init', () => {
     it('adds "onboarding-transition" event listeners', () => {
-      const addEventListenerSpy = spyOn(moduleWrapper, 'addEventListener')
+      const addEventListenerSpy = spyOn(conversationMessageRegion, 'addEventListener')
       module.init()
 
       expect(addEventListenerSpy).toHaveBeenCalled()
@@ -63,7 +63,7 @@ describe('ConversationOnboardingFlow module', () => {
     })
 
     it('dispatches "deinit" event on the module wrapper', () => {
-      const onboardingEventSpy = spyOn(moduleWrapper, 'dispatchEvent')
+      const onboardingEventSpy = spyOn(conversationMessageRegion, 'dispatchEvent')
 
       module.handleOnboardingTransition(event)
 
@@ -78,30 +78,30 @@ describe('ConversationOnboardingFlow module', () => {
     })
 
     it('replaces the data attributes on the wrapper', () => {
-      moduleWrapper.dataset.module = 'onboarding'
-      moduleWrapper.dataset.other = 'something'
+      conversationMessageRegion.dataset.module = 'onboarding'
+      conversationMessageRegion.dataset.other = 'something'
 
       module.handleOnboardingTransition(event)
 
-      expect(moduleWrapper.dataset.module).toEqual('onboarding')
-      expect(moduleWrapper.dataset.other).toBeUndefined()
+      expect(conversationMessageRegion.dataset.module).toEqual('onboarding')
+      expect(conversationMessageRegion.dataset.other).toBeUndefined()
     })
 
     it('fires an event to the module with the details of the conversation HTML to append', () => {
-      const moduleWrapperEventSpy = spyOn(moduleWrapper, 'dispatchEvent')
+      const conversationMessageRegionEventSpy = spyOn(conversationMessageRegion, 'dispatchEvent')
       module.handleOnboardingTransition(event)
 
       const expectedEvent = jasmine.objectContaining({
         type: 'conversation-append',
         detail: { html: event.detail.conversationAppendHtml }
       })
-      expect(moduleWrapperEventSpy).toHaveBeenCalledWith(expectedEvent)
+      expect(conversationMessageRegionEventSpy).toHaveBeenCalledWith(expectedEvent)
     })
 
     it('replaces the form', () => {
       module.handleOnboardingTransition(event)
 
-      expect(formContainer.innerHTML).toContain(event.detail.formHtml)
+      expect(conversationFormWidthRestrictor.innerHTML).toContain(event.detail.formHtml)
     })
 
     it('updates the page title', () => {

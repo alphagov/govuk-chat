@@ -1,6 +1,6 @@
 <%
   start ||= false
-  conversation_form_button ||= false
+  question_form_button ||= false
   text ||= nil
   href ||= nil
   aria_describedby ||= nil
@@ -8,7 +8,7 @@
 
   classes = "app-c-blue-button govuk-button"
   classes << " govuk-button--start" if start
-  classes << " app-c-blue-button--conversation-form js-conversation-form-button" if conversation_form_button
+  classes << " app-c-blue-button--question-form js-question-form-button" if question_form_button
 
   options = { class: classes }
   options[:type] = "submit" if href.blank?

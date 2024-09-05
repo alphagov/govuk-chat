@@ -1,4 +1,4 @@
-name: Conversation form
+name: Question form
 description: A form that contains an input field with a visually hidden label, a submit button, and any accompanying hints and/or error messages for the input
 accessibility_criteria: |
   Inputs in the component must:

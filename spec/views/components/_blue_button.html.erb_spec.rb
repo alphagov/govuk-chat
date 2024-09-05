@@ -23,12 +23,12 @@ RSpec.describe "components/_blue_button.html.erb" do
   it "renders the blue button conversation form variant correctly" do
     render("components/blue_button", {
       text: "Submit button",
-      conversation_form_button: true,
+      question_form_button: true,
     })
 
     expect(rendered)
       .to have_selector(".app-c-blue-button.govuk-button[type='submit']")
-      .and have_selector(".app-c-blue-button.govuk-button.app-c-blue-button--conversation-form.js-conversation-form-button[type='submit']", text: "Submit button")
+      .and have_selector(".app-c-blue-button.govuk-button.app-c-blue-button--question-form.js-question-form-button[type='submit']", text: "Submit button")
   end
 
   it "renders an anchor tag if href is set" do

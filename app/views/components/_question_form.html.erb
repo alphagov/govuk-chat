@@ -21,28 +21,28 @@
   aria_described_by = aria_described_by.join(" ")
 
   data_attributes = {
-    module: "conversation-form",
+    module: "question-form",
     maxlength: maxlength,
     threshold: character_count_threshold,
     "presence-error-message": presence_error_message,
     "hint-id": hint_id,
   }
 
-  form_group_classes = " app-c-conversation-form__form-group js-conversation-form-group"
-  form_group_classes << " app-c-conversation-form__form-group--error" if error_items.any?
+  form_group_classes = " app-c-question-form__form-group js-question-form-group"
+  form_group_classes << " app-c-question-form__form-group--error" if error_items.any?
 
-  input_classes = "app-c-conversation-form__input js-conversation-form-input govuk-js-character-count"
-  input_classes << " app-c-conversation-form__input--error" if error_items.any?
+  input_classes = "app-c-question-form__input js-question-form-input govuk-js-character-count"
+  input_classes << " app-c-question-form__input--error" if error_items.any?
 %>
 
-<%= tag.div class: "app-c-conversation-form js-conversation-form-wrapper", data: data_attributes do %>
-  <%= form_with url: url, class: "app-c-conversation-form__form js-conversation-form", data: { module: "ga4-form-tracker", ga4_form: { "event_name": "form_response", "type": "GOV.UK Chat user input", "section": "Enter your question" } } do |f| %>
+<%= tag.div class: "app-c-question-form js-question-form-container", data: data_attributes do %>
+  <%= form_with url: url, class: "app-c-question-form__form js-question-form", data: { module: "ga4-form-tracker", ga4_form: { "event_name": "form_response", "type": "GOV.UK Chat user input", "section": "Enter your question" } } do |f| %>
     <%= tag.ul(
       id: error_id,
-      class: %w[govuk-list govuk-error-message js-conversation-form-errors-wrapper app-c-conversation-form__error-list],
+      class: %w[govuk-list govuk-error-message js-question-form-errors-wrapper app-c-question-form__error-list],
       hidden: !has_error) do %>
       <% error_items.each do |error| %>
-        <li class="app-c-conversation-form__error-message">
+        <li class="app-c-question-form__error-message">
           <span class="govuk-visually-hidden">Error:</span>
           <%= error[:text] %>
         </li>
@@ -50,14 +50,14 @@
     <% end %>
 
     <%= content_tag :div, class: form_group_classes do %>
-      <%= content_tag :div, class: "app-c-conversation-form__input-wrapper" do %>
+      <%= content_tag :div, class: "app-c-question-form__input-wrapper" do %>
         <%= label_tag(
           input_id,
           "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
-          class: "app-c-conversation-form__label js-conversation-form-label govuk-visually-hidden",
+          class: "app-c-question-form__label js-question-form-label govuk-visually-hidden",
         ) %>
 
-        <%= content_tag :div, class: "app-c-conversation-form__input-character-count-wrapper" do %>
+        <%= content_tag :div, class: "app-c-question-form__input-character-count-wrapper" do %>
           <%= text_field_tag(
             input_id,
             value,
@@ -84,13 +84,13 @@
         <%= content_tag :span, "",
           aria: { live: "assertive" },
           data: { awaiting_response_text: "GOV.UK Chat is generating a response to your question" },
-          class: "govuk-visually-hidden js-conversation-form-button__response-status" %>
+          class: "govuk-visually-hidden js-question-form-button__response-status" %>
       <% end %>
 
-      <%= content_tag :div, class: "app-c-conversation-form__button-wrapper" do %>
+      <%= content_tag :div, class: "app-c-question-form__button-wrapper" do %>
         <%= render "components/blue_button", {
           text: send_text,
-          conversation_form_button: true,
+          question_form_button: true,
         } %>
       <% end %>
     <% end %>
@@ -99,7 +99,7 @@
   <%= link_to(
     "Share your feedback (opens in a new tab)",
     "https://surveys.publishing.service.gov.uk/s/govuk-chat-beta/?user=#{user_id}",
-    class: "govuk-body govuk-link govuk-link--no-visited-state app-c-conversation-form__survey-link js-survey-link",
+    class: "govuk-body govuk-link govuk-link--no-visited-state app-c-question-form__survey-link js-survey-link",
     target: "_blank",
     rel: "noopener noreferrer",
     data: {

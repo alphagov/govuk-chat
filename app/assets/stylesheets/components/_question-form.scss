@@ -1,17 +1,17 @@
 @import "govuk/components/character-count/character-count";
 @import "govuk/components/error-message/error-message";
 
-.app-c-conversation-form__form {
+.app-c-question-form__form {
   padding-top: govuk-spacing(4);
   margin-bottom: govuk-spacing(2);
 }
 
-.app-c-conversation-form__form-group {
+.app-c-question-form__form-group {
   align-items: center;
   display: flex;
 }
 
-.app-c-conversation-form__error-list {
+.app-c-question-form__error-list {
   margin-bottom: 0;
 
   > li {
@@ -24,17 +24,17 @@
   }
 }
 
-.app-c-conversation-form__form-group--error, .app-c-conversation-form__error-list {
+.app-c-question-form__form-group--error, .app-c-question-form__error-list {
   padding-left: govuk-spacing(3);
   border-left: $govuk-border-width-form-group-error solid $govuk-error-colour;
 }
 
-.app-c-conversation-form__error-message {
+.app-c-question-form__error-message {
   @include govuk-typography-weight-bold($important: false);
   color: $govuk-error-colour
 }
 
-.app-c-conversation-form__input-wrapper {
+.app-c-question-form__input-wrapper {
   flex-grow: 1;
   margin-right: govuk-spacing(1);
 
@@ -44,7 +44,7 @@
   }
 }
 
-.app-c-conversation-form__input {
+.app-c-question-form__input {
   border: 2px solid govuk-colour("black");
   border-radius: 0;
   padding: govuk-spacing(2);
@@ -58,7 +58,7 @@
   }
 
   &.govuk-textarea--error, // A class injected by the GOV.UK Frontend character-count component
-  &.app-c-conversation-form__input--error {
+  &.app-c-question-form__input--error {
     border-color: govuk-colour("red");
 
     &:focus {
@@ -73,7 +73,7 @@
   margin-bottom: 0;
 }
 
-.app-c-conversation-form__survey-link {
+.app-c-question-form__survey-link {
   display: none;
 
   .js-enabled & {

@@ -1,4 +1,4 @@
-describe('ConversationForm component', () => {
+describe('QuestionForm component', () => {
   'use strict'
 
   let div, form, formGroup, label, input, button, buttonResponseStatus, presenceErrorMessage,
@@ -13,32 +13,32 @@ describe('ConversationForm component', () => {
     div.dataset.maxlength = 300
     div.dataset.hintId = 'create_question_user_question-info'
     div.innerHTML = `
-      <form class="js-conversation-form">
-        <div class="js-conversation-form-group">
-          <ul id="create_question_user_question-error" class="js-conversation-form-errors-wrapper" hidden="true"></ul>
-          <label class="js-conversation-form-label">Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)</label>
-          <input type="text" class="js-conversation-form-input govuk-js-character-count" id="create_question_user_question" value="What is the VAT rate?" aria-describedby="create_question_user_question-info create_question_user_question-error">
+      <form class="js-question-form">
+        <div class="js-question-form-group">
+          <ul id="create_question_user_question-error" class="js-question-form-errors-wrapper" hidden="true"></ul>
+          <label class="js-question-form-label">Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)</label>
+          <input type="text" class="js-question-form-input govuk-js-character-count" id="create_question_user_question" value="What is the VAT rate?" aria-describedby="create_question_user_question-info create_question_user_question-error">
           <div id="create_question_user_question-info" class="gem-c-hint govuk-hint govuk-visually-hidden">
             Please limit your question to 300 characters.
           </div>
-          <button class="js-conversation-form-button">
+          <button class="js-question-form-button">
             Submit
-            <span class="js-conversation-form-button__response-status" data-awaiting-response-text="GOV.UK Chat is generating a response to your question"></span>
+            <span class="js-question-form-button__response-status" data-awaiting-response-text="GOV.UK Chat is generating a response to your question"></span>
           </button>
         </div>
       </form>
       <a href="/survey" class="js-survey-link">Survey</a>
     `
-    form = div.querySelector('.js-conversation-form')
-    label = div.querySelector('.js-conversation-form-label')
-    input = div.querySelector('.js-conversation-form-input')
-    button = div.querySelector('.js-conversation-form-button')
-    button = div.querySelector('.js-conversation-form-button')
-    buttonResponseStatus = div.querySelector('.js-conversation-form-button__response-status')
-    errorsWrapper = div.querySelector('.js-conversation-form-errors-wrapper')
-    formGroup = div.querySelector('.js-conversation-form-group')
+    form = div.querySelector('.js-question-form')
+    label = div.querySelector('.js-question-form-label')
+    input = div.querySelector('.js-question-form-input')
+    button = div.querySelector('.js-question-form-button')
+    button = div.querySelector('.js-question-form-button')
+    buttonResponseStatus = div.querySelector('.js-question-form-button__response-status')
+    errorsWrapper = div.querySelector('.js-question-form-errors-wrapper')
+    formGroup = div.querySelector('.js-question-form-group')
     document.body.appendChild(div)
-    module = new window.GOVUK.Modules.ConversationForm(div)
+    module = new window.GOVUK.Modules.QuestionForm(div)
   })
 
   afterEach(function () {
@@ -112,7 +112,7 @@ describe('ConversationForm component', () => {
       expect(errorsWrapper.hidden).toBe(false)
 
       expect(errorsWrapper.innerHTML)
-        .toEqual(`<li class="app-c-conversation-form__error-message"><span class="govuk-visually-hidden">Error:</span>${presenceErrorMessage}</li>`)
+        .toEqual(`<li class="app-c-question-form__error-message"><span class="govuk-visually-hidden">Error:</span>${presenceErrorMessage}</li>`)
     })
 
     it('hides the regular label and references the error messages via aria-labelledby when the user input is empty', () => {
@@ -127,8 +127,8 @@ describe('ConversationForm component', () => {
       input.value = ''
       form.dispatchEvent(new Event('submit'))
 
-      expect(formGroup.classList).toContain('app-c-conversation-form__form-group--error')
-      expect(input.classList).toContain('app-c-conversation-form__input--error')
+      expect(formGroup.classList).toContain('app-c-question-form__form-group--error')
+      expect(input.classList).toContain('app-c-question-form__input--error')
     })
 
     it('removes any errors and error classes when input is valid', () => {
@@ -140,8 +140,8 @@ describe('ConversationForm component', () => {
 
       expect(errorsWrapper.hidden).toBe(true)
       expect(errorsWrapper.innerHTML).toBe('')
-      expect(formGroup.classList).not.toContain('app-c-conversation-form__form-group--error')
-      expect(input.classList).not.toContain('app-c-conversation-form__input--error')
+      expect(formGroup.classList).not.toContain('app-c-question-form__form-group--error')
+      expect(input.classList).not.toContain('app-c-question-form__input--error')
     })
 
     it('restores the regular label when input is valid', () => {
@@ -243,8 +243,8 @@ describe('ConversationForm component', () => {
       const event = new CustomEvent('question-rejected', errorDetail)
       div.dispatchEvent(event)
 
-      const expectedHtml = '<li class="app-c-conversation-form__error-message"><span class="govuk-visually-hidden">Error:</span>Error 1</li>' +
-        '<li class="app-c-conversation-form__error-message"><span class="govuk-visually-hidden">Error:</span>Error 2</li>'
+      const expectedHtml = '<li class="app-c-question-form__error-message"><span class="govuk-visually-hidden">Error:</span>Error 1</li>' +
+        '<li class="app-c-question-form__error-message"><span class="govuk-visually-hidden">Error:</span>Error 2</li>'
 
       expect(errorsWrapper.hidden).toBe(false)
       expect(errorsWrapper.innerHTML).toEqual(expectedHtml)
@@ -262,13 +262,13 @@ describe('ConversationForm component', () => {
       const event = new CustomEvent('question-rejected', errorDetail)
       div.dispatchEvent(event)
 
-      expect(formGroup.classList).toContain('app-c-conversation-form__form-group--error')
-      expect(input.classList).toContain('app-c-conversation-form__input--error')
+      expect(formGroup.classList).toContain('app-c-question-form__form-group--error')
+      expect(input.classList).toContain('app-c-question-form__input--error')
     })
 
     it('replaces any existing error messages', () => {
       errorsWrapper.hidden = false
-      errorsWrapper.innerHTML = '<li class="app-c-conversation-form__error-message"><span class="govuk-visually-hidden">Error:</span>Oops</li>'
+      errorsWrapper.innerHTML = '<li class="app-c-question-form__error-message"><span class="govuk-visually-hidden">Error:</span>Oops</li>'
       div.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
 
       expect(errorsWrapper.hidden).toBe(false)

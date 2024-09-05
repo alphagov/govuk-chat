@@ -11,7 +11,7 @@
 
 //= require components/answer-feedback
 //= require components/chat-header
-//= require components/conversation-form
+//= require components/question-form
 //= require modules/chat-conversation
 //= require modules/conversation-message-lists
 //= require modules/conversation-onboarding-flow

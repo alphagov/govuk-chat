@@ -1,29 +1,29 @@
 describe('ChatConversation module', () => {
-  let moduleElement, module, formComponent, form
+  let moduleElement, module, formContainer, form
   const longWaitForProgressiveDisclosure = 60000
 
   beforeEach(() => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
       <div class="js-conversation-message-lists">
-        <ul class="js-message-history-list"></ul>
-        <div class="js-new-messages-region">
-          <ul class="js-new-messages-list"></ul>
+        <ul class="js-conversation-message-history-list"></ul>
+        <div class="js-new-conversation-messages-container">
+          <ul class="js-new-conversation-messages-list"></ul>
         </div>
         <template class="js-loading-question"><li>Loading</li></template>
         <template class="js-loading-answer"><li>Loading</li></template>
       </div>
-      <div class="js-conversation-form-wrapper">
-        <form action="/conversation" class="js-conversation-form">
+      <div class="js-question-form-container">
+        <form action="/conversation" class="js-question-form">
           <input type="text" name="question" value="How can I setup a new business?">
-          <button class="js-conversation-form-button">Send</button>
+          <button class="js-question-form-button">Send</button>
         </form>
       </div>
     `
 
     document.body.appendChild(moduleElement)
-    formComponent = moduleElement.querySelector('.js-conversation-form-wrapper')
-    form = moduleElement.querySelector('.js-conversation-form')
+    formContainer = moduleElement.querySelector('.js-question-form-container')
+    form = moduleElement.querySelector('.js-question-form')
 
     module = new window.GOVUK.Modules.ChatConversation(moduleElement)
   })
@@ -46,14 +46,14 @@ describe('ChatConversation module', () => {
       const handleFormSubmissionSpy = spyOn(module, 'handleFormSubmission')
 
       module.init()
-      formComponent.dispatchEvent(new Event('submit'))
+      formContainer.dispatchEvent(new Event('submit'))
 
       expect(handleFormSubmissionSpy).toHaveBeenCalled()
     })
 
     describe('when initialised with existing new messages to indicate an onboarding status', () => {
       beforeEach(() => {
-        const newMessagesList = moduleElement.querySelector('.js-new-messages-list')
+        const newMessagesList = moduleElement.querySelector('.js-new-conversation-messages-list')
         newMessagesList.innerHTML = `
           <li class="js-conversation-message">Message 1</li>
           <li class="js-conversation-message">Message 2</li>
@@ -74,14 +74,14 @@ describe('ChatConversation module', () => {
         module.init()
 
         // using toHaveClass matcher was triggering a "stale element" error so using other matcher
-        expect(formComponent.classList).toContain('govuk-visually-hidden')
+        expect(formContainer.classList).toContain('govuk-visually-hidden')
 
         jasmine.clock().tick(longWaitForProgressiveDisclosure)
         jasmine.clock().uninstall()
 
         // timeout to ensure promise callbacks are executed
         window.setTimeout(() => {
-          expect(formComponent.classList).not.toContain('govuk-visually-hidden')
+          expect(formContainer.classList).not.toContain('govuk-visually-hidden')
           done()
         }, 0)
       })
@@ -102,7 +102,7 @@ describe('ChatConversation module', () => {
 
       beforeEach(() => {
         module.pendingAnswerUrl = '/answer'
-        formComponent.dataset.conversationFormModuleStarted = 'true'
+        formContainer.dataset.conversationFormModuleStarted = 'true'
         checkAnswerSpy = spyOn(module, 'checkAnswer')
       })
 
@@ -115,13 +115,13 @@ describe('ChatConversation module', () => {
       })
 
       it('starts checking for an answer and dispatches an event so the form is in the correct state', () => {
-        const formComponentEventSpy = spyOn(formComponent, 'dispatchEvent')
+        const formContainerEventSpy = spyOn(formContainer, 'dispatchEvent')
 
         module.init()
 
         expect(checkAnswerSpy).toHaveBeenCalled()
         const expectedEvent = jasmine.objectContaining({ type: 'question-accepted' })
-        expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
+        expect(formContainerEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
     })
 
@@ -132,18 +132,18 @@ describe('ChatConversation module', () => {
 
       it('starts checking for answer and changing form state once the form component is initialised', () => {
         const checkAnswerSpy = spyOn(module, 'checkAnswer')
-        const formComponentEventSpy = spyOn(formComponent, 'dispatchEvent').and.callThrough()
+        const formContainerEventSpy = spyOn(formContainer, 'dispatchEvent').and.callThrough()
 
         module.init()
 
         expect(checkAnswerSpy).not.toHaveBeenCalled()
-        expect(formComponentEventSpy).not.toHaveBeenCalled()
+        expect(formContainerEventSpy).not.toHaveBeenCalled()
 
-        formComponent.dispatchEvent(new Event('init'))
+        formContainer.dispatchEvent(new Event('init'))
 
         expect(checkAnswerSpy).toHaveBeenCalled()
         const expectedEvent = jasmine.objectContaining({ type: 'question-accepted' })
-        expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
+        expect(formContainerEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
     })
   })
@@ -216,7 +216,7 @@ describe('ChatConversation module', () => {
     })
 
     it('dispatches a question-pending event on the form component element', async () => {
-      const formEventSpy = spyOn(module.formComponent, 'dispatchEvent')
+      const formEventSpy = spyOn(module.formContainer, 'dispatchEvent')
 
       await module.handleFormSubmission(new Event('submit'))
 
@@ -240,12 +240,12 @@ describe('ChatConversation module', () => {
       })
 
       it('dispatches a "question-accepted" event on the form component element', async () => {
-        const formComponentEventSpy = spyOn(module.formComponent, 'dispatchEvent')
+        const formContainerEventSpy = spyOn(module.formContainer, 'dispatchEvent')
 
         await module.handleFormSubmission(new Event('submit'))
 
         const expectedEvent = jasmine.objectContaining({ type: 'question-accepted' })
-        expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
+        expect(formContainerEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
 
       it('starts the process to load an answer', async () => {
@@ -270,12 +270,12 @@ describe('ChatConversation module', () => {
       })
 
       it('dispatches a "question-rejected" event on the form component element', async () => {
-        const formComponentEventSpy = spyOn(module.formComponent, 'dispatchEvent')
+        const formContainerEventSpy = spyOn(module.formContainer, 'dispatchEvent')
 
         await module.handleFormSubmission(new Event('submit'))
 
         const expectedEvent = jasmine.objectContaining({ type: 'question-rejected', detail: { errorMessages: ['form error'] } })
-        expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
+        expect(formContainerEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
 
       it('delegates to messageLists to reset question loading', async () => {
@@ -365,12 +365,12 @@ describe('ChatConversation module', () => {
       })
 
       it('dispatches an "answer-received" event to the form component', async () => {
-        const formComponentEventSpy = spyOn(module.formComponent, 'dispatchEvent')
+        const formContainerEventSpy = spyOn(module.formContainer, 'dispatchEvent')
 
         await module.checkAnswer()
 
         const expectedEvent = jasmine.objectContaining({ type: 'answer-received' })
-        expect(formComponentEventSpy).toHaveBeenCalledWith(expectedEvent)
+        expect(formContainerEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
     })
 
@@ -440,21 +440,21 @@ describe('ChatConversation module', () => {
       expect(appendNewProgressivelyDisclosedMessagesSpy).toHaveBeenCalled()
     })
 
-    it('hides the formComponent prior to disclosing messages and then shows it after', done => {
+    it('hides the formContainer prior to disclosing messages and then shows it after', done => {
       jasmine.clock().install()
 
       module.init()
 
       moduleElement.dispatchEvent(event)
 
-      expect(formComponent).toHaveClass('govuk-visually-hidden')
+      expect(formContainer).toHaveClass('govuk-visually-hidden')
 
       jasmine.clock().tick(longWaitForProgressiveDisclosure)
       jasmine.clock().uninstall()
 
       // timeout to ensure promise callbacks are executed
       window.setTimeout(() => {
-        expect(formComponent).not.toHaveClass('govuk-visually-hidden')
+        expect(formContainer).not.toHaveClass('govuk-visually-hidden')
         done()
       }, 0)
     })

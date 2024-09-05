@@ -1,13 +1,13 @@
-describe('ConversationMessageLists module', () => {
+describe('conversationMessageLists module', () => {
   let moduleElement, module, messageHistoryList, newMessagesList, scrollIntoViewSpy,
     progressiveDisclosureDelay, questionLoadingTimeout
 
   beforeEach(() => {
     moduleElement = document.createElement('div')
     moduleElement.innerHTML = `
-      <ul class="js-message-history-list"></ul>
-      <div class="js-new-messages-region">
-        <ul class="js-new-messages-list"></ul>
+      <ul class="js-conversation-message-history-list"></ul>
+      <div class="js-new-conversation-messages-container">
+        <ul class="js-new-conversation-messages-list"></ul>
       </div>
       <template class="js-loading-question">
         <li>Loading question</li>
@@ -19,8 +19,8 @@ describe('ConversationMessageLists module', () => {
 
     moduleElement.dataset.progressiveDisclosureDelay = 2000
     document.body.appendChild(moduleElement)
-    messageHistoryList = moduleElement.querySelector('.js-message-history-list')
-    newMessagesList = moduleElement.querySelector('.js-new-messages-list')
+    messageHistoryList = moduleElement.querySelector('.js-conversation-message-history-list')
+    newMessagesList = moduleElement.querySelector('.js-new-conversation-messages-list')
 
     module = new window.GOVUK.Modules.ConversationMessageLists(moduleElement)
     progressiveDisclosureDelay = module.PROGRESSIVE_DISCLOSURE_DELAY
@@ -144,7 +144,7 @@ describe('ConversationMessageLists module', () => {
     })
 
     it('focuses the new messages region', () => {
-      const focusSpy = spyOn(module.newMessagesRegion, 'focus')
+      const focusSpy = spyOn(module.newMessagesContainer, 'focus')
       module.appendNewProgressivelyDisclosedMessages('<li>Message</li>')
       expect(focusSpy).toHaveBeenCalled()
     })
@@ -376,7 +376,7 @@ describe('ConversationMessageLists module', () => {
     })
 
     it('focuses the new messages region', () => {
-      const focusSpy = spyOn(module.newMessagesRegion, 'focus')
+      const focusSpy = spyOn(module.newMessagesContainer, 'focus')
 
       module.renderAnswer('<li>New answer</li>')
 

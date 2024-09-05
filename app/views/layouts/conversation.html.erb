@@ -29,22 +29,22 @@
 
 <% content_for :content do %>
   <main class="app-conversation-layout__main" id="content" role="main" data-module="conversation-onboarding-flow">
-    <%= tag.div(class: "app-conversation-layout__wrapper js-module-wrapper", data: @conversation_data_attributes) do %>
+    <%= tag.div(class: "app-conversation-layout__wrapper js-conversation-message-region", data: @conversation_data_attributes) do %>
       <div class="app-conversation-layout__message-container" aria-labelledby="chat-history" role="region">
-        <div class="app-conversation-layout__width-container">
+        <div class="app-conversation-layout__width-restrictor">
           <%= yield(:alerts) if content_for?(:alerts) %>
 
           <h1 class="govuk-visually-hidden js-title"><%= page_title %></h1>
 
           <div class="js-conversation-message-lists" data-progressive-disclosure-delay="<%= Rails.configuration.conversation_js_progressive_disclosure_delay || 2000 %>">
             <h2 id="chat-history" class="govuk-visually-hidden">Chat history</h2>
-            <ul class="app-conversation-layout__list js-message-history-list">
+            <ul class="app-conversation-layout__list js-conversation-message-history-list">
               <%= yield(:message_history) %>
             </ul>
 
-            <div tabindex="-1" role="region" aria-labelledby="new-messages" class="js-new-messages-region">
+            <div tabindex="-1" role="region" aria-labelledby="new-messages" class="js-new-conversation-messages-container">
               <h2 id="new-messages" class="govuk-visually-hidden">New messages</h2>
-              <ul class="app-conversation-layout__list js-new-messages-list">
+              <ul class="app-conversation-layout__list js-new-conversation-messages-list">
                 <%= yield(:new_messages) %>
               </ul>
             </div>
@@ -54,8 +54,8 @@
         </div>
       </div>
 
-      <div class="app-conversation-layout__form-container govuk-!-display-none-print">
-        <div class="app-conversation-layout__width-container js-form-container">
+      <div class="app-conversation-layout__form-region js-conversation-form-region govuk-!-display-none-print">
+        <div class="app-conversation-layout__width-restrictor js-conversation-form-width-restrictor">
           <%= yield(:form) %>
         </div>
       </div>

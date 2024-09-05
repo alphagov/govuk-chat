@@ -105,7 +105,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   def then_i_see_the_first_question_was_accepted
-    within(".js-new-messages-list") do
+    within(".js-new-conversation-messages-list") do
       expect(page).to have_content(@first_question)
     end
   end
@@ -113,25 +113,25 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   alias_method :when_i_see_the_first_question_was_accepted, :then_i_see_the_valid_question_was_accepted
 
   def then_i_see_an_answer_loading_message
-    within(".js-new-messages-list") do
+    within(".js-new-conversation-messages-list") do
       expect(page).to have_content("Loading your answer")
     end
   end
 
   def and_i_see_no_answer_loading_message
-    within(".js-new-messages-list") do
+    within(".js-new-conversation-messages-list") do
       expect(page).not_to have_content("Loading your answer")
     end
   end
 
   def then_i_see_a_question_loading_message
-    within(".js-new-messages-list") do
+    within(".js-new-conversation-messages-list") do
       expect(page).to have_content("Loading your question")
     end
   end
 
   def then_i_see_no_question_loading_message
-    within(".js-new-messages-list") do
+    within(".js-new-conversation-messages-list") do
       expect(page).not_to have_content("Loading your question")
     end
   end
@@ -160,7 +160,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   def then_i_see_the_second_question_was_accepted
-    within(".js-new-messages-list") do
+    within(".js-new-conversation-messages-list") do
       expect(page).to have_content(@second_question)
     end
   end
