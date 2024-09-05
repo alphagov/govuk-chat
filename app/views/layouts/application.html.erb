@@ -10,6 +10,14 @@
   main_classes << yield(:main_class)
   browser_title = (content_for?(:browser_title) ? yield(:browser_title) : yield(:title)).presence
   page_title = (content_for?(:page_title) ? yield(:page_title) : yield(:title)).presence
+
+  # as this layout is used for exceptions, we should cope with any errors
+  begin
+    early_access_user = current_early_access_user
+  rescue StandardError => e
+    GovukError.notify(e)
+    early_access_user = nil
+  end
 %>
 <%= tag.html(class: html_classes, lang: "en") do %>
   <head>
@@ -44,7 +52,7 @@
     } %>
 
     <%= render "components/chat_header", {
-      logo_href: current_early_access_user ? show_conversation_path : homepage_path,
+      logo_href: early_access_user ? show_conversation_path : homepage_path,
       navigation_items: [
         {
           text: "About",
