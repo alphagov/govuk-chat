@@ -68,4 +68,21 @@ RSpec.describe Answer do
         .and include("sources" => answer.sources.map(&:serialize_for_export))
     end
   end
+
+  describe "#assign_metrics" do
+    it "updates the given namespace with the values" do
+      answer = create(:answer)
+
+      answer.assign_metrics(
+        "answer_composition", { duration: 1.1, llm_tokens: { prompt: 1, completion: 2 } }
+      )
+
+      expect(answer.metrics).to eq(
+        "answer_composition" => {
+          duration: 1.1,
+          llm_tokens: { prompt: 1, completion: 2 },
+        },
+      )
+    end
+  end
 end

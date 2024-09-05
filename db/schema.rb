@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_03_074927) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_04_151153) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -82,6 +82,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_03_074927) do
     t.enum "question_routing_label", enum_type: "question_routing_label"
     t.text "question_routing_llm_response"
     t.float "question_routing_confidence_score"
+    t.jsonb "metrics"
     t.index ["created_at"], name: "index_answers_on_created_at"
     t.index ["question_id"], name: "index_answers_on_question_id", unique: true
   end

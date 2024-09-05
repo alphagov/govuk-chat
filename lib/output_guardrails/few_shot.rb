@@ -1,12 +1,13 @@
 module OutputGuardrails
   class FewShot
-    Result = Data.define(:triggered, :guardrails, :llm_response)
+    Result = Data.define(:triggered, :guardrails, :llm_response, :llm_token_usage)
     class ResponseError < StandardError
-      attr_reader :llm_response
+      attr_reader :llm_response, :llm_token_usage
 
-      def initialize(message, llm_response)
+      def initialize(message, llm_response, llm_token_usage)
         super(message)
         @llm_response = llm_response
+        @llm_token_usage = llm_token_usage
       end
     end
 
@@ -34,7 +35,9 @@ module OutputGuardrails
 
     def create_result
       llm_response = openai_response.dig("choices", 0, "message", "content")
-      raise ResponseError.new("Error parsing guardrail response", llm_response) unless response_pattern =~ llm_response
+      llm_token_usage = openai_response["usage"]
+
+      raise ResponseError.new("Error parsing guardrail response", llm_response, llm_token_usage) unless response_pattern =~ llm_response
 
       parts = llm_response.split(" | ")
       triggered = parts.first.chomp == "True"
@@ -43,7 +46,7 @@ module OutputGuardrails
                    else
                      []
                    end
-      Result.new(triggered:, llm_response:, guardrails:)
+      Result.new(triggered:, llm_response:, guardrails:, llm_token_usage:)
     end
 
     def openai_response

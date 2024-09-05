@@ -12,6 +12,16 @@ RSpec.describe AnswerComposition::Pipeline::SearchResultFetcher, :chunked_conten
       described_class.call(context)
       expect(context.search_results).to eq(search_results.results)
     end
+
+    it "assigns metrics to the answer" do
+      allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
+
+      described_class.call(context)
+
+      expect(context.answer.metrics["search_results"]).to match({
+        duration: 1.5,
+      })
+    end
   end
 
   context "when no search results are found" do
@@ -22,6 +32,16 @@ RSpec.describe AnswerComposition::Pipeline::SearchResultFetcher, :chunked_conten
       expect { described_class.call(context) }.to throw_symbol(:abort)
         .and change { context.answer.status }.to("abort_no_govuk_content")
         .and change { context.answer.message }.to(Answer::CannedResponses::NO_CONTENT_FOUND_REPONSE)
+    end
+
+    it "assigns metrics to the answer" do
+      allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
+
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+
+      expect(context.answer.metrics["search_results"]).to match({
+        duration: 1.5,
+      })
     end
   end
 end

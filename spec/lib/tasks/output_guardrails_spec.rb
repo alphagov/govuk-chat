@@ -6,6 +6,7 @@ RSpec.describe "rake guardrails tasks" do
         llm_response: "False | None",
         triggered: false,
         guardrails: [],
+        llm_token_usage: {},
       )
     end
     let(:true_response) do
@@ -13,6 +14,7 @@ RSpec.describe "rake guardrails tasks" do
         llm_response: 'True | "1"',
         triggered: true,
         guardrails: %w[sensitive_financial_matters],
+        llm_token_usage: {},
       )
     end
     let(:model_name) { OutputGuardrails::FewShot::OPENAI_MODEL }

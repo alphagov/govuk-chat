@@ -104,4 +104,15 @@ RSpec.describe AnswerComposition::Composer do
       end
     end
   end
+
+  it "assigns metrics to the answer" do
+    answer = create(:answer)
+    allow(AnswerComposition::OpenAIAnswer).to receive(:call).and_return(answer)
+    allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
+
+    described_class.call(answer.question)
+    expect(answer.metrics["answer_composition"]).to match({
+      duration: 1.5,
+    })
+  end
 end

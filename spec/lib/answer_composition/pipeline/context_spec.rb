@@ -51,6 +51,13 @@ RSpec.describe AnswerComposition::Pipeline::Context do
 
       expect(instance.answer.sources.map(&:used)).to all(be false)
     end
+
+    it "assigns metrics" do
+      instance = described_class.new(build(:question))
+      args = { message: "answer", metrics: { "namespace" => { value: 1 } } }
+      instance.abort_pipeline(**args)
+      expect(instance.answer.metrics).to eq("namespace" => { value: 1 })
+    end
   end
 
   describe "#abort_pipeline!" do

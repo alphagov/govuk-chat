@@ -85,6 +85,22 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
         expect(context.answer.sources.map(&:used)).to eq([true, false])
       end
 
+      it "assigns metrics to the answer" do
+        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
+        stub_openai_chat_completion_structured_response(
+          expected_message_history,
+          structured_response,
+        )
+
+        described_class.call(context)
+
+        expect(context.answer.metrics["structured_answer"]).to eq({
+          duration: 1.5,
+          llm_prompt_tokens: 13,
+          llm_completion_tokens: 7,
+        })
+      end
+
       context "and answered is 'false'" do
         let(:structured_response) do
           {
@@ -105,6 +121,22 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
             .and change { context.answer.message }.to(Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE)
             .and change { context.answer.llm_response }.to(structured_response)
         end
+
+        it "assigns metrics to the answer" do
+          allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
+          stub_openai_chat_completion_structured_response(
+            expected_message_history,
+            structured_response,
+          )
+
+          expect { described_class.call(context) }.to throw_symbol(:abort)
+
+          expect(context.answer.metrics["structured_answer"]).to eq({
+            duration: 1.5,
+            llm_prompt_tokens: 13,
+            llm_completion_tokens: 7,
+          })
+        end
       end
     end
 
@@ -115,6 +147,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
       end
 
       it "aborts the pipeline" do
+        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
         stub_openai_chat_completion_structured_response(
           expected_message_history,
           structured_response,
@@ -125,6 +158,13 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           error_message: "class: JSON::Schema::ValidationError message: The property '#/' did not contain a required property of 'answered'",
           llm_response: structured_response,
+          metrics: {
+            "structured_answer" => {
+              duration: 1.5,
+              llm_prompt_tokens: 13,
+              llm_completion_tokens: 7,
+            },
+          },
         )
 
         described_class.call(context)
@@ -138,6 +178,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
       end
 
       it "aborts the pipeline" do
+        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
         stub_openai_chat_completion_structured_response(
           expected_message_history,
           structured_response,
@@ -148,6 +189,13 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           error_message: "class: JSON::ParserError message: unexpected token at 'this will blow up'",
           llm_response: structured_response,
+          metrics: {
+            "structured_answer" => {
+              duration: 1.5,
+              llm_prompt_tokens: 13,
+              llm_completion_tokens: 7,
+            },
+          },
         )
 
         described_class.call(context)
