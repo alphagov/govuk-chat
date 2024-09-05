@@ -1,5 +1,5 @@
 class WaitingListUnsubscribeController < BaseController
-  skip_before_action :ensure_early_access_user_if_auth_required!
+  skip_before_action :ensure_early_access_user_if_required
 
   def unsubscribe
     return head(:ok) if request.head?

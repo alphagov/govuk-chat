@@ -1,7 +1,7 @@
 class ErrorsController < BaseController
   skip_before_action :verify_authenticity_token
   skip_before_action :ensure_signon_user_if_required
-  skip_before_action :ensure_early_access_user_if_auth_required!
+  skip_before_action :ensure_early_access_user_if_required
 
   def bad_request
     render status: :bad_request, formats: :html

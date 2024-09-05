@@ -1,5 +1,5 @@
 class SignUpController < BaseController
-  skip_before_action :ensure_early_access_user_if_auth_required!
+  skip_before_action :ensure_early_access_user_if_required
   before_action :redirect_to_homepage_if_auth_not_required
   before_action :redirect_to_homepage_if_signed_in
   before_action :ensure_sign_up_flow_position
