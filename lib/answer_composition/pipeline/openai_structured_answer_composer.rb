@@ -10,11 +10,14 @@ module AnswerComposition::Pipeline
     end
 
     def call
+      start_time = context.current_time
+
       unless parsed_structured_response["answered"]
         return context.abort_pipeline!(
           message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
           status: "abort_llm_cannot_answer",
           llm_response: raw_structured_response,
+          metrics: { "structured_answer" => build_metrics(start_time) },
         )
       end
 
@@ -27,12 +30,15 @@ module AnswerComposition::Pipeline
         status: "success",
         llm_response: raw_structured_response,
       )
+
+      context.answer.assign_metrics("structured_answer", build_metrics(start_time))
     rescue JSON::Schema::ValidationError, JSON::ParserError => e
       context.abort_pipeline!(
         message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
         status: "error_invalid_llm_response",
         error_message: error_message(e),
         llm_response: raw_structured_response,
+        metrics: { "structured_answer" => build_metrics(start_time) },
       )
     end
 
@@ -55,7 +61,7 @@ module AnswerComposition::Pipeline
     end
 
     def openai_response
-      openai_client.chat(
+      @openai_response ||= openai_client.chat(
         parameters: {
           model: OPENAI_MODEL,
           messages:,
@@ -135,6 +141,14 @@ module AnswerComposition::Pipeline
       end
 
       context.update_sources_from_exact_paths_used(source_urls)
+    end
+
+    def build_metrics(start_time)
+      {
+        duration: context.current_time - start_time,
+        llm_prompt_tokens: openai_response.dig("usage", "prompt_tokens"),
+        llm_completion_tokens: openai_response.dig("usage", "completion_tokens"),
+      }
     end
   end
 end
