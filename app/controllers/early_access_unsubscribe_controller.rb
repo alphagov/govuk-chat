@@ -1,4 +1,4 @@
-class RevokeAccessController < BaseController
+class EarlyAccessUnsubscribeController < BaseController
   skip_before_action :ensure_early_access_user_if_auth_required!
 
   def revoke
