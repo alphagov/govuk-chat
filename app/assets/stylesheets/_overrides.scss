@@ -1,3 +1,8 @@
+.govuk-visually-hidden {
+  // Required to prevent visually hidden content from causing scrollbars to appear
+  translate: -1px -1px;
+}
+
 // Footer overrides
 .gem-c-layout-footer {
   .govuk-footer__inline-list {

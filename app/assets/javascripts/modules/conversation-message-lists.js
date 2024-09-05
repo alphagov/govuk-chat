@@ -32,10 +32,9 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
         const nextMessageSelector = `${this.MESSAGE_SELECTOR}.govuk-visually-hidden`
 
-        const interval = window.setInterval(() => {
+        const showMessage = () => {
           const messageToShow = this.newMessagesList.querySelector(nextMessageSelector)
           if (!messageToShow) {
-            window.clearInterval(interval)
             resolve()
             return
           }
@@ -43,7 +42,10 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
           messageToShow.classList.add('app-c-conversation-message--fade-in')
           messageToShow.classList.remove('govuk-visually-hidden')
           this.scrollIntoView(messageToShow)
-        }, this.PROGRESSIVE_DISCLOSURE_DELAY)
+          window.setTimeout(showMessage, this.PROGRESSIVE_DISCLOSURE_DELAY)
+        }
+
+        window.setTimeout(showMessage, this.PROGRESSIVE_DISCLOSURE_DELAY / 2)
       })
     }
 

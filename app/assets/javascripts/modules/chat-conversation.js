@@ -5,6 +5,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
   class ChatConversation {
     constructor (module) {
       this.module = module
+      this.conversationFormRegion = this.module.querySelector('.js-conversation-form-region')
       this.formContainer = this.module.querySelector('.js-question-form-container')
       this.form = this.module.querySelector('.js-question-form')
       this.messageLists = new Modules.ConversationMessageLists(this.module.querySelector('.js-conversation-message-lists'))
@@ -18,9 +19,10 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
       // existing new messages indicates we are in onboarding
       if (this.messageLists.hasNewMessages()) {
-        this.formContainer.classList.add('govuk-visually-hidden')
+        this.conversationFormRegion.classList.add('govuk-visually-hidden')
         this.messageLists.progressivelyDiscloseMessages().then(() => {
-          this.formContainer.classList.remove('govuk-visually-hidden')
+          this.conversationFormRegion.classList.add('app-conversation-layout__form-region--slide-in')
+          this.conversationFormRegion.classList.remove('govuk-visually-hidden')
           this.messageLists.scrollToLastNewMessage()
         })
       } else {
@@ -131,9 +133,12 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     async conversationAppend (event) {
-      this.formContainer.classList.add('govuk-visually-hidden')
+      this.conversationFormRegion.classList.add('govuk-visually-hidden')
+      this.conversationFormRegion.classList.remove('app-conversation-layout__form-region--slide-in')
       await this.messageLists.appendNewProgressivelyDisclosedMessages(event.detail.html)
-      this.formContainer.classList.remove('govuk-visually-hidden')
+      this.conversationFormRegion.classList.add('app-conversation-layout__form-region--slide-in')
+      this.conversationFormRegion.classList.remove('app-conversation-layout__form-region--slide-out')
+      this.conversationFormRegion.classList.remove('govuk-visually-hidden')
       this.messageLists.scrollToLastNewMessage()
     }
 
