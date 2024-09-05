@@ -21,6 +21,22 @@ RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" 
       get homepage_path
       expect(response.cookies).to be_empty
     end
+
+    context "and the user is signed in" do
+      before { Settings.instance.update!(public_access_enabled: true) }
+      include_context "when signed in"
+
+      it "prevents customisation of the layout based on signed in status" do
+        get onboarding_limitations_path
+        expect(response.body)
+          .to have_selector("a.app-c-header__link[href='#{show_conversation_path}']")
+
+        Settings.instance.update!(public_access_enabled: false)
+        get onboarding_limitations_path
+        expect(response.body)
+          .to have_selector("a.app-c-header__link[href='#{homepage_path}']")
+      end
+    end
   end
 
   context "when public_access_enabled is false and downtime_type is temporary" do

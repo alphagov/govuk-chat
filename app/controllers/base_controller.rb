@@ -22,6 +22,8 @@ private
   end
 
   def current_early_access_user
+    return unless settings.public_access_enabled
+
     @current_early_access_user ||= authenticate_early_access_user
   end
 
