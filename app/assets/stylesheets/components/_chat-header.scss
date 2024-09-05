@@ -123,7 +123,7 @@
 
 .app-c-header__container {
   border-bottom: govuk-spacing(2) solid govuk-colour("yellow");
-  
+
   @include govuk-media-query($until: desktop) {
     padding-bottom: govuk-spacing(2);
   }
@@ -171,13 +171,14 @@
 }
 
 .app-c-header__button {
-  @include govuk-typography-common;
-  @include govuk-typography-weight-bold($important: false);
   font-size: 16px; // directly set the font size to prevent govuk-font mixins from reducing it on smaller screens
   background: none;
   color: govuk-colour("white");
   border: none;
   padding: 0;
+
+  @include govuk-typography-common;
+  @include govuk-typography-weight-bold($important: false);
 
   &:hover {
     text-decoration: underline;
