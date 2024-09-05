@@ -53,6 +53,17 @@ RSpec.describe OutputGuardrails::FewShot do
              ))
     end
 
+    it "returns the LLM token usage" do
+      stub_openai_output_guardrail(input)
+      result = described_class.call(input)
+
+      expect(result.llm_token_usage).to eq({
+        "prompt_tokens" => 13,
+        "completion_tokens" => 7,
+        "total_tokens" => 20,
+      })
+    end
+
     context "when the OpenAI response format is incorrect" do
       it "throws a AnswerComposition::OutputGuardrails::ResponseError" do
         guardrail_result = 'False | "1, 2"'

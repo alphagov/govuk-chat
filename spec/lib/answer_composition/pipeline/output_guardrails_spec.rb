@@ -13,6 +13,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
         triggered: false,
         guardrails: [],
         llm_response: "False | None",
+        llm_token_usage: { "prompt_tokens" => 13, "completion_tokens" => 7 },
       )
     end
 
@@ -36,6 +37,18 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
     it "sets the output_guardrail_llm_response" do
       expect { described_class.call(context) }.to change(context.answer, :output_guardrail_llm_response).to("False | None")
     end
+
+    it "assigns metrics to the answer" do
+      allow(context).to receive(:current_time).and_return(100.0, 101.5)
+
+      described_class.call(context)
+
+      expect(context.answer.metrics["output_guardrails"]).to eq({
+        duration: 1.5,
+        llm_prompt_tokens: 13,
+        llm_completion_tokens: 7,
+      })
+    end
   end
 
   context "when the guardrails are triggered" do
@@ -44,6 +57,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
         triggered: true,
         guardrails: %w[political],
         llm_response: 'True | "3"',
+        llm_token_usage: { "prompt_tokens" => 13, "completion_tokens" => 7 },
       )
     end
 
@@ -60,6 +74,18 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
         output_guardrail_llm_response: 'True | "3"',
       )
     end
+
+    it "assigns metrics to the answer" do
+      allow(context).to receive(:current_time).and_return(100.0, 101.5)
+
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+
+      expect(context.answer.metrics["output_guardrails"]).to eq({
+        duration: 1.5,
+        llm_prompt_tokens: 13,
+        llm_completion_tokens: 7,
+      })
+    end
   end
 
   context "when a FewShot::ResponseError occurs during the FewShot call" do
@@ -67,7 +93,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
 
     before do
       allow(OutputGuardrails::FewShot).to receive(:call)
-        .and_raise(OutputGuardrails::FewShot::ResponseError.new("An error occurred", 'False | "1, 2"'))
+        .and_raise(OutputGuardrails::FewShot::ResponseError.new("An error occurred", 'False | "1, 2"', { "prompt_tokens" => 13, "completion_tokens" => 7 }))
     end
 
     it "aborts the pipeline and updates the answer's status with an error message" do
@@ -78,6 +104,18 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
         output_guardrail_status: "error",
         output_guardrail_llm_response: 'False | "1, 2"',
       )
+    end
+
+    it "assigns metrics to the answer" do
+      allow(context).to receive(:current_time).and_return(100.0, 101.5)
+
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+
+      expect(context.answer.metrics["output_guardrails"]).to eq({
+        duration: 1.5,
+        llm_prompt_tokens: 13,
+        llm_completion_tokens: 7,
+      })
     end
   end
 end
