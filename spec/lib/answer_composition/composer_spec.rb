@@ -102,6 +102,14 @@ RSpec.describe AnswerComposition::Composer do
         expect(GovukError).to receive(:notify).with(StandardError)
         result
       end
+
+      it "assigns metrics to the answer" do
+        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
+
+        expect(result.metrics["answer_composition"]).to match({
+          "duration" => 1.5,
+        })
+      end
     end
   end
 
