@@ -1,4 +1,4 @@
-RSpec.describe "Sign ups" do
+RSpec.describe "Sign up" do
   scenario "new user signs up" do
     given_sign_ups_are_enabled
 
@@ -10,39 +10,6 @@ RSpec.describe "Sign ups" do
 
     when_i_click_the_link_in_the_email
     then_i_arrive_on_the_onboarding_limitations_page
-  end
-
-  scenario "returning user signs in" do
-    given_sign_ups_are_enabled
-    and_i_am_a_returning_user
-
-    when_i_visit_the_homepage
-    and_i_enter_my_email_address
-    then_i_am_told_i_have_been_sent_an_email
-
-    when_i_click_the_link_in_the_email
-    then_i_arrive_on_the_onboarding_limitations_page
-  end
-
-  scenario "early access user unsubscribes" do
-    given_sign_ups_are_enabled
-    and_i_am_a_returning_user
-
-    when_i_visit_the_homepage
-    and_i_enter_my_email_address
-    then_i_am_told_i_have_been_sent_an_email
-
-    when_i_click_the_unsubscribe_link_in_the_email
-    then_i_see_my_early_access_account_has_been_removed
-  end
-
-  scenario "revoked user attempts to sign in" do
-    given_sign_ups_are_enabled
-    and_i_am_a_returning_user_with_revoked_access
-
-    when_i_visit_the_homepage
-    and_i_enter_my_email_address
-    then_i_am_told_i_do_not_have_access
   end
 
   scenario "signups are disabled by an admin mid flow" do
@@ -99,7 +66,7 @@ RSpec.describe "Sign ups" do
   end
 
   def and_i_enter_my_email_address
-    fill_in "Enter your email to sign up or get a new link for GOV.UK Chat", with: @email ||= "user@test.com"
+    fill_in "Enter your email to sign up or get a new link for GOV.UK Chat", with: "user@test.com"
     click_on "Get started"
   end
 
@@ -136,28 +103,9 @@ RSpec.describe "Sign ups" do
     expect(page).to have_content("Introduction to GOV.UK Chat and its limitations")
   end
 
-  def and_i_am_a_returning_user
-    user = create(:early_access_user)
-    @email = user.email
-  end
-
-  def and_i_am_a_returning_user_with_revoked_access
-    user = create(:early_access_user, :revoked)
-    @email = user.email
-  end
-
-  def then_i_see_my_early_access_account_has_been_removed
-    expect(page).to have_content("Your access has been removed")
-    expect(EarlyAccessUser.exists?(email: @email)).to be(false)
-  end
-
   def then_i_see_my_waiting_list_place_has_been_removed
     expect(page).to have_content("You’ve been removed from the waitlist")
     expect(WaitingListUser.exists?(email: @email)).to be(false)
-  end
-
-  def then_i_am_told_i_do_not_have_access
-    expect(page).to have_content("You do not have access to GOV.UK Chat.")
   end
 
   def and_an_admin_toggles_off_signups
