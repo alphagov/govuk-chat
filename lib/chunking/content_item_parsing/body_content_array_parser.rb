@@ -7,6 +7,7 @@ module Chunking::ContentItemParsing
 
     SCHEMAS_TO_DOCUMENT_TYPE_CHECK = {
       "answer" => ANY_DOCUMENT_TYPE,
+      "help_page" => ANY_DOCUMENT_TYPE,
       "specialist_document" => lambda { |document_type|
         ALLOWED_SPECIALIST_DOCUMENT_TYPES.include?(document_type)
       },
