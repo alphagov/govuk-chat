@@ -88,7 +88,13 @@ For a schema to be supported by GOV.UK Chat it needs to be registered with a cor
 
 To add a new schema you will have to establish what HTML from the Content Item is appropriate to be indexed into search for GOV.UK Chat. If there isn't any, then it probably shouldn't be added.
 
-Lots of GOV.UK Content have only one field that needs to be indexed `details->body`. We have a parser class already for this field ([`BodyContentParser`](../lib/chunking/content_item_parsing/body_content_parser.rb)) so to add an additional schema that only uses this field then we just need to add the schema name to the list of schemas already supported for this parser.
+Lots of GOV.UK Content have only one field that needs to be indexed `details->body`.
+
+The publishing API has 2 different formats for the body - you need to check [the publisher content schema](https://docs.publishing.service.gov.uk/content-schemas/help_page.html#publisher-content-schema)
+
+If `body` is a string we have a parser class already for this field ([`BodyContentParser`](../lib/chunking/content_item_parsing/body_content_parser.rb)) so to add an additional schema that only uses this field then we just need to add the schema name to the list of schemas already supported for this parser.
+
+If `body`  is an array with markdown and html versions - use [`BodyContentArrayParser`](../lib/chunking/content_item_parsing/body_content_array_parser.rb)
 
 If you have a schema that has HTML in different fields you'll need to create a new parser class in the [`Chunking::ContentItemParsing`](../lib/chunking/content_item_parsing/) namespace, which inherits from [`Chunking::ContentItemParsing::BaseParser`](../lib/chunking/content_item_parsing/base_parser.rb). This parser will need to implement a `.call` method and the class will need to concatenate the HTML together before calling the `build_chunks` method to convert that HTML into chunks. An example of this can be seen in [`Chunking::ContentItemParsing::TransactionParser`](../lib/chunking/content_item_parsing/transaction_parser.rb).
 
