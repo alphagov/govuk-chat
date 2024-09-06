@@ -11,6 +11,11 @@ RSpec.describe OpenAIClient do # rubocop:disable RSpec/SpecFilePathFormat
       expect(described_class.build).to be_an_instance_of(OpenAI::Client)
     end
 
+    it "sets the request timeout to the configuration value" do
+      allow(Rails.configuration).to receive(:openai_request_timeout).and_return(10)
+      expect(described_class.build.request_timeout).to eq(10)
+    end
+
     it "raises an OpenAIClient::ClientError when a client error occurs" do
       stub_request(:post, /openai\.com/).to_return(status: 400)
 
