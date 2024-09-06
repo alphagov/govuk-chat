@@ -73,7 +73,7 @@ RSpec.describe "Sign ups" do
   end
 
   def and_i_enter_my_email_address
-    fill_in "To get started, enter your email address.", with: @email ||= "user@test.com"
+    fill_in "Enter your email to sign up or get a new link for GOV.UK Chat", with: @email ||= "user@test.com"
     click_on "Get started"
   end
 
