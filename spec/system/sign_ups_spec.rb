@@ -137,7 +137,7 @@ RSpec.describe "Sign ups" do
 
   def and_i_receive_an_email_telling_me_i_am_on_the_waitlist
     expect(ActionMailer::Base.deliveries.last.body.raw_source)
-      .to include("Thanks for joining our early access waitlist.")
+      .to include("You've been added to the GOV.UK Chat waitlist")
   end
 
   def then_i_am_told_i_have_been_prevented_access

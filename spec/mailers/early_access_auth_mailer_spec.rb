@@ -36,6 +36,8 @@ RSpec.describe EarlyAccessAuthMailer do
   describe ".waitlist" do
     let(:user) { create(:waiting_list_user) }
     let(:email) { mailer.waitlist(user) }
+    let(:id) { user.id }
+    let(:token) { user.unsubscribe_token }
 
     it_behaves_like "sets reply_to_id"
 
@@ -44,7 +46,11 @@ RSpec.describe EarlyAccessAuthMailer do
     end
 
     it "informs the user we will email then when they can access chat" do
-      expect(email.body).to include "We will send you another email when you can access GOV.UK Chat."
+      expect(email.body).to include("Please check your emails regularly")
+    end
+
+    it "includes a link to unsubscribe" do
+      expect(email.body).to include(waiting_list_user_unsubscribe_url(id:, token:))
     end
   end
 end
