@@ -48,7 +48,14 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       button.addEventListener('click', e => window.print())
 
       li.appendChild(button)
-      this.navList.appendChild(li)
+
+      const linkToInsertAbove = this.navList.querySelector('[data-after-print=true]')
+
+      if (linkToInsertAbove) {
+        this.navList.insertBefore(li, linkToInsertAbove.closest('li'))
+      } else {
+        this.navList.appendChild(li)
+      }
     }
   }
 
