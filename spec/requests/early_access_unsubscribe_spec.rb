@@ -1,4 +1,4 @@
-RSpec.describe "RevokeAccessController" do
+RSpec.describe "EarlyAccessUnsubscribeController" do
   describe "GET :unsubscribe" do
     let(:user) { create(:early_access_user) }
     let(:id) { user.id }
