@@ -2,7 +2,7 @@ describe('QuestionForm component', () => {
   'use strict'
 
   let div, form, formGroup, input, button, buttonResponseStatus, presenceErrorMessage,
-    lengthErrorMessage, errorsWrapper, module
+    lengthErrorMessage, errorsWrapper, module, remainingQuestionsHint
 
   beforeEach(function () {
     div = document.createElement('div')
@@ -17,6 +17,7 @@ describe('QuestionForm component', () => {
         <div class="js-question-form-group">
           <ul id="create_question_user_question-error" class="js-question-form-errors-wrapper" hidden="true"></ul>
           <input type="text" class="js-question-form-input govuk-js-character-count" id="create_question_user_question" value="What is the VAT rate?">
+          <div class="js-remaining-questions-hint"></div>
           <div id="create_question_user_question-info" class="gem-c-hint govuk-hint govuk-visually-hidden">
             Please limit your question to 300 characters.
           </div>
@@ -35,6 +36,7 @@ describe('QuestionForm component', () => {
     buttonResponseStatus = div.querySelector('.js-question-form-button__response-status')
     errorsWrapper = div.querySelector('.js-question-form-errors-wrapper')
     formGroup = div.querySelector('.js-question-form-group')
+    remainingQuestionsHint = form.querySelector('.js-remaining-questions-hint')
     document.body.appendChild(div)
     module = new window.GOVUK.Modules.QuestionForm(div)
   })
@@ -190,6 +192,26 @@ describe('QuestionForm component', () => {
       div.dispatchEvent(new Event('question-accepted'))
 
       expect(form.innerHTML).not.toContain('You have 20 characters remaining')
+    })
+
+    describe('when the remaining questions event attribute exists', () => {
+      it('updates the remaining questions hint', () => {
+        div.dispatchEvent(new CustomEvent(
+          'question-accepted',
+          { detail: { remainingQuestionsCopy: '6 messages left' } }
+        ))
+
+        expect(remainingQuestionsHint.textContent).toEqual('6 messages left')
+      })
+
+      it('does nothing if the value is empty', () => {
+        div.dispatchEvent(new CustomEvent(
+          'question-accepted',
+          { detail: { remainingQuestionsCopy: '' } }
+        ))
+
+        expect(remainingQuestionsHint.textContent).toEqual('')
+      })
     })
   })
 
