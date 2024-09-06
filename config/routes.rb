@@ -30,8 +30,7 @@ Rails.application.routes.draw do
 
     get "waiting-list-unsubscribe/:id/:token", to: "waiting_list_unsubscribe#unsubscribe", as: :waiting_list_user_unsubscribe
     post "waiting-list-unsubscribe/:id/:token", to: "waiting_list_unsubscribe#unsubscribe_confirm", as: :waiting_list_user_unsubscribe_confirm
-    get "early-access-unsubscribe/:token", to: "early_access_unsubscribe#revoke", as: :early_access_user_unsubscribe
-    post "early-access-unsubscribe/:token", to: "early_access_unsubscribe#revoke_confirm", as: :early_access_user_unsubscribe_confirm
+    get "early-access-unsubscribe/:id/:token", to: "early_access_unsubscribe#unsubscribe", as: :early_access_user_unsubscribe
 
     scope :onboarding do
       get "", to: "onboarding#limitations", as: :onboarding_limitations
