@@ -135,4 +135,58 @@ RSpec.describe EarlyAccessUser do
       end
     end
   end
+
+  describe "#unlimited_question_allowance?" do
+    context "when the question limit is present" do
+      it "returns true if the question limit is zero" do
+        user = build(:early_access_user, question_limit: 0)
+        expect(user.unlimited_question_allowance?).to be(true)
+      end
+
+      it "returns false if the question limit is not zero" do
+        user = build(:early_access_user, question_limit: 5)
+        expect(user.unlimited_question_allowance?).to be(false)
+      end
+    end
+
+    context "when the question limit is nil" do
+      let(:user) { build(:early_access_user, question_limit: nil) }
+
+      it "returns true if the globally configured limit is zero" do
+        allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(0)
+        expect(user.unlimited_question_allowance?).to be(true)
+      end
+
+      it "returns false if the globally configured limit is not zero" do
+        allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(10)
+        expect(user.unlimited_question_allowance?).to be(false)
+      end
+    end
+  end
+
+  describe "#number_of_questions_remaining" do
+    it "raises an error if the user has an unlimited question allowance" do
+      user = build(:early_access_user, question_limit: 0)
+      expect { user.number_of_questions_remaining }.to raise_error(RuntimeError, "User has unlimited questions allowance")
+    end
+
+    it "returns the number of questions remaining if the question limit is not nil" do
+      user = build(:early_access_user, question_limit: 20, questions_count: 2)
+      expect(user.number_of_questions_remaining).to eq(18)
+    end
+
+    it "returns the number of questions remaining if the question limit is nil" do
+      allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(50)
+
+      user = build(:early_access_user, question_limit: nil, questions_count: 10)
+      expect(user.number_of_questions_remaining).to eq(40)
+    end
+
+    it "caps the number of questions remaining at 0" do
+      allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(50)
+
+      user = build(:early_access_user, question_limit: nil, questions_count: 100)
+      expect(user.number_of_questions_remaining).to eq(0)
+    end
+  end
 end

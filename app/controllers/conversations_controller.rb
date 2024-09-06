@@ -137,6 +137,7 @@ private
       ),
       answer_url: answer_question_path(question),
       error_messages: [],
+      remaining_questions_copy: remaining_questions_copy(question.conversation.user),
     }
   end
 
@@ -185,5 +186,13 @@ private
       format.html { redirect_to onboarding_limitations_path }
       format.json { render json: { error: "Onboarding incomplete" }, status: :bad_request }
     end
+  end
+
+  def remaining_questions_copy(user)
+    return "" if user.nil?
+    return "" if user.unlimited_question_allowance?
+    return "" if user.number_of_questions_remaining > Rails.configuration.conversations.question_warning_threshold
+
+    "#{view_context.pluralize(user.number_of_questions_remaining, 'message')} left"
   end
 end
