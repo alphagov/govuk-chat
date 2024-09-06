@@ -23,7 +23,7 @@ class Form::EarlyAccess::SignInOrUp
 
     if user.is_a?(EarlyAccessUser)
       session = Passwordless::Session.create!(authenticatable: user)
-      EarlyAccessAuthMailer.sign_in(session).deliver_now
+      EarlyAccessAuthMailer.access_granted(session).deliver_now
       Result.new(outcome: :existing_early_access_user, email:, user:)
     else
       Result.new(outcome: :existing_waiting_list_user, email:, user:)
