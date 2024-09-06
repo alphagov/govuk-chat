@@ -39,8 +39,6 @@ class SessionsController < BaseController
 
   def destroy
     sign_out_early_access_user
-
-    redirect_to homepage_path
   end
 
 private
