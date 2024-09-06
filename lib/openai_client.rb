@@ -32,7 +32,10 @@ class OpenAIClient
   end
 
   def self.build
-    OpenAI::Client.new(access_token: Rails.configuration.openai_access_token) do |faraday|
+    OpenAI::Client.new(
+      access_token: Rails.configuration.openai_access_token,
+      request_timeout: Rails.configuration.openai_request_timeout,
+    ) do |faraday|
       # Use our own middleware to wrap OpenAI errors in distinct exceptions from Faraday ones
       faraday.builder.insert_before(Faraday::Response::RaiseError, ErrorMiddleware)
     end
