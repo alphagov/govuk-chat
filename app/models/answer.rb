@@ -18,8 +18,7 @@ class Answer < ApplicationRecord
       We saved your conversation. Check [GOV.UK guidance for businesses](https://www.gov.uk/browse/business) if you need information now.
     MESSAGE
     GUARDRAILS_FAILED_MESSAGE = <<~MESSAGE.freeze
-      Sorry, the answer does not meet the GOV.UK Chat content guidelines.
-      This might be because it contains unclear, misleading or inappropriate information.
+      I generated an answer to your question, but it does not meet the GOV.UK Chat content guidelines. This might be because it contains unclear or misleading information, or offers advice about money or your personal circumstances.
 
       Please try asking about something else or rephrasing your question.
     MESSAGE
