@@ -29,7 +29,7 @@ RSpec.describe EarlyAccessAuthMailer do
     it "contains a link to unsubscribe" do
       email = mailer.access_granted(session)
 
-      expect(email.body).to include(early_access_user_unsubscribe_url(user.id, user.unsubscribe_access_token))
+      expect(email.body).to include(early_access_user_unsubscribe_url(user.id, user.unsubscribe_token))
     end
   end
 

@@ -6,7 +6,7 @@ class EarlyAccessUnsubscribeController < BaseController
 
     @token = params[:token]
     id = params[:id]
-    user = EarlyAccessUser.find_by!(id:, unsubscribe_access_token: @token)
+    user = EarlyAccessUser.find_by!(id:, unsubscribe_token: @token)
     user.destroy!
   end
 end

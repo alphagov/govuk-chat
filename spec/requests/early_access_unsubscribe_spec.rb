@@ -11,7 +11,7 @@ RSpec.describe "EarlyAccessUnsubscribeController" do
   describe "GET :unsubscribe" do
     let(:user) { create(:early_access_user) }
     let(:id) { user.id }
-    let(:token) { user.unsubscribe_access_token }
+    let(:token) { user.unsubscribe_token }
 
     before do
       create :conversation, user:
