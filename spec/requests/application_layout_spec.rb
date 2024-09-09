@@ -40,7 +40,8 @@ RSpec.describe "Application layout" do
     end
 
     it "renders the navbar link as if the user is logged out" do
-      get about_path
+      # we use an error route as these won't check for signed in outside of the view
+      get "/404"
 
       expect(response.body)
         .to have_selector("a.app-c-header__link[href='#{homepage_path}']")
@@ -49,7 +50,7 @@ RSpec.describe "Application layout" do
     it "notifies Sentry about the error" do
       expect(GovukError).to receive(:notify).with(error)
 
-      get about_path
+      get "/404"
     end
   end
 end
