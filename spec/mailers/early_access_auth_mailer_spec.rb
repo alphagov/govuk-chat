@@ -1,10 +1,20 @@
 RSpec.describe EarlyAccessAuthMailer do
   let(:mailer) { described_class }
 
+  shared_examples "sets reply_to_id" do
+    it "sets reply_to_id to ENV[GOVUK_NOTIFY_REPLY_TO_ID]" do
+      ClimateControl.modify GOVUK_NOTIFY_REPLY_TO_ID: "random-uuid" do
+        expect(email.reply_to_id).to eq("random-uuid")
+      end
+    end
+  end
+
   describe ".access_granted" do
     let(:user) { create(:early_access_user) }
     let(:session) { create(:passwordless_session, authenticatable: user) }
     let(:email) { mailer.access_granted(session) }
+
+    it_behaves_like "sets reply_to_id"
 
     it "has the subject of 'You can now access GOV.UK Chat'" do
       expect(email.subject).to eq("You can now access GOV.UK Chat")
@@ -28,6 +38,8 @@ RSpec.describe EarlyAccessAuthMailer do
     let(:session) { create(:passwordless_session, authenticatable: user) }
     let(:email) { mailer.sign_in(session) }
 
+    it_behaves_like "sets reply_to_id"
+
     it "has the subject of 'Sign in'" do
       expect(email.subject).to eq("Sign in")
     end
@@ -42,6 +54,8 @@ RSpec.describe EarlyAccessAuthMailer do
   describe ".waitlist" do
     let(:user) { create(:waiting_list_user) }
     let(:email) { mailer.waitlist(user) }
+
+    it_behaves_like "sets reply_to_id"
 
     it "has the subject of 'Thanks for joining the waitlist'" do
       expect(email.subject).to eq("Thanks for joining the waitlist")
