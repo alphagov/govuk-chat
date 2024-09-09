@@ -48,7 +48,6 @@ private
 
     respond_to do |format|
       format.html do
-        save_passwordless_redirect_location!(EarlyAccessUser)
         redirect_to homepage_path
       end
       format.json { render json: { error: "User not authenticated" }, status: :bad_request }

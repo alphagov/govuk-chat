@@ -49,7 +49,7 @@ private
   end
 
   def redirect_location
-    reset_passwordless_redirect_location!(EarlyAccessUser) || onboarding_limitations_path
+    onboarding_limitations_path
   end
 
   def configure_session_and_conversation_cookie(early_access_user)
