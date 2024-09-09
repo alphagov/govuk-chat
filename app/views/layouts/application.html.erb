@@ -62,7 +62,11 @@
           text: "Help and support",
           href: support_path,
         },
-      ],
+        conversation_layout ? {
+          text: "Start new chat (clear chat history)",
+          href: clear_conversation_path,
+        } : nil,
+      ].compact,
       print_utility: conversation_layout,
     } %>
 

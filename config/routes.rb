@@ -44,6 +44,9 @@ Rails.application.routes.draw do
       get "/questions/:question_id/answer", to: "conversations#answer", as: :answer_question
 
       post "/answers/:answer_id/feedback", to: "conversations#answer_feedback", as: :answer_feedback
+
+      get "/clear", to: "conversations#clear", as: :clear_conversation
+      post "/clear", to: "conversations#clear_confirm"
     end
 
     get "/about", to: "static#about"

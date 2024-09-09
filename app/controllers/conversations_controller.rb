@@ -1,8 +1,8 @@
 class ConversationsController < BaseController
-  layout "conversation", except: :answer
+  layout "conversation", except: %i[answer clear]
   before_action :require_onboarding_completed
   before_action :find_conversation
-  before_action :require_conversation, only: %i[answer answer_feedback]
+  before_action :require_conversation, only: %i[answer answer_feedback clear]
 
   def show
     @conversation ||= Conversation.new
@@ -27,6 +27,13 @@ class ConversationsController < BaseController
         end
       end
     end
+  end
+
+  def clear; end
+
+  def clear_confirm
+    cookies.delete(:conversation_id)
+    redirect_to show_conversation_path
   end
 
   def update
