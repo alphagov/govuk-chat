@@ -1,4 +1,13 @@
 RSpec.describe "EarlyAccessUnsubscribeController" do
+  describe "HEAD :unsubscribe" do
+    it "returns :ok with empty body" do
+      head early_access_user_unsubscribe_path(id: "any", token: "any")
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to be_empty
+    end
+  end
+
   describe "GET :unsubscribe" do
     let(:user) { create(:early_access_user) }
     let(:id) { user.id }
