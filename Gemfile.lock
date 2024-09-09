@@ -593,7 +593,7 @@ GEM
     passwordless (1.7.0)
       bcrypt (>= 3.1.11)
       rails (>= 5.1.4)
-    pg (1.5.7)
+    pg (1.5.8)
     plek (5.2.0)
     prometheus_exporter (2.1.1)
       webrick
