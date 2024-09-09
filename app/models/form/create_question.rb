@@ -19,7 +19,6 @@ class Form::CreateQuestion
     validate!
 
     question = Question.new(message: user_question, conversation:)
-    question.answer_strategy = :open_ai_rag_completion if Feature.enabled?(:unstructured_answer_generation)
     question.save!
     conversation.user.increment!(:questions_count) if conversation.user.present?
     ComposeAnswerJob.perform_later(question.id)
@@ -47,13 +46,5 @@ private
     return unless conversation.user.question_limit_reached?
 
     errors.add(:base, "You have asked the maximum number of questions. You cannot ask any more.")
-  end
-
-  def answer_strategy
-    if Feature.enabled?(:unstructured_answer_generation)
-      :open_ai_rag_completion
-    else
-      :openai_structured_answer
-    end
   end
 end

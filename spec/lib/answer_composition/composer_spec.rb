@@ -4,29 +4,6 @@ RSpec.describe AnswerComposition::Composer do
 
   describe ".call" do
     context "when the question is for open ai" do
-      context "and the answer strategy is open_ai_rag_completion" do
-        let(:question) { create :question, answer_strategy: :open_ai_rag_completion }
-
-        it "calls OpenAIAnswer with the correct pipeline" do
-          expected_pipeline = [
-            AnswerComposition::Pipeline::QuestionRephraser,
-            AnswerComposition::Pipeline::SearchResultFetcher,
-            AnswerComposition::Pipeline::OpenAIUnstructuredAnswerComposer,
-            AnswerComposition::Pipeline::OutputGuardrails,
-          ]
-          expected_pipeline.each do |pipeline|
-            allow(pipeline).to receive(:call) { |context| context }
-          end
-          expect(AnswerComposition::OpenAIAnswer).to receive(:call).and_call_original
-          result = described_class.call(question)
-
-          expect(result)
-            .to be_an_instance_of(Answer)
-            .and have_attributes(question:)
-          expect(expected_pipeline).to all(have_received(:call))
-        end
-      end
-
       context "and the answer strategy is 'openai_structured_answer'" do
         let(:question) { create :question, answer_strategy: :openai_structured_answer }
 
@@ -76,7 +53,7 @@ RSpec.describe AnswerComposition::Composer do
     end
 
     context "when an error is returned during answer generation" do
-      let(:question) { create :question, answer_strategy: :open_ai_rag_completion }
+      let(:question) { create :question, answer_strategy: :openai_structured_answer }
       let(:result) { described_class.call(question) }
 
       before do

@@ -30,13 +30,6 @@ module AnswerComposition
 
     def compose_answer
       case answer_strategy
-      when "open_ai_rag_completion"
-        OpenAIAnswer.call(question:, pipeline: [
-          Pipeline::QuestionRephraser,
-          Pipeline::SearchResultFetcher,
-          Pipeline::OpenAIUnstructuredAnswerComposer,
-          Pipeline::OutputGuardrails,
-        ])
       when "openai_structured_answer"
         OpenAIAnswer.call(question:, pipeline: [
           Pipeline::QuestionRephraser,
