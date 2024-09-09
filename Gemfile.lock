@@ -874,6 +874,7 @@ DEPENDENCIES
   opensearch-ruby
   passwordless
   pg
+  prometheus_exporter
   pry-byebug
   pry-rails
   rails (= 7.2.1)
