@@ -6,7 +6,7 @@ RSpec.describe "Sign ups" do
     and_i_enter_my_email_address
     and_i_choose_my_description
     and_i_choose_my_reason_for_visit
-    then_i_am_told_i_have_been_sent_an_email_address
+    then_i_am_told_i_have_been_sent_an_email
 
     when_i_click_the_link_in_the_email
     then_i_arrive_on_the_onboarding_limitations_page
@@ -18,7 +18,7 @@ RSpec.describe "Sign ups" do
 
     when_i_visit_the_homepage
     and_i_enter_my_email_address
-    then_i_am_told_i_have_been_sent_an_email_address
+    then_i_am_told_i_have_been_sent_an_email
 
     when_i_click_the_link_in_the_email
     then_i_arrive_on_the_onboarding_limitations_page
@@ -92,7 +92,7 @@ RSpec.describe "Sign ups" do
     click_on "Submit answers"
   end
 
-  def then_i_am_told_i_have_been_sent_an_email_address
+  def then_i_am_told_i_have_been_sent_an_email
     expect(page).to have_content("You have been sent a new unique link to access GOV.UK Chat.")
   end
 
