@@ -77,6 +77,11 @@ RSpec.describe "sessions controller" do
           get magic_link
           expect(cookies[:conversation_id]).to eq conversation.id
         end
+
+        it "allows access and redirects to the choose to clear or continue chat page" do
+          get magic_link
+          expect(response).to redirect_to choose_conversation_path
+        end
       end
 
       context "when the user has completed onboarding" do

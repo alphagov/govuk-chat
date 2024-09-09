@@ -49,6 +49,7 @@ Rails.application.routes.draw do
 
       get "/clear", to: "conversations#clear", as: :clear_conversation
       post "/clear", to: "conversations#clear_confirm"
+      get "/choose", to: "conversations#choose", as: :choose_conversation
     end
 
     get "/about", to: "static#about"

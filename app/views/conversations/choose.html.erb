@@ -1,0 +1,19 @@
+<%= content_for :title, "Do you want to continue your last chat?" %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body">To get the most accurate answers, start a new chat when you ask about something new.</p>
+    <p class="govuk-body">If you chose to continue your last chat, you can always start a new one from the GOV.UK Chat menu. From there, you can also save your chat before you start a new one.</p>
+
+    <%= form_with url: clear_path, class: "app-c-onboarding-form" do |f| %>
+      <%= render "components/blue_button", {
+        text: "Continue last chat",
+        href: show_conversation_path,
+      } %>
+      <%= render "govuk_publishing_components/components/button", {
+        secondary_solid: true,
+        text: "Start a new chat (clears history)",
+      } %>
+    <% end %>
+  </div>
+</div>

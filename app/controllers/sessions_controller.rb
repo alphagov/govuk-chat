@@ -49,6 +49,8 @@ private
   end
 
   def redirect_location
+    return choose_conversation_path if cookies[:conversation_id].present?
+
     onboarding_limitations_path
   end
 
