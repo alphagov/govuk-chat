@@ -143,6 +143,13 @@ RSpec.describe Admin::QuestionsHelper do
 
       expect(value).to have_link("View all questions", href: admin_questions_path(user_id:))
     end
+
+    it "doesn't return a 'Early access user' field when the conversation is not associated with one" do
+      conversation.update!(user: nil)
+
+      result = helper.question_show_summary_list_rows(question, nil, 1, 1)
+      expect(returned_keys(result)).not_to include("Early access user")
+    end
   end
 
   def returned_keys(result)
