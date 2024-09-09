@@ -44,7 +44,7 @@ class Form::EarlyAccess::ReasonForVisit
     end
 
     if @result.outcome == :early_access_user
-      EarlyAccessAuthMailer.sign_in(@session).deliver_now
+      EarlyAccessAuthMailer.access_granted(@session).deliver_now
     else
       EarlyAccessAuthMailer.waitlist(@result.user).deliver_now
     end

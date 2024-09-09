@@ -72,7 +72,7 @@ class Admin::WaitingListUsersController < Admin::BaseController
     new_user = EarlyAccessUser.promote_waiting_list_user(user)
 
     session = Passwordless::Session.create!(authenticatable: new_user)
-    EarlyAccessAuthMailer.waitlist_promoted(session).deliver_now
+    EarlyAccessAuthMailer.access_granted(session).deliver_now
 
     redirect_to admin_early_access_user_path(new_user), notice: "User promoted"
   end
