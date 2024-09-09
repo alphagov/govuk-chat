@@ -49,27 +49,27 @@ module Admin
       ]
 
       user = conversation.user
-      rows << if user.present?
-                {
-                  field: "Early access user",
-                  value: safe_join([
-                    link_to(user.email, admin_early_access_user_path(user), class: "govuk-link"),
-                    " (",
-                    link_to("View all questions", admin_questions_path(user_id: user.id), class: "govuk-link"),
-                    ")",
-                  ]),
-                }
-              else
-                {
-                  field: "Early access user",
-                  value: safe_join([
-                    "Deleted user",
-                    " (",
-                    link_to("View all questions", admin_questions_path(user_id: conversation.early_access_user_id), class: "govuk-link"),
-                    ")",
-                  ]),
-                }
-              end
+      if user.present?
+        rows << {
+          field: "Early access user",
+          value: safe_join([
+            link_to(user.email, admin_early_access_user_path(user), class: "govuk-link"),
+            " (",
+            link_to("View all questions", admin_questions_path(user_id: user.id), class: "govuk-link"),
+            ")",
+          ]),
+        }
+      elsif conversation.early_access_user_id
+        rows << {
+          field: "Early access user",
+          value: safe_join([
+            "Deleted user",
+            " (",
+            link_to("View all questions", admin_questions_path(user_id: conversation.early_access_user_id), class: "govuk-link"),
+            ")",
+          ]),
+        }
+      end
 
       rows << if answer.present?
                 [
