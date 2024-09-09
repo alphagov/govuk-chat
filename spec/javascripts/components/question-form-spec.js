@@ -2,7 +2,7 @@ describe('QuestionForm component', () => {
   'use strict'
 
   let div, form, formGroup, input, button, buttonResponseStatus, presenceErrorMessage,
-    lengthErrorMessage, errorsWrapper, module, remainingQuestionsHint
+    lengthErrorMessage, errorsWrapper, module, remainingQuestionsHint, remainingQuestionsHintWrapper
 
   beforeEach(function () {
     div = document.createElement('div')
@@ -17,7 +17,9 @@ describe('QuestionForm component', () => {
         <div class="js-question-form-group">
           <ul id="create_question_user_question-error" class="js-question-form-errors-wrapper" hidden="true"></ul>
           <input type="text" class="js-question-form-input govuk-js-character-count" id="create_question_user_question" value="What is the VAT rate?">
-          <div class="js-remaining-questions-hint"></div>
+          <div class="js-remaining-questions-hint-wrapper govuk-visually-hidden">
+            <div class="js-remaining-questions-hint"></div>
+          </div>
           <div id="create_question_user_question-info" class="gem-c-hint govuk-hint govuk-visually-hidden">
             Please limit your question to 300 characters.
           </div>
@@ -37,6 +39,7 @@ describe('QuestionForm component', () => {
     errorsWrapper = div.querySelector('.js-question-form-errors-wrapper')
     formGroup = div.querySelector('.js-question-form-group')
     remainingQuestionsHint = form.querySelector('.js-remaining-questions-hint')
+    remainingQuestionsHintWrapper = form.querySelector('.js-remaining-questions-hint-wrapper')
     document.body.appendChild(div)
     module = new window.GOVUK.Modules.QuestionForm(div)
   })
@@ -142,6 +145,14 @@ describe('QuestionForm component', () => {
       form.dispatchEvent(new Event('submit'))
 
       expect(input.getAttribute('aria-describedby')).toBe('create_question_user_question-info')
+    })
+
+    it('hides the question limit hint when there are errors', () => {
+      remainingQuestionsHintWrapper.classList.remove('govuk-visually-hidden')
+      input.value = ''
+      form.dispatchEvent(new Event('submit'))
+
+      expect(remainingQuestionsHintWrapper.classList.contains('govuk-visually-hidden')).toBe(true)
     })
   })
 
@@ -288,6 +299,12 @@ describe('QuestionForm component', () => {
       const customEvent = new CustomEvent('question-rejected', { detail: { errorMessages: null } })
       expect(() => { module.handleQuestionRejected(customEvent) })
         .toThrowError(errorMessage)
+    })
+
+    it('hides the question limit hint', () => {
+      remainingQuestionsHintWrapper.classList.remove('govuk-visually-hidden')
+      div.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
+      expect(remainingQuestionsHintWrapper.classList.contains('govuk-visually-hidden')).toBe(true)
     })
   })
 

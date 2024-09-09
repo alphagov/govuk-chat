@@ -19,6 +19,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.errorsWrapper = module.querySelector('.js-question-form-errors-wrapper')
       this.formGroup = module.querySelector('.js-question-form-group')
       this.surveyLink = module.querySelector('.js-survey-link')
+      this.remainingQuestionsHintWrapper = module.querySelector('.js-remaining-questions-hint-wrapper')
+      this.remainingQuestionsHint = this.remainingQuestionsHintWrapper.querySelector('.js-remaining-questions-hint')
       this.conversationId = null
     }
 
@@ -71,6 +73,9 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
       if (e.detail && e.detail.remainingQuestionsCopy) {
         this.remainingQuestionsHint.textContent = e.detail.remainingQuestionsCopy
+        this.remainingQuestionsHintWrapper.classList.remove('govuk-visually-hidden')
+      } else {
+        this.remainingQuestionsHintWrapper.classList.add('govuk-visually-hidden')
       }
     }
 
@@ -135,7 +140,11 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
       this.toggleErrorStyles(errors.length)
       this.announceErrors(errors.length)
-      if (errors.length) this.input.focus()
+
+      if (errors.length) {
+        this.input.focus()
+        this.remainingQuestionsHintWrapper.classList.add('govuk-visually-hidden')
+      }
     }
 
     announceErrors (hasErrors) {

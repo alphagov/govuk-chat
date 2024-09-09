@@ -51,11 +51,13 @@
       <% end %>
     <% end %>
 
-    <%= render "govuk_publishing_components/components/hint", {
-      id: remaining_questions_hint_id,
-      classes: "js-remaining-questions-hint",
-      text: "",
-    } %>
+    <div class="js-remaining-questions-hint-wrapper <%= remaining_questions_copy.blank? ? "govuk-visually-hidden" : "" %>">
+      <%= render "govuk_publishing_components/components/hint", {
+        id: remaining_questions_hint_id,
+        classes: "js-remaining-questions-hint",
+        text: "",
+      } %>
+    </div>
 
     <%= content_tag :div, class: form_group_classes do %>
       <%= content_tag :div, class: "app-c-question-form__input-wrapper" do %>
