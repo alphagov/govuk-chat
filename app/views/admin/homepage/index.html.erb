@@ -1,1 +1,103 @@
-Hello this is the admin interface
+<%
+content_for(:title, "GOV.UK Chat Admin")
+has_developer_tools_permission = Current.admin_user.has_permission?(AdminUser::Permissions::DEVELOPER_TOOLS)
+settings = Settings.instance
+
+dashboard_link_items = []
+
+if has_developer_tools_permission
+  dashboard_link_items << link_to("Sidekiq", "/sidekiq", class: "govuk-link")
+end
+
+if ENV["GOVUK_ENVIRONMENT"]
+  dashboard_link_items << link_to("Infrastructure status",
+                                  "https://grafana.eks.#{ENV['GOVUK_ENVIRONMENT']}.govuk.digital/d/chat-ai-dashboard",
+                                  class: "govuk-link")
+end
+%>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <% if !settings.public_access_enabled %>
+      <%= render "govuk_publishing_components/components/notice", {
+        title: "Public access to chat is disabled",
+      } do %>
+        <%= render "govuk_publishing_components/components/warning_text", {
+          text: "All users attempting to use chat will receive an error response",
+        } %>
+        <p class="govuk-body">
+          This can be changed in <%= link_to("settings", admin_settings_path, class: "govuk-link") %>.
+        </p>
+      <% end %>
+    <% elsif !settings.sign_up_enabled %>
+      <%= render "govuk_publishing_components/components/notice", {
+        title: "Sign ups are disabled",
+      } do %>
+        <p class="govuk-body">
+          All users who attempt to sign-up will be denied. Only existing users
+          can login.
+          <%= link_to("Update settings", admin_settings_path, class: "govuk-link") %>.
+        </p>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-third">
+    <%= render "govuk_publishing_components/components/heading", {
+      text: "Chat",
+      font_size: "m",
+      heading_level: 2,
+      margin_bottom: 4,
+    } %>
+
+    <%= render "govuk_publishing_components/components/list", {
+      visible_counters: true,
+      items: [
+        link_to("Browse questions (#{number_with_delimiter(@questions_total)})", admin_questions_path, class: "govuk-link"),
+        link_to("Test question search results", admin_search_path, class: "govuk-link"),
+        link_to("Use chat", homepage_path, class: "govuk-link"),
+      ],
+    } %>
+  </div>
+  <div class="govuk-grid-column-one-third">
+    <%= render "govuk_publishing_components/components/heading", {
+      text: "Pilot users",
+      font_size: "m",
+      heading_level: 2,
+      margin_bottom: 4,
+    } %>
+
+    <%= render "govuk_publishing_components/components/list", {
+      visible_counters: true,
+      items: [
+        safe_join(["Instant access places: #{settings.instant_access_places} (",
+                   link_to("Update", admin_settings_path, class: "govuk-link"),
+                   ")"]),
+        safe_join(["Delayed access places: #{settings.delayed_access_places} (",
+                   link_to("Update", admin_settings_path, class: "govuk-link"),
+                   ")"]),
+        link_to("Add an early access user", new_admin_early_access_user_path, class: "govuk-link"),
+        link_to("Browse early access users (#{number_with_delimiter(@early_access_users_total)})", admin_early_access_users_path, class: "govuk-link"),
+        link_to("Add someone to the waiting list", new_admin_waiting_list_user_path, class: "govuk-link"),
+        link_to("Browse waiting list users (#{number_with_delimiter(@waiting_list_users_total)})", admin_waiting_list_users_path, class: "govuk-link"),
+      ],
+    } %>
+  </div>
+  <% if dashboard_link_items.any? %>
+    <div class="govuk-grid-column-one-third">
+      <%= render "govuk_publishing_components/components/heading", {
+        text: "Dashboards",
+        font_size: "m",
+        heading_level: 2,
+        margin_bottom: 4,
+      } %>
+
+      <%= render "govuk_publishing_components/components/list", {
+        visible_counters: true,
+        items: dashboard_link_items,
+      } %>
+    </div>
+  <% end %>
+</div>
