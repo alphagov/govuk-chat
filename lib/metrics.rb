@@ -31,10 +31,27 @@ class Metrics
     },
   ].freeze
 
+  GAUGES = [
+    {
+      name: "openai_remaining_tokens",
+      description: "The number of remaining tokens for OpenAI API",
+    },
+    {
+      name: "openai_remaining_requests",
+      description: "The number of remaining requests for OpenAI API",
+    },
+  ].freeze
+
   def self.register
     COUNTERS.each do |counter|
       PrometheusExporter::Client.default.register(
         :counter, name_with_prefix(counter[:name]), counter[:description]
+      )
+    end
+
+    GAUGES.each do |gauge|
+      PrometheusExporter::Client.default.register(
+        :gauge, name_with_prefix(gauge[:name]), gauge[:description]
       )
     end
   end
@@ -48,6 +65,16 @@ class Metrics
 
     metric = PrometheusExporter::Client.default.find_registered_metric(name_with_prefix(name))
     metric.observe(1, labels)
+  end
+
+  def self.gauge(name, value, labels = {})
+    if GAUGES.none? { |gauge| gauge[:name] == name }
+      GovukError.notify("#{name} is not defined in Metrics::GAUGES")
+      return
+    end
+
+    metric = PrometheusExporter::Client.default.find_registered_metric(name_with_prefix(name))
+    metric.observe(value, labels)
   end
 
   def self.name_with_prefix(name)

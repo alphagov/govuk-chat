@@ -16,6 +16,12 @@ RSpec.describe Metrics do
           .with(:counter, "#{described_class::PREFIX}#{counter[:name]}", counter[:description])
       end
 
+      described_class::GAUGES.each do |gauge|
+        expect(PrometheusExporter::Client.default)
+          .to receive(:register)
+          .with(:gauge, "#{described_class::PREFIX}#{gauge[:name]}", gauge[:description])
+      end
+
       described_class.register
     end
   end
