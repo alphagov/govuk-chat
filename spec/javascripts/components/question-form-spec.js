@@ -223,6 +223,15 @@ describe('QuestionForm component', () => {
 
         expect(remainingQuestionsHint.textContent).toEqual('')
       })
+
+      it('updates the input\'s aria-describedby attribute to reference the remaining questions hint', () => {
+        div.dispatchEvent(new CustomEvent(
+          'question-accepted',
+          { detail: { remainingQuestionsCopy: '6 messages left' } }
+        ))
+
+        expect(input.getAttribute('aria-describedby')).toContain(remainingQuestionsHint.id)
+      })
     })
   })
 
