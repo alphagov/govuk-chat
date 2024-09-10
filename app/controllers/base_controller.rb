@@ -47,10 +47,7 @@ private
     return if current_early_access_user
 
     respond_to do |format|
-      format.html do
-        save_passwordless_redirect_location!(EarlyAccessUser)
-        redirect_to homepage_path
-      end
+      format.html { redirect_to homepage_path }
       format.json { render json: { error: "User not authenticated" }, status: :bad_request }
     end
   end

@@ -44,15 +44,6 @@ RSpec.describe "sessions controller" do
         expect(Passwordless::Session).to have_received(:lock)
       end
 
-      context "with a stored redirect location" do
-        it "redirects to the stored location" do
-          get show_conversation_path
-          follow_redirect!
-          get magic_link
-          expect(response).to redirect_to(show_conversation_path)
-        end
-      end
-
       context "and the user has had access revoked" do
         before { passwordless_session.authenticatable.touch(:revoked_at) }
 
@@ -85,6 +76,12 @@ RSpec.describe "sessions controller" do
           create(:conversation, :not_expired, user: passwordless_session.authenticatable, created_at: 1.day.ago)
           get magic_link
           expect(cookies[:conversation_id]).to eq conversation.id
+        end
+
+        it "renders a page prompting a user to choose whether to continue their last chat" do
+          get magic_link
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include("Do you want to continue your last chat?")
         end
       end
 

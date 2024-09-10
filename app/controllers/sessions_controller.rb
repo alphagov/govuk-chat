@@ -22,7 +22,11 @@ class SessionsController < BaseController
       early_access_user.sign_in(passwordless_session)
       configure_session_and_conversation_cookie(early_access_user)
 
-      redirect_to redirect_location
+      if cookies[:conversation_id].present?
+        render :resume_conversation_choice
+      else
+        redirect_to onboarding_limitations_path
+      end
     rescue EarlyAccessUser::AccessRevokedError
       sign_out_early_access_user
       render "shared/access_revoked", status: :forbidden
@@ -46,10 +50,6 @@ private
 
     # Make it "slow" on purpose to make brute-force attacks more of a hassle
     BCrypt::Password.create(token) # rubocop:disable Rails/SaveBang
-  end
-
-  def redirect_location
-    reset_passwordless_redirect_location!(EarlyAccessUser) || onboarding_limitations_path
   end
 
   def configure_session_and_conversation_cookie(early_access_user)
