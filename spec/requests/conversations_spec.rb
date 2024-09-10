@@ -85,6 +85,18 @@ RSpec.describe "ConversationsController" do
         end
       end
 
+      it "renders the remaining question count" do
+        allow(Rails.configuration.conversations).to receive_messages(
+          max_questions_per_user: 50,
+          question_warning_threshold: 20,
+        )
+        conversation.user.update!(questions_count: 45)
+
+        get show_conversation_path
+
+        expect(response.body).to have_selector(".js-remaining-questions-hint", text: "5 messages left")
+      end
+
       context "and there is a question without an answer" do
         let(:conversation) { create(:conversation, user:) }
 

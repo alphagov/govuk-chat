@@ -8,6 +8,7 @@ class ConversationsController < BaseController
     @conversation ||= Conversation.new
     prepare_for_show_view(@conversation)
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
+    @remaining_questions_copy = remaining_questions_copy(@conversation.user)
 
     respond_to do |format|
       format.html { render :show }

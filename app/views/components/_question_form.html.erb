@@ -16,10 +16,12 @@
   error_id = "#{input_id}-error"
 
   remaining_questions_hint_id = "js-remaining-questions-hint-#{SecureRandom.hex(4)}"
+  remaining_questions_copy ||= ""
 
   aria_described_by = []
   aria_described_by << hint_id
   aria_described_by << error_id if has_error
+  aria_described_by << remaining_questions_hint_id if remaining_questions_copy.present?
   aria_described_by = aria_described_by.join(" ")
 
   data_attributes = {
@@ -55,7 +57,7 @@
       <%= render "govuk_publishing_components/components/hint", {
         id: remaining_questions_hint_id,
         classes: "js-remaining-questions-hint",
-        text: "",
+        text: remaining_questions_copy,
       } %>
     </div>
 
