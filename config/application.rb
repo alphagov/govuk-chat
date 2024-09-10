@@ -58,6 +58,18 @@ module GovukChat
     config.early_access_users = Hashie::Mash.new(
       max_waiting_list_promotions_per_run: 50,
     )
+    config.instant_access_places_schedule = Hashie::Mash.new(
+      not_before: Date.new(2024, 9, 16),
+      not_after: Date.new(2024, 10, 31),
+      places: ENV.fetch("INSTANT_ACCESS_PLACES_SCHEDULE_INCREMENT", "26").to_i,
+      max_places: 150,
+    )
+    config.delayed_access_places_schedule = Hashie::Mash.new(
+      not_before: Date.new(2024, 9, 16),
+      not_after: Date.new(2024, 10, 31),
+      places: ENV.fetch("DELAYED_ACCESS_PLACES_SCHEDULE_INCREMENT", "26").to_i,
+      max_places: 150,
+    )
 
     config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]
     config.openai_request_timeout = 45
