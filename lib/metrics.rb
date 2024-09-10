@@ -9,6 +9,10 @@ class Metrics
       name: "waiting_list_user_accounts_total",
       description: "The total number of waiting list users",
     },
+    {
+      name: "questions_total",
+      description: "The total number of question asked",
+    },
   ].freeze
 
   def self.register
