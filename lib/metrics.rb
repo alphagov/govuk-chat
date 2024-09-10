@@ -16,7 +16,11 @@ class Metrics
     {
       name: "answers_total",
       description: "The total number of answers created - success or failure",
-    }
+    },
+    {
+      name: "answer_feedback_total",
+      description: "The number of useful (yes/no) responses received",
+    },
   ].freeze
 
   def self.register
