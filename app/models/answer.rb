@@ -25,6 +25,8 @@ class Answer < ApplicationRecord
     LLM_CANNOT_ANSWER_MESSAGE = "Sorry, I cannot answer that question.".freeze
   end
 
+  after_commit :send_answers_total_to_prometheus, on: :create
+
   belongs_to :question
   has_many :sources, -> { order(relevancy: :asc) }, class_name: "AnswerSource"
   has_one :feedback, class_name: "AnswerFeedback"
@@ -71,5 +73,9 @@ class Answer < ApplicationRecord
   def assign_metrics(namespace, values)
     self.metrics ||= {}
     self.metrics[namespace] = values
+  end
+
+  def send_answers_total_to_prometheus
+    Metrics.increment_counter("answers_total", status:, question_routing_label:, output_guardrail_status:)
   end
 end
