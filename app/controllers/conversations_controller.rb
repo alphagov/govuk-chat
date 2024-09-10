@@ -1,5 +1,5 @@
 class ConversationsController < BaseController
-  layout "conversation", except: %i[answer choose clear]
+  layout "conversation", except: %i[answer clear]
   before_action :require_onboarding_completed
   before_action :find_conversation
   before_action :require_conversation, only: %i[answer answer_feedback clear]
@@ -30,7 +30,6 @@ class ConversationsController < BaseController
   end
 
   def clear; end
-  def choose; end
 
   def clear_confirm
     cookies.delete(:conversation_id)

@@ -78,9 +78,10 @@ RSpec.describe "sessions controller" do
           expect(cookies[:conversation_id]).to eq conversation.id
         end
 
-        it "allows access and redirects to the choose to clear or continue chat page" do
+        it "renders a page prompting a user to choose whether to continue their last chat" do
           get magic_link
-          expect(response).to redirect_to choose_conversation_path
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include("Do you want to continue your last chat?")
         end
       end
 
