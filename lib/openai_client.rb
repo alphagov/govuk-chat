@@ -31,6 +31,30 @@ class OpenAIClient
     end
   end
 
+  class RateLimitMiddleware < Faraday::Middleware
+    def on_complete(env)
+      return unless env.response_body["object"].in?(%w[chat.completion embedding])
+
+      record_rate_limit_metrics(env)
+    end
+
+  private
+
+    def record_rate_limit_metrics(env)
+      object = env.response_body["object"]
+      model_name = JSON.parse(env.request_body)["model"]
+      headers = env["response_headers"]
+
+      if (remaining_tokens = headers["x-ratelimit-remaining-tokens"])
+        Metrics.gauge("openai_remaining_tokens", remaining_tokens.to_i, { object:, model: model_name })
+      end
+
+      if (remaining_requests = headers["x-ratelimit-remaining-requests"])
+        Metrics.gauge("openai_remaining_requests", remaining_requests.to_i, { object:, model: model_name })
+      end
+    end
+  end
+
   def self.build
     OpenAI::Client.new(
       access_token: Rails.configuration.openai_access_token,
@@ -38,6 +62,7 @@ class OpenAIClient
     ) do |faraday|
       # Use our own middleware to wrap OpenAI errors in distinct exceptions from Faraday ones
       faraday.builder.insert_before(Faraday::Response::RaiseError, ErrorMiddleware)
+      faraday.builder.insert_before(Faraday::Response::Json, RateLimitMiddleware)
     end
   end
 end
