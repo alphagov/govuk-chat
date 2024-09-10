@@ -13,6 +13,10 @@ class Metrics
       name: "questions_total",
       description: "The total number of question asked",
     },
+    {
+      name: "answers_total",
+      description: "The total number of answers created - success or failure",
+    }
   ].freeze
 
   def self.register
