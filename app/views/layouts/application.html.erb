@@ -18,6 +18,19 @@
     GovukError.notify(e)
     early_access_user = nil
   end
+
+  navigation_items = [
+    { text: "About", href: about_path },
+    { text: "Help and support", href: support_path },
+  ]
+
+  if conversation_layout
+    navigation_items << { text: "Start new chat (clear chat history)", href: clear_conversation_path }
+  end
+
+  if early_access_user
+    navigation_items << { text: "Sign out", href: sign_out_path, data: { after_print: true} }
+  end
 %>
 <%= tag.html(class: html_classes, lang: "en") do %>
   <head>
@@ -53,20 +66,7 @@
 
     <%= render "components/chat_header", {
       logo_href: early_access_user ? show_conversation_path : homepage_path,
-      navigation_items: [
-        {
-          text: "About",
-          href: about_path,
-        },
-        {
-          text: "Help and support",
-          href: support_path,
-        },
-        conversation_layout ? {
-          text: "Start new chat (clear chat history)",
-          href: clear_conversation_path,
-        } : nil,
-      ].compact,
+      navigation_items: ,
       print_utility: conversation_layout,
     } %>
 

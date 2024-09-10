@@ -10,9 +10,9 @@ describe('ChatHeader component', () => {
         <nav>
           <button class="govuk-js-header-toggle">Menu</button>
           <ul class="govuk-header__navigation-list">
-            <li class="govuk-header__navigation-item">Navigation item</li>
-            <li class="govuk-header__navigation-item">Navigation item</li>
-            <li class="govuk-header__navigation-item">Navigation item</li>
+            <li class="govuk-header__navigation-item"><a>Navigation item</a></li>
+            <li class="govuk-header__navigation-item"><a>Navigation item</a></li>
+            <li class="govuk-header__navigation-item"><a>Navigation item</a></li>
           </ul>
         </nav>
       </div>
@@ -80,6 +80,17 @@ describe('ChatHeader component', () => {
         const updatedNavListItems = header.querySelectorAll('.js-header-nav-container .govuk-header__navigation-item')
 
         expect(updatedNavListItems.length).toEqual(navListItems.length + 1)
+        expect(printButton.textContent).toEqual('Print or save this chat')
+      })
+
+      it('adds a list item to the nav list with a print button after a link with data-after-print=true', () => {
+        header.dataset.addPrintUtility = true
+        navList.querySelector('li:nth-child(2) a').dataset.afterPrint = true
+
+        module.init()
+
+        // Print button has been added above the 2nd nav item, so it's now the 2nd nav item
+        const printButton = navList.querySelector('li:nth-child(2) button')
         expect(printButton.textContent).toEqual('Print or save this chat')
       })
     })

@@ -84,6 +84,12 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     and_i_see_no_answer_loading_message
   end
 
+  scenario "print link is added to navigation" do
+    given_i_am_a_signed_in_early_access_user
+    and_i_have_confirmed_i_understand_chat_risks
+    then_i_see_a_print_link_in_the_menu
+  end
+
   def when_i_enter_a_first_question
     @first_question = "How do I setup a workplace pension?"
     fill_in "create_question[user_question]", with: @first_question
@@ -259,5 +265,13 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
     parsed_answer = JSON.parse(answer)["answer"]
     stub_openai_output_guardrail(parsed_answer)
+  end
+
+  def then_i_see_a_print_link_in_the_menu
+    within(".app-c-header") do
+      click_button "Menu"
+    end
+
+    expect(page).to have_button("Print or save this chat")
   end
 end

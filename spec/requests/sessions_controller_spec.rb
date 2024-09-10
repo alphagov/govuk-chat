@@ -151,21 +151,31 @@ RSpec.describe "sessions controller" do
   end
 
   describe "GET :destroy" do
-    before { sign_in_early_access_user(create(:early_access_user)) }
-
-    it "redirects the user to early access entry point" do
-      get sign_out_path
-      expect(response).to redirect_to(homepage_path)
-    end
-
     it "signs out the user" do
+      sign_in_early_access_user(create(:early_access_user))
+
       get onboarding_limitations_path
+
       expect(response).to have_http_status(:ok)
 
       get sign_out_path
 
       get onboarding_limitations_path
       expect(response).to redirect_to(homepage_path)
+    end
+
+    it "renders a signed out page" do
+      sign_in_early_access_user(create(:early_access_user))
+
+      get sign_out_path
+
+      expect(response.body).to have_content("You are now signed out")
+    end
+
+    it "renders for a signed-out user" do
+      get sign_out_path
+
+      expect(response.body).to have_content("You are now signed out")
     end
   end
 end
