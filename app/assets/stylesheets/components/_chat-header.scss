@@ -27,6 +27,15 @@
       margin-right: 0;
     }
 
+    .govuk-header__link {
+      font-size: 16px; // directly set the font size to prevent govuk-font mixins from reducing it on smaller screens
+    }
+  }
+
+  .js-header-navigation-item {
+    display: block;
+    margin-top: govuk-spacing(1);
+
     // This is a bit of a hack to add the header divider line and it's very brittle - it will break if
     // we wanted to add additional navigation links above the link and it will need updating any time
     // there's a change to the number of navigation links. We'll want to revisit this at a later date
@@ -40,15 +49,6 @@
         margin-top: govuk-spacing(2);
       }
     }
-
-    .govuk-header__link {
-      font-size: 16px; // directly set the font size to prevent govuk-font mixins from reducing it on smaller screens
-    }
-  }
-
-  .js-header-navigation-item {
-    display: block;
-    margin-top: govuk-spacing(1);
 
     @include govuk-media-query($until: tablet) {
       &:first-of-type {
