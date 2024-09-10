@@ -320,7 +320,7 @@ RSpec.describe "ConversationsController" do
           "question_html" => /app-c-conversation-message/,
           "answer_url" => answer_question_path(question),
           "error_messages" => [],
-          "remaining_questions_copy" => "",
+          "remaining_questions_copy" => nil,
         })
       end
 
@@ -338,41 +338,17 @@ RSpec.describe "ConversationsController" do
         )
       end
 
-      describe "remaining questions copy" do
-        it "is empty if the user can ask an unlimited number of questions" do
-          conversation.user.update!(question_limit: 0)
+      it "includes the remaining questions copy" do
+        allow(Rails.configuration.conversations).to receive_messages(
+          max_questions_per_user: 50,
+          question_warning_threshold: 20,
+        )
+        conversation.user.update!(questions_count: 40)
 
-          post update_conversation_path,
-               params: { create_question: { user_question: "How much tax should I be paying?" }, format: :json }
+        post update_conversation_path,
+             params: { create_question: { user_question: "How much tax should I be paying?" }, format: :json }
 
-          expect(JSON.parse(response.body)).to include("remaining_questions_copy" => "")
-        end
-
-        it "is empty if the user has not reached the warning threshold" do
-          allow(Rails.configuration.conversations).to receive_messages(
-            max_questions_per_user: 50,
-            question_warning_threshold: 20,
-          )
-          conversation.user.update!(questions_count: 5)
-
-          post update_conversation_path,
-               params: { create_question: { user_question: "How much tax should I be paying?" }, format: :json }
-
-          expect(JSON.parse(response.body)).to include("remaining_questions_copy" => "")
-        end
-
-        it "returns the remaining question count if the user has reached the warning threshold" do
-          allow(Rails.configuration.conversations).to receive_messages(
-            max_questions_per_user: 50,
-            question_warning_threshold: 20,
-          )
-          conversation.user.update!(questions_count: 40)
-
-          post update_conversation_path,
-               params: { create_question: { user_question: "How much tax should I be paying?" }, format: :json }
-
-          expect(JSON.parse(response.body)).to include("remaining_questions_copy" => "9 messages left")
-        end
+        expect(JSON.parse(response.body)).to include("remaining_questions_copy" => "9 messages left")
       end
     end
   end
