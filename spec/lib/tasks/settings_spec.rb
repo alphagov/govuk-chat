@@ -84,7 +84,7 @@ RSpec.describe "rake search tasks" do
 
     it "locks the settings record to update the places" do
       expect(settings).to receive(:with_lock).and_call_original
-      Rake::Task[task_name].invoke("instant_access")
+      expect { Rake::Task[task_name].invoke("instant_access") }.to output.to_stdout
     end
 
     it "creates a SettingsAudit record to communicate what has been done" do
