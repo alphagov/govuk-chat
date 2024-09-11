@@ -116,7 +116,7 @@ module Search
       search_body = {
         query: { term: { base_path: } },
         sort: { _id: { order: "asc" } },
-        _source: { include: %w[digest] },
+        _source: { includes: %w[digest] },
       }
 
       items = {}
