@@ -115,7 +115,7 @@ module Search
     def id_digest_hash(base_path, batch_size: 100)
       search_body = {
         query: { term: { base_path: } },
-        sort: { _id: { order: "asc" } },
+        sort: { digest: { order: "asc" } },
         _source: { includes: %w[digest] },
       }
 
