@@ -74,7 +74,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       if (e.detail && e.detail.remainingQuestionsCopy) {
         this.remainingQuestionsHint.textContent = e.detail.remainingQuestionsCopy
         this.remainingQuestionsHintWrapper.classList.remove('govuk-visually-hidden')
-        this.attachInputDescriptions([this.remainingQuestionsHint.id])
+        this.attachInputDescriptions(this.remainingQuestionsHint.id)
       } else {
         this.remainingQuestionsHintWrapper.classList.add('govuk-visually-hidden')
       }
@@ -140,18 +140,23 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.errorsWrapper.replaceChildren(...elements)
 
       this.toggleErrorStyles(errors.length)
-      this.attachInputDescriptions(errors.length ? [this.errorsWrapper.id] : [])
 
       if (errors.length) {
+        this.attachInputDescriptions(this.errorsWrapper.id)
         this.input.focus()
         this.remainingQuestionsHintWrapper.classList.add('govuk-visually-hidden')
+      } else {
+        this.resetInputDescriptions()
       }
     }
 
-    attachInputDescriptions (additionalIds) {
-      const ids = [this.module.dataset.hintId, ...additionalIds].join(' ')
-
+    attachInputDescriptions () {
+      const ids = [this.module.dataset.hintId, ...arguments].join(' ')
       this.input.setAttribute('aria-describedby', ids)
+    }
+
+    resetInputDescriptions () {
+      this.input.setAttribute('aria-describedby', this.module.dataset.hintId)
     }
 
     toggleErrorStyles (hasErrors) {
