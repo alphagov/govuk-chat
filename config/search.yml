@@ -12,6 +12,7 @@ document_type_weightings:
   export_health_certificate: 0.5
   guidance: 1.1
   guide: 2.0
+  help_page: 1.5
   licence_transaction: 2.0
   manual_section: 1.5
   notice: 0.5
