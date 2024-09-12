@@ -81,10 +81,6 @@
         Send
         <%= content_tag :span, "message to GOV.UK Chat",
           class: "govuk-visually-hidden" %>
-        <%= content_tag :span, "",
-          aria: { live: "assertive" },
-          data: { awaiting_response_text: "GOV.UK Chat is generating a response to your question" },
-          class: "govuk-visually-hidden js-question-form-button__response-status" %>
       <% end %>
 
       <%= content_tag :div, class: "app-c-question-form__button-wrapper" do %>
@@ -92,6 +88,13 @@
           text: send_text,
           question_form_button: true,
         } %>
+        <%= content_tag :span, "",
+          role: "alert",
+          data: {
+            loading_question_text: "Loading your question",
+            loading_answer_text: "Loading your answer",
+          },
+          class: "govuk-visually-hidden js-question-form-button__response-status" %>
       <% end %>
     <% end %>
   <% end %>

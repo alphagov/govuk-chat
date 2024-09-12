@@ -61,11 +61,13 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     handleQuestionPending () {
       this.disableControls()
+      this.handleButtonResponseStatus(this.buttonResponseStatus.dataset.loadingQuestionText)
     }
 
     handleQuestionAccepted () {
       this.disableControls()
       this.resetInput()
+      this.handleButtonResponseStatus(this.buttonResponseStatus.dataset.loadingAnswerText)
     }
 
     handleQuestionRejected (event) {
@@ -92,11 +94,14 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.toggleDisabledSettings(false)
     }
 
+    handleButtonResponseStatus (text) {
+      this.buttonResponseStatus.textContent = text
+    }
+
     toggleDisabledSettings (isDisabled) {
       if (isDisabled) {
         this.button.setAttribute('aria-disabled', 'true')
         this.button.classList.add('app-c-blue-button--disabled')
-        this.buttonResponseStatus.textContent = this.buttonResponseStatus.dataset.awaitingResponseText
       } else {
         this.button.removeAttribute('aria-disabled')
         this.button.classList.remove('app-c-blue-button--disabled')
