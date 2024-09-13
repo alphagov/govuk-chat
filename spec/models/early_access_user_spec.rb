@@ -76,6 +76,15 @@ RSpec.describe EarlyAccessUser do
       end
     end
 
+    it "increments login_count value" do
+      freeze_time do
+        user = create(:early_access_user, last_login_at: 1.day.ago)
+
+        expect { user.sign_in(build(:passwordless_session)) }
+          .to change { user.login_count }.by(1)
+      end
+    end
+
     it "deletes any other available sessions to prevent concurrent usage" do
       user = create(:early_access_user)
       current_session = create(:passwordless_session, authenticatable: user)
