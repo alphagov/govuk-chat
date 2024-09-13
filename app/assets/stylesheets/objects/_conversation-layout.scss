@@ -84,6 +84,10 @@ $slide-in-out-translation-px: 67px;
   }
 }
 
+.app-conversation-layout__messages-container:focus {
+  outline: none;
+}
+
 .app-conversation-layout__list {
   padding-left: 0;
   margin: 0;
