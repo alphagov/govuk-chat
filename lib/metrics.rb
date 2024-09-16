@@ -26,7 +26,7 @@ class Metrics
   def self.register
     COUNTERS.each do |counter|
       PrometheusExporter::Client.default.register(
-        :counter, name_with_prefix(counter[:name]), counter[:description], labels: %i[source]
+        :counter, name_with_prefix(counter[:name]), counter[:description]
       )
     end
   end
