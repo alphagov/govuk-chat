@@ -34,7 +34,7 @@ module SystemSpecHelpers
   end
 
   def given_i_am_a_signed_in_early_access_user
-    @user = create(:early_access_user)
+    @user ||= create(:early_access_user)
     session = Passwordless::Session.create!(authenticatable: @user)
     magic_link = magic_link_path(session.to_param, session.token, only_path: false)
     visit(magic_link)

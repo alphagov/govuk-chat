@@ -25,5 +25,8 @@ message_history << render("get_started_messages")
 end
 
 content_for(:message_history, safe_join(message_history))
-content_for(:form, render("form", { create_question: @create_question }))
+content_for(
+  :form,
+  render("form", { create_question: @create_question, remaining_questions_copy: @remaining_questions_copy }),
+)
 %>

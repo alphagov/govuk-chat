@@ -19,13 +19,15 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.errorsWrapper = module.querySelector('.js-question-form-errors-wrapper')
       this.formGroup = module.querySelector('.js-question-form-group')
       this.surveyLink = module.querySelector('.js-survey-link')
+      this.remainingQuestionsHintWrapper = module.querySelector('.js-remaining-questions-hint-wrapper')
+      this.remainingQuestionsHint = this.remainingQuestionsHintWrapper.querySelector('.js-remaining-questions-hint')
       this.conversationId = null
     }
 
     init () {
       this.form.addEventListener('submit', e => this.handleSubmit(e))
       this.module.addEventListener('question-pending', () => this.handleQuestionPending())
-      this.module.addEventListener('question-accepted', () => this.handleQuestionAccepted())
+      this.module.addEventListener('question-accepted', e => this.handleQuestionAccepted(e))
       this.module.addEventListener('question-rejected', e => this.handleQuestionRejected(e))
       this.module.addEventListener('answer-received', () => this.handleAnswerReceived())
 
@@ -64,10 +66,18 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.handleButtonResponseStatus(this.buttonResponseStatus.dataset.loadingQuestionText)
     }
 
-    handleQuestionAccepted () {
+    handleQuestionAccepted (e) {
       this.disableControls()
       this.resetInput()
       this.handleButtonResponseStatus(this.buttonResponseStatus.dataset.loadingAnswerText)
+
+      if (e.detail && e.detail.remainingQuestionsCopy) {
+        this.remainingQuestionsHint.textContent = e.detail.remainingQuestionsCopy
+        this.remainingQuestionsHintWrapper.classList.remove('govuk-visually-hidden')
+        this.attachInputDescriptions(this.remainingQuestionsHint.id)
+      } else {
+        this.remainingQuestionsHintWrapper.classList.add('govuk-visually-hidden')
+      }
     }
 
     handleQuestionRejected (event) {
@@ -130,16 +140,23 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.errorsWrapper.replaceChildren(...elements)
 
       this.toggleErrorStyles(errors.length)
-      this.announceErrors(errors.length)
-      if (errors.length) this.input.focus()
+
+      if (errors.length) {
+        this.attachInputDescriptions(this.errorsWrapper.id)
+        this.input.focus()
+        this.remainingQuestionsHintWrapper.classList.add('govuk-visually-hidden')
+      } else {
+        this.resetInputDescriptions()
+      }
     }
 
-    announceErrors (hasErrors) {
-      if (hasErrors) {
-        this.input.setAttribute('aria-describedby', `${this.module.dataset.hintId} ${this.errorsWrapper.id}`)
-      } else {
-        this.input.setAttribute('aria-describedby', this.module.dataset.hintId)
-      }
+    attachInputDescriptions () {
+      const ids = [this.module.dataset.hintId, ...arguments].join(' ')
+      this.input.setAttribute('aria-describedby', ids)
+    }
+
+    resetInputDescriptions () {
+      this.input.setAttribute('aria-describedby', this.module.dataset.hintId)
     }
 
     toggleErrorStyles (hasErrors) {

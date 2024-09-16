@@ -85,6 +85,18 @@ RSpec.describe "ConversationsController" do
         end
       end
 
+      it "renders the remaining question count" do
+        allow(Rails.configuration.conversations).to receive_messages(
+          max_questions_per_user: 50,
+          question_warning_threshold: 20,
+        )
+        conversation.user.update!(questions_count: 45)
+
+        get show_conversation_path
+
+        expect(response.body).to have_selector(".js-remaining-questions-hint", text: "5 messages left")
+      end
+
       context "and there is a question without an answer" do
         let(:conversation) { create(:conversation, user:) }
 
@@ -308,6 +320,7 @@ RSpec.describe "ConversationsController" do
           "question_html" => /app-c-conversation-message/,
           "answer_url" => answer_question_path(question),
           "error_messages" => [],
+          "remaining_questions_copy" => nil,
         })
       end
 
@@ -323,6 +336,19 @@ RSpec.describe "ConversationsController" do
           "answer_url" => nil,
           "error_messages" => [Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE],
         )
+      end
+
+      it "includes the remaining questions copy" do
+        allow(Rails.configuration.conversations).to receive_messages(
+          max_questions_per_user: 50,
+          question_warning_threshold: 20,
+        )
+        conversation.user.update!(questions_count: 40)
+
+        post update_conversation_path,
+             params: { create_question: { user_question: "How much tax should I be paying?" }, format: :json }
+
+        expect(JSON.parse(response.body)).to include("remaining_questions_copy" => "9 messages left")
       end
     end
   end

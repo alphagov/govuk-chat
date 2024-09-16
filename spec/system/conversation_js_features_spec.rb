@@ -90,6 +90,20 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     then_i_see_a_print_link_in_the_menu
   end
 
+  scenario "reaching question limit" do
+    given_i_am_approaching_the_question_limit
+    and_i_have_an_active_conversation
+    and_i_am_a_signed_in_early_access_user
+
+    when_i_visit_the_conversation_page
+    then_i_see_my_question_remaining_count
+
+    when_i_enter_a_first_question
+    then_i_see_the_valid_question_was_accepted
+
+    then_i_see_my_question_remaining_count_is_decreased
+  end
+
   def when_i_enter_a_first_question
     @first_question = "How do I setup a workplace pension?"
     fill_in "create_question[user_question]", with: @first_question
@@ -273,5 +287,30 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     end
 
     expect(page).to have_button("Print or save this chat")
+  end
+
+  def given_i_am_approaching_the_question_limit
+    allow(Rails.configuration.conversations).to receive_messages(
+      max_questions_per_user: 50,
+      question_warning_threshold: 20,
+    )
+    @user = create(:early_access_user, questions_count: 45)
+  end
+
+  def then_i_see_my_question_remaining_count
+    expect(page).to have_content("5 messages left")
+  end
+
+  def then_i_see_my_question_remaining_count_is_decreased
+    expect(page).to have_content("4 messages left")
+  end
+
+  def and_i_have_an_active_conversation
+    conversation = create(:conversation, user: @user)
+    create(:question, :with_answer, conversation:)
+  end
+
+  def when_i_visit_the_conversation_page
+    visit show_conversation_path
   end
 end

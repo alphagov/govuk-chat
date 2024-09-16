@@ -161,7 +161,8 @@ describe('ChatConversation module', () => {
       successfulQuestionResponseJson = {
         question_html: '<li id="question_123">How can I setup a new business?</li>',
         answer_url: '/answer',
-        error_messages: []
+        error_messages: [],
+        remaining_questions_copy: '5 messages left'
       }
 
       fetchSpy = spyOn(window, 'fetch')
@@ -248,7 +249,10 @@ describe('ChatConversation module', () => {
 
         await module.handleFormSubmission(new Event('submit'))
 
-        const expectedEvent = jasmine.objectContaining({ type: 'question-accepted' })
+        const expectedEvent = jasmine.objectContaining({
+          type: 'question-accepted',
+          detail: { remainingQuestionsCopy: '5 messages left' }
+        })
         expect(formContainerEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
 

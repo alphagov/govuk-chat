@@ -8,6 +8,7 @@ class ConversationsController < BaseController
     @conversation ||= Conversation.new
     prepare_for_show_view(@conversation)
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
+    @remaining_questions_copy = helpers.remaining_questions_copy(@conversation.user)
 
     respond_to do |format|
       format.html { render :show }
@@ -137,6 +138,7 @@ private
       ),
       answer_url: answer_question_path(question),
       error_messages: [],
+      remaining_questions_copy: helpers.remaining_questions_copy(question.conversation.user),
     }
   end
 

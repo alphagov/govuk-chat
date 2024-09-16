@@ -54,6 +54,7 @@ module GovukChat
       max_question_age_days: 30,
       max_question_count: 500,
       max_questions_per_user: 70,
+      question_warning_threshold: 20,
     )
     config.early_access_users = Hashie::Mash.new(
       max_waiting_list_promotions_per_run: 50,
