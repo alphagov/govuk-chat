@@ -155,7 +155,7 @@ private
       answer_html: render_to_string(
         partial: "answer",
         formats: :html,
-        locals: { answer: },
+        locals: { answer:, question_limit_warning: true },
       ),
     }
   end

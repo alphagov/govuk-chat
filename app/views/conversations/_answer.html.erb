@@ -5,3 +5,9 @@
   question_message: answer.question.message,
   feedback_url: (answer_feedback_path(answer) if answer.feedback.blank?),
 } %>
+
+<% if question_limit_warning && show_question_limit_system_message?(current_early_access_user) %>
+  <%= render( "question_limit_system_message", {
+    questions_remaining: current_early_access_user.number_of_questions_remaining,
+  }) %>
+<% end %>

@@ -96,12 +96,38 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     and_i_am_a_signed_in_early_access_user
 
     when_i_visit_the_conversation_page
-    then_i_see_my_question_remaining_count
+    and_i_have_confirmed_i_understand_chat_risks
 
     when_i_enter_a_first_question
     then_i_see_the_valid_question_was_accepted
+    and_the_first_answer_is_generated
+    and_i_see_my_question_remaining_count
+    and_i_see_an_approaching_question_limit_system_message
 
-    then_i_see_my_question_remaining_count_is_decreased
+    when_i_enter_a_second_question
+    then_i_see_the_second_question_was_accepted
+    and_the_second_answer_is_generated
+    and_i_see_my_question_remaining_count_is_decreased
+
+    when_i_reload_the_page
+    then_i_do_not_see_an_approaching_question_limit_system_message
+  end
+
+  scenario "reached question limit" do
+    given_i_have_one_question_remaining_in_my_limit
+    and_i_have_an_active_conversation
+    and_i_am_a_signed_in_early_access_user
+
+    when_i_visit_the_conversation_page
+    and_i_have_confirmed_i_understand_chat_risks
+
+    when_i_enter_a_first_question
+    then_i_see_the_valid_question_was_accepted
+    and_the_first_answer_is_generated
+    and_i_see_a_reached_question_limit_system_message
+
+    when_i_enter_a_second_question
+    then_i_see_a_message_limit_validation_error
   end
 
   def when_i_enter_a_first_question
@@ -197,6 +223,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
     execute_queued_sidekiq_jobs
   end
+  alias_method :and_the_second_answer_is_generated, :when_the_second_answer_is_generated
 
   def then_i_can_see_the_second_answer
     expect(page).to have_content(@second_answer)
@@ -294,20 +321,49 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
       max_questions_per_user: 50,
       question_warning_threshold: 20,
     )
-    @user = create(:early_access_user, questions_count: 45)
+    @user = create(:early_access_user, questions_count: 29)
   end
 
-  def then_i_see_my_question_remaining_count
-    expect(page).to have_content("5 messages left")
+  def given_i_have_one_question_remaining_in_my_limit
+    allow(Rails.configuration.conversations).to receive_messages(
+      max_questions_per_user: 50,
+      question_warning_threshold: 20,
+    )
+    @user = create(:early_access_user, questions_count: 49)
   end
 
-  def then_i_see_my_question_remaining_count_is_decreased
-    expect(page).to have_content("4 messages left")
+  def and_i_see_my_question_remaining_count
+    expect(page).to have_content("20 messages left")
+  end
+
+  def and_i_see_my_question_remaining_count_is_decreased
+    expect(page).to have_content("19 messages left")
+  end
+
+  def and_i_see_an_approaching_question_limit_system_message
+    within(".js-new-conversation-messages-list:last-child") do
+      expect(page).to have_content("You’ve nearly reached the message limit for the GOV.UK Chat trial.")
+    end
+  end
+
+  def then_i_do_not_see_an_approaching_question_limit_system_message
+    expect(page).not_to have_content("You’ve nearly reached the message limit for the GOV.UK Chat trial.")
+  end
+
+  def and_i_see_a_reached_question_limit_system_message
+    within(".js-new-conversation-messages-list:last-child") do
+      expect(page).to have_content("You’ve reached the message limit for the GOV.UK Chat trial.")
+    end
+  end
+
+  def then_i_see_a_message_limit_validation_error
+    within(".app-c-question-form__error-list") do
+      expect(page).to have_content "You have asked the maximum number of questions"
+    end
   end
 
   def and_i_have_an_active_conversation
-    conversation = create(:conversation, user: @user)
-    create(:question, :with_answer, conversation:)
+    create(:conversation, user: @user)
   end
 
   def when_i_visit_the_conversation_page
