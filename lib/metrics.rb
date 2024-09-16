@@ -21,6 +21,10 @@ class Metrics
       name: "answer_feedback_total",
       description: "The number of useful (yes/no) responses received",
     },
+    {
+      name: "conversations_total",
+      description: "The total number of conversations",
+    },
   ].freeze
 
   def self.register
