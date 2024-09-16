@@ -85,6 +85,7 @@ module GovukChat
     end
 
     config.answer_statuses = Hashie::Mash.new(YAML.load_file("#{__dir__}/answer_statuses.yml"))
+    config.question_routing_labels = Hashie::Mash.new(YAML.load_file("#{__dir__}/question_routing_labels.yml"))
     config.search = Hashie::Mash.new(YAML.load_file("#{__dir__}/search.yml"))
 
     config.action_dispatch.rescue_responses["Search::ChunkedContentRepository::NotFound"] = :not_found
