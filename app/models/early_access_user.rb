@@ -36,6 +36,7 @@ class EarlyAccessUser < ApplicationRecord
     raise AccessRevokedError if access_revoked?
 
     touch(:last_login_at)
+    increment(:login_count)
 
     # delete any other sessions for this user to ensure no concurrent sessions,
     # both active and ones not yet to be claimed

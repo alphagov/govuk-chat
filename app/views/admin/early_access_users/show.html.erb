@@ -24,6 +24,10 @@
       value: @user.email,
     },
     {
+      field: "Logins",
+      value: @user.login_count,
+    },
+    {
       field: "Last login",
       value: @user.last_login_at ? @user.last_login_at.to_fs(:time_and_date) : "Never",
     },

@@ -229,6 +229,7 @@ RSpec.describe "Admin::EarlyAccessController" do
         :early_access_user,
         email: "alice@example.com",
         last_login_at: Time.zone.parse("2024-1-1 12:13:14"),
+        login_count: 12,
         user_description: :business_owner_or_self_employed,
         reason_for_visit: :find_specific_answer,
         revoked_at: nil,
@@ -245,6 +246,7 @@ RSpec.describe "Admin::EarlyAccessController" do
         .and have_content("business_owner_or_self_employed")
         .and have_content("find_specific_answer")
         .and have_content("Unlimited")
+        .and have_content("12")
         .and have_link("7", href: admin_questions_path(user_id: user.id))
     end
 

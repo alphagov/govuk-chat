@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_09_204702) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_13_113454) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -124,6 +124,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_09_204702) do
     t.boolean "onboarding_completed", default: false, null: false
     t.integer "question_limit"
     t.string "unsubscribe_token", default: -> { "gen_random_uuid()" }, null: false
+    t.integer "login_count", default: 0
     t.index ["email"], name: "index_early_access_users_on_email", unique: true
   end
 
