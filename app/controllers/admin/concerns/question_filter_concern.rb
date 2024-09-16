@@ -9,6 +9,7 @@ private
       :status,
       { start_date_params: %i[day month year], end_date_params: %i[day month year] },
       :answer_feedback_useful,
+      :question_routing_label,
       :page,
       :sort,
       :user_id,
