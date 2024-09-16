@@ -13,7 +13,7 @@ RSpec.describe Metrics do
       described_class::COUNTERS.each do |counter|
         expect(PrometheusExporter::Client.default)
           .to receive(:register)
-          .with(:counter, "#{described_class::PREFIX}#{counter[:name]}", counter[:description], labels: %i[source])
+          .with(:counter, "#{described_class::PREFIX}#{counter[:name]}", counter[:description])
       end
 
       described_class.register
