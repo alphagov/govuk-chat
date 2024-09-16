@@ -102,4 +102,11 @@ RSpec.describe Answer do
       )
     end
   end
+
+  it "ensures the question routing labels and the enum values are in sync" do
+    label_config = Rails.configuration.question_routing_labels
+    enum_values = described_class.question_routing_labels.values
+
+    expect(label_config.keys).to match_array(enum_values)
+  end
 end

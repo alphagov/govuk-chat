@@ -50,6 +50,25 @@ class Answer < ApplicationRecord
        },
        prefix: true
 
+  enum :question_routing_label,
+       {
+         about_mps: "about_mps",
+         advice_opinions_predictions: "advice_opinions_predictions",
+         character_fun: "character_fun",
+         content_not_govuk: "content_not_govuk",
+         genuine_rag: "genuine_rag",
+         gov_transparency: "gov_transparency",
+         greetings: "greetings",
+         harmful_vulgar_controversy: "harmful_vulgar_controversy",
+         multi_questions: "multi_questions",
+         negative_acknowledgement: "negative_acknowledgement",
+         non_english: "non_english",
+         personal_info: "personal_info",
+         positive_acknowledgement: "positive_acknowledgement",
+         vague_acronym_grammar: "vague_acronym_grammar",
+       },
+       prefix: true
+
   enum :output_guardrail_status, { pass: "pass", fail: "fail", error: "error" }
 
   def build_sources_from_search_results(search_results)
