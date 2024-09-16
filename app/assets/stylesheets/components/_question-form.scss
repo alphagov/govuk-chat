@@ -46,6 +46,7 @@
 .app-c-question-form__input {
   border: 2px solid govuk-colour("black");
   border-radius: 0;
+  box-sizing: border-box;
   padding: govuk-spacing(2);
   width: 100%;
   margin: 0;
