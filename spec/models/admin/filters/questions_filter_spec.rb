@@ -220,6 +220,14 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([bob_question])
     end
 
+    it "filters the results by question routing label" do
+      create(:question, answer: build(:answer, question_routing_label: "genuine_rag"))
+      non_english_question = create(:question, answer: build(:answer, question_routing_label: "non_english"))
+
+      filter = described_class.new(question_routing_label: "non_english")
+      expect(filter.results).to eq([non_english_question])
+    end
+
     it "paginates the results" do
       create_list(:question, 26)
 
