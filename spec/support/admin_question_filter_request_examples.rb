@@ -58,7 +58,7 @@ module AdminQuestionFilterRequestExamples
 
       context "when filter parameters are provided" do
         it "returns success when filters paramaters are valid" do
-          get public_send(path, conversation, status: "abort_timeout")
+          get public_send(path, conversation, status: "error_timeout")
           expect(response).to have_http_status(:ok)
         end
 

@@ -125,7 +125,7 @@ RSpec.describe Question do
 
         expect(answer).to have_attributes(
           message: Answer::CannedResponses::TIMED_OUT_RESPONSE,
-          status: "abort_timeout",
+          status: "error_timeout",
           question:,
           feedback: nil,
         )

@@ -408,11 +408,11 @@ RSpec.describe "ConversationsController" do
         )
       end
 
-      it "creates the answer with a status of abort_timeout" do
+      it "creates the answer with a status of error_timeout" do
         expect { get answer_question_path(question) }.to change { question.reload.answer }.from(nil)
         expect(question.answer).to have_attributes(
           message: Answer::CannedResponses::TIMED_OUT_RESPONSE,
-          status: "abort_timeout",
+          status: "error_timeout",
         )
       end
 
