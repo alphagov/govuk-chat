@@ -25,6 +25,10 @@ class Metrics
       name: "conversations_total",
       description: "The total number of conversations",
     },
+    {
+      name: "login_total",
+      description: "The total number of early access user logins",
+    },
   ].freeze
 
   def self.register
