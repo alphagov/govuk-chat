@@ -1,7 +1,7 @@
 .app-c-conversation-sources {
   border-top: 1px solid govuk-colour("mid-grey");
   margin-top: govuk-spacing(6);
-  padding-top: govuk-spacing(6);
+  padding-top: govuk-spacing(4);
 }
 
 .app-c-conversation-sources-list {
@@ -15,10 +15,10 @@
 
 .app-c-warning-text {
   display: flex;
+  margin-bottom: govuk-spacing(2);
   padding: govuk-spacing(2) 0;
   position: relative;
   @include govuk-font($size: 19);
-  @include govuk-responsive-margin(4, "bottom");
 
   @include govuk-media-query($from: tablet) {
     align-items: center;
