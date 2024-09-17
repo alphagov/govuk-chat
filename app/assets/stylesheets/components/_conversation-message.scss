@@ -25,13 +25,33 @@ $message-container-spacing-mobile: 40px;
   }
 }
 
-.app-c-conversation-message__message--govuk-message, .app-c-conversation-message__feedback {
+.app-c-conversation-message__message--govuk-message {
   margin: govuk-spacing(3) 0;
+  @include govuk-media-query($from: tablet) {
+    margin: govuk-spacing(5) 0;
+  }
+}
+
+.app-c-conversation-message__feedback {
+  margin: 0 0 govuk-spacing(3);
+  @include govuk-media-query($from: tablet) {
+    margin: 0 0 govuk-spacing(5);
+  }
+}
+
+.app-c-conversation-message__message--govuk-message, .app-c-conversation-message__feedback {
   width: calc(100% - $message-container-spacing-mobile);
 
   @include govuk-media-query($from: tablet) {
-    margin: govuk-spacing(5) 0;
     width: calc(100% - $message-container-spacing-tablet);
+  }
+}
+
+.app-c-conversation-message__message--govuk-message:has(~ .app-c-conversation-message__feedback) {
+  margin: govuk-spacing(2) 0;
+
+  @include govuk-media-query($from: tablet) {
+    margin: govuk-spacing(3) 0;
   }
 }
 
