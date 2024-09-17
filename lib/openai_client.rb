@@ -45,12 +45,18 @@ class OpenAIClient
       model_name = JSON.parse(env.request_body)["model"]
       headers = env["response_headers"]
 
-      if (remaining_tokens = headers["x-ratelimit-remaining-tokens"])
-        Metrics.gauge("openai_remaining_tokens", remaining_tokens.to_i, { object:, model: model_name })
+      if headers["x-ratelimit-remaining-tokens"] && headers["x-ratelimit-limit-tokens"]
+        remaining_tokens = headers["x-ratelimit-remaining-tokens"].to_i
+        tokens_limit = headers["x-ratelimit-limit-tokens"].to_f
+        Metrics.gauge("openai_remaining_tokens", remaining_tokens, { object:, model: model_name })
+        Metrics.gauge("openai_tokens_used_percentage", ((tokens_limit - remaining_tokens) / tokens_limit) * 100, { object:, model: model_name })
       end
 
-      if (remaining_requests = headers["x-ratelimit-remaining-requests"])
-        Metrics.gauge("openai_remaining_requests", remaining_requests.to_i, { object:, model: model_name })
+      if headers["x-ratelimit-remaining-requests"] && headers["x-ratelimit-limit-requests"]
+        remaining_requests = headers["x-ratelimit-remaining-requests"].to_i
+        requests_limit = headers["x-ratelimit-limit-requests"].to_f
+        Metrics.gauge("openai_remaining_requests", remaining_requests, { object:, model: model_name })
+        Metrics.gauge("openai_requests_used_percentage", ((requests_limit - remaining_requests) / requests_limit) * 100, { object:, model: model_name })
       end
     end
   end

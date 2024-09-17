@@ -34,11 +34,19 @@ class Metrics
   GAUGES = [
     {
       name: "openai_remaining_tokens",
-      description: "The number of remaining tokens for OpenAI API",
+      description: "The number of remaining tokens for the OpenAI API",
     },
     {
       name: "openai_remaining_requests",
-      description: "The number of remaining requests for OpenAI API",
+      description: "The number of remaining requests for the OpenAI API",
+    },
+    {
+      name: "openai_tokens_used_percentage",
+      description: "The percentage of available tokens for the OpenAI API that have been used",
+    },
+    {
+      name: "openai_requests_used_percentage",
+      description: "The percentage of available requests for the OpenAI API that have been used",
     },
   ].freeze
 

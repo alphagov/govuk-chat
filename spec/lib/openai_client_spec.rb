@@ -51,8 +51,10 @@ RSpec.describe OpenAIClient do # rubocop:disable RSpec/SpecFilePathFormat
       stub_request(:post, /openai\.com/)
         .to_return_json(
           headers: {
-            "x-ratelimit-remaining-tokens" => 123,
-            "x-ratelimit-remaining-requests" => 456,
+            "x-ratelimit-remaining-tokens" => 90_000_000,
+            "x-ratelimit-limit-tokens" => 150_000_000,
+            "x-ratelimit-remaining-requests" => 21_000,
+            "x-ratelimit-limit-requests" => 30_000,
           },
           body: {
             "object" => "chat.completion",
@@ -61,8 +63,10 @@ RSpec.describe OpenAIClient do # rubocop:disable RSpec/SpecFilePathFormat
 
       described_class.build.chat(parameters: chat_parameters)
 
-      expect(Metrics).to have_received(:gauge).with("openai_remaining_tokens", 123, { object: "chat.completion", model: chat_parameters[:model] })
-      expect(Metrics).to have_received(:gauge).with("openai_remaining_requests", 456, { object: "chat.completion", model: chat_parameters[:model] })
+      expect(Metrics).to have_received(:gauge).with("openai_remaining_tokens", 90_000_000, { object: "chat.completion", model: chat_parameters[:model] })
+      expect(Metrics).to have_received(:gauge).with("openai_tokens_used_percentage", 40.0, { object: "chat.completion", model: chat_parameters[:model] })
+      expect(Metrics).to have_received(:gauge).with("openai_remaining_requests", 21_000, { object: "chat.completion", model: chat_parameters[:model] })
+      expect(Metrics).to have_received(:gauge).with("openai_requests_used_percentage", 30.0, { object: "chat.completion", model: chat_parameters[:model] })
     end
 
     it "doesn't set gauges for an unknown object" do
