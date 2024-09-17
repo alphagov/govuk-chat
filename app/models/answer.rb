@@ -45,6 +45,7 @@ class Answer < ApplicationRecord
          error_invalid_llm_response: "error_invalid_llm_response",
          error_output_guardrails: "error_output_guardrails",
          error_non_specific: "error_non_specific",
+         error_timeout: "error_timeout",
          error_question_routing: "error_question_routing",
          success: "success",
        },
