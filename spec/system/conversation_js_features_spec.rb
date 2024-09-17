@@ -358,7 +358,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
   def then_i_see_a_message_limit_validation_error
     within(".app-c-question-form__error-list") do
-      expect(page).to have_content "You have asked the maximum number of questions"
+      expect(page).to have_content "You’ve reached the message limit for the GOV.UK Chat trial."
     end
   end
 

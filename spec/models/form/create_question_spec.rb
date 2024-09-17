@@ -68,7 +68,7 @@ RSpec.describe Form::CreateQuestion do
     end
 
     describe "#within_question_limit?" do
-      let(:question_limit_error_message) { "You have asked the maximum number of questions. You cannot ask any more." }
+      let(:question_limit_error_message) { "You’ve reached the message limit for the GOV.UK Chat trial. You have no messages left." }
 
       it "adds a error message if over the question limit" do
         conversation.user = build(:early_access_user, questions_count: 2, question_limit: 1)
