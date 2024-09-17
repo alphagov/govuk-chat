@@ -25,13 +25,13 @@ RSpec.describe Admin::QuestionsHelper do
 
     context "when the status passed in has a corresponding description" do
       it "returns a tag with the status and description as the title attribute" do
-        tag = helper.format_answer_status_as_tag("abort_timeout")
-        expect(tag).to eq('<span title="Abort - no answer after configured timeout" class="govuk-tag govuk-tag--orange">Abort</span>')
+        tag = helper.format_answer_status_as_tag("error_timeout")
+        expect(tag).to eq('<span title="Error - no answer after configured timeout" class="govuk-tag govuk-tag--red">Error</span>')
       end
 
       it "returns a tag and a visible description when with_description_suffix is true" do
-        tag = helper.format_answer_status_as_tag("abort_timeout", with_description_suffix: true)
-        expected_output = '<span title="Abort - no answer after configured timeout" class="govuk-tag govuk-tag--orange">Abort</span>' \
+        tag = helper.format_answer_status_as_tag("error_timeout", with_description_suffix: true)
+        expected_output = '<span title="Error - no answer after configured timeout" class="govuk-tag govuk-tag--red">Error</span>' \
                           " - no answer after configured timeout"
         expect(tag).to eq(expected_output)
       end

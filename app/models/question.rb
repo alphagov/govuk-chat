@@ -39,7 +39,7 @@ class Question < ApplicationRecord
     if age >= Rails.configuration.conversations.answer_timeout_in_seconds
       create_answer(
         message: Answer::CannedResponses::TIMED_OUT_RESPONSE,
-        status: :abort_timeout,
+        status: :error_timeout,
         feedback: nil,
       )
     end
