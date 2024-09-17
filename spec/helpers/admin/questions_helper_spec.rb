@@ -118,6 +118,15 @@ RSpec.describe Admin::QuestionsHelper do
       expect(returned_keys(result)).to include("Feedback created at", "Feedback")
     end
 
+    it "returns a row with a human readable question routing label" do
+      answer = create(:answer, question_routing_label: "advice_opinions_predictions")
+      answer = answer_from_db(answer)
+      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
+
+      row = result.find { |r| r[:field] == "Question routing label" }
+      expect(row[:value]).to eq("Advice, opinions, predictions")
+    end
+
     it "returns a row with a link to the user's details" do
       result = helper.question_show_summary_list_rows(question, nil, 1, 1)
 

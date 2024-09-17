@@ -127,6 +127,21 @@
     ],
   } %>
 
+  <%= render "govuk_publishing_components/components/select", {
+    id: "question_routing_label",
+    name: "question_routing_label",
+    label: "Question routing label",
+    heading_size: "s",
+    full_width: true,
+    options: [{text: "", value: ""}] + Rails.configuration.question_routing_labels.map do |label, human_readable_label|
+      {
+        text: human_readable_label,
+        value: label,
+        selected: params[:question_routing_label] == label,
+      }
+    end,
+  } %>
+
   <%= render "govuk_publishing_components/components/button", {
     text: "Filter",
     margin_bottom: true,

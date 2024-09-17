@@ -32,6 +32,10 @@ RSpec.describe "Admin user filters questions" do
     and_i_filter_by_questions_with_useful_answers
     then_i_see_the_useful_question
 
+    when_i_clear_the_filters
+    and_i_filter_by_questions_with_a_specific_question_routing_label
+    then_i_see_the_question_with_that_routing_label
+
     when_i_view_the_questions_conversation
     and_i_filter_on_the_pending_status
     then_i_see_the_pending_question
@@ -58,8 +62,9 @@ RSpec.describe "Admin user filters questions" do
   def and_there_are_questions
     conversation = build(:conversation)
     @question1 = create(:question, conversation:, message: "Hello world", created_at: 2.years.ago)
-    @question2 = create(:question, :with_answer, message: "World", conversation:)
-    create(:answer_feedback, answer: @question2.answer, useful: true)
+    @question2 = create(:question, message: "World", conversation:)
+    answer2 = create(:answer, question: @question2, question_routing_label: "non_english")
+    create(:answer_feedback, answer: answer2, useful: true)
   end
 
   def and_there_are_questions_associated_with_users
@@ -188,6 +193,16 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_useful_question
+    expect(page).to have_content(@question2.message)
+    expect(page).not_to have_content(@question1.message)
+  end
+
+  def and_i_filter_by_questions_with_a_specific_question_routing_label
+    select "Non-English", from: "question_routing_label"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_question_with_that_routing_label
     expect(page).to have_content(@question2.message)
     expect(page).not_to have_content(@question1.message)
   end

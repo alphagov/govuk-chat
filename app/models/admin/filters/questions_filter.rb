@@ -5,6 +5,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :end_date_params, default: {}
   attribute :conversation
   attribute :answer_feedback_useful, :boolean
+  attribute :question_routing_label
   attribute :user_id
 
   validate :validate_dates
@@ -32,6 +33,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
       scope = end_date_scope(scope)
       scope = answer_feedback_useful_scope(scope)
       scope = conversation_scope(scope)
+      scope = question_routing_label_scope(scope)
       scope = ordering_scope(scope)
       scope = user_scope(scope)
       scope.page(page)
@@ -103,6 +105,12 @@ private
     return scope if user_id.blank?
 
     scope.joins(:conversation).where("conversations.early_access_user_id = ?", user_id)
+  end
+
+  def question_routing_label_scope(scope)
+    return scope if question_routing_label.blank?
+
+    scope.joins(:answer).where("answers.question_routing_label = ?", question_routing_label)
   end
 
   def validate_dates
