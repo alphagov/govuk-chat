@@ -36,4 +36,10 @@
   .gem-c-error-summary.govuk-error-summary {
     background-color: govuk-colour("white");
   }
+
+  .gem-c-label.govuk-label.govuk-label--m {
+    @include govuk-media-query($until: tablet) {
+      @include govuk-font-size(19, $line-height: false, $important: false);
+    }
+  }
 }
