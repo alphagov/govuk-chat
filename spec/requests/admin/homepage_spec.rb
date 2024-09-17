@@ -51,7 +51,7 @@ RSpec.describe "Admin::HomepageController" do
       it "renders a link to the infrastructure dashboard" do
         get admin_homepage_path
         expect(response.body)
-          .to have_link("Infrastructure status", href: /grafana.*\/chat-ai-dashboard/)
+          .to have_link("Infrastructure status", href: /grafana.*\/govuk-chat-technical/)
       end
     end
   end
