@@ -3,6 +3,10 @@ $message-container-spacing-mobile: 40px;
 
 .app-c-conversation-message {
   list-style: none;
+
+  &:last-child {
+    scroll-margin-top: govuk-spacing(2);
+  }
 }
 
 .app-c-conversation-message__message {
