@@ -22,7 +22,7 @@ RSpec.describe "User clears chat" do
   end
 
   def and_i_cancel
-    click_on "Continue last chat"
+    click_on "Return to last chat"
   end
 
   def and_i_reset_my_conversation

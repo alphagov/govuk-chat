@@ -3,6 +3,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <p class="govuk-body">Starting a new chat will permanently clear your chat history.</p>
+    <p class="govuk-body">If you want to save your conversation before starting a new one, you need to return to your last chat. Then use the ‘Print or save this chat’ option in the menu to save your conversation.</p>
 
     <%= form_with url: clear_path, class: "app-c-onboarding-form" do |f| %>
       <%= render "components/blue_button", {
@@ -10,7 +11,7 @@
       } %>
       <%= render "govuk_publishing_components/components/button", {
         secondary_solid: true,
-        text: "Continue last chat",
+        text: "Return to last chat",
         href: show_conversation_path,
       } %>
     <% end %>
