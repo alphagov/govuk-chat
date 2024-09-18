@@ -77,7 +77,8 @@ class Metrics
 
   def self.gauge(name, value, labels = {})
     if GAUGES.none? { |gauge| gauge[:name] == name }
-      GovukError.notify("#{name} is not defined in Metrics::GAUGES")
+      error = "#{name} is not defined in Metrics::GAUGES"
+      Rails.env.production? ? GovukError.notify(error) : (raise error)
       return
     end
 
