@@ -5,11 +5,11 @@
 }
 
 .app-c-conversation-sources-list {
-  padding-left: govuk-spacing(5);
+   // there currently isn't a `govuk-spacing` mixin that produces 35px
+  padding-left: 35px;
 
   .app-c-conversation-sources-list__item {
     @include govuk-responsive-margin(3, "bottom");
-    padding-left: govuk-spacing(2);
   }
 }
 
@@ -61,6 +61,7 @@
 
 .app-c-warning-text__text {
   display: block;
+  // there currently isn't a `govuk-spacing` mixin that produces 35px
   padding-left: 35px;
   @include govuk-text-colour;
 }
