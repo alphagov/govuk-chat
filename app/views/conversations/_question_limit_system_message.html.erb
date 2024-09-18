@@ -1,0 +1,4 @@
+<%= render "components/conversation_message", {
+  id: "answer_limit",
+  message: "<p>You’ve#{questions_remaining > 0 ? ' nearly' : ''} reached the message limit for the GOV.UK Chat trial.</p><p>You have #{questions_remaining} #{'message'.pluralize(questions_remaining)} left.</p>",
+} %>

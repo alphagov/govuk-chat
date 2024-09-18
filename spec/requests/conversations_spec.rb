@@ -97,6 +97,27 @@ RSpec.describe "ConversationsController" do
         expect(response.body).to have_selector(".js-remaining-questions-hint", text: "5 messages left")
       end
 
+      it "renders a system message when approaching the question limit" do
+        allow(Rails.configuration.conversations).to receive_messages(
+          max_questions_per_user: 50,
+          question_warning_threshold: 20,
+        )
+        conversation.user.update!(questions_count: 30)
+
+        get show_conversation_path
+
+        expect(response.body).to have_content("You’ve nearly reached the message limit for the GOV.UK Chat trial").once
+      end
+
+      it "renders a system message when the question limit has been reached" do
+        allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(50)
+        conversation.user.update!(questions_count: 50)
+
+        get show_conversation_path
+
+        expect(response.body).to have_content("You’ve reached the message limit for the GOV.UK Chat trial").once
+      end
+
       context "and there is a question without an answer" do
         let(:conversation) { create(:conversation, user:) }
 
@@ -430,6 +451,31 @@ RSpec.describe "ConversationsController" do
 
         expect(response).to have_http_status(:success)
         expect(JSON.parse(response.body)).to match({ "answer_html" => /app-c-conversation-message/ })
+      end
+
+      it "includes a system message in answer_html when appraching the question limit" do
+        allow(Rails.configuration.conversations).to receive_messages(
+          max_questions_per_user: 50,
+          question_warning_threshold: 20,
+        )
+        user.update!(questions_count: 30)
+
+        question = create(:question, :with_answer, conversation:)
+
+        get answer_question_path(question, format: :json)
+
+        expect(JSON.parse(response.body)).to match({ "answer_html" => /You’ve nearly reached the message limit/ })
+      end
+
+      it "includes a system message in answer_html when reached the question limit" do
+        allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(50)
+        user.update!(questions_count: 50)
+
+        question = create(:question, :with_answer, conversation:)
+
+        get answer_question_path(question, format: :json)
+
+        expect(JSON.parse(response.body)).to match({ "answer_html" => /You’ve reached the message limit/ })
       end
 
       it "responds with an accepted status code when the question has a pending answer" do

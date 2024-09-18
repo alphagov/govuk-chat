@@ -45,6 +45,6 @@ private
     return if conversation.user.nil?
     return unless conversation.user.question_limit_reached?
 
-    errors.add(:base, "You have asked the maximum number of questions. You cannot ask any more.")
+    errors.add(:base, "You’ve reached the message limit for the GOV.UK Chat trial. You have no messages left.")
   end
 end

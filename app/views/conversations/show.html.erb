@@ -21,7 +21,9 @@ message_history << render("onboarding/privacy_messages")
 message_history << render("get_started_messages")
 @questions.each do |question|
   message_history << render("question", question:)
-  message_history << render("answer", answer: question.answer) if question.answer
+  if question.answer
+    message_history << render("answer", answer: question.answer, question_limit_warning: question == @questions.last)
+  end
 end
 
 content_for(:message_history, safe_join(message_history))
