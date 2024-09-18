@@ -12,7 +12,6 @@ private
 
     expires_in(1.minute, public: true) unless Rails.env.development?
     request.session_options[:skip] = true
-    response.headers["Govuk-Rendered-Error"] = "true"
     response.headers["No-Fallback"] = "true"
 
     status = settings.downtime_type_temporary? ? :service_unavailable : :gone

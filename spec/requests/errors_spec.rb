@@ -5,7 +5,6 @@ RSpec.describe "ErrorController" do
       get "/#{code}"
       expect(response).to have_http_status(status)
       expect(response.body).to have_selector(".gem-c-title__text", text: page_title)
-      expect(response.headers["Govuk-Rendered-Error"]).to eq "true"
       expect(response.headers["No-Fallback"]).to eq "true"
     end
   end

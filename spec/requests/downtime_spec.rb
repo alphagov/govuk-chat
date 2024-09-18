@@ -22,9 +22,8 @@ RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" 
       expect(response.cookies).to be_empty
     end
 
-    it "sets the correct headers" do
+    it "sets the 'No-Fallback' header" do
       get homepage_path
-      expect(response.headers["Govuk-Rendered-Error"]).to eq("true")
       expect(response.headers["No-Fallback"]).to eq("true")
     end
   end
