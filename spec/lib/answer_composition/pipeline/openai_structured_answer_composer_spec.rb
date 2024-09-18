@@ -23,13 +23,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
       context.search_results = [search_result]
     end
 
-    it "sends OpenAI a series of messages combining system prompt, few shot messages and the user question" do
-      few_shots = llm_prompts[:few_shots].flat_map do |few_shot|
-        [
-          { role: "user", content: few_shot[:user] },
-          { role: "assistant", content: few_shot[:assistant] },
-        ]
-      end
+    it "sends OpenAI a series of messages combining system prompt and the user question" do
       system_prompt_context = "[{:page_url=>\"link_1\", " \
                               ":page_title=>\"Title\", " \
                               ":page_description=>\"Description\", " \
@@ -37,7 +31,6 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
                               ":context_content=>\"<p>Some content</p><a href=\\\"link_2\\\">What is a tax?</a>\"}]"
       expected_message_history = [
         { role: "system", content: system_prompt(system_prompt_context) },
-        few_shots,
         { role: "user", content: question.message },
       ]
       .flatten
