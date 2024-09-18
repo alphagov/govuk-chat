@@ -42,15 +42,25 @@ RSpec.describe Metrics do
       expect(metric).to have_received(:observe).with(1, source: "instant_signup")
     end
 
-    it "notifies sentry and returns if the counter does not exist" do
-      allow(GovukError).to receive(:notify)
+    context "when in a production environment" do
+      it "notifies sentry and returns if the counter does not exist" do
+        allow(GovukError).to receive(:notify)
+        allow(Rails.env).to receive(:production?).and_return(true)
 
-      described_class.increment_counter("non_existant_counter", source: "instant_signup")
+        described_class.increment_counter("non_existant_counter", source: "instant_signup")
 
-      expect(GovukError)
-        .to have_received(:notify)
-        .with("non_existant_counter is not defined in Metrics::COUNTERS")
-      expect(metric).not_to have_received(:observe)
+        expect(GovukError)
+          .to have_received(:notify)
+          .with("non_existant_counter is not defined in Metrics::COUNTERS")
+        expect(metric).not_to have_received(:observe)
+      end
+    end
+
+    context "when in a non production environment" do
+      it "raises an error if the counter does not exist" do
+        expect { described_class.increment_counter("non_existant_counter", source: "instant_signup") }
+          .to raise_error("non_existant_counter is not defined in Metrics::COUNTERS")
+      end
     end
   end
 end

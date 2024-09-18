@@ -37,7 +37,8 @@ class Metrics
 
   def self.increment_counter(name, labels = {})
     if COUNTERS.none? { |counter| counter[:name] == name }
-      GovukError.notify("#{name} is not defined in Metrics::COUNTERS")
+      error = "#{name} is not defined in Metrics::COUNTERS"
+      Rails.env.production? ? GovukError.notify(error) : (raise error)
       return
     end
 
