@@ -33,13 +33,10 @@ class Answer < ApplicationRecord
 
   enum :status,
        {
-         # TODO: remove this status from DB once we're confident this isn't coming back
-         abort_forbidden_words: "abort_forbidden_words",
          abort_llm_cannot_answer: "abort_llm_cannot_answer",
          abort_no_govuk_content: "abort_no_govuk_content",
          abort_output_guardrails: "abort_output_guardrails",
          abort_question_routing: "abort_question_routing",
-         abort_timeout: "abort_timeout",
          error_answer_service_error: "error_answer_service_error",
          error_context_length_exceeded: "error_context_length_exceeded",
          error_invalid_llm_response: "error_invalid_llm_response",
