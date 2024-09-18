@@ -61,6 +61,10 @@ RSpec.describe EarlyAccessUser do
   end
 
   describe "#sign_in" do
+    before do
+      allow(Metrics).to receive(:increment_counter)
+    end
+
     it "raises a AccessRevokedError if a user has access revoked" do
       instance = described_class.new(revoked_at: Time.current)
       expect { instance.sign_in(build(:passwordless_session)) }
@@ -83,6 +87,12 @@ RSpec.describe EarlyAccessUser do
         expect { user.sign_in(build(:passwordless_session)) }
           .to change { user.login_count }.by(1)
       end
+    end
+
+    it "sends logins_total to prometheus" do
+      user = create(:early_access_user, source: :delayed_signup)
+      user.sign_in(build(:passwordless_session))
+      expect(Metrics).to have_received(:increment_counter).with("login_total", user_source: "delayed_signup")
     end
 
     it "deletes any other available sessions to prevent concurrent usage" do

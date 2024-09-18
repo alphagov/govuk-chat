@@ -41,9 +41,11 @@ class EarlyAccessUser < ApplicationRecord
     # delete any other sessions for this user to ensure no concurrent sessions,
     # both active and ones not yet to be claimed
     Passwordless::Session.available
-                         .where(authenticatable: self)
-                         .where.not(id: session.id)
-                         .delete_all
+      .where(authenticatable: self)
+      .where.not(id: session.id)
+      .delete_all
+
+    Metrics.increment_counter("login_total", user_source: source)
   end
 
   def question_limit_reached?
