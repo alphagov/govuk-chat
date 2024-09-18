@@ -4,7 +4,7 @@ class HomepageController < BaseController
 
   def index
     request.session_options[:skip] = true
-    expires_in(5.minutes, public: true) unless Rails.env.development?
+    expires_in(1.minute, public: true) unless Rails.env.development?
     early_access_auth = !Rails.configuration.available_without_early_access_authentication
     if early_access_auth
       @sign_in_or_up_form = Form::EarlyAccess::SignInOrUp.new

@@ -21,6 +21,12 @@ RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" 
       get homepage_path
       expect(response.cookies).to be_empty
     end
+
+    it "sets the correct headers" do
+      get homepage_path
+      expect(response.headers["Govuk-Rendered-Error"]).to eq("true")
+      expect(response.headers["No-Fallback"]).to eq("true")
+    end
   end
 
   context "when public_access_enabled is false and downtime_type is temporary" do

@@ -4,7 +4,7 @@ RSpec.describe "StaticController" do
       it "sets the cache headers to 5 mins with a vary of Cookie" do
         get public_send(path_method)
 
-        expect(response.headers["Cache-Control"]).to eq("max-age=300, public")
+        expect(response.headers["Cache-Control"]).to eq("max-age=60, public")
         expect(response.headers["Vary"]).to eq("Cookie")
       end
     end
