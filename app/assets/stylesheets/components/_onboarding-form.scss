@@ -6,7 +6,6 @@
 
   .govuk-button, .govuk-link {
     flex: auto;
-    margin: govuk-spacing(2);
 
     @include govuk-media-query($until: tablet) {
       margin: 0 0 govuk-spacing(2);
@@ -26,5 +25,9 @@
     flex-direction: column;
     margin-bottom: govuk-spacing(1);
     padding-top: govuk-spacing(3);
+  }
+
+  @include govuk-media-query($from: tablet) {
+    gap: 10px;
   }
 }
