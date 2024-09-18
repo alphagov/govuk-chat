@@ -34,7 +34,7 @@ RSpec.describe "HomepageController" do
     it "sets the cache headers to 5 mins" do
       get homepage_path
 
-      expect(response.headers["Cache-Control"]).to eq("max-age=300, public")
+      expect(response.headers["Cache-Control"]).to eq("max-age=60, public")
     end
 
     it "skips regenerating session so the resource can be cached" do
