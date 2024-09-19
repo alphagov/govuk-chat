@@ -55,9 +55,7 @@ class Admin::WaitingListUsersController < Admin::BaseController
   end
 
   def destroy
-    user = WaitingListUser.find(params[:id])
-
-    user.destroy!
+    WaitingListUser.find(params[:id]).destroy_with_audit(deletion_type: "admin")
 
     redirect_to admin_waiting_list_users_path, notice: "User deleted"
   end

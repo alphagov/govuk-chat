@@ -19,14 +19,10 @@ RSpec.describe EarlyAccessUser do
   end
 
   describe ".promote_waiting_list_user" do
-    it "creates the early access user and deletes the waiting list user" do
+    it "creates and returns an early access user" do
       waiting_list_user = create(:waiting_list_user)
 
-      described_class.promote_waiting_list_user(waiting_list_user)
-
-      expect(WaitingListUser.find_by_id(waiting_list_user.id)).to be_nil
-
-      early_access_user = described_class.find_by_email(waiting_list_user.email)
+      early_access_user = described_class.promote_waiting_list_user(waiting_list_user)
 
       expect(early_access_user).to have_attributes(
         email: waiting_list_user.email,
@@ -34,6 +30,14 @@ RSpec.describe EarlyAccessUser do
         reason_for_visit: waiting_list_user.reason_for_visit,
         source: "admin_promoted",
       )
+    end
+
+    it "deletes the WaitingListUser and creates a DeletedWaitingListUser" do
+      waiting_list_user = create(:waiting_list_user)
+
+      expect { described_class.promote_waiting_list_user(waiting_list_user) }
+        .to change { WaitingListUser.exists?(waiting_list_user.id) }.to(false)
+        .and change { DeletedWaitingListUser.where(deletion_type: "promotion").count }.by(1)
     end
 
     it "does not make any changes if an exception is raised" do
