@@ -54,7 +54,7 @@ class Admin::EarlyAccessUsersController < Admin::BaseController
   end
 
   def destroy
-    EarlyAccessUser.find(params[:id]).destroy!
+    EarlyAccessUser.find(params[:id]).destroy_with_audit(deletion_type: :admin)
 
     redirect_to admin_early_access_users_path, notice: "User deleted"
   end

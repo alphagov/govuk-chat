@@ -382,6 +382,13 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
       expect(response).to redirect_to(admin_early_access_users_path)
     end
 
+    it "creates a DeletedEarlyAccessUser with 'admin' as deletion_type" do
+      user = create(:early_access_user)
+
+      expect { delete admin_early_access_user_path(user) }
+        .to change { DeletedEarlyAccessUser.where(deletion_type: :admin).count }.by(1)
+    end
+
     it "keeps the user's conversations" do
       user = create(:early_access_user)
       conversation = create(:conversation, :with_history, user:)

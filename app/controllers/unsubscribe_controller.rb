@@ -11,6 +11,6 @@ class UnsubscribeController < BaseController
   def early_access_user
     EarlyAccessUser
       .find_by!(id: params[:id], unsubscribe_token: params[:token])
-      .destroy!
+      .destroy_with_audit(deletion_type: :unsubscribe)
   end
 end

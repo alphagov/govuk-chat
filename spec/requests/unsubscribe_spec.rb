@@ -73,6 +73,11 @@ RSpec.describe "UnsubscribeController" do
         expect(EarlyAccessUser.exists?(user.id)).to be(false)
       end
 
+      it "creates a DeletedEarlyAccessUser the user" do
+        expect { get early_access_user_unsubscribe_path(user.id, user.unsubscribe_token) }
+          .to change { DeletedEarlyAccessUser.where(deletion_type: :unsubscribe).count }.by(1)
+      end
+
       it "renders a confirmation view" do
         get early_access_user_unsubscribe_path(user.id, user.unsubscribe_token)
 

@@ -3,17 +3,17 @@ class EarlyAccessUser < ApplicationRecord
 
   include PilotUser
 
+  SOURCE_ENUM = {
+    admin_added: "admin_added",
+    admin_promoted: "admin_promoted",
+    delayed_signup: "delayed_signup",
+    instant_signup: "instant_signup",
+  }.freeze
+
   has_many :conversations
   passwordless_with :email
 
-  enum :source,
-       {
-         admin_added: "admin_added",
-         admin_promoted: "admin_promoted",
-         delayed_signup: "delayed_signup",
-         instant_signup: "instant_signup",
-       },
-       prefix: true
+  enum :source, SOURCE_ENUM, prefix: true
 
   passwordless_with :email
 
@@ -25,6 +25,17 @@ class EarlyAccessUser < ApplicationRecord
         **waiting_list_user.slice(:email, :user_description, :reason_for_visit),
         source:,
       )
+    end
+  end
+
+  def destroy_with_audit(deletion_type:)
+    transaction do
+      destroy!
+      DeletedEarlyAccessUser.create!(id:,
+                                     deletion_type:,
+                                     login_count:,
+                                     user_source: source,
+                                     user_created_at: created_at)
     end
   end
 

@@ -48,6 +48,24 @@ RSpec.describe EarlyAccessUser do
     end
   end
 
+  describe "#destroy_with_audit" do
+    it "destroys a user while creating a DeletedEarlyAccessUser record" do
+      instance = create(:early_access_user, login_count: 3)
+
+      expect { instance.destroy_with_audit(deletion_type: :unsubscribe) }
+        .to change(described_class, :count).by(-1)
+        .and change(DeletedEarlyAccessUser, :count).by(1)
+
+      expect(DeletedEarlyAccessUser.last).to have_attributes(
+        id: instance.id,
+        login_count: instance.login_count,
+        user_source: instance.source,
+        user_created_at: instance.created_at,
+        deletion_type: "unsubscribe",
+      )
+    end
+  end
+
   describe "#access_revoked?" do
     it "returns true when revoked_at has a value" do
       instance = described_class.new(revoked_at: Time.current)
