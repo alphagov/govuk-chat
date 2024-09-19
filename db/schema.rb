@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_19_114135) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_19_130431) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -19,6 +19,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_19_114135) do
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "deleted_early_access_user_deletion_type", ["unsubscribe", "admin"]
+  create_enum "deleted_waiting_list_user_deletion_type", ["unsubscribe", "admin", "promotion"]
   create_enum "early_access_user_source", ["admin_added", "instant_signup", "admin_promoted", "delayed_signup"]
   create_enum "output_guardrails_status", ["pass", "fail", "error"]
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "content_not_govuk", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar"]
@@ -115,6 +116,14 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_19_114135) do
     t.integer "login_count", default: 0
     t.enum "deletion_type", null: false, enum_type: "deleted_early_access_user_deletion_type"
     t.enum "user_source", null: false, enum_type: "early_access_user_source"
+    t.datetime "user_created_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "deleted_waiting_list_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.enum "deletion_type", null: false, enum_type: "deleted_waiting_list_user_deletion_type"
+    t.enum "user_source", null: false, enum_type: "waiting_list_users_source"
     t.datetime "user_created_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
