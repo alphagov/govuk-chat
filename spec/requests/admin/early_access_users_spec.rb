@@ -1,4 +1,4 @@
-RSpec.describe "Admin::EarlyAccessController" do
+RSpec.describe "Admin::EarlyAccessUsersController" do
   describe "GET :index" do
     it "renders the page successfully" do
       get admin_early_access_users_path
