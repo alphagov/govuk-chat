@@ -41,6 +41,11 @@ RSpec.describe Healthcheck::OpenAI do # rubocop:disable RSpec/SpecFilePathFormat
 
   def stub_openai_models_list
     stub_request(:get, "https://api.openai.com/v1/models")
-      .to_return_json(status: 200)
+      .to_return_json(
+        status: 200,
+        body: {
+          "object" => "list",
+        },
+      )
   end
 end

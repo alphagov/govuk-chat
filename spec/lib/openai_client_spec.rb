@@ -45,5 +45,60 @@ RSpec.describe OpenAIClient do # rubocop:disable RSpec/SpecFilePathFormat
       expect { described_class.build.chat(parameters: chat_parameters) }
         .to raise_error(OpenAIClient::ContextLengthExceededError)
     end
+
+    it "sets OpenAI rate limit Prometheus gauges" do
+      allow(Metrics).to receive(:gauge)
+      stub_request(:post, /openai\.com/)
+        .to_return_json(
+          headers: {
+            "x-ratelimit-remaining-tokens" => 90_000_000,
+            "x-ratelimit-limit-tokens" => 150_000_000,
+            "x-ratelimit-remaining-requests" => 21_000,
+            "x-ratelimit-limit-requests" => 30_000,
+          },
+          body: {
+            "object" => "chat.completion",
+          },
+        )
+
+      described_class.build.chat(parameters: chat_parameters)
+
+      expect(Metrics).to have_received(:gauge).with("openai_remaining_tokens", 90_000_000, { object: "chat.completion", model: chat_parameters[:model] })
+      expect(Metrics).to have_received(:gauge).with("openai_tokens_used_percentage", 40.0, { object: "chat.completion", model: chat_parameters[:model] })
+      expect(Metrics).to have_received(:gauge).with("openai_remaining_requests", 21_000, { object: "chat.completion", model: chat_parameters[:model] })
+      expect(Metrics).to have_received(:gauge).with("openai_requests_used_percentage", 30.0, { object: "chat.completion", model: chat_parameters[:model] })
+    end
+
+    it "doesn't set gauges for an unknown object" do
+      allow(Metrics).to receive(:gauge)
+      stub_request(:post, /openai\.com/)
+        .to_return_json(
+          headers: {
+            "x-ratelimit-remaining-tokens" => 123,
+            "x-ratelimit-remaining-requests" => 456,
+          },
+          body: {
+            "object" => "random object",
+          },
+        )
+
+      described_class.build.chat(parameters: chat_parameters)
+
+      expect(Metrics).not_to have_received(:gauge)
+    end
+
+    it "doesn't set gauges if remaining tokens or requests isn't returned in the header" do
+      allow(Metrics).to receive(:gauge)
+      stub_request(:post, /openai\.com/)
+        .to_return_json(
+          body: {
+            "object" => "chat.completion",
+          },
+        )
+
+      described_class.build.chat(parameters: chat_parameters)
+
+      expect(Metrics).not_to have_received(:gauge)
+    end
   end
 end
