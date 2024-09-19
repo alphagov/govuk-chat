@@ -85,7 +85,7 @@ RSpec.describe EarlyAccessUser do
         user = create(:early_access_user, last_login_at: 1.day.ago)
 
         expect { user.sign_in(build(:passwordless_session)) }
-          .to change { user.login_count }.by(1)
+          .to change { user.reload.login_count }.by(1)
       end
     end
 
