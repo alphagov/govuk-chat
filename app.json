@@ -37,9 +37,6 @@
     "OPENSEARCH_URL": {
       "required": true
     },
-    "SIDEKIQ_CONCURRENCY": {
-      "value": 10
-    }
   },
   "formation": {
     "web": {
