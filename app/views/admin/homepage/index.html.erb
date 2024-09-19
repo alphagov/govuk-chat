@@ -43,7 +43,7 @@ end
   </div>
 </div>
 
-<div class="govuk-grid-row">
+<div class="govuk-grid-row govuk-!-margin-bottom-4">
   <div class="govuk-grid-column-one-third">
     <%= render "govuk_publishing_components/components/heading", {
       text: "Chat",
@@ -79,9 +79,9 @@ end
                    link_to("Update", admin_settings_path, class: "govuk-link"),
                    ")"]),
         link_to("Add an early access user", new_admin_early_access_user_path, class: "govuk-link"),
-        link_to("Browse early access users (#{number_with_delimiter(@early_access_users_total)})", admin_early_access_users_path, class: "govuk-link"),
+        link_to("Browse early access users (#{number_with_delimiter(@early_access_user_stats[:current])})", admin_early_access_users_path, class: "govuk-link"),
         link_to("Add someone to the waiting list", new_admin_waiting_list_user_path, class: "govuk-link"),
-        link_to("Browse waiting list users (#{number_with_delimiter(@waiting_list_users_total)})", admin_waiting_list_users_path, class: "govuk-link"),
+        link_to("Browse waiting list users (#{number_with_delimiter(@waiting_list_user_stats[:current])})", admin_waiting_list_users_path, class: "govuk-link"),
       ],
     } %>
   </div>
@@ -100,4 +100,62 @@ end
       } %>
     </div>
   <% end %>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-half">
+    <%= render "govuk_publishing_components/components/summary_list", {
+      title: "Early access user stats",
+      heading_level: 2,
+      items: [
+        {
+          field: "Current",
+          value: link_to(number_with_delimiter(@early_access_user_stats[:current]), admin_early_access_users_path),
+        },
+        {
+          field: "Unsubscribed",
+          value: number_with_delimiter(@early_access_user_stats[:unsubscribed]),
+        },
+        {
+          field: "Admin deleted",
+          value: number_with_delimiter(@early_access_user_stats[:admin_deleted]),
+        },
+        {
+          field: "Total",
+          value: number_with_delimiter(@early_access_user_stats[:total]),
+        },
+      ],
+      borderless: true,
+    } %>
+  </div>
+
+  <div class="govuk-grid-column-one-half">
+    <%= render "govuk_publishing_components/components/summary_list", {
+      title: "Waiting list user stats",
+      heading_level: 2,
+      items: [
+        {
+          field: "Current",
+          value: link_to(number_with_delimiter(@waiting_list_user_stats[:current]), admin_waiting_list_users_path),
+        },
+        {
+          field: "Promoted to early access user",
+          value: number_with_delimiter(@waiting_list_user_stats[:promoted]),
+        },
+        {
+          field: "Unsubscribed",
+          value: number_with_delimiter(@waiting_list_user_stats[:unsubscribed]),
+        },
+        {
+          field: "Admin deleted",
+          value: number_with_delimiter(@waiting_list_user_stats[:admin_deleted]),
+        },
+        {
+          field: "Total",
+          value: number_with_delimiter(@waiting_list_user_stats[:total]),
+        },
+      ],
+      borderless: true,
+    } %>
+  </div>
 </div>
