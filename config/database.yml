@@ -1,7 +1,7 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: 12
+  pool: <%= ENV.fetch("DATABASE_POOL", "12").to_i %>
   template: template0
 
 development:
