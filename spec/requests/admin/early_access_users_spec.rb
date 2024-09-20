@@ -1,4 +1,4 @@
-RSpec.describe "Admin::EarlyAccessController" do
+RSpec.describe "Admin::EarlyAccessUsersController" do
   describe "GET :index" do
     it "renders the page successfully" do
       get admin_early_access_users_path
@@ -380,6 +380,13 @@ RSpec.describe "Admin::EarlyAccessController" do
       expect(EarlyAccessUser.find_by_id(user.id)).to be_nil
 
       expect(response).to redirect_to(admin_early_access_users_path)
+    end
+
+    it "creates a DeletedEarlyAccessUser with 'admin' as deletion_type" do
+      user = create(:early_access_user)
+
+      expect { delete admin_early_access_user_path(user) }
+        .to change { DeletedEarlyAccessUser.where(deletion_type: :admin).count }.by(1)
     end
 
     it "keeps the user's conversations" do

@@ -324,6 +324,13 @@ RSpec.describe "Admin::WaitingListUsersController" do
 
       expect(response).to redirect_to(admin_waiting_list_users_path)
     end
+
+    it "creates a DeletedWaitingListUser with 'admin' as deletion_type" do
+      user = create(:waiting_list_user)
+
+      expect { delete admin_waiting_list_user_path(user) }
+        .to change { DeletedWaitingListUser.where(deletion_type: :admin).count }.by(1)
+    end
   end
 
   describe "GET :promote" do

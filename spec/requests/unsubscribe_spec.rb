@@ -39,6 +39,11 @@ RSpec.describe "UnsubscribeController" do
         expect(WaitingListUser.exists?(user.id)).to be(false)
       end
 
+      it "creates a DeletedEarlyAccessUser the user" do
+        expect { get waiting_list_user_unsubscribe_path(user.id, user.unsubscribe_token) }
+          .to change { DeletedWaitingListUser.where(deletion_type: :unsubscribe).count }.by(1)
+      end
+
       it "renders a confirmation view" do
         get waiting_list_user_unsubscribe_path(user.id, user.unsubscribe_token)
 
@@ -71,6 +76,11 @@ RSpec.describe "UnsubscribeController" do
         get early_access_user_unsubscribe_path(user.id, user.unsubscribe_token)
 
         expect(EarlyAccessUser.exists?(user.id)).to be(false)
+      end
+
+      it "creates a DeletedEarlyAccessUser the user" do
+        expect { get early_access_user_unsubscribe_path(user.id, user.unsubscribe_token) }
+          .to change { DeletedEarlyAccessUser.where(deletion_type: :unsubscribe).count }.by(1)
       end
 
       it "renders a confirmation view" do
