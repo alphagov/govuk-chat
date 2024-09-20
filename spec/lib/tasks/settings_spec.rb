@@ -42,12 +42,12 @@ RSpec.describe "rake search tasks" do
       end
     end
 
-    it "errors when the places config variable is not set or not a positive number" do
-      [nil, 0, -5].each do |value|
+    it "errors when the places config variable is not set or is a negative number" do
+      [nil, -5].each do |value|
         Rake::Task[task_name].reenable
         allow(instant_access_places_schedule).to receive(:places).and_return(value)
         expect { Rake::Task[task_name].invoke("instant_access") }
-          .to output(/places must be defined and be a positive integer\n/).to_stderr
+          .to output(/places must be defined and not be a negative number\n/).to_stderr
           .and raise_error(SystemExit)
       end
     end
@@ -60,6 +60,13 @@ RSpec.describe "rake search tasks" do
           .to output(/max_places must be defined and be a positive integer\n/).to_stderr
           .and raise_error(SystemExit)
       end
+    end
+
+    it "does nothing if places are set to 0" do
+      allow(instant_access_places_schedule).to receive(:places).and_return(0)
+
+      expect { Rake::Task[task_name].invoke("instant_access") }
+        .to output("places are set to be incremented by zero, nothing to do\n").to_stdout
     end
 
     it "doesn't increment places before the 'not_before' date" do

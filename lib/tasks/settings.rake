@@ -7,12 +7,16 @@ namespace :settings do
 
     config = Rails.configuration.public_send("#{args.places_type}_places_schedule".to_sym)
 
-    unless config.places&.positive?
-      abort("places must be defined and be a positive integer")
+    if !config.places || config.places.negative?
+      abort("places must be defined and not be a negative number")
     end
 
     unless config.max_places&.positive?
       abort("max_places must be defined and be a positive integer")
+    end
+
+    if config.places.zero?
+      next puts "places are set to be incremented by zero, nothing to do"
     end
 
     not_before_date = config.not_before
