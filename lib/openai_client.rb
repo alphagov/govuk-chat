@@ -33,7 +33,7 @@ class OpenAIClient
 
   class RateLimitMiddleware < Faraday::Middleware
     def on_complete(env)
-      return unless env.response_body["object"].in?(%w[chat.completion embedding])
+      return unless env.url.path.in?(%w[/v1/embeddings /v1/chat/completions])
 
       record_rate_limit_metrics(env)
     end
@@ -41,22 +41,22 @@ class OpenAIClient
   private
 
     def record_rate_limit_metrics(env)
-      object = env.response_body["object"]
+      endpoint = env.url.path
       model_name = JSON.parse(env.request_body)["model"]
       headers = env["response_headers"]
 
       if headers["x-ratelimit-remaining-tokens"] && headers["x-ratelimit-limit-tokens"]
         remaining_tokens = headers["x-ratelimit-remaining-tokens"].to_i
         tokens_limit = headers["x-ratelimit-limit-tokens"].to_f
-        Metrics.gauge("openai_remaining_tokens", remaining_tokens, { object:, model: model_name })
-        Metrics.gauge("openai_tokens_used_percentage", ((tokens_limit - remaining_tokens) / tokens_limit) * 100, { object:, model: model_name })
+        Metrics.gauge("openai_remaining_tokens", remaining_tokens, { endpoint:, model: model_name })
+        Metrics.gauge("openai_tokens_used_percentage", ((tokens_limit - remaining_tokens) / tokens_limit) * 100, { endpoint:, model: model_name })
       end
 
       if headers["x-ratelimit-remaining-requests"] && headers["x-ratelimit-limit-requests"]
         remaining_requests = headers["x-ratelimit-remaining-requests"].to_i
         requests_limit = headers["x-ratelimit-limit-requests"].to_f
-        Metrics.gauge("openai_remaining_requests", remaining_requests, { object:, model: model_name })
-        Metrics.gauge("openai_requests_used_percentage", ((requests_limit - remaining_requests) / requests_limit) * 100, { object:, model: model_name })
+        Metrics.gauge("openai_remaining_requests", remaining_requests, { endpoint:, model: model_name })
+        Metrics.gauge("openai_requests_used_percentage", ((requests_limit - remaining_requests) / requests_limit) * 100, { endpoint:, model: model_name })
       end
     end
   end
