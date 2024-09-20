@@ -2,22 +2,22 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <% if @audits.present? %>
-      <%= render "govuk_publishing_components/components/secondary_navigation", {
-        aria_label: "Settings navigation",
-        items: [
-          {
-            label: "Settings",
-            href: admin_settings_path,
-          },
-          {
-            label: "Audits",
-            href: admin_settings_audits_path,
-            current: true,
-          },
-        ],
-      } %>
+    <%= render "govuk_publishing_components/components/secondary_navigation", {
+      aria_label: "Settings navigation",
+      items: [
+        {
+          label: "Settings",
+          href: admin_settings_path,
+        },
+        {
+          label: "Audits",
+          href: admin_settings_audits_path,
+          current: true,
+        },
+      ],
+    } %>
 
+    <% if @audits.present? %>
       <% @audits.each do |audit| %>
         <%= render "components/settings_audit_entry", {
           action: audit.action,
