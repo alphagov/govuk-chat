@@ -42,7 +42,7 @@ RSpec.describe EarlyAccessAuthMailer do
     it_behaves_like "sets reply_to_id"
 
     it "has the subject of 'Thanks for joining the waitlist'" do
-      expect(email.subject).to eq("Thanks for joining the waitlist")
+      expect(email.subject).to eq("You're on the waitlist for GOV.UK Chat")
     end
 
     it "informs the user we will email then when they can access chat" do
