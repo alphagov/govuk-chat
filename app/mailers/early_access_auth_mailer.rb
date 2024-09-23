@@ -9,6 +9,6 @@ class EarlyAccessAuthMailer < ApplicationMailer
   def waitlist(user)
     @id = user.id
     @token = user.unsubscribe_token
-    view_mail(template_id, to: user.email, subject: "Thanks for joining the waitlist")
+    view_mail(template_id, to: user.email, subject: "You're on the waitlist for GOV.UK Chat")
   end
 end
