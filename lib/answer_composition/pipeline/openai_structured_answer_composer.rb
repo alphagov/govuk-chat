@@ -88,7 +88,6 @@ module AnswerComposition::Pipeline
     def messages
       [
         { role: "system", content: system_prompt },
-        few_shots,
         { role: "user", content: context.question_message },
       ]
       .flatten
@@ -107,15 +106,6 @@ module AnswerComposition::Pipeline
           context_headings: result.heading_hierarchy,
           context_content: link_token_mapper.map_links_to_tokens(result.html_content),
         }
-      end
-    end
-
-    def few_shots
-      llm_prompts[:few_shots].flat_map do |few_shot|
-        [
-          { role: "user", content: few_shot[:user] },
-          { role: "assistant", content: few_shot[:assistant] },
-        ]
       end
     end
 
