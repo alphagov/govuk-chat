@@ -93,6 +93,23 @@ RSpec.describe "Admin::QuestionsController" do
 
         expect(response.body.squish).to have_content("Filtering by user: #{user.id} (Deleted user)")
       end
+
+      it "renders a conversation_id select filter when filtering by a user" do
+        user = create(:early_access_user)
+        create(:conversation, user:)
+        create(:conversation, user:)
+
+        get admin_questions_path(user_id: user.id)
+
+        expect(response.body).to have_select("conversation_id", options: ["", "1st", "2nd"])
+      end
+
+      it "renders a conversation_id when filtering by a conversation_id" do
+        conversation = create(:conversation)
+        get admin_questions_path(conversation_id: conversation.id)
+
+        expect(response.body.squish).to have_content("Filtering by conversation ID:   #{conversation.id}")
+      end
     end
 
     context "when the sort param is not the default value" do

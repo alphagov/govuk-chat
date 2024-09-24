@@ -52,6 +52,10 @@ RSpec.describe "Admin user filters questions" do
 
     when_i_search_for_a_question_from_the_user
     then_i_see_the_filtered_questions_for_that_user
+
+    when_clear_the_search_filter
+    and_i_filter_by_the_users_first_conversation
+    then_i_see_the_question_from_the_first_conversation
   end
 
   def and_there_are_early_access_users
@@ -69,11 +73,12 @@ RSpec.describe "Admin user filters questions" do
 
   def and_there_are_questions_associated_with_users
     conversation1 = build(:conversation, user: @user)
+    conversation2 = build(:conversation, user: @user)
     create(:question, conversation: conversation1, message: "Hello world")
-    create(:question, conversation: conversation1, message: "Greetings world")
+    create(:question, conversation: conversation2, message: "Greetings world")
 
-    conversation2 = build(:conversation, user: @user2)
-    create(:question, conversation: conversation2, message: "Goodbye")
+    conversation3 = build(:conversation, user: @user2)
+    create(:question, conversation: conversation3, message: "Goodbye")
   end
 
   def when_i_visit_the_admin_area
@@ -131,6 +136,22 @@ RSpec.describe "Admin user filters questions" do
       expect(page).to have_content("Greetings")
       expect(page).not_to have_content("Hello")
       expect(page).not_to have_content("Goodbye")
+    end
+  end
+
+  def when_clear_the_search_filter
+    fill_in "search", with: ""
+  end
+
+  def and_i_filter_by_the_users_first_conversation
+    select "1st", from: "conversation_id"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_question_from_the_first_conversation
+    within(".govuk-table") do
+      expect(page).to have_content("Hello world")
+      expect(page).not_to have_content("Greetings world")
     end
   end
 
