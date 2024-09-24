@@ -254,7 +254,12 @@ RSpec.describe Admin::Filters::QuestionsFilter do
 
   describe "#previous_page_params" do
     it "retains all other query params when constructing the params" do
-      create_list(:answer, 26, :with_feedback)
+      user = create(:early_access_user)
+      conversation = create(:conversation, user:)
+      26.times do
+        question = create(:question, conversation:)
+        create(:answer, :with_feedback, question:)
+      end
       today = Date.current
       start_date_params = { day: today.day, month: today.month, year: today.year - 1 }
       end_date_params = { day: today.day, month: today.month, year: today.year + 1 }
@@ -266,16 +271,31 @@ RSpec.describe Admin::Filters::QuestionsFilter do
         start_date_params:,
         end_date_params:,
         answer_feedback_useful: "true",
+        user_id: user.id,
       )
 
       expect(filter.previous_page_params)
-        .to eq({ status: "success", search: "message", answer_feedback_useful: true, start_date_params:, end_date_params: })
+        .to eq(
+          {
+            status: "success",
+            search: "message",
+            answer_feedback_useful: true,
+            start_date_params:,
+            end_date_params:,
+            user_id: user.id,
+          },
+        )
     end
   end
 
   describe "#next_page_params" do
     it "retains all other query params when constructing the params" do
-      create_list(:answer, 26, :with_feedback)
+      user = create(:early_access_user)
+      conversation = create(:conversation, user:)
+      26.times do
+        question = create(:question, conversation:)
+        create(:answer, :with_feedback, question:)
+      end
       today = Date.current
       start_date_params = { day: today.day, month: today.month, year: today.year - 1 }
       end_date_params = { day: today.day, month: today.month, year: today.year + 1 }
@@ -286,10 +306,21 @@ RSpec.describe Admin::Filters::QuestionsFilter do
         start_date_params:,
         end_date_params:,
         answer_feedback_useful: "true",
+        user_id: user.id,
       )
 
       expect(filter.next_page_params)
-        .to eq({ status: "success", search: "message", answer_feedback_useful: true, page: 2, start_date_params:, end_date_params: })
+        .to eq(
+          {
+            status: "success",
+            search: "message",
+            answer_feedback_useful: true,
+            page: 2,
+            start_date_params:,
+            end_date_params:,
+            user_id: user.id,
+          },
+        )
     end
   end
 
