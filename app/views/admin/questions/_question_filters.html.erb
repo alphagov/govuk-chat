@@ -2,7 +2,7 @@
   user = filter.user
 %>
 
-<%= form_with(url:, method: :get) do %>
+<%= form_with(url: admin_questions_path, method: :get) do %>
   <% if params[:user_id].present? %>
     <p class="govuk-body">
       Filtering by user:
@@ -149,7 +149,7 @@
 
   <p class="govuk-body">
     <%= link_to "Clear all filters",
-                url,
+                admin_questions_path,
                 class: "govuk-link govuk-link--no-visited-state" %>
   </p>
 <% end %>
