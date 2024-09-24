@@ -238,12 +238,12 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(questions.count).to eq(1)
     end
 
-    context "when a conversation is passed in on initilisation" do
+    context "when a conversation_id is passed in on initilisation" do
       it "scopes the results to the conversation" do
         question1 = create(:question, created_at: 2.minutes.ago)
         create(:question, created_at: 1.minute.ago)
 
-        filter = described_class.new(conversation: question1.conversation)
+        filter = described_class.new(conversation_id: question1.conversation_id)
 
         expect(filter.results).to eq([question1])
       end
@@ -272,6 +272,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
         end_date_params:,
         answer_feedback_useful: "true",
         user_id: user.id,
+        conversation_id: conversation.id,
       )
 
       expect(filter.previous_page_params)
@@ -283,6 +284,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
             start_date_params:,
             end_date_params:,
             user_id: user.id,
+            conversation_id: conversation.id,
           },
         )
     end
@@ -307,6 +309,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
         end_date_params:,
         answer_feedback_useful: "true",
         user_id: user.id,
+        conversation_id: conversation.id,
       )
 
       expect(filter.next_page_params)
@@ -319,6 +322,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
             start_date_params:,
             end_date_params:,
             user_id: user.id,
+            conversation_id: conversation.id,
           },
         )
     end
