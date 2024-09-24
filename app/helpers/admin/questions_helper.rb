@@ -24,7 +24,12 @@ module Admin
       rows = [
         {
           field: "Conversation id",
-          value: link_to(conversation.id, admin_show_conversation_path(conversation), title: "View whole conversation", class: "govuk-link"),
+          value: link_to(
+            conversation.id,
+            admin_questions_path(conversation_id: conversation.id),
+            title: "View whole conversation",
+            class: "govuk-link",
+          ),
         },
         {
           field: "Question number",

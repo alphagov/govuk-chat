@@ -8,7 +8,7 @@ RSpec.describe "Admin user views conversation history" do
     when_i_click_to_view_a_question
     then_i_see_that_questions_answer
     when_i_click_to_view_conversation
-    # then_i_see_the_other_questions_for_this_conversation
+    then_i_see_the_other_questions_for_this_conversation
   end
 
   def and_there_are_questions_submitted
@@ -44,9 +44,9 @@ RSpec.describe "Admin user views conversation history" do
     click_link @question2.conversation_id
   end
 
-  # def then_i_see_the_other_questions_for_this_conversation
-  #   expect(page).to have_content(@question1.message)
-  #   expect(page).to have_content(@question2.message)
-  #   expect(page).not_to have_content(@question3.message)
-  # end
+  def then_i_see_the_other_questions_for_this_conversation
+    expect(page).to have_content(@question1.message)
+    expect(page).to have_content(@question2.message)
+    expect(page).not_to have_content(@question3.message)
+  end
 end
