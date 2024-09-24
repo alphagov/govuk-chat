@@ -57,6 +57,7 @@ private
     filters[:end_date_params] = end_date_params if end_date_params.values.any?(&:present?)
     filters[:sort] = sort if sort != self.class.default_sort
     filters[:answer_feedback_useful] = answer_feedback_useful unless answer_feedback_useful.nil?
+    filters[:user_id] = user_id if user_id.present?
 
     filters
   end
