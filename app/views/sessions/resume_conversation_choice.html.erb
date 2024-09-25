@@ -9,10 +9,18 @@
       <%= render "components/blue_button", {
         text: "Return to last chat",
         href: show_conversation_path,
+        data_attributes: {
+          "module": "ga4-link-tracker",
+          "ga4-link": { "event_name": "navigation", "type": "generic link", "index_link": 1, "index_total": 1, "section": "Resume chat" },
+        },
       } %>
       <%= render "govuk_publishing_components/components/button", {
         secondary_solid: true,
         text: "Start a new chat (clears history)",
+        data_attributes: {
+          "module": "ga4-event-tracker",
+          "ga4-event": { "event_name": "navigation", "type": "chat button", "index": "1", "index_total": "1", "section": "Resume chat" },
+        },
       } %>
     <% end %>
   </div>
