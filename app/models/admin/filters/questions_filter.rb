@@ -3,7 +3,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :search
   attribute :start_date_params, default: {}
   attribute :end_date_params, default: {}
-  attribute :conversation
+  attribute :conversation_id
   attribute :answer_feedback_useful, :boolean
   attribute :question_routing_label
   attribute :user_id
@@ -44,7 +44,13 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   def user
     return @user if defined?(@user)
 
-    @user = EarlyAccessUser.find_by(id: user_id)
+    @user = EarlyAccessUser.includes(:conversations).find_by(id: user_id)
+  end
+
+  def conversation
+    return @conversation if defined?(@conversation)
+
+    @conversation = Conversation.find_by_id(conversation_id)
   end
 
 private
@@ -58,6 +64,7 @@ private
     filters[:sort] = sort if sort != self.class.default_sort
     filters[:answer_feedback_useful] = answer_feedback_useful unless answer_feedback_useful.nil?
     filters[:user_id] = user_id if user_id.present?
+    filters[:conversation_id] = conversation.id if conversation.present?
 
     filters
   end

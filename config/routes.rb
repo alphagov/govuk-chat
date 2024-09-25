@@ -60,7 +60,6 @@ Rails.application.routes.draw do
     get "", to: "homepage#index", as: :homepage
     get "/questions", to: "questions#index", as: :questions
     get "/questions/:id", to: "questions#show", as: :show_question
-    get "/conversations/:id", to: "conversations#show", as: :show_conversation
     get "/search", to: "search#index", as: :search
     get "/search/chunk/:id", to: "chunks#show", as: :chunk
 

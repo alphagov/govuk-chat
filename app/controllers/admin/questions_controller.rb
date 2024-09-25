@@ -1,8 +1,6 @@
 class Admin::QuestionsController < Admin::BaseController
-  include Admin::Concerns::QuestionFilterConcern
-
   def index
-    @filter = questions_filter
+    @filter = Admin::Filters::QuestionsFilter.new(filter_params)
     render :index, status: :unprocessable_entity if @filter.errors.present?
   end
 
@@ -13,5 +11,21 @@ class Admin::QuestionsController < Admin::BaseController
                                .where("created_at <= ? ", @question.created_at)
                                .count
     @total_questions = Question.where(conversation: @question.conversation).count
+  end
+
+private
+
+  def filter_params
+    params.permit(
+      :search,
+      :status,
+      { start_date_params: %i[day month year], end_date_params: %i[day month year] },
+      :answer_feedback_useful,
+      :question_routing_label,
+      :page,
+      :sort,
+      :user_id,
+      :conversation_id,
+    )
   end
 end

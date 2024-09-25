@@ -8,12 +8,11 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-third">
-    <%= render "admin/shared/question_filters", filter: @filter, url: admin_questions_path %>
+    <%= render "question_filters", filter: @filter %>
   </div>
   <div class="govuk-grid-column-two-thirds">
-    <%= render "admin/shared/questions_table",
+    <%= render "questions_table",
       filter: @filter,
-      questions: @filter.results,
-      path: :admin_questions_path %>
+      questions: @filter.results %>
   </div>
 </div>

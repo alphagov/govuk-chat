@@ -1,8 +1,9 @@
 <%
   user = filter.user
+  conversation = filter.conversation
 %>
 
-<%= form_with(url:, method: :get) do %>
+<%= form_with(url: admin_questions_path, method: :get) do %>
   <% if params[:user_id].present? %>
     <p class="govuk-body">
       Filtering by user:
@@ -13,6 +14,32 @@
       <% end %>
     </p>
     <%= hidden_field_tag(:user_id, params[:user_id]) %>
+  <% end %>
+
+  <% if user.present? %>
+    <%= render "govuk_publishing_components/components/select", {
+      id: "conversation_id",
+      name: "conversation_id",
+      label: "Conversation",
+      heading_size: "s",
+      full_width: true,
+      options: [{ text: "", value: "" }] +
+        user.conversations.map.with_index(1) do |conversation, index|
+          {
+            text: index.ordinalize,
+            value: conversation.id,
+            selected: params[:conversation_id] == conversation.id,
+          }
+        end,
+    } %>
+  <% elsif conversation.present? %>
+    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">
+      Filtering by conversation ID:
+    </p>
+    <p class="govuk-body">
+      <%= conversation.id %>
+    </p>
+    <%= hidden_field_tag(:conversation_id, params[:conversation_id]) %>
   <% end %>
 
   <%= render "govuk_publishing_components/components/input", {
@@ -149,7 +176,7 @@
 
   <p class="govuk-body">
     <%= link_to "Clear all filters",
-                url,
+                admin_questions_path,
                 class: "govuk-link govuk-link--no-visited-state" %>
   </p>
 <% end %>
