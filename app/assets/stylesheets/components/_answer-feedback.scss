@@ -28,7 +28,7 @@
   margin: 0;
   padding: 0;
   cursor: pointer;
-  @include govuk-font-size(19, $line-height: false, $important: false);
+  @include govuk-font(19, $weight: "regular", $tabular: false, $line-height: false);
   @include govuk-link-common;
   @include govuk-link-style-default;
 }
