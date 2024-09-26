@@ -11,6 +11,7 @@
 
 .app-c-answer-feedback__legend {
   float: left;
+  padding: 0;
   margin-right: govuk-spacing(1);
   @include govuk-font($size: 19, $weight: regular);
 }
