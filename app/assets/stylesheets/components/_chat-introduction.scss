@@ -1,5 +1,9 @@
 .app-c-chat-introduction {
-  padding: 80px 0; // setting the padding top using px as there isn't a mixin for this much padding
+   // setting the padding using px as there isn't a mixin for this much padding
+  padding: 60px 0 80px;
+  @include govuk-media-query($from: tablet) {
+    padding: 80px 0;
+  }
 }
 
 .app-c-chat-introduction--error {
