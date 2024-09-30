@@ -1,2 +1,3 @@
-# Use Sidekiq strict args to force Sidekiq 6 deprecations to error ahead of upgrade to Sidekiq 7
-Sidekiq.strict_args!
+Sidekiq.configure_client do |config|
+  config.logger.level = Logger::WARN if Rails.env.test?
+end
