@@ -26,7 +26,7 @@ describe('QuestionForm component', () => {
           <button class="js-question-form-button">
             Submit
           </button>
-          <span data-loading-question-text="Loading your question" data-loading-answer-text="Loading your answer" class="js-question-form-button__response-status"></span>
+          <span data-loading-question-text="Loading your question" data-loading-answer-text="Generating your answer" class="js-question-form-button__response-status"></span>
         </div>
       </form>
       <a href="/survey" class="js-survey-link">Survey</a>
@@ -185,7 +185,7 @@ describe('QuestionForm component', () => {
       expect(input.readOnly).toBe(true)
       expect(button.hasAttribute('aria-disabled')).toBe(true)
       expect(button.classList).toContain('app-c-blue-button--disabled')
-      expect(buttonResponseStatus.textContent).toContain('Loading your answer')
+      expect(buttonResponseStatus.textContent).toContain('Generating your answer')
     })
 
     it('resets the input value', () => {
