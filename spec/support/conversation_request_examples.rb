@@ -1,5 +1,5 @@
 module ConversationRequestExamples
-  shared_examples "handles a request for a user who hasn't completed onboarding" do |routes:|
+  shared_examples "handles a request for a user who hasn't completed onboarding" do |routes:, with_json: true|
     include_context "when signed in"
     let(:route_params) { [] }
 
@@ -15,6 +15,8 @@ module ConversationRequestExamples
             end
           end
 
+          next unless with_json
+
           context "when it is a JSON request" do
             it "responds with a bad request for users who aren't onboarded for #{method} #{path}" do
               process(method.to_sym, public_send(path.to_sym, *route_params), params: { format: :json })
@@ -27,7 +29,7 @@ module ConversationRequestExamples
     end
   end
 
-  shared_examples "requires a users conversation cookie to reference an active conversation" do |routes:|
+  shared_examples "requires a users conversation cookie to reference an active conversation" do |routes:, with_json: true|
     let(:route_params) { [] }
     include_context "when signed in"
     include_context "with onboarding completed"
@@ -57,7 +59,7 @@ module ConversationRequestExamples
             before { cookies[:conversation_id] = "unknown" }
 
             include_examples "redirects a HTML request", path, method
-            include_examples "denies a JSON request", path, method
+            include_examples("denies a JSON request", path, method) if with_json
           end
 
           context "when conversation cookie references a conversation associated with a different user" do
@@ -67,7 +69,7 @@ module ConversationRequestExamples
             end
 
             include_examples "redirects a HTML request", path, method
-            include_examples "denies a JSON request", path, method
+            include_examples("denies a JSON request", path, method) if with_json
           end
 
           context "when the conversation has expired" do
@@ -77,7 +79,7 @@ module ConversationRequestExamples
             end
 
             include_examples "redirects a HTML request", path, method
-            include_examples "denies a JSON request", path, method
+            include_examples("denies a JSON request", path, method) if with_json
           end
         end
       end
