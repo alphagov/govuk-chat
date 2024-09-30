@@ -104,7 +104,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
 
         expect(rendered).to have_selector("li.app-c-conversation-message#loading-answer") do |rendered_question|
           expect(rendered_question)
-            .to have_selector(".app-c-conversation-message__loading-text", text: "Loading your answer")
+            .to have_selector(".app-c-conversation-message__loading-text", text: "Generating your answer")
             .and have_selector(".app-c-conversation-message__loading-ellipsis", text: "...")
         end
       end

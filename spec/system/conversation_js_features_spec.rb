@@ -160,13 +160,13 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
   def then_i_see_an_answer_loading_message
     within(".js-new-conversation-messages-list") do
-      expect(page).to have_content("Loading your answer")
+      expect(page).to have_content("Generating your answer")
     end
   end
 
   def and_i_see_no_answer_loading_message
     within(".js-new-conversation-messages-list") do
-      expect(page).not_to have_content("Loading your answer")
+      expect(page).not_to have_content("Generating your answer")
     end
   end
 
