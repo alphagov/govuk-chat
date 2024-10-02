@@ -37,7 +37,7 @@ module AnswerComposition
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           status: "error_question_routing",
           error_message: error_message(e),
-          llm_response: llm_classification_function,
+          question_routing_llm_response: llm_classification_function.to_json,
           metrics: { "question_routing" => build_metrics(start_time) },
         )
       end
