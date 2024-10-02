@@ -16,14 +16,20 @@ RSpec.describe "ConversationsController" do
   end
 
   it_behaves_like "handles a request for a user who hasn't completed onboarding",
-                  routes: { clear_conversation_path: %i[get post], show_conversation_path: %i[get], update_conversation_path: %i[post] }
+                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+  it_behaves_like "handles a request for a user who hasn't completed onboarding",
+                  routes: { clear_conversation_path: %i[get post] },
+                  with_json: false
   it_behaves_like "handles a request for a user who hasn't completed onboarding",
                   routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
     let(:route_params) { [SecureRandom.uuid] }
   end
 
   it_behaves_like "requires a users conversation cookie to reference an active conversation",
-                  routes: { clear_conversation_path: %i[get post], show_conversation_path: %i[get], update_conversation_path: %i[post] }
+                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
+  it_behaves_like "requires a users conversation cookie to reference an active conversation",
+                  routes: { clear_conversation_path: %i[get post] },
+                  with_json: false
   it_behaves_like "requires a users conversation cookie to reference an active conversation",
                   routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
     let(:route_params) { [SecureRandom.uuid] }
@@ -447,7 +453,7 @@ RSpec.describe "ConversationsController" do
       it "responds with a 200 and answer_html when the question has been answered" do
         question = create(:question, :with_answer, conversation:)
 
-        get answer_question_path(question, format: :json)
+        get answer_question_path(question), params: { format: :json }
 
         expect(response).to have_http_status(:success)
         expect(JSON.parse(response.body)).to match({ "answer_html" => /app-c-conversation-message/ })
@@ -462,7 +468,7 @@ RSpec.describe "ConversationsController" do
 
         question = create(:question, :with_answer, conversation:)
 
-        get answer_question_path(question, format: :json)
+        get answer_question_path(question), params: { format: :json }
 
         expect(JSON.parse(response.body)).to match({ "answer_html" => /You’ve nearly reached the message limit/ })
       end
@@ -473,14 +479,14 @@ RSpec.describe "ConversationsController" do
 
         question = create(:question, :with_answer, conversation:)
 
-        get answer_question_path(question, format: :json)
+        get answer_question_path(question), params: { format: :json }
 
         expect(JSON.parse(response.body)).to match({ "answer_html" => /You’ve reached the message limit/ })
       end
 
       it "responds with an accepted status code when the question has a pending answer" do
         question = create(:question, conversation:)
-        get answer_question_path(question, format: :json)
+        get answer_question_path(question), params: { format: :json }
 
         expect(response).to have_http_status(:accepted)
         expect(JSON.parse(response.body)).to eq({ "answer_html" => nil })
@@ -494,7 +500,7 @@ RSpec.describe "ConversationsController" do
             created_at: Rails.configuration.conversations.answer_timeout_in_seconds.seconds.ago,
           )
 
-          get answer_question_path(question, format: :json)
+          get answer_question_path(question), params: { format: :json }
 
           expect(response).to have_http_status(:success)
           expect(JSON.parse(response.body)).to match({ "answer_html" => /app-c-conversation-message/ })

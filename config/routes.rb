@@ -13,7 +13,13 @@ Rails.application.routes.draw do
     Healthcheck::Opensearch,
   )
 
-  scope :chat do
+  html_constraint = { format: [Mime::Type.lookup("*/*"),
+                               Mime::Type.lookup("text/html")] }
+  html_json_constraint = { format: [Mime::Type.lookup("*/*"),
+                                    Mime::Type.lookup("text/html"),
+                                    Mime::Type.lookup("application/json")] }
+
+  scope :chat, format: false, defaults: { format: "html" }, constraints: html_constraint do
     get "", to: "homepage#index", as: :homepage
     post "", to: "homepage#sign_in_or_up"
 
@@ -31,7 +37,7 @@ Rails.application.routes.draw do
     get "unsubscribe/waiting-list/:id/:token", to: "unsubscribe#waiting_list_user", as: :waiting_list_user_unsubscribe
     get "unsubscribe/early-access/:id/:token", to: "unsubscribe#early_access_user", as: :early_access_user_unsubscribe
 
-    scope :onboarding do
+    scope :onboarding, constraints: html_json_constraint do
       get "", to: "onboarding#limitations", as: :onboarding_limitations
       post "", to: "onboarding#limitations_confirm", as: :onboarding_limitations_confirm
       get "privacy", to: "onboarding#privacy", as: :onboarding_privacy
@@ -39,12 +45,16 @@ Rails.application.routes.draw do
     end
 
     scope :conversation do
-      get "", to: "conversations#show", as: :show_conversation
-      post "", to: "conversations#update", as: :update_conversation
+      get "", to: "conversations#show", as: :show_conversation, constraints: html_json_constraint
+      post "", to: "conversations#update", as: :update_conversation, constraints: html_json_constraint
 
-      get "/questions/:question_id/answer", to: "conversations#answer", as: :answer_question
+      get "/questions/:question_id/answer", to: "conversations#answer",
+                                            as: :answer_question,
+                                            constraints: html_json_constraint
 
-      post "/answers/:answer_id/feedback", to: "conversations#answer_feedback", as: :answer_feedback
+      post "/answers/:answer_id/feedback", to: "conversations#answer_feedback",
+                                           as: :answer_feedback,
+                                           constraints: html_json_constraint
 
       get "/clear", to: "conversations#clear", as: :clear_conversation
       post "/clear", to: "conversations#clear_confirm"
@@ -56,7 +66,7 @@ Rails.application.routes.draw do
     get "/accessibility", to: "static#accessibility"
   end
 
-  namespace :admin do
+  namespace :admin, format: false, defaults: { format: "html" }, constraints: html_constraint do
     get "", to: "homepage#index", as: :homepage
     get "/questions", to: "questions#index", as: :questions
     get "/questions/:id", to: "questions#show", as: :show_question
