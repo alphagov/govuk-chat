@@ -222,7 +222,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           status: "error_question_routing",
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           error_message: "class: JSON::Schema::ValidationError message: The property '#/' did not contain a required property of 'answer'",
-          llm_response: { "arguments" => classification_response.to_json, "name" => "greetings" },
+          question_routing_llm_response: { "name" => "greetings", "arguments" => classification_response.to_json }.to_json,
           metrics: a_hash_including("question_routing" => {
             duration: 1.5,
             llm_prompt_tokens: 13,
@@ -250,7 +250,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           status: "error_question_routing",
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           error_message: "class: JSON::ParserError message: unexpected token at 'this will blow up'",
-          llm_response: { "arguments" => classification_response, "name" => "greetings" },
+          question_routing_llm_response: { "name" => "greetings", "arguments" => classification_response }.to_json,
           metrics: a_hash_including("question_routing" => {
             duration: 1.5,
             llm_prompt_tokens: 13,
