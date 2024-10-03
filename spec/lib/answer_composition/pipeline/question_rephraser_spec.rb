@@ -64,6 +64,16 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
           llm_completion_tokens: 7,
         })
       end
+
+      it "assigns the llm response to the answer" do
+        described_class.call(context)
+        expect(context.answer.llm_responses["question_rephrasing"]).to match(
+          a_hash_including(
+            "finish_reason" => "stop",
+            "message" => a_hash_including({ "content" => rephrased }),
+          ),
+        )
+      end
     end
 
     context "when there is an OpenAIClient::ClientError" do

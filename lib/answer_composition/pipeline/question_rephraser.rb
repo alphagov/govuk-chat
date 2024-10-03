@@ -16,7 +16,9 @@ module AnswerComposition
 
         start_time = AnswerComposition.monotonic_time
 
-        context.question_message = openai_response.dig("choices", 0, "message", "content")
+        context.question_message = openai_response_choice.dig("message", "content")
+
+        context.answer.assign_llm_response("question_rephrasing", openai_response_choice)
 
         context.answer.assign_metrics("question_rephrasing", {
           duration: AnswerComposition.monotonic_time - start_time,
@@ -41,6 +43,10 @@ module AnswerComposition
             temperature: 0.0,
           },
         )
+      end
+
+      def openai_response_choice
+        @openai_response_choice ||= openai_response.dig("choices", 0)
       end
 
       def messages
