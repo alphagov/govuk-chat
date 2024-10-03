@@ -92,6 +92,11 @@ class Answer < ApplicationRecord
     self.metrics[namespace] = values
   end
 
+  def assign_llm_response(namespace, hash)
+    self.llm_responses ||= {}
+    self.llm_responses[namespace] = hash
+  end
+
   def send_answers_total_to_prometheus
     Metrics.increment_counter("answers_total", status:, question_routing_label:, output_guardrail_status:)
   end
