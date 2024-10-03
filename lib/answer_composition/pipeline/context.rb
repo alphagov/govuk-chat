@@ -16,6 +16,10 @@ module AnswerComposition::Pipeline
         metrics.each { |key, values| answer.assign_metrics(key, values) }
       end
 
+      if (llm_response = answer_attrs.delete(:llm_response))
+        llm_response.each { |namespace, values| answer.assign_llm_response(namespace, values) }
+      end
+
       answer.sources.each { |source| source.used = false }
       answer.assign_attributes(answer_attrs)
       answer
