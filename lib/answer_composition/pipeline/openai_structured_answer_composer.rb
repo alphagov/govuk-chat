@@ -11,12 +11,12 @@ module AnswerComposition::Pipeline
 
     def call
       start_time = AnswerComposition.monotonic_time
+      context.answer.assign_llm_response("structured_answer", openai_response_choice)
 
       unless parsed_structured_response["answered"]
         return context.abort_pipeline!(
           message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
           status: "abort_llm_cannot_answer",
-          llm_response: raw_structured_response,
           metrics: { "structured_answer" => build_metrics(start_time) },
         )
       end
@@ -25,19 +25,13 @@ module AnswerComposition::Pipeline
 
       set_context_sources
 
-      context.answer.assign_attributes(
-        message:,
-        status: "success",
-        llm_response: raw_structured_response,
-      )
-
+      context.answer.assign_attributes(message:, status: "success")
       context.answer.assign_metrics("structured_answer", build_metrics(start_time))
     rescue JSON::Schema::ValidationError, JSON::ParserError => e
       context.abort_pipeline!(
         message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
         status: "error_invalid_llm_response",
         error_message: error_message(e),
-        llm_response: raw_structured_response,
         metrics: { "structured_answer" => build_metrics(start_time) },
       )
     end
@@ -55,8 +49,8 @@ module AnswerComposition::Pipeline
     end
 
     def raw_structured_response
-      @raw_structured_response ||= openai_response.dig(
-        "choices", 0, "message", "tool_calls", 0, "function", "arguments"
+      @raw_structured_response ||= openai_response_choice.dig(
+        "message", "tool_calls", 0, "function", "arguments"
       )
     end
 
@@ -83,6 +77,10 @@ module AnswerComposition::Pipeline
           tool_choice: "required",
         },
       )
+    end
+
+    def openai_response_choice
+      @openai_response_choice ||= openai_response.dig("choices", 0)
     end
 
     def messages
