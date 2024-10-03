@@ -64,6 +64,19 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
       expect(request).to have_been_made
     end
 
+    it "assigns the llm response to the answer" do
+      stub_openai_chat_question_routing(expected_message_history, tools:)
+
+      described_class.call(context)
+
+      expect(context.answer.llm_responses["question_routing"]).to match(
+        a_hash_including(
+          "finish_reason" => "stop",
+          "message" => a_hash_including("tool_calls"),
+        ),
+      )
+    end
+
     context "when a successful response is received" do
       it "assigns the correct values to the context's answer when genuine_rag" do
         stub_openai_chat_question_routing(expected_message_history, tools:)
@@ -73,7 +86,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
         expect(context.answer).to have_attributes(
           question_routing_label: "genuine_rag",
           question_routing_confidence_score: nil,
-          question_routing_llm_response: { name: "genuine_rag", arguments: "{}" }.to_json,
         )
       end
 
@@ -111,7 +123,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           question_routing_label: "greetings",
           message: "Hello! How can I help you today?",
           question_routing_confidence_score: 0.85,
-          question_routing_llm_response: { name: "greetings", arguments: classification_response.to_json }.to_json,
           metrics: a_hash_including("question_routing" => {
             duration: 1.5,
             llm_prompt_tokens: 13,
@@ -178,7 +189,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           question_routing_label: "greetings",
           message: "Hi there",
           question_routing_confidence_score: 0.9,
-          question_routing_llm_response: { name: "greetings", arguments: classification_response.to_json }.to_json,
           metrics: a_hash_including("question_routing" => {
             duration: 1.5,
             llm_prompt_tokens: 13,
@@ -222,7 +232,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           status: "error_question_routing",
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           error_message: "class: JSON::Schema::ValidationError message: The property '#/' did not contain a required property of 'answer'",
-          question_routing_llm_response: { "name" => "greetings", "arguments" => classification_response.to_json }.to_json,
           metrics: a_hash_including("question_routing" => {
             duration: 1.5,
             llm_prompt_tokens: 13,
@@ -250,7 +259,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           status: "error_question_routing",
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           error_message: "class: JSON::ParserError message: unexpected token at 'this will blow up'",
-          question_routing_llm_response: { "name" => "greetings", "arguments" => classification_response }.to_json,
           metrics: a_hash_including("question_routing" => {
             duration: 1.5,
             llm_prompt_tokens: 13,
