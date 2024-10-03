@@ -64,10 +64,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
         )
         expect(context.answer.status).to eq("success")
         expect(context.answer.llm_responses["structured_answer"]).to match(
-          a_hash_including(
-            "finish_reason" => "stop",
-            "message" => a_hash_including("tool_calls"),
-          ),
+          hash_including_openai_response_with_tool_call("generate_answer_using_retrieved_contexts"),
         )
       end
 

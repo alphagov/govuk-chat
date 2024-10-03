@@ -70,10 +70,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
       described_class.call(context)
 
       expect(context.answer.llm_responses["question_routing"]).to match(
-        a_hash_including(
-          "finish_reason" => "stop",
-          "message" => a_hash_including("tool_calls"),
-        ),
+        hash_including_openai_response_with_tool_call("genuine_rag"),
       )
     end
 
