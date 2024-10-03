@@ -269,6 +269,28 @@ RSpec.describe "Admin::QuestionsController" do
         .and have_content(/llm_prompt_tokens.*400/)
         .and have_content(/llm_completion_tokens.*101/)
     end
+
+    it "renders the LLM responses" do
+      llm_responses = {
+        "structured_answer" => {
+          "tool_calls": [
+            { "id": "call_dqGpbb39drQDafLsjDLtnbGD" },
+          ],
+        },
+      }
+
+      question = create(:question)
+      create(:answer, question:, llm_responses:)
+
+      get admin_show_question_path(question)
+
+      expect(response.body).to have_content("LLM responses")
+
+      expect(response.body.squish)
+        .to have_content("structured_answer")
+        .and have_content("tool_calls")
+        .and have_content('"id": "call_dqGpbb39drQDafLsjDLtnbGD"')
+    end
   end
 
   def expect_unprocessible_entity_with_date_errors

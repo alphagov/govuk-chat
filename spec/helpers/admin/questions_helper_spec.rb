@@ -76,11 +76,8 @@ RSpec.describe Admin::QuestionsHelper do
         "Answer",
         "Question routing label",
         "Question routing confidence score",
-        "Question routing LLM Response",
-        "LLM Response",
         "Guardrails status",
         "Guardrails triggered",
-        "Guardrails LLM response",
       ]
 
       expect(returned_keys(result)).to match_array(expected_keys)
