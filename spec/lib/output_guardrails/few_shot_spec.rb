@@ -38,7 +38,9 @@ RSpec.describe OutputGuardrails::FewShot do
         .and(having_attributes(
                triggered: true,
                guardrails: %w[COSTS PERSONAL],
-               llm_response: guardrail_result,
+               llm_response: a_hash_including(
+                 "message" => a_hash_including("content" => guardrail_result),
+               ),
              ))
     end
 
@@ -49,7 +51,9 @@ RSpec.describe OutputGuardrails::FewShot do
         .and(having_attributes(
                triggered: false,
                guardrails: [],
-               llm_response: guardrail_result,
+               llm_response: a_hash_including(
+                 "message" => a_hash_including("content" => guardrail_result),
+               ),
              ))
     end
 
