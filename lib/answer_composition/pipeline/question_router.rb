@@ -87,6 +87,7 @@ module AnswerComposition
             temperature: 0.0,
             tools:,
             tool_choice: "required",
+            parallel_tool_calls: false,
           },
         )
       end
