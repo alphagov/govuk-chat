@@ -63,7 +63,9 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
           "VAT (Value Added Tax) is a [tax][1] applied to most goods and services in the UK. [1]: https://www.test.gov.uk/what-is-tax",
         )
         expect(context.answer.status).to eq("success")
-        expect(context.answer.llm_response).to eq(structured_response)
+        expect(context.answer.llm_responses["structured_answer"]).to match(
+          hash_including_openai_response_with_tool_call("generate_answer_using_retrieved_contexts"),
+        )
       end
 
       it "sets the 'used' boolean to false for unused sources" do
@@ -112,7 +114,6 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
           expect { described_class.call(context) }.to throw_symbol(:abort)
             .and change { context.answer.status }.to("abort_llm_cannot_answer")
             .and change { context.answer.message }.to(Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE)
-            .and change { context.answer.llm_response }.to(structured_response)
         end
 
         it "assigns metrics to the answer" do
@@ -150,7 +151,6 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
           status: "error_invalid_llm_response",
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           error_message: "class: JSON::Schema::ValidationError message: The property '#/' did not contain a required property of 'answered'",
-          llm_response: structured_response,
           metrics: {
             "structured_answer" => {
               duration: 1.5,
@@ -181,7 +181,6 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
           status: "error_invalid_llm_response",
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           error_message: "class: JSON::ParserError message: unexpected token at 'this will blow up'",
-          llm_response: structured_response,
           metrics: {
             "structured_answer" => {
               duration: 1.5,

@@ -11,30 +11,27 @@ module AnswerComposition
         start_time = AnswerComposition.monotonic_time
 
         response = ::OutputGuardrails::FewShot.call(context.answer.message)
+        context.answer.assign_llm_response("output_guardrails", response.llm_response)
+
         if response.triggered
           context.abort_pipeline!(
             message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
             status: "abort_output_guardrails",
-            output_guardrail_llm_response: response.llm_response,
             output_guardrail_failures: response.guardrails,
             output_guardrail_status: :fail,
             metrics: { "output_guardrails" => build_metrics(start_time, response) },
           )
         else
-          context.answer.assign_attributes(
-            output_guardrail_status: :pass,
-            output_guardrail_llm_response: response.llm_response,
-          )
-
+          context.answer.assign_attributes(output_guardrail_status: :pass)
           context.answer.assign_metrics("output_guardrails", build_metrics(start_time, response))
         end
       rescue ::OutputGuardrails::FewShot::ResponseError => e
         context.abort_pipeline!(
           message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
           status: "error_output_guardrails",
-          output_guardrail_llm_response: e.llm_response,
           output_guardrail_status: :error,
           metrics: { "output_guardrails" => build_metrics(start_time, e) },
+          llm_response: { "output_guardrails" => e.llm_response },
         )
       end
 

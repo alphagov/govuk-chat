@@ -34,12 +34,17 @@ module OutputGuardrails
     attr_reader :input, :openai_client
 
     def create_result
-      llm_response = openai_response.dig("choices", 0, "message", "content")
+      llm_response = openai_response.dig("choices", 0)
+      llm_response_content = llm_response.dig("message", "content")
       llm_token_usage = openai_response["usage"]
 
-      raise ResponseError.new("Error parsing guardrail response", llm_response, llm_token_usage) unless response_pattern =~ llm_response
+      unless response_pattern =~ llm_response_content
+        raise ResponseError.new(
+          "Error parsing guardrail response", llm_response_content, llm_token_usage
+        )
+      end
 
-      parts = llm_response.split(" | ")
+      parts = llm_response_content.split(" | ")
       triggered = parts.first.chomp == "True"
       guardrails = if triggered
                      extract_guardrails(parts.second)

@@ -13,12 +13,10 @@ module AnswerComposition
 
       def call
         start_time = AnswerComposition.monotonic_time
+        context.answer.assign_llm_response("question_routing", openai_response_choice)
 
         if valid_question?
-          context.answer.assign_attributes(
-            question_routing_label: "genuine_rag",
-            question_routing_llm_response: llm_classification_function.to_json,
-          )
+          context.answer.assign_attributes(question_routing_label: "genuine_rag")
           context.answer.assign_metrics("question_routing", build_metrics(start_time))
         else
           validate_schema
@@ -27,7 +25,6 @@ module AnswerComposition
             message: llm_classification_data["answer"],
             status: "abort_question_routing",
             question_routing_label:,
-            question_routing_llm_response: llm_classification_function.to_json,
             question_routing_confidence_score: llm_classification_data["confidence"],
             metrics: { "question_routing" => build_metrics(start_time) },
           )
@@ -37,7 +34,6 @@ module AnswerComposition
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
           status: "error_question_routing",
           error_message: error_message(e),
-          question_routing_llm_response: llm_classification_function.to_json,
           metrics: { "question_routing" => build_metrics(start_time) },
         )
       end
@@ -55,9 +51,13 @@ module AnswerComposition
       end
 
       def llm_classification_function
-        @llm_classification_function ||= openai_response.dig(
-          "choices", 0, "message", "tool_calls", 0, "function"
+        @llm_classification_function ||= openai_response_choice.dig(
+          "message", "tool_calls", 0, "function"
         )
+      end
+
+      def openai_response_choice
+        @openai_response_choice ||= openai_response.dig("choices", 0)
       end
 
       def raw_llm_classification_data

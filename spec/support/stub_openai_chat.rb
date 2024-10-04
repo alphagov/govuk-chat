@@ -150,4 +150,20 @@ module StubOpenAIChat
       },
     }
   end
+
+  def hash_including_openai_response_with_tool_call(tool_call_name)
+    a_hash_including(
+      "finish_reason" => "stop",
+      "message" => a_hash_including(
+        "role" => "assistant",
+        "tool_calls" => an_array_matching(
+          a_hash_including(
+            "function" => a_hash_including(
+              "name" => tool_call_name,
+            ),
+          ),
+        ),
+      ),
+    )
+  end
 end

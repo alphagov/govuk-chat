@@ -21,6 +21,19 @@
       items: question_show_summary_list_rows(@question, @answer, @question_number, @total_questions),
     } %>
 
+     <% if @answer&.llm_responses.present? %>
+      <%= render "govuk_publishing_components/components/details", {
+        title: "LLM responses",
+      } do %>
+        <% @answer.llm_responses.sort.each do |namespace, response| %>
+          <h3 class="govuk-heading-m"><%= namespace %></h3>
+          <p class="govuk-body">
+            <%= render("components/code_snippet", content: JSON.pretty_generate(response)) %>
+          </p>
+        <% end %>
+      <% end %>
+    <% end %>
+
     <% if @answer&.metrics&.present? %>
       <%= render "govuk_publishing_components/components/details", {
         title: "Metrics",

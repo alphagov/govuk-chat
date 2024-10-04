@@ -88,7 +88,7 @@ RSpec.describe Answer do
 
   describe "#assign_metrics" do
     it "updates the given namespace with the values" do
-      answer = create(:answer)
+      answer = build(:answer)
 
       answer.assign_metrics(
         "answer_composition", { duration: 1.1, llm_tokens: { prompt: 1, completion: 2 } }
@@ -98,6 +98,22 @@ RSpec.describe Answer do
         "answer_composition" => {
           duration: 1.1,
           llm_tokens: { prompt: 1, completion: 2 },
+        },
+      )
+    end
+  end
+
+  describe "#assign_llm_response" do
+    it "updates the given namespace with the hash" do
+      answer = build(:answer)
+
+      answer.assign_llm_response(
+        "question_routing", { some: "hash" }
+      )
+
+      expect(answer.llm_responses).to eq(
+        "question_routing" => {
+          some: "hash",
         },
       )
     end

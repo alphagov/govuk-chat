@@ -58,6 +58,13 @@ RSpec.describe AnswerComposition::Pipeline::Context do
       instance.abort_pipeline(**args)
       expect(instance.answer.metrics).to eq("namespace" => { value: 1 })
     end
+
+    it "assigns an llm_response" do
+      instance = described_class.new(build(:question))
+      args = { message: "answer", llm_response: { "output_guardrails" => { some: "data" } } }
+      instance.abort_pipeline(**args)
+      expect(instance.answer.llm_responses["output_guardrails"]).to eq({ some: "data" })
+    end
   end
 
   describe "#abort_pipeline!" do

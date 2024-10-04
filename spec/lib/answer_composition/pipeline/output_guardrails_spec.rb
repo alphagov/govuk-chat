@@ -34,8 +34,10 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
       expect { described_class.call(context) }.to change(context.answer, :output_guardrail_status).to("pass")
     end
 
-    it "sets the output_guardrail_llm_response" do
-      expect { described_class.call(context) }.to change(context.answer, :output_guardrail_llm_response).to("False | None")
+    it "assigns the llm response to the answer" do
+      described_class.call(context)
+
+      expect(context.answer.llm_responses["output_guardrails"]).to eq("False | None")
     end
 
     it "assigns metrics to the answer" do
@@ -71,8 +73,12 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
         message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
         output_guardrail_status: "fail",
         output_guardrail_failures: %w[political],
-        output_guardrail_llm_response: 'True | "3"',
       )
+    end
+
+    it "assigns the llm response to the answer" do
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+      expect(context.answer.llm_responses["output_guardrails"]).to eq('True | "3"')
     end
 
     it "assigns metrics to the answer" do
@@ -102,8 +108,12 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
         status: "error_output_guardrails",
         message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
         output_guardrail_status: "error",
-        output_guardrail_llm_response: 'False | "1, 2"',
       )
+    end
+
+    it "assigns the llm response to the answer" do
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+      expect(context.answer.llm_responses["output_guardrails"]).to eq('False | "1, 2"')
     end
 
     it "assigns metrics to the answer" do
