@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_03_125702) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_04_092816) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -79,10 +79,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_03_125702) do
     t.string "error_message"
     t.enum "output_guardrail_status", enum_type: "output_guardrails_status"
     t.string "output_guardrail_failures", default: [], array: true
-    t.string "output_guardrail_llm_response"
-    t.string "llm_response"
     t.enum "question_routing_label", enum_type: "question_routing_label"
-    t.text "question_routing_llm_response"
     t.float "question_routing_confidence_score"
     t.jsonb "metrics"
     t.jsonb "llm_responses"
