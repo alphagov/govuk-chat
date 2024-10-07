@@ -60,6 +60,6 @@ class Question < ApplicationRecord
 private
 
   def send_questions_total_to_prometheus
-    Metrics.increment_counter("questions_total")
+    PrometheusMetrics.increment_counter("questions_total")
   end
 end

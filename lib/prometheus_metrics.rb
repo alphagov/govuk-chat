@@ -1,4 +1,4 @@
-class Metrics
+class PrometheusMetrics
   PREFIX = "govuk_chat_".freeze
   COUNTERS = [
     {
@@ -66,7 +66,7 @@ class Metrics
 
   def self.increment_counter(name, labels = {})
     if COUNTERS.none? { |counter| counter[:name] == name }
-      error = "#{name} is not defined in Metrics::COUNTERS"
+      error = "#{name} is not defined in PrometheusMetrics::COUNTERS"
       Rails.env.production? ? GovukError.notify(error) : (raise error)
       return
     end
@@ -77,7 +77,7 @@ class Metrics
 
   def self.gauge(name, value, labels = {})
     if GAUGES.none? { |gauge| gauge[:name] == name }
-      error = "#{name} is not defined in Metrics::GAUGES"
+      error = "#{name} is not defined in PrometheusMetrics::GAUGES"
       Rails.env.production? ? GovukError.notify(error) : (raise error)
       return
     end

@@ -3,26 +3,26 @@ RSpec.describe Conversation do
     let(:user) { create(:early_access_user) }
 
     before do
-      allow(Metrics).to receive(:increment_counter)
+      allow(PrometheusMetrics).to receive(:increment_counter)
     end
 
     it "doesn't attempt to incrment the conversations_total metric if conversation isn't associated with a user" do
       create(:conversation)
-      expect(Metrics).not_to have_received(:increment_counter).with("conversations_total", anything)
+      expect(PrometheusMetrics).not_to have_received(:increment_counter).with("conversations_total", anything)
     end
 
     it "increments the conversations_total metric with the correct labels for the users first conversation" do
       create(:conversation, user:)
 
-      expect(Metrics).to have_received(:increment_counter).with("conversations_total", first_conversation: true).once
-      expect(Metrics).not_to have_received(:increment_counter).with("conversations_total", first_conversation: false)
+      expect(PrometheusMetrics).to have_received(:increment_counter).with("conversations_total", first_conversation: true).once
+      expect(PrometheusMetrics).not_to have_received(:increment_counter).with("conversations_total", first_conversation: false)
     end
 
     it "increments the conversations_total metric with the correct labels for subsequent conversations" do
       2.times { create(:conversation, user:) }
 
-      expect(Metrics).to have_received(:increment_counter).with("conversations_total", first_conversation: false).once
-      expect(Metrics).to have_received(:increment_counter).with("conversations_total", first_conversation: true).once
+      expect(PrometheusMetrics).to have_received(:increment_counter).with("conversations_total", first_conversation: false).once
+      expect(PrometheusMetrics).to have_received(:increment_counter).with("conversations_total", first_conversation: true).once
     end
   end
 

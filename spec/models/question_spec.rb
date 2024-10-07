@@ -1,12 +1,12 @@
 RSpec.describe Question do
   before do
-    allow(Metrics).to receive(:increment_counter)
+    allow(PrometheusMetrics).to receive(:increment_counter)
   end
 
   describe "after_commit" do
     it "increments questions_total counter" do
       create :question
-      expect(Metrics)
+      expect(PrometheusMetrics)
         .to have_received(:increment_counter)
         .with("questions_total")
     end

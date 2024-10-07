@@ -1,4 +1,4 @@
-RSpec.describe Metrics do
+RSpec.describe PrometheusMetrics do
   describe "initialisation" do
     it "registers the prometheus metrics on boot" do
       described_class::COUNTERS.map { |counter| counter[:name] }.each do |counter_name|
@@ -57,7 +57,7 @@ RSpec.describe Metrics do
 
         expect(GovukError)
           .to have_received(:notify)
-          .with("non_existant_counter is not defined in Metrics::COUNTERS")
+          .with("non_existant_counter is not defined in PrometheusMetrics::COUNTERS")
         expect(metric).not_to have_received(:observe)
       end
     end
@@ -65,7 +65,7 @@ RSpec.describe Metrics do
     context "when in a non production environment" do
       it "raises an error if the counter does not exist" do
         expect { described_class.increment_counter("non_existant_counter", source: "instant_signup") }
-          .to raise_error("non_existant_counter is not defined in Metrics::COUNTERS")
+          .to raise_error("non_existant_counter is not defined in PrometheusMetrics::COUNTERS")
       end
     end
   end
@@ -94,7 +94,7 @@ RSpec.describe Metrics do
 
         expect(GovukError)
           .to have_received(:notify)
-          .with("non_existant_gauge is not defined in Metrics::GAUGES")
+          .with("non_existant_gauge is not defined in PrometheusMetrics::GAUGES")
         expect(metric).not_to have_received(:observe)
       end
     end
@@ -102,7 +102,7 @@ RSpec.describe Metrics do
     context "when in a non production environment" do
       it "raises an error if the gauge does not exist" do
         expect { described_class.gauge("non_existant_gauge", 90_000_000, { object: "chat.completion", model: "gpt-4o-mini" }) }
-          .to raise_error("non_existant_gauge is not defined in Metrics::GAUGES")
+          .to raise_error("non_existant_gauge is not defined in PrometheusMetrics::GAUGES")
       end
     end
   end

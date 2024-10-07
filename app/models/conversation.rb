@@ -17,7 +17,7 @@ class Conversation < ApplicationRecord
   def send_conversations_total_to_prometheus
     return if early_access_user_id.blank?
 
-    Metrics.increment_counter(
+    PrometheusMetrics.increment_counter(
       "conversations_total",
       first_conversation: Conversation.where(early_access_user_id:).where.not(id:).none?,
     )

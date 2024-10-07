@@ -30,7 +30,7 @@ module PilotUser
   private
 
     def send_signup_metric_to_prometheus
-      Metrics.increment_counter(
+      PrometheusMetrics.increment_counter(
         "#{self.class.model_name.singular}_accounts_total",
         source:,
       )

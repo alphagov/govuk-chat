@@ -1,20 +1,20 @@
 RSpec.describe EarlyAccessUser do
   describe "after_commit" do
     before do
-      allow(Metrics).to receive(:increment_counter)
+      allow(PrometheusMetrics).to receive(:increment_counter)
     end
 
-    it "delegates to 'Metrics.increment_counter' with the correct arguments on create" do
+    it "delegates to 'PrometheusMetrics.increment_counter' with the correct arguments on create" do
       user = create(:early_access_user)
-      expect(Metrics)
+      expect(PrometheusMetrics)
         .to have_received(:increment_counter)
         .with("early_access_user_accounts_total", source: user.source)
     end
 
-    it "doesn't call 'Metrics.increment_counter' on update" do
+    it "doesn't call 'PrometheusMetrics.increment_counter' on update" do
       user = create(:early_access_user)
       user.update!(email: "test@test.com")
-      expect(Metrics).to have_received(:increment_counter).once
+      expect(PrometheusMetrics).to have_received(:increment_counter).once
     end
   end
 
@@ -84,7 +84,7 @@ RSpec.describe EarlyAccessUser do
 
   describe "#sign_in" do
     before do
-      allow(Metrics).to receive(:increment_counter)
+      allow(PrometheusMetrics).to receive(:increment_counter)
     end
 
     it "raises a AccessRevokedError if a user has access revoked" do
@@ -114,7 +114,7 @@ RSpec.describe EarlyAccessUser do
     it "sends logins_total to prometheus" do
       user = create(:early_access_user, source: :delayed_signup)
       user.sign_in(build(:passwordless_session))
-      expect(Metrics).to have_received(:increment_counter).with("login_total", user_source: "delayed_signup")
+      expect(PrometheusMetrics).to have_received(:increment_counter).with("login_total", user_source: "delayed_signup")
     end
 
     it "deletes any other available sessions to prevent concurrent usage" do

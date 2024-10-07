@@ -136,6 +136,6 @@ class Answer < ApplicationRecord
   end
 
   def send_answers_total_to_prometheus
-    Metrics.increment_counter("answers_total", status:, question_routing_label:, output_guardrail_status:)
+    PrometheusMetrics.increment_counter("answers_total", status:, question_routing_label:, output_guardrail_status:)
   end
 end

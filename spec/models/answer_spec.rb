@@ -1,13 +1,13 @@
 RSpec.describe Answer do
   before do
-    allow(Metrics).to receive(:increment_counter)
+    allow(PrometheusMetrics).to receive(:increment_counter)
   end
 
   describe "after_commit" do
     it "increments answers_total counter" do
       answer = create(:answer, status: :abort_output_guardrails, question_routing_label: :genuine_rag, output_guardrail_status: :fail)
 
-      expect(Metrics).to have_received(:increment_counter).with(
+      expect(PrometheusMetrics).to have_received(:increment_counter).with(
         "answers_total",
         status: answer.status,
         question_routing_label: answer.question_routing_label,

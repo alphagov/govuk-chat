@@ -19,6 +19,6 @@ class AnswerFeedback < ApplicationRecord
 private
 
   def send_answer_feedback_total_to_prometheus
-    Metrics.increment_counter("answer_feedback_total", useful:)
+    PrometheusMetrics.increment_counter("answer_feedback_total", useful:)
   end
 end
