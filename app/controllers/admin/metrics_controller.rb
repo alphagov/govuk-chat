@@ -88,6 +88,16 @@ class Admin::MetricsController < Admin::BaseController
     render json: populate_7_days_data(data).chart_json
   end
 
+  def output_guardrail_failures
+    data = Answer.where(created_at: start_time..)
+                 .output_guardrail_status_fail
+                 .group(:output_guardrail_failures)
+                 .group_by_day(:created_at)
+                 .count_output_guardrail_failures
+
+    render json: populate_7_days_data(data).chart_json
+  end
+
 private
 
   def start_time

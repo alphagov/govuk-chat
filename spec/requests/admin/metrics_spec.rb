@@ -182,6 +182,51 @@ RSpec.describe "Admin::MetricsController" do
     end
   end
 
+  describe "GET :output_guardrail_failures" do
+    it "renders a successful JSON response" do
+      get admin_metrics_output_guardrail_failures_path
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Content-Type"]).to match("application/json")
+      expect(JSON.parse(response.body)).to eq([])
+    end
+
+    it "returns data of the individual occurrences of output guardrail_failures given to answers" do
+      create_list(:answer,
+                  3,
+                  created_at: 6.days.ago,
+                  output_guardrail_status: :fail,
+                  output_guardrail_failures: %w[guardrail_1])
+      create_list(:answer,
+                  4,
+                  created_at: 6.days.ago,
+                  output_guardrail_status: :fail,
+                  output_guardrail_failures: %w[guardrail_1 guardrail_2])
+      create_list(:answer,
+                  2,
+                  created_at: 6.days.ago,
+                  output_guardrail_status: :fail,
+                  output_guardrail_failures: %w[guardrail_3])
+      create_list(:answer,
+                  5,
+                  created_at: 2.days.ago,
+                  output_guardrail_status: :fail,
+                  output_guardrail_failures: %w[guardrail_1])
+      create_list(:answer,
+                  3,
+                  created_at: 2.days.ago,
+                  output_guardrail_status: :fail,
+                  output_guardrail_failures: %w[guardrail_2 guardrail_3])
+
+      get admin_metrics_output_guardrail_failures_path
+
+      expect(JSON.parse(response.body)).to contain_exactly(
+        { "name" => "guardrail_1", "data" => counts_for_last_7_days(days_ago_6: 7, days_ago_2: 5) },
+        { "name" => "guardrail_2", "data" => counts_for_last_7_days(days_ago_6: 4, days_ago_2: 3) },
+        { "name" => "guardrail_3", "data" => counts_for_last_7_days(days_ago_6: 2, days_ago_2: 3) },
+      )
+    end
+  end
+
 private
 
   def counts_for_last_7_days(days_ago_6: 0,

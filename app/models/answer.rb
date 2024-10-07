@@ -69,7 +69,43 @@ class Answer < ApplicationRecord
        },
        prefix: true
 
-  enum :output_guardrail_status, { pass: "pass", fail: "fail", error: "error" }
+  enum :output_guardrail_status,
+       { pass: "pass", fail: "fail", error: "error" },
+       prefix: true
+
+  # output_guardrail_failures are stored as an array so they are more challenging
+  # to produce aggregate counts of occurrences
+  def self.count_output_guardrail_failures
+    all_query_groups = current_scope&.group_values || []
+    guardrail_group_position = all_query_groups.index { |group| group.to_s == "output_guardrail_failures" }
+    raise "must have grouped by output_guardrail_failures" unless guardrail_group_position
+
+    count_result = current_scope.count
+
+    count_result.each_with_object({}) do |(group, count), memo|
+      if all_query_groups.length == 1
+        # if we have only a single "group" in the query then we know the group
+        # value will only comprise of triggered guardrails
+        triggered_guardrails = group
+        triggered_guardrails.each do |guardrail|
+          memo[guardrail] ||= 0
+          memo[guardrail] += count
+        end
+      else
+        # if there are multiple "groups" in the query then some could come
+        # before the output_guardrail_failures with others after
+        before_groupings = group.take(guardrail_group_position)
+        triggered_guardrails = group[guardrail_group_position]
+        after_groupings = group.drop(guardrail_group_position + 1)
+
+        triggered_guardrails.each do |guardrail|
+          new_group = before_groupings + [guardrail] + after_groupings
+          memo[new_group] ||= 0
+          memo[new_group] += count
+        end
+      end
+    end
+  end
 
   def build_sources_from_search_results(search_results)
     self.sources = search_results.map.with_index do |result, relevancy|

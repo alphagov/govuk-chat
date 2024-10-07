@@ -15,6 +15,11 @@ RSpec.describe "Admin user views metrics", :js do
     create_list(:answer, 3, created_at: 3.days.ago, status: :abort_llm_cannot_answer)
     create_list(:answer, 5, created_at: 4.days.ago, status: :error_timeout)
     create_list(:answer, 2, created_at: 1.day.ago, question_routing_label: :genuine_rag)
+    create_list(:answer,
+                4,
+                created_at: 5.days.ago,
+                output_guardrail_status: :fail,
+                output_guardrail_failures: %w[guardrail_1 guardrail_2])
   end
 
   def when_i_visit_the_admin_area
@@ -36,5 +41,6 @@ RSpec.describe "Admin user views metrics", :js do
     expect(page).to have_selector("#answers-with-abort-status canvas")
     expect(page).to have_selector("#answers-with-error-status canvas")
     expect(page).to have_selector("#question-routing-labels canvas")
+    expect(page).to have_selector("#output-guardrail-failures canvas")
   end
 end

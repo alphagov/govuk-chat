@@ -28,6 +28,75 @@ RSpec.describe Answer do
     end
   end
 
+  describe ".count_output_guardrail_failures" do
+    context "when only grouped by output_guardrail_failures" do
+      it "returns the count for each guardrail that failed" do
+        create(:answer, output_guardrail_failures: %w[guardrail_1 guardrail_2])
+        create(:answer, output_guardrail_failures: %w[guardrail_1])
+        create(:answer, output_guardrail_failures: %w[guardrail_1 guardrail_2 guardrail_3])
+        create(:answer, output_guardrail_failures: %w[guardrail_4])
+        create(:answer, output_guardrail_failures: [])
+
+        counts = described_class.group(:output_guardrail_failures)
+                                .count_output_guardrail_failures
+
+        expect(counts).to eq({ "guardrail_1" => 3,
+                               "guardrail_2" => 2,
+                               "guardrail_3" => 1,
+                               "guardrail_4" => 1 })
+      end
+    end
+
+    context "when grouped by output_guardrail_failures and other groupings" do
+      it "returns the count for each guardrail that failed" do
+        create(:answer,
+               question_routing_label: "content_not_govuk",
+               output_guardrail_failures: %w[guardrail_1 guardrail_2],
+               status: "success")
+        create(:answer,
+               question_routing_label: "content_not_govuk",
+               output_guardrail_failures: %w[guardrail_1],
+               status: "success")
+        create(:answer,
+               question_routing_label: "content_not_govuk",
+               output_guardrail_failures: %w[guardrail_1],
+               status: "abort_output_guardrails")
+        create(:answer,
+               question_routing_label: "genuine_rag",
+               output_guardrail_failures: %w[guardrail_1 guardrail_2],
+               status: "success")
+        create(:answer,
+               question_routing_label: "genuine_rag",
+               output_guardrail_failures: %w[guardrail_1],
+               status: "success")
+        create(:answer,
+               question_routing_label: "genuine_rag",
+               output_guardrail_failures: [],
+               status: "success")
+
+        counts = described_class.group(:question_routing_label)
+                                .group(:output_guardrail_failures)
+                                .group(:status)
+                                .count_output_guardrail_failures
+
+        expect(counts).to eq({
+          %w[content_not_govuk guardrail_1 success] => 2,
+          %w[content_not_govuk guardrail_1 abort_output_guardrails] => 1,
+          %w[content_not_govuk guardrail_2 success] => 1,
+          %w[genuine_rag guardrail_1 success] => 2,
+          %w[genuine_rag guardrail_2 success] => 1,
+        })
+      end
+    end
+
+    context "when not grouped by output_guardrail_failures" do
+      it "raises an error" do
+        expect { described_class.count_output_guardrail_failures }
+          .to raise_error("must have grouped by output_guardrail_failures")
+      end
+    end
+  end
+
   describe "#sources" do
     it "implicitly orders sources by relevancy" do
       answer = create(:answer)
