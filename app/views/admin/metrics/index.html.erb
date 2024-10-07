@@ -1,0 +1,58 @@
+<%
+content_for(:title, "Metrics for last 7 days")
+legend_position = "bottom"
+common_chart_options = { refresh: 30 }
+%>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-8">
+  <div class="govuk-grid-column-one-half" id="early-access-users">
+    <h2 class="govuk-heading-l">Early access users</h2>
+    <%= column_chart admin_metrics_early_access_users_path,
+                     **(common_chart_options.merge(stacked: true, legend: legend_position)) %>
+  </div>
+  <div class="govuk-grid-column-one-half" id="waiting-list-users">
+    <h2 class="govuk-heading-l">Waiting list users</h2>
+    <%= column_chart admin_metrics_waiting_list_users_path,
+                     **(common_chart_options.merge(stacked: true, legend: legend_position)) %>
+  </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-8">
+  <div class="govuk-grid-column-one-half" id="conversations">
+    <h2 class="govuk-heading-l">New conversations</h2>
+    <%= column_chart admin_metrics_conversations_path, **common_chart_options %>
+  </div>
+  <div class="govuk-grid-column-one-half" id="questions">
+    <h2 class="govuk-heading-l">Questions</h2>
+    <%= column_chart admin_metrics_questions_path,
+                     **(common_chart_options.merge(stacked: true, legend: legend_position)) %>
+  </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-8">
+  <div class="govuk-grid-column-full" id="answer-feedback">
+    <h2 class="govuk-heading-l">Answer feedback</h2>
+    <%= column_chart admin_metrics_answer_feedback_path, **common_chart_options.merge(legend: legend_position) %>
+  </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-8">
+  <div class="govuk-grid-column-full" id="answers-with-abort-status">
+    <h2 class="govuk-heading-l">Answers with abort status</h2>
+    <%= column_chart admin_metrics_answer_abort_statuses_path, **common_chart_options.merge(legend: legend_position) %>
+  </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-8">
+  <div class="govuk-grid-column-full" id="answers-with-error-status">
+    <h2 class="govuk-heading-l">Answers with error status</h2>
+    <%= column_chart admin_metrics_answer_error_statuses_path, **common_chart_options.merge(legend: legend_position) %>
+  </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-8">
+  <div class="govuk-grid-column-full" id="question-routing-labels">
+    <h2 class="govuk-heading-l">Question routing labels</h2>
+    <%= column_chart admin_metrics_question_routing_labels_path, **common_chart_options.merge(legend: legend_position) %>
+  </div>
+</div>

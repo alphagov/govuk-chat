@@ -21,6 +21,31 @@ RSpec.describe Question do
     end
   end
 
+  describe ".group_by_aggregate_status" do
+    it "groups unanswered questions into a 'pending' group" do
+      create(:question)
+
+      expect(described_class.group_by_aggregate_status.count).to match(
+        hash_including("pending" => 1),
+      )
+    end
+
+    it "groups questions by the first part of their status" do
+      create(:answer, status: :success)
+      create(:answer, status: :abort_no_govuk_content)
+      create(:answer, status: :abort_output_guardrails)
+      create(:answer, status: :error_non_specific)
+      create(:answer, status: :error_answer_service_error)
+      create(:answer, status: :error_context_length_exceeded)
+
+      expect(described_class.group_by_aggregate_status.count).to eq({
+        "success" => 1,
+        "abort" => 2,
+        "error" => 3,
+      })
+    end
+  end
+
   describe ".active" do
     it "returns questions newer than the configured max_question_age" do
       freeze_time do

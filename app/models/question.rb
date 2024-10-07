@@ -17,6 +17,11 @@ class Question < ApplicationRecord
 
   scope :unanswered, -> { where.missing(:answer) }
 
+  scope :group_by_aggregate_status, lambda {
+    left_outer_joins(:answer)
+    .group("CASE WHEN answers.status IS NULL THEN 'pending' ELSE SPLIT_PART(answers.status::TEXT, '_', 1) END")
+  }
+
   scope :exportable, lambda { |start_date, end_date|
                        joins(:conversation, :answer)
                        .preload(:conversation, answer: %i[sources])

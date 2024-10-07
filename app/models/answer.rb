@@ -25,6 +25,8 @@ class Answer < ApplicationRecord
     LLM_CANNOT_ANSWER_MESSAGE = "Sorry, I cannot answer that question.".freeze
   end
 
+  scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
+
   after_commit :send_answers_total_to_prometheus, on: :create
 
   belongs_to :question

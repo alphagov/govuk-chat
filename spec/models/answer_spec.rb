@@ -16,6 +16,18 @@ RSpec.describe Answer do
     end
   end
 
+  describe ".aggregate_status" do
+    it "filters by the first portion of a status" do
+      create_list(:answer, 2, status: :abort_output_guardrails)
+      create(:answer, status: :abort_question_routing)
+      create_list(:answer, 3, status: :error_non_specific)
+      create_list(:answer, 2, status: :error_timeout)
+
+      expect(described_class.aggregate_status("abort").count).to eq(3)
+      expect(described_class.aggregate_status("error").count).to eq(5)
+    end
+  end
+
   describe "#sources" do
     it "implicitly orders sources by relevancy" do
       answer = create(:answer)
