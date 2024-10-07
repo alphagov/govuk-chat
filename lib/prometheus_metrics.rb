@@ -1,36 +1,5 @@
 class PrometheusMetrics
   PREFIX = "govuk_chat_".freeze
-  COUNTERS = [
-    {
-      name: "early_access_user_accounts_total",
-      description: "The total number of early access users",
-    },
-    {
-      name: "waiting_list_user_accounts_total",
-      description: "The total number of waiting list users",
-    },
-    {
-      name: "questions_total",
-      description: "The total number of question asked",
-    },
-    {
-      name: "answers_total",
-      description: "The total number of answers created - success or failure",
-    },
-    {
-      name: "answer_feedback_total",
-      description: "The number of useful (yes/no) responses received",
-    },
-    {
-      name: "conversations_total",
-      description: "The total number of conversations",
-    },
-    {
-      name: "login_total",
-      description: "The total number of early access user logins",
-    },
-  ].freeze
-
   GAUGES = [
     {
       name: "openai_remaining_tokens",
@@ -51,28 +20,11 @@ class PrometheusMetrics
   ].freeze
 
   def self.register
-    COUNTERS.each do |counter|
-      PrometheusExporter::Client.default.register(
-        :counter, name_with_prefix(counter[:name]), counter[:description]
-      )
-    end
-
     GAUGES.each do |gauge|
       PrometheusExporter::Client.default.register(
         :gauge, name_with_prefix(gauge[:name]), gauge[:description]
       )
     end
-  end
-
-  def self.increment_counter(name, labels = {})
-    if COUNTERS.none? { |counter| counter[:name] == name }
-      error = "#{name} is not defined in PrometheusMetrics::COUNTERS"
-      Rails.env.production? ? GovukError.notify(error) : (raise error)
-      return
-    end
-
-    metric = PrometheusExporter::Client.default.find_registered_metric(name_with_prefix(name))
-    metric.observe(1, labels)
   end
 
   def self.gauge(name, value, labels = {})

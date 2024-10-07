@@ -1,23 +1,4 @@
 RSpec.describe WaitingListUser do
-  describe "after_commit" do
-    before do
-      allow(PrometheusMetrics).to receive(:increment_counter)
-    end
-
-    it "delegates to 'PrometheusMetrics.increment_counter' with the correct arguments on create" do
-      user = create(:waiting_list_user)
-      expect(PrometheusMetrics)
-        .to have_received(:increment_counter)
-        .with("waiting_list_user_accounts_total", source: user.source)
-    end
-
-    it "doesn't call 'PrometheusMetrics.increment_counter' on update" do
-      user = create(:waiting_list_user)
-      user.update!(email: "test@test.com")
-      expect(PrometheusMetrics).to have_received(:increment_counter).once
-    end
-  end
-
   describe "#destroy_with_audit" do
     it "destroys a user while creating a DeletedWaitingListUser record" do
       instance = create(:waiting_list_user)

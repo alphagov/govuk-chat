@@ -27,8 +27,6 @@ class Answer < ApplicationRecord
 
   scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
 
-  after_commit :send_answers_total_to_prometheus, on: :create
-
   belongs_to :question
   has_many :sources, -> { order(relevancy: :asc) }, class_name: "AnswerSource"
   has_one :feedback, class_name: "AnswerFeedback"
@@ -133,9 +131,5 @@ class Answer < ApplicationRecord
   def assign_llm_response(namespace, hash)
     self.llm_responses ||= {}
     self.llm_responses[namespace] = hash
-  end
-
-  def send_answers_total_to_prometheus
-    PrometheusMetrics.increment_counter("answers_total", status:, question_routing_label:, output_guardrail_status:)
   end
 end
