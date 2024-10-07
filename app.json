@@ -36,6 +36,9 @@
     },
     "OPENSEARCH_URL": {
       "required": true
+    },
+    "REDIS_SSL_VERIFY_NONE": {
+      "value": "true"
     }
   },
   "formation": {
