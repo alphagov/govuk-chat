@@ -20,7 +20,7 @@
   <% if early_access %>
     <% info_text = "By continuing, you consent to your email being used to provide access to the tool." %>
 
-    <div class="govuk-!-width-two-thirds">
+    <div class="govuk-!-width-three-quarters">
       <%= form_with url: form_url, class: "app-c-chat-introduction__form", authenticity_token: false do |f| %>
         <%= render "govuk_publishing_components/components/input", {
           label: {
@@ -56,7 +56,7 @@
     } %>
   <% end %>
 
-  <div class="govuk-!-width-two-thirds">
-    <%= content_tag(:p, info_text, {id: "info-text", class: "govuk-body govuk-!-margin-top-5"}) %>
+  <div class="govuk-!-width-three-quarters">
+    <%= content_tag(:p, info_text, {id: "info-text", class: "app-c-chat-introduction__info_text govuk-body govuk-!-margin-top-8"}) %>
   </div>
 <% end %>
