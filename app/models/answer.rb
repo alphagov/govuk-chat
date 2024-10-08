@@ -23,6 +23,7 @@ class Answer < ApplicationRecord
       Please try asking about something else or rephrasing your question.
     MESSAGE
     LLM_CANNOT_ANSWER_MESSAGE = "Sorry, I cannot answer that question.".freeze
+    FORBIDDEN_TERMS_MESSAGE = GUARDRAILS_FAILED_MESSAGE
   end
 
   scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
