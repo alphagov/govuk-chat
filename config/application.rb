@@ -101,5 +101,7 @@ module GovukChat
     config.conversation_js_progressive_disclosure_delay = nil
 
     config.bigquery_dataset_id = ENV["BIGQUERY_DATASET"]
+
+    config.forbidden_terms = Set.new(YAML.load_file("#{__dir__}/forbidden_terms.yml"))
   end
 end
