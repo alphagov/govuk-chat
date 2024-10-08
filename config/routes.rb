@@ -72,6 +72,20 @@ Rails.application.routes.draw do
     get "/questions/:id", to: "questions#show", as: :show_question
     get "/search", to: "search#index", as: :search
     get "/search/chunk/:id", to: "chunks#show", as: :chunk
+    scope :metrics do
+      get "", to: "metrics#index", as: :metrics
+      scope defaults: { format: "json" }, constraints: html_json_constraint do
+        get "early-access-users", to: "metrics#early_access_users", as: :metrics_early_access_users
+        get "waiting-list-users", to: "metrics#waiting_list_users", as: :metrics_waiting_list_users
+        get "conversations", to: "metrics#conversations", as: :metrics_conversations
+        get "questions", to: "metrics#questions", as: :metrics_questions
+        get "answer-feedback", to: "metrics#answer_feedback", as: :metrics_answer_feedback
+        get "answer-abort-statuses", to: "metrics#answer_abort_statuses", as: :metrics_answer_abort_statuses
+        get "answer-error-statuses", to: "metrics#answer_error_statuses", as: :metrics_answer_error_statuses
+        get "question-routing-labels", to: "metrics#question_routing_labels", as: :metrics_question_routing_labels
+        get "output-guardrail-failures", to: "metrics#output_guardrail_failures", as: :metrics_output_guardrail_failures
+      end
+    end
 
     resources :early_access_users, path: "/early-access-users" do
       get "/delete", to: "early_access_users#delete", as: :delete, on: :member

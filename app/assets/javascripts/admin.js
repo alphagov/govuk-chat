@@ -4,3 +4,6 @@
 //= require govuk_publishing_components/components/character-count
 //= require govuk_publishing_components/components/table
 //= require govuk_publishing_components/components/radio
+
+//= require chartkick
+//= require Chart.bundle
