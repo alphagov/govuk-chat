@@ -8,6 +8,11 @@ pending:
   label_colour: "yellow"
   description:
   label_and_description:
+abort_forbidden_terms:
+  label: "Abort"
+  label_colour: "orange"
+  description: "failed forbidden terms check"
+  label_and_description: "Abort - failed forbidden terms check"
 abort_llm_cannot_answer:
   label: "Abort"
   label_colour: "orange"

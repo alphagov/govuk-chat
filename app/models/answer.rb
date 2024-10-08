@@ -33,6 +33,7 @@ class Answer < ApplicationRecord
 
   enum :status,
        {
+         abort_forbidden_terms: "abort_forbidden_terms",
          abort_llm_cannot_answer: "abort_llm_cannot_answer",
          abort_no_govuk_content: "abort_no_govuk_content",
          abort_output_guardrails: "abort_output_guardrails",
