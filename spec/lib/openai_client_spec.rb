@@ -54,7 +54,7 @@ RSpec.describe OpenAIClient do # rubocop:disable RSpec/SpecFilePathFormat
     end
 
     it "sets OpenAI chat completion rate limit Prometheus gauges" do
-      allow(Metrics).to receive(:gauge)
+      allow(PrometheusMetrics).to receive(:gauge)
       stub_request(:post, /openai\.com/)
         .to_return_json(
           headers: {
@@ -67,14 +67,14 @@ RSpec.describe OpenAIClient do # rubocop:disable RSpec/SpecFilePathFormat
 
       described_class.build.chat(parameters: chat_parameters)
 
-      expect(Metrics).to have_received(:gauge).with("openai_remaining_tokens", 90_000_000, { endpoint: "/v1/chat/completions", model: chat_parameters[:model] })
-      expect(Metrics).to have_received(:gauge).with("openai_tokens_used_percentage", 40.0, { endpoint: "/v1/chat/completions", model: chat_parameters[:model] })
-      expect(Metrics).to have_received(:gauge).with("openai_remaining_requests", 21_000, { endpoint: "/v1/chat/completions", model: chat_parameters[:model] })
-      expect(Metrics).to have_received(:gauge).with("openai_requests_used_percentage", 30.0, { endpoint: "/v1/chat/completions", model: chat_parameters[:model] })
+      expect(PrometheusMetrics).to have_received(:gauge).with("openai_remaining_tokens", 90_000_000, { endpoint: "/v1/chat/completions", model: chat_parameters[:model] })
+      expect(PrometheusMetrics).to have_received(:gauge).with("openai_tokens_used_percentage", 40.0, { endpoint: "/v1/chat/completions", model: chat_parameters[:model] })
+      expect(PrometheusMetrics).to have_received(:gauge).with("openai_remaining_requests", 21_000, { endpoint: "/v1/chat/completions", model: chat_parameters[:model] })
+      expect(PrometheusMetrics).to have_received(:gauge).with("openai_requests_used_percentage", 30.0, { endpoint: "/v1/chat/completions", model: chat_parameters[:model] })
     end
 
     it "sets OpenAI embeddings rate limit Prometheus gauges" do
-      allow(Metrics).to receive(:gauge)
+      allow(PrometheusMetrics).to receive(:gauge)
       stub_request(:post, /openai\.com/)
         .to_return_json(
           headers: {
@@ -87,19 +87,19 @@ RSpec.describe OpenAIClient do # rubocop:disable RSpec/SpecFilePathFormat
 
       described_class.build.embeddings(parameters: embeddings_parameters)
 
-      expect(Metrics).to have_received(:gauge).with("openai_remaining_tokens", 90_000_000, { endpoint: "/v1/embeddings", model: embeddings_parameters[:model] })
-      expect(Metrics).to have_received(:gauge).with("openai_tokens_used_percentage", 40.0, { endpoint: "/v1/embeddings", model: embeddings_parameters[:model] })
-      expect(Metrics).to have_received(:gauge).with("openai_remaining_requests", 21_000, { endpoint: "/v1/embeddings", model: embeddings_parameters[:model] })
-      expect(Metrics).to have_received(:gauge).with("openai_requests_used_percentage", 30.0, { endpoint: "/v1/embeddings", model: embeddings_parameters[:model] })
+      expect(PrometheusMetrics).to have_received(:gauge).with("openai_remaining_tokens", 90_000_000, { endpoint: "/v1/embeddings", model: embeddings_parameters[:model] })
+      expect(PrometheusMetrics).to have_received(:gauge).with("openai_tokens_used_percentage", 40.0, { endpoint: "/v1/embeddings", model: embeddings_parameters[:model] })
+      expect(PrometheusMetrics).to have_received(:gauge).with("openai_remaining_requests", 21_000, { endpoint: "/v1/embeddings", model: embeddings_parameters[:model] })
+      expect(PrometheusMetrics).to have_received(:gauge).with("openai_requests_used_percentage", 30.0, { endpoint: "/v1/embeddings", model: embeddings_parameters[:model] })
     end
 
     it "doesn't set gauges if remaining tokens or requests isn't returned in the header" do
-      allow(Metrics).to receive(:gauge)
+      allow(PrometheusMetrics).to receive(:gauge)
       stub_request(:post, /openai\.com/)
 
       described_class.build.chat(parameters: chat_parameters)
 
-      expect(Metrics).not_to have_received(:gauge)
+      expect(PrometheusMetrics).not_to have_received(:gauge)
     end
   end
 end

@@ -1,17 +1,4 @@
 RSpec.describe Question do
-  before do
-    allow(Metrics).to receive(:increment_counter)
-  end
-
-  describe "after_commit" do
-    it "increments questions_total counter" do
-      create :question
-      expect(Metrics)
-        .to have_received(:increment_counter)
-        .with("questions_total")
-    end
-  end
-
   describe ".unanswered" do
     it "returns all questions without an answer" do
       question = create(:question)

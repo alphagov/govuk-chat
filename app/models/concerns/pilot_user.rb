@@ -5,8 +5,6 @@ module PilotUser
   USER_RESEARCH_QUESTION_REASON_FOR_VISIT = "Why did you visit GOV.UK today?".freeze
 
   included do
-    after_commit :send_signup_metric_to_prometheus, on: :create
-
     enum :user_description,
          {
            business_owner_or_self_employed: "business_owner_or_self_employed",
@@ -26,14 +24,5 @@ module PilotUser
            other: "other",
          },
          prefix: true
-
-  private
-
-    def send_signup_metric_to_prometheus
-      Metrics.increment_counter(
-        "#{self.class.model_name.singular}_accounts_total",
-        source:,
-      )
-    end
   end
 end

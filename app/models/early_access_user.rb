@@ -55,8 +55,6 @@ class EarlyAccessUser < ApplicationRecord
       .where(authenticatable: self)
       .where.not(id: session.id)
       .delete_all
-
-    Metrics.increment_counter("login_total", user_source: source)
   end
 
   def question_limit_reached?

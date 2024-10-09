@@ -1,16 +1,4 @@
 RSpec.describe AnswerFeedback do
-  before do
-    allow(Metrics).to receive(:increment_counter)
-  end
-
-  describe "after_commit" do
-    it "increments answer_feedback_total counter" do
-      create(:answer_feedback, useful: :yes)
-
-      expect(Metrics).to have_received(:increment_counter).with("answer_feedback_total", useful: true)
-    end
-  end
-
   describe ".exportable" do
     let!(:new_answer_feedback) { create(:answer_feedback, created_at: 2.days.ago) }
     let!(:old_answer_feedback) { create(:answer_feedback, created_at: 4.days.ago - 20.seconds) }

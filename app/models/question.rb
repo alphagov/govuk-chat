@@ -1,6 +1,4 @@
 class Question < ApplicationRecord
-  after_commit :send_questions_total_to_prometheus, on: :create
-
   enum :answer_strategy,
        {
          open_ai_rag_completion: "open_ai_rag_completion", # legacy strategy - no longer used
@@ -55,11 +53,5 @@ class Question < ApplicationRecord
       "answer" => answer&.serialize_for_export,
       "early_access_user_id" => conversation.early_access_user_id,
     )
-  end
-
-private
-
-  def send_questions_total_to_prometheus
-    Metrics.increment_counter("questions_total")
   end
 end
