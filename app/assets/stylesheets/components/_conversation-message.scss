@@ -64,6 +64,40 @@ $message-container-spacing-mobile: 40px;
   .gem-c-govspeak.govuk-govspeak :last-child {
     margin-bottom: 0;
   }
+
+  // This is an override of the ordered list styling in Govspeak (which itself
+  // uses the design system) to fix a rendering issue in Safari. Should either
+  // of those change ordered list styling these styles will break!
+  //
+  // This also has limitations:
+  // - any ordered list type will be syled to numeric, so type attribute is ignored
+  // - any ordered list will start at 1, so a start attribute is ignored
+  // - a list with more than 99 items will render incorrectly
+  //
+  // Design System issue: https://github.com/alphagov/govuk-frontend/issues/5398
+  .gem-c-govspeak ol {
+    counter-reset: item;
+    list-style-type: none;
+    margin: 0;
+  }
+
+  .gem-c-govspeak ol > li {
+    padding: 0 0 0 govuk-spacing(4);
+    position: relative;
+
+    // increase indentation for double digit numbers
+    &:nth-child(n+10) {
+      padding: 0 0 0 govuk-spacing(5);
+    }
+  }
+
+  .gem-c-govspeak ol > li::before {
+    content: counter(item) ". ";
+    counter-increment: item;
+    font-variant-numeric: tabular-nums;
+    left: 0;
+    position: absolute;
+  }
 }
 
 .app-c-conversation-message__identifier {
