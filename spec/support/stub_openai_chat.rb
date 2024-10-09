@@ -39,17 +39,15 @@ module StubOpenAIChat
           {
             type: "function",
             function: {
-              "name": "generate_answer_using_retrieved_contexts",
-              "description": "Use the provided contexts to generate an answer to the question.",
-              "parameters": {
-                "type": output_schema[:type],
-                "properties": output_schema[:properties],
-              },
-              "required": output_schema[:required],
+              name: "generate_answer_using_retrieved_contexts",
+              description: "Use the provided contexts to generate an answer to the question.",
+              strict: true,
+              parameters: output_schema,
             },
           },
         ],
         tool_choice: "required",
+        parallel_tool_calls: false,
       },
     )
 
