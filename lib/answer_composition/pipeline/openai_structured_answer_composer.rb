@@ -67,12 +67,7 @@ module AnswerComposition::Pipeline
                 name: "generate_answer_using_retrieved_contexts",
                 description: "Use the provided contexts to generate an answer to the question.",
                 strict: true,
-                parameters: {
-                  type: output_schema[:type],
-                  properties: output_schema[:properties],
-                },
-                required: output_schema[:required],
-                additionalProperties: false,
+                parameters: output_schema,
               },
             },
           ],
