@@ -26,6 +26,13 @@ class Answer < ApplicationRecord
     JAILBREAK_GUARDRAILS_FAILED_MESSAGE = "I cannot answer that. Please try asking something else.".freeze
     LLM_CANNOT_ANSWER_MESSAGE = "Sorry, I cannot answer that question.".freeze
     FORBIDDEN_TERMS_MESSAGE = GUARDRAILS_FAILED_MESSAGE
+
+    def self.response_for_question_routing_label(label)
+      canned_responses = Rails.configuration.question_routing_labels.dig(label, :canned_responses)
+      raise "No canned responses for #{label}" unless canned_responses.respond_to?(:sample)
+
+      canned_responses.sample
+    end
   end
 
   GUARDRAIL_STATUSES = { pass: "pass", fail: "fail", error: "error" }.freeze

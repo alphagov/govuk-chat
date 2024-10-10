@@ -1,4 +1,22 @@
 RSpec.describe Answer do
+  describe "CannedResponses" do
+    describe ".response_for_question_routing_label" do
+      it "raises an error if the label doesn't exist in the config" do
+        expect {
+          described_class::CannedResponses.response_for_question_routing_label("not-here")
+        }.to raise_error("No canned responses for not-here")
+      end
+
+      it "returns a random canned response" do
+        responses = Rails.configuration.question_routing_labels["about_mps"][:canned_responses]
+
+        response = described_class::CannedResponses.response_for_question_routing_label("about_mps")
+
+        expect(responses).to include(response)
+      end
+    end
+  end
+
   describe ".aggregate_status" do
     it "filters by the first portion of a status" do
       create_list(:answer, 2, status: :abort_answer_guardrails)
