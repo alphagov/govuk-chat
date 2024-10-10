@@ -48,6 +48,11 @@ error_answer_guardrails:
   label_colour: "red"
   description: "invalid format from answer guardrails LLM call"
   label_and_description: "Error - invalid format from answer guardrails LLM call"
+abort_question_routing_token_limit:
+  label: "Abort"
+  label_colour: "orange"
+  description: "completion token limit reached"
+  label_and_description: "Abort - completion token limit reached"
 error_answer_service_error:
   label: "Error"
   label_colour: "red"

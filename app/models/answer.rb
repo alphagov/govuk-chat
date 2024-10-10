@@ -52,6 +52,7 @@ class Answer < ApplicationRecord
          abort_no_govuk_content: "abort_no_govuk_content",
          abort_output_guardrails: "abort_output_guardrails",
          abort_question_routing: "abort_question_routing",
+         abort_question_routing_token_limit: "abort_question_routing_token_limit",
          error_answer_service_error: "error_answer_service_error",
          error_answer_guardrails: "error_answer_guardrails",
          error_context_length_exceeded: "error_context_length_exceeded",
