@@ -13,22 +13,24 @@ module AnswerComposition
 
       def call
         start_time = AnswerComposition.monotonic_time
-        context.answer.assign_llm_response("question_routing", openai_response_choice)
 
-        if valid_question?
-          context.answer.assign_attributes(question_routing_label: "genuine_rag")
-          context.answer.assign_metrics("question_routing", build_metrics(start_time))
-        else
-          validate_schema
+        answer = context.answer
+        answer.assign_llm_response("question_routing", openai_response_choice)
 
-          context.abort_pipeline!(
-            message: llm_classification_data["answer"],
-            status: "abort_question_routing",
-            question_routing_label:,
-            question_routing_confidence_score: llm_classification_data["confidence"],
-            metrics: { "question_routing" => build_metrics(start_time) },
-          )
-        end
+        validate_schema
+
+        answer.assign_attributes(
+          question_routing_label:,
+          question_routing_confidence_score: llm_classification_data["confidence"],
+          message: llm_answer || Answer::CannedResponses.response_for_question_routing_label(question_routing_label),
+        )
+
+        answer.assign_attributes(status: "abort_question_routing") unless genuine_rag?
+        answer.assign_metrics(
+          "question_routing", build_metrics(start_time)
+        )
+
+        context.abort_pipeline unless genuine_rag? || llm_answer.present?
       rescue JSON::Schema::ValidationError, JSON::ParserError => e
         context.abort_pipeline!(
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
@@ -42,7 +44,11 @@ module AnswerComposition
 
       attr_reader :context
 
-      def valid_question?
+      def llm_answer
+        llm_classification_data["answer"]
+      end
+
+      def genuine_rag?
         question_routing_label == "genuine_rag"
       end
 
@@ -76,7 +82,7 @@ module AnswerComposition
         raise InvalidLabelError, "Invalid label: #{question_routing_label}" unless used_tool
 
         schema = used_tool[:function][:parameters]
-        JSON::Validator.validate!(schema, JSON.parse(raw_llm_classification_data))
+        JSON::Validator.validate!(schema, llm_classification_data)
       end
 
       def openai_response
@@ -109,20 +115,27 @@ module AnswerComposition
 
       def tools
         config[:classifications].map do |classification|
+          parameters = {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              confidence: config[:confidence_property],
+            },
+            required: %w[confidence],
+          }
+
+          if classification[:properties].present?
+            parameters[:required].concat(classification[:required])
+            parameters[:properties].merge!(classification[:properties])
+          end
+
           {
             type: "function",
             function: {
               name: classification[:name],
               description: build_description(classification),
               strict: true,
-              parameters: {
-                type: "object",
-                properties: classification[:properties].merge(
-                  confidence: config[:confidence_property],
-                ),
-                required: classification[:required] + %w[confidence],
-                additionalProperties: false,
-              },
+              parameters:,
             },
           }
         end

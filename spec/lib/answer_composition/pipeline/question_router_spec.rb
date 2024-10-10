@@ -20,6 +20,8 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
 
   let(:tools) do
 
+    properties = classification[:properties] || {}
+
     [{
       type: "function",
       function: {
@@ -28,15 +30,18 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
         strict: true,
         parameters: {
           type: "object",
-          properties: classification[:properties].merge({
+          properties: properties.merge({
             confidence: llm_prompts[:confidence_property],
           }),
-          required: (classification[:properties].keys + %i[confidence]).map(&:to_s),
+          required: %w[confidence] + properties.keys.map(&:to_s),
           additionalProperties: false,
         },
       },
-
     }]
+  end
+
+  let(:classification_response) do
+    { answer: "Hello!", confidence: 0.85 }
   end
 
   let(:expected_message_history) do
@@ -57,7 +62,12 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
     let(:context) { build(:answer_pipeline_context, question:) }
 
     it "sends OpenAI a series of messages combining system prompt and the user question" do
-      request = stub_openai_chat_question_routing(expected_message_history, tools:)
+      request = stub_openai_chat_question_routing(
+        expected_message_history,
+        tools:,
+        function_name: "greetings",
+        function_arguments: classification_response,
+      )
 
       described_class.call(context)
 
@@ -65,126 +75,138 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
     end
 
     it "assigns the llm response to the answer" do
-      stub_openai_chat_question_routing(expected_message_history, tools:)
+      stub_openai_chat_question_routing(
+        expected_message_history,
+        tools:,
+        function_name: "greetings",
+        function_arguments: classification_response,
+      )
 
       described_class.call(context)
 
       expect(context.answer.llm_responses["question_routing"]).to match(
-        hash_including_openai_response_with_tool_call("genuine_rag"),
+        hash_including_openai_response_with_tool_call("greetings"),
       )
     end
 
-    context "when a successful response is received" do
-      it "assigns the correct values to the context's answer when genuine_rag" do
-        stub_openai_chat_question_routing(expected_message_history, tools:)
+    it "assigns the correct values to the context's answer" do
+      stub_openai_chat_question_routing(
+        expected_message_history,
+        tools:,
+        function_name: "greetings",
+        function_arguments: classification_response,
+      )
 
-        described_class.call(context)
+      described_class.call(context)
 
-        expect(context.answer).to have_attributes(
-          question_routing_label: "genuine_rag",
-          question_routing_confidence_score: nil,
-        )
-      end
+      expect(context.answer).to have_attributes(
+        question_routing_label: "greetings",
+        question_routing_confidence_score: 0.85,
+        message: "Hello! How can I help you today?",
+      )
+    end
 
-      it "assigns metrics to the answer" do
-        stub_openai_chat_question_routing(expected_message_history, tools:)
-        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
+    it "assigns metrics to the context's answer" do
+      stub_openai_chat_question_routing(
+        expected_message_history,
+        tools:,
+        function_name: "greetings",
+        function_arguments: classification_response,
+      )
+      allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
 
-        described_class.call(context)
+      described_class.call(context)
 
-        expect(context.answer.metrics["question_routing"]).to eq({
-          duration: 1.5,
-          llm_prompt_tokens: 13,
-          llm_completion_tokens: 7,
-        })
-      end
+      expect(context.answer.metrics["question_routing"]).to eq({
+        duration: 1.5,
+        llm_prompt_tokens: 13,
+        llm_completion_tokens: 7,
+      })
+    end
 
-      it "aborts the pipeline and assigns the correct values to the context's answer when not genuine_rag" do
-        classification_response = {
-          answer: "Hello!",
-          confidence: 0.85,
+    context "when the LLM response does not contain an answer" do
+      let(:classification_attributes) do
+        {
+          name: "greetings",
+          description: "A classification description",
+          
+          
         }
+      end
 
-        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
+      it "assigns a canned response as the message" do
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
           function_name: "greetings",
-          function_arguments: classification_response,
+          function_arguments: { confidence: 0.85 },
         )
+        allow(Answer::CannedResponses)
+          .to receive(:response_for_question_routing_label).with("greetings")
+          .and_return("Canned response")
 
-        expect { described_class.call(context) }.to throw_symbol(:abort)
+        described_class.call(context)
 
-        expect(context.answer).to have_attributes(
-          status: "abort_question_routing",
-          question_routing_label: "greetings",
-          message: "Hello! How can I help you today?",
-          question_routing_confidence_score: 0.85,
-          metrics: a_hash_including("question_routing" => {
-            duration: 1.5,
-            llm_prompt_tokens: 13,
-            llm_completion_tokens: 7,
-          }),
-        )
+        expect(context.answer).to have_attributes(message: "Canned response")
       end
 
-      it "raises an error if the label is invalid" do
-        classification_response = {
-          answer: "Hello!",
-          confidence: 0.85,
-        }
+      it "aborts the pipeline" do
+        expect(context).to receive(:abort_pipeline)
 
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
-          function_name: "invalid_label",
-          function_arguments: classification_response,
+          function_name: "greetings",
+          function_arguments: { confidence: 0.85 },
         )
 
-        expect { described_class.call(context) }.to raise_error(
-          AnswerComposition::Pipeline::QuestionRouter::InvalidLabelError,
-          "Invalid label: invalid_label",
-        )
+        described_class.call(context)
       end
     end
 
-    context "when the classification has additional properties" do
-      let(:classification) do
-        classification_attributes.merge(
-          properties: {
-            answer: {
-              type: "string",
-              description: "Answer the question.",
-            },
-            main_topic: {
-              type: "string",
-              description: "The main topic or primary focus of the user request.",
-            },
-          },
-          required: %w[answer main_topic],
-        )
+    it "raises an error if the label is invalid" do
+      stub_openai_chat_question_routing(
+        expected_message_history,
+        tools:,
+        function_name: "invalid_label",
+        function_arguments: classification_response,
+      )
+
+      expect { described_class.call(context) }.to raise_error(
+        AnswerComposition::Pipeline::QuestionRouter::InvalidLabelError,
+        "Invalid label: invalid_label",
+      )
+    end
+
+    context "when the response isn't genuine_rag" do
+      let(:classification_attributes) do
+        {
+          name: "greetings",
+          description: "A classification description",
+          
+          
+        }
       end
 
-      it "makes a successful request to OpenAI and aborts the pipeline" do
-        classification_response = {
-          answer: "Hi there",
-          confidence: 0.9,
-          main_topic: "This is the main topic",
-        }
-
+      it "makes a successful request to OpenAI and sets the attributes" do
         allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
+        allow(Answer::CannedResponses)
+          .to receive(:response_for_question_routing_label).with("greetings")
+          .and_return("Canned response")
+
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
           function_name: "greetings",
-          function_arguments: classification_response,
+          function_arguments: { confidence: 0.9 },
         )
 
-        expect { described_class.call(context) }.to throw_symbol(:abort)
+        described_class.call(context)
+
         expect(context.answer).to have_attributes(
           status: "abort_question_routing",
           question_routing_label: "greetings",
-          message: "Hi there",
+          message: "Canned response",
           question_routing_confidence_score: 0.9,
           metrics: a_hash_including("question_routing" => {
             duration: 1.5,
@@ -194,27 +216,22 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
         )
       end
 
-      it "aborts the pipeline if the schema is invalid" do
-        # This schema doesn't have the main_topic property, which is required
-        classification_response = {
-          answer: "Hello!",
-          confidence: 0.85,
-        }
+      it "aborts the pipeline" do
+        expect(context).to receive(:abort_pipeline)
 
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
           function_name: "greetings",
-          function_arguments: classification_response,
+          function_arguments: { confidence: 0.85 },
         )
 
-        expect { described_class.call(context) }.to throw_symbol(:abort)
-          .and change { context.answer.status }.to("error_question_routing")
+        described_class.call(context)
       end
     end
 
-    context "when OpenAI passes JSON back that is invalid against the Output schema" do
-      it "aborts the pipeline" do
+    context "when schema validation fails" do
+      it "aborts the pipeline when OpenAI passes JSON back that is invalid against the Output schema" do
         classification_response = { something: "irrelevant" }
 
         allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
@@ -228,7 +245,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
         expect(context).to receive(:abort_pipeline!).with(
           status: "error_question_routing",
           message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
-          error_message: "class: JSON::Schema::ValidationError message: The property '#/' did not contain a required property of 'answer'",
+          error_message: a_string_including("class: JSON::Schema::ValidationError"),
           metrics: a_hash_including("question_routing" => {
             duration: 1.5,
             llm_prompt_tokens: 13,
@@ -238,10 +255,8 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
 
         described_class.call(context)
       end
-    end
 
-    context "when OpenAI passes invalid JSON in the response" do
-      it "aborts the pipeline" do
+      it "aborts the pipeline when OpenAI passes invalid JSON in the response" do
         classification_response = "this will blow up"
 
         allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)

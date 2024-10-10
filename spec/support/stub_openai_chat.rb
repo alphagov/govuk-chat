@@ -56,7 +56,12 @@ module StubOpenAIChat
     stub_openai_chat_completion(question_or_history, chat_options: structured_generation_chat_options, tool_calls:)
   end
 
-  def stub_openai_chat_question_routing(question_or_history, tools: an_instance_of(Array), function_name: "genuine_rag", function_arguments: {})
+  def stub_openai_chat_question_routing(
+    question_or_history,
+    tools: an_instance_of(Array),
+    function_name: "genuine_rag",
+    function_arguments: { "answer": "This is RAG.", confidence: 1.0 }
+  )
     function_arguments = function_arguments.to_json unless function_arguments.is_a?(String)
 
     chat_options = {
