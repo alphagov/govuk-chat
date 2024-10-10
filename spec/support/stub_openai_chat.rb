@@ -68,6 +68,7 @@ module StubOpenAIChat
       model: AnswerComposition::Pipeline::QuestionRouter::OPENAI_MODEL,
       tools:,
       tool_choice: "required",
+      max_completion_tokens: AnswerComposition::Pipeline::QuestionRouter::MAX_COMPLETION_TOKENS,
     }
 
     stub_openai_chat_completion(

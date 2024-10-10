@@ -2,6 +2,7 @@ module AnswerComposition
   module Pipeline
     class QuestionRouter
       OPENAI_MODEL = "gpt-4o-mini".freeze
+      MAX_COMPLETION_TOKENS = 160
 
       def self.call(...) = new(...).call
 
@@ -72,6 +73,7 @@ module AnswerComposition
             tools:,
             tool_choice: "required",
             parallel_tool_calls: false,
+            max_completion_tokens: MAX_COMPLETION_TOKENS,
           },
         )
       end
