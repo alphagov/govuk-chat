@@ -102,7 +102,7 @@ module Admin
                   },
                   {
                     field: "Question routing label",
-                    value: Rails.configuration.question_routing_labels[answer.question_routing_label],
+                    value: Rails.configuration.question_routing_labels.dig(answer.question_routing_label, :label),
                   },
                   {
                     field: "Question routing confidence score",
