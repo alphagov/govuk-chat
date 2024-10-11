@@ -22,8 +22,8 @@ class Answer < ApplicationRecord
 
       Please try asking about something else or rephrasing your question.
     MESSAGE
-
     JAILBREAK_GUARDRAILS_FAILED_MESSAGE = "I cannot answer that. Please try asking something else.".freeze
+    QUESTION_ROUTING_GUARDRAILS_FAILED_MESSAGE = GUARDRAILS_FAILED_MESSAGE
     LLM_CANNOT_ANSWER_MESSAGE = "Sorry, I cannot answer that question.".freeze
     FORBIDDEN_TERMS_MESSAGE = GUARDRAILS_FAILED_MESSAGE
 
