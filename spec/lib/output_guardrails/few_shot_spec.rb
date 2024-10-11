@@ -41,6 +41,7 @@ RSpec.describe OutputGuardrails::FewShot do
                llm_response: a_hash_including(
                  "message" => a_hash_including("content" => guardrail_result),
                ),
+               llm_guardrail_result: guardrail_result,
              ))
     end
 
@@ -54,6 +55,7 @@ RSpec.describe OutputGuardrails::FewShot do
                llm_response: a_hash_including(
                  "message" => a_hash_including("content" => guardrail_result),
                ),
+               llm_guardrail_result: guardrail_result,
              ))
     end
 

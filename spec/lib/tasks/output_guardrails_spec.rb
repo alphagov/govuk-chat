@@ -3,7 +3,8 @@ RSpec.describe "rake guardrails tasks" do
     let(:task_name) { "output_guardrails:evaluate_fewshot" }
     let(:false_response) do
       OutputGuardrails::FewShot::Result.new(
-        llm_response: "False | None",
+        llm_response: llm_response_json("False | None"),
+        llm_guardrail_result: "False | None",
         triggered: false,
         guardrails: [],
         llm_token_usage: {},
@@ -11,7 +12,8 @@ RSpec.describe "rake guardrails tasks" do
     end
     let(:true_response) do
       OutputGuardrails::FewShot::Result.new(
-        llm_response: 'True | "1"',
+        llm_response: llm_response_json('True | "1"'),
+        llm_guardrail_result: 'True | "1"',
         triggered: true,
         guardrails: %w[sensitive_financial_matters],
         llm_token_usage: {},
@@ -35,6 +37,9 @@ RSpec.describe "rake guardrails tasks" do
           expect(results).to include("count", "model")
           expect(results["model"]).to eq(model_name)
 
+          first_example = results["false_positives"][0]
+          expect(first_example["actual"]).to eq(true_response.llm_guardrail_result)
+
           examples = CSV.read(Rails.root.join("lib/data/output_guardrails/fewshot_examples.csv"), headers: true).length
           expect(OutputGuardrails::FewShot).to have_received(:call).exactly(examples).times
         ensure
@@ -48,6 +53,17 @@ RSpec.describe "rake guardrails tasks" do
       it "outputs the full structure to the console" do
         expect { Rake::Task[task_name].invoke }.to output(/count=>[\s\S]*failures=>/).to_stdout
       end
+    end
+
+    def llm_response_json(guardrail_result)
+      {
+        "message": {
+          "role": "assistant",
+          "content": guardrail_result,
+          "refusal": nil,
+        },
+        "finish_reason": "stop",
+      }
     end
   end
 end

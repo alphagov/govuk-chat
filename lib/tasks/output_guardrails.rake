@@ -7,7 +7,9 @@ namespace "output_guardrails" do
     model_name = OutputGuardrails::FewShot::OPENAI_MODEL
     true_eval = ->(v) { v != "False | None" }
 
-    results = OutputGuardrails::Evaluation.call(file_path, true_eval:) { |input| OutputGuardrails::FewShot.call(input).llm_response }
+    results = OutputGuardrails::Evaluation.call(file_path, true_eval:) do |input|
+      OutputGuardrails::FewShot.call(input).llm_guardrail_result
+    end
 
     results.merge!(model: model_name)
 

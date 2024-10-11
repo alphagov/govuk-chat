@@ -12,7 +12,14 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
       OutputGuardrails::FewShot::Result.new(
         triggered: false,
         guardrails: [],
-        llm_response: "False | None",
+        llm_guardrail_result: "False | None",
+        llm_response: {
+          "message": {
+            "role": "assistant",
+            "content": "False | None",
+          },
+          "finish_reason": "stop",
+        },
         llm_token_usage: { "prompt_tokens" => 13, "completion_tokens" => 7 },
       )
     end
@@ -37,7 +44,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
     it "assigns the llm response to the answer" do
       described_class.call(context)
 
-      expect(context.answer.llm_responses["output_guardrails"]).to eq("False | None")
+      expect(context.answer.llm_responses["output_guardrails"]).to eq(few_shot_response.llm_response)
     end
 
     it "assigns metrics to the answer" do
@@ -58,7 +65,14 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
       OutputGuardrails::FewShot::Result.new(
         triggered: true,
         guardrails: %w[political],
-        llm_response: 'True | "3"',
+        llm_guardrail_result: 'True | "3"',
+        llm_response: {
+          "message": {
+            "role": "assistant",
+            "content": 'True | "3"',
+          },
+          "finish_reason": "stop",
+        },
         llm_token_usage: { "prompt_tokens" => 13, "completion_tokens" => 7 },
       )
     end
@@ -78,7 +92,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
 
     it "assigns the llm response to the answer" do
       expect { described_class.call(context) }.to throw_symbol(:abort)
-      expect(context.answer.llm_responses["output_guardrails"]).to eq('True | "3"')
+      expect(context.answer.llm_responses["output_guardrails"]).to eq(few_shot_response.llm_response)
     end
 
     it "assigns metrics to the answer" do
