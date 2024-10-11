@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_15_105556) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_15_111024) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -84,6 +84,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_15_105556) do
     t.jsonb "metrics"
     t.jsonb "llm_responses"
     t.enum "jailbreak_guardrails_status", enum_type: "guardrails_status"
+    t.enum "question_routing_guardrails_status", enum_type: "guardrails_status"
+    t.string "question_routing_guardrails_failures", default: [], array: true
     t.index ["created_at"], name: "index_answers_on_created_at"
     t.index ["question_id"], name: "index_answers_on_question_id", unique: true
   end
