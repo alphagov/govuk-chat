@@ -109,6 +109,16 @@ module StubOpenAIChat
     )
   end
 
+  def stub_openai_jailbreak_guardrails(to_check, response = InputGuardrails::Jailbreak.pass_value)
+    stub_openai_chat_completion(
+      array_including({ "role" => "user", "content" => a_string_including(to_check) }),
+      answer: response,
+      chat_options: { model: InputGuardrails::Jailbreak::OPENAI_MODEL,
+                      max_tokens: InputGuardrails::Jailbreak.max_tokens,
+                      logit_bias: InputGuardrails::Jailbreak.logit_bias },
+    )
+  end
+
   def openai_chat_completion_response_body(answer: nil, tool_calls: nil)
     {
       id: "chatcmpl-abc123",
