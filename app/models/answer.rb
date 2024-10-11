@@ -26,6 +26,8 @@ class Answer < ApplicationRecord
     FORBIDDEN_TERMS_MESSAGE = GUARDRAILS_FAILED_MESSAGE
   end
 
+  GUARDRAIL_STATUSES = { pass: "pass", fail: "fail", error: "error" }.freeze
+
   scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
 
   belongs_to :question
@@ -71,9 +73,8 @@ class Answer < ApplicationRecord
        },
        prefix: true
 
-  enum :output_guardrail_status,
-       { pass: "pass", fail: "fail", error: "error" },
-       prefix: true
+  enum :output_guardrail_status, GUARDRAIL_STATUSES, prefix: true
+  enum :jailbreak_guardrails_status, GUARDRAIL_STATUSES, prefix: true
 
   # output_guardrail_failures are stored as an array so they are more challenging
   # to produce aggregate counts of occurrences

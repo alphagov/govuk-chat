@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_11_085431) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_11_092134) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -21,7 +21,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_11_085431) do
   create_enum "deleted_early_access_user_deletion_type", ["unsubscribe", "admin"]
   create_enum "deleted_waiting_list_user_deletion_type", ["unsubscribe", "admin", "promotion"]
   create_enum "early_access_user_source", ["admin_added", "instant_signup", "admin_promoted", "delayed_signup"]
-  create_enum "output_guardrails_status", ["pass", "fail", "error"]
+  create_enum "guardrails_status", ["pass", "fail", "error"]
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "content_not_govuk", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar"]
   create_enum "settings_downtime_type", ["temporary", "permanent"]
   create_enum "status", ["success", "error_non_specific", "error_answer_service_error", "error_context_length_exceeded", "abort_no_govuk_content", "error_invalid_llm_response", "abort_output_guardrails", "error_output_guardrails", "abort_llm_cannot_answer", "abort_question_routing", "error_question_routing", "error_timeout", "abort_forbidden_terms", "abort_jailbreak_guardrails", "error_jailbreak_guardrails"]
@@ -77,12 +77,13 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_11_085431) do
     t.datetime "updated_at", null: false
     t.enum "status", null: false, enum_type: "status"
     t.string "error_message"
-    t.enum "output_guardrail_status", enum_type: "output_guardrails_status"
+    t.enum "output_guardrail_status", enum_type: "guardrails_status"
     t.string "output_guardrail_failures", default: [], array: true
     t.enum "question_routing_label", enum_type: "question_routing_label"
     t.float "question_routing_confidence_score"
     t.jsonb "metrics"
     t.jsonb "llm_responses"
+    t.enum "jailbreak_guardrails_status", enum_type: "guardrails_status"
     t.index ["created_at"], name: "index_answers_on_created_at"
     t.index ["question_id"], name: "index_answers_on_question_id", unique: true
   end
