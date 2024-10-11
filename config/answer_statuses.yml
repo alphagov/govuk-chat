@@ -13,6 +13,11 @@ abort_forbidden_terms:
   label_colour: "orange"
   description: "failed forbidden terms check"
   label_and_description: "Abort - failed forbidden terms check"
+abort_jailbreak_guardrails:
+  label: "Abort"
+  label_colour: "orange"
+  description: "jailbreak guardrails triggered"
+  label_and_description: "Abort - jailbreak guardrails triggered"
 abort_llm_cannot_answer:
   label: "Abort"
   label_colour: "orange"
@@ -48,6 +53,11 @@ error_invalid_llm_response:
   label_colour: "red"
   description: "invalid structured answer from LLM"
   label_and_description: "Error - invalid structured answer from LLM"
+error_jailbreak_guardrails:
+  label: "Error"
+  label_colour: "red"
+  description: "invalid format from jailbreak guardrails LLM call"
+  label_and_description: "Error - invalid format from jailbreak guardrails LLM call"
 error_output_guardrails:
   label: "Error"
   label_colour: "red"
