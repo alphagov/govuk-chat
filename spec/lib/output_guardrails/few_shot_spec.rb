@@ -2,8 +2,9 @@ RSpec.describe OutputGuardrails::FewShot do
   let(:guardrail_mappings) { { "1" => "COSTS", "5" => "PERSONAL" } }
 
   let(:formatted_date) { Date.current.strftime("%A %d %B %Y") }
+  let(:llm_prompt_name) { :output_guardrails }
   let(:system_prompt) do
-    Rails.configuration.llm_prompts.output_guardrails.dig(:few_shot, :system_prompt)
+    Rails.configuration.llm_prompts.dig(llm_prompt_name, :few_shot, :system_prompt)
       .gsub("{date}", formatted_date)
   end
 
@@ -27,14 +28,14 @@ RSpec.describe OutputGuardrails::FewShot do
         max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
       })
 
-      described_class.call(input)
+      described_class.call(input, llm_prompt_name)
       expect(openai_request).to have_been_made
     end
 
     it "returns triggered: true with human readable guardrails" do
       guardrail_result = 'True | "1, 5"'
       stub_openai_output_guardrail(input, guardrail_result)
-      expect(described_class.call(input)).to be_a(OutputGuardrails::FewShot::Result)
+      expect(described_class.call(input, llm_prompt_name)).to be_a(OutputGuardrails::FewShot::Result)
         .and(having_attributes(
                triggered: true,
                guardrails: %w[COSTS PERSONAL],
@@ -48,7 +49,7 @@ RSpec.describe OutputGuardrails::FewShot do
     it "returns triggered: false with empty guardrails" do
       guardrail_result = "False | None"
       stub_openai_output_guardrail(input, guardrail_result)
-      expect(described_class.call(input)).to be_a(OutputGuardrails::FewShot::Result)
+      expect(described_class.call(input, llm_prompt_name)).to be_a(OutputGuardrails::FewShot::Result)
         .and(having_attributes(
                triggered: false,
                guardrails: [],
@@ -61,7 +62,7 @@ RSpec.describe OutputGuardrails::FewShot do
 
     it "returns the LLM token usage" do
       stub_openai_output_guardrail(input)
-      result = described_class.call(input)
+      result = described_class.call(input, llm_prompt_name)
 
       expect(result.llm_token_usage).to eq({
         "prompt_tokens" => 13,
@@ -74,7 +75,7 @@ RSpec.describe OutputGuardrails::FewShot do
       it "throws a AnswerComposition::OutputGuardrails::ResponseError" do
         guardrail_result = 'False | "1, 2"'
         stub_openai_output_guardrail(input, guardrail_result)
-        expect { described_class.call(input) }
+        expect { described_class.call(input, llm_prompt_name) }
           .to raise_error(
             an_instance_of(OutputGuardrails::FewShot::ResponseError)
               .and(having_attributes(message: "Error parsing guardrail response",
@@ -87,7 +88,7 @@ RSpec.describe OutputGuardrails::FewShot do
       it "throws a AnswerComposition::OutputGuardrails::ResponseError" do
         guardrail_result = 'False | "1, 8"'
         stub_openai_output_guardrail(input, guardrail_result)
-        expect { described_class.call(input) }
+        expect { described_class.call(input, llm_prompt_name) }
           .to raise_error(
             an_instance_of(OutputGuardrails::FewShot::ResponseError)
               .and(having_attributes(message: "Error parsing guardrail response",
@@ -102,7 +103,7 @@ RSpec.describe OutputGuardrails::FewShot do
       end
 
       it "raises a OpenAIClient::RequestError with a modified message" do
-        expect { described_class.call(input) }
+        expect { described_class.call(input, llm_prompt_name) }
           .to raise_error(
             an_instance_of(OpenAIClient::RequestError)
               .and(having_attributes(response: an_instance_of(Hash),
@@ -118,13 +119,36 @@ RSpec.describe OutputGuardrails::FewShot do
       end
 
       it "raises a OpenAIClient::ContextLengthExceededError with a modified message" do
-        expect { described_class.call(input) }
+        expect { described_class.call(input, llm_prompt_name) }
           .to raise_error(
             an_instance_of(OpenAIClient::ContextLengthExceededError)
               .and(having_attributes(response: an_instance_of(Hash),
                                      message: "Exceeded context length running guardrail: This is a test input.",
                                      cause: an_instance_of(OpenAIClient::ContextLengthExceededError))),
           )
+      end
+    end
+
+    context "with a question routing guardrail LLM prompt" do
+      it "makes the request" do
+        messages = array_including(
+          { "role" => "system", "content" => a_string_including(formatted_date) },
+          { "role" => "user", "content" => a_string_including(input) },
+        )
+        openai_request = stub_openai_chat_completion(messages, answer: "False | None", chat_options: {})
+
+        described_class.call(input, :question_routing_guardrails)
+
+        expect(openai_request).to have_been_made
+      end
+    end
+
+    context "with a non-existent llm_prompt_name" do
+      let(:llm_prompt_name) { "non_existent_llm_prompt_name" }
+
+      it "raises an error" do
+        expect { described_class.call(input, llm_prompt_name) }
+          .to raise_error("No LLM prompts found for #{llm_prompt_name}")
       end
     end
   end

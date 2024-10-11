@@ -26,7 +26,9 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
 
     it "calls the guardrails with the answer message" do
       described_class.call(context)
-      expect(OutputGuardrails::FewShot).to have_received(:call).with(context.answer.message)
+      expect(OutputGuardrails::FewShot)
+        .to have_received(:call)
+        .with(context.answer.message, :output_guardrails)
     end
 
     it "does not abort the pipeline" do

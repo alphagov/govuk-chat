@@ -10,7 +10,7 @@ module AnswerComposition
       def call
         start_time = AnswerComposition.monotonic_time
 
-        response = ::OutputGuardrails::FewShot.call(context.answer.message)
+        response = ::OutputGuardrails::FewShot.call(context.answer.message, :output_guardrails)
         context.answer.assign_llm_response("output_guardrails", response.llm_response)
 
         if response.triggered

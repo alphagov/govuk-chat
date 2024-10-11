@@ -16,9 +16,10 @@ module OutputGuardrails
 
     def self.call(...) = new(...).call
 
-    def initialize(input)
+    def initialize(input, llm_prompt_name)
       @input = input
       @openai_client = OpenAIClient.build
+      @llm_prompt_name = llm_prompt_name
     end
 
     def call
@@ -31,7 +32,7 @@ module OutputGuardrails
 
   private
 
-    attr_reader :input, :openai_client
+    attr_reader :input, :openai_client, :llm_prompt_name
 
     def create_result
       llm_response = openai_response.dig("choices", 0)
@@ -98,7 +99,11 @@ module OutputGuardrails
     end
 
     def llm_prompts
-      Rails.configuration.llm_prompts.output_guardrails
+      prompts = Rails.configuration.llm_prompts[llm_prompt_name]
+
+      raise "No LLM prompts found for #{llm_prompt_name}" unless prompts
+
+      prompts
     end
   end
 end
