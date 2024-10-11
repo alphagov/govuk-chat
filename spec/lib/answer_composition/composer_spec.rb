@@ -12,6 +12,7 @@ RSpec.describe AnswerComposition::Composer do
             AnswerComposition::Pipeline::JailbreakGuardrails,
             AnswerComposition::Pipeline::QuestionRephraser,
             AnswerComposition::Pipeline::QuestionRouter,
+            AnswerComposition::Pipeline::QuestionRoutingGuardrails,
             AnswerComposition::Pipeline::SearchResultFetcher,
             AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer,
             AnswerComposition::Pipeline::OutputGuardrails,

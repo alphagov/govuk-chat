@@ -36,6 +36,7 @@ module AnswerComposition
           Pipeline::JailbreakGuardrails,
           Pipeline::QuestionRephraser,
           Pipeline::QuestionRouter,
+          Pipeline::QuestionRoutingGuardrails,
           Pipeline::SearchResultFetcher,
           Pipeline::OpenAIStructuredAnswerComposer,
           Pipeline::OutputGuardrails,
