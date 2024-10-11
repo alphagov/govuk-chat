@@ -109,6 +109,14 @@ module Admin
                     value: answer.question_routing_confidence_score,
                   },
                   {
+                    field: "Question routing guardrails status",
+                    value: answer.question_routing_guardrails_status,
+                  },
+                  {
+                    field: "Question routing guardrails triggered",
+                    value: answer.question_routing_guardrails_failures.join(", "),
+                  },
+                  {
                     field: "Jailbreak guardrails status",
                     value: answer.jailbreak_guardrails_status,
                   },

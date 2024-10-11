@@ -76,6 +76,8 @@ RSpec.describe Admin::QuestionsHelper do
         "Answer",
         "Question routing label",
         "Question routing confidence score",
+        "Question routing guardrails status",
+        "Question routing guardrails triggered",
         "Jailbreak guardrails status",
         "Answer guardrails status",
         "Answer guardrails triggered",
