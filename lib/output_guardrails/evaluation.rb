@@ -66,6 +66,7 @@ module OutputGuardrails
         false_positives:,
         false_negatives:,
         failures:,
+        successes:,
       }
     end
 
@@ -121,21 +122,19 @@ module OutputGuardrails
     end
 
     def failures
-      examples.select(&:failure?).map do |example|
-        { input: example.input, expected: example.expected, actual: example.actual }
-      end
+      examples.select(&:failure?).map(&method(:format_example))
     end
 
     def false_positives
-      examples.select(&:false_positive?).map do |example|
-        { input: example.input, expected: example.expected, actual: example.actual }
-      end
+      examples.select(&:false_positive?).map(&method(:format_example))
     end
 
     def false_negatives
-      examples.select(&:false_negative?).map do |example|
-        { input: example.input, expected: example.expected, actual: example.actual }
-      end
+      examples.select(&:false_negative?).map(&method(:format_example))
+    end
+
+    def successes
+      examples.select(&:exact_match?).map(&method(:format_example))
     end
 
     def precision
@@ -152,6 +151,14 @@ module OutputGuardrails
 
     def run_guardrail(input)
       guardrail_block.call(input)
+    end
+
+    def format_example(example)
+      {
+        input: example.input,
+        expected: example.expected,
+        actual: example.actual,
+      }
     end
   end
 end
