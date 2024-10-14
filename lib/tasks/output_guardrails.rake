@@ -7,11 +7,24 @@ namespace "output_guardrails" do
     model_name = OutputGuardrails::FewShot::OPENAI_MODEL
     true_eval = ->(v) { v != "False | None" }
 
+    prompt_token_counts = []
+
     results = OutputGuardrails::Evaluation.call(file_path, true_eval:) do |input|
-      OutputGuardrails::FewShot.call(input).llm_guardrail_result
+      result = OutputGuardrails::FewShot.call(input)
+      prompt_token_counts << result.llm_token_usage["prompt_tokens"]
+      result.llm_guardrail_result
+    rescue OutputGuardrails::FewShot::ResponseError => e
+      prompt_token_counts << e.llm_token_usage["prompt_tokens"]
+      "ERR: #{e.llm_response}"
     end
 
-    results.merge!(model: model_name)
+    average_prompt_token_count = prompt_token_counts.sum / prompt_token_counts.size
+
+    results.merge!(
+      model: model_name,
+      average_prompt_token_count:,
+      max_prompt_token_count: prompt_token_counts.max,
+    )
 
     if output_path.nil?
       pp results

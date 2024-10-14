@@ -80,8 +80,6 @@ module OutputGuardrails
         expected = row["output"]
         latency = Benchmark.realtime do
           actual = run_guardrail(input)
-        rescue OutputGuardrails::FewShot::ResponseError => e
-          actual = "ERR: #{e.llm_response}"
         end
 
         entry = Example.new(
