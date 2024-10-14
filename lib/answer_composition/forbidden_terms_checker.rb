@@ -19,9 +19,7 @@ module AnswerComposition
         )
       end
 
-      answer.assign_attributes(
-        metrics: { "forbidden_terms_checker" => build_metrics(start_time) },
-      )
+      answer.assign_metrics("forbidden_terms_checker", build_metrics(start_time))
     end
 
   private

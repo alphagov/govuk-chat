@@ -6,10 +6,14 @@ RSpec.describe AnswerComposition::ForbiddenTermsChecker do
     allow(Rails.configuration).to receive(:forbidden_terms).and_return(Set.new(["badterm", "extra bad term"]))
   end
 
-  it "assigns the forbidden_terms_checker metric to the answer" do
+  it "assigns the forbidden_terms_checker metric to the metrics values on the answer" do
+    answer.assign_metrics("existing_metric", { duration: 1 })
     allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
     described_class.call(answer)
-    expect(answer.metrics["forbidden_terms_checker"]).to eq({ "duration" => 1.5 })
+    expect(answer.metrics).to match(hash_including(
+                                      "existing_metric" => { duration: 1 },
+                                      "forbidden_terms_checker" => { duration: 1.5 },
+                                    ))
   end
 
   shared_examples "doesn't update answers message or status" do
