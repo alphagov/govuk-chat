@@ -1,39 +1,29 @@
-<%
-session_timeout_days = 30
-magic_link_timeout_hours = 24
-%>
 Hello,
 
 You now have access to GOV.UK Chat, an experimental tool that helps you find answers to your questions about business and trade.
 
 ## Get started
 
-You can use the unique link below to get started. It's valid for <%= magic_link_timeout_hours %> hours and can only be used once.
+You can use the unique link below to get started. You'll need to use it within <%= @magic_link_timeout_hours %> hours to activate your account.
 
 [Start chatting](<%= @magic_link %>)
 
 ## How to use GOV.UK Chat
 
-To return to GOV.UK Chat, visit [gov.uk/chat/conversation](<%= show_conversation_url %>) at any point in the next <%= session_timeout_days %> days.
-
-You'll need to [get a new link for GOV.UK Chat](<%= homepage_url %>) if:
-
-* you want to use GOV.UK Chat on a different browser or device
-* your access has expired after <%= session_timeout_days %> days
-* you've signed out of GOV.UK Chat
-
-## Get the most out of GOV.UK Chat
-
-Start a new chat whenever you ask about something new.
-
-This will remove your previous messages and make your answers more accurate.
-
-This is because GOV.UK Chat uses your previous messages as context to interpret and answer new questions.
-
 From the GOV.UK Chat menu, you can:
 
 * save your chat history
 * start a new chat
+
+Start a new chat whenever you ask about something new. This will remove your previous messages and make your answers more accurate.
+
+This is because GOV.UK Chat uses your previous messages as context to interpret and answer new questions.
+
+You'll need to [get a new link for GOV.UK Chat](<%= homepage_url %>) if:
+
+* you want to use GOV.UK Chat on a different browser or device
+* your access has expired after <%= @session_timeout_days %> days
+* you've signed out of GOV.UK Chat
 
 If you need help accessing GOV.UK Chat, reply to this email.
 

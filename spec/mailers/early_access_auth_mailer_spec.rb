@@ -26,6 +26,12 @@ RSpec.describe EarlyAccessAuthMailer do
       expect(email.body).to include(magic_link_url(session.to_param, session.token))
     end
 
+    it "contains a link the homepage" do
+      email = mailer.access_granted(session)
+
+      expect(email.body).to include(homepage_url)
+    end
+
     it "contains a link to unsubscribe" do
       email = mailer.access_granted(session)
 
