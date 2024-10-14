@@ -1,5 +1,11 @@
 module StubOpenAIChat
-  def stub_openai_chat_completion(question_or_history, answer: nil, chat_options: {}, tool_calls: nil)
+  def stub_openai_chat_completion(
+    question_or_history,
+    answer: nil,
+    chat_options: {},
+    tool_calls: nil,
+    finish_reason: "stop"
+  )
     history = if question_or_history.is_a?(String)
                 array_including({ "role" => "user", "content" => question_or_history })
               else
@@ -24,7 +30,7 @@ module StubOpenAIChat
       )
       .to_return_json(
         status: 200,
-        body: openai_chat_completion_response_body(answer:, tool_calls:),
+        body: openai_chat_completion_response_body(answer:, tool_calls:, finish_reason:),
         headers: {},
       )
   end
@@ -60,7 +66,8 @@ module StubOpenAIChat
     question_or_history,
     tools: an_instance_of(Array),
     function_name: "genuine_rag",
-    function_arguments: { "answer": "This is RAG.", confidence: 1.0 }
+    function_arguments: { "answer": "This is RAG.", confidence: 1.0 },
+    finish_reason: "stop"
   )
     function_arguments = function_arguments.to_json unless function_arguments.is_a?(String)
 
@@ -75,6 +82,7 @@ module StubOpenAIChat
       question_or_history,
       chat_options:,
       tool_calls: [openai_chat_completion_tool_call(function_name, function_arguments)],
+      finish_reason:,
     )
   end
 
@@ -124,7 +132,7 @@ module StubOpenAIChat
     )
   end
 
-  def openai_chat_completion_response_body(answer: nil, tool_calls: nil)
+  def openai_chat_completion_response_body(answer: nil, tool_calls: nil, finish_reason: "stop")
     {
       id: "chatcmpl-abc123",
       object: "chat.completion",
@@ -142,7 +150,7 @@ module StubOpenAIChat
             content: answer,
           },
           logprobs: nil,
-          finish_reason: "stop",
+          finish_reason:,
           index: 0,
         },
       ],
