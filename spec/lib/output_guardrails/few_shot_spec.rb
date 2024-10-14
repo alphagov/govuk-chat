@@ -25,7 +25,6 @@ RSpec.describe OutputGuardrails::FewShot do
       )
       openai_request = stub_openai_chat_completion(messages, answer: "False | None", chat_options: {
         model: OutputGuardrails::FewShot::OPENAI_MODEL,
-        max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
       })
 
       described_class.call(input, llm_prompt_name)
@@ -69,6 +68,26 @@ RSpec.describe OutputGuardrails::FewShot do
         "completion_tokens" => 7,
         "total_tokens" => 20,
       })
+    end
+
+    it "calculates the max_tokens param from the guardrail config" do
+      longest_possible_response_string = %(True | "#{guardrail_mappings.keys.join(', ')}")
+      token_count = Tiktoken
+                      .encoding_for_model(described_class::OPENAI_MODEL)
+                      .encode(longest_possible_response_string)
+                      .length
+
+      max_tokens = token_count + described_class::MAX_TOKENS_BUFFER
+
+      openai_request = stub_openai_chat_completion(
+        anything,
+        answer: "False | None",
+        chat_options: { max_tokens: },
+      )
+
+      described_class.call(input, llm_prompt_name)
+
+      expect(openai_request).to have_been_made
     end
 
     context "when the OpenAI response format is incorrect" do
