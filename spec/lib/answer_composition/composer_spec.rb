@@ -15,7 +15,7 @@ RSpec.describe AnswerComposition::Composer do
             AnswerComposition::Pipeline::QuestionRoutingGuardrails,
             AnswerComposition::Pipeline::SearchResultFetcher,
             AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer,
-            AnswerComposition::Pipeline::OutputGuardrails,
+            AnswerComposition::Pipeline::AnswerGuardrails,
           ]
           expected_pipeline.each do |pipeline|
             allow(pipeline).to receive(:call) { |context| context }

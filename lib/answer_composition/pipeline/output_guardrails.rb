@@ -7,35 +7,7 @@ module AnswerComposition
         @context = context
       end
 
-      def call
-        start_time = AnswerComposition.monotonic_time
-
-        response = ::OutputGuardrails::FewShot.call(context.answer.message, :output_guardrails)
-        context.answer.assign_llm_response("output_guardrails", response.llm_response)
-
-        if response.triggered
-          context.abort_pipeline!(
-            message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
-            status: "abort_answer_guardrails",
-            answer_guardrails_failures: response.guardrails,
-            answer_guardrails_status: :fail,
-            metrics: { "output_guardrails" => build_metrics(start_time, response) },
-          )
-        else
-          context.answer.assign_attributes(answer_guardrails_status: :pass)
-          context.answer.assign_metrics("output_guardrails", build_metrics(start_time, response))
-        end
-      rescue ::OutputGuardrails::FewShot::ResponseError => e
-        context.abort_pipeline!(
-          message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
-          status: "error_answer_guardrails",
-          answer_guardrails_status: :error,
-          metrics: { "output_guardrails" => build_metrics(start_time, e) },
-          llm_response: { "output_guardrails" => e.llm_response },
-        )
-      end
-
-    private
+    protected
 
       attr_reader :context
 
@@ -45,6 +17,30 @@ module AnswerComposition
           llm_prompt_tokens: response_or_error.llm_token_usage["prompt_tokens"],
           llm_completion_tokens: response_or_error.llm_token_usage["completion_tokens"],
         }
+      end
+
+      def response
+        @response ||= begin
+          result = ::OutputGuardrails::FewShot.call(context.answer.message, guardrail_name)
+
+          context.answer.assign_llm_response(guardrail_name, result.llm_response)
+
+          result
+        end
+      end
+
+      def guardrail_name
+        self.class.name.split("::").last.underscore
+      end
+
+      def abort_after_response_error(error, start_time)
+        context.abort_pipeline!(
+          message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
+          status: "error_answer_guardrails",
+          "#{guardrail_name}_status": :error,
+          metrics: { guardrail_name => build_metrics(start_time, error) },
+          llm_response: { guardrail_name => error.llm_response },
+        )
       end
     end
   end

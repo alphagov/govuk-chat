@@ -39,7 +39,7 @@ module AnswerComposition
           Pipeline::QuestionRoutingGuardrails,
           Pipeline::SearchResultFetcher,
           Pipeline::OpenAIStructuredAnswerComposer,
-          Pipeline::OutputGuardrails,
+          Pipeline::AnswerGuardrails,
         ])
       else
         raise "Answer strategy #{answer_strategy} not configured"

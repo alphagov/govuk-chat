@@ -2,7 +2,7 @@ RSpec.describe OutputGuardrails::FewShot do
   let(:guardrail_mappings) { { "1" => "COSTS", "5" => "PERSONAL" } }
 
   let(:formatted_date) { Date.current.strftime("%A %d %B %Y") }
-  let(:llm_prompt_name) { :output_guardrails }
+  let(:llm_prompt_name) { :answer_guardrails }
   let(:system_prompt) do
     Rails.configuration.llm_prompts.dig(llm_prompt_name, :few_shot, :system_prompt)
       .gsub("{date}", formatted_date)
@@ -10,8 +10,8 @@ RSpec.describe OutputGuardrails::FewShot do
 
   before do
     allow(Rails.logger).to receive(:error)
-    allow(Rails.configuration.llm_prompts.output_guardrails).to receive(:dig).and_call_original
-    allow(Rails.configuration.llm_prompts.output_guardrails).to receive(:dig).with(:few_shot, :guardrail_mappings)
+    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:dig).and_call_original
+    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:dig).with(:few_shot, :guardrail_mappings)
                                                             .and_return(guardrail_mappings)
   end
 
