@@ -12,6 +12,7 @@ module AnswerComposition
       start_time = AnswerComposition.monotonic_time
 
       compose_answer.tap do |answer|
+        ForbiddenTermsChecker.call(answer)
         answer.assign_metrics("answer_composition", build_metrics(start_time))
       end
     rescue StandardError => e

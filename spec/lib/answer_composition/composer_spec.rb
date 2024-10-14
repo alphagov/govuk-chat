@@ -88,6 +88,26 @@ RSpec.describe AnswerComposition::Composer do
         })
       end
     end
+
+    context "when there are forbidden terms in the answer message" do
+      let(:answer) { build(:answer, message: "message with badword") }
+
+      before do
+        allow(Rails.configuration).to receive(:forbidden_terms).and_return(Set.new(%w[badword]))
+        allow(AnswerComposition::OpenAIAnswer).to receive(:call).and_return(answer)
+      end
+
+      it "returns an answer with FORBIDDEN_TERMS_MESSAGE" do
+        result = described_class.call(question)
+
+        expect(result)
+          .to be_an_instance_of(Answer)
+          .and have_attributes(
+            message: Answer::CannedResponses::FORBIDDEN_TERMS_MESSAGE,
+            status: "abort_forbidden_terms",
+          )
+      end
+    end
   end
 
   it "assigns metrics to the answer" do
