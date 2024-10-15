@@ -38,6 +38,7 @@ class Answer < ApplicationRecord
 
   enum :status,
        {
+         abort_answer_guardrails: "abort_answer_guardrails",
          abort_forbidden_terms: "abort_forbidden_terms",
          abort_jailbreak_guardrails: "abort_jailbreak_guardrails",
          abort_llm_cannot_answer: "abort_llm_cannot_answer",
@@ -45,6 +46,7 @@ class Answer < ApplicationRecord
          abort_output_guardrails: "abort_output_guardrails",
          abort_question_routing: "abort_question_routing",
          error_answer_service_error: "error_answer_service_error",
+         error_answer_guardrails: "error_answer_guardrails",
          error_context_length_exceeded: "error_context_length_exceeded",
          error_jailbreak_guardrails: "error_jailbreak_guardrails",
          error_invalid_llm_response: "error_invalid_llm_response",

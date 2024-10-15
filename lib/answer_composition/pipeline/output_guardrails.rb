@@ -16,7 +16,7 @@ module AnswerComposition
         if response.triggered
           context.abort_pipeline!(
             message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
-            status: "abort_output_guardrails",
+            status: "abort_answer_guardrails",
             answer_guardrails_failures: response.guardrails,
             answer_guardrails_status: :fail,
             metrics: { "output_guardrails" => build_metrics(start_time, response) },
@@ -28,7 +28,7 @@ module AnswerComposition
       rescue ::OutputGuardrails::FewShot::ResponseError => e
         context.abort_pipeline!(
           message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
-          status: "error_output_guardrails",
+          status: "error_answer_guardrails",
           answer_guardrails_status: :error,
           metrics: { "output_guardrails" => build_metrics(start_time, e) },
           llm_response: { "output_guardrails" => e.llm_response },

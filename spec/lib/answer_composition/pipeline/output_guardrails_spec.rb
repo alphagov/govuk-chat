@@ -83,7 +83,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
       }.to throw_symbol(:abort)
 
       expect(context.answer).to have_attributes(
-        status: "abort_output_guardrails",
+        status: "abort_answer_guardrails",
         message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
         answer_guardrails_status: "fail",
         answer_guardrails_failures: %w[political],
@@ -119,7 +119,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
     it "aborts the pipeline and updates the answer's status with an error message" do
       expect { described_class.call(context) }.to throw_symbol(:abort)
       expect(context.answer).to have_attributes(
-        status: "error_output_guardrails",
+        status: "error_answer_guardrails",
         message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
         answer_guardrails_status: "error",
       )

@@ -8,6 +8,11 @@ pending:
   label_colour: "yellow"
   description:
   label_and_description:
+abort_answer_guardrails:
+  label: "Abort"
+  label_colour: "orange"
+  description: "answer guardrails triggered"
+  label_and_description: "Abort - answer guardrails triggered"
 abort_forbidden_terms:
   label: "Abort"
   label_colour: "orange"
@@ -38,6 +43,11 @@ abort_question_routing:
   label_colour: "orange"
   description: "unsuitable question asked"
   label_and_description: "Abort - unsuitable question asked"
+error_answer_guardrails:
+  label: "Error"
+  label_colour: "red"
+  description: "invalid format from answer guardrails LLM call"
+  label_and_description: "Error - invalid format from answer guardrails LLM call"
 error_answer_service_error:
   label: "Error"
   label_colour: "red"
