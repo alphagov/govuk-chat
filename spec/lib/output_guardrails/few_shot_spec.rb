@@ -130,38 +130,6 @@ RSpec.describe OutputGuardrails::FewShot do
     end
   end
 
-  context "when there is an OpenAIClient::ClientError" do
-    before do
-      stub_openai_chat_completion_error
-    end
-
-    it "raises a OpenAIClient::RequestError with a modified message" do
-      expect { described_class.call(input, llm_prompt_name) }
-        .to raise_error(
-          an_instance_of(OpenAIClient::RequestError)
-            .and(having_attributes(response: an_instance_of(Hash),
-                                   message: "could not run guardrail: This is a test input.",
-                                   cause: an_instance_of(OpenAIClient::ClientError))),
-        )
-    end
-  end
-
-  context "when there is an OpenAIClient::ContextLengthExceededError" do
-    before do
-      stub_openai_chat_completion_error(code: "context_length_exceeded")
-    end
-
-    it "raises a OpenAIClient::ContextLengthExceededError with a modified message" do
-      expect { described_class.call(input, llm_prompt_name) }
-        .to raise_error(
-          an_instance_of(OpenAIClient::ContextLengthExceededError)
-            .and(having_attributes(response: an_instance_of(Hash),
-                                   message: "Exceeded context length running guardrail: This is a test input.",
-                                   cause: an_instance_of(OpenAIClient::ContextLengthExceededError))),
-        )
-    end
-  end
-
   context "with a non-existent llm_prompt_name" do
     let(:llm_prompt_name) { "non_existent_llm_prompt_name" }
 
