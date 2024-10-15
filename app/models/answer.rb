@@ -56,7 +56,6 @@ class Answer < ApplicationRecord
          error_answer_guardrails: "error_answer_guardrails",
          error_context_length_exceeded: "error_context_length_exceeded",
          error_jailbreak_guardrails: "error_jailbreak_guardrails",
-         error_invalid_llm_response: "error_invalid_llm_response",
          error_output_guardrails: "error_output_guardrails",
          error_non_specific: "error_non_specific",
          error_timeout: "error_timeout",
