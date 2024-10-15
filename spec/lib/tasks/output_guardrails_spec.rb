@@ -7,7 +7,7 @@ RSpec.describe "rake guardrails tasks" do
         llm_guardrail_result: "False | None",
         triggered: false,
         guardrails: [],
-        llm_token_usage: {},
+        llm_token_usage: { "prompt_tokens" => 1000 },
       )
     end
     let(:true_response) do
@@ -16,7 +16,7 @@ RSpec.describe "rake guardrails tasks" do
         llm_guardrail_result: 'True | "1"',
         triggered: true,
         guardrails: %w[sensitive_financial_matters],
-        llm_token_usage: {},
+        llm_token_usage: { "prompt_tokens" => 2000 },
       )
     end
     let(:model_name) { OutputGuardrails::FewShot::OPENAI_MODEL }
@@ -36,6 +36,12 @@ RSpec.describe "rake guardrails tasks" do
           expect(results).to be_a(Hash)
           expect(results).to include("count", "model")
           expect(results["model"]).to eq(model_name)
+
+          # Average token count depends on the number of examples, so we'll just
+          # check the presence of a value here so the tests won't fail when the
+          # CSV file changes
+          expect(results["average_prompt_token_count"]).to be_a(Integer)
+          expect(results["max_prompt_token_count"]).to eq(2000)
 
           first_example = results["false_positives"][0]
           expect(first_example["actual"]).to eq(true_response.llm_guardrail_result)
