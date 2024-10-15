@@ -194,27 +194,27 @@ RSpec.describe "Admin::MetricsController" do
       create_list(:answer,
                   3,
                   created_at: 6.days.ago,
-                  output_guardrail_status: :fail,
+                  answer_guardrails_status: :fail,
                   answer_guardrails_failures: %w[guardrail_1])
       create_list(:answer,
                   4,
                   created_at: 6.days.ago,
-                  output_guardrail_status: :fail,
+                  answer_guardrails_status: :fail,
                   answer_guardrails_failures: %w[guardrail_1 guardrail_2])
       create_list(:answer,
                   2,
                   created_at: 6.days.ago,
-                  output_guardrail_status: :fail,
+                  answer_guardrails_status: :fail,
                   answer_guardrails_failures: %w[guardrail_3])
       create_list(:answer,
                   5,
                   created_at: 2.days.ago,
-                  output_guardrail_status: :fail,
+                  answer_guardrails_status: :fail,
                   answer_guardrails_failures: %w[guardrail_1])
       create_list(:answer,
                   3,
                   created_at: 2.days.ago,
-                  output_guardrail_status: :fail,
+                  answer_guardrails_status: :fail,
                   answer_guardrails_failures: %w[guardrail_2 guardrail_3])
 
       get admin_metrics_answer_guardrails_failures_path

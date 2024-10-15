@@ -18,7 +18,7 @@ RSpec.describe "Admin user views metrics", :js do
     create_list(:answer,
                 4,
                 created_at: 5.days.ago,
-                output_guardrail_status: :fail,
+                answer_guardrails_status: :fail,
                 answer_guardrails_failures: %w[guardrail_1 guardrail_2])
   end
 

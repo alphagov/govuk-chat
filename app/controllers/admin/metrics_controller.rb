@@ -90,7 +90,7 @@ class Admin::MetricsController < Admin::BaseController
 
   def answer_guardrails_failures
     data = Answer.where(created_at: start_time..)
-                 .output_guardrail_status_fail
+                 .answer_guardrails_status_fail
                  .group(:answer_guardrails_failures)
                  .group_by_day(:created_at)
                  .count_answer_guardrails_failures

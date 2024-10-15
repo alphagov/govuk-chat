@@ -18,18 +18,18 @@ module AnswerComposition
             message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
             status: "abort_output_guardrails",
             answer_guardrails_failures: response.guardrails,
-            output_guardrail_status: :fail,
+            answer_guardrails_status: :fail,
             metrics: { "output_guardrails" => build_metrics(start_time, response) },
           )
         else
-          context.answer.assign_attributes(output_guardrail_status: :pass)
+          context.answer.assign_attributes(answer_guardrails_status: :pass)
           context.answer.assign_metrics("output_guardrails", build_metrics(start_time, response))
         end
       rescue ::OutputGuardrails::FewShot::ResponseError => e
         context.abort_pipeline!(
           message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
           status: "error_output_guardrails",
-          output_guardrail_status: :error,
+          answer_guardrails_status: :error,
           metrics: { "output_guardrails" => build_metrics(start_time, e) },
           llm_response: { "output_guardrails" => e.llm_response },
         )

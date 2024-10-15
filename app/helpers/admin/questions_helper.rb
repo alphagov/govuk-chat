@@ -113,8 +113,8 @@ module Admin
                     value: answer.jailbreak_guardrails_status,
                   },
                   {
-                    field: "Guardrails status",
-                    value: answer.output_guardrail_status,
+                    field: "Answer guardrails status",
+                    value: answer.answer_guardrails_status,
                   },
                   {
                     field: "Answer guardrails triggered",

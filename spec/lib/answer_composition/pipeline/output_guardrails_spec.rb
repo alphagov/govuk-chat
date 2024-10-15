@@ -37,8 +37,8 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
       expect { described_class.call(context) }.not_to change(context.answer, :message)
     end
 
-    it "sets the output_guardrail_status" do
-      expect { described_class.call(context) }.to change(context.answer, :output_guardrail_status).to("pass")
+    it "sets the answer_guardrails_status" do
+      expect { described_class.call(context) }.to change(context.answer, :answer_guardrails_status).to("pass")
     end
 
     it "assigns the llm response to the answer" do
@@ -85,7 +85,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
       expect(context.answer).to have_attributes(
         status: "abort_output_guardrails",
         message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
-        output_guardrail_status: "fail",
+        answer_guardrails_status: "fail",
         answer_guardrails_failures: %w[political],
       )
     end
@@ -121,7 +121,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
       expect(context.answer).to have_attributes(
         status: "error_output_guardrails",
         message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
-        output_guardrail_status: "error",
+        answer_guardrails_status: "error",
       )
     end
 
