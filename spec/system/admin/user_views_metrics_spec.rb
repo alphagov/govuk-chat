@@ -19,7 +19,7 @@ RSpec.describe "Admin user views metrics", :js do
                 4,
                 created_at: 5.days.ago,
                 output_guardrail_status: :fail,
-                output_guardrail_failures: %w[guardrail_1 guardrail_2])
+                answer_guardrails_failures: %w[guardrail_1 guardrail_2])
   end
 
   def when_i_visit_the_admin_area
@@ -41,6 +41,6 @@ RSpec.describe "Admin user views metrics", :js do
     expect(page).to have_selector("#answers-with-abort-status canvas")
     expect(page).to have_selector("#answers-with-error-status canvas")
     expect(page).to have_selector("#question-routing-labels canvas")
-    expect(page).to have_selector("#output-guardrail-failures canvas")
+    expect(page).to have_selector("#answer-guardrails-failures canvas")
   end
 end

@@ -78,7 +78,7 @@ RSpec.describe Admin::QuestionsHelper do
         "Question routing confidence score",
         "Jailbreak guardrails status",
         "Guardrails status",
-        "Guardrails triggered",
+        "Answer guardrails triggered",
       ]
 
       expect(returned_keys(result)).to match_array(expected_keys)

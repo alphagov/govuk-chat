@@ -17,7 +17,7 @@ module AnswerComposition
           context.abort_pipeline!(
             message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
             status: "abort_output_guardrails",
-            output_guardrail_failures: response.guardrails,
+            answer_guardrails_failures: response.guardrails,
             output_guardrail_status: :fail,
             metrics: { "output_guardrails" => build_metrics(start_time, response) },
           )

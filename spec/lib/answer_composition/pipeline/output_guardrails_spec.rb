@@ -86,7 +86,7 @@ RSpec.describe AnswerComposition::Pipeline::OutputGuardrails do
         status: "abort_output_guardrails",
         message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
         output_guardrail_status: "fail",
-        output_guardrail_failures: %w[political],
+        answer_guardrails_failures: %w[political],
       )
     end
 

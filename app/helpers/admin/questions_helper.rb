@@ -117,8 +117,8 @@ module Admin
                     value: answer.output_guardrail_status,
                   },
                   {
-                    field: "Guardrails triggered",
-                    value: answer.output_guardrail_failures.join(", "),
+                    field: "Answer guardrails triggered",
+                    value: answer.answer_guardrails_failures.join(", "),
                   },
                 ]
               else

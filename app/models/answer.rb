@@ -78,12 +78,12 @@ class Answer < ApplicationRecord
   enum :output_guardrail_status, GUARDRAIL_STATUSES, prefix: true
   enum :jailbreak_guardrails_status, GUARDRAIL_STATUSES, prefix: true
 
-  # output_guardrail_failures are stored as an array so they are more challenging
+  # answer_guardrails_failures are stored as an array so they are more challenging
   # to produce aggregate counts of occurrences
-  def self.count_output_guardrail_failures
+  def self.count_answer_guardrails_failures
     all_query_groups = current_scope&.group_values || []
-    guardrail_group_position = all_query_groups.index { |group| group.to_s == "output_guardrail_failures" }
-    raise "must have grouped by output_guardrail_failures" unless guardrail_group_position
+    guardrail_group_position = all_query_groups.index { |group| group.to_s == "answer_guardrails_failures" }
+    raise "must have grouped by answer_guardrails_failures" unless guardrail_group_position
 
     count_result = current_scope.count
 
@@ -98,7 +98,7 @@ class Answer < ApplicationRecord
         end
       else
         # if there are multiple "groups" in the query then some could come
-        # before the output_guardrail_failures with others after
+        # before the answer_guardrails_failures with others after
         before_groupings = group.take(guardrail_group_position)
         triggered_guardrails = group[guardrail_group_position]
         after_groupings = group.drop(guardrail_group_position + 1)

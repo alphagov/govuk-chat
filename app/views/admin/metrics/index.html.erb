@@ -58,8 +58,8 @@ common_chart_options = { refresh: 30 }
 </div>
 
 <div class="govuk-grid-row govuk-!-margin-bottom-8">
-  <div class="govuk-grid-column-full" id="output-guardrail-failures">
-    <h2 class="govuk-heading-l">Output guardrail failures</h2>
-    <%= column_chart admin_metrics_output_guardrail_failures_path, **common_chart_options.merge(legend: legend_position) %>
+  <div class="govuk-grid-column-full" id="answer-guardrails-failures">
+    <h2 class="govuk-heading-l">Answer guardrails failures</h2>
+    <%= column_chart admin_metrics_answer_guardrails_failures_path, **common_chart_options.merge(legend: legend_position) %>
   </div>
 </div>
