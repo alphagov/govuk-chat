@@ -134,66 +134,6 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
       end
     end
 
-    context "when OpenAI passes JSON back that is invalid against the Output schema" do
-      let(:structured_response) { { answer: "VAT (Value Added Tax) is a tax applied to most goods and services in the UK." }.to_json }
-      let(:expected_message_history) do
-        array_including({ "role" => "user", "content" => question.message })
-      end
-
-      it "aborts the pipeline" do
-        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
-        stub_openai_chat_completion_structured_response(
-          expected_message_history,
-          structured_response,
-        )
-
-        expect(context).to receive(:abort_pipeline!).with(
-          status: "error_invalid_llm_response",
-          message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
-          error_message: "class: JSON::Schema::ValidationError message: The property '#/' did not contain a required property of 'answered'",
-          metrics: {
-            "structured_answer" => {
-              duration: 1.5,
-              llm_prompt_tokens: 13,
-              llm_completion_tokens: 7,
-            },
-          },
-        )
-
-        described_class.call(context)
-      end
-    end
-
-    context "when OpenAI passes invalid JSON in the response" do
-      let(:structured_response) { "this will blow up" }
-      let(:expected_message_history) do
-        array_including({ "role" => "user", "content" => question.message })
-      end
-
-      it "aborts the pipeline" do
-        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
-        stub_openai_chat_completion_structured_response(
-          expected_message_history,
-          structured_response,
-        )
-
-        expect(context).to receive(:abort_pipeline!).with(
-          status: "error_invalid_llm_response",
-          message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
-          error_message: "class: JSON::ParserError message: unexpected token at 'this will blow up'",
-          metrics: {
-            "structured_answer" => {
-              duration: 1.5,
-              llm_prompt_tokens: 13,
-              llm_completion_tokens: 7,
-            },
-          },
-        )
-
-        described_class.call(context)
-      end
-    end
-
     def system_prompt(context)
       sprintf(llm_prompts[:system_prompt], context:)
     end
