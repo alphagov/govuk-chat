@@ -66,12 +66,12 @@ module Guardrails
     end
 
     def mapping_keys
-      llm_prompts.dig(:few_shot, :guardrail_mappings).keys.map(&:to_i)
+      llm_prompts[:guardrail_mappings].keys.map(&:to_i)
     end
 
     def extract_guardrails(parts)
       guardrail_numbers = parts.scan(/\d+/)
-      mappings = llm_prompts.dig(:few_shot, :guardrail_mappings)
+      mappings = llm_prompts[:guardrail_mappings]
       guardrail_numbers.map { |n| mappings[n] }
     end
 
@@ -83,11 +83,11 @@ module Guardrails
     end
 
     def system_prompt
-      llm_prompts.dig(:few_shot, :system_prompt).gsub("{date}", Date.current.strftime("%A %d %B %Y"))
+      llm_prompts[:system_prompt].gsub("{date}", Date.current.strftime("%A %d %B %Y"))
     end
 
     def user_prompt
-      llm_prompts.dig(:few_shot, :user_prompt).sub("{input}", input)
+      llm_prompts[:user_prompt].sub("{input}", input)
     end
 
     def llm_prompts

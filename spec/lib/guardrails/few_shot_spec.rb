@@ -5,14 +5,14 @@ RSpec.describe Guardrails::FewShot do
   let(:formatted_date) { Date.current.strftime("%A %d %B %Y") }
   let(:llm_prompt_name) { :answer_guardrails }
   let(:system_prompt) do
-    Rails.configuration.llm_prompts.dig(llm_prompt_name, :few_shot, :system_prompt)
+    Rails.configuration.llm_prompts.dig(llm_prompt_name, :system_prompt)
       .gsub("{date}", formatted_date)
   end
 
   before do
     allow(Rails.logger).to receive(:error)
-    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:dig).and_call_original
-    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:dig).with(:few_shot, :guardrail_mappings)
+    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:[]).and_call_original
+    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:[]).with(:guardrail_mappings)
                                                             .and_return(guardrail_mappings)
   end
 
