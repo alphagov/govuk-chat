@@ -25,7 +25,8 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
   end
 
   def and_i_enter_a_question
-    fill_in "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)", with: "How much tax should I be paying?"
+    @first_question = "How much tax should I be paying?"
+    fill_in "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)", with: @first_question
     click_on "Send"
   end
 
@@ -34,16 +35,18 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
   end
 
   def when_the_first_answer_is_generated
-    @openai_embedding = mock_openai_embedding("How much tax should i pay?")
+    openai_embedding = mock_openai_embedding(@first_question)
     allow(Search::TextToEmbedding)
-    .to receive(:call)
-    .and_return(@openai_embedding)
+      .to receive(:call)
+      .and_return(openai_embedding)
     populate_chunked_content_index([
-      build(:chunked_content_record, openai_embedding: @openai_embedding, exact_path: "/pay-more-tax#yes-really"),
+      build(:chunked_content_record, openai_embedding:, exact_path: "/pay-more-tax#yes-really"),
     ])
-    stub_openai_chat_question_routing("How much tax should I be paying?")
+
+    stub_openai_jailbreak_guardrails(@first_question)
+    stub_openai_chat_question_routing(@first_question)
     stub_openai_chat_completion_structured_response(
-      "How much tax should I be paying?",
+      @first_question,
       {
         answer: "Lots of tax.",
         answered: true,
@@ -58,8 +61,8 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
   def when_the_second_answer_is_generated
     rephrased_question = "Rephrased How much tax should I be paying?"
 
-    stub_openai_question_rephrasing("Are you sure?", rephrased_question)
-
+    stub_openai_jailbreak_guardrails(@second_question)
+    stub_openai_question_rephrasing(@second_question, rephrased_question)
     stub_openai_chat_question_routing(rephrased_question)
     stub_openai_chat_completion_structured_response(
       rephrased_question,
@@ -79,7 +82,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
   end
 
   def then_i_see_my_question_on_the_page
-    expect(page).to have_content("How much tax should I be paying?")
+    expect(page).to have_content(@first_question)
   end
 
   def and_i_can_see_the_first_answer
@@ -91,11 +94,12 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
   end
 
   def when_i_enter_a_second_question
-    fill_in "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)", with: "Are you sure?"
+    @second_question = "Are you sure?"
+    fill_in "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)", with: @second_question
     click_on "Send"
   end
 
   def then_i_see_my_second_question_on_the_page
-    expect(page).to have_content("Are you sure?")
+    expect(page).to have_content(@second_question)
   end
 end

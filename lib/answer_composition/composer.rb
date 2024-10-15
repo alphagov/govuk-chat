@@ -33,6 +33,7 @@ module AnswerComposition
       case answer_strategy
       when "openai_structured_answer"
         OpenAIAnswer.call(question:, pipeline: [
+          Pipeline::JailbreakGuardrails,
           Pipeline::QuestionRephraser,
           Pipeline::QuestionRouter,
           Pipeline::SearchResultFetcher,

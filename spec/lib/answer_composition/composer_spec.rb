@@ -9,6 +9,7 @@ RSpec.describe AnswerComposition::Composer do
 
         it "calls OpenAIAnswer with the correct pipeline" do
           expected_pipeline = [
+            AnswerComposition::Pipeline::JailbreakGuardrails,
             AnswerComposition::Pipeline::QuestionRephraser,
             AnswerComposition::Pipeline::QuestionRouter,
             AnswerComposition::Pipeline::SearchResultFetcher,

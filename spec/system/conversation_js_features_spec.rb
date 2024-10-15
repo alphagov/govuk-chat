@@ -287,6 +287,8 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   def stubs_for_mock_answer(question, answer, rephrase_question: false)
+    stub_openai_jailbreak_guardrails(question)
+
     if rephrase_question
       rephrased_question = "Rephrased #{question}"
 
