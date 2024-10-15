@@ -16,7 +16,7 @@ module AnswerComposition
           context.answer.assign_attributes(answer_guardrails_status: :pass)
           context.answer.assign_metrics(guardrail_name, build_metrics(start_time, response))
         end
-      rescue ::OutputGuardrails::FewShot::ResponseError => e
+      rescue ::Guardrails::FewShot::ResponseError => e
         abort_after_response_error(e, start_time)
       end
     end

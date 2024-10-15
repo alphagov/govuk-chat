@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :output_guardrail_result, class: "OutputGuardrails::FewShot::Result" do
+  factory :output_guardrail_result, class: "Guardrails::FewShot::Result" do
     initialize_with { new(**attributes) }
 
     llm_token_usage do

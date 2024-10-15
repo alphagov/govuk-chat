@@ -21,7 +21,7 @@ module AnswerComposition
 
       def response
         @response ||= begin
-          result = ::OutputGuardrails::FewShot.call(context.answer.message, guardrail_name)
+          result = ::Guardrails::FewShot.call(context.answer.message, guardrail_name)
 
           context.answer.assign_llm_response(guardrail_name, result.llm_response)
 

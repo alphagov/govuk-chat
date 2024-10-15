@@ -4,7 +4,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
 
   before do
     context.answer.message = message
-    allow(OutputGuardrails::FewShot).to receive(:call).and_return(few_shot_response)
+    allow(Guardrails::FewShot).to receive(:call).and_return(few_shot_response)
   end
 
   context "when the guardrails are not triggered" do
@@ -13,7 +13,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
     it_behaves_like "a passing guardrail pipeline step", "question_routing_guardrails"
 
     it "does nothing if the question routing label is 'geniune_rag'" do
-      expect(OutputGuardrails::FewShot).not_to receive(:call)
+      expect(Guardrails::FewShot).not_to receive(:call)
 
       context.answer.question_routing_label = "genuine_rag"
 

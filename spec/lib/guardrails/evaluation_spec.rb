@@ -1,6 +1,6 @@
 require "csv"
 
-RSpec.describe OutputGuardrails::Evaluation do
+RSpec.describe Guardrails::Evaluation do
   let(:file_path) { Rails.root.join("spec/support/files/output_guardrails_fewshot_examples.csv") }
 
   context "when Evaluating FewShot" do

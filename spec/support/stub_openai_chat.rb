@@ -118,7 +118,7 @@ module StubOpenAIChat
     stub_openai_chat_completion(
       array_including({ "role" => "user", "content" => a_string_including(to_check) }),
       answer: response,
-      chat_options: { model: OutputGuardrails::FewShot::OPENAI_MODEL },
+      chat_options: { model: Guardrails::FewShot::OPENAI_MODEL },
     )
   end
 

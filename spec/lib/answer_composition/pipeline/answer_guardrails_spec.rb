@@ -4,7 +4,7 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
 
   before do
     context.answer.message = message
-    allow(OutputGuardrails::FewShot).to receive(:call).and_return(few_shot_response)
+    allow(Guardrails::FewShot).to receive(:call).and_return(few_shot_response)
   end
 
   context "when the guardrails are not triggered" do

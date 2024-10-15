@@ -2,7 +2,7 @@ module GuardrailsExamples
   shared_examples "a passing guardrail pipeline step" do |guardrail_name|
     it "calls the guardrails with the answer message" do
       described_class.call(context)
-      expect(OutputGuardrails::FewShot)
+      expect(Guardrails::FewShot)
         .to have_received(:call)
         .with(context.answer.message, guardrail_name)
     end
@@ -41,10 +41,10 @@ module GuardrailsExamples
       let(:few_shot_response) { nil }
 
       before do
-        allow(OutputGuardrails::FewShot)
+        allow(Guardrails::FewShot)
           .to receive(:call)
           .and_raise(
-            OutputGuardrails::FewShot::ResponseError.new(
+            Guardrails::FewShot::ResponseError.new(
               "An error occurred", 'False | "1, 2"',
               { "prompt_tokens" => 13, "completion_tokens" => 7 }
             ),

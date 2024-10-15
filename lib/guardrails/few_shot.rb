@@ -1,4 +1,4 @@
-module OutputGuardrails
+module Guardrails
   class FewShot
     Result = Data.define(:triggered, :guardrails, :llm_response, :llm_token_usage, :llm_guardrail_result)
     class ResponseError < StandardError
