@@ -1,4 +1,4 @@
-RSpec.describe InputGuardrails::Jailbreak do
+RSpec.describe Guardrails::Jailbreak do
   let(:input) { "User question" }
 
   it "calls OpenAI to check for jailbreak attempts" do

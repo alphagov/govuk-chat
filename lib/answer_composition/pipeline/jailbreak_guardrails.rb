@@ -10,7 +10,7 @@ module AnswerComposition
       def call
         start_time = AnswerComposition.monotonic_time
 
-        response = InputGuardrails::Jailbreak.call(context.question.message)
+        response = Guardrails::Jailbreak.call(context.question.message)
         context.answer.assign_attributes(jailbreak_guardrails_status: response.triggered ? :fail : :pass)
         context.answer.assign_llm_response("jailbreak_guardrails", response.llm_response)
         context.answer.assign_metrics("jailbreak_guardrails", build_metrics(start_time, response))
@@ -21,7 +21,7 @@ module AnswerComposition
             status: "abort_jailbreak_guardrails",
           )
         end
-      rescue InputGuardrails::Jailbreak::ResponseError => e
+      rescue Guardrails::Jailbreak::ResponseError => e
         context.abort_pipeline!(
           message: Answer::CannedResponses::JAILBREAK_GUARDRAILS_FAILED_MESSAGE,
           status: "error_jailbreak_guardrails",

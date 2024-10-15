@@ -1,4 +1,4 @@
-module InputGuardrails
+module Guardrails
   class Jailbreak
     Result = Data.define(:triggered, :llm_response, :llm_token_usage)
     class ResponseError < StandardError
