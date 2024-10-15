@@ -1,8 +1,6 @@
 module AnswerComposition
   module Pipeline
     class QuestionRouter
-      class InvalidLabelError < StandardError; end
-
       OPENAI_MODEL = "gpt-4o-mini".freeze
 
       def self.call(...) = new(...).call
@@ -17,8 +15,6 @@ module AnswerComposition
         answer = context.answer
         answer.assign_llm_response("question_routing", openai_response_choice)
 
-        validate_schema
-
         answer.assign_attributes(
           question_routing_label:,
           question_routing_confidence_score: llm_classification_data["confidence"],
@@ -31,13 +27,6 @@ module AnswerComposition
         )
 
         context.abort_pipeline unless genuine_rag? || llm_answer.present?
-      rescue JSON::Schema::ValidationError, JSON::ParserError => e
-        context.abort_pipeline!(
-          message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
-          status: "error_question_routing",
-          error_message: error_message(e),
-          metrics: { "question_routing" => build_metrics(start_time) },
-        )
       end
 
     private
@@ -72,17 +61,6 @@ module AnswerComposition
 
       def llm_classification_data
         JSON.parse(raw_llm_classification_data)
-      end
-
-      def validate_schema
-        used_tool = tools.find do |tool|
-          tool[:function][:name] == question_routing_label
-        end
-
-        raise InvalidLabelError, "Invalid label: #{question_routing_label}" unless used_tool
-
-        schema = used_tool[:function][:parameters]
-        JSON::Validator.validate!(schema, llm_classification_data)
       end
 
       def openai_response

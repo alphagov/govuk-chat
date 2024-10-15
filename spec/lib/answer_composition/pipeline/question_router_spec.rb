@@ -164,20 +164,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
       end
     end
 
-    it "raises an error if the label is invalid" do
-      stub_openai_chat_question_routing(
-        expected_message_history,
-        tools:,
-        function_name: "invalid_label",
-        function_arguments: classification_response,
-      )
-
-      expect { described_class.call(context) }.to raise_error(
-        AnswerComposition::Pipeline::QuestionRouter::InvalidLabelError,
-        "Invalid label: invalid_label",
-      )
-    end
-
     context "when the response isn't genuine_rag" do
       let(:classification_attributes) do
         {
@@ -224,58 +210,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
           tools:,
           function_name: "greetings",
           function_arguments: { confidence: 0.85 },
-        )
-
-        described_class.call(context)
-      end
-    end
-
-    context "when schema validation fails" do
-      it "aborts the pipeline when OpenAI passes JSON back that is invalid against the Output schema" do
-        classification_response = { something: "irrelevant" }
-
-        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
-        stub_openai_chat_question_routing(
-          expected_message_history,
-          tools:,
-          function_name: "greetings",
-          function_arguments: classification_response,
-        )
-
-        expect(context).to receive(:abort_pipeline!).with(
-          status: "error_question_routing",
-          message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
-          error_message: a_string_including("class: JSON::Schema::ValidationError"),
-          metrics: a_hash_including("question_routing" => {
-            duration: 1.5,
-            llm_prompt_tokens: 13,
-            llm_completion_tokens: 7,
-          }),
-        )
-
-        described_class.call(context)
-      end
-
-      it "aborts the pipeline when OpenAI passes invalid JSON in the response" do
-        classification_response = "this will blow up"
-
-        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
-        stub_openai_chat_question_routing(
-          expected_message_history,
-          tools:,
-          function_name: "greetings",
-          function_arguments: classification_response,
-        )
-
-        expect(context).to receive(:abort_pipeline!).with(
-          status: "error_question_routing",
-          message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
-          error_message: "class: JSON::ParserError message: unexpected token at 'this will blow up'",
-          metrics: a_hash_including("question_routing" => {
-            duration: 1.5,
-            llm_prompt_tokens: 13,
-            llm_completion_tokens: 7,
-          }),
         )
 
         described_class.call(context)
