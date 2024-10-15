@@ -76,42 +76,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
       end
     end
 
-    context "when there is an OpenAIClient::ClientError" do
-      let(:context) { build(:answer_pipeline_context, question:) }
-
-      before do
-        stub_openai_chat_completion_error
-      end
-
-      it "raises a OpenAIClient::RequestError with a modified message" do
-        expect { described_class.call(context) }
-          .to raise_error(
-            an_instance_of(OpenAIClient::RequestError)
-            .and(having_attributes(response: an_instance_of(Hash),
-                                   message: "could not rephrase #{question.message}",
-                                   cause: an_instance_of(OpenAIClient::ClientError))),
-          )
-      end
-    end
-
-    context "when there is an OpenAIClient::ContextLengthExceededError" do
-      let(:context) { build(:answer_pipeline_context, question:) }
-
-      before do
-        stub_openai_chat_completion_error(code: "context_length_exceeded")
-      end
-
-      it "raises a OpenAIClient::ContextLengthExceededError with a modified message" do
-        expect { described_class.call(context) }
-          .to raise_error(
-            an_instance_of(OpenAIClient::ContextLengthExceededError)
-              .and(having_attributes(response: an_instance_of(Hash),
-                                     message: "Exceeded context length rephrasing #{question.message}",
-                                     cause: an_instance_of(OpenAIClient::ContextLengthExceededError))),
-          )
-      end
-    end
-
     context "when a question has been rephrased" do
       let(:conversation) { create(:conversation) }
       let(:question) { create(:question, conversation:) }

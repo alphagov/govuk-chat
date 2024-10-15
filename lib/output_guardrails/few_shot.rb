@@ -23,18 +23,6 @@ module OutputGuardrails
     end
 
     def call
-      create_result
-    rescue OpenAIClient::ContextLengthExceededError => e
-      raise OpenAIClient::ContextLengthExceededError.new("Exceeded context length running guardrail: #{input}", e.response)
-    rescue OpenAIClient::RequestError => e
-      raise OpenAIClient::RequestError.new("could not run guardrail: #{input}", e.response)
-    end
-
-  private
-
-    attr_reader :input, :openai_client, :llm_prompt_name
-
-    def create_result
       llm_response = openai_response.dig("choices", 0)
       llm_guardrail_result = llm_response.dig("message", "content")
       llm_token_usage = openai_response["usage"]
@@ -54,6 +42,10 @@ module OutputGuardrails
                    end
       Result.new(triggered:, llm_response:, guardrails:, llm_token_usage:, llm_guardrail_result:)
     end
+
+  private
+
+    attr_reader :input, :openai_client, :llm_prompt_name
 
     def openai_response
       @openai_response ||= openai_client.chat(
