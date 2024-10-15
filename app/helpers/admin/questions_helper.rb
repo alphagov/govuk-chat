@@ -101,6 +101,10 @@ module Admin
                       ),
                   },
                   {
+                    field: "Jailbreak guardrails status",
+                    value: answer.jailbreak_guardrails_status,
+                  },
+                  {
                     field: "Question routing label",
                     value: Rails.configuration.question_routing_labels.dig(answer.question_routing_label, :label),
                   },
@@ -115,10 +119,6 @@ module Admin
                   {
                     field: "Question routing guardrails triggered",
                     value: answer.question_routing_guardrails_failures.join(", "),
-                  },
-                  {
-                    field: "Jailbreak guardrails status",
-                    value: answer.jailbreak_guardrails_status,
                   },
                   {
                     field: "Answer guardrails status",

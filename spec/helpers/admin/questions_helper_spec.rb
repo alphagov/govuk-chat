@@ -64,26 +64,26 @@ RSpec.describe Admin::QuestionsHelper do
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
       expected_keys = [
         "Conversation id",
-        "Early access user",
         "Question number",
         "Question id",
         "Question created at",
         "Question",
-        "Rephrased question",
         "Show search results",
+        "Early access user",
+        "Rephrased question",
         "Status",
         "Answer created at",
         "Answer",
+        "Jailbreak guardrails status",
         "Question routing label",
         "Question routing confidence score",
         "Question routing guardrails status",
         "Question routing guardrails triggered",
-        "Jailbreak guardrails status",
         "Answer guardrails status",
         "Answer guardrails triggered",
       ]
 
-      expect(returned_keys(result)).to match_array(expected_keys)
+      expect(returned_keys(result)).to eq(expected_keys)
     end
 
     it "returns an error message row if the answer has an error message" do
