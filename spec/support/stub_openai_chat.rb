@@ -109,8 +109,7 @@ module StubOpenAIChat
     stub_openai_chat_completion(
       array_including({ "role" => "user", "content" => a_string_including(to_check) }),
       answer: response,
-      chat_options: { model: OutputGuardrails::FewShot::OPENAI_MODEL,
-                      max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS },
+      chat_options: { model: OutputGuardrails::FewShot::OPENAI_MODEL },
     )
   end
 

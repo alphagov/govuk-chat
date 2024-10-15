@@ -12,7 +12,7 @@ module OutputGuardrails
     end
 
     OPENAI_MODEL = "gpt-4o-mini".freeze
-    OPENAI_MAX_TOKENS = 25 # It takes 23 tokens for True | "1, 2, 3, 4, 5, 6, 7"
+    MAX_TOKENS_BUFFER = 5
 
     def self.call(...) = new(...).call
 
@@ -61,7 +61,7 @@ module OutputGuardrails
           model: OPENAI_MODEL,
           messages:,
           temperature: 0.0,
-          max_tokens: OPENAI_MAX_TOKENS,
+          max_tokens:,
         },
       )
     end
@@ -104,6 +104,18 @@ module OutputGuardrails
       raise "No LLM prompts found for #{llm_prompt_name}" unless prompts
 
       prompts
+    end
+
+    def max_tokens
+      all_mapping_keys = mapping_keys.map(&:to_s).join(", ")
+      longest_possible_response_string = %(True | "#{all_mapping_keys}")
+
+      token_count = Tiktoken
+       .encoding_for_model(OPENAI_MODEL)
+       .encode(longest_possible_response_string)
+       .length
+
+      token_count + MAX_TOKENS_BUFFER
     end
   end
 end

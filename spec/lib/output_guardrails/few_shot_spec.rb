@@ -1,5 +1,6 @@
 RSpec.describe OutputGuardrails::FewShot do
   let(:guardrail_mappings) { { "1" => "COSTS", "5" => "PERSONAL" } }
+  let(:input) { "This is a test input." }
 
   let(:formatted_date) { Date.current.strftime("%A %d %B %Y") }
   let(:llm_prompt_name) { :answer_guardrails }
@@ -16,8 +17,6 @@ RSpec.describe OutputGuardrails::FewShot do
   end
 
   context "when the request is successful" do
-    let(:input) { "This is a test input." }
-
     it "calls OpenAI to check for guardrail violations, including the date in the system prompt and the input in the user prompt" do
       messages = array_including(
         { "role" => "system", "content" => a_string_including(formatted_date) },
@@ -25,7 +24,6 @@ RSpec.describe OutputGuardrails::FewShot do
       )
       openai_request = stub_openai_chat_completion(messages, answer: "False | None", chat_options: {
         model: OutputGuardrails::FewShot::OPENAI_MODEL,
-        max_tokens: OutputGuardrails::FewShot::OPENAI_MAX_TOKENS,
       })
 
       described_class.call(input, llm_prompt_name)
@@ -71,6 +69,40 @@ RSpec.describe OutputGuardrails::FewShot do
       })
     end
 
+    it "calculates the max_tokens param from the guardrail config" do
+      longest_possible_response_string = %(True | "#{guardrail_mappings.keys.join(', ')}")
+      token_count = Tiktoken
+                      .encoding_for_model(described_class::OPENAI_MODEL)
+                      .encode(longest_possible_response_string)
+                      .length
+
+      max_tokens = token_count + described_class::MAX_TOKENS_BUFFER
+
+      openai_request = stub_openai_chat_completion(
+        anything,
+        answer: "False | None",
+        chat_options: { max_tokens: },
+      )
+
+      described_class.call(input, llm_prompt_name)
+
+      expect(openai_request).to have_been_made
+    end
+
+    context "with a question routing guardrail LLM prompt" do
+      it "makes the request" do
+        messages = array_including(
+          { "role" => "system", "content" => a_string_including(formatted_date) },
+          { "role" => "user", "content" => a_string_including(input) },
+        )
+        openai_request = stub_openai_chat_completion(messages, answer: "False | None", chat_options: {})
+
+        described_class.call(input, :question_routing_guardrails)
+
+        expect(openai_request).to have_been_made
+      end
+    end
+
     context "when the OpenAI response format is incorrect" do
       it "throws a AnswerComposition::OutputGuardrails::ResponseError" do
         guardrail_result = 'False | "1, 2"'
@@ -96,60 +128,46 @@ RSpec.describe OutputGuardrails::FewShot do
           )
       end
     end
+  end
 
-    context "when there is an OpenAIClient::ClientError" do
-      before do
-        stub_openai_chat_completion_error
-      end
-
-      it "raises a OpenAIClient::RequestError with a modified message" do
-        expect { described_class.call(input, llm_prompt_name) }
-          .to raise_error(
-            an_instance_of(OpenAIClient::RequestError)
-              .and(having_attributes(response: an_instance_of(Hash),
-                                     message: "could not run guardrail: This is a test input.",
-                                     cause: an_instance_of(OpenAIClient::ClientError))),
-          )
-      end
+  context "when there is an OpenAIClient::ClientError" do
+    before do
+      stub_openai_chat_completion_error
     end
 
-    context "when there is an OpenAIClient::ContextLengthExceededError" do
-      before do
-        stub_openai_chat_completion_error(code: "context_length_exceeded")
-      end
-
-      it "raises a OpenAIClient::ContextLengthExceededError with a modified message" do
-        expect { described_class.call(input, llm_prompt_name) }
-          .to raise_error(
-            an_instance_of(OpenAIClient::ContextLengthExceededError)
-              .and(having_attributes(response: an_instance_of(Hash),
-                                     message: "Exceeded context length running guardrail: This is a test input.",
-                                     cause: an_instance_of(OpenAIClient::ContextLengthExceededError))),
-          )
-      end
-    end
-
-    context "with a question routing guardrail LLM prompt" do
-      it "makes the request" do
-        messages = array_including(
-          { "role" => "system", "content" => a_string_including(formatted_date) },
-          { "role" => "user", "content" => a_string_including(input) },
+    it "raises a OpenAIClient::RequestError with a modified message" do
+      expect { described_class.call(input, llm_prompt_name) }
+        .to raise_error(
+          an_instance_of(OpenAIClient::RequestError)
+            .and(having_attributes(response: an_instance_of(Hash),
+                                   message: "could not run guardrail: This is a test input.",
+                                   cause: an_instance_of(OpenAIClient::ClientError))),
         )
-        openai_request = stub_openai_chat_completion(messages, answer: "False | None", chat_options: {})
+    end
+  end
 
-        described_class.call(input, :question_routing_guardrails)
-
-        expect(openai_request).to have_been_made
-      end
+  context "when there is an OpenAIClient::ContextLengthExceededError" do
+    before do
+      stub_openai_chat_completion_error(code: "context_length_exceeded")
     end
 
-    context "with a non-existent llm_prompt_name" do
-      let(:llm_prompt_name) { "non_existent_llm_prompt_name" }
+    it "raises a OpenAIClient::ContextLengthExceededError with a modified message" do
+      expect { described_class.call(input, llm_prompt_name) }
+        .to raise_error(
+          an_instance_of(OpenAIClient::ContextLengthExceededError)
+            .and(having_attributes(response: an_instance_of(Hash),
+                                   message: "Exceeded context length running guardrail: This is a test input.",
+                                   cause: an_instance_of(OpenAIClient::ContextLengthExceededError))),
+        )
+    end
+  end
 
-      it "raises an error" do
-        expect { described_class.call(input, llm_prompt_name) }
-          .to raise_error("No LLM prompts found for #{llm_prompt_name}")
-      end
+  context "with a non-existent llm_prompt_name" do
+    let(:llm_prompt_name) { "non_existent_llm_prompt_name" }
+
+    it "raises an error" do
+      expect { described_class.call(input, llm_prompt_name) }
+        .to raise_error("No LLM prompts found for #{llm_prompt_name}")
     end
   end
 end
