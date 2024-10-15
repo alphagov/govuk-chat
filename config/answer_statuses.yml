@@ -58,11 +58,6 @@ error_context_length_exceeded:
   label_colour: "red"
   description: "too many tokens sent to LLM"
   label_and_description: "Error - too many tokens sent to LLM"
-error_invalid_llm_response:
-  label: "Error"
-  label_colour: "red"
-  description: "invalid structured answer from LLM"
-  label_and_description: "Error - invalid structured answer from LLM"
 error_jailbreak_guardrails:
   label: "Error"
   label_colour: "red"

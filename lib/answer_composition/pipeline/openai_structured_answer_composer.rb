@@ -27,13 +27,6 @@ module AnswerComposition::Pipeline
 
       context.answer.assign_attributes(message:, status: "success")
       context.answer.assign_metrics("structured_answer", build_metrics(start_time))
-    rescue JSON::Schema::ValidationError, JSON::ParserError => e
-      context.abort_pipeline!(
-        message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
-        status: "error_invalid_llm_response",
-        error_message: error_message(e),
-        metrics: { "structured_answer" => build_metrics(start_time) },
-      )
     end
 
   private
@@ -41,11 +34,7 @@ module AnswerComposition::Pipeline
     attr_reader :context, :link_token_mapper
 
     def parsed_structured_response
-      @parsed_structured_response ||= begin
-        parsed_structured_response = JSON.parse(raw_structured_response)
-        JSON::Validator.validate!(output_schema, parsed_structured_response)
-        parsed_structured_response
-      end
+      @parsed_structured_response ||= JSON.parse(raw_structured_response)
     end
 
     def raw_structured_response
