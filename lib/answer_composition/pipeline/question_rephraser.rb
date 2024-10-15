@@ -53,10 +53,11 @@ module AnswerComposition
       end
 
       def message_records
-        Question.where(conversation: question.conversation)
-                .includes(:answer)
-                .joins(:answer)
-                .last(5)
+        @message_records ||= Question.where(conversation: question.conversation)
+                                     .includes(:answer)
+                                     .joins(:answer)
+                                     .last(5)
+                                     .select(&:use_in_rephrasing?)
       end
 
       def message_history
@@ -73,7 +74,7 @@ module AnswerComposition
       end
 
       def first_question?
-        question.conversation.questions.count < 2
+        message_records.blank?
       end
 
       def config
