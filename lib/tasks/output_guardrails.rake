@@ -1,8 +1,8 @@
 namespace "output_guardrails" do
   desc "Output guardrail evaluation using Guardrails::MultipleChecker - supply a file path to write to JSON"
-  task :evaluate_fewshot, %i[output_path] => :environment do |_, args|
+  task :evaluate_multiple_checker, %i[output_path] => :environment do |_, args|
     output_path = args[:output_path]
-    file_path = Rails.root.join("lib/data/output_guardrails/fewshot_examples.csv")
+    file_path = Rails.root.join("lib/data/output_guardrails/multiple_checker_examples.csv")
 
     model_name = Guardrails::MultipleChecker::OPENAI_MODEL
     true_eval = ->(v) { v != "False | None" }

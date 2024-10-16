@@ -18,7 +18,7 @@ You can also use the playground to ask the reasoning behind any response it give
 
 ## Evaluation
 
-There is a rake task `guardrails:evaluate_fewshot` that will read a CSV and call the LLM with the content of the `input` column, compare the result to the `output` column and output metrics like this
+There is a rake task `guardrails:evaluate_multiple_checker` that will read a CSV and call the LLM with the content of the `input` column, compare the result to the `output` column and output metrics like this
 
 ```
 {:count=>116,

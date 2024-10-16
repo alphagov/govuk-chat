@@ -1,6 +1,6 @@
 RSpec.describe "rake guardrails tasks" do
-  describe "output_guardrails:evaluate_fewshot" do
-    let(:task_name) { "output_guardrails:evaluate_fewshot" }
+  describe "output_guardrails:evaluate_multiple_checker" do
+    let(:task_name) { "output_guardrails:evaluate_multiple_checker" }
     let(:false_response) do
       Guardrails::MultipleChecker::Result.new(
         llm_response: llm_response_json("False | None"),
@@ -46,7 +46,7 @@ RSpec.describe "rake guardrails tasks" do
           first_example = results["false_positives"][0]
           expect(first_example["actual"]).to eq(true_response.llm_guardrail_result)
 
-          examples = CSV.read(Rails.root.join("lib/data/output_guardrails/fewshot_examples.csv"), headers: true).length
+          examples = CSV.read(Rails.root.join("lib/data/output_guardrails/multiple_checker_examples.csv"), headers: true).length
           expect(Guardrails::MultipleChecker).to have_received(:call).exactly(examples).times
         ensure
           temp.close
