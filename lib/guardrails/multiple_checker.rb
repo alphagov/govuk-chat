@@ -66,12 +66,12 @@ module Guardrails
     end
 
     def mapping_keys
-      llm_prompts[:guardrail_mappings].keys.map(&:to_i)
+      guardrails_llm_prompts.fetch(:guardrail_mappings).keys.map(&:to_i)
     end
 
     def extract_guardrails(parts)
       guardrail_numbers = parts.scan(/\d+/)
-      mappings = llm_prompts[:guardrail_mappings]
+      mappings = guardrails_llm_prompts.fetch(:guardrail_mappings)
       guardrail_numbers.map { |n| mappings[n] }
     end
 
@@ -83,14 +83,14 @@ module Guardrails
     end
 
     def system_prompt
-      llm_prompts[:system_prompt].gsub("{date}", Date.current.strftime("%A %d %B %Y"))
+      guardrails_llm_prompts.fetch(:system_prompt).gsub("{date}", Date.current.strftime("%A %d %B %Y"))
     end
 
     def user_prompt
-      llm_prompts[:user_prompt].sub("{input}", input)
+      guardrails_llm_prompts.fetch(:user_prompt).sub("{input}", input)
     end
 
-    def llm_prompts
+    def guardrails_llm_prompts
       prompts = Rails.configuration.llm_prompts[llm_prompt_name]
 
       raise "No LLM prompts found for #{llm_prompt_name}" unless prompts

@@ -11,8 +11,8 @@ RSpec.describe Guardrails::MultipleChecker do
 
   before do
     allow(Rails.logger).to receive(:error)
-    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:[]).and_call_original
-    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:[]).with(:guardrail_mappings)
+    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:fetch).and_call_original
+    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:fetch).with(:guardrail_mappings)
                                                             .and_return(guardrail_mappings)
   end
 
