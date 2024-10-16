@@ -1,5 +1,5 @@
 module Guardrails
-  class Jailbreak
+  class JailbreakChecker
     Result = Data.define(:triggered, :llm_response, :llm_token_usage)
     class ResponseError < StandardError
       attr_reader :llm_guardrail_result, :llm_response, :llm_token_usage

@@ -17,14 +17,14 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
 
   context "when the guardrails are not triggered" do
     before do
-      allow(Guardrails::Jailbreak)
+      allow(Guardrails::JailbreakChecker)
         .to receive(:call)
-        .and_return(Guardrails::Jailbreak::Result.new(triggered: false, llm_response:, llm_token_usage:))
+        .and_return(Guardrails::JailbreakChecker::Result.new(triggered: false, llm_response:, llm_token_usage:))
     end
 
     it "calls the guardrails with the question message" do
       described_class.call(context)
-      expect(Guardrails::Jailbreak).to have_received(:call).with(context.question.message)
+      expect(Guardrails::JailbreakChecker).to have_received(:call).with(context.question.message)
     end
 
     it "does not abort the pipeline" do
@@ -60,9 +60,9 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
 
   context "when the guardrails are triggered" do
     before do
-      allow(Guardrails::Jailbreak)
+      allow(Guardrails::JailbreakChecker)
         .to receive(:call)
-        .and_return(Guardrails::Jailbreak::Result.new(triggered: true, llm_response:, llm_token_usage:))
+        .and_return(Guardrails::JailbreakChecker::Result.new(triggered: true, llm_response:, llm_token_usage:))
     end
 
     it "aborts the pipeline and updates the answer's status and message attributes" do
@@ -97,11 +97,13 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
 
   context "when a Jailbreak::ResponseError occurs" do
     before do
-      error = Guardrails::Jailbreak::ResponseError.new("An error occurred",
-                                                       llm_guardrail_result: "?",
-                                                       llm_response:,
-                                                       llm_token_usage:)
-      allow(Guardrails::Jailbreak).to receive(:call).and_raise(error)
+      error = Guardrails::JailbreakChecker::ResponseError.new(
+        "An error occurred",
+        llm_guardrail_result: "?",
+        llm_response:,
+        llm_token_usage:,
+      )
+      allow(Guardrails::JailbreakChecker).to receive(:call).and_raise(error)
     end
 
     it "aborts the pipeline and updates the answer's status with an error message" do

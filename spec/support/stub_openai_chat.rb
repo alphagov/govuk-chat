@@ -122,13 +122,13 @@ module StubOpenAIChat
     )
   end
 
-  def stub_openai_jailbreak_guardrails(to_check, response = Guardrails::Jailbreak.pass_value)
+  def stub_openai_jailbreak_guardrails(to_check, response = Guardrails::JailbreakChecker.pass_value)
     stub_openai_chat_completion(
       array_including({ "role" => "user", "content" => a_string_including(to_check) }),
       answer: response,
-      chat_options: { model: Guardrails::Jailbreak::OPENAI_MODEL,
-                      max_tokens: Guardrails::Jailbreak.max_tokens,
-                      logit_bias: Guardrails::Jailbreak.logit_bias },
+      chat_options: { model: Guardrails::JailbreakChecker::OPENAI_MODEL,
+                      max_tokens: Guardrails::JailbreakChecker.max_tokens,
+                      logit_bias: Guardrails::JailbreakChecker.logit_bias },
     )
   end
 
