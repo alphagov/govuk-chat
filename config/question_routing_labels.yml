@@ -5,6 +5,8 @@ about_mps:
 
 advice_opinions_predictions:
   label: "Advice, opinions, predictions"
+  canned_responses:
+    - "I cannot answer that. Please try asking something else."
 
 character_fun:
   label: "Character fun"
@@ -13,6 +15,9 @@ character_fun:
 
 content_not_govuk:
   label: "Content not GOV.UK"
+  canned_responses:
+  # TODO - check with Dave S to see if we want different content for this
+    - "I cannot answer that. Please try asking something else."
 
 genuine_rag:
   label: "Genuine RAG"
@@ -38,6 +43,8 @@ harmful_vulgar_controversy:
 
 multi_questions:
   label: "Multi-questions"
+  canned_responses:
+    - "I cannot answer that. Please try asking something else."
 
 negative_acknowledgement:
   label: "Negative acknowledgement"
@@ -69,3 +76,5 @@ positive_acknowledgement:
 
 vague_acronym_grammar:
   label: "Vague, acronym, grammar"
+  canned_responses:
+    - "I cannot answer that. Please try asking something else."
