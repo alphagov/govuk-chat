@@ -16,33 +16,40 @@ module AnswerComposition
         answer = context.answer
         answer.assign_llm_response("question_routing", openai_response_choice)
 
-        if openai_response_choice["finish_reason"] == "length"
-          context.abort_pipeline!(
-            message: Answer::CannedResponses.response_for_question_routing_label(question_routing_label),
-            status: "abort_question_routing_token_limit",
-            question_routing_label:,
-            metrics: { "question_routing" => build_metrics(start_time) },
-          )
-        else
+        if genuine_rag?
           answer.assign_attributes(
             question_routing_label:,
             question_routing_confidence_score: llm_classification_data["confidence"],
-            message: llm_answer || Answer::CannedResponses.response_for_question_routing_label(question_routing_label),
+          )
+        elsif openai_response_choice["finish_reason"] == "length"
+          context.abort_pipeline(
+            message: Answer::CannedResponses.response_for_question_routing_label(question_routing_label),
+            status: "abort_question_routing_token_limit",
+            question_routing_label:,
+          )
+        else
+          answer.assign_attributes(
+            message: use_llm_answer? ? llm_answer : Answer::CannedResponses.response_for_question_routing_label(question_routing_label),
+            status: "abort_question_routing",
+            question_routing_label:,
+            question_routing_confidence_score: llm_classification_data["confidence"],
           )
 
-          answer.assign_attributes(status: "abort_question_routing") unless genuine_rag?
-
-          answer.assign_metrics(
-            "question_routing", build_metrics(start_time)
-          )
-
-          context.abort_pipeline unless genuine_rag? || llm_answer.present?
+          context.abort_pipeline unless use_llm_answer?
         end
+
+        answer.assign_metrics(
+          "question_routing", build_metrics(start_time)
+        )
       end
 
     private
 
       attr_reader :context
+
+      def use_llm_answer?
+        Rails.configuration.question_routing_labels.dig(question_routing_label, :use_answer)
+      end
 
       def llm_answer
         llm_classification_data["answer"]
