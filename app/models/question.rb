@@ -31,6 +31,8 @@ class Question < ApplicationRecord
     where("questions.created_at >= :max_age", max_age:)
   }
 
+  delegate :use_in_rephrasing?, to: :answer
+
   def answer_status
     answer&.status || "pending"
   end
