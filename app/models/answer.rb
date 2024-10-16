@@ -37,6 +37,14 @@ class Answer < ApplicationRecord
 
   GUARDRAIL_STATUSES = { pass: "pass", fail: "fail", error: "error" }.freeze
 
+  STATUSES_EXCLUDED_FROM_REPHRASING = %w[
+    abort_answer_guardrails
+    abort_forbidden_terms
+    abort_jailbreak_guardrails
+    abort_output_guardrails
+    abort_question_routing
+  ].freeze
+
   scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
 
   belongs_to :question
@@ -147,5 +155,9 @@ class Answer < ApplicationRecord
   def assign_llm_response(namespace, hash)
     self.llm_responses ||= {}
     self.llm_responses[namespace] = hash
+  end
+
+  def use_in_rephrasing?
+    STATUSES_EXCLUDED_FROM_REPHRASING.exclude?(status)
   end
 end

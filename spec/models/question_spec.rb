@@ -158,14 +158,23 @@ RSpec.describe Question do
           .and include("early_access_user_id" => question.conversation.early_access_user_id)
       end
     end
+
+    context "when the question does not have an answer" do
+      it "returns a serialized question with its answer" do
+        question = create(:question)
+
+        expect(question.serialize_for_export)
+          .to include(question.as_json)
+      end
+    end
   end
 
-  context "when the question does not have an answer" do
-    it "returns a serialized question with its answer" do
-      question = create(:question)
+  describe "#use_in_rephrasing?" do
+    it "delegates to the answer" do
+      question = create(:question, :with_answer)
+      allow(question.answer).to receive(:use_in_rephrasing?).and_return(true)
 
-      expect(question.serialize_for_export)
-        .to include(question.as_json)
+      expect(question.use_in_rephrasing?).to be(true)
     end
   end
 end

@@ -207,4 +207,21 @@ RSpec.describe Answer do
 
     expect(label_config.keys).to match_array(enum_values)
   end
+
+  describe "use_in_rephrasing?" do
+    it "returns true for answers with statuses not in the STATUSES_EXCLUDED_FROM_REPHRASING constant" do
+      statuses = described_class.statuses.keys - described_class::STATUSES_EXCLUDED_FROM_REPHRASING
+      statuses.each do |status|
+        answer = build(:answer, status:)
+        expect(answer.use_in_rephrasing?).to be(true)
+      end
+    end
+
+    it "returns false for answers with statuses included in the STATUSES_EXCLUDED_FROM_REPHRASING constant" do
+      described_class::STATUSES_EXCLUDED_FROM_REPHRASING.each do |status|
+        answer = build(:answer, status:)
+        expect(answer.use_in_rephrasing?).to be(false)
+      end
+    end
+  end
 end

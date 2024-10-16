@@ -7,6 +7,21 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
     end
   end
 
+  context "when all other recent answers have statuses in Answer::STATUSES_EXCLUDED_FROM_REPHRASING" do
+    it "returns nil" do
+      conversation = create(:conversation)
+      create(:question, conversation:)
+      Answer::STATUSES_EXCLUDED_FROM_REPHRASING.sample(4) do |status|
+        question = create(:question, conversation:)
+        create(:answer, question:, status:)
+      end
+      latest_question = create(:question, conversation:)
+      context = build(:answer_pipeline_context, question: latest_question)
+
+      expect(described_class.call(context)).to be_nil
+    end
+  end
+
   context "when the question is part of an ongoing chat" do
     let(:conversation) { create :conversation, :with_history }
     let(:question) { conversation.questions.strict_loading(false).last }
@@ -73,6 +88,18 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
             "message" => a_hash_including({ "content" => rephrased }),
           ),
         )
+      end
+
+      context "and one of the answers statuses is in Answer::STATUSES_EXCLUDED_FROM_REPHRASING" do
+        it "does not include that question and answer in the history" do
+          request = stub_openai_chat_completion(expected_messages, answer: rephrased)
+          last_question = conversation.questions.strict_loading(false).last
+          create(:answer, question: last_question, status: :abort_jailbreak_guardrails)
+          create(:question, conversation:, message: last_question.message)
+
+          described_class.call(context)
+          expect(request).to have_been_made
+        end
       end
     end
 
