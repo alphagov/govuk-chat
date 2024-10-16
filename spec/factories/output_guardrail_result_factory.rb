@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :output_guardrail_result, class: "Guardrails::MultipleChecker::Result" do
+  factory :guardrails_multiple_checker_result, class: "Guardrails::MultipleChecker::Result" do
     initialize_with { new(**attributes) }
 
     llm_token_usage do

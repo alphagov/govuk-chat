@@ -8,7 +8,7 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
   end
 
   context "when the guardrails are not triggered" do
-    let(:guardrail_response) { build(:output_guardrail_result, :pass) }
+    let(:guardrail_response) { build(:guardrails_multiple_checker_result, :pass) }
 
     it_behaves_like "a passing guardrail pipeline step", "answer_guardrails"
 
@@ -19,7 +19,7 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
   end
 
   context "when the guardrails are triggered" do
-    let(:guardrail_response) { build(:output_guardrail_result, :fail) }
+    let(:guardrail_response) { build(:guardrails_multiple_checker_result, :fail) }
 
     it "aborts the pipeline and updates the answer's status and message attributes" do
       expect {
