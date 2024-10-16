@@ -42,7 +42,7 @@ class Answer < ApplicationRecord
     abort_forbidden_terms
     abort_jailbreak_guardrails
     abort_output_guardrails
-    abort_question_routing
+    abort_question_routing_guardrails
   ].freeze
 
   scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
@@ -60,6 +60,7 @@ class Answer < ApplicationRecord
          abort_no_govuk_content: "abort_no_govuk_content",
          abort_output_guardrails: "abort_output_guardrails",
          abort_question_routing: "abort_question_routing",
+         abort_question_routing_guardrails: "abort_question_routing_guardrails",
          abort_question_routing_token_limit: "abort_question_routing_token_limit",
          error_answer_service_error: "error_answer_service_error",
          error_answer_guardrails: "error_answer_guardrails",
@@ -69,6 +70,7 @@ class Answer < ApplicationRecord
          error_non_specific: "error_non_specific",
          error_timeout: "error_timeout",
          error_question_routing: "error_question_routing",
+         error_question_routing_guardrails: "error_question_routing_guardrails",
          success: "success",
        },
        prefix: true

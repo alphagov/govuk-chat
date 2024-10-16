@@ -34,7 +34,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
 
       expect(context.answer).to have_attributes({
         message: Answer::CannedResponses::QUESTION_ROUTING_GUARDRAILS_FAILED_MESSAGE,
-        status: "abort_answer_guardrails",
+        status: "abort_question_routing_guardrails",
         question_routing_guardrails_failures: %w[political],
       })
     end

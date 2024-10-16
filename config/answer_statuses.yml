@@ -43,16 +43,21 @@ abort_question_routing:
   label_colour: "orange"
   description: "unsuitable question asked"
   label_and_description: "Abort - unsuitable question asked"
-error_answer_guardrails:
-  label: "Error"
-  label_colour: "red"
-  description: "invalid format from answer guardrails LLM call"
-  label_and_description: "Error - invalid format from answer guardrails LLM call"
+abort_question_routing_guardrails:
+  label: "Abort"
+  label_colour: "orange"
+  description: "question routing guardrails triggered"
+  label_and_description: "Abort - question routing guardrails triggered"
 abort_question_routing_token_limit:
   label: "Abort"
   label_colour: "orange"
   description: "completion token limit reached"
   label_and_description: "Abort - completion token limit reached"
+error_answer_guardrails:
+  label: "Error"
+  label_colour: "red"
+  description: "invalid format from answer guardrails LLM call"
+  label_and_description: "Error - invalid format from answer guardrails LLM call"
 error_answer_service_error:
   label: "Error"
   label_colour: "red"
@@ -88,3 +93,8 @@ error_question_routing:
   label_colour: "red"
   description: "invalid response from question routing LLM call"
   label_and_description: "Error - invalid response from question routing LLM call"
+error_question_routing_guardrails:
+  label: "Error"
+  label_colour: "red"
+  description: "error from question routing guardrails LLM call"
+  label_and_description: "Error - from question routing guardrails LLM call"
