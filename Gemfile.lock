@@ -857,7 +857,6 @@ DEPENDENCIES
   groupdate
   hashie
   inline_svg
-  json-schema
   kaminari
   kramdown
   mail-notify
