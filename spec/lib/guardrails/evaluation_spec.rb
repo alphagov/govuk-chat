@@ -1,7 +1,7 @@
 require "csv"
 
 RSpec.describe Guardrails::Evaluation do
-  let(:file_path) { Rails.root.join("spec/support/files/guardrails_multiple_checker_examples.csv") }
+  let(:file_path) { Rails.root.join("spec/support/files/answer_guardrails_examples.csv") }
 
   context "when evaluating MultipleChecker" do
     describe "#call" do

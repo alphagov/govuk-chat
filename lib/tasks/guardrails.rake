@@ -1,8 +1,8 @@
 namespace "guardrails" do
   desc "Output guardrail evaluation using Guardrails::MultipleChecker - supply a file path to write to JSON"
-  task :evaluate_multiple_checker, %i[output_path] => :environment do |_, args|
+  task :evaluate_answer_guardrails, %i[output_path] => :environment do |_, args|
     output_path = args[:output_path]
-    file_path = Rails.root.join("lib/data/output_guardrails/multiple_checker_examples.csv")
+    file_path = Rails.root.join("lib/data/output_guardrails/answer_guardrails_examples.csv")
 
     model_name = Guardrails::MultipleChecker::OPENAI_MODEL
     true_eval = ->(v) { v != "False | None" }
@@ -10,7 +10,7 @@ namespace "guardrails" do
     prompt_token_counts = []
 
     results = Guardrails::Evaluation.call(file_path, true_eval:) do |input|
-      result = Guardrails::MultipleChecker.call(input)
+      result = Guardrails::MultipleChecker.call(input, :answer_guardrails)
       prompt_token_counts << result.llm_token_usage["prompt_tokens"]
       result.llm_guardrail_result
     rescue Guardrails::MultipleChecker::ResponseError => e
