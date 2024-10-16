@@ -12,4 +12,12 @@ RSpec.describe "Question routing labels" do
     label_config = Rails.configuration.question_routing_labels
     expect(label_config.values).to all(match(hash_including("use_answer" => boolean)))
   end
+
+  it "specifies an array of canned_responses for each label other than genuine_rag" do
+    labels_except_genuine_rag = Rails.configuration.question_routing_labels.except("genuine_rag")
+    only_strings_matcher = match(all(be_a(String)))
+    expect(labels_except_genuine_rag.values).to all(
+      match(hash_including("canned_responses" => be_present.and(only_strings_matcher))),
+    )
+  end
 end
