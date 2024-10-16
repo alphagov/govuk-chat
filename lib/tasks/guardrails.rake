@@ -1,4 +1,4 @@
-namespace "output_guardrails" do
+namespace "guardrails" do
   desc "Output guardrail evaluation using Guardrails::MultipleChecker - supply a file path to write to JSON"
   task :evaluate_multiple_checker, %i[output_path] => :environment do |_, args|
     output_path = args[:output_path]

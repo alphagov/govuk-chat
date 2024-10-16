@@ -1,6 +1,6 @@
 RSpec.describe "rake guardrails tasks" do
-  describe "output_guardrails:evaluate_multiple_checker" do
-    let(:task_name) { "output_guardrails:evaluate_multiple_checker" }
+  describe "guardrails:evaluate_multiple_checker" do
+    let(:task_name) { "guardrails:evaluate_multiple_checker" }
     let(:false_response) do
       Guardrails::MultipleChecker::Result.new(
         llm_response: llm_response_json("False | None"),
