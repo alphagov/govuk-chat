@@ -7,4 +7,9 @@ RSpec.describe "Question routing labels" do
 
     expect(llm_labels - label_config.keys).to be_empty
   end
+
+  it "defines a use_answer property for each question routing label" do
+    label_config = Rails.configuration.question_routing_labels
+    expect(label_config.values).to all(match(hash_including("use_answer" => boolean)))
+  end
 end
