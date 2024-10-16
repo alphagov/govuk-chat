@@ -42,7 +42,7 @@ class Answer < ApplicationRecord
     abort_forbidden_terms
     abort_jailbreak_guardrails
     abort_output_guardrails
-    abort_question_routing
+    abort_question_routing_guardrails
   ].freeze
 
   scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
