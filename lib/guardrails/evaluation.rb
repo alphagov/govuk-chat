@@ -1,8 +1,8 @@
-module OutputGuardrails
+module Guardrails
   # Reads a CSV file - calls the provided block with the value in the input column
   # The result is compared with the output column from the csv - metrics about
   # the number of and percentage of exact matches, along with failed examples is output.
-  # Usage: OutputGuardrails::Evaluation.call(file_path) { |input| code_to_evaluate.call(input).whatever }
+  # Usage: Guardrails::Evaluation.call(file_path) { |input| code_to_evaluate.call(input).whatever }
 
   class Evaluation
     class Example

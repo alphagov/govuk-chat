@@ -1,9 +1,9 @@
 require "csv"
 
-RSpec.describe OutputGuardrails::Evaluation do
-  let(:file_path) { Rails.root.join("spec/support/files/output_guardrails_fewshot_examples.csv") }
+RSpec.describe Guardrails::Evaluation do
+  let(:file_path) { Rails.root.join("spec/support/files/answer_guardrails_examples.csv") }
 
-  context "when Evaluating FewShot" do
+  context "when evaluating MultipleChecker" do
     describe "#call" do
       it "evaluates the examples correctly" do
         result = described_class.call(file_path, true_eval: ->(v) { v != "False | None" }) do |input|

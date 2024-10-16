@@ -1,18 +1,18 @@
-RSpec.describe OutputGuardrails::FewShot do
+RSpec.describe Guardrails::MultipleChecker do
   let(:guardrail_mappings) { { "1" => "COSTS", "5" => "PERSONAL" } }
   let(:input) { "This is a test input." }
 
   let(:formatted_date) { Date.current.strftime("%A %d %B %Y") }
   let(:llm_prompt_name) { :answer_guardrails }
   let(:system_prompt) do
-    Rails.configuration.llm_prompts.dig(llm_prompt_name, :few_shot, :system_prompt)
+    Rails.configuration.llm_prompts.dig(llm_prompt_name, :system_prompt)
       .gsub("{date}", formatted_date)
   end
 
   before do
     allow(Rails.logger).to receive(:error)
-    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:dig).and_call_original
-    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:dig).with(:few_shot, :guardrail_mappings)
+    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:fetch).and_call_original
+    allow(Rails.configuration.llm_prompts.answer_guardrails).to receive(:fetch).with(:guardrail_mappings)
                                                             .and_return(guardrail_mappings)
   end
 
@@ -23,7 +23,7 @@ RSpec.describe OutputGuardrails::FewShot do
         { "role" => "user", "content" => a_string_including(input) },
       )
       openai_request = stub_openai_chat_completion(messages, answer: "False | None", chat_options: {
-        model: OutputGuardrails::FewShot::OPENAI_MODEL,
+        model: described_class::OPENAI_MODEL,
       })
 
       described_class.call(input, llm_prompt_name)
@@ -33,7 +33,7 @@ RSpec.describe OutputGuardrails::FewShot do
     it "returns triggered: true with human readable guardrails" do
       guardrail_result = 'True | "1, 5"'
       stub_openai_output_guardrail(input, guardrail_result)
-      expect(described_class.call(input, llm_prompt_name)).to be_a(OutputGuardrails::FewShot::Result)
+      expect(described_class.call(input, llm_prompt_name)).to be_a(described_class::Result)
         .and(having_attributes(
                triggered: true,
                guardrails: %w[COSTS PERSONAL],
@@ -47,7 +47,7 @@ RSpec.describe OutputGuardrails::FewShot do
     it "returns triggered: false with empty guardrails" do
       guardrail_result = "False | None"
       stub_openai_output_guardrail(input, guardrail_result)
-      expect(described_class.call(input, llm_prompt_name)).to be_a(OutputGuardrails::FewShot::Result)
+      expect(described_class.call(input, llm_prompt_name)).to be_a(described_class::Result)
         .and(having_attributes(
                triggered: false,
                guardrails: [],
@@ -104,12 +104,12 @@ RSpec.describe OutputGuardrails::FewShot do
     end
 
     context "when the OpenAI response format is incorrect" do
-      it "throws a AnswerComposition::OutputGuardrails::ResponseError" do
+      it "throws a ResponseError" do
         guardrail_result = 'False | "1, 2"'
         stub_openai_output_guardrail(input, guardrail_result)
         expect { described_class.call(input, llm_prompt_name) }
           .to raise_error(
-            an_instance_of(OutputGuardrails::FewShot::ResponseError)
+            an_instance_of(described_class::ResponseError)
               .and(having_attributes(message: "Error parsing guardrail response",
                                      llm_response: guardrail_result)),
           )
@@ -117,12 +117,12 @@ RSpec.describe OutputGuardrails::FewShot do
     end
 
     context "when the OpenAI response contains an unknown guardrail number" do
-      it "throws a AnswerComposition::OutputGuardrails::ResponseError" do
+      it "throws a ResponseError" do
         guardrail_result = 'False | "1, 8"'
         stub_openai_output_guardrail(input, guardrail_result)
         expect { described_class.call(input, llm_prompt_name) }
           .to raise_error(
-            an_instance_of(OutputGuardrails::FewShot::ResponseError)
+            an_instance_of(described_class::ResponseError)
               .and(having_attributes(message: "Error parsing guardrail response",
                                      llm_response: guardrail_result)),
           )

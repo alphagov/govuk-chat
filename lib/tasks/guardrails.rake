@@ -1,19 +1,19 @@
-namespace "output_guardrails" do
-  desc "Output guardrail evaluation using OutputGuardrails::FewShot - supply a file path to write to JSON"
-  task :evaluate_fewshot, %i[output_path] => :environment do |_, args|
+namespace "guardrails" do
+  desc "Output guardrail evaluation using Guardrails::MultipleChecker - supply a file path to write to JSON"
+  task :evaluate_answer_guardrails, %i[output_path] => :environment do |_, args|
     output_path = args[:output_path]
-    file_path = Rails.root.join("lib/data/output_guardrails/fewshot_examples.csv")
+    file_path = Rails.root.join("lib/data/output_guardrails/answer_guardrails_examples.csv")
 
-    model_name = OutputGuardrails::FewShot::OPENAI_MODEL
+    model_name = Guardrails::MultipleChecker::OPENAI_MODEL
     true_eval = ->(v) { v != "False | None" }
 
     prompt_token_counts = []
 
-    results = OutputGuardrails::Evaluation.call(file_path, true_eval:) do |input|
-      result = OutputGuardrails::FewShot.call(input)
+    results = Guardrails::Evaluation.call(file_path, true_eval:) do |input|
+      result = Guardrails::MultipleChecker.call(input, :answer_guardrails)
       prompt_token_counts << result.llm_token_usage["prompt_tokens"]
       result.llm_guardrail_result
-    rescue OutputGuardrails::FewShot::ResponseError => e
+    rescue Guardrails::MultipleChecker::ResponseError => e
       prompt_token_counts << e.llm_token_usage["prompt_tokens"]
       "ERR: #{e.llm_response}"
     end

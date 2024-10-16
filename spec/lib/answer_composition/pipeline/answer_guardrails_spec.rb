@@ -4,11 +4,11 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
 
   before do
     context.answer.message = message
-    allow(OutputGuardrails::FewShot).to receive(:call).and_return(few_shot_response)
+    allow(Guardrails::MultipleChecker).to receive(:call).and_return(guardrail_response)
   end
 
   context "when the guardrails are not triggered" do
-    let(:few_shot_response) { build(:output_guardrail_result, :pass) }
+    let(:guardrail_response) { build(:guardrails_multiple_checker_result, :pass) }
 
     it_behaves_like "a passing guardrail pipeline step", "answer_guardrails"
 
@@ -19,7 +19,7 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
   end
 
   context "when the guardrails are triggered" do
-    let(:few_shot_response) { build(:output_guardrail_result, :fail) }
+    let(:guardrail_response) { build(:guardrails_multiple_checker_result, :fail) }
 
     it "aborts the pipeline and updates the answer's status and message attributes" do
       expect {
@@ -36,7 +36,7 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
 
     it "assigns the llm response to the answer" do
       expect { described_class.call(context) }.to throw_symbol(:abort)
-      expect(context.answer.llm_responses["answer_guardrails"]).to eq(few_shot_response.llm_response)
+      expect(context.answer.llm_responses["answer_guardrails"]).to eq(guardrail_response.llm_response)
     end
 
     it "assigns metrics to the answer" do
