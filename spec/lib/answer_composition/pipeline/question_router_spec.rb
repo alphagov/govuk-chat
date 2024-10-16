@@ -89,23 +89,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
       )
     end
 
-    it "assigns the correct values to the context's answer" do
-      stub_openai_chat_question_routing(
-        expected_message_history,
-        tools:,
-        function_name: "greetings",
-        function_arguments: classification_response,
-      )
-
-      described_class.call(context)
-
-      expect(context.answer).to have_attributes(
-        question_routing_label: "greetings",
-        question_routing_confidence_score: 0.85,
-        message: "Hello! How can I help you today?",
-      )
-    end
-
     it "assigns metrics to the context's answer" do
       stub_openai_chat_question_routing(
         expected_message_history,
@@ -124,95 +107,136 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
       })
     end
 
-    context "when the LLM response does not contain an answer" do
-      let(:classification_attributes) do
-        {
-          name: "greetings",
-          description: "A classification description",
-          
-          
-        }
-      end
-
-      it "assigns a canned response as the message" do
+    context "when the question routing label is genuine_rag" do
+      before do
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
-          function_name: "greetings",
-          function_arguments: { confidence: 0.85 },
+          function_name: "genuine_rag",
+          function_arguments: { answer: "Generic answer", confidence: 0.9 },
         )
-        allow(Answer::CannedResponses)
-          .to receive(:response_for_question_routing_label).with("greetings")
-          .and_return("Canned response")
-
-        described_class.call(context)
-
-        expect(context.answer).to have_attributes(message: "Canned response")
       end
 
-      it "aborts the pipeline" do
-        expect(context).to receive(:abort_pipeline)
-
-        stub_openai_chat_question_routing(
-          expected_message_history,
-          tools:,
-          function_name: "greetings",
-          function_arguments: { confidence: 0.85 },
-        )
-
+      it "assigns the question routing label and confidence" do
         described_class.call(context)
+
+        expect(context.answer).to have_attributes(
+          question_routing_label: "genuine_rag",
+          question_routing_confidence_score: 0.9,
+        )
+      end
+
+      it "doesn't assign a message" do
+        described_class.call(context)
+
+        expect(context.answer.message).to be_nil
+      end
+
+      it "doesn't abort the pipeline" do
+        expect { described_class.call(context) }
+          .not_to change(context, :aborted?).from(false)
       end
     end
 
-    context "when the response isn't genuine_rag" do
-      let(:classification_attributes) do
-        {
-          name: "greetings",
-          description: "A classification description",
-          
-          
-        }
-      end
-
-      it "makes a successful request to OpenAI and sets the attributes" do
-        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
-        allow(Answer::CannedResponses)
-          .to receive(:response_for_question_routing_label).with("greetings")
-          .and_return("Canned response")
-
+    context "when the tokens returned by OpenAI exceeds the limit" do
+      before do
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
           function_name: "greetings",
-          function_arguments: { confidence: 0.9 },
+          function_arguments: {
+            answer: "A long answer that is terminated mid senten",
+            confidence: 0.99,
+          },
+          finish_reason: "length",
         )
+      end
+
+      it "assigns a canned response message with an abort_question_routing_token_limit status" do
+        canned_response = "Canned response"
+
+        # This method returns a random value
+        allow(Answer::CannedResponses)
+          .to receive(:response_for_question_routing_label)
+          .with("greetings")
+          .and_return(canned_response)
 
         described_class.call(context)
 
         expect(context.answer).to have_attributes(
-          status: "abort_question_routing",
+          message: canned_response,
+          status: "abort_question_routing_token_limit",
           question_routing_label: "greetings",
-          message: "Canned response",
-          question_routing_confidence_score: 0.9,
-          metrics: a_hash_including("question_routing" => {
-            duration: 1.5,
-            llm_prompt_tokens: 13,
-            llm_completion_tokens: 7,
-          }),
         )
       end
 
       it "aborts the pipeline" do
-        expect(context).to receive(:abort_pipeline)
+        expect { described_class.call(context) }
+          .to change(context, :aborted?).to(true)
+      end
+    end
 
+    context "when the question routing label is one where we use the answer" do
+      let(:answer_message) { "This content was not found on GOV.UK" }
+
+      before do
+        stub_openai_chat_question_routing(
+          expected_message_history,
+          tools:,
+          function_name: "multi_questions",
+          function_arguments: { answer: answer_message, confidence: 0.9 },
+        )
+      end
+
+      it "assigns the answer message, status and question routing metadata" do
+        described_class.call(context)
+
+        expect(context.answer).to have_attributes(
+          message: answer_message,
+          status: "abort_question_routing",
+          question_routing_label: "multi_questions",
+          question_routing_confidence_score: 0.9,
+        )
+      end
+
+      it "doesn't abort the pipeline" do
+        expect { described_class.call(context) }
+          .not_to change(context, :aborted?).from(false)
+      end
+    end
+
+    context "when the question routing label is one where we ignore the answer" do
+      before do
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
           function_name: "greetings",
-          function_arguments: { confidence: 0.85 },
+          function_arguments: { answer: "Ignored", confidence: 0.9 },
         )
+      end
+
+      it "assigns a canned response message with an abort_question_routing status and question routing metadata" do
+        canned_response = "Canned response"
+
+        # This method returns a random value
+        allow(Answer::CannedResponses)
+          .to receive(:response_for_question_routing_label)
+          .with("greetings")
+          .and_return(canned_response)
 
         described_class.call(context)
+
+        expect(context.answer).to have_attributes(
+          message: canned_response,
+          status: "abort_question_routing",
+          question_routing_label: "greetings",
+          question_routing_confidence_score: 0.9,
+        )
+      end
+
+      it "aborts the pipeline" do
+        expect { described_class.call(context) }
+          .to change(context, :aborted?).to(true)
       end
     end
 

@@ -1,28 +1,34 @@
 about_mps:
   label: "About MPs"
+  use_answer: false
   canned_responses:
     - Sorry, I cannot answer that question. You may be able to find your answer on [the UK Parliament website](https://www.parliament.uk/).<br /><br />If you have questions that can be answered using GOV.UK guidance, I'd be happy to help.
 
 advice_opinions_predictions:
   label: "Advice, opinions, predictions"
+  use_answer: true
   canned_responses:
     - "I cannot answer that. Please try asking something else."
 
 character_fun:
   label: "Character fun"
+  use_answer: false
   canned_responses:
     - I cannot answer that. If you have genuine questions that can be answered using GOV.UK guidance, I'd be happy to help.
 
 genuine_rag:
   label: "Genuine RAG"
+  use_answer: false
 
 gov_transparency:
   label: "Government transparency"
+  use_answer: false
   canned_responses:
     - Sorry, I cannot answer your question. You may be able to find the information by [searching on GOV.UK](https://www.gov.uk/).<br /><br />If not, check [Freedom of Information (FOI) responses](https://www.gov.uk/search/transparency-and-freedom-of-information-releases?content_store_document_type=foi_release) to find out if your question has already been answered. You can also [make your own FOI request](https://www.gov.uk/make-a-freedom-of-information-request).
 
 greetings:
   label: "Greetings"
+  use_answer: false
   canned_responses:
     - Hi 👋 How can I help you?
     - How can I help you today?
@@ -32,16 +38,19 @@ greetings:
 
 harmful_vulgar_controversy:
   label: "Harmful, vulgar, controversy"
+  use_answer: false
   canned_responses:
     - I cannot answer that. If you have genuine questions that can be answered using GOV.UK guidance, I’d be happy to help.
 
 multi_questions:
   label: "Multi-questions"
+  use_answer: true
   canned_responses:
     - "I cannot answer that. Please try asking something else."
 
 negative_acknowledgement:
   label: "Negative acknowledgement"
+  use_answer: false
   canned_responses:
     - I’m sorry. You can try asking the question again. I can also answer other questions, if you have any.
     - I’m sorry. You can try rephrasing your question or ask something else.
@@ -51,16 +60,19 @@ negative_acknowledgement:
 
 non_english:
   label: "Non-English"
+  use_answer: false
   canned_responses:
     - Sorry, I cannot answer that. Please translate your question into English and try again.
 
 personal_info:
   label: "Personal information"
+  use_answer: false
   canned_responses:
     - I do not have access to any personal or confidential information. You can try searching for the [service you need on GOV.UK](https://www.gov.uk/search/services). Or ask me another question, if you need more help.
 
 positive_acknowledgement:
   label: "Positive acknowledgement"
+  use_answer: false
   canned_responses:
     - I’m happy to answer more questions, if you have any.
     - If there’s anything else you’d like to ask, I’m happy to assist.
@@ -70,5 +82,6 @@ positive_acknowledgement:
 
 vague_acronym_grammar:
   label: "Vague, acronym, grammar"
+  use_answer: true
   canned_responses:
     - "I cannot answer that. Please try asking something else."
