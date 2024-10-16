@@ -169,14 +169,14 @@ RSpec.describe "Admin::MetricsController" do
     end
 
     it "returns data of the question routing labels given to answers" do
-      create_list(:answer, 3, created_at: 3.days.ago, status: :abort_question_routing, question_routing_label: :content_not_govuk)
+      create_list(:answer, 3, created_at: 3.days.ago, status: :abort_question_routing, question_routing_label: :about_mps)
       create_list(:answer, 4, created_at: 3.days.ago, question_routing_label: :genuine_rag)
       create_list(:answer, 2, created_at: 3.days.ago, question_routing_label: nil)
 
       get admin_metrics_question_routing_labels_path
 
       expect(JSON.parse(response.body)).to contain_exactly(
-        { "name" => "content_not_govuk", "data" => counts_for_last_7_days(days_ago_3: 3) },
+        { "name" => "about_mps", "data" => counts_for_last_7_days(days_ago_3: 3) },
         { "name" => "genuine_rag", "data" => counts_for_last_7_days(days_ago_3: 4) },
       )
     end
