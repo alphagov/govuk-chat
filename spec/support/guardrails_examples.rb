@@ -55,7 +55,7 @@ module GuardrailsExamples
         expect { described_class.call(context) }.to throw_symbol(:abort)
         expect(context.answer).to have_attributes(
           message:,
-          status: "error_answer_guardrails",
+          status: "error_#{guardrail_name}",
           "#{guardrail_name}_status": "error",
           llm_responses: a_hash_including(guardrail_name => 'False | "1, 2"'),
         )
