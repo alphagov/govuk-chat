@@ -78,7 +78,6 @@ class Answer < ApplicationRecord
          about_mps: "about_mps",
          advice_opinions_predictions: "advice_opinions_predictions",
          character_fun: "character_fun",
-         content_not_govuk: "content_not_govuk",
          genuine_rag: "genuine_rag",
          gov_transparency: "gov_transparency",
          greetings: "greetings",

@@ -13,12 +13,6 @@ character_fun:
   canned_responses:
     - I cannot answer that. If you have genuine questions that can be answered using GOV.UK guidance, I'd be happy to help.
 
-content_not_govuk:
-  label: "Content not GOV.UK"
-  canned_responses:
-  # TODO - check with Dave S to see if we want different content for this
-    - "I cannot answer that. Please try asking something else."
-
 genuine_rag:
   label: "Genuine RAG"
 

@@ -51,15 +51,15 @@ RSpec.describe Answer do
     context "when grouped by answer_guardrails_failures and other groupings" do
       it "returns the count for each guardrail that failed" do
         create(:answer,
-               question_routing_label: "content_not_govuk",
+               question_routing_label: "about_mps",
                answer_guardrails_failures: %w[guardrail_1 guardrail_2],
                status: "success")
         create(:answer,
-               question_routing_label: "content_not_govuk",
+               question_routing_label: "about_mps",
                answer_guardrails_failures: %w[guardrail_1],
                status: "success")
         create(:answer,
-               question_routing_label: "content_not_govuk",
+               question_routing_label: "about_mps",
                answer_guardrails_failures: %w[guardrail_1],
                status: "abort_answer_guardrails")
         create(:answer,
@@ -81,9 +81,9 @@ RSpec.describe Answer do
                                 .count_answer_guardrails_failures
 
         expect(counts).to eq({
-          %w[content_not_govuk guardrail_1 success] => 2,
-          %w[content_not_govuk guardrail_1 abort_answer_guardrails] => 1,
-          %w[content_not_govuk guardrail_2 success] => 1,
+          %w[about_mps guardrail_1 success] => 2,
+          %w[about_mps guardrail_1 abort_answer_guardrails] => 1,
+          %w[about_mps guardrail_2 success] => 1,
           %w[genuine_rag guardrail_1 success] => 2,
           %w[genuine_rag guardrail_2 success] => 1,
         })
