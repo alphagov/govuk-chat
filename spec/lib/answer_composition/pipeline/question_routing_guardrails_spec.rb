@@ -4,16 +4,16 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
 
   before do
     context.answer.message = message
-    allow(Guardrails::FewShot).to receive(:call).and_return(few_shot_response)
+    allow(Guardrails::MultipleChecker).to receive(:call).and_return(guardrail_response)
   end
 
   context "when the guardrails are not triggered" do
-    let(:few_shot_response) { build(:output_guardrail_result, :pass) }
+    let(:guardrail_response) { build(:output_guardrail_result, :pass) }
 
     it_behaves_like "a passing guardrail pipeline step", "question_routing_guardrails"
 
     it "does nothing if the question routing label is 'geniune_rag'" do
-      expect(Guardrails::FewShot).not_to receive(:call)
+      expect(Guardrails::MultipleChecker).not_to receive(:call)
 
       context.answer.question_routing_label = "genuine_rag"
 
@@ -27,7 +27,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
   end
 
   context "when the guardrails are triggered" do
-    let(:few_shot_response) { build(:output_guardrail_result, :fail) }
+    let(:guardrail_response) { build(:output_guardrail_result, :fail) }
 
     it "sets the message on the answer" do
       described_class.call(context)

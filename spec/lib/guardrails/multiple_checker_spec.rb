@@ -1,4 +1,4 @@
-RSpec.describe Guardrails::FewShot do
+RSpec.describe Guardrails::MultipleChecker do
   let(:guardrail_mappings) { { "1" => "COSTS", "5" => "PERSONAL" } }
   let(:input) { "This is a test input." }
 

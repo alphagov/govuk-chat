@@ -1,5 +1,5 @@
 module Guardrails
-  class FewShot
+  class MultipleChecker
     Result = Data.define(:triggered, :guardrails, :llm_response, :llm_token_usage, :llm_guardrail_result)
     class ResponseError < StandardError
       attr_reader :llm_response, :llm_token_usage

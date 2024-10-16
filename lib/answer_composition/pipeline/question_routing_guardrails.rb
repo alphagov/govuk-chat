@@ -18,7 +18,7 @@ module AnswerComposition
           question_routing_guardrails_status: response.triggered ? :fail : :pass,
           metrics: { guardrail_name => build_metrics(start_time, response) },
         )
-      rescue ::Guardrails::FewShot::ResponseError => e
+      rescue ::Guardrails::MultipleChecker::ResponseError => e
         abort_after_response_error(e, start_time)
       end
     end

@@ -2,7 +2,7 @@ RSpec.describe "rake guardrails tasks" do
   describe "output_guardrails:evaluate_fewshot" do
     let(:task_name) { "output_guardrails:evaluate_fewshot" }
     let(:false_response) do
-      Guardrails::FewShot::Result.new(
+      Guardrails::MultipleChecker::Result.new(
         llm_response: llm_response_json("False | None"),
         llm_guardrail_result: "False | None",
         triggered: false,
@@ -11,7 +11,7 @@ RSpec.describe "rake guardrails tasks" do
       )
     end
     let(:true_response) do
-      Guardrails::FewShot::Result.new(
+      Guardrails::MultipleChecker::Result.new(
         llm_response: llm_response_json('True | "1"'),
         llm_guardrail_result: 'True | "1"',
         triggered: true,
@@ -19,11 +19,11 @@ RSpec.describe "rake guardrails tasks" do
         llm_token_usage: { "prompt_tokens" => 2000 },
       )
     end
-    let(:model_name) { Guardrails::FewShot::OPENAI_MODEL }
+    let(:model_name) { Guardrails::MultipleChecker::OPENAI_MODEL }
 
     before do
       Rake::Task[task_name].reenable
-      allow(Guardrails::FewShot).to receive(:call).and_return(false_response, true_response)
+      allow(Guardrails::MultipleChecker).to receive(:call).and_return(false_response, true_response)
     end
 
     context "when given an output path" do
@@ -47,7 +47,7 @@ RSpec.describe "rake guardrails tasks" do
           expect(first_example["actual"]).to eq(true_response.llm_guardrail_result)
 
           examples = CSV.read(Rails.root.join("lib/data/output_guardrails/fewshot_examples.csv"), headers: true).length
-          expect(Guardrails::FewShot).to have_received(:call).exactly(examples).times
+          expect(Guardrails::MultipleChecker).to have_received(:call).exactly(examples).times
         ensure
           temp.close
           temp.unlink

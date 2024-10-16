@@ -34,4 +34,4 @@ There is a rake task `guardrails:evaluate_fewshot` that will read a CSV and call
  ]
 }
 ```
-This is intended to be run whenever we change the prompts and few-shot examples so we know if we are improving the performance.
+This is intended to be run whenever we change the prompts and examples so we know if we are improving the performance.
