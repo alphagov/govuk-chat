@@ -33,6 +33,36 @@ RSpec.describe EarlyAccessUser do
     end
   end
 
+  describe ".aggregate_export_data" do
+    it "returns a hash of aggregated early user statistics created before a time" do
+      freeze_time do
+        create(:early_access_user, source: :admin_added)
+        create(:early_access_user, source: :admin_promoted)
+        create(:early_access_user, source: :instant_signup, revoked_at: Time.current)
+        create(:deleted_early_access_user, deletion_type: :unsubscribe)
+
+        two_minutes_ago = 2.minutes.ago
+        create(:early_access_user, source: :admin_added, created_at: two_minutes_ago)
+        2.times { create(:early_access_user, source: :admin_promoted, created_at: two_minutes_ago) }
+        create(:early_access_user, source: :instant_signup, revoked_at: two_minutes_ago, created_at: two_minutes_ago)
+        create(:deleted_early_access_user, deletion_type: :unsubscribe, created_at: two_minutes_ago)
+        2.times { create(:deleted_early_access_user, deletion_type: :admin, created_at: two_minutes_ago) }
+
+        until_date = 1.minute.ago
+        expect(described_class.aggregate_export_data(1.minute.ago)).to eq(
+          "exported_until" => until_date.as_json,
+          "admin_added" => 1,
+          "admin_promoted" => 2,
+          "delayed_signup" => 0,
+          "instant_signup" => 1,
+          "revoked" => 1,
+          "deleted_by_unsubscribe" => 1,
+          "deleted_by_admin" => 2,
+        )
+      end
+    end
+  end
+
   describe "#destroy_with_audit" do
     it "destroys a user while creating a DeletedEarlyAccessUser record" do
       instance = create(:early_access_user, login_count: 3)
