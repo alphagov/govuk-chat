@@ -41,7 +41,6 @@ class Answer < ApplicationRecord
     abort_answer_guardrails
     abort_forbidden_terms
     abort_jailbreak_guardrails
-    abort_output_guardrails
     abort_question_routing_guardrails
   ].freeze
 
@@ -58,7 +57,6 @@ class Answer < ApplicationRecord
          abort_jailbreak_guardrails: "abort_jailbreak_guardrails",
          abort_llm_cannot_answer: "abort_llm_cannot_answer",
          abort_no_govuk_content: "abort_no_govuk_content",
-         abort_output_guardrails: "abort_output_guardrails",
          abort_question_routing: "abort_question_routing",
          abort_question_routing_guardrails: "abort_question_routing_guardrails",
          abort_question_routing_token_limit: "abort_question_routing_token_limit",
@@ -66,7 +64,6 @@ class Answer < ApplicationRecord
          error_answer_guardrails: "error_answer_guardrails",
          error_context_length_exceeded: "error_context_length_exceeded",
          error_jailbreak_guardrails: "error_jailbreak_guardrails",
-         error_output_guardrails: "error_output_guardrails",
          error_non_specific: "error_non_specific",
          error_timeout: "error_timeout",
          error_question_routing: "error_question_routing",

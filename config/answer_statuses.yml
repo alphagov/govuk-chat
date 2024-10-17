@@ -28,10 +28,6 @@ abort_llm_cannot_answer:
   label_colour: "orange"
   description: "LLM couldn't answer the question"
   label_and_description: "Abort - LLM couldn't answer the question"
-abort_output_guardrails:
-  label: "Abort"
-  label_colour: "orange"
-  description: "output guardrails triggered"
   label_and_description: "Abort - output guardrails triggered"
 abort_no_govuk_content:
   label: "Abort"
@@ -73,11 +69,6 @@ error_jailbreak_guardrails:
   label_colour: "red"
   description: "invalid format from jailbreak guardrails LLM call"
   label_and_description: "Error - invalid format from jailbreak guardrails LLM call"
-error_output_guardrails:
-  label: "Error"
-  label_colour: "red"
-  description: "invalid format from output guardrails LLM call"
-  label_and_description: "Error - invalid format from output guardrails LLM call"
 error_non_specific:
   label: "Error"
   label_colour: "red"
