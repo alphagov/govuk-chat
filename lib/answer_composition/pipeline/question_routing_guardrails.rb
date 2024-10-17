@@ -19,7 +19,7 @@ module AnswerComposition
           metrics: { guardrail_name => build_metrics(start_time, response) },
         )
       rescue ::Guardrails::MultipleChecker::ResponseError => e
-        abort_after_response_error(e, start_time)
+        abort_after_response_error(e, start_time, Answer::CannedResponses::QUESTION_ROUTING_GUARDRAILS_FAILED_MESSAGE)
       end
     end
   end

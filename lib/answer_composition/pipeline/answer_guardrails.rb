@@ -6,7 +6,7 @@ module AnswerComposition
 
         if response.triggered
           context.abort_pipeline!(
-            message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
+            message: Answer::CannedResponses::ANSWER_GUARDRAILS_FAILED_MESSAGE,
             status: "abort_answer_guardrails",
             answer_guardrails_failures: response.guardrails,
             answer_guardrails_status: :fail,
@@ -17,7 +17,7 @@ module AnswerComposition
           context.answer.assign_metrics(guardrail_name, build_metrics(start_time, response))
         end
       rescue ::Guardrails::MultipleChecker::ResponseError => e
-        abort_after_response_error(e, start_time)
+        abort_after_response_error(e, start_time, Answer::CannedResponses::ANSWER_GUARDRAILS_FAILED_MESSAGE)
       end
     end
   end
