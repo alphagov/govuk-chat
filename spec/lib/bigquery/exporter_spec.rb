@@ -31,6 +31,43 @@ RSpec.describe Bigquery::Exporter do
       expect(last_export).to have_received(:with_lock)
     end
 
+    it "exports aggregate data on users by default" do
+      result = described_class.call
+
+      Bigquery::MODELS_WITH_AGGREGATE_STATS_TO_EXPORT.map(&:table_name).each do |table_name|
+        expect(dataset).to have_received(:load_job).with(table_name, any_args)
+      end
+      expect(result[:tables]).to match(questions: 0, answer_feedback: 0)
+    end
+
+    it "provides a JSON file with the correct object to the dataset to load in data for models with aggregate data" do
+      freeze_time do
+        described_class.call
+
+        expect(dataset).to have_received(:load_job).with("early_access_users", any_args) do |table_id, file, _config|
+          json_record = JSON.parse(file.readline.chomp)
+          expect(table_id).to eq("early_access_users")
+          expect(json_record).to match(
+            EarlyAccessUser.aggregate_export_data(Time.zone.now).stringify_keys,
+          )
+        end
+      end
+    end
+
+    it "configures the load_job appropriately" do
+      config = instance_double(Google::Cloud::Bigquery::LoadJob::Updater,
+                               "autodetect=": nil,
+                               "format=": nil,
+                               "schema_update_options=": nil)
+      allow(dataset).to receive(:load_job).and_yield(config).and_return(load_job)
+
+      described_class.call
+
+      expect(config).to have_received(:autodetect=).with(true).twice
+      expect(config).to have_received(:format=).with("json").twice
+      expect(config).to have_received(:schema_update_options=).with(%w[ALLOW_FIELD_ADDITION ALLOW_FIELD_RELAXATION]).twice
+    end
+
     it "returns a hash of the outcome of the task" do
       freeze_time do
         last_export = create(:bigquery_export, exported_until: 1.day.ago)
@@ -41,7 +78,7 @@ RSpec.describe Bigquery::Exporter do
       end
     end
 
-    context "when there is new data since the last export" do
+    context "when there is new TOP_LEVEL_MODELS_TO_EXPORT data since the last export" do
       let(:answer) { create(:answer, :with_sources, created_at: 2.days.ago) }
       let!(:question) { answer.question }
 
@@ -49,12 +86,11 @@ RSpec.describe Bigquery::Exporter do
         create(:bigquery_export, exported_until: 3.days.ago)
       end
 
-      it "provides a JSON file with the correct object to the dataset to load in data" do
+      it "provides a JSON file with the correct object to the dataset to load in data top level data models" do
         described_class.call
 
-        expect(dataset).to have_received(:load_job) do |table_id, file, _config|
+        expect(dataset).to have_received(:load_job).with("questions", any_args) do |table_id, file, _config|
           first_json_record = JSON.parse(file.readline.chomp)
-
           expect(table_id).to eq("questions")
           expect(first_json_record).to match(
             described_class.remove_nil_values(question.serialize_for_export),
@@ -66,9 +102,9 @@ RSpec.describe Bigquery::Exporter do
         create(:answer_feedback, answer:, created_at: 2.days.ago)
 
         result = described_class.call
-
-        expect(dataset).to have_received(:load_job).with("questions", any_args)
-        expect(dataset).to have_received(:load_job).with("answer_feedback", any_args)
+        Bigquery::TOP_LEVEL_MODELS_TO_EXPORT.map(&:table_name).each do |table_name|
+          expect(dataset).to have_received(:load_job).with(table_name, any_args)
+        end
         expect(result[:tables]).to match(questions: 1, answer_feedback: 1)
       end
 
@@ -77,36 +113,27 @@ RSpec.describe Bigquery::Exporter do
 
         described_class.call
 
-        expect(dataset).to have_received(:load_job) do |_, file, _config|
+        expect(dataset).to have_received(:load_job).with("questions", any_args) do |_table_id, file, _config|
           first_json_record = JSON.parse(file.readline.chomp)
           answer_json = first_json_record["answer"]
           expect(answer_json.keys).not_to include("question_routing_confidence_score")
         end
       end
-
-      it "configures the load_job appropriately" do
-        config = instance_double(Google::Cloud::Bigquery::LoadJob::Updater,
-                                 "autodetect=": nil,
-                                 "format=": nil,
-                                 "schema_update_options=": nil)
-        allow(dataset).to receive(:load_job).and_yield(config).and_return(load_job)
-
-        described_class.call
-
-        expect(config).to have_received(:autodetect=).with(true)
-        expect(config).to have_received(:format=).with("json")
-        expect(config).to have_received(:schema_update_options=).with(%w[ALLOW_FIELD_ADDITION ALLOW_FIELD_RELAXATION])
-      end
     end
 
-    context "when there is no new data since the last export" do
-      it "does not call load_job" do
+    context "when there is no new data for for top level data models since the last export" do
+      it "doesn't pass any data for top level models" do
         create(:bigquery_export, exported_until: 1.day.ago)
         create(:answer, created_at: 2.days.ago)
 
         result = described_class.call
 
-        expect(dataset).not_to have_received(:load_job)
+        Bigquery::MODELS_WITH_AGGREGATE_STATS_TO_EXPORT.map(&:table_name).each do |table_name|
+          expect(dataset).to have_received(:load_job).with(table_name, any_args)
+        end
+        Bigquery::TOP_LEVEL_MODELS_TO_EXPORT.map(&:table_name).each do |table_name|
+          expect(dataset).not_to have_received(:load_job).with(table_name, any_args)
+        end
         expect(result[:tables]).to match(questions: 0, answer_feedback: 0)
       end
     end
@@ -133,8 +160,9 @@ RSpec.describe Bigquery::Exporter do
       it "creates the appropriate tables" do
         described_class.call
 
-        expect(dataset).to have_received(:create_table).with("questions")
-        expect(dataset).to have_received(:create_table).with("answer_feedback")
+        Bigquery::MODELS_WITH_AGGREGATE_STATS_TO_EXPORT + Bigquery::TOP_LEVEL_MODELS_TO_EXPORT.map(&:table_name).each do |table_name|
+          expect(dataset).to have_received(:create_table).with(table_name)
+        end
       end
 
       it "configures the created tables appropriately" do
@@ -143,10 +171,10 @@ RSpec.describe Bigquery::Exporter do
 
         described_class.call
 
-        expect(schema).to have_received(:timestamp).with("created_at", { mode: :required }).exactly(2).times
-        expect(table).to have_received(:time_partitioning_type=).with("DAY").exactly(2).times
-        expect(table).to have_received(:time_partitioning_field=).with("created_at").exactly(2).times
-        expect(table).to have_received(:time_partitioning_expiration=).with(1.year.to_i).exactly(2).times
+        expect(schema).to have_received(:timestamp).with("created_at", { mode: :required }).exactly(4).times
+        expect(table).to have_received(:time_partitioning_type=).with("DAY").exactly(4).times
+        expect(table).to have_received(:time_partitioning_field=).with("created_at").exactly(4).times
+        expect(table).to have_received(:time_partitioning_expiration=).with(1.year.to_i).exactly(4).times
       end
     end
 

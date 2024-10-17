@@ -51,6 +51,13 @@ module Bigquery
         tempfile = save_tables_to_json(self.class.remove_nil_values(records_to_export))
         upload_to_bigquery(tempfile, table_id)
       end
+
+      MODELS_WITH_AGGREGATE_STATS_TO_EXPORT.each do |model|
+        table_id = model.table_name
+        json_to_export = model.aggregate_export_data(export_until)
+        tempfile = save_tables_to_json([json_to_export])
+        upload_to_bigquery(tempfile, table_id)
+      end
       exported_records
     end
 
