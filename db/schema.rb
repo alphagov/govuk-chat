@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_18_083806) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_18_083807) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -22,7 +22,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_18_083806) do
   create_enum "deleted_waiting_list_user_deletion_type", ["unsubscribe", "admin", "promotion"]
   create_enum "early_access_user_source", ["admin_added", "instant_signup", "admin_promoted", "delayed_signup"]
   create_enum "guardrails_status", ["pass", "fail", "error"]
-  create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "content_not_govuk", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar"]
+  create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar"]
   create_enum "settings_downtime_type", ["temporary", "permanent"]
   create_enum "status", ["success", "error_non_specific", "error_answer_service_error", "error_context_length_exceeded", "abort_no_govuk_content", "abort_llm_cannot_answer", "abort_question_routing", "error_question_routing", "error_timeout", "abort_forbidden_terms", "abort_jailbreak_guardrails", "error_jailbreak_guardrails", "abort_answer_guardrails", "error_answer_guardrails", "abort_question_routing_token_limit", "abort_question_routing_guardrails", "error_question_routing_guardrails"]
   create_enum "ur_question_reason_for_visit", ["find_specific_answer", "complete_task", "understand_process", "research_topic", "other"]
