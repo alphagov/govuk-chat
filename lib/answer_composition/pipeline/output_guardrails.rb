@@ -33,9 +33,9 @@ module AnswerComposition
         self.class.name.split("::").last.underscore
       end
 
-      def abort_after_response_error(error, start_time)
+      def abort_after_response_error(error, start_time, message)
         context.abort_pipeline!(
-          message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
+          message:,
           status: "error_#{guardrail_name}",
           "#{guardrail_name}_status": :error,
           metrics: { guardrail_name => build_metrics(start_time, error) },

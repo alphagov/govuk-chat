@@ -28,7 +28,7 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
 
       expect(context.answer).to have_attributes(
         status: "abort_answer_guardrails",
-        message: Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE,
+        message: Answer::CannedResponses::ANSWER_GUARDRAILS_FAILED_MESSAGE,
         answer_guardrails_status: "fail",
         answer_guardrails_failures: %w[political],
       )
@@ -52,5 +52,5 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
     end
   end
 
-  it_behaves_like "an erroring guardrail pipeline step", "answer_guardrails", Answer::CannedResponses::GUARDRAILS_FAILED_MESSAGE
+  it_behaves_like "an erroring guardrail pipeline step", "answer_guardrails", Answer::CannedResponses::ANSWER_GUARDRAILS_FAILED_MESSAGE
 end

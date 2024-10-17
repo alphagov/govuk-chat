@@ -17,15 +17,21 @@ class Answer < ApplicationRecord
 
       We saved your conversation. Check [GOV.UK guidance for businesses](https://www.gov.uk/browse/business) if you need information now.
     MESSAGE
-    GUARDRAILS_FAILED_MESSAGE = <<~MESSAGE.freeze
+    ANSWER_GUARDRAILS_FAILED_MESSAGE = <<~MESSAGE.freeze
       I generated an answer to your question, but it does not meet the GOV.UK Chat content guidelines. This might be because it contains unclear or misleading information, or offers advice about money or your personal circumstances.
 
       Please try asking about something else or rephrasing your question.
     MESSAGE
     JAILBREAK_GUARDRAILS_FAILED_MESSAGE = "I cannot answer that. Please try asking something else.".freeze
-    QUESTION_ROUTING_GUARDRAILS_FAILED_MESSAGE = GUARDRAILS_FAILED_MESSAGE
+    QUESTION_ROUTING_GUARDRAILS_FAILED_MESSAGE = <<~MESSAGE.freeze
+      I generated an answer to your question, but it does not meet the GOV.UK Chat content guidelines.
+
+      This could be because it contains misleading or inappropriate information, or offers advice about money or your personal circumstances.
+
+      Please try asking something else.
+    MESSAGE
     LLM_CANNOT_ANSWER_MESSAGE = "Sorry, I cannot answer that question.".freeze
-    FORBIDDEN_TERMS_MESSAGE = GUARDRAILS_FAILED_MESSAGE
+    FORBIDDEN_TERMS_MESSAGE = ANSWER_GUARDRAILS_FAILED_MESSAGE
 
     def self.response_for_question_routing_label(label)
       canned_responses = Rails.configuration.question_routing_labels.dig(label, :canned_responses)
