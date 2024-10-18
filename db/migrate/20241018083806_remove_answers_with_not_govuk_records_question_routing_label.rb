@@ -1,8 +1,13 @@
 class RemoveAnswersWithNotGovukRecordsQuestionRoutingLabel < ActiveRecord::Migration[7.2]
+  class Answer < ApplicationRecord
+    enum :question_routing_label,
+         {
+           content_not_govuk: "content_not_govuk",
+         }
+  end
+
   def up
-    if Answer.question_routing_labels.keys.include?("content_not_govuk")
-      Answer.where(question_routing_label: :content_not_govuk).destroy_all
-    end
+    Answer.where(question_routing_label: :content_not_govuk).destroy_all
   end
 
   def down
