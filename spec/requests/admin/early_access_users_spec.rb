@@ -33,6 +33,32 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         .to have_link("alice@example.com", href: admin_early_access_user_path(user))
     end
 
+    it "does not link to a user's questions if they have 0 questions" do
+      create(:early_access_user, email: "alice@example.com")
+
+      get admin_early_access_users_path
+
+      expect(response.body).to have_selector(".govuk-table__cell", exact_text: "0")
+    end
+
+    it "links to a user's questions without a total if they have no question limit" do
+      user = create(:early_access_user, email: "alice@example.com", questions_count: 5, individual_question_limit: 0)
+
+      get admin_early_access_users_path
+
+      expect(response.body).to have_link("5", href: admin_questions_path(user_id: user.id))
+      expect(response.body).to have_selector(".govuk-table__cell", exact_text: "5")
+    end
+
+    it "links to a user's questions with a total if they have a fixed question limit" do
+      user = create(:early_access_user, email: "alice@example.com", questions_count: 5, individual_question_limit: 70)
+
+      get admin_early_access_users_path
+
+      expect(response.body).to have_link("5", href: admin_questions_path(user_id: user.id))
+      expect(response.body).to have_selector(".govuk-table__cell", exact_text: "5/70")
+    end
+
     context "when there are multiple pages of users" do
       before do
         create_list(:early_access_user, 26)
