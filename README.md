@@ -1,8 +1,6 @@
 # GOV.UK Chat
 
-**⚠️ Experimental application in early stages of development ⚠️**
-
-A web application that provides a [LLM](https://en.wikipedia.org/wiki/Large_language_model) powered chat experience based on GOV.UK content.
+A web application that provides a [LLM](https://en.wikipedia.org/wiki/Large_language_model) powered chat experience based on GOV.UK content. Initially launched as a beta with limited user access.
 
 ## Nomenclature
 
@@ -11,6 +9,11 @@ A web application that provides a [LLM](https://en.wikipedia.org/wiki/Large_lang
 - Source - a reference to a chunk of GOV.UK content that was used as the supporting content for an Answer
 - Conversation - a collection of questions and answers that represent a user's particular interaction with this application
 - Chunk - a portion of a GOV.UK Content Item, which tends to be of the granularity of a particular heading and related content
+- Early access user - a user that has access to use chat during the beta
+- Waiting list user - a user that can't authenticate to the system and is waiting to be promoted to an Early access user
+- Admin user - a user, authenticated by [signon](https://github.com/alphagov/signon), that can administer chat
+- Instant access places - the number of available slots for users to register as Early access users
+- Delayed access places - the number of available slots for waiting list users to be promoted to Early access users
 
 ## Technical documentation
 
