@@ -105,14 +105,41 @@ RSpec.describe EarlyAccessUser do
     end
   end
 
+  describe "#question_limit" do
+    context "when a user doesn't have an individual question limit" do
+      let(:user) { build(:early_access_user, individual_question_limit: nil) }
+
+      it "returns the max_questions_per_user config variable" do
+        expect(user.question_limit)
+          .to eq(Rails.configuration.conversations.max_questions_per_user)
+      end
+    end
+
+    context "when a user has an individual question limit" do
+      let(:user) { build(:early_access_user, individual_question_limit: 100) }
+
+      it "returns the configured limit" do
+        expect(user.question_limit).to eq(100)
+      end
+    end
+
+    context "when a user has unlimited questions" do
+      let(:user) { build(:early_access_user, individual_question_limit: 0) }
+
+      it "returns 0" do
+        expect(user.question_limit).to eq(0)
+      end
+    end
+  end
+
   describe "#question_limit_reached?" do
     it "returns false if the the question limit is zero" do
-      user = build(:early_access_user, question_limit: 0)
+      user = build(:early_access_user, individual_question_limit: 0)
       expect(user.question_limit_reached?).to be(false)
     end
 
-    context "when the question_limit is nil" do
-      let(:user) { build(:early_access_user, question_limit: nil, questions_count: 5) }
+    context "when an individual_question_limit is not set" do
+      let(:user) { build(:early_access_user, individual_question_limit: nil, questions_count: 5) }
 
       it "returns false if the question count is less than the default" do
         allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(10)
@@ -130,39 +157,39 @@ RSpec.describe EarlyAccessUser do
       end
     end
 
-    context "when the question_limit is not nil" do
+    context "when the individual_question_limit is not nil" do
       it "returns false if the question count is less than the limit" do
-        user = build(:early_access_user, question_limit: 10, questions_count: 5)
+        user = build(:early_access_user, individual_question_limit: 10, questions_count: 5)
         expect(user.question_limit_reached?).to be(false)
       end
 
       it "returns true if the question count equals the limit" do
-        user = build(:early_access_user, question_limit: 5, questions_count: 5)
+        user = build(:early_access_user, individual_question_limit: 5, questions_count: 5)
         expect(user.question_limit_reached?).to be(true)
       end
 
       it "returns true if the question count exceeds the limit" do
-        user = build(:early_access_user, question_limit: 5, questions_count: 10)
+        user = build(:early_access_user, individual_question_limit: 5, questions_count: 10)
         expect(user.question_limit_reached?).to be(true)
       end
     end
   end
 
   describe "#unlimited_question_allowance?" do
-    context "when the question limit is present" do
-      it "returns true if the question limit is zero" do
-        user = build(:early_access_user, question_limit: 0)
+    context "when the individual question limit is present" do
+      it "returns true if the individual question limit is zero" do
+        user = build(:early_access_user, individual_question_limit: 0)
         expect(user.unlimited_question_allowance?).to be(true)
       end
 
       it "returns false if the question limit is not zero" do
-        user = build(:early_access_user, question_limit: 5)
+        user = build(:early_access_user, individual_question_limit: 5)
         expect(user.unlimited_question_allowance?).to be(false)
       end
     end
 
-    context "when the question limit is nil" do
-      let(:user) { build(:early_access_user, question_limit: nil) }
+    context "when the individual question limit is nil" do
+      let(:user) { build(:early_access_user, individual_question_limit: nil) }
 
       it "returns true if the globally configured limit is zero" do
         allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(0)
@@ -178,26 +205,26 @@ RSpec.describe EarlyAccessUser do
 
   describe "#number_of_questions_remaining" do
     it "raises an error if the user has an unlimited question allowance" do
-      user = build(:early_access_user, question_limit: 0)
+      user = build(:early_access_user, individual_question_limit: 0)
       expect { user.number_of_questions_remaining }.to raise_error(RuntimeError, "User has unlimited questions allowance")
     end
 
     it "returns the number of questions remaining if the question limit is not nil" do
-      user = build(:early_access_user, question_limit: 20, questions_count: 2)
+      user = build(:early_access_user, individual_question_limit: 20, questions_count: 2)
       expect(user.number_of_questions_remaining).to eq(18)
     end
 
-    it "returns the number of questions remaining if the question limit is nil" do
+    it "returns the number of questions remaining if the individual question limit is nil" do
       allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(50)
 
-      user = build(:early_access_user, question_limit: nil, questions_count: 10)
+      user = build(:early_access_user, individual_question_limit: nil, questions_count: 10)
       expect(user.number_of_questions_remaining).to eq(40)
     end
 
     it "caps the number of questions remaining at 0" do
       allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(50)
 
-      user = build(:early_access_user, question_limit: nil, questions_count: 100)
+      user = build(:early_access_user, individual_question_limit: nil, questions_count: 100)
       expect(user.number_of_questions_remaining).to eq(0)
     end
   end

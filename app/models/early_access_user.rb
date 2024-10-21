@@ -57,6 +57,10 @@ class EarlyAccessUser < ApplicationRecord
       .delete_all
   end
 
+  def question_limit
+    individual_question_limit || Rails.configuration.conversations.max_questions_per_user
+  end
+
   def question_limit_reached?
     return false if unlimited_question_allowance?
 
@@ -66,12 +70,10 @@ class EarlyAccessUser < ApplicationRecord
   def number_of_questions_remaining
     raise "User has unlimited questions allowance" if unlimited_question_allowance?
 
-    limit = question_limit || Rails.configuration.conversations.max_questions_per_user
-    [limit - questions_count, 0].max
+    [question_limit - questions_count, 0].max
   end
 
   def unlimited_question_allowance?
-    limit = question_limit || Rails.configuration.conversations.max_questions_per_user
-    limit.zero?
+    question_limit.zero?
   end
 end
