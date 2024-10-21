@@ -30,7 +30,7 @@ class Answer < ApplicationRecord
 
       Please try asking something else.
     MESSAGE
-    LLM_CANNOT_ANSWER_MESSAGE = "Sorry, I cannot answer that question.".freeze
+    LLM_CANNOT_ANSWER_MESSAGE = "Sorry, I cannot find anything on GOV.UK to help me answer your question. Please try asking a different question.".freeze
     FORBIDDEN_TERMS_MESSAGE = ANSWER_GUARDRAILS_FAILED_MESSAGE
 
     def self.response_for_question_routing_label(label)
