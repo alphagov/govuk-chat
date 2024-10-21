@@ -203,29 +203,29 @@ RSpec.describe EarlyAccessUser do
     end
   end
 
-  describe "#number_of_questions_remaining" do
+  describe "#questions_remaining" do
     it "raises an error if the user has an unlimited question allowance" do
       user = build(:early_access_user, individual_question_limit: 0)
-      expect { user.number_of_questions_remaining }.to raise_error(RuntimeError, "User has unlimited questions allowance")
+      expect { user.questions_remaining }.to raise_error(RuntimeError, "User has unlimited questions allowance")
     end
 
     it "returns the number of questions remaining if the question limit is not nil" do
       user = build(:early_access_user, individual_question_limit: 20, questions_count: 2)
-      expect(user.number_of_questions_remaining).to eq(18)
+      expect(user.questions_remaining).to eq(18)
     end
 
     it "returns the number of questions remaining if the individual question limit is nil" do
       allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(50)
 
       user = build(:early_access_user, individual_question_limit: nil, questions_count: 10)
-      expect(user.number_of_questions_remaining).to eq(40)
+      expect(user.questions_remaining).to eq(40)
     end
 
     it "caps the number of questions remaining at 0" do
       allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(50)
 
       user = build(:early_access_user, individual_question_limit: nil, questions_count: 100)
-      expect(user.number_of_questions_remaining).to eq(0)
+      expect(user.questions_remaining).to eq(0)
     end
   end
 end

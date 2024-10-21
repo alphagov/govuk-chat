@@ -64,10 +64,10 @@ class EarlyAccessUser < ApplicationRecord
   def question_limit_reached?
     return false if unlimited_question_allowance?
 
-    number_of_questions_remaining <= 0
+    questions_remaining <= 0
   end
 
-  def number_of_questions_remaining
+  def questions_remaining
     raise "User has unlimited questions allowance" if unlimited_question_allowance?
 
     [question_limit - questions_count, 0].max
