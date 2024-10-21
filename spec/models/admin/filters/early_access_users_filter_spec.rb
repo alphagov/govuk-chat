@@ -91,6 +91,17 @@ RSpec.describe Admin::Filters::EarlyAccessUsersFilter do
       filter = described_class.new(revoked: "false")
       expect(filter.results).to eq([active_user])
     end
+
+    it "filters by question limit status" do
+      user_at_question_limit = create(:early_access_user, questions_count: 10, individual_question_limit: 10)
+      user_not_at_question_limit = create(:early_access_user, questions_count: 1, individual_question_limit: 10)
+
+      filter = described_class.new(at_question_limit: "true")
+      expect(filter.results).to eq([user_at_question_limit])
+
+      filter = described_class.new(at_question_limit: "false")
+      expect(filter.results).to eq([user_not_at_question_limit])
+    end
   end
 
   it_behaves_like "a paginatable filter", :early_access_user

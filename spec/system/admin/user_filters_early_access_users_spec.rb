@@ -22,12 +22,16 @@ RSpec.describe "Admin user filters early access users" do
     when_i_clear_the_filters
     and_i_filter_by_revoked
     then_i_see_the_revoked_user
+
+    when_i_clear_the_filters
+    and_i_filter_by_at_question_limit
+    then_i_see_the_user_at_their_question_limit
   end
 
   def and_there_are_early_access_users
-    create(:early_access_user, email: "alice@example.com", last_login_at: 1.minute.ago, source: :instant_signup)
-    create(:early_access_user, email: "betty@example.com", last_login_at: nil, source: :admin_added, revoked_at: nil)
-    create(:early_access_user, email: "clive@example.com", last_login_at: 1.hour.ago, source: :instant_signup, revoked_at: 1.minute.ago)
+    create(:early_access_user, email: "alice@example.com", last_login_at: 1.minute.ago, source: :instant_signup, questions_count: 70, question_limit: nil)
+    create(:early_access_user, email: "betty@example.com", last_login_at: nil, source: :admin_added, revoked_at: nil, questions_count: 70, question_limit: 0)
+    create(:early_access_user, email: "clive@example.com", last_login_at: 1.hour.ago, source: :instant_signup, revoked_at: 1.minute.ago, questions_count: 3, question_limit: nil)
   end
 
   def when_i_visit_the_admin_area
@@ -81,6 +85,11 @@ RSpec.describe "Admin user filters early access users" do
     click_button "Filter"
   end
 
+  def and_i_filter_by_at_question_limit
+    select "Yes", from: "at_question_limit"
+    click_button "Filter"
+  end
+
   def then_i_see_the_admin_added_user
     within(".govuk-table") do
       expect(page).to have_content("betty@example.com")
@@ -93,6 +102,14 @@ RSpec.describe "Admin user filters early access users" do
     within(".govuk-table") do
       expect(page).to have_content("clive@example.com")
       expect(page).not_to have_content("alice@example.com")
+      expect(page).not_to have_content("betty@example.com")
+    end
+  end
+
+  def then_i_see_the_user_at_their_question_limit
+    within(".govuk-table") do
+      expect(page).to have_content("alice@example.com")
+      expect(page).not_to have_content("clive@example.com")
       expect(page).not_to have_content("betty@example.com")
     end
   end

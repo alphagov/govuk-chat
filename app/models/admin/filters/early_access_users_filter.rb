@@ -2,6 +2,7 @@ class Admin::Filters::EarlyAccessUsersFilter < Admin::Filters::BaseFilter
   attribute :email
   attribute :source
   attribute :revoked, :boolean
+  attribute :at_question_limit, :boolean
 
   def self.default_sort
     "-last_login_at"
@@ -17,6 +18,7 @@ class Admin::Filters::EarlyAccessUsersFilter < Admin::Filters::BaseFilter
       scope = email_scope(scope)
       scope = source_scope(scope)
       scope = revoked_scope(scope)
+      scope = question_limit_scope(scope)
       scope = ordering_scope(scope)
       scope.page(page).per(25)
     end
@@ -43,6 +45,12 @@ private
     return scope if revoked.nil?
 
     revoked ? scope.where.not(revoked_at: nil) : scope.where(revoked_at: nil)
+  end
+
+  def question_limit_scope(scope)
+    return scope if at_question_limit.nil?
+
+    at_question_limit ? scope.at_question_limit : scope.within_question_limit
   end
 
   def ordering_scope(scope)

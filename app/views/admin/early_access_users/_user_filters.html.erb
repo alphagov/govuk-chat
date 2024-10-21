@@ -49,6 +49,30 @@
     ],
   } %>
 
+  <%= render "govuk_publishing_components/components/select", {
+    id: "at_question_limit",
+    name: "at_question_limit",
+    label: "At Question Limit",
+    heading_size: "s",
+    full_width: true,
+    options: [
+      {
+        text: "",
+        value: "",
+      },
+      {
+        text: "Yes",
+        value: "true",
+        selected: params[:at_question_limit] == "true",
+      },
+      {
+        text: "No",
+        value: "false",
+        selected: params[:at_question_limit] == "false",
+      },
+    ],
+  } %>
+
   <%= render "govuk_publishing_components/components/button", {
     text: "Filter",
     margin_bottom: true,
