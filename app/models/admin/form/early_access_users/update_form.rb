@@ -16,12 +16,12 @@ class Admin::Form::EarlyAccessUsers::UpdateForm
   def submit
     validate!
 
-    limit = question_limit
+    individual_question_limit = question_limit
 
     if question_limit.present? && question_limit == Rails.configuration.conversations.max_questions_per_user
-      limit = nil
+      individual_question_limit = nil
     end
 
-    user.update!(question_limit: limit)
+    user.update!(individual_question_limit:)
   end
 end

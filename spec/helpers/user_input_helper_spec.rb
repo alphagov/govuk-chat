@@ -31,7 +31,7 @@ RSpec.describe UserInputHelper do
     end
 
     it "is nil if the user can ask an unlimited number of questions" do
-      user = build(:early_access_user, question_limit: 0)
+      user = build(:early_access_user, individual_question_limit: 0)
 
       expect(helper.remaining_questions_copy(user)).to be_nil
     end

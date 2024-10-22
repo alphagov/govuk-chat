@@ -16,22 +16,22 @@ RSpec.describe Admin::Form::EarlyAccessUsers::UpdateForm do
     end
 
     context "when updating the question limit" do
-      let(:user) { create(:early_access_user, question_limit: 5) }
+      let(:user) { create(:early_access_user, individual_question_limit: 5) }
 
       it "sets the value to null if the question limit matches the default" do
         allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(10)
         form = described_class.new(user:, question_limit: 10)
-        expect { form.submit }.to change(user, :question_limit).from(5).to(nil)
+        expect { form.submit }.to change(user, :individual_question_limit).from(5).to(nil)
       end
 
       it "sets the value to null if the question limit is blank" do
         form = described_class.new(user:, question_limit: nil)
-        expect { form.submit }.to change(user, :question_limit).from(5).to(nil)
+        expect { form.submit }.to change(user, :individual_question_limit).from(5).to(nil)
       end
 
       it "sets the value to the value specified" do
         form = described_class.new(user:, question_limit: 10)
-        expect { form.submit }.to change(user, :question_limit).from(5).to(10)
+        expect { form.submit }.to change(user, :individual_question_limit).from(5).to(10)
       end
     end
   end

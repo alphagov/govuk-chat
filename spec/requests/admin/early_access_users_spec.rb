@@ -233,7 +233,7 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         user_description: :business_owner_or_self_employed,
         reason_for_visit: :find_specific_answer,
         revoked_at: nil,
-        question_limit: 0,
+        individual_question_limit: 0,
         questions_count: 7,
       )
 
@@ -314,7 +314,7 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
     end
 
     it "renders the input field with the default value if is is null" do
-      user = create(:early_access_user, question_limit: nil)
+      user = create(:early_access_user, individual_question_limit: nil)
       get edit_admin_early_access_user_path(user)
 
       default_limit = Rails.configuration.conversations.max_questions_per_user
@@ -326,7 +326,7 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
 
   describe "PATCH :update" do
     it "updates the user and redirects" do
-      user = create(:early_access_user, question_limit: 2)
+      user = create(:early_access_user, individual_question_limit: 2)
 
       patch admin_early_access_user_path(user),
             params: {
@@ -336,7 +336,7 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
             }
 
       expect(user.reload).to have_attributes(
-        question_limit: 3,
+        individual_question_limit: 3,
       )
 
       expect(response).to redirect_to(admin_early_access_user_path(user))

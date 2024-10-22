@@ -29,7 +29,7 @@ class Admin::EarlyAccessUsersController < Admin::BaseController
     @user = EarlyAccessUser.find(params[:id])
     @form = Admin::Form::EarlyAccessUsers::UpdateForm.new(
       user: @user,
-      question_limit: @user.question_limit,
+      question_limit: @user.individual_question_limit,
     )
   end
 
