@@ -5,9 +5,9 @@ module Bigquery
     def self.remove_nil_values(json)
       case json
       when Array
-        json.map { |el| remove_nil_values(el) }.compact
+        json.map { |el| remove_nil_values(el) }.compact.presence
       when Hash
-        json.transform_values { |v| remove_nil_values(v) }.compact
+        json.transform_values { |v| remove_nil_values(v) }.compact.presence
       else
         json
       end
