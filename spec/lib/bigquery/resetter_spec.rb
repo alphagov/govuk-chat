@@ -17,13 +17,14 @@ RSpec.describe Bigquery::Resetter do
 
       it "deletes all tables in bigquery" do
         described_class.call
-        Bigquery::TOP_LEVEL_MODELS_TO_EXPORT.each do |model|
+        models = Bigquery::TOP_LEVEL_MODELS_TO_EXPORT + Bigquery::MODELS_WITH_AGGREGATE_STATS_TO_EXPORT
+        models.each do |model|
           table_name = model.table_name
 
           expect(dataset).to have_received(:table).with(table_name)
           expect(dataset.table(table_name))
             .to have_received(:delete)
-            .exactly(Bigquery::TOP_LEVEL_MODELS_TO_EXPORT.size).times
+            .exactly(models.size).times
         end
       end
     end

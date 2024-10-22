@@ -11,7 +11,7 @@ module Bigquery
     end
 
     def call
-      TOP_LEVEL_MODELS_TO_EXPORT.each do |model|
+      (TOP_LEVEL_MODELS_TO_EXPORT + MODELS_WITH_AGGREGATE_STATS_TO_EXPORT).each do |model|
         table_id = model.table_name
 
         dataset.table(table_id)&.delete
