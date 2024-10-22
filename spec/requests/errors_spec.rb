@@ -25,6 +25,10 @@ RSpec.describe "ErrorController" do
     it_behaves_like "an error response", 422, :unprocessable_entity, "Sorry, there is a problem"
   end
 
+  describe "/429" do
+    it_behaves_like "an error response", 429, :too_many_requests, "Sorry, there is a problem"
+  end
+
   describe "/500" do
     it_behaves_like "an error response", 500, :internal_server_error, "Sorry, there is a problem with GOV.UK Chat"
   end

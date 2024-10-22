@@ -20,6 +20,10 @@ class ErrorsController < BaseController
     render status: :unprocessable_entity, formats: :html
   end
 
+  def too_many_requests
+    render status: :too_many_requests, formats: :html
+  end
+
   def internal_server_error
     render status: :internal_server_error, formats: :html
   end
