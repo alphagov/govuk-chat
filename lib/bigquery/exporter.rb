@@ -67,7 +67,7 @@ module Bigquery
     end
 
     def smart_survey_json
-      response_count = JSON.parse(smart_survey_response.body)["responses"]
+      response_count = smart_survey_response.body["responses"]
 
       {
         "exported_until" => Time.current.as_json,
@@ -77,13 +77,17 @@ module Bigquery
 
     def smart_survey_response
       smary_survey_config = Rails.application.config.smart_survey
+
       conn = Faraday.new(
         url: "https://api.smartsurvey.io/v1/surveys/#{smary_survey_config.survey_id}",
         headers: {
-          "Content-Type" => "application/json",
           "Accept" => "application/json",
         },
-      )
+      ) do |faraday|
+        faraday.response :json
+        faraday.response :raise_error
+      end
+
       conn.set_basic_auth(smary_survey_config.api_key, smary_survey_config.api_key_secret)
       conn.get
     end

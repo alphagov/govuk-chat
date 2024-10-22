@@ -128,6 +128,29 @@ RSpec.describe Bigquery::Exporter do
       end
     end
 
+    context "when the Smart Survey API request fails" do
+      before do
+        stub_smart_survey_request(status: 500)
+      end
+
+      it "raises an error" do
+        expect { described_class.call }.to raise_error(Faraday::Error)
+      end
+
+      it "doesn't create a BigQueryExport record" do
+        create(:bigquery_export, exported_until: 1.day.ago)
+
+        expect { described_class.call }
+          .to raise_error(Faraday::Error)
+          .and(not_change { BigqueryExport.count })
+      end
+
+      it "doesn't call the uploader" do
+        expect { described_class.call }.to raise_error(Faraday::Error)
+        expect(Bigquery::Uploader).not_to have_received(:call)
+      end
+    end
+
     context "when there is new TOP_LEVEL_MODELS_TO_EXPORT data since the last export" do
       let(:answer) { create(:answer, :with_sources, created_at: 2.days.ago) }
       let!(:question) { answer.question }
@@ -206,7 +229,7 @@ RSpec.describe Bigquery::Exporter do
     end
   end
 
-  def stub_smart_survey_request
+  def stub_smart_survey_request(status: 200)
     stub_request(:get, "https://api.smartsurvey.io/v1/surveys/12345")
       .with(
         headers: {
@@ -215,9 +238,10 @@ RSpec.describe Bigquery::Exporter do
         },
       )
       .to_return_json(
+        status:,
         body: {
           responses: 1,
-        }.to_json,
+        },
       )
   end
 end
