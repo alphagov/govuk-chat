@@ -52,6 +52,14 @@ RSpec.describe Bigquery::Exporter do
   describe ".call" do
     before do
       allow(Bigquery::Uploader).to receive(:call)
+      allow(Rails.configuration).to receive(:smart_survey).and_return(
+        Hashie::Mash.new(
+          survey_id: "12345",
+          api_key: "test_smart_survey_username",
+          api_key_secret: "test_smart_survey_password",
+        ),
+      )
+      stub_smart_survey_request
     end
 
     it "creates a BigQueryExport record" do
@@ -61,7 +69,7 @@ RSpec.describe Bigquery::Exporter do
       end
     end
 
-    it "calls Bigquery::Uploader with a model and tempfile with the correct JSON for each aggregate statistics model" do
+    it "calls Bigquery::Uploader with the correct values for the default aggregate statistics tables" do
       freeze_time do
         described_class.call
 
@@ -71,7 +79,7 @@ RSpec.describe Bigquery::Exporter do
             kind_of(Tempfile),
             time_partitioning_field: "exported_until",
           ) do |_table_id, file, _time_partioning_field|
-            json_record = JSON.parse(file.readline.chomp)
+            json_record = JSON.parse(file.readline)
             expect(json_record).to match(
               EarlyAccessUser.aggregate_export_data(Time.current),
             )
@@ -83,11 +91,24 @@ RSpec.describe Bigquery::Exporter do
             kind_of(Tempfile),
             time_partitioning_field: "exported_until",
           ) do |_table_id, file, _time_partioning_field|
-            json_record = JSON.parse(file.readline.chomp)
+            json_record = JSON.parse(file.readline)
             expect(json_record).to match(
               WaitingListUser.aggregate_export_data(Time.current),
             )
           end
+
+        expect(Bigquery::Uploader)
+          .to have_received(:call).with(
+            "smart_survey_responses",
+            kind_of(Tempfile),
+            time_partitioning_field: "exported_until",
+          ) do |_table_id, file, _time_partioning_field|
+          json_record = JSON.parse(file.readline)
+          expect(json_record).to eq(
+            "exported_until" => Time.current.as_json,
+            "completed_surveys" => 1,
+          )
+        end
       end
     end
 
@@ -113,7 +134,7 @@ RSpec.describe Bigquery::Exporter do
       let!(:answer_feedback) { create(:answer_feedback, created_at: 2.days.ago) }
       let!(:last_export) { create(:bigquery_export, exported_until: 3.days.ago) }
 
-      it "calls Bigquery::Uploader with a model and tempfile with the correct JSON for each top level model" do
+      it "calls Bigquery::Uploader with a table_id and tempfile with the correct JSON for each top level model" do
         described_class.call
 
         expect(Bigquery::Uploader).to have_received(:call).with("questions", kind_of(Tempfile)) do |_table_id, file|
@@ -183,5 +204,20 @@ RSpec.describe Bigquery::Exporter do
         end
       end
     end
+  end
+
+  def stub_smart_survey_request
+    stub_request(:get, "https://api.smartsurvey.io/v1/surveys/12345")
+      .with(
+        headers: {
+          "Accept" => "application/json",
+          "Authorization" => "Basic #{Base64.strict_encode64('test_smart_survey_username:test_smart_survey_password').chomp}",
+        },
+      )
+      .to_return_json(
+        body: {
+          responses: 1,
+        }.to_json,
+      )
   end
 end

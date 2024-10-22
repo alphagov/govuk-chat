@@ -49,6 +49,9 @@ module Bigquery
         Uploader.call(table_id, tempfile, time_partitioning_field: "exported_until")
       end
 
+      tempfile = save_tables_to_json([smart_survey_json])
+      Uploader.call("smart_survey_responses", tempfile, time_partitioning_field: "exported_until")
+
       exported_records
     end
 
@@ -61,6 +64,28 @@ module Bigquery
 
       tempfile.rewind
       tempfile
+    end
+
+    def smart_survey_json
+      response_count = JSON.parse(smart_survey_response.body)["responses"]
+
+      {
+        "exported_until" => Time.current.as_json,
+        "completed_surveys" => response_count,
+      }
+    end
+
+    def smart_survey_response
+      smary_survey_config = Rails.application.config.smart_survey
+      conn = Faraday.new(
+        url: "https://api.smartsurvey.io/v1/surveys/#{smary_survey_config.survey_id}",
+        headers: {
+          "Content-Type" => "application/json",
+          "Accept" => "application/json",
+        },
+      )
+      conn.set_basic_auth(smary_survey_config.api_key, smary_survey_config.api_key_secret)
+      conn.get
     end
   end
 end
