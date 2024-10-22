@@ -3,12 +3,32 @@ RSpec.describe "users rake tasks" do
     let(:task_name) { "users:promote_waiting_list" }
     let!(:waiting_list_users) { create_list :waiting_list_user, 3 }
     let(:early_access_users) { EarlyAccessUser.all }
+    let(:settings) { Settings.instance }
 
     before do
       Rake::Task[task_name].reenable
     end
 
     shared_examples "promotes waiting list users" do |expected_promotions|
+      let(:max_places) do
+        [
+          Rails.configuration.early_access_users.max_waiting_list_promotions_per_run,
+          settings.delayed_access_places,
+        ].min
+      end
+
+      before do
+        allow(WaitingListUser)
+          .to receive(:users_to_promote)
+          .with(max_places)
+          .and_return(waiting_list_users.first(max_places))
+      end
+
+      it "randomises the users selected for promotion" do
+        expect { Rake::Task[task_name].invoke }.to output.to_stdout
+        expect(WaitingListUser).to have_received(:users_to_promote).with(max_places)
+      end
+
       it "add EarlyAccessUsers and deletes WaitingListUsers" do
         expect { Rake::Task[task_name].invoke }.to change(EarlyAccessUser, :count).by(expected_promotions)
           .and change(WaitingListUser, :count).by(-expected_promotions)
@@ -23,7 +43,6 @@ RSpec.describe "users rake tasks" do
       end
 
       it "locks the settings and decrements the available places" do
-        settings = create :settings, delayed_access_places: expected_promotions
         allow(Settings).to receive(:instance).and_return(settings)
         expect(settings).to receive(:with_lock).and_call_original
         expect { Rake::Task[task_name].invoke }.to change(settings, :delayed_access_places).by(-expected_promotions)
@@ -38,7 +57,7 @@ RSpec.describe "users rake tasks" do
 
     context "when number of waiting list users is within limits" do
       before do
-        Settings.instance.update!(delayed_access_places: 10)
+        settings.update!(delayed_access_places: 10)
       end
 
       it_behaves_like "promotes waiting list users", 3
@@ -46,7 +65,7 @@ RSpec.describe "users rake tasks" do
 
     context "when the number of delayed_access_places is limited" do
       before do
-        Settings.instance.update!(delayed_access_places: 2)
+        settings.update!(delayed_access_places: 2)
       end
 
       it_behaves_like "promotes waiting list users", 2
@@ -58,7 +77,7 @@ RSpec.describe "users rake tasks" do
 
     context "when the number of waiting list users exceeds the batch size" do
       before do
-        Settings.instance.update!(delayed_access_places: 10)
+        settings.update!(delayed_access_places: 10)
         allow(Rails.configuration.early_access_users).to receive(:max_waiting_list_promotions_per_run).and_return(1)
       end
 
@@ -67,7 +86,7 @@ RSpec.describe "users rake tasks" do
 
     context "when public access is disabled" do
       before do
-        Settings.instance.update!(public_access_enabled: false)
+        settings.update!(public_access_enabled: false)
       end
 
       it "does not continue processing" do
@@ -79,7 +98,7 @@ RSpec.describe "users rake tasks" do
 
     context "when there are no delayed access places available" do
       before do
-        Settings.instance.update!(delayed_access_places: 0)
+        settings.update!(delayed_access_places: 0)
       end
 
       it "does not continue processing" do

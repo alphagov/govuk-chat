@@ -8,6 +8,8 @@ class WaitingListUser < ApplicationRecord
 
   enum :source, SOURCE_ENUM, prefix: true
 
+  scope :users_to_promote, ->(limit) { order("RANDOM()").limit(limit) }
+
   def destroy_with_audit(deletion_type:)
     transaction do
       destroy!

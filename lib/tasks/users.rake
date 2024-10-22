@@ -9,7 +9,7 @@ namespace :users do
     max_batch_size = Rails.configuration.early_access_users.max_waiting_list_promotions_per_run
     settings.with_lock do
       max_promotions = [settings.delayed_access_places, max_batch_size].min
-      WaitingListUser.order(:created_at).limit(max_promotions).each do |waiting_list_user|
+      WaitingListUser.users_to_promote(max_promotions).each do |waiting_list_user|
         users_to_notify << EarlyAccessUser.promote_waiting_list_user(waiting_list_user, :delayed_signup)
         settings.delayed_access_places -= 1
       end
