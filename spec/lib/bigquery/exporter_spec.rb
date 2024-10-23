@@ -74,6 +74,19 @@ RSpec.describe Bigquery::Exporter do
         described_class.call
 
         expect(Bigquery::Uploader)
+        .to have_received(:call).with(
+          "smart_survey_responses",
+          kind_of(Tempfile),
+          time_partitioning_field: "exported_until",
+        ) do |_table_id, file, _time_partioning_field|
+          json_record = JSON.parse(file.readline)
+          expect(json_record).to eq(
+            "exported_until" => Time.current.as_json,
+            "completed_surveys" => 1,
+          )
+        end
+
+        expect(Bigquery::Uploader)
           .to have_received(:call).with(
             "early_access_users",
             kind_of(Tempfile),
@@ -96,19 +109,6 @@ RSpec.describe Bigquery::Exporter do
               WaitingListUser.aggregate_export_data(Time.current),
             )
           end
-
-        expect(Bigquery::Uploader)
-          .to have_received(:call).with(
-            "smart_survey_responses",
-            kind_of(Tempfile),
-            time_partitioning_field: "exported_until",
-          ) do |_table_id, file, _time_partioning_field|
-          json_record = JSON.parse(file.readline)
-          expect(json_record).to eq(
-            "exported_until" => Time.current.as_json,
-            "completed_surveys" => 1,
-          )
-        end
       end
     end
 
