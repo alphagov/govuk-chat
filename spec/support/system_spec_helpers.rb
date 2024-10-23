@@ -17,9 +17,7 @@ module SystemSpecHelpers
   end
 
   def set_rack_cookie(name, value)
-    headers = {}
-    Rack::Utils.set_cookie_header!(headers, name, value)
-    cookie_string = headers["Set-Cookie"]
+    cookie_string = Rack::Utils.set_cookie_header(name, value)
     Capybara.current_session.driver.browser.set_cookie(cookie_string)
   end
 
