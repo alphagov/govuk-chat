@@ -1,0 +1,34 @@
+<%= content_for :title, "Edit maximum waiting list places" %>
+<%= content_for :title_context, "Settings" %>
+ <%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
+                                    href: admin_settings_path) ) %>
+<%= render "shared/error_summary",
+  model: @form,
+  anchor_mappings: {
+    max_places: "#max_waiting_list_places_form_max_places",
+    author_comment: "#max_waiting_list_places_form_author_comment",
+  } %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <%= form_with url: admin_settings_edit_max_waiting_list_places_path, method: :patch do |f| %>
+      <%= render "govuk_publishing_components/components/input", {
+        label: {
+          text: "Maximum waiting list places",
+        },
+        id: "max_waiting_list_places_form_max_places",
+        name: "max_waiting_list_places_form[max_places]",
+        value: @form.max_places,
+        heading_level: 2,
+        heading_size: "l",
+        error_items: error_items(@form, :max_places),
+      } %>
+
+      <%= render "admin/settings/shared/author_comment", form: @form, setting: "max_places" %>
+
+      <%= render "govuk_publishing_components/components/button", {
+        text: "Submit",
+      } %>
+    <% end %>
+  </div>
+</div>

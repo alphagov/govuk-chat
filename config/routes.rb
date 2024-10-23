@@ -109,6 +109,9 @@ Rails.application.routes.draw do
       get "/delayed_access_places", to: "settings/delayed_access_places#edit", as: :settings_edit_delayed_access_places
       patch "/delayed_access_places", to: "settings/delayed_access_places#update", as: :settings_update_delayed_access_places
 
+      get "/max_waiting_list_places", to: "settings/max_waiting_list_places#edit", as: :settings_edit_max_waiting_list_places
+      patch "/max_waiting_list_places", to: "settings/max_waiting_list_places#update", as: :settings_update_max_waiting_list_places
+
       get "/sign-up-enabled", to: "settings/sign_up_enabled#edit", as: :settings_edit_sign_up_enabled
       patch "/sign-up-enabled", to: "settings/sign_up_enabled#update", as: :settings_update_sign_up_enabled
 

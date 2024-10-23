@@ -45,7 +45,7 @@ end
       } do %>
         <p class="govuk-body">
           There are <%= @waiting_list_user_stats[:current] %> users on the waiting list. The maximum allowed is <%= settings.max_waiting_list_places %>.
-          If you would like to increase the maximum places you can <%= link_to("update the setting", "#", class: "govuk-link") %>.
+          If you would like to increase the maximum places you can <%= link_to("update the setting", admin_settings_edit_max_waiting_list_places_path, class: "govuk-link") %>.
         </p>
       <% end %>
     <% end %>

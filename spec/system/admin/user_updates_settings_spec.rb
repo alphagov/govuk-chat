@@ -8,6 +8,7 @@ RSpec.describe "Admin user updates settings" do
     and_i_should_see_there_are_ten_delayed_access_places
     and_i_should_see_the_sign_up_enabled_setting_is_disabled
     and_i_should_see_the_public_access_enabled_setting_is_enabled
+    and_i_should_see_the_max_waiting_list_places_setting_is_ten
 
     when_i_click_the_edit_link_for_instant_access_places
     and_i_add_five_instant_access_places
@@ -25,6 +26,10 @@ RSpec.describe "Admin user updates settings" do
     and_i_disable_public_access
     then_i_see_that_public_access_is_disabled
 
+    when_i_click_the_edit_link_for_max_waiting_list_places
+    and_i_set_the_max_waiting_list_places_to_fifteen
+    and_i_should_see_the_max_waiting_list_places_setting_is_fifteen
+
     when_i_click_on_the_audits_link
     then_i_can_see_the_audits_for_my_changes
   end
@@ -37,6 +42,7 @@ RSpec.describe "Admin user updates settings" do
       instant_access_places: 10,
       delayed_access_places: 10,
       sign_up_enabled: false,
+      max_waiting_list_places: 10,
     )
   end
 
@@ -45,11 +51,11 @@ RSpec.describe "Admin user updates settings" do
   end
 
   def then_i_should_see_there_are_ten_instant_access_places
-    expect(page).to have_selector(".govuk-summary-list__row", text: "Available instant access places 10")
+    expect(page).to have_content("Available instant access places 10")
   end
 
   def and_i_should_see_there_are_ten_delayed_access_places
-    expect(page).to have_selector(".govuk-summary-list__row", text: "Available delayed access places 10")
+    expect(page).to have_content("Available delayed access places 10")
   end
 
   def and_i_should_see_the_sign_up_enabled_setting_is_disabled
@@ -64,6 +70,10 @@ RSpec.describe "Admin user updates settings" do
     end
   end
 
+  def and_i_should_see_the_max_waiting_list_places_setting_is_ten
+    expect(page).to have_content("Maximum places 10")
+  end
+
   def when_i_click_the_edit_link_for_instant_access_places
     click_on "Edit Available instant access places"
   end
@@ -75,7 +85,7 @@ RSpec.describe "Admin user updates settings" do
   alias_method :and_i_add_five_delayed_access_places, :and_i_add_five_instant_access_places
 
   def then_i_see_there_are_fifteen_instant_access_places
-    expect(page).to have_selector(".govuk-summary-list__row", text: "Available instant access places 15")
+    expect(page).to have_content("Available instant access places 15")
   end
 
   def when_i_click_the_edit_link_for_delayed_access_places
@@ -83,7 +93,7 @@ RSpec.describe "Admin user updates settings" do
   end
 
   def then_i_see_there_are_fifteen_delayed_access_places
-    expect(page).to have_selector(".govuk-summary-list__row", text: "Available delayed access places 15")
+    expect(page).to have_content("Available delayed access places 15")
   end
 
   def when_i_click_the_edit_link_for_sign_up_enabled
@@ -117,6 +127,19 @@ RSpec.describe "Admin user updates settings" do
     end
   end
 
+  def when_i_click_the_edit_link_for_max_waiting_list_places
+    click_on "Edit Maximum places"
+  end
+
+  def and_i_set_the_max_waiting_list_places_to_fifteen
+    fill_in "Maximum waiting list places", with: 15
+    click_on "Submit"
+  end
+
+  def and_i_should_see_the_max_waiting_list_places_setting_is_fifteen
+    expect(page).to have_content("Maximum places 15")
+  end
+
   def when_i_click_on_the_audits_link
     click_on "Audits"
   end
@@ -127,5 +150,6 @@ RSpec.describe "Admin user updates settings" do
       .and have_content("Added 5 delayed access places")
       .and have_content("Sign up enabled set to true")
       .and have_content("Public access enabled set to false, downtime type permanent")
+      .and have_content("Updated maximum waiting list places to 15")
   end
 end

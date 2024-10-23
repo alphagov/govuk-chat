@@ -39,7 +39,7 @@ RSpec.describe "Admin::HomepageController" do
 
       it "renders a link to update the setting" do
         get admin_homepage_path
-        expect(response.body).to have_link("update the setting", href: "#")
+        expect(response.body).to have_link("update the setting", href: admin_settings_edit_max_waiting_list_places_path)
       end
     end
 
