@@ -26,6 +26,23 @@ RSpec.describe "Admin::HomepageController" do
       end
     end
 
+    context "when signups are enabled and the waiting list is 80% or more full" do
+      before do
+        create_list(:waiting_list_user, 4)
+        Settings.instance.update!(max_waiting_list_places: 5, sign_up_enabled: true)
+      end
+
+      it "renders a notice" do
+        get admin_homepage_path
+        expect(response.body).to have_selector(".gem-c-notice", text: /The waiting list is 80% full/)
+      end
+
+      it "renders a link to update the setting" do
+        get admin_homepage_path
+        expect(response.body).to have_link("update the setting", href: "#")
+      end
+    end
+
     context "when a user has the developer tools permission" do
       before do
         user = create(

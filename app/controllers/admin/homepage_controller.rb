@@ -19,6 +19,7 @@ class Admin::HomepageController < Admin::BaseController
     promoted_waiting_list_users = DeletedWaitingListUser.deletion_type_promotion.count
     unsubscribed_waiting_list_users = DeletedWaitingListUser.deletion_type_unsubscribe.count
     admin_deleted_waiting_list_users = DeletedWaitingListUser.deletion_type_admin.count
+    percentage_of_waiting_list_used = (waiting_list_users_current.to_f / Settings.instance.max_waiting_list_places) * 100
 
     @waiting_list_user_stats = {
       current: waiting_list_users_current,
@@ -29,6 +30,7 @@ class Admin::HomepageController < Admin::BaseController
               promoted_waiting_list_users,
               unsubscribed_waiting_list_users,
               admin_deleted_waiting_list_users].sum,
+      percentage_of_waiting_list_used:,
     }
   end
 end
