@@ -1,4 +1,54 @@
 RSpec.describe Bigquery::Exporter do
+  describe ".remove_nil_values" do
+    it "removes nil values from nested arrays and hashes" do
+      result = described_class.remove_nil_values({
+        "a" => {
+          "aa" => [1, 2],
+          "ab" => {
+            "aba" => "a",
+            "abb" => nil,
+          },
+          "ac" => nil,
+        },
+        "b" => [
+          "ba",
+          ["bb", nil],
+          { "bc" => %w[a], "bd" => nil },
+        ],
+      })
+
+      expect(result).to eq({
+        "a" => {
+          "aa" => [1, 2],
+          "ab" => { "aba" => "a" },
+        },
+        "b" => ["ba", %w[bb], { "bc" => %w[a] }],
+      })
+    end
+
+    it "removes empty arrays and empty hashes" do
+      result = described_class.remove_nil_values({
+        "a" => {
+          "aa" => [nil],
+          "ab" => {
+            "aba" => nil,
+          },
+          "ac" => "a",
+        },
+        "b" => [
+          "ba",
+          [nil],
+          { "bb" => %w[a], "bc" => [nil] },
+        ],
+      })
+
+      expect(result).to eq({
+        "a" => { "ac" => "a" },
+        "b" => ["ba", { "bb" => %w[a] }],
+      })
+    end
+  end
+
   describe ".call" do
     before do
       allow(Bigquery::Uploader).to receive(:call)
