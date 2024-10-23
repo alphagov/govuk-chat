@@ -30,14 +30,21 @@ module Bigquery
   private
 
     def export(export_from, export_until)
-      tempfile = save_tables_to_json([smart_survey_json])
-      Uploader.call("smart_survey_responses", tempfile, time_partitioning_field: "exported_until")
+      tables_to_upload = [
+        [
+          "smart_survey_responses",
+          save_tables_to_json([smart_survey_json]),
+          {
+            time_partitioning_field: "exported_until",
+          },
+        ],
+      ]
 
       MODELS_WITH_AGGREGATE_STATS_TO_EXPORT.each do |model|
         table_id = model.table_name
         json_to_export = model.aggregate_export_data(export_until)
         tempfile = save_tables_to_json([json_to_export])
-        Uploader.call(table_id, tempfile, time_partitioning_field: "exported_until")
+        tables_to_upload << [table_id, tempfile, { time_partitioning_field: "exported_until" }]
       end
 
       exported_records = {}
@@ -49,7 +56,11 @@ module Bigquery
         next unless records_to_export.any?
 
         tempfile = save_tables_to_json(self.class.remove_nil_values(records_to_export))
-        Uploader.call(table_id, tempfile)
+        tables_to_upload << [table_id, tempfile]
+      end
+
+      tables_to_upload.each do |table_id, tempfile, options|
+        Uploader.call(table_id, tempfile, **options)
       end
 
       exported_records
