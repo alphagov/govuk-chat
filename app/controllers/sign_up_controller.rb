@@ -39,8 +39,10 @@ class SignUpController < BaseController
       session.delete("sign_up")
       if result.outcome == :early_access_user
         render :sign_up_successful
-      else
+      elsif result.outcome == :waiting_list_user
         render :waitlist
+      else
+        render :waitlist_full
       end
     else
       render :reason_for_visit, status: :unprocessable_entity

@@ -90,31 +90,57 @@ RSpec.describe Form::EarlyAccess::ReasonForVisit do
         Settings.instance.update!(instant_access_places: 0)
       end
 
-      it "creates a waiting list user with the correct attributes" do
-        expect { form.submit }.to change(WaitingListUser, :count).by(1)
-        waiting_list_user = WaitingListUser.last
-        expect(waiting_list_user)
-          .to have_attributes(
-            email: "email@test.com",
-            user_description: "business_owner_or_self_employed",
-            reason_for_visit: "find_specific_answer",
-            source: "insufficient_instant_places",
-          )
+      context "and there are waiting list places available" do
+        it "creates a waiting list user with the correct attributes" do
+          expect { form.submit }.to change(WaitingListUser, :count).by(1)
+          waiting_list_user = WaitingListUser.last
+          expect(waiting_list_user)
+            .to have_attributes(
+              email: "email@test.com",
+              user_description: "business_owner_or_self_employed",
+              reason_for_visit: "find_specific_answer",
+              source: "insufficient_instant_places",
+            )
+        end
+
+        it "sends a waiting list email to the user" do
+          expect { form.submit }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
+          expect(EarlyAccessAuthMailer).to have_received(:waitlist).with(WaitingListUser.last)
+        end
+
+        it "returns a result object with the correct attributes" do
+          result = form.submit
+          expect(result)
+            .to be_a(Form::EarlyAccess::ReasonForVisit::Result)
+            .and have_attributes(
+              outcome: :waiting_list_user,
+              user: WaitingListUser.last,
+            )
+        end
       end
 
-      it "sends a waiting list email to the user" do
-        expect { form.submit }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-        expect(EarlyAccessAuthMailer).to have_received(:waitlist).with(WaitingListUser.last)
-      end
+      context "and there are no waiting list places available" do
+        before do
+          Settings.instance.update!(max_waiting_list_places: 0)
+        end
 
-      it "returns a result object with the correct attributes" do
-        result = form.submit
-        expect(result)
-          .to be_a(Form::EarlyAccess::ReasonForVisit::Result)
-          .and have_attributes(
-            outcome: :waiting_list_user,
-            user: WaitingListUser.last,
-          )
+        it "doesn't create a waiting list user" do
+          expect { form.submit }.not_to change(WaitingListUser, :count)
+        end
+
+        it "doesn't send a waiting list email" do
+          expect { form.submit }.not_to change(EarlyAccessAuthMailer.deliveries, :count)
+        end
+
+        it "returns a result object with the correct attributes" do
+          result = form.submit
+          expect(result)
+            .to be_a(Form::EarlyAccess::ReasonForVisit::Result)
+            .and have_attributes(
+              outcome: :waiting_list_full,
+              user: nil,
+            )
+        end
       end
     end
   end
