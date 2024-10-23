@@ -17,6 +17,22 @@ class EarlyAccessUser < ApplicationRecord
 
   passwordless_with :email
 
+  scope :at_question_limit, lambda {
+    default_limit = Rails.configuration.conversations.max_questions_per_user
+    where(
+      "(individual_question_limit IS NULL AND questions_count >= ?) OR (individual_question_limit > 0 AND questions_count >= individual_question_limit)",
+      default_limit,
+    )
+  }
+
+  scope :within_question_limit, lambda {
+    default_limit = Rails.configuration.conversations.max_questions_per_user
+    where(
+      "(individual_question_limit IS NULL AND questions_count < ?) OR (questions_count < individual_question_limit) OR (individual_question_limit = 0)",
+      default_limit,
+    )
+  }
+
   def self.promote_waiting_list_user(waiting_list_user, source = :admin_promoted)
     transaction do
       waiting_list_user.destroy_with_audit(deletion_type: :promotion)

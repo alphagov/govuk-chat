@@ -33,6 +33,32 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         .to have_link("alice@example.com", href: admin_early_access_user_path(user))
     end
 
+    it "does not link to a user's questions if they have 0 questions" do
+      create(:early_access_user, email: "alice@example.com")
+
+      get admin_early_access_users_path
+
+      expect(response.body).to have_selector(".govuk-table__cell", exact_text: "0")
+    end
+
+    it "links to a user's questions without a total if they have no question limit" do
+      user = create(:early_access_user, email: "alice@example.com", questions_count: 5, individual_question_limit: 0)
+
+      get admin_early_access_users_path
+
+      expect(response.body).to have_link("5", href: admin_questions_path(user_id: user.id))
+      expect(response.body).to have_selector(".govuk-table__cell", exact_text: "5")
+    end
+
+    it "links to a user's questions with a total if they have a fixed question limit" do
+      user = create(:early_access_user, email: "alice@example.com", questions_count: 5, individual_question_limit: 70)
+
+      get admin_early_access_users_path
+
+      expect(response.body).to have_link("5", href: admin_questions_path(user_id: user.id))
+      expect(response.body).to have_selector(".govuk-table__cell", exact_text: "5/70")
+    end
+
     context "when there are multiple pages of users" do
       before do
         create_list(:early_access_user, 26)
@@ -58,9 +84,46 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
     end
 
     context "when filter parameters are provided" do
-      it "renders the page successfully" do
-        get admin_early_access_users_path(source: "instant_signup")
-        expect(response).to have_http_status(:ok)
+      context "and user source is filtered by 'Instant Signup'" do
+        it "displays users with a source of 'Instant Signup and filters out others" do
+          create(:early_access_user, email: "a@example.com", source: "instant_signup")
+          create(:early_access_user, email: "b@example.com", source: "admin_added")
+          get admin_early_access_users_path(source: "instant_signup")
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to have_selector(".govuk-table") do |match|
+            expect(match).to have_content(/a@example\.com/)
+            expect(match).not_to have_content(/b@example\.com/)
+          end
+        end
+      end
+
+      context "and users are filtered by 'Revoked'" do
+        it "displays user accounts which have been revoked and filters out those which have not" do
+          create(:early_access_user, email: "a@example.com", revoked_at: Time.zone.now)
+          create(:early_access_user, email: "b@example.com")
+          get admin_early_access_users_path(revoked: true)
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to have_selector(".govuk-table") do |match|
+            expect(match).to have_content(/a@example\.com/)
+            expect(match).not_to have_content(/b@example\.com/)
+          end
+        end
+      end
+
+      context "and users are filtered by 'At Question Limit'" do
+        it "displays user accounts at their question limit and filters out those which are not" do
+          create(:early_access_user, email: "a@example.com", questions_count: 100, individual_question_limit: 100)
+          create(:early_access_user, email: "c@example.com", questions_count: 23)
+          get admin_early_access_users_path(at_question_limit: true)
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to have_selector(".govuk-table") do |match|
+            expect(match).to have_content(/a@example\.com/)
+            expect(match).not_to have_content(/b@example\.com/)
+          end
+        end
       end
     end
 

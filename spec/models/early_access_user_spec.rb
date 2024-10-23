@@ -1,4 +1,54 @@
 RSpec.describe EarlyAccessUser do
+  describe ".at_question_limit" do
+    it "returns early access users at or over their individual question limit" do
+      user_at_question_limit = create(:early_access_user, questions_count: 10, individual_question_limit: 10)
+      user_over_question_limit = create(:early_access_user, questions_count: 11, individual_question_limit: 10)
+      create(:early_access_user, questions_count: 5, individual_question_limit: 10)
+
+      expect(described_class.at_question_limit).to contain_exactly(user_at_question_limit, user_over_question_limit)
+    end
+
+    it "returns early access users at over the default question limit" do
+      default_question_limit = Rails.configuration.conversations.max_questions_per_user
+
+      user_at_question_limit = create(:early_access_user, questions_count: default_question_limit)
+      user_over_question_limit = create(:early_access_user, questions_count: default_question_limit + 1)
+      create(:early_access_user, questions_count: default_question_limit - 1)
+
+      expect(described_class.at_question_limit).to contain_exactly(user_at_question_limit, user_over_question_limit)
+    end
+
+    it "does not return early access users with a limit of 0" do
+      user_with_unlimited_questions = create(:early_access_user, questions_count: 100, individual_question_limit: 0)
+
+      expect(described_class.at_question_limit).not_to include user_with_unlimited_questions
+    end
+  end
+
+  describe ".within_question_limit" do
+    it "returns early access users within their individual question limit" do
+      create(:early_access_user, questions_count: 10, individual_question_limit: 10)
+      user_within_question_limit = create(:early_access_user, questions_count: 5, individual_question_limit: 10)
+
+      expect(described_class.within_question_limit).to eq [user_within_question_limit]
+    end
+
+    it "returns early access users within the default question limit" do
+      default_question_limit = Rails.configuration.conversations.max_questions_per_user
+
+      create(:early_access_user, questions_count: default_question_limit)
+      user_within_question_limit = create(:early_access_user, questions_count: default_question_limit - 1)
+
+      expect(described_class.within_question_limit).to eq [user_within_question_limit]
+    end
+
+    it "returns early access users with a limit of 0" do
+      user_with_unlimited_questions = create(:early_access_user, questions_count: 100, individual_question_limit: 0)
+
+      expect(described_class.within_question_limit).to eq [user_with_unlimited_questions]
+    end
+  end
+
   describe ".promote_waiting_list_user" do
     it "creates and returns an early access user" do
       waiting_list_user = create(:waiting_list_user)
