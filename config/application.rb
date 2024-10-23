@@ -75,6 +75,12 @@ module GovukChat
     config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]
     config.openai_request_timeout = 45
 
+    config.smart_survey = Hashie::Mash.new(
+      survey_id: "1561650",
+      api_key: ENV["SMART_SURVEY_API_KEY"],
+      api_key_secret: ENV["SMART_SURVEY_API_KEY_SECRET"],
+    )
+
     config.llm_prompts = ActiveSupport::OrderedOptions.new
     Dir[Rails.root.join("config/llm_prompts/*.yml")].each do |path|
       # use symbolize keys so top level keys can be accessed as an object, for

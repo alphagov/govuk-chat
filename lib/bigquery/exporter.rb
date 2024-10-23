@@ -30,6 +30,23 @@ module Bigquery
   private
 
     def export(export_from, export_until)
+      tables_to_upload = [
+        [
+          "smart_survey_responses",
+          save_tables_to_json([smart_survey_json]),
+          {
+            time_partitioning_field: "exported_until",
+          },
+        ],
+      ]
+
+      MODELS_WITH_AGGREGATE_STATS_TO_EXPORT.each do |model|
+        table_id = model.table_name
+        json_to_export = model.aggregate_export_data(export_until)
+        tempfile = save_tables_to_json([json_to_export])
+        tables_to_upload << [table_id, tempfile, { time_partitioning_field: "exported_until" }]
+      end
+
       exported_records = {}
       TOP_LEVEL_MODELS_TO_EXPORT.each do |model|
         records_to_export = model.exportable(export_from, export_until).map(&:serialize_for_export)
@@ -39,14 +56,11 @@ module Bigquery
         next unless records_to_export.any?
 
         tempfile = save_tables_to_json(self.class.remove_nil_values(records_to_export))
-        Uploader.call(table_id, tempfile)
+        tables_to_upload << [table_id, tempfile]
       end
 
-      MODELS_WITH_AGGREGATE_STATS_TO_EXPORT.each do |model|
-        table_id = model.table_name
-        json_to_export = model.aggregate_export_data(export_until)
-        tempfile = save_tables_to_json([json_to_export])
-        Uploader.call(table_id, tempfile, time_partitioning_field: "exported_until")
+      tables_to_upload.each do |table_id, tempfile, options|
+        Uploader.call(table_id, tempfile, **options)
       end
 
       exported_records
@@ -61,6 +75,32 @@ module Bigquery
 
       tempfile.rewind
       tempfile
+    end
+
+    def smart_survey_json
+      response_count = smart_survey_response.body["responses"]
+
+      {
+        "exported_until" => Time.current.as_json,
+        "completed_surveys" => response_count,
+      }
+    end
+
+    def smart_survey_response
+      smary_survey_config = Rails.application.config.smart_survey
+
+      conn = Faraday.new(
+        url: "https://api.smartsurvey.io/v1/surveys/#{smary_survey_config.survey_id}",
+        headers: {
+          "Accept" => "application/json",
+        },
+      ) do |faraday|
+        faraday.response :json
+        faraday.response :raise_error
+      end
+
+      conn.set_basic_auth(smary_survey_config.api_key, smary_survey_config.api_key_secret)
+      conn.get
     end
   end
 end
