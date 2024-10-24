@@ -1,4 +1,6 @@
 class Admin::WaitingListUsersController < Admin::BaseController
+  helper_method :user_research_questions
+
   def index
     filter_params = params.permit(:email, :page, :sort)
     @filter = Admin::Filters::WaitingListUsersFilter.new(filter_params)
@@ -73,6 +75,10 @@ class Admin::WaitingListUsersController < Admin::BaseController
     EarlyAccessAuthMailer.access_granted(session).deliver_now
 
     redirect_to admin_early_access_user_path(new_user), notice: "User promoted"
+  end
+
+  def user_research_questions
+    Rails.configuration.pilot_user_research_questions
   end
 
 private

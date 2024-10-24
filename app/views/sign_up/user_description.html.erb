@@ -1,6 +1,4 @@
-<%
-  content_for(:browser_title, PilotUser::USER_RESEARCH_QUESTION_DESCRIPTION)
-%>
+<% content_for(:browser_title, @question_config.text) %>
 <%= render "shared/error_summary",
   model: @user_description_form,
   anchor_mappings: {
@@ -14,40 +12,23 @@
     <%= form_with url: sign_up_user_description_path do %>
       <%= hidden_field_tag "user_description_form[choice]", nil, id: "user_description_form_choice_hidden_field" %>
 
+      <%
+        items = @question_config.options.map do |option|
+          {
+            value: option.value,
+            text: option.text,
+            checked: @user_description_form.choice == option.value,
+          }
+        end
+      %>
       <%= render "govuk_publishing_components/components/radio", {
         id: "user_description_form_choice",
         name: "user_description_form[choice]",
-        heading: PilotUser::USER_RESEARCH_QUESTION_DESCRIPTION,
+        heading: @question_config.text,
         heading_caption: "Question 1 of 2",
         heading_level: 1,
         error_items: error_items(@user_description_form, :choice),
-        items: [
-          {
-            value: "business_owner_or_self_employed",
-            text: "I own a business or am self-employed",
-            checked: @user_description_form.choice == "business_owner_or_self_employed",
-          },
-          {
-            value: "starting_business_or_becoming_self_employed",
-            text: "I'm planning to start a business or become self-employed",
-            checked: @user_description_form.choice == "starting_business_or_becoming_self_employed",
-          },
-            {
-            value: "business_advisor",
-            text: "I'm a business advisor",
-            checked: @user_description_form.choice == "business_advisor",
-          },
-            {
-            value: "business_administrator",
-            text: "I work in business administration",
-            checked: @user_description_form.choice == "business_administrator",
-          },
-          {
-            value: "none",
-            text: "None of the above",
-            checked: @user_description_form.choice == "none",
-          },
-        ],
+        items:,
       } %>
 
       <%= render "components/blue_button", {

@@ -1,4 +1,6 @@
 class Admin::EarlyAccessUsersController < Admin::BaseController
+  helper_method :user_research_questions
+
   def index
     filter_params = params.permit(:email, :page, :sort, :source, :revoked, :at_question_limit)
     @filter = Admin::Filters::EarlyAccessUsersFilter.new(filter_params)
@@ -57,6 +59,10 @@ class Admin::EarlyAccessUsersController < Admin::BaseController
     EarlyAccessUser.find(params[:id]).destroy_with_audit(deletion_type: :admin)
 
     redirect_to admin_early_access_users_path, notice: "User deleted"
+  end
+
+  def user_research_questions
+    Rails.configuration.pilot_user_research_questions
   end
 
 private

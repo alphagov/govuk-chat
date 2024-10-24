@@ -1,6 +1,4 @@
-<%
-  content_for(:browser_title, PilotUser::USER_RESEARCH_QUESTION_REASON_FOR_VISIT)
-%>
+<% content_for(:browser_title, @question_config.text) %>
 <%= render "shared/error_summary",
   model: @reason_for_visit_form,
   anchor_mappings: {
@@ -14,35 +12,23 @@
     <%= form_with url: sign_up_reason_for_visit_path do %>
       <%= hidden_field_tag "reason_for_visit_form[choice]", nil, id: "reason_for_visit_form_choice_hidden_field" %>
 
+      <%
+        items = @question_config.options.map do |option|
+          {
+            value: option.value,
+            text: option.text,
+            checked: @reason_for_visit_form.choice == option.value,
+          }
+        end
+      %>
       <%= render "govuk_publishing_components/components/radio", {
         id: "reason_for_visit_form_choice",
         name: "reason_for_visit_form[choice]",
-        heading: PilotUser::USER_RESEARCH_QUESTION_REASON_FOR_VISIT,
+        heading: @question_config.text,
         heading_caption: "Question 2 of 2",
         heading_level: 1,
         error_items: error_items(@reason_for_visit_form, :choice),
-        items: [
-          {
-            value: "find_specific_answer",
-            text: "To find a specific answer, like when the next bank holiday is",
-          },
-          {
-            value: "complete_task",
-            text: "To complete a task, like applying for a passport",
-          },
-            {
-            value: "understand_process",
-            text: "To figure out a process, like how to export goods",
-          },
-            {
-            value: "research_topic",
-            text: "To learn about a topic, like financial support for businesses",
-          },
-          {
-            value: "other",
-            text: "Other",
-          },
-        ],
+        items:,
       } %>
 
       <%= render "components/blue_button", {
