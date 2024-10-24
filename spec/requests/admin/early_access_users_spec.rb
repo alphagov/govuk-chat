@@ -56,7 +56,17 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
       get admin_early_access_users_path
 
       expect(response.body).to have_link("5", href: admin_questions_path(user_id: user.id))
-      expect(response.body).to have_selector(".govuk-table__cell", exact_text: "5/70")
+      expect(response.body).to have_selector(".govuk-table__cell", exact_text: "5 / 70")
+    end
+
+    it "links to a user's questions with a total if they have a default question limit" do
+      user = create(:early_access_user, email: "alice@example.com", questions_count: 5)
+      default_question_limit = Rails.configuration.conversations.max_questions_per_user
+
+      get admin_early_access_users_path
+
+      expect(response.body).to have_link("5", href: admin_questions_path(user_id: user.id))
+      expect(response.body).to have_selector(".govuk-table__cell", exact_text: "5 / #{default_question_limit}")
     end
 
     context "when there are multiple pages of users" do

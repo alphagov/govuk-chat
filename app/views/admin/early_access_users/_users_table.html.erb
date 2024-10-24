@@ -28,12 +28,13 @@
       },
     ],
     rows: users.map do |user|
-      individual_question_limit = user.individual_question_limit unless user.unlimited_question_allowance?
+      question_limit = user.question_limit unless user.unlimited_question_allowance?
+
       question_text = if user.questions_count.zero?
                   "0"
                 else
                   link = link_to(user.questions_count, admin_questions_path(user_id: user.id), class: "govuk-link")
-                  individual_question_limit ? safe_join([link, "/", individual_question_limit]) : link
+                  question_limit ? safe_join([link, " / ", question_limit]) : link
                 end
 
       [
