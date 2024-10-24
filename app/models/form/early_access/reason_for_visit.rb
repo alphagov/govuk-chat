@@ -22,6 +22,11 @@ class Form::EarlyAccess::ReasonForVisit
 
     settings = Settings.instance
     settings.with_lock do
+      if settings.instant_access_places.zero? &&
+          settings.max_waiting_list_places <= WaitingListUser.count
+        return Result.new(outcome: :waiting_list_full, user: nil)
+      end
+
       if settings.instant_access_places.zero?
         user = WaitingListUser.create!(
           reason_for_visit: choice,

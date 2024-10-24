@@ -159,7 +159,7 @@ RSpec.describe "SignUpController" do
           end
         end
 
-        context "and there are no instant access places available" do
+        context "and there are no instant access places, but waiting list places are available" do
           before do
             Settings.instance.update!(instant_access_places: 0)
           end
@@ -185,6 +185,34 @@ RSpec.describe "SignUpController" do
               )
             }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
             expect(EarlyAccessAuthMailer.deliveries.last.subject).to eq("You're on the waitlist for GOV.UK Chat")
+          end
+
+          it "deletes the session['sign_up'] variable" do
+            post sign_up_reason_for_visit_path(
+              reason_for_visit_form: { choice: "find_specific_answer" },
+            )
+            expect(session["sign_up"]).to be_nil
+          end
+        end
+
+        context "and there are no instant access places or waiting list places available" do
+          before do
+            Settings.instance.update!(instant_access_places: 0, max_waiting_list_places: 0)
+          end
+
+          it "responds with a successful status" do
+            post sign_up_reason_for_visit_path(
+              reason_for_visit_form: { choice: "find_specific_answer" },
+            )
+            expect(response).to have_http_status(:ok)
+          end
+
+          it "renders the waitlist full template" do
+            post sign_up_reason_for_visit_path(
+              reason_for_visit_form: { choice: "find_specific_answer" },
+            )
+            expect(response.body)
+              .to have_selector(".govuk-heading-xl", text: "The GOV.UK Chat waitlist is currently full")
           end
 
           it "deletes the session['sign_up'] variable" do

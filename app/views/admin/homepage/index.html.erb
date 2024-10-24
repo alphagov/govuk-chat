@@ -39,6 +39,15 @@ end
           <%= link_to("Update settings", admin_settings_path, class: "govuk-link") %>.
         </p>
       <% end %>
+    <% elsif @waiting_list_user_stats[:percentage_of_waiting_list_used] >= 80 %>
+      <%= render "govuk_publishing_components/components/notice", {
+        title: "The waiting list is #{number_to_percentage(@waiting_list_user_stats[:percentage_of_waiting_list_used], precision: 0)} full",
+      } do %>
+        <p class="govuk-body">
+          There are <%= @waiting_list_user_stats[:current] %> users on the waiting list. The maximum allowed is <%= settings.max_waiting_list_places %>.
+          If you would like to increase the maximum places you can <%= link_to("update the setting", admin_settings_edit_max_waiting_list_places_path, class: "govuk-link") %>.
+        </p>
+      <% end %>
     <% end %>
   </div>
 </div>
