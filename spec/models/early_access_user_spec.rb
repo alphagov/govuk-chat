@@ -1,4 +1,6 @@
 RSpec.describe EarlyAccessUser do
+  include_examples "user research question enums match config"
+
   describe ".at_question_limit" do
     it "returns early access users at or over their individual question limit" do
       user_at_question_limit = create(:early_access_user, questions_count: 10, individual_question_limit: 10)
