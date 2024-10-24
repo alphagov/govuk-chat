@@ -93,21 +93,28 @@ RSpec.describe EarlyAccessUser do
 
         two_minutes_ago = 2.minutes.ago
         create(:early_access_user, source: :admin_added, created_at: two_minutes_ago)
-        2.times { create(:early_access_user, source: :admin_promoted, created_at: two_minutes_ago) }
+        create_list(:early_access_user, 2, source: :admin_promoted, created_at: two_minutes_ago)
         create(:early_access_user, source: :instant_signup, revoked_at: two_minutes_ago, created_at: two_minutes_ago)
         create(:deleted_early_access_user, deletion_type: :unsubscribe, created_at: two_minutes_ago)
-        2.times { create(:deleted_early_access_user, deletion_type: :admin, created_at: two_minutes_ago) }
+        create_list(:deleted_early_access_user, 2, deletion_type: :admin, created_at: two_minutes_ago)
 
         until_date = 1.minute.ago
         expect(described_class.aggregate_export_data(1.minute.ago)).to eq(
           "exported_until" => until_date.as_json,
-          "admin_added" => 1,
-          "admin_promoted" => 2,
-          "delayed_signup" => 0,
-          "instant_signup" => 1,
+          "current_user_sources" => {
+            "admin_added" => 1,
+            "admin_promoted" => 2,
+            "delayed_signup" => 0,
+            "instant_signup" => 1,
+          },
+          "deletion_types" => {
+            "unsubscribe" => 1,
+            "admin" => 2,
+          },
           "revoked" => 1,
-          "deleted_by_unsubscribe" => 1,
-          "deleted_by_admin" => 2,
+          "current" => 4,
+          "deleted" => 3,
+          "all_time" => 7,
         )
       end
     end

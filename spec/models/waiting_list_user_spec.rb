@@ -34,9 +34,9 @@ RSpec.describe WaitingListUser do
     it "returns a hash of aggregated waiting list user statistics created before the time passed in" do
       freeze_time do
         create(:waiting_list_user, source: :admin_added, created_at: 2.minutes.ago)
-        2.times { create(:waiting_list_user, source: :insufficient_instant_places, created_at: 2.minutes.ago) }
+        create_list(:waiting_list_user, 2, source: :insufficient_instant_places, created_at: 2.minutes.ago)
         create(:deleted_waiting_list_user, deletion_type: :unsubscribe, created_at: 2.minutes.ago)
-        2.times { create(:deleted_waiting_list_user, deletion_type: :admin, created_at: 2.minutes.ago) }
+        create_list(:deleted_waiting_list_user, 2, deletion_type: :admin, created_at: 2.minutes.ago)
         create(:deleted_waiting_list_user, deletion_type: :promotion, created_at: 2.minutes.ago)
         create(:waiting_list_user, source: :admin_added)
         create(:deleted_waiting_list_user, deletion_type: :promotion)
@@ -44,11 +44,18 @@ RSpec.describe WaitingListUser do
         until_date = 1.minute.ago
         expect(described_class.aggregate_export_data(until_date)).to eq(
           "exported_until" => until_date.as_json,
-          "admin_added" => 1,
-          "insufficient_instant_places" => 2,
-          "deleted_by_unsubscribe" => 1,
-          "deleted_by_admin" => 2,
-          "deleted_by_promotion" => 1,
+          "current_user_sources" => {
+            "admin_added" => 1,
+            "insufficient_instant_places" => 2,
+          },
+          "deletion_types" => {
+            "unsubscribe" => 1,
+            "admin" => 2,
+            "promotion" => 1,
+          },
+          "current" => 3,
+          "deleted" => 4,
+          "all_time" => 7,
         )
       end
     end
