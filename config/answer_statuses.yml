@@ -28,7 +28,6 @@ abort_llm_cannot_answer:
   label_colour: "orange"
   description: "LLM couldn't answer the question"
   label_and_description: "Abort - LLM couldn't answer the question"
-  label_and_description: "Abort - output guardrails triggered"
 abort_no_govuk_content:
   label: "Abort"
   label_colour: "orange"
