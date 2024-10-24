@@ -192,12 +192,18 @@ RSpec.describe "Admin::WaitingListUsersController" do
 
       get admin_waiting_list_user_path(user)
 
+      ur_question_text = %i[user_description reason_for_visit].each_with_object({}) do |question, memo|
+        options = Rails.configuration.pilot_user_research_questions[question.to_s].options
+        option = options.find { |o| o.value == user.public_send(question) }
+        memo[question] = option.fetch("text")
+      end
+
       expect(response.body)
         .to have_content("User details")
         .and have_content("alice@example.com")
         .and have_content(user.created_at.to_fs(:time_and_date))
-        .and have_content("business_owner_or_self_employed")
-        .and have_content("find_specific_answer")
+        .and have_content(ur_question_text[:user_description])
+        .and have_content(ur_question_text[:reason_for_visit])
     end
 
     it "includes links to manage the user" do

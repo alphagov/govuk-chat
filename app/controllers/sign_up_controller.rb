@@ -6,14 +6,12 @@ class SignUpController < BaseController
   before_action :render_not_accepting_signups_if_sign_ups_disabled
 
   def user_description
-    @question_config = user_research_questions_config.user_description
     @user_description_form = Form::EarlyAccess::UserDescription.new(
       choice: session.dig("sign_up", "user_description"),
     )
   end
 
   def confirm_user_description
-    @question_config = user_research_questions_config.user_description
     @user_description_form = Form::EarlyAccess::UserDescription.new(user_description_form_params)
 
     if @user_description_form.valid?
@@ -25,7 +23,6 @@ class SignUpController < BaseController
   end
 
   def reason_for_visit
-    @question_config = user_research_questions_config.reason_for_visit
     @reason_for_visit_form = Form::EarlyAccess::ReasonForVisit.new
   end
 
@@ -35,7 +32,6 @@ class SignUpController < BaseController
       return render :sign_up_denied, status: :forbidden
     end
 
-    @question_config = user_research_questions_config.reason_for_visit
     @reason_for_visit_form = Form::EarlyAccess::ReasonForVisit.new(reason_for_visit_form_params)
 
     if @reason_for_visit_form.valid?
@@ -58,10 +54,6 @@ class SignUpController < BaseController
   end
 
 private
-
-  def user_research_questions_config
-    Rails.configuration.pilot_user_research_questions
-  end
 
   def user_description_form_params
     params.require(:user_description_form).permit(:choice)

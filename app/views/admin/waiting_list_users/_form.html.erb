@@ -15,13 +15,7 @@
     label: "User research description",
     full_width: true,
     error_id: form.errors.key?(:user_description) ? "waiting_list_user_form_user_description" : nil,
-    options: ([""] + WaitingListUser.user_descriptions.keys).map do |description|
-      {
-        text: description.humanize,
-        value: description,
-        selected: form.user_description == description,
-      }
-    end,
+    options: user_research_question_options_for_select(:user_description, selected: form.reason_for_visit),
   } %>
 
   <%= render "govuk_publishing_components/components/select", {
@@ -30,13 +24,7 @@
     label: "User research reason for visit",
     full_width: true,
     error_id: form.errors.key?(:reason_for_visit) ? "waiting_list_user_form_reason_for_visit" : nil,
-    options: ([""] + WaitingListUser.reason_for_visits.keys).map do |description|
-      {
-        text: description.humanize,
-        value: description,
-        selected: form.reason_for_visit == description,
-      }
-    end,
+    options: user_research_question_options_for_select(:reason_for_visit, selected: form.reason_for_visit),
   } %>
 
   <%= render "govuk_publishing_components/components/button", {

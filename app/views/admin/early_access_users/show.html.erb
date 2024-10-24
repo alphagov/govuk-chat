@@ -34,12 +34,12 @@
       value: @user.source.humanize,
     },
     {
-      field: "User research question: #{user_research_questions.user_description.text}",
-      value: @user.user_description,
+      field: "user research question: #{user_research_question_text(:user_description)}",
+      value: user_research_question_option_text(:user_description, @user.user_description),
     },
     {
-      field: "User research question: #{user_research_questions.reason_for_visit.text}",
-      value: @user.reason_for_visit,
+      field: "User research question: #{user_research_question_text(:reason_for_visit)}",
+      value: user_research_question_option_text(:reason_for_visit, @user.reason_for_visit),
     },
     {
       field: "Questions asked",
