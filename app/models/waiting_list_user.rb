@@ -13,18 +13,24 @@ class WaitingListUser < ApplicationRecord
   def self.aggregate_export_data(until_date)
     hash = {
       "exported_until" => until_date.as_json,
+      "current_user_sources" => {},
+      "deletion_types" => {},
     }
 
     source_counts = where("created_at < ?", until_date).group(:source).count
     sources.each_value do |source|
-      hash[source] = source_counts[source] || 0
+      hash["current_user_sources"][source] = source_counts[source] || 0
     end
 
     deletion_type_counts = DeletedWaitingListUser.where("created_at < ?", until_date).group(:deletion_type).count
     DeletedWaitingListUser.deletion_types
                           .each_value do |deletion_type|
-                            hash["deleted_by_#{deletion_type}"] = deletion_type_counts[deletion_type] || 0
+                            hash["deletion_types"][deletion_type] = deletion_type_counts[deletion_type] || 0
                           end
+
+    hash["current"] = source_counts.sum(&:last)
+    hash["deleted"] = deletion_type_counts.sum(&:last)
+    hash["all_time"] = hash["current"] + hash["deleted"]
 
     hash
   end
