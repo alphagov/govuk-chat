@@ -1,0 +1,22 @@
+<%= content_for :title, "You've requested too many links" %>
+<%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
+                                  href: homepage_path) ) %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body">
+      You'll be able to request a new link in
+      <%= Form::EarlyAccess::SignInOrUp::MAX_SESSIONS_MINUTES_CONSTRAINT %> minutes.
+    </p>
+
+    <h2 class="govuk-heading-m">Find the links you've requested</h2>
+
+    <p class="govuk-body">
+      Links to GOV.UK Chat are sent via email from GOV.UK. The subject line is 'You can now access GOV.UK Chat'.
+    </p>
+
+    <p class="govuk-body">
+      If you cannot find the emails in your inbox, check your junk or spam folder.
+    </p>
+  </div>
+</div>

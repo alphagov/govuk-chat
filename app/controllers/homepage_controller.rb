@@ -23,12 +23,19 @@ class HomepageController < BaseController
     if @sign_in_or_up_form.valid?
       result = @sign_in_or_up_form.submit
 
-      return render :email_sent if result.outcome == :existing_early_access_user
-      return render "shared/already_on_waitlist" if result.outcome == :existing_waiting_list_user
-      return render "shared/access_revoked", status: :forbidden if result.outcome == :user_revoked
-
-      session["sign_up"] = { "email" => result.email }
-      redirect_to sign_up_user_description_path
+      case result.outcome
+      when :existing_early_access_user
+        render :email_sent
+      when :existing_waiting_list_user
+        render "shared/already_on_waitlist"
+      when :user_revoked
+        render "shared/access_revoked", status: :forbidden
+      when :magic_link_limit
+        render :magic_link_limit, status: :too_many_requests
+      else
+        session["sign_up"] = { "email" => result.email }
+        redirect_to sign_up_user_description_path
+      end
     else
       render :index_early_access, status: :unprocessable_entity
     end
