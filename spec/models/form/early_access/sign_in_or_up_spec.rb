@@ -111,5 +111,29 @@ RSpec.describe Form::EarlyAccess::SignInOrUp do
           )
       end
     end
+
+    context "when the user has requested 3 links in the last 5 minutes" do
+      let(:user) { create(:early_access_user, email: "existing.email@example.com") }
+      let(:form) { described_class.new(email: user.email) }
+
+      before do
+        create(:passwordless_session, authenticatable: user, created_at: 6.minutes.ago)
+        create_list(:passwordless_session, 2, authenticatable: user)
+      end
+
+      it "returns a result object with the correct attributes" do
+        third_sign_in_result = form.submit
+        fourth_sign_in_result = form.submit
+
+        expect(third_sign_in_result.outcome).to eq(:existing_early_access_user)
+        expect(fourth_sign_in_result)
+          .to be_a(described_class::Result)
+          .and have_attributes(
+            outcome: :magic_link_limit,
+            email: user.email,
+            user:,
+          )
+      end
+    end
   end
 end
