@@ -14,7 +14,7 @@ RSpec.describe "Admin::Settings::InstantAccessPlacesController" do
       settings = create(:settings, instant_access_places: 10)
 
       expect {
-        patch admin_settings_update_instant_access_places_path,
+        patch admin_settings_edit_instant_access_places_path,
               params: { instant_access_places_form: { places: 5 } }
       }
         .to change(SettingsAudit, :count).by(1)
@@ -24,7 +24,7 @@ RSpec.describe "Admin::Settings::InstantAccessPlacesController" do
     end
 
     it "re-renders the edit page when given invalid params" do
-      patch admin_settings_update_instant_access_places_path,
+      patch admin_settings_edit_instant_access_places_path,
             params: { instant_access_places_form: { places: "" } }
 
       expect(response).to have_http_status(:unprocessable_entity)

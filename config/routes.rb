@@ -104,19 +104,19 @@ Rails.application.routes.draw do
       get "", to: "settings#show", as: :settings
 
       get "/instant_access_places", to: "settings/instant_access_places#edit", as: :settings_edit_instant_access_places
-      patch "/instant_access_places", to: "settings/instant_access_places#update", as: :settings_update_instant_access_places
+      patch "/instant_access_places", to: "settings/instant_access_places#update"
 
       get "/delayed_access_places", to: "settings/delayed_access_places#edit", as: :settings_edit_delayed_access_places
-      patch "/delayed_access_places", to: "settings/delayed_access_places#update", as: :settings_update_delayed_access_places
+      patch "/delayed_access_places", to: "settings/delayed_access_places#update"
 
       get "/max_waiting_list_places", to: "settings/max_waiting_list_places#edit", as: :settings_edit_max_waiting_list_places
-      patch "/max_waiting_list_places", to: "settings/max_waiting_list_places#update", as: :settings_update_max_waiting_list_places
+      patch "/max_waiting_list_places", to: "settings/max_waiting_list_places#update"
 
       get "/sign-up-enabled", to: "settings/sign_up_enabled#edit", as: :settings_edit_sign_up_enabled
-      patch "/sign-up-enabled", to: "settings/sign_up_enabled#update", as: :settings_update_sign_up_enabled
+      patch "/sign-up-enabled", to: "settings/sign_up_enabled#update"
 
       get "/public-access", to: "settings/public_access#edit", as: :settings_edit_public_access
-      patch "/public-access", to: "settings/public_access#update", as: :settings_update_public_access
+      patch "/public-access", to: "settings/public_access#update"
 
       get "/audits", to: "settings#audits", as: :settings_audits
     end

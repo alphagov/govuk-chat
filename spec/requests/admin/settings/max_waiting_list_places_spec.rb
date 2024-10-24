@@ -14,7 +14,7 @@ RSpec.describe "Admin::Settings::MaxWaitingListPlacesController" do
       settings = create(:settings, max_waiting_list_places: 10)
 
       expect {
-        patch admin_settings_update_max_waiting_list_places_path,
+        patch admin_settings_edit_max_waiting_list_places_path,
               params: { max_waiting_list_places_form: { max_places: 15 } }
       }.to change(SettingsAudit, :count).by(1)
        .and change { settings.reload.max_waiting_list_places }.to(15)
@@ -23,7 +23,7 @@ RSpec.describe "Admin::Settings::MaxWaitingListPlacesController" do
     end
 
     it "re-renders the edit page when given invalid params" do
-      patch admin_settings_update_max_waiting_list_places_path,
+      patch admin_settings_edit_max_waiting_list_places_path,
             params: { max_waiting_list_places_form: { max_places: "" } }
 
       expect(response).to have_http_status(:unprocessable_entity)
