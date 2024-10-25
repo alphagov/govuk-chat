@@ -165,6 +165,7 @@ module AnswerComposition
           duration: AnswerComposition.monotonic_time - start_time,
           llm_prompt_tokens: openai_response.dig("usage", "prompt_tokens"),
           llm_completion_tokens: openai_response.dig("usage", "completion_tokens"),
+          llm_cached_tokens: openai_response.dig("usage", "prompt_tokens_details", "cached_tokens"),
         }
       end
     end

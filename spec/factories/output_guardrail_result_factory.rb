@@ -3,7 +3,11 @@ FactoryBot.define do
     initialize_with { new(**attributes) }
 
     llm_token_usage do
-      { "prompt_tokens" => 13, "completion_tokens" => 7 }
+      {
+        "prompt_tokens" => 13,
+        "completion_tokens" => 7,
+        "prompt_tokens_details" => { "cached_tokens" => 10 },
+      }
     end
 
     llm_response do

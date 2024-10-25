@@ -104,6 +104,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
         duration: 1.5,
         llm_prompt_tokens: 13,
         llm_completion_tokens: 7,
+        llm_cached_tokens: 10,
       })
     end
 
