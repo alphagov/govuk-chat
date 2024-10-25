@@ -81,12 +81,59 @@ RSpec.describe "SignUpController" do
   end
 
   describe "POST :confirm_reason_for_visit" do
-    context "when the user description given was 'none'" do
-      include_context "with early access user email and user description provided", "none"
+    include_context "with early access user email and user description provided"
 
-      it "shows a denied page" do
+    context "when invalid params are passed" do
+      it "renders the reason_for_visit page with errors" do
+        post sign_up_reason_for_visit_path
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to have_selector(".govuk-error-summary")
+      end
+    end
+
+    context "when valid params are passed" do
+      it "redirects to the found_chat path" do
         post sign_up_reason_for_visit_path(
           reason_for_visit_form: { choice: "find_specific_answer" },
+        )
+        expect(response).to redirect_to(sign_up_found_chat_path)
+      end
+
+      it "adds the reason for visit to session['sign_up']" do
+        post sign_up_reason_for_visit_path(
+          reason_for_visit_form: { choice: "find_specific_answer" },
+        )
+        expect(session["sign_up"])
+          .to eq(
+            {
+              "email" => "email@test.com",
+              "user_description" => "business_owner_or_self_employed",
+              "reason_for_visit" => "find_specific_answer",
+            },
+          )
+      end
+    end
+  end
+
+  describe "GET :found_chat" do
+    include_context "with early access user email, user description and reason for visit provided"
+
+    it "renders successfully" do
+      question_config = Rails.configuration.pilot_user_research_questions.found_chat
+      get sign_up_found_chat_path
+      expect(response).to have_http_status(:ok)
+      expect(response.body)
+        .to have_selector(".gem-c-radio__heading-text", text: question_config.fetch("text"))
+    end
+  end
+
+  describe "POST :confirm_found_chat" do
+    context "when the user description given was 'none'" do
+      include_context "with early access user email, user description and reason for visit provided", "none"
+
+      it "shows a denied page" do
+        post sign_up_found_chat_path(
+          found_chat_form: { choice: "find_specific_answer" },
         )
 
         expect(response).to have_http_status(:forbidden)
@@ -95,134 +142,134 @@ RSpec.describe "SignUpController" do
       end
     end
 
-    context "when email and user description are valid" do
-      include_context "with early access user email and user description provided"
+    context "when invalid params are passed" do
+      include_context "with early access user email, user description and reason for visit provided"
 
-      context "and invalid params are passed" do
-        it "renders the reason_for_visit page with errors" do
-          post sign_up_reason_for_visit_path(reason_for_visit_form: { choice: "" })
-          expect(response).to have_http_status(:unprocessable_entity)
-          expect(response.body).to have_selector(".govuk-error-summary")
+      it "renders the sign_up_found_chat page with errors" do
+        post sign_up_found_chat_path
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to have_selector(".govuk-error-summary")
+      end
+    end
+
+    context "when valid params are passed" do
+      include_context "with early access user email, user description and reason for visit provided"
+
+      context "and user already has access" do
+        it "responds with a conflict status and tells the user an account already exists" do
+          create(:early_access_user, email: "email@test.com")
+          post sign_up_found_chat_path(
+            found_chat_form: { choice: "search_engine" },
+          )
+          expect(response).to have_http_status(:conflict)
+          expect(response.body).to have_selector(".govuk-heading-xl", text: "You already have access to GOV.UK Chat")
         end
       end
 
-      context "and valid params are passed" do
-        context "and user already has access" do
-          it "responds with a conflict status and tells the user an account already exists" do
-            create(:early_access_user, email: "email@test.com")
-            post sign_up_reason_for_visit_path(
-              reason_for_visit_form: { choice: "find_specific_answer" },
-            )
-            expect(response).to have_http_status(:conflict)
-            expect(response.body).to have_selector(".govuk-heading-xl", text: "You already have access to GOV.UK Chat")
-          end
+      context "and the user is already on the waiting list" do
+        it "responds with a conflict status and tells the user an account already exists" do
+          create(:waiting_list_user, email: "email@test.com")
+          post sign_up_found_chat_path(
+            found_chat_form: { choice: "search_engine" },
+          )
+          expect(response).to have_http_status(:conflict)
+          expect(response.body).to have_selector(".govuk-heading-xl", text: "You're already on the waitlist")
+        end
+      end
+
+      context "and there are instant access places available" do
+        it "responds with a successful status" do
+          post sign_up_found_chat_path(
+            found_chat_form: { choice: "search_engine" },
+          )
+          expect(response).to have_http_status(:ok)
         end
 
-        context "and the user is already on the waiting list" do
-          it "responds with a conflict status and tells the user an account already exists" do
-            create(:waiting_list_user, email: "email@test.com")
-            post sign_up_reason_for_visit_path(
-              reason_for_visit_form: { choice: "find_specific_answer" },
-            )
-            expect(response).to have_http_status(:conflict)
-            expect(response.body).to have_selector(".govuk-heading-xl", text: "You're already on the waitlist")
-          end
+        it "renders the sign_up_successful template" do
+          post sign_up_found_chat_path(
+            found_chat_form: { choice: "search_engine" },
+          )
+          expect(response.body).to have_selector(".govuk-heading-xl", text: "You can now start using GOV.UK Chat")
         end
 
-        context "and there are instant access places available" do
-          it "responds with a successful status" do
-            post sign_up_reason_for_visit_path(
-              reason_for_visit_form: { choice: "find_specific_answer" },
+        it "emails a magic link to the user" do
+          expect {
+            post sign_up_found_chat_path(
+              found_chat_form: { choice: "search_engine" },
             )
-            expect(response).to have_http_status(:ok)
-          end
-
-          it "renders the sign_up_successful template" do
-            post sign_up_reason_for_visit_path(
-              reason_for_visit_form: { choice: "find_specific_answer" },
-            )
-            expect(response.body).to have_selector(".govuk-heading-xl", text: "You can now start using GOV.UK Chat")
-          end
-
-          it "emails a magic link to the user" do
-            expect {
-              post sign_up_reason_for_visit_path(
-                reason_for_visit_form: { choice: "find_specific_answer" },
-              )
-            }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-            expect(EarlyAccessAuthMailer.deliveries.last.subject).to eq("You can now access GOV.UK Chat")
-          end
-
-          it "deletes the session['sign_up'] variable" do
-            post sign_up_reason_for_visit_path(
-              reason_for_visit_form: { choice: "find_specific_answer" },
-            )
-            expect(session["sign_up"]).to be_nil
-          end
+          }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
+          expect(EarlyAccessAuthMailer.deliveries.last.subject).to eq("You can now access GOV.UK Chat")
         end
 
-        context "and there are no instant access places, but waiting list places are available" do
-          before do
-            Settings.instance.update!(instant_access_places: 0)
-          end
+        it "deletes the session['sign_up'] variable" do
+          post sign_up_found_chat_path(
+            found_chat_form: { choice: "search_engine" },
+          )
+          expect(session["sign_up"]).to be_nil
+        end
+      end
 
-          it "responds with a successful status" do
-            post sign_up_reason_for_visit_path(
-              reason_for_visit_form: { choice: "find_specific_answer" },
-            )
-            expect(response).to have_http_status(:ok)
-          end
-
-          it "renders the waitlist template" do
-            post sign_up_reason_for_visit_path(
-              reason_for_visit_form: { choice: "find_specific_answer" },
-            )
-            expect(response.body).to have_selector(".govuk-heading-xl", text: "You have been added to the waitlist")
-          end
-
-          it "emails the user informing them they've been added to the waitlist" do
-            expect {
-              post sign_up_reason_for_visit_path(
-                reason_for_visit_form: { choice: "find_specific_answer" },
-              )
-            }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-            expect(EarlyAccessAuthMailer.deliveries.last.subject).to eq("You're on the waitlist for GOV.UK Chat")
-          end
-
-          it "deletes the session['sign_up'] variable" do
-            post sign_up_reason_for_visit_path(
-              reason_for_visit_form: { choice: "find_specific_answer" },
-            )
-            expect(session["sign_up"]).to be_nil
-          end
+      context "and there are no instant access places, but waiting list places are available" do
+        before do
+          Settings.instance.update!(instant_access_places: 0)
         end
 
-        context "and there are no instant access places or waiting list places available" do
-          before do
-            Settings.instance.update!(instant_access_places: 0, max_waiting_list_places: 0)
-          end
+        it "responds with a successful status" do
+          post sign_up_found_chat_path(
+            found_chat_form: { choice: "search_engine" },
+          )
+          expect(response).to have_http_status(:ok)
+        end
 
-          it "responds with a successful status" do
-            post sign_up_reason_for_visit_path(
-              reason_for_visit_form: { choice: "find_specific_answer" },
-            )
-            expect(response).to have_http_status(:ok)
-          end
+        it "renders the waitlist template" do
+          post sign_up_found_chat_path(
+            found_chat_form: { choice: "search_engine" },
+          )
+          expect(response.body).to have_selector(".govuk-heading-xl", text: "You have been added to the waitlist")
+        end
 
-          it "renders the waitlist full template" do
-            post sign_up_reason_for_visit_path(
-              reason_for_visit_form: { choice: "find_specific_answer" },
+        it "emails the user informing them they've been added to the waitlist" do
+          expect {
+            post sign_up_found_chat_path(
+              found_chat_form: { choice: "search_engine" },
             )
-            expect(response.body)
-              .to have_selector(".govuk-heading-xl", text: "The GOV.UK Chat waitlist is currently full")
-          end
+          }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
+          expect(EarlyAccessAuthMailer.deliveries.last.subject).to eq("You're on the waitlist for GOV.UK Chat")
+        end
 
-          it "deletes the session['sign_up'] variable" do
-            post sign_up_reason_for_visit_path(
-              reason_for_visit_form: { choice: "find_specific_answer" },
-            )
-            expect(session["sign_up"]).to be_nil
-          end
+        it "deletes the session['sign_up'] variable" do
+          post sign_up_found_chat_path(
+            found_chat_form: { choice: "search_engine" },
+          )
+          expect(session["sign_up"]).to be_nil
+        end
+      end
+
+      context "and there are no instant access places or waiting list places available" do
+        before do
+          Settings.instance.update!(instant_access_places: 0, max_waiting_list_places: 0)
+        end
+
+        it "responds with a successful status" do
+          post sign_up_found_chat_path(
+            found_chat_form: { choice: "search_engine" },
+          )
+          expect(response).to have_http_status(:ok)
+        end
+
+        it "renders the waitlist full template" do
+          post sign_up_found_chat_path(
+            found_chat_form: { choice: "search_engine" },
+          )
+          expect(response.body)
+            .to have_selector(".govuk-heading-xl", text: "The GOV.UK Chat waitlist is currently full")
+        end
+
+        it "deletes the session['sign_up'] variable" do
+          post sign_up_found_chat_path(
+            found_chat_form: { choice: "search_engine" },
+          )
+          expect(session["sign_up"]).to be_nil
         end
       end
     end

@@ -136,20 +136,22 @@ module SignUpRequestExamples
 
   shared_context "with early access user email provided" do
     before do
-      post homepage_path(
-        sign_in_or_up_form: { email: "email@test.com" },
-      )
+      post homepage_path(sign_in_or_up_form: { email: "email@test.com" })
     end
   end
 
-  shared_context "with early access user email and user description provided" do |user_description = "business_owner_or_self_employed"|
+  shared_context "with early access user email and user description provided" do
     before do
-      post homepage_path(
-        sign_in_or_up_form: { email: "email@test.com" },
-      )
-      post sign_up_user_description_path(
-        user_description_form: { choice: user_description },
-      )
+      post homepage_path(sign_in_or_up_form: { email: "email@test.com" })
+      post sign_up_user_description_path(user_description_form: { choice: "business_owner_or_self_employed" })
+    end
+  end
+
+  shared_context "with early access user email, user description and reason for visit provided" do |user_description = "business_owner_or_self_employed"|
+    before do
+      post homepage_path(sign_in_or_up_form: { email: "email@test.com" })
+      post sign_up_user_description_path(user_description_form: { choice: user_description })
+      post sign_up_reason_for_visit_path(reason_for_visit_form: { choice: "find_specific_answer" })
     end
   end
 end

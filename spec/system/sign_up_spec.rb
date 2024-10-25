@@ -6,6 +6,7 @@ RSpec.describe "Sign up" do
     and_i_enter_my_email_address
     and_i_choose_my_description
     and_i_choose_my_reason_for_visit
+    and_i_choose_how_i_found_chat
     then_i_am_told_i_have_been_sent_an_email
 
     when_i_click_the_link_in_the_email
@@ -29,6 +30,7 @@ RSpec.describe "Sign up" do
     and_i_enter_my_email_address
     and_i_choose_my_description
     and_i_choose_my_reason_for_visit
+    and_i_choose_how_i_found_chat
 
     then_i_am_told_i_have_been_added_to_the_waitlist
     and_i_receive_an_email_telling_me_i_am_on_the_waitlist
@@ -42,6 +44,7 @@ RSpec.describe "Sign up" do
     and_i_enter_my_email_address
     and_i_choose_my_description
     and_i_choose_my_reason_for_visit
+    and_i_choose_how_i_found_chat
     then_i_am_told_i_have_been_added_to_the_waitlist
 
     when_i_click_the_unsubscribe_link_in_the_email
@@ -54,6 +57,7 @@ RSpec.describe "Sign up" do
     and_i_enter_my_email_address
     and_i_choose_an_invalid_description
     and_i_choose_my_reason_for_visit
+    and_i_choose_how_i_found_chat
     then_i_am_told_i_have_been_prevented_access
   end
 
@@ -71,7 +75,7 @@ RSpec.describe "Sign up" do
   end
 
   def and_i_choose_my_description
-    choose "I own a business or am self-employed"
+    choose ur_question_first_option_text(:user_description)
     click_on "Next question"
   end
 
@@ -81,7 +85,12 @@ RSpec.describe "Sign up" do
   end
 
   def and_i_choose_my_reason_for_visit
-    choose "To complete a task, like applying for a passport"
+    choose ur_question_first_option_text(:reason_for_visit)
+    click_on "Next question"
+  end
+
+  def and_i_choose_how_i_found_chat
+    choose ur_question_first_option_text(:found_chat)
     click_on "Submit answers"
   end
 

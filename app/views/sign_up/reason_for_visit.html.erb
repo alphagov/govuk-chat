@@ -16,14 +16,14 @@
         id: "reason_for_visit_form_choice",
         name: "reason_for_visit_form[choice]",
         heading: user_research_question_text(:reason_for_visit),
-        heading_caption: "Question 2 of 2",
+        heading_caption: "Question 2 of 3",
         heading_level: 1,
         error_items: error_items(@reason_for_visit_form, :choice),
         items: user_research_question_items_for_radio(:reason_for_visit, checked: @reason_for_visit_form.choice),
       } %>
 
       <%= render "components/blue_button", {
-        text: "Submit answers",
+        text: "Next question",
       } %>
     <% end %>
   </div>

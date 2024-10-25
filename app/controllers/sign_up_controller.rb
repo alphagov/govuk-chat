@@ -27,19 +27,35 @@ class SignUpController < BaseController
   end
 
   def confirm_reason_for_visit
+    @reason_for_visit_form = Form::EarlyAccess::ReasonForVisit.new(reason_for_visit_form_params)
+
+    if @reason_for_visit_form.valid?
+      session["sign_up"]["reason_for_visit"] = @reason_for_visit_form.choice
+      redirect_to sign_up_found_chat_path
+    else
+      render :reason_for_visit, status: :unprocessable_entity
+    end
+  end
+
+  def found_chat
+    @found_chat_form = Form::EarlyAccess::FoundChat.new
+  end
+
+  def confirm_found_chat
     if session["sign_up"]["user_description"] == "none"
       session.delete("sign_up")
       return render :sign_up_denied, status: :forbidden
     end
 
-    @reason_for_visit_form = Form::EarlyAccess::ReasonForVisit.new(reason_for_visit_form_params)
+    @found_chat_form = Form::EarlyAccess::FoundChat.new(found_chat_form_params)
 
-    if @reason_for_visit_form.valid?
+    if @found_chat_form.valid?
       sign_up_session = session["sign_up"]
       result = PilotSignUp.call(
         email: sign_up_session["email"],
         user_description: sign_up_session["user_description"],
-        reason_for_visit: @reason_for_visit_form.choice,
+        reason_for_visit: sign_up_session["reason_for_visit"],
+        found_chat: @found_chat_form.choice,
       )
       session.delete("sign_up")
 
@@ -51,7 +67,7 @@ class SignUpController < BaseController
         render :waitlist_full
       end
     else
-      render :reason_for_visit, status: :unprocessable_entity
+      render :found_chat, status: :unprocessable_entity
     end
   rescue PilotSignUp::EarlyAccessUserConflictError
     render :account_already_exists, status: :conflict
@@ -67,6 +83,10 @@ private
 
   def reason_for_visit_form_params
     params.require(:reason_for_visit_form).permit(:choice)
+  end
+
+  def found_chat_form_params
+    params.require(:found_chat_form).permit(:choice)
   end
 
   def ensure_sign_up_flow_position
