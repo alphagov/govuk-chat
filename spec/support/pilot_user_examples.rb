@@ -11,5 +11,6 @@ module PilotUserExamples
   shared_examples "user research question enums match config" do
     include_examples "underlying enum matches config", "ur_question_user_description", :user_descriptions
     include_examples "underlying enum matches config", "ur_question_reason_for_visit", :reason_for_visits
+    include_examples "underlying enum matches config", "ur_question_found_chat", :found_chat
   end
 end

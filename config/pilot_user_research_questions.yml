@@ -25,3 +25,25 @@ reason_for_visit:
       text: To learn about a topic, like financial support for businesses
     - value: other
       text: Other
+
+found_chat:
+  text: How did you find out about GOV.UK Chat?
+  options:
+    - value: govuk_website
+      text: GOV.UK website
+    - value: govuk_blog
+      text: GOV.UK blog
+    - value: social_media
+      text: Social media
+    - value: news
+      text: News
+    - value: personal_contact
+      text: Someone you know personally, such as your friend or family member
+    - value: professional_contact
+      text: Someone you know professionally, such as your business partner or accountant
+    - value: official_government_announcement
+      text: Official government announcement
+    - value: search_engine
+      text: Search engine, such as Google
+    - value: other
+      text: Other
