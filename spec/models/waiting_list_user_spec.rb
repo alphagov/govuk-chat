@@ -28,6 +28,23 @@ RSpec.describe WaitingListUser do
         deletion_type: "unsubscribe",
       )
     end
+
+    it "records the user id of the admin that deleted the user if passed one" do
+      instance = create(:waiting_list_user)
+      admin_user_id = SecureRandom.uuid
+
+      expect { instance.destroy_with_audit(deletion_type: :admin, deleted_by_admin_user_id: admin_user_id) }
+        .to change(described_class, :count).by(-1)
+        .and change(DeletedWaitingListUser, :count).by(1)
+
+      expect(DeletedWaitingListUser.last).to have_attributes(
+        id: instance.id,
+        user_source: instance.source,
+        user_created_at: instance.created_at,
+        deletion_type: "admin",
+        deleted_by_admin_user_id: admin_user_id,
+      )
+    end
   end
 
   describe ".aggregate_export_data" do
