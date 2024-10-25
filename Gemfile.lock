@@ -113,6 +113,7 @@ GEM
       rexml
     crass (1.0.6)
     csv (3.3.0)
+    dalli (3.2.8)
     dartsass-rails (0.5.1)
       railties (>= 6.0.0)
       sass-embedded (~> 1.63)
@@ -840,6 +841,7 @@ DEPENDENCIES
   chartkick
   climate_control
   csv
+  dalli
   dartsass-rails
   dotenv
   erb_lint
