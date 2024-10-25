@@ -66,6 +66,7 @@ RSpec.describe Guardrails::MultipleChecker do
         "prompt_tokens" => 13,
         "completion_tokens" => 7,
         "total_tokens" => 20,
+        "prompt_tokens_details" => { "cached_tokens" => 10 },
       })
     end
 

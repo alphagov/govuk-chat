@@ -13,7 +13,9 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
     }
   end
 
-  let(:llm_token_usage) { { "prompt_tokens" => 10, "completion_tokens" => 5 } }
+  let(:llm_token_usage) do
+    { "prompt_tokens" => 10, "completion_tokens" => 5, "prompt_tokens_details" => { "cached_tokens" => 0 } }
+  end
 
   context "when the guardrails are not triggered" do
     before do
@@ -54,6 +56,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
         duration: 1.5,
         llm_prompt_tokens: 10,
         llm_completion_tokens: 5,
+        llm_cached_tokens: 0,
       })
     end
   end
@@ -91,6 +94,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
         duration: 1.5,
         llm_prompt_tokens: 10,
         llm_completion_tokens: 5,
+        llm_cached_tokens: 0,
       })
     end
   end
@@ -129,6 +133,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
         duration: 1.5,
         llm_prompt_tokens: 10,
         llm_completion_tokens: 5,
+        llm_cached_tokens: 0,
       })
     end
   end

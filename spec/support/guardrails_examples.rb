@@ -32,6 +32,7 @@ module GuardrailsExamples
         duration: 1.5,
         llm_prompt_tokens: 13,
         llm_completion_tokens: 7,
+        llm_cached_tokens: 10,
       })
     end
   end
@@ -46,7 +47,7 @@ module GuardrailsExamples
           .and_raise(
             Guardrails::MultipleChecker::ResponseError.new(
               "An error occurred", 'False | "1, 2"',
-              { "prompt_tokens" => 13, "completion_tokens" => 7 }
+              { "prompt_tokens" => 13, "completion_tokens" => 7, "prompt_tokens_details" => { "cached_tokens" => 10 } }
             ),
           )
       end
@@ -75,6 +76,7 @@ module GuardrailsExamples
           duration: 1.5,
           llm_prompt_tokens: 13,
           llm_completion_tokens: 7,
+          llm_cached_tokens: 10,
         })
       end
     end

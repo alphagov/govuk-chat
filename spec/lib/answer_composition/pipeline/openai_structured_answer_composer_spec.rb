@@ -93,6 +93,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
           duration: 1.5,
           llm_prompt_tokens: 13,
           llm_completion_tokens: 7,
+          llm_cached_tokens: 10,
         })
       end
 
@@ -129,6 +130,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
             duration: 1.5,
             llm_prompt_tokens: 13,
             llm_completion_tokens: 7,
+            llm_cached_tokens: 10,
           })
         end
       end
