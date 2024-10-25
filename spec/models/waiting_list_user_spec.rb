@@ -1,4 +1,6 @@
 RSpec.describe WaitingListUser do
+  include_examples "user research question enums match config"
+
   describe ".users_to_promote" do
     it "returns an array of waiting_list_users" do
       create_list(:waiting_list_user, 3)

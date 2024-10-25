@@ -1,6 +1,4 @@
-<%
-  content_for(:browser_title, PilotUser::USER_RESEARCH_QUESTION_DESCRIPTION)
-%>
+<% content_for(:browser_title, user_research_question_text(:user_description)) %>
 <%= render "shared/error_summary",
   model: @user_description_form,
   anchor_mappings: {
@@ -17,37 +15,11 @@
       <%= render "govuk_publishing_components/components/radio", {
         id: "user_description_form_choice",
         name: "user_description_form[choice]",
-        heading: PilotUser::USER_RESEARCH_QUESTION_DESCRIPTION,
+        heading: user_research_question_text(:user_description),
         heading_caption: "Question 1 of 2",
         heading_level: 1,
         error_items: error_items(@user_description_form, :choice),
-        items: [
-          {
-            value: "business_owner_or_self_employed",
-            text: "I own a business or am self-employed",
-            checked: @user_description_form.choice == "business_owner_or_self_employed",
-          },
-          {
-            value: "starting_business_or_becoming_self_employed",
-            text: "I'm planning to start a business or become self-employed",
-            checked: @user_description_form.choice == "starting_business_or_becoming_self_employed",
-          },
-            {
-            value: "business_advisor",
-            text: "I'm a business advisor",
-            checked: @user_description_form.choice == "business_advisor",
-          },
-            {
-            value: "business_administrator",
-            text: "I work in business administration",
-            checked: @user_description_form.choice == "business_administrator",
-          },
-          {
-            value: "none",
-            text: "None of the above",
-            checked: @user_description_form.choice == "none",
-          },
-        ],
+        items: user_research_question_items_for_radio(:user_description, checked: @user_description_form.choice),
       } %>
 
       <%= render "components/blue_button", {

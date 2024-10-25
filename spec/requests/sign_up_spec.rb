@@ -32,9 +32,10 @@ RSpec.describe "SignUpController" do
     include_context "with early access user email provided"
 
     it "renders successfully" do
+      question_config = Rails.configuration.pilot_user_research_questions.user_description
       get sign_up_user_description_path
       expect(response).to have_http_status(:ok)
-      expect(response.body).to have_selector(".gem-c-radio__heading-text", text: PilotUser::USER_RESEARCH_QUESTION_DESCRIPTION)
+      expect(response.body).to have_selector(".gem-c-radio__heading-text", text: question_config.fetch("text"))
     end
   end
 
@@ -71,10 +72,11 @@ RSpec.describe "SignUpController" do
     include_context "with early access user email and user description provided"
 
     it "renders successfully" do
+      question_config = Rails.configuration.pilot_user_research_questions.reason_for_visit
       get sign_up_reason_for_visit_path
       expect(response).to have_http_status(:ok)
       expect(response.body)
-        .to have_selector(".gem-c-radio__heading-text", text: PilotUser::USER_RESEARCH_QUESTION_REASON_FOR_VISIT)
+        .to have_selector(".gem-c-radio__heading-text", text: question_config.fetch("text"))
     end
   end
 

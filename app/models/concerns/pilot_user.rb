@@ -1,28 +1,12 @@
 module PilotUser
   extend ActiveSupport::Concern
 
-  USER_RESEARCH_QUESTION_DESCRIPTION = "Which of the following best describes you?".freeze
-  USER_RESEARCH_QUESTION_REASON_FOR_VISIT = "Why did you visit GOV.UK today?".freeze
-
   included do
-    enum :user_description,
-         {
-           business_owner_or_self_employed: "business_owner_or_self_employed",
-           starting_business_or_becoming_self_employed: "starting_business_or_becoming_self_employed",
-           business_advisor: "business_advisor",
-           business_administrator: "business_administrator",
-           none: "none",
-         },
-         prefix: true
+    user_research_questions = Rails.configuration.pilot_user_research_questions
+    user_description_values = user_research_questions.user_description.options.map(&:value)
+    enum :user_description, user_description_values.index_by(&:to_sym), prefix: true
 
-    enum :reason_for_visit,
-         {
-           find_specific_answer: "find_specific_answer",
-           complete_task: "complete_task",
-           understand_process: "understand_process",
-           research_topic: "research_topic",
-           other: "other",
-         },
-         prefix: true
+    reason_for_visit_values = user_research_questions.reason_for_visit.options.map(&:value)
+    enum :reason_for_visit, reason_for_visit_values.index_by(&:to_sym), prefix: true
   end
 end
