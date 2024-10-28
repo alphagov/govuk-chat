@@ -31,6 +31,23 @@ module SignUpRequestExamples
     end
   end
 
+  shared_examples "redirects user to reason for visit path when previous sign up steps have been completed but reason for visit hasn't" do |routes:|
+    include_context "with early access user email and user description provided"
+
+    routes.each do |path, methods|
+      describe "Redirects user to the reason for visit path when session['sign_up']['reason_for_visit'] is blank" do
+        methods.each do |method|
+          it "redirects user to the reason for visit path for #{method} #{path}" do
+            process(method.to_sym, public_send(path.to_sym))
+
+            expect(response).to have_http_status(:redirect)
+            expect(response).to redirect_to(sign_up_reason_for_visit_path)
+          end
+        end
+      end
+    end
+  end
+
   shared_examples "renders not_accepting_signups page when Settings#sign_up_enabled is false" do |routes:|
     include_context "with early access user email and user description provided"
 

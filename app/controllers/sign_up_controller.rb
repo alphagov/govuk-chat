@@ -2,8 +2,8 @@ class SignUpController < BaseController
   skip_before_action :ensure_early_access_user_if_required
   before_action :redirect_to_homepage_if_auth_not_required
   before_action :redirect_to_homepage_if_signed_in
-  before_action :ensure_sign_up_flow_position
   before_action :render_not_accepting_signups_if_sign_ups_disabled
+  before_action :ensure_sign_up_flow_position
 
   def user_description
     @user_description_form = Form::EarlyAccess::UserDescription.new(
@@ -94,8 +94,16 @@ private
       return redirect_to homepage_path
     end
 
-    if session.dig("sign_up", "user_description").blank? && action_name.match?(/reason_for_visit/)
-      redirect_to sign_up_user_description_path
+    if session.dig("sign_up", "user_description").blank?
+      return if action_name.match?(/user_description/)
+
+      return redirect_to sign_up_user_description_path
+    end
+
+    if session.dig("sign_up", "reason_for_visit").blank?
+      return if action_name.match?(/reason_for_visit/)
+
+      redirect_to sign_up_reason_for_visit_path
     end
   end
 

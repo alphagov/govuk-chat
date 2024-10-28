@@ -5,10 +5,17 @@ RSpec.describe "SignUpController" do
                   routes: {
                     sign_up_user_description_path: %i[get post],
                     sign_up_reason_for_visit_path: %i[get post],
+                    sign_up_found_chat_path: %i[get post],
                   }
 
   it_behaves_like "redirects user to user description path when email is set in the session but user description isn't",
-                  routes: { sign_up_reason_for_visit_path: %i[get post] }
+                  routes: {
+                    sign_up_reason_for_visit_path: %i[get post],
+                    sign_up_found_chat_path: %i[get post],
+                  }
+
+  it_behaves_like "redirects user to reason for visit path when previous sign up steps have been completed but reason for visit hasn't",
+                  routes: { sign_up_found_chat_path: %i[get post] }
 
   it_behaves_like "renders not_accepting_signups page when Settings#sign_up_enabled is false",
                   routes: {
