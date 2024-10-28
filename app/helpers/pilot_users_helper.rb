@@ -4,6 +4,8 @@ module PilotUsersHelper
   end
 
   def user_research_question_option_text(question_label, option_value)
+    return "" unless option_value
+
     options = Rails.configuration.pilot_user_research_questions.fetch(question_label.to_s).options
     option = options.find { |o| o.value == option_value.to_s }
     raise "Option #{option_value} not found for question #{question_label}" unless option
