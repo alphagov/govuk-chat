@@ -1,4 +1,6 @@
 RSpec.describe Form::CreateQuestion do
+  let(:hidden_in_unicode_tags) { "\u{E0068}\u{E0069}\u{E0064}\u{E0064}\u{E0065}\u{E006E}" }
+
   describe "validations" do
     let(:conversation) { build(:conversation) }
 
@@ -97,6 +99,24 @@ RSpec.describe Form::CreateQuestion do
         expect(form).to be_valid
       end
     end
+
+    describe "unicode tags" do
+      let(:form) do
+        described_class.new(
+          conversation:,
+          user_question: "Message with hidden characters#{hidden_in_unicode_tags}",
+        )
+      end
+
+      it "is valid with a message containing unicode tags" do
+        expect(form).to be_valid
+      end
+
+      it "becomes invalid if the message is set to nil" do
+        expect { form.user_question = nil }
+          .to change(form, :valid?).to(false)
+      end
+    end
   end
 
   describe "#submit" do
@@ -121,6 +141,7 @@ RSpec.describe Form::CreateQuestion do
         expect(Question.where(conversation:).last)
           .to have_attributes(
             message: "How much tax should I be paying?",
+            unsanitised_message: nil,
             answer_strategy: "openai_structured_answer",
           )
       end
@@ -138,6 +159,21 @@ RSpec.describe Form::CreateQuestion do
           conversation:,
         )
         expect { form.submit }.to change { user.reload.questions_count }.by(1)
+      end
+
+      context "when the user question contains unicode tags" do
+        let(:message_with_unicode_tags) { "Message with hidden characters#{hidden_in_unicode_tags}" }
+        let(:form) { described_class.new(conversation:, user_question: message_with_unicode_tags) }
+
+        it "sets a sanitised message on question" do
+          form.submit
+          expect(Question.where(conversation:).last.message).to eq("Message with hidden characters")
+        end
+
+        it "sets the original question as the unsanitised message" do
+          form.submit
+          expect(Question.where(conversation:).last.unsanitised_message).to eq(message_with_unicode_tags)
+        end
       end
     end
 
