@@ -35,8 +35,14 @@ class SignUpController < BaseController
     @reason_for_visit_form = Form::EarlyAccess::ReasonForVisit.new(reason_for_visit_form_params)
 
     if @reason_for_visit_form.valid?
-      result = @reason_for_visit_form.submit
+      sign_up_session = session["sign_up"]
+      result = PilotSignUp.call(
+        email: sign_up_session["email"],
+        user_description: sign_up_session["user_description"],
+        reason_for_visit: @reason_for_visit_form.choice,
+      )
       session.delete("sign_up")
+
       if result.outcome == :early_access_user
         render :sign_up_successful
       elsif result.outcome == :waiting_list_user
@@ -47,9 +53,9 @@ class SignUpController < BaseController
     else
       render :reason_for_visit, status: :unprocessable_entity
     end
-  rescue Form::EarlyAccess::ReasonForVisit::EarlyAccessUserConflictError
+  rescue PilotSignUp::EarlyAccessUserConflictError
     render :account_already_exists, status: :conflict
-  rescue Form::EarlyAccess::ReasonForVisit::WaitingListUserConflictError
+  rescue PilotSignUp::WaitingListUserConflictError
     render "shared/already_on_waitlist", status: :conflict
   end
 
@@ -60,13 +66,7 @@ private
   end
 
   def reason_for_visit_form_params
-    params
-      .require(:reason_for_visit_form)
-      .permit(:choice)
-      .merge(
-        email: session.dig("sign_up", "email"),
-        user_description: session.dig("sign_up", "user_description"),
-      )
+    params.require(:reason_for_visit_form).permit(:choice)
   end
 
   def ensure_sign_up_flow_position
