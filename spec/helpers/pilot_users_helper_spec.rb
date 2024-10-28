@@ -79,12 +79,6 @@ RSpec.describe PilotUsersHelper do
                             { value: "option_b", text: "Option B", selected: false })
     end
 
-    it "can remove the empty options" do
-      expect(helper.user_research_question_options_for_select("my_question", with_empty: false))
-        .to contain_exactly({ value: "option_a", text: "Option A", selected: false },
-                            { value: "option_b", text: "Option B", selected: false })
-    end
-
     it "raises a KeyError when requesting a question that isn't configured" do
       expect { helper.user_research_question_options_for_select("other_question") }
         .to raise_error(KeyError)

@@ -11,7 +11,7 @@ module PilotUsersHelper
     option.fetch("text")
   end
 
-  def user_research_question_options_for_select(question_label, selected: nil, with_empty: true)
+  def user_research_question_options_for_select(question_label, selected: nil)
     options = Rails.configuration.pilot_user_research_questions.fetch(question_label.to_s).options
 
     choices = options.map do |option|
@@ -22,11 +22,7 @@ module PilotUsersHelper
       }
     end
 
-    if with_empty
-      [{ value: "", text: "", selected: selected == "" }] + choices
-    else
-      choices
-    end
+    [{ value: "", text: "", selected: selected == "" }] + choices
   end
 
   def user_research_question_items_for_radio(question_label, checked: nil)
