@@ -14,6 +14,16 @@ RSpec.describe "UnsubscribeController" do
     end
   end
 
+  it_behaves_like "throttles traffic from a single IP address",
+                  routes: { waiting_list_user_unsubscribe_path: %i[get] }, limit: 20, period: 5.minutes do
+                    let(:route_params) { { id: SecureRandom.uuid, token: SecureRandom.uuid } }
+                  end
+
+  it_behaves_like "throttles traffic from a single IP address",
+                  routes: { early_access_user_unsubscribe_path: %i[get] }, limit: 20, period: 5.minutes do
+                    let(:route_params) { { id: SecureRandom.uuid, token: SecureRandom.uuid } }
+                  end
+
   describe "HEAD :waiting_list_user" do
     it "returns a success without unsubscribing the user" do
       user = create(:waiting_list_user)
