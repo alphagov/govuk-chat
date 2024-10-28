@@ -4,6 +4,11 @@ class Rack::Attack
     next cdn_client_ip(request) if request.path == homepage_path && request.post?
   end
 
+  throttle("sign-up final step by IP", limit: 10, period: 5.minutes) do |request|
+    sign_up_path = Rails.application.routes.url_helpers.sign_up_found_chat_path
+    next cdn_client_ip(request) if request.path == sign_up_path && request.post?
+  end
+
   def self.cdn_client_ip(request)
     # We use a header set by the CDN to specify which IP address to use a
     # discriminiator. We can't use request.ip as that uses the IP address of
