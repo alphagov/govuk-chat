@@ -35,8 +35,12 @@ class SignUpController < BaseController
     @reason_for_visit_form = Form::EarlyAccess::ReasonForVisit.new(reason_for_visit_form_params)
 
     if @reason_for_visit_form.valid?
-      session["sign_up"]["reason_for_visit"] = @reason_for_visit_form.choice
-      result = PilotSignUp.call(**session["sign_up"])
+      sign_up_session = session["sign_up"]
+      result = PilotSignUp.call(
+        email: sign_up_session["email"],
+        user_description: sign_up_session["user_description"],
+        reason_for_visit: @reason_for_visit_form.choice,
+      )
       session.delete("sign_up")
 
       if result.outcome == :early_access_user

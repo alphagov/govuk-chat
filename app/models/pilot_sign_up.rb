@@ -1,55 +1,65 @@
 class PilotSignUp
-  include ActiveModel::Model
-  include ActiveModel::Attributes
-
   class EarlyAccessUserConflictError < StandardError; end
   class WaitingListUserConflictError < StandardError; end
-  Result = Data.define(:outcome, :user)
-
-  attribute :email
-  attribute :user_description
-  attribute :reason_for_visit
+  Result = Data.define(:outcome, :user, :session)
 
   def self.call(...) = new(...).call
+
+  def initialize(email:, user_description:, reason_for_visit:)
+    @email = email
+    @user_description = user_description
+    @reason_for_visit = reason_for_visit
+    @settings = Settings.instance
+  end
 
   def call
     raise EarlyAccessUserConflictError if EarlyAccessUser.exists?(email:)
     raise WaitingListUserConflictError if WaitingListUser.exists?(email:)
 
-    settings = Settings.instance
-    settings.with_lock do
-      if settings.instant_access_places.zero? &&
-          settings.max_waiting_list_places <= WaitingListUser.count
-        return Result.new(outcome: :waiting_list_full, user: nil)
-      end
-
-      if settings.instant_access_places.zero?
-        user = WaitingListUser.create!(
-          email:,
-          user_description:,
-          reason_for_visit:,
-          source: "insufficient_instant_places",
-        )
-        @result = Result.new(outcome: :waiting_list_user, user:)
+    result = settings.with_lock do
+      if waiting_list_full?
+        Result.new(outcome: :waiting_list_full, user: nil, session: nil)
+      elsif settings.instant_access_places.zero?
+        user = setup_waiting_list_user
+        Result.new(outcome: :waiting_list_user, user:, session: nil)
       else
-        user = EarlyAccessUser.create!(
-          email:,
-          user_description:,
-          reason_for_visit:,
-          source: "instant_signup",
-        )
-        @session = Passwordless::Session.create!(authenticatable: user)
-        settings.update!(instant_access_places: settings.instant_access_places - 1)
-        @result = Result.new(outcome: :early_access_user, user:)
+        user, session = setup_early_access_user
+        Result.new(outcome: :early_access_user, user:, session:)
       end
     end
 
-    if @result.outcome == :early_access_user
-      EarlyAccessAuthMailer.access_granted(@session).deliver_now
-    else
-      EarlyAccessAuthMailer.waitlist(@result.user).deliver_now
-    end
+    EarlyAccessAuthMailer.access_granted(result.session).deliver_now if result.outcome == :early_access_user
+    EarlyAccessAuthMailer.waitlist(result.user).deliver_now if result.outcome == :waiting_list_user
+    result
+  end
 
-    @result
+private
+
+  attr_reader :email, :user_description, :reason_for_visit, :settings
+
+  def waiting_list_full?
+    settings.instant_access_places.zero? &&
+      settings.max_waiting_list_places <= WaitingListUser.count
+  end
+
+  def setup_early_access_user
+    user = EarlyAccessUser.create!(
+      email:,
+      user_description:,
+      reason_for_visit:,
+      source: "instant_signup",
+    )
+    settings.update!(instant_access_places: settings.instant_access_places - 1)
+    session = Passwordless::Session.create!(authenticatable: user)
+    [user, session]
+  end
+
+  def setup_waiting_list_user
+    WaitingListUser.create!(
+      email:,
+      user_description:,
+      reason_for_visit:,
+      source: "insufficient_instant_places",
+    )
   end
 end
