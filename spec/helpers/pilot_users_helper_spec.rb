@@ -46,6 +46,10 @@ RSpec.describe PilotUsersHelper do
         .to eq("Option A")
     end
 
+    it "returns an empty string when given a nil option" do
+      expect(helper.user_research_question_option_text("my_question", nil)).to eq("")
+    end
+
     it "raises a KeyError when requesting a question that isn't configured" do
       expect { helper.user_research_question_option_text("other_question", "option_a") }
         .to raise_error(KeyError)
