@@ -305,6 +305,7 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         login_count: 12,
         user_description: :business_owner_or_self_employed,
         reason_for_visit: :find_specific_answer,
+        found_chat: :govuk_website,
         revoked_at: nil,
         individual_question_limit: 0,
         questions_count: 7,
@@ -312,7 +313,7 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
 
       get admin_early_access_user_path(user)
 
-      ur_question_text = %i[user_description reason_for_visit].each_with_object({}) do |question, memo|
+      ur_question_text = %i[user_description reason_for_visit found_chat].each_with_object({}) do |question, memo|
         options = Rails.configuration.pilot_user_research_questions[question.to_s].options
         option = options.find { |o| o.value == user.public_send(question) }
         memo[question] = option.fetch("text")
@@ -324,6 +325,7 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         .and have_content("12:13pm on 1 January 2024")
         .and have_content(ur_question_text[:user_description])
         .and have_content(ur_question_text[:reason_for_visit])
+        .and have_content(ur_question_text[:found_chat])
         .and have_content("Unlimited")
         .and have_content("12")
         .and have_link("7", href: admin_questions_path(user_id: user.id))
