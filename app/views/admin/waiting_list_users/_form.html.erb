@@ -27,6 +27,15 @@
     options: user_research_question_options_for_select(:reason_for_visit, selected: form.reason_for_visit),
   } %>
 
+  <%= render "govuk_publishing_components/components/select", {
+    id: "waiting_list_user_form_found_chat",
+    name: "waiting_list_user_form[found_chat]",
+    label: "User research found chat",
+    full_width: true,
+    error_id: form.errors.key?(:found_chat) ? "waiting_list_user_form_found_chat" : nil,
+    options: user_research_question_options_for_select(:found_chat, selected: form.found_chat),
+  } %>
+
   <%= render "govuk_publishing_components/components/button", {
     text: "Submit",
   } %>

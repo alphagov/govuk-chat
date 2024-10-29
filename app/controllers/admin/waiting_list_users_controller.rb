@@ -32,6 +32,7 @@ class Admin::WaitingListUsersController < Admin::BaseController
       email: @user.email,
       user_description: @user.user_description,
       reason_for_visit: @user.reason_for_visit,
+      found_chat: @user.found_chat,
     )
   end
 
@@ -81,6 +82,6 @@ private
   def user_params
     params
       .require(:waiting_list_user_form)
-      .permit(:email, :user_description, :reason_for_visit)
+      .permit(:email, :user_description, :reason_for_visit, :found_chat)
   end
 end

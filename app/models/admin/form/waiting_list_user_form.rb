@@ -5,6 +5,7 @@ class Admin::Form::WaitingListUserForm
   attribute :email
   attribute :user_description, :string
   attribute :reason_for_visit, :string
+  attribute :found_chat, :string
   attribute :user
 
   validates :email, presence: { message: "Enter an email address" },
@@ -17,16 +18,25 @@ class Admin::Form::WaitingListUserForm
   validates :user_description, inclusion: { in: WaitingListUser.user_descriptions.keys,
                                             message: "User description option must be selected" },
                                allow_blank: true
+  validates :found_chat, inclusion: { in: WaitingListUser.found_chat.keys,
+                                      message: "Found chat option must be selected" },
+                         allow_blank: true
   validate :pilot_user_does_not_exist, if: -> { email.present? }
 
   def submit
     validate!
 
     if user.present?
-      user.update!(email: email || user.email, user_description:, reason_for_visit:)
+      user.update!(email: email || user.email, user_description:, reason_for_visit:, found_chat:)
       user
     else
-      WaitingListUser.create!(email:, user_description:, reason_for_visit:, source: :admin_added)
+      WaitingListUser.create!(
+        email:,
+        user_description:,
+        reason_for_visit:,
+        found_chat:,
+        source: :admin_added,
+      )
     end
   end
 

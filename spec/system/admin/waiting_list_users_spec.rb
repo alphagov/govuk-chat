@@ -46,6 +46,9 @@ RSpec.describe "Admin user waiting list users functionality" do
     @user_description = Rails.configuration.pilot_user_research_questions.dig(:user_description, :options, 0, :text)
     select @user_description
 
+    @found_chat = Rails.configuration.pilot_user_research_questions.dig(:found_chat, :options, 0, :text)
+    select @found_chat
+
     click_button "Submit"
   end
 
@@ -55,6 +58,7 @@ RSpec.describe "Admin user waiting list users functionality" do
       .and have_content(@email)
       .and have_content(@user_description)
       .and have_content(@reason_for_visit)
+      .and have_content(@found_chat)
   end
 
   def and_there_is_a_waiting_list_user

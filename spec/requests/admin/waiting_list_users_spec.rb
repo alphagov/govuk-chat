@@ -237,6 +237,7 @@ RSpec.describe "Admin::WaitingListUsersController" do
                email: "new.user@example.com",
                user_description: "business_administrator",
                reason_for_visit: "research_topic",
+               found_chat: "govuk_website",
              },
            }
 
@@ -244,6 +245,7 @@ RSpec.describe "Admin::WaitingListUsersController" do
         email: "new.user@example.com",
         user_description: "business_administrator",
         reason_for_visit: "research_topic",
+        found_chat: "govuk_website",
         source: "admin_added",
       )
       expect(response).to redirect_to(admin_waiting_list_user_path(WaitingListUser.last))
@@ -275,6 +277,7 @@ RSpec.describe "Admin::WaitingListUsersController" do
         email: "old.email@example.com",
         user_description: "business_owner_or_self_employed",
         reason_for_visit: "find_specific_answer",
+        found_chat: "social_media",
       )
 
       patch admin_waiting_list_user_path(user),
@@ -283,6 +286,7 @@ RSpec.describe "Admin::WaitingListUsersController" do
                 email: "new.user@example.com",
                 user_description: "business_administrator",
                 reason_for_visit: "research_topic",
+                found_chat: "govuk_website",
               },
             }
 
@@ -290,6 +294,7 @@ RSpec.describe "Admin::WaitingListUsersController" do
         email: "new.user@example.com",
         user_description: "business_administrator",
         reason_for_visit: "research_topic",
+        found_chat: "govuk_website",
       )
 
       expect(response).to redirect_to(admin_waiting_list_user_path(user))
