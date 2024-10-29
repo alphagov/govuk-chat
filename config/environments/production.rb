@@ -68,7 +68,17 @@ Rails.application.configure do
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
   # Use a different cache store in production.
-  config.cache_store = :mem_cache_store if ENV["MEMCACHE_SERVERS"]
+  if ENV["MEMCACHE_SERVERS"]
+    # This config is quite specific for AWS TLS memcached and our container
+    # configuration - will need env vars for other environments. Also it took
+    # lots of trial and error getting this working so do test any tweaks.
+    ssl_context = OpenSSL::SSL::SSLContext.new.tap do |context|
+      context.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      context.verify_hostname = true
+      context.ca_path = "/etc/ssl/certs/"
+    end
+    config.cache_store = :mem_cache_store, ENV["MEMCACHE_SERVERS"], { ssl_context:, protocol: :meta }
+  end
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter = :resque
