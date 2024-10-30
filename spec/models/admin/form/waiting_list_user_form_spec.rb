@@ -50,7 +50,7 @@ RSpec.describe Admin::Form::WaitingListUserForm do
 
       expect(form).to be_invalid
       expect(form.errors.count).to eq(1)
-      expect(form.errors.messages[:user_description]).to eq(["User description option must be selected"])
+      expect(form.errors.messages[:user_description]).to eq(["Invalid User description option selected"])
     end
 
     it "returns false if the reason_for_visit is invalid" do
@@ -58,7 +58,7 @@ RSpec.describe Admin::Form::WaitingListUserForm do
 
       expect(form).to be_invalid
       expect(form.errors.count).to eq(1)
-      expect(form.errors.messages[:reason_for_visit]).to eq(["Reason for visit option must be selected"])
+      expect(form.errors.messages[:reason_for_visit]).to eq(["Invalid Reason for visit option selected"])
     end
 
     it "returns false if the found_chat is invalid" do
@@ -66,7 +66,7 @@ RSpec.describe Admin::Form::WaitingListUserForm do
 
       expect(form).to be_invalid
       expect(form.errors.count).to eq(1)
-      expect(form.errors.messages[:found_chat]).to eq(["Found chat option must be selected"])
+      expect(form.errors.messages[:found_chat]).to eq(["Invalid Found chat option selected"])
     end
 
     it "allows nil values for reason_for_visit and user_description" do
