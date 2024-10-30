@@ -2,9 +2,9 @@ class Form::EarlyAccess::FoundChat
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  CHOICE_PRESENCE_ERROR_MESSAGE = "Select how you found out about GOV.UK Chat".freeze
+  CHOICE_ERROR_MESSAGE = "Select how you found out about GOV.UK Chat".freeze
 
   attribute :choice
 
-  validates :choice, presence: { message: CHOICE_PRESENCE_ERROR_MESSAGE }
+  validates :choice, inclusion: { in: WaitingListUser.found_chat.keys, message: CHOICE_ERROR_MESSAGE }
 end

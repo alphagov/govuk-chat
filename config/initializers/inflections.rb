@@ -13,5 +13,6 @@
 # These inflection rules are supported but not enabled by default:
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "OpenAI"
+  inflect.plural "reason_for_visit", "reason_for_visit"
   inflect.plural "found_chat", "found_chat"
 end

@@ -12,7 +12,7 @@ class Admin::Form::WaitingListUserForm
                     if: -> { user.nil? }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "Enter a valid email address" },
                     if: -> { email.present? }
-  validates :reason_for_visit, inclusion: { in: WaitingListUser.reason_for_visits.keys,
+  validates :reason_for_visit, inclusion: { in: WaitingListUser.reason_for_visit.keys,
                                             message: "Invalid Reason for visit option selected" },
                                allow_blank: true
   validates :user_description, inclusion: { in: WaitingListUser.user_descriptions.keys,
