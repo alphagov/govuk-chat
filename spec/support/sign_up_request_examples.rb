@@ -176,4 +176,21 @@ module SignUpRequestExamples
       post sign_up_reason_for_visit_path(reason_for_visit_form: { choice: "find_specific_answer" })
     end
   end
+
+  shared_context "with early access user email, user description of none, and reason for sign up provided" do
+    before do
+      create(:settings, sign_up_enabled: true)
+
+      post homepage_path(
+        sign_in_or_up_form: { email: "email@test.com" },
+      )
+      post sign_up_user_description_path(
+        user_description_form: { choice: "none" },
+      )
+      post sign_up_reason_for_visit_path(
+        reason_for_visit_form: { choice: "find_specific_answer" },
+      )
+      post sign_up_found_chat_path
+    end
+  end
 end

@@ -71,7 +71,11 @@ RSpec.describe "SignUpController" do
           user_description_form: { choice: "business_owner_or_self_employed" },
         )
         expect(session["sign_up"])
-          .to eq({ "email" => "email@test.com", "user_description" => "business_owner_or_self_employed" })
+          .to eq({
+            "email" => "email@test.com",
+            "previous_sign_up_denied" => false,
+            "user_description" => "business_owner_or_self_employed",
+          })
       end
     end
   end
@@ -117,6 +121,7 @@ RSpec.describe "SignUpController" do
               "email" => "email@test.com",
               "user_description" => "business_owner_or_self_employed",
               "reason_for_visit" => "find_specific_answer",
+              "previous_sign_up_denied" => false,
             },
           )
       end
@@ -140,13 +145,17 @@ RSpec.describe "SignUpController" do
       include_context "with early access user email, user description and reason for visit provided", "none"
 
       it "shows a denied page" do
-        post sign_up_found_chat_path(
-          found_chat_form: { choice: "find_specific_answer" },
-        )
+        post sign_up_found_chat_path
 
         expect(response).to have_http_status(:forbidden)
         expect(response.body).to have_content("You cannot currently use GOV.UK Chat")
         expect(session["sign_up"]).to be_nil
+      end
+
+      it 'sets session["sign_up_denied"] to true' do
+        post sign_up_found_chat_path
+
+        expect(session["sign_up_denied"]).to be(true)
       end
     end
 

@@ -44,6 +44,7 @@ class SignUpController < BaseController
   def confirm_found_chat
     if session["sign_up"]["user_description"] == "none"
       session.delete("sign_up")
+      session["sign_up_denied"] = true
       return render :sign_up_denied, status: :forbidden
     end
 
