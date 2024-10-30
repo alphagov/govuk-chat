@@ -138,6 +138,35 @@ RSpec.describe "HomepageController" do
           }.not_to change(EarlyAccessAuthMailer.deliveries, :count)
         end
       end
+
+      context "and the user has requested 3 links in the last 5 minutes" do
+        before do
+          create_list(:passwordless_session, 3, authenticatable: early_access_user)
+        end
+
+        it "responds with a too_many_requests status" do
+          post homepage_path(
+            sign_in_or_up_form: { email: early_access_user.email },
+          )
+          expect(response).to have_http_status(:too_many_requests)
+        end
+
+        it "renders the magic_link_limit template" do
+          post homepage_path(
+            sign_in_or_up_form: { email: early_access_user.email },
+          )
+          expect(response.body)
+            .to have_selector(".govuk-heading-xl", text: "You've requested too many links")
+        end
+
+        it "doesn't send a magic link to the user" do
+          expect {
+            post homepage_path(
+              sign_in_or_up_form: { email: early_access_user.email },
+            )
+          }.not_to change(EarlyAccessAuthMailer.deliveries, :count)
+        end
+      end
     end
 
     context "when invalid params are passed" do
