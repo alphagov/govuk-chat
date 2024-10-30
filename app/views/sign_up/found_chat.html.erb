@@ -8,8 +8,6 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <%= form_with url: sign_up_found_chat_path do %>
-      <%= hidden_field_tag "found_chat[choice]", nil, id: "found_chat_form_choice_hidden_field" %>
-
       <%= render "govuk_publishing_components/components/radio", {
         id: "found_chat_form_choice",
         name: "found_chat_form[choice]",

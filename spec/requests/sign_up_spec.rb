@@ -51,7 +51,7 @@ RSpec.describe "SignUpController" do
 
     context "when invalid params are passed" do
       it "renders the user_description page with errors" do
-        post sign_up_user_description_path(user_description_form: { choice: "" })
+        post sign_up_user_description_path
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to have_selector(".govuk-error-summary")
       end

@@ -78,15 +78,15 @@ class SignUpController < BaseController
 private
 
   def user_description_form_params
-    params.require(:user_description_form).permit(:choice)
+    params.permit(user_description_form: [:choice]).fetch("user_description_form", {})
   end
 
   def reason_for_visit_form_params
-    params.require(:reason_for_visit_form).permit(:choice)
+    params.permit(reason_for_visit_form: [:choice]).fetch("reason_for_visit_form", {})
   end
 
   def found_chat_form_params
-    params.require(:found_chat_form).permit(:choice)
+    params.permit(found_chat_form: [:choice]).fetch("found_chat_form", {})
   end
 
   def ensure_sign_up_flow_position
