@@ -1,18 +1,34 @@
 <%
-content_for(:title, "Metrics for last 7 days")
+content_for(:title, "Metrics")
 legend_position = "bottom"
 common_chart_options = { refresh: 30 }
 %>
 
+<%= render "govuk_publishing_components/components/secondary_navigation", {
+  aria_label: "Metrics time period navigation",
+  items: [
+    {
+      label: "Last 24 hours",
+      href: admin_metrics_path,
+      current: @period == :last_24_hours,
+    },
+    {
+      label: "Last 7 days",
+      href: admin_metrics_path(period: "last_7_days"),
+      current: @period == :last_7_days,
+    },
+  ],
+} %>
+
 <div class="govuk-grid-row govuk-!-margin-bottom-8">
   <div class="govuk-grid-column-one-half" id="early-access-users">
     <h2 class="govuk-heading-l">Early access users</h2>
-    <%= column_chart admin_metrics_early_access_users_path,
+    <%= column_chart admin_metrics_early_access_users_path(period: @period),
                      **(common_chart_options.merge(stacked: true, legend: legend_position)) %>
   </div>
   <div class="govuk-grid-column-one-half" id="waiting-list-users">
     <h2 class="govuk-heading-l">Waiting list users</h2>
-    <%= column_chart admin_metrics_waiting_list_users_path,
+    <%= column_chart admin_metrics_waiting_list_users_path(period: @period),
                      **(common_chart_options.merge(stacked: true, legend: legend_position)) %>
   </div>
 </div>
@@ -20,46 +36,70 @@ common_chart_options = { refresh: 30 }
 <div class="govuk-grid-row govuk-!-margin-bottom-8">
   <div class="govuk-grid-column-one-half" id="conversations">
     <h2 class="govuk-heading-l">New conversations</h2>
-    <%= column_chart admin_metrics_conversations_path, **common_chart_options %>
+    <%= column_chart admin_metrics_conversations_path(period: @period), **common_chart_options %>
   </div>
   <div class="govuk-grid-column-one-half" id="questions">
     <h2 class="govuk-heading-l">Questions</h2>
-    <%= column_chart admin_metrics_questions_path,
+    <%= column_chart admin_metrics_questions_path(period: @period),
                      **(common_chart_options.merge(stacked: true, legend: legend_position)) %>
   </div>
 </div>
 
+<% column_class = @period == :last_7_days ? "govuk-grid-column-full" : "govuk-grid-column-one-half" %>
+
 <div class="govuk-grid-row govuk-!-margin-bottom-8">
-  <div class="govuk-grid-column-full" id="answer-feedback">
+  <div class="<%= column_class %>" id="answer-feedback">
     <h2 class="govuk-heading-l">Answer feedback</h2>
-    <%= column_chart admin_metrics_answer_feedback_path, **common_chart_options.merge(legend: legend_position) %>
+    <%= column_chart admin_metrics_answer_feedback_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
   </div>
-</div>
 
+<% if @period == :last_7_days %>
+</div>
 <div class="govuk-grid-row govuk-!-margin-bottom-8">
-  <div class="govuk-grid-column-full" id="answers-with-abort-status">
+<% end %>
+
+  <div class="<%= column_class %>" id="answers-with-abort-status">
     <h2 class="govuk-heading-l">Answers with abort status</h2>
-    <%= column_chart admin_metrics_answer_abort_statuses_path, **common_chart_options.merge(legend: legend_position) %>
+    <% if @period == :last_7_days %>
+      <%= column_chart admin_metrics_answer_abort_statuses_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% else %>
+      <%= pie_chart admin_metrics_answer_abort_statuses_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% end %>
   </div>
 </div>
 
 <div class="govuk-grid-row govuk-!-margin-bottom-8">
-  <div class="govuk-grid-column-full" id="answers-with-error-status">
+  <div class="<%= column_class %>" id="answers-with-error-status">
     <h2 class="govuk-heading-l">Answers with error status</h2>
-    <%= column_chart admin_metrics_answer_error_statuses_path, **common_chart_options.merge(legend: legend_position) %>
+    <% if @period == :last_7_days %>
+      <%= column_chart admin_metrics_answer_error_statuses_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% else %>
+      <%= pie_chart admin_metrics_answer_error_statuses_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% end %>
   </div>
-</div>
 
+<% if @period == :last_7_days %>
+</div>
 <div class="govuk-grid-row govuk-!-margin-bottom-8">
-  <div class="govuk-grid-column-full" id="question-routing-labels">
+<% end %>
+
+  <div class="<%= column_class %>" id="question-routing-labels">
     <h2 class="govuk-heading-l">Question routing labels</h2>
-    <%= column_chart admin_metrics_question_routing_labels_path, **common_chart_options.merge(legend: legend_position) %>
+    <% if @period == :last_7_days %>
+      <%= column_chart admin_metrics_question_routing_labels_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% else %>
+      <%= pie_chart admin_metrics_question_routing_labels_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% end %>
   </div>
 </div>
 
 <div class="govuk-grid-row govuk-!-margin-bottom-8">
-  <div class="govuk-grid-column-full" id="answer-guardrails-failures">
+  <div class="<%= column_class %>" id="answer-guardrails-failures">
     <h2 class="govuk-heading-l">Answer guardrails failures</h2>
-    <%= column_chart admin_metrics_answer_guardrails_failures_path, **common_chart_options.merge(legend: legend_position) %>
+    <% if @period == :last_7_days %>
+      <%= column_chart admin_metrics_answer_guardrails_failures_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% else %>
+      <%= pie_chart admin_metrics_answer_guardrails_failures_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% end %>
   </div>
 </div>
