@@ -47,11 +47,19 @@ module Admin
           field: "Question",
           value: question.message,
         },
+        (
+          if question.unsanitised_message.present?
+            {
+              field: "Unsanitised question",
+              value: "ASCII smuggling decoded:<br><br>".html_safe + decode_and_mark_unicode_tag_segments(question.unsanitised_message),
+            }
+          end
+        ),
         {
           field: "Show search results",
           value: link_to(search_text, admin_search_path(params: { search_text: }), class: "govuk-link"),
         },
-      ]
+      ].compact
 
       user = conversation.user
       if user.present?
@@ -182,6 +190,32 @@ module Admin
       end
 
       rows.flatten
+    end
+
+    def decode_and_mark_unicode_tag_segments(input)
+      input_segments = input.scan(UnicodeTags::SCAN_REGEX)
+
+      marked_segments = input_segments.map do |segment|
+        if segment.match?(UnicodeTags::MATCH_REGEX)
+          tag.mark(decode_unicode_tags(segment))
+        else
+          segment
+        end
+      end
+
+      safe_join(marked_segments)
+    end
+
+    def decode_unicode_tags(string)
+      decoded_chars = string.chars.map do |char|
+        codepoint = char.ord
+        if codepoint.between?(UnicodeTags::RANGE_START, UnicodeTags::RANGE_END)
+          (codepoint - UnicodeTags::DECODE_SUBTRACT).chr(Encoding::UTF_8)
+        else
+          char
+        end
+      end
+      decoded_chars.join
     end
   end
 end
