@@ -97,7 +97,10 @@ module GovukChat
       YAML.load_file("#{__dir__}/pilot_user_research_questions.yml"),
     )
 
-    config.action_dispatch.rescue_responses["Search::ChunkedContentRepository::NotFound"] = :not_found
+    config.action_dispatch.rescue_responses.merge!(
+      "Search::ChunkedContentRepository::NotFound" => :not_found,
+      "ThrottledRequest" => :too_many_requests,
+    )
 
     config.exceptions_app = routes
 

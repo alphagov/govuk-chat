@@ -608,6 +608,8 @@ GEM
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.1.8)
+    rack-attack (6.7.0)
+      rack (>= 1.0, < 4)
     rack-protection (4.0.0)
       base64 (>= 0.1.0)
       rack (>= 3.0.0, < 4)
@@ -870,6 +872,7 @@ DEPENDENCIES
   prometheus_exporter
   pry-byebug
   pry-rails
+  rack-attack
   rails (= 7.2.1.2)
   rspec-rails
   rubocop-govuk

@@ -66,4 +66,11 @@ RSpec.configure do |config|
     # them running in a small viewport.
     dismiss_cookie_banner
   end
+
+  config.around(:each, :rack_attack) do |example|
+    old_store = Rack::Attack.cache.store
+    Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+    example.run
+    Rack::Attack.cache.store = old_store
+  end
 end
