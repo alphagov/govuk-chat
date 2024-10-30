@@ -29,6 +29,9 @@ Rails.application.routes.draw do
 
       get "/your-visit", to: "sign_up#reason_for_visit", as: :sign_up_reason_for_visit
       post "/your-visit", to: "sign_up#confirm_reason_for_visit"
+
+      get "/find-out", to: "sign_up#found_chat", as: :sign_up_found_chat
+      post "/find-out", to: "sign_up#confirm_found_chat"
     end
 
     get "sign-out", to: "sessions#destroy"

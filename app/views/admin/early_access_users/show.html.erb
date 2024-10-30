@@ -42,6 +42,10 @@
       value: user_research_question_option_text(:reason_for_visit, @user.reason_for_visit),
     },
     {
+      field: "User research question: #{user_research_question_text(:found_chat)}",
+      value: user_research_question_option_text(:found_chat, @user.found_chat),
+    },
+    {
       field: "Questions asked",
       value: @user.questions_count.zero? ? "0" : link_to(@user.questions_count, admin_questions_path(user_id: @user.id), class: "govuk-link"),
     },

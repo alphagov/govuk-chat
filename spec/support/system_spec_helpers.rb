@@ -38,4 +38,8 @@ module SystemSpecHelpers
     visit(magic_link)
   end
   alias_method :and_i_am_a_signed_in_early_access_user, :given_i_am_a_signed_in_early_access_user
+
+  def ur_question_first_option_text(question_label)
+    Rails.configuration.pilot_user_research_questions.dig(question_label, :options, 0, :text)
+  end
 end

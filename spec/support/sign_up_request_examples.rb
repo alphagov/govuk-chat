@@ -31,6 +31,23 @@ module SignUpRequestExamples
     end
   end
 
+  shared_examples "redirects user to reason for visit path when previous sign up steps have been completed but reason for visit hasn't" do |routes:|
+    include_context "with early access user email and user description provided"
+
+    routes.each do |path, methods|
+      describe "Redirects user to the reason for visit path when session['sign_up']['reason_for_visit'] is blank" do
+        methods.each do |method|
+          it "redirects user to the reason for visit path for #{method} #{path}" do
+            process(method.to_sym, public_send(path.to_sym))
+
+            expect(response).to have_http_status(:redirect)
+            expect(response).to redirect_to(sign_up_reason_for_visit_path)
+          end
+        end
+      end
+    end
+  end
+
   shared_examples "renders not_accepting_signups page when Settings#sign_up_enabled is false" do |routes:|
     include_context "with early access user email and user description provided"
 
@@ -136,20 +153,22 @@ module SignUpRequestExamples
 
   shared_context "with early access user email provided" do
     before do
-      post homepage_path(
-        sign_in_or_up_form: { email: "email@test.com" },
-      )
+      post homepage_path(sign_in_or_up_form: { email: "email@test.com" })
     end
   end
 
-  shared_context "with early access user email and user description provided" do |user_description = "business_owner_or_self_employed"|
+  shared_context "with early access user email and user description provided" do
     before do
-      post homepage_path(
-        sign_in_or_up_form: { email: "email@test.com" },
-      )
-      post sign_up_user_description_path(
-        user_description_form: { choice: user_description },
-      )
+      post homepage_path(sign_in_or_up_form: { email: "email@test.com" })
+      post sign_up_user_description_path(user_description_form: { choice: "business_owner_or_self_employed" })
+    end
+  end
+
+  shared_context "with early access user email, user description and reason for visit provided" do |user_description = "business_owner_or_self_employed"|
+    before do
+      post homepage_path(sign_in_or_up_form: { email: "email@test.com" })
+      post sign_up_user_description_path(user_description_form: { choice: user_description })
+      post sign_up_reason_for_visit_path(reason_for_visit_form: { choice: "find_specific_answer" })
     end
   end
 end

@@ -4,6 +4,7 @@ RSpec.describe Admin::Form::WaitingListUserForm do
       email: "user@example.com",
       user_description: "business_owner_or_self_employed",
       reason_for_visit: "find_specific_answer",
+      found_chat: "search_engine",
     }
   end
 
@@ -49,7 +50,7 @@ RSpec.describe Admin::Form::WaitingListUserForm do
 
       expect(form).to be_invalid
       expect(form.errors.count).to eq(1)
-      expect(form.errors.messages[:user_description]).to eq(["User description option must be selected"])
+      expect(form.errors.messages[:user_description]).to eq(["Invalid User description option selected"])
     end
 
     it "returns false if the reason_for_visit is invalid" do
@@ -57,7 +58,15 @@ RSpec.describe Admin::Form::WaitingListUserForm do
 
       expect(form).to be_invalid
       expect(form.errors.count).to eq(1)
-      expect(form.errors.messages[:reason_for_visit]).to eq(["Reason for visit option must be selected"])
+      expect(form.errors.messages[:reason_for_visit]).to eq(["Invalid Reason for visit option selected"])
+    end
+
+    it "returns false if the found_chat is invalid" do
+      form = described_class.new(valid_attributes.merge(found_chat: "invalid"))
+
+      expect(form).to be_invalid
+      expect(form.errors.count).to eq(1)
+      expect(form.errors.messages[:found_chat]).to eq(["Invalid Found chat option selected"])
     end
 
     it "allows nil values for reason_for_visit and user_description" do
@@ -84,6 +93,7 @@ RSpec.describe Admin::Form::WaitingListUserForm do
           email: "user@example.com",
           user_description: "business_owner_or_self_employed",
           reason_for_visit: "find_specific_answer",
+          found_chat: "search_engine",
           source: "admin_added",
         )
       end
@@ -101,6 +111,7 @@ RSpec.describe Admin::Form::WaitingListUserForm do
           email: "user@example.com",
           user_description: "business_advisor",
           reason_for_visit: "research_topic",
+          found_chat: "govuk_website",
         )
       end
 
@@ -111,6 +122,7 @@ RSpec.describe Admin::Form::WaitingListUserForm do
           .to change(user, :email).to("newemail@bar.com")
           .and change(user, :user_description).to("business_owner_or_self_employed")
           .and change(user, :reason_for_visit).to("find_specific_answer")
+          .and change(user, :found_chat).to("search_engine")
       end
 
       it "does not require the email attribute" do

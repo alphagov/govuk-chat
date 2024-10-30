@@ -5,10 +5,11 @@ class PilotSignUp
 
   def self.call(...) = new(...).call
 
-  def initialize(email:, user_description:, reason_for_visit:)
+  def initialize(email:, user_description:, reason_for_visit:, found_chat:)
     @email = email
     @user_description = user_description
     @reason_for_visit = reason_for_visit
+    @found_chat = found_chat
     @settings = Settings.instance
   end
 
@@ -35,7 +36,7 @@ class PilotSignUp
 
 private
 
-  attr_reader :email, :user_description, :reason_for_visit, :settings
+  attr_reader :email, :user_description, :reason_for_visit, :found_chat, :settings
 
   def waiting_list_full?
     settings.instant_access_places.zero? &&
@@ -47,6 +48,7 @@ private
       email:,
       user_description:,
       reason_for_visit:,
+      found_chat:,
       source: "instant_signup",
     )
     settings.update!(instant_access_places: settings.instant_access_places - 1)
@@ -59,6 +61,7 @@ private
       email:,
       user_description:,
       reason_for_visit:,
+      found_chat:,
       source: "insufficient_instant_places",
     )
   end

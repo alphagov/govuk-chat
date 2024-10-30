@@ -7,6 +7,7 @@ RSpec.describe PilotSignUp do
         email: "email@test.com",
         user_description: "business_owner_or_self_employed",
         reason_for_visit: "find_specific_answer",
+        found_chat: "search_engine",
       }
     end
 
@@ -35,6 +36,7 @@ RSpec.describe PilotSignUp do
           reason_for_visit: "find_specific_answer",
           email: "email@test.com",
           user_description: "business_owner_or_self_employed",
+          found_chat: "search_engine",
           source: "instant_signup",
         )
       end
@@ -77,6 +79,7 @@ RSpec.describe PilotSignUp do
               email: "email@test.com",
               user_description: "business_owner_or_self_employed",
               reason_for_visit: "find_specific_answer",
+              found_chat: "search_engine",
               source: "insufficient_instant_places",
             )
         end
