@@ -1,6 +1,6 @@
 class Admin::EarlyAccessUsersController < Admin::BaseController
   def index
-    filter_params = params.permit(:email, :page, :sort, :source, :revoked, :at_question_limit)
+    filter_params = params.permit(:email, :page, :sort, :source, :access)
     @filter = Admin::Filters::EarlyAccessUsersFilter.new(filter_params)
   end
 

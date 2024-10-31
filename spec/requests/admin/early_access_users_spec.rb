@@ -21,7 +21,6 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         .to have_link("Email", href: admin_early_access_users_path(sort: "email"))
         .and have_link("Last login", href: admin_early_access_users_path(sort: "last_login_at"))
         .and have_link("Questions", href: admin_early_access_users_path(sort: "-questions_count"))
-        .and have_selector(".govuk-table__header", text: "Access revoked?")
     end
 
     it "renders the table body correctly" do
@@ -69,6 +68,24 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
       expect(response.body).to have_selector(".govuk-table__cell", exact_text: "5 / #{default_question_limit}")
     end
 
+    context "when the user is revoked" do
+      it "appends a label to the link indicate the user is revoked" do
+        user = create(:early_access_user, :revoked)
+        get admin_early_access_users_path
+
+        expect(response.body).to have_content("#{user.email} (revoked)")
+      end
+    end
+
+    context "when the user is shadow banned" do
+      it "appends a label to the link indicate the user is shadow banned" do
+        user = create(:early_access_user, :shadow_banned)
+        get admin_early_access_users_path
+
+        expect(response.body).to have_content("#{user.email} (shadow banned)")
+      end
+    end
+
     context "when there are multiple pages of users" do
       before do
         create_list(:early_access_user, 26)
@@ -108,25 +125,11 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         end
       end
 
-      context "and users are filtered by 'Revoked'" do
-        it "displays user accounts which have been revoked and filters out those which have not" do
+      context "and 'Access' is filtered by 'Revoked'" do
+        it "displays user accounts which have been revoked" do
           create(:early_access_user, email: "a@example.com", revoked_at: Time.zone.now)
           create(:early_access_user, email: "b@example.com")
-          get admin_early_access_users_path(revoked: true)
-
-          expect(response).to have_http_status(:ok)
-          expect(response.body).to have_selector(".govuk-table") do |match|
-            expect(match).to have_content(/a@example\.com/)
-            expect(match).not_to have_content(/b@example\.com/)
-          end
-        end
-      end
-
-      context "and users are filtered by 'At Question Limit'" do
-        it "displays user accounts at their question limit and filters out those which are not" do
-          create(:early_access_user, email: "a@example.com", questions_count: 100, individual_question_limit: 100)
-          create(:early_access_user, email: "c@example.com", questions_count: 23)
-          get admin_early_access_users_path(at_question_limit: true)
+          get admin_early_access_users_path(access: "revoked")
 
           expect(response).to have_http_status(:ok)
           expect(response.body).to have_selector(".govuk-table") do |match|
@@ -309,6 +312,7 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         revoked_at: nil,
         individual_question_limit: 0,
         questions_count: 7,
+        bannable_action_count: 5,
       )
 
       get admin_early_access_user_path(user)
@@ -329,6 +333,7 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         .and have_content("Unlimited")
         .and have_content("12")
         .and have_link("7", href: admin_questions_path(user_id: user.id))
+        .and have_content("5")
     end
 
     it "renders the links to manage the user" do
@@ -353,6 +358,34 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
       expect(response.body)
         .to have_content("9:10am on 2 January 2024")
         .and have_content("Asking too many questions")
+    end
+
+    it "renders the shadow banned details" do
+      user = create(
+        :early_access_user,
+        :shadow_banned,
+        shadow_banned_at: Time.zone.parse("2024-1-2 09:10:11"),
+      )
+
+      get admin_early_access_user_path(user)
+
+      expect(response.body)
+        .to have_content("9:10am on 2 January 2024")
+        .and have_content(user.shadow_banned_reason)
+    end
+
+    it "renders the restored details" do
+      user = create(
+        :early_access_user,
+        :restored,
+        restored_at: Time.zone.parse("2024-1-2 09:10:11"),
+      )
+
+      get admin_early_access_user_path(user)
+
+      expect(response.body)
+        .to have_content("9:10am on 2 January 2024")
+        .and have_content(user.restored_reason)
     end
   end
 

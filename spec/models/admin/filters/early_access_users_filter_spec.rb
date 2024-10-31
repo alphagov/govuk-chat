@@ -81,26 +81,27 @@ RSpec.describe Admin::Filters::EarlyAccessUsersFilter do
       expect(filter.results).to eq([admin_added_user])
     end
 
-    it "filters by revoked status" do
-      active_user = create(:early_access_user, revoked_at: nil)
-      revoked_user = create(:early_access_user, revoked_at: 1.minute.ago)
+    it "filters by access status" do
+      active_user = create(:early_access_user, revoked_at: nil, shadow_banned_at: nil)
+      revoked_user = create(:early_access_user, :revoked)
+      shadow_banned_user = create(:early_access_user, :shadow_banned)
+      user_at_question_limit = create(:early_access_user, individual_question_limit: 1, questions_count: 1)
 
-      filter = described_class.new(revoked: "true")
+      filter = described_class.new(access: "")
+      expect(filter.results)
+        .to contain_exactly(active_user, revoked_user, shadow_banned_user, user_at_question_limit)
+
+      filter = described_class.new(access: "revoked")
       expect(filter.results).to eq([revoked_user])
 
-      filter = described_class.new(revoked: "false")
-      expect(filter.results).to eq([active_user])
-    end
+      filter = described_class.new(access: "shadow_banned")
+      expect(filter.results).to eq([shadow_banned_user])
 
-    it "filters by question limit status" do
-      user_at_question_limit = create(:early_access_user, questions_count: 10, individual_question_limit: 10)
-      user_not_at_question_limit = create(:early_access_user, questions_count: 1, individual_question_limit: 10)
-
-      filter = described_class.new(at_question_limit: "true")
+      filter = described_class.new(access: "at_question_limit")
       expect(filter.results).to eq([user_at_question_limit])
 
-      filter = described_class.new(at_question_limit: "false")
-      expect(filter.results).to eq([user_not_at_question_limit])
+      filter = described_class.new(access: "no_restrictions")
+      expect(filter.results).to eq([active_user])
     end
   end
 
