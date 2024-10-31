@@ -1,5 +1,5 @@
 <%
-content_for(:title, "Audits")
+content_for(:title, "Settings audits")
 content_for(:active_navigation_item, admin_settings_path)
 %>
 
@@ -36,6 +36,6 @@ content_for(:active_navigation_item, admin_settings_path)
     ) %>
 <% else %>
   <%= render "govuk_publishing_components/components/inset_text", {
-    text: "No audits.",
+    text: "No audited settings changes.",
   } %>
 <% end %>
