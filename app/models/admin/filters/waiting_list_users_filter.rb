@@ -1,5 +1,6 @@
 class Admin::Filters::WaitingListUsersFilter < Admin::Filters::BaseFilter
   attribute :email
+  attribute :previous_sign_up_denied, :boolean
 
   def self.default_sort
     "-created_at"
@@ -13,6 +14,7 @@ class Admin::Filters::WaitingListUsersFilter < Admin::Filters::BaseFilter
     @results ||= begin
       scope = WaitingListUser
       scope = email_scope(scope)
+      scope = previous_sign_up_denied_scope(scope)
       scope = ordering_scope(scope)
       scope.page(page).per(25)
     end
@@ -26,5 +28,11 @@ private
     filters[:sort] = sort if sort != self.class.default_sort
 
     filters
+  end
+
+  def previous_sign_up_denied_scope(scope)
+    return scope if previous_sign_up_denied.nil?
+
+    scope.where(previous_sign_up_denied:)
   end
 end
