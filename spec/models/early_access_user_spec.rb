@@ -194,6 +194,23 @@ RSpec.describe EarlyAccessUser do
     end
   end
 
+  describe "#revoked_or_banned?" do
+    it "returns true when access is revoked" do
+      instance = build(:early_access_user, :revoked)
+      expect(instance.revoked_or_banned?).to be(true)
+    end
+
+    it "returns true when shadow banned" do
+      instance = build(:early_access_user, :shadow_banned)
+      expect(instance.revoked_or_banned?).to be(true)
+    end
+
+    it "returns false when not revoked or shadow banned" do
+      instance = build(:early_access_user)
+      expect(instance.revoked_or_banned?).to be(false)
+    end
+  end
+
   describe "#sign_in" do
     it "raises a AccessRevokedError if a user has access revoked" do
       instance = described_class.new(revoked_at: Time.current)

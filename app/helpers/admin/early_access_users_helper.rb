@@ -1,6 +1,6 @@
 module Admin::EarlyAccessUsersHelper
   def early_access_user_index_email_field(user)
-    user_email = if user.access_revoked? || user.shadow_banned?
+    user_email = if user.revoked_or_banned?
                    tag.s(user.email)
                  else
                    user.email

@@ -35,7 +35,7 @@ private
   end
 
   def redirect_to_user_show_page_unless_revoked_or_banned
-    redirect_to admin_early_access_user_path(@user) unless @user.access_revoked? || @user.shadow_banned?
+    redirect_to admin_early_access_user_path(@user) unless @user.revoked_or_banned?
   end
 
   def revoke_params

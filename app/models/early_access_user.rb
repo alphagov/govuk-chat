@@ -95,6 +95,10 @@ class EarlyAccessUser < ApplicationRecord
     restored_at.present?
   end
 
+  def revoked_or_banned?
+    access_revoked? || shadow_banned?
+  end
+
   def sign_in(session)
     raise AccessRevokedError if access_revoked?
 
