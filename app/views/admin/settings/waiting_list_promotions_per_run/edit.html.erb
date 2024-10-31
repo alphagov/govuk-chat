@@ -21,6 +21,8 @@ content_for(:back_link, render("govuk_publishing_components/components/back_link
         },
         id: "waiting_list_promotions_per_run_form_promotions_per_run",
         name: "waiting_list_promotions_per_run_form[promotions_per_run]",
+        hint: "This sets the number of waiting list users that will be promoted "\
+              "to early access user on the hourly run.",
         value: @form.promotions_per_run,
         heading_level: 2,
         heading_size: "l",
