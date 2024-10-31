@@ -11,7 +11,11 @@ examples:
     data:
       action: Added 10 instant access places
       created_at: 11:00am on 1 January 2024
-      author_comment: This is a comment provided by the author when created.
+      author_comment: |
+        This is a comment provided by the author when created.
+
+        It spans multiple lines.
+        Some with only one separating new line
   with_a_user:
     data:
       action: Added 10 instant access places

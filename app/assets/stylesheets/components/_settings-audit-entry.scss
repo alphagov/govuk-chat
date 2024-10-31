@@ -1,5 +1,5 @@
 .app-c-settings-audit-entry {
-  margin-bottom: govuk-spacing(6);
+  margin-bottom: govuk-spacing(7);
 }
 
 .app-c-settings-audit-entry__action {
@@ -8,9 +8,11 @@
 }
 
 .app-c-settings-audit-entry__author_comment {
-  margin-bottom: govuk-spacing(2);
-  margin-top: govuk-spacing(2);
-  @include govuk-font($size: 19, $weight: regular);
+  // margin to match .govuk-body margin bottom
+  margin-top: govuk-spacing(3);
+  @include govuk-media-query($from: tablet) {
+    margin-top: govuk-spacing(4);
+  }
 }
 
 .app-c-settings-audit-entry__authored {
