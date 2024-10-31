@@ -57,6 +57,10 @@
       field: "Bannable action count",
       value: @user.bannable_action_count,
     },
+    {
+      field: "Previous sign up denied",
+      value: @user.previous_sign_up_denied? ? "Yes" : "No",
+    },
   ]
 
   if @user.access_revoked?

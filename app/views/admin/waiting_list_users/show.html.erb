@@ -41,6 +41,10 @@
       field: "User research question: #{user_research_question_text(:found_chat)}",
       value: user_research_question_option_text(:found_chat, @user.found_chat),
     },
+    {
+      field: "Previous sign up denied",
+      value: @user.previous_sign_up_denied? ? "Yes" : "No",
+    },
   ]
 %>
 
