@@ -9,5 +9,18 @@ FactoryBot.define do
     trait :revoked do
       revoked_at { Time.zone.now }
     end
+
+    trait :shadow_banned do
+      shadow_banned_at { Time.zone.now }
+      shadow_banned_reason do
+        "User attempted to jailbreak the system #{EarlyAccessUser::BANNABLE_ACTION_COUNT_THRESHOLD} times"
+      end
+      bannable_action_count { EarlyAccessUser::BANNABLE_ACTION_COUNT_THRESHOLD }
+    end
+
+    trait :restored do
+      restored_at { Time.zone.now }
+      restored_reason { "User was not being malicious" }
+    end
   end
 end

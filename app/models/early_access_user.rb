@@ -3,6 +3,7 @@ class EarlyAccessUser < ApplicationRecord
 
   include PilotUser
 
+  BANNABLE_ACTION_COUNT_THRESHOLD = 10
   SOURCE_ENUM = {
     admin_added: "admin_added",
     admin_promoted: "admin_promoted",
@@ -84,6 +85,14 @@ class EarlyAccessUser < ApplicationRecord
 
   def access_revoked?
     revoked_at.present?
+  end
+
+  def shadow_banned?
+    shadow_banned_at.present?
+  end
+
+  def restored?
+    restored_at.present?
   end
 
   def sign_in(session)
