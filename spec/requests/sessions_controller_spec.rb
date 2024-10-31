@@ -1,4 +1,9 @@
 RSpec.describe "sessions controller" do
+  it_behaves_like "throttles traffic from a single IP address",
+                  routes: { magic_link_path: %i[get] }, limit: 20, period: 5.minutes do
+                    let(:route_params) { { id: SecureRandom.uuid, token: SecureRandom.uuid } }
+                  end
+
   describe "HEAD :confirm" do
     let(:passwordless_session) { create :passwordless_session }
     let(:magic_link) { magic_link_url(passwordless_session.to_param, passwordless_session.token) }
