@@ -21,7 +21,6 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         .to have_link("Email", href: admin_early_access_users_path(sort: "email"))
         .and have_link("Last login", href: admin_early_access_users_path(sort: "last_login_at"))
         .and have_link("Questions", href: admin_early_access_users_path(sort: "-questions_count"))
-        .and have_selector(".govuk-table__header", text: "Access revoked?")
     end
 
     it "renders the table body correctly" do
@@ -67,6 +66,24 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
 
       expect(response.body).to have_link("5", href: admin_questions_path(user_id: user.id))
       expect(response.body).to have_selector(".govuk-table__cell", exact_text: "5 / #{default_question_limit}")
+    end
+
+    context "when the user is revoked" do
+      it "appends a label to the link indicate the user is revoked" do
+        user = create(:early_access_user, :revoked)
+        get admin_early_access_users_path
+
+        expect(response.body).to have_content("#{user.email} (revoked)")
+      end
+    end
+
+    context "when the user is shadow banned" do
+      it "appends a label to the link indicate the user is shadow banned" do
+        user = create(:early_access_user, :shadow_banned)
+        get admin_early_access_users_path
+
+        expect(response.body).to have_content("#{user.email} (shadow banned)")
+      end
     end
 
     context "when there are multiple pages of users" do

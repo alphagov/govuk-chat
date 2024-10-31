@@ -23,37 +23,18 @@
         sort_direction: filter.sort_direction("last_login_at"),
         href: public_send(path, filter.toggleable_sort_params("-last_login_at")),
       },
-      {
-        text: "Access revoked?",
-      },
     ],
     rows: users.map do |user|
-      question_limit = user.question_limit unless user.unlimited_question_allowance?
-
-      question_text = if user.questions_count.zero?
-                  "0"
-                else
-                  link = link_to(user.questions_count, admin_questions_path(user_id: user.id), class: "govuk-link")
-                  question_limit ? safe_join([link, " / ", question_limit]) : link
-                end
-
       [
         {
-          text: link_to(
-            user.email,
-            admin_early_access_user_path(user),
-            class: "govuk-link",
-          ),
+          text: early_access_user_index_email_field(user),
         },
         {
-          text: question_text,
+          text: early_access_user_index_questions_field(user),
         },
         {
           text: user.last_login_at ? user.last_login_at.to_fs(:time_and_date) : "Never",
           format: user.last_login_at ? nil : "empty",
-        },
-        {
-          text: user.access_revoked? ? "Yes" : "No",
         },
       ]
     end,
