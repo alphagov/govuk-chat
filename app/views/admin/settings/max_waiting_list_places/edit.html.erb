@@ -21,6 +21,8 @@ content_for(:back_link, render("govuk_publishing_components/components/back_link
         },
         id: "max_waiting_list_places_form_max_places",
         name: "max_waiting_list_places_form[max_places]",
+        hint: "The maximum number of users who can be on the waiting list " \
+              "before further users are rejected",
         value: @form.max_places,
         heading_level: 2,
         heading_size: "l",
