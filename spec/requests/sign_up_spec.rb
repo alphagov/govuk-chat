@@ -35,6 +35,9 @@ RSpec.describe "SignUpController" do
                     sign_up_reason_for_visit_path: %i[get post],
                   }
 
+  it_behaves_like "throttles traffic from a single IP address",
+                  routes: { sign_up_found_chat_path: %i[post] }, limit: 10, period: 5.minutes
+
   describe "GET :user_description" do
     include_context "with early access user email provided"
 
