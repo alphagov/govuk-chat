@@ -99,11 +99,11 @@ class Admin::MetricsController < Admin::BaseController
                   .group(:answer_guardrails_failures)
 
     if @period == :last_7_days
-      data = scope.group_by_day(:created_at).count_answer_guardrails_failures
+      data = scope.group_by_day(:created_at).count_guardrails_failures(:answer_guardrails_failures)
 
       render json: populate_period_data(data).chart_json
     else
-      data = scope.count_answer_guardrails_failures
+      data = scope.count_guardrails_failures(:answer_guardrails_failures)
 
       render json: data.chart_json
     end

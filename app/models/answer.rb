@@ -99,12 +99,16 @@ class Answer < ApplicationRecord
   enum :answer_guardrails_status, GUARDRAIL_STATUSES, prefix: true
   enum :jailbreak_guardrails_status, GUARDRAIL_STATUSES, prefix: true
 
-  # answer_guardrails_failures are stored as an array so they are more challenging
+  # guardrail failures are stored as an array so they are more challenging
   # to produce aggregate counts of occurrences
-  def self.count_answer_guardrails_failures
+  def self.count_guardrails_failures(attribute)
+    unless attribute.in?(%i[answer_guardrails_failures question_routing_guardrails_failures])
+      raise ArgumentError, "Unexpected attribute: #{attribute}"
+    end
+
     all_query_groups = current_scope&.group_values || []
-    guardrail_group_position = all_query_groups.index { |group| group.to_s == "answer_guardrails_failures" }
-    raise "must have grouped by answer_guardrails_failures" unless guardrail_group_position
+    guardrail_group_position = all_query_groups.index { |group| group.to_sym == attribute.to_sym }
+    raise "must have grouped by #{attribute}" unless guardrail_group_position
 
     count_result = current_scope.count
 
