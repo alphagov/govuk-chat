@@ -97,6 +97,7 @@ class Answer < ApplicationRecord
        prefix: true
 
   enum :answer_guardrails_status, GUARDRAIL_STATUSES, prefix: true
+  enum :question_routing_guardrails_status, GUARDRAIL_STATUSES, prefix: true
   enum :jailbreak_guardrails_status, GUARDRAIL_STATUSES, prefix: true
 
   # guardrail failures are stored as an array so they are more challenging
