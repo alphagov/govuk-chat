@@ -35,7 +35,7 @@ class HomepageController < BaseController
       else
         session["sign_up"] = {
           "email" => result.email,
-          "previous_sign_up_denied" => session["sign_up_denied"] || false,
+          "previous_sign_up_denied" => session["sign_up_denied"].present?,
         }
         redirect_to sign_up_user_description_path
       end

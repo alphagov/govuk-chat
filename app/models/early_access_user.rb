@@ -39,7 +39,7 @@ class EarlyAccessUser < ApplicationRecord
       waiting_list_user.destroy_with_audit(deletion_type: :promotion)
 
       create!(
-        **waiting_list_user.slice(:email, :user_description, :reason_for_visit),
+        **waiting_list_user.slice(:email, :user_description, :reason_for_visit, :previous_sign_up_denied),
         source:,
       )
     end
