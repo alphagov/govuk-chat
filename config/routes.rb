@@ -115,6 +115,11 @@ Rails.application.routes.draw do
       get "/max_waiting_list_places", to: "settings/max_waiting_list_places#edit", as: :settings_edit_max_waiting_list_places
       patch "/max_waiting_list_places", to: "settings/max_waiting_list_places#update"
 
+      get "/waiting-list-promotions-per-run",
+          to: "settings/waiting_list_promotions_per_run#edit",
+          as: :settings_edit_waiting_list_promotions_per_run
+      patch "/waiting-list-promotions-per-run", to: "settings/waiting_list_promotions_per_run#update"
+
       get "/sign-up-enabled", to: "settings/sign_up_enabled#edit", as: :settings_edit_sign_up_enabled
       patch "/sign-up-enabled", to: "settings/sign_up_enabled#update"
 
