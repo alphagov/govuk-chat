@@ -26,9 +26,9 @@
   } %>
 
   <%= render "govuk_publishing_components/components/select", {
-    id: "revoked",
-    name: "revoked",
-    label: "Revoked",
+    id: "access",
+    name: "access",
+    label: "Access",
     heading_size: "s",
     full_width: true,
     options: [
@@ -38,37 +38,23 @@
       },
       {
         text: "Revoked",
-        value: "true",
-        selected: params[:revoked] == "true",
+        value: "revoked",
+        selected: params[:access] == "revoked",
       },
       {
-        text: "Not revoked",
-        value: "false",
-        selected: params[:revoked] == "false",
-      },
-    ],
-  } %>
-
-  <%= render "govuk_publishing_components/components/select", {
-    id: "at_question_limit",
-    name: "at_question_limit",
-    label: "At Question Limit",
-    heading_size: "s",
-    full_width: true,
-    options: [
-      {
-        text: "",
-        value: "",
+        text: "Shadow banned",
+        value: "shadow_banned",
+        selected: params[:access] == "shadow_banned",
       },
       {
-        text: "Yes",
-        value: "true",
-        selected: params[:at_question_limit] == "true",
+        text: "At question limit",
+        value: "at_question_limit",
+        selected: params[:access] == "at_question_limit",
       },
       {
-        text: "No",
-        value: "false",
-        selected: params[:at_question_limit] == "false",
+        text: "No restrictions",
+        value: "no_restrictions",
+        selected: params[:access] == "no_restrictions",
       },
     ],
   } %>

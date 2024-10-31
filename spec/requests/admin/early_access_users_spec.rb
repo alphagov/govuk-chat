@@ -125,25 +125,11 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         end
       end
 
-      context "and users are filtered by 'Revoked'" do
-        it "displays user accounts which have been revoked and filters out those which have not" do
+      context "and 'Access' is filtered by 'Revoked'" do
+        it "displays user accounts which have been revoked" do
           create(:early_access_user, email: "a@example.com", revoked_at: Time.zone.now)
           create(:early_access_user, email: "b@example.com")
-          get admin_early_access_users_path(revoked: true)
-
-          expect(response).to have_http_status(:ok)
-          expect(response.body).to have_selector(".govuk-table") do |match|
-            expect(match).to have_content(/a@example\.com/)
-            expect(match).not_to have_content(/b@example\.com/)
-          end
-        end
-      end
-
-      context "and users are filtered by 'At Question Limit'" do
-        it "displays user accounts at their question limit and filters out those which are not" do
-          create(:early_access_user, email: "a@example.com", questions_count: 100, individual_question_limit: 100)
-          create(:early_access_user, email: "c@example.com", questions_count: 23)
-          get admin_early_access_users_path(at_question_limit: true)
+          get admin_early_access_users_path(access: "revoked")
 
           expect(response).to have_http_status(:ok)
           expect(response.body).to have_selector(".govuk-table") do |match|
