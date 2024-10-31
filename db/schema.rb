@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_31_092825) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_31_203912) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
@@ -191,6 +191,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_31_092825) do
     t.boolean "public_access_enabled", default: true
     t.enum "downtime_type", default: "temporary", enum_type: "settings_downtime_type"
     t.integer "max_waiting_list_places", default: 1000, null: false
+    t.integer "waiting_list_promotions_per_run", default: 25, null: false
     t.index ["singleton_guard"], name: "index_settings_on_singleton_guard", unique: true
   end
 
