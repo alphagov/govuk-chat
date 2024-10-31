@@ -2,6 +2,7 @@ class Admin::Filters::EarlyAccessUsersFilter < Admin::Filters::BaseFilter
   attribute :email
   attribute :source
   attribute :access
+  attribute :previous_sign_up_denied, :boolean
 
   def self.default_sort
     "-last_login_at"
@@ -17,6 +18,7 @@ class Admin::Filters::EarlyAccessUsersFilter < Admin::Filters::BaseFilter
       scope = email_scope(scope)
       scope = source_scope(scope)
       scope = access_scope(scope)
+      scope = previous_sign_up_denied_scope(scope)
       scope = ordering_scope(scope)
       scope.page(page).per(25)
     end
@@ -52,6 +54,12 @@ private
     else
       scope.where(revoked_at: nil, shadow_banned_at: nil).within_question_limit
     end
+  end
+
+  def previous_sign_up_denied_scope(scope)
+    return scope if previous_sign_up_denied.nil?
+
+    scope.where(previous_sign_up_denied:)
   end
 
   def ordering_scope(scope)

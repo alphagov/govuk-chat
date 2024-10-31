@@ -103,6 +103,17 @@ RSpec.describe Admin::Filters::EarlyAccessUsersFilter do
       filter = described_class.new(access: "no_restrictions")
       expect(filter.results).to eq([active_user])
     end
+
+    it "filters by previous sign up denied status" do
+      user_previously_denied_sign_up = create(:early_access_user, previous_sign_up_denied: true)
+      user_not_previously_denied_sign_up = create(:early_access_user, previous_sign_up_denied: false)
+
+      filter = described_class.new(previous_sign_up_denied: "true")
+      expect(filter.results).to eq([user_previously_denied_sign_up])
+
+      filter = described_class.new(previous_sign_up_denied: "false")
+      expect(filter.results).to eq([user_not_previously_denied_sign_up])
+    end
   end
 
   it_behaves_like "a paginatable filter", :early_access_user
