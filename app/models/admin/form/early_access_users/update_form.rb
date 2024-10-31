@@ -3,6 +3,7 @@ class Admin::Form::EarlyAccessUsers::UpdateForm
   include ActiveModel::Attributes
 
   attribute :question_limit
+  attribute :bannable_action_count
   attribute :user
 
   validates :question_limit,
@@ -13,6 +14,13 @@ class Admin::Form::EarlyAccessUsers::UpdateForm
             },
             allow_nil: true
 
+  validates :bannable_action_count,
+            numericality: {
+              only_integer: true,
+              greater_than_or_equal_to: 0,
+              message: "Bannable action count must be a number",
+            }
+
   def submit
     validate!
 
@@ -22,6 +30,6 @@ class Admin::Form::EarlyAccessUsers::UpdateForm
       individual_question_limit = nil
     end
 
-    user.update!(individual_question_limit:)
+    user.update!(individual_question_limit:, bannable_action_count:)
   end
 end

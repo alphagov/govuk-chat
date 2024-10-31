@@ -446,11 +446,13 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
             params: {
               update_early_access_user_form: {
                 question_limit: 3,
+                bannable_action_count: 1,
               },
             }
 
       expect(user.reload).to have_attributes(
         individual_question_limit: 3,
+        bannable_action_count: 1,
       )
 
       expect(response).to redirect_to(admin_early_access_user_path(user))

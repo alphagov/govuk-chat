@@ -30,15 +30,13 @@ class Admin::EarlyAccessUsersController < Admin::BaseController
     @form = Admin::Form::EarlyAccessUsers::UpdateForm.new(
       user: @user,
       question_limit: @user.individual_question_limit,
+      bannable_action_count: @user.bannable_action_count,
     )
   end
 
   def update
     @user = EarlyAccessUser.find(params[:id])
-    @form = Admin::Form::EarlyAccessUsers::UpdateForm.new(
-      user: @user,
-      question_limit: update_params[:question_limit].presence,
-    )
+    @form = Admin::Form::EarlyAccessUsers::UpdateForm.new(update_params.merge(user: @user))
 
     if @form.valid?
       @form.submit
@@ -67,6 +65,6 @@ private
   end
 
   def update_params
-    params.require(:update_early_access_user_form).permit(:question_limit)
+    params.require(:update_early_access_user_form).permit(:question_limit, :bannable_action_count)
   end
 end
