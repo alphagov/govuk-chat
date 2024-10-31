@@ -4,9 +4,10 @@ namespace :users do
     settings = Settings.instance
     next puts "Not promoting while public access is disabled" unless settings.public_access_enabled?
     next puts "No delayed access places available" if settings.delayed_access_places.zero?
+    next puts "Promotions per run set to zero" if settings.waiting_list_promotions_per_run.zero?
 
     users_to_notify = []
-    max_batch_size = Rails.configuration.early_access_users.max_waiting_list_promotions_per_run
+    max_batch_size = settings.waiting_list_promotions_per_run
     settings.with_lock do
       max_promotions = [settings.delayed_access_places, max_batch_size].min
       WaitingListUser.users_to_promote(max_promotions).each do |waiting_list_user|
