@@ -97,7 +97,7 @@ Rails.application.routes.draw do
       member do
         get "/delete", to: "early_access_users#delete", as: :delete
         get "/access/revoke", to: "early_access_users/access#revoke", as: :revoke
-        patch "/access/revoke", to: "early_access_users/access#revoke_confirm", as: :revoke_confirm
+        patch "/access/revoke", to: "early_access_users/access#revoke_confirm"
         patch "/access/restore", to: "early_access_users/access#restore", as: :restore
       end
     end
@@ -106,7 +106,7 @@ Rails.application.routes.draw do
       member do
         get "/delete", to: "waiting_list_users#delete", as: :delete
         get "/promote", to: "waiting_list_users#promote", as: :promote
-        post "/promote", to: "waiting_list_users#promote_confirm", as: :promote_confirm
+        post "/promote", to: "waiting_list_users#promote_confirm"
       end
     end
 

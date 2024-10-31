@@ -365,7 +365,7 @@ RSpec.describe "Admin::WaitingListUsersController" do
     it "creates the early access user and deletes the waiting list user" do
       user = create(:waiting_list_user)
 
-      post promote_confirm_admin_waiting_list_user_path(user)
+      post promote_admin_waiting_list_user_path(user)
 
       expect(WaitingListUser.find_by_id(user.id)).to be_nil
       expect(EarlyAccessUser.find_by_email(user.email)).to be_present
@@ -374,7 +374,7 @@ RSpec.describe "Admin::WaitingListUsersController" do
     it "creates a passwordless session and assigns the new user" do
       user = create(:waiting_list_user)
 
-      post promote_confirm_admin_waiting_list_user_path(user)
+      post promote_admin_waiting_list_user_path(user)
 
       new_user = EarlyAccessUser.find_by_email(user.email)
       expect(Passwordless::Session.last.authenticatable).to eq(new_user)
@@ -384,7 +384,7 @@ RSpec.describe "Admin::WaitingListUsersController" do
       user = create(:waiting_list_user)
       allow(EarlyAccessAuthMailer).to receive(:access_granted).and_call_original
 
-      expect { post promote_confirm_admin_waiting_list_user_path(user) }
+      expect { post promote_admin_waiting_list_user_path(user) }
         .to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
 
       created_session = Passwordless::Session.last
@@ -394,7 +394,7 @@ RSpec.describe "Admin::WaitingListUsersController" do
     it "redirects to the early access user details" do
       user = create(:waiting_list_user)
 
-      post promote_confirm_admin_waiting_list_user_path(user)
+      post promote_admin_waiting_list_user_path(user)
 
       expect(response).to(
         redirect_to(admin_early_access_user_path(EarlyAccessUser.find_by_email(user.email))),

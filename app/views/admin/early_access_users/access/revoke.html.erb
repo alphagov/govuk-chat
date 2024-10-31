@@ -30,7 +30,7 @@ content_for(:active_navigation_item, admin_early_access_users_path)
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <%= form_with url: revoke_confirm_admin_early_access_user_path(@user), method: :patch do |f| %>
+    <%= form_with url: revoke_admin_early_access_user_path(@user), method: :patch do |f| %>
       <%= render "govuk_publishing_components/components/textarea", {
         label: {
           heading_size: "l",

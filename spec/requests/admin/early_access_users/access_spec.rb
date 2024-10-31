@@ -16,7 +16,7 @@ RSpec.describe "Admin::EarlyAccessUsers::AccessController" do
     it "updates the user's revoked attributes and redirects to the user's page" do
       expect {
         patch(
-          revoke_confirm_admin_early_access_user_path(user),
+          revoke_admin_early_access_user_path(user),
           params: {
             access_form: { revoke_reason: "Asking too many questions" },
           },
@@ -30,7 +30,7 @@ RSpec.describe "Admin::EarlyAccessUsers::AccessController" do
 
     it "re-renders the edit page when given invalid params" do
       patch(
-        revoke_confirm_admin_early_access_user_path(user),
+        revoke_admin_early_access_user_path(user),
         params: { access_form: { revoke_reason: "" } },
       )
 
