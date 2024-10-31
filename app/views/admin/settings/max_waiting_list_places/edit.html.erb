@@ -29,7 +29,9 @@ content_for(:back_link, render("govuk_publishing_components/components/back_link
         error_items: error_items(@form, :max_places),
       } %>
 
-      <%= render "admin/settings/shared/author_comment", form: @form, setting: "max_places" %>
+      <%= render "admin/settings/shared/author_comment",
+                 form: @form,
+                 setting: "max_waiting_list_places" %>
 
       <%= render "govuk_publishing_components/components/button", {
         text: "Submit",

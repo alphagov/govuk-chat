@@ -91,6 +91,7 @@ RSpec.describe "Admin user updates settings" do
   def and_i_disable_public_access
     choose "No"
     choose "Permanent"
+    fill_in "Comment (optional)", with: "Reason for disabling public access"
     click_on "Submit"
   end
 
@@ -106,6 +107,7 @@ RSpec.describe "Admin user updates settings" do
 
   def and_i_choose_to_enable_signups
     choose "Yes"
+    fill_in "Comment (optional)", with: "Reason for enabling sign-ups"
     click_on "Submit"
   end
 
@@ -121,9 +123,15 @@ RSpec.describe "Admin user updates settings" do
 
   def and_i_add_five_instant_access_places
     fill_in "Additional places", with: 5
+    fill_in "Comment (optional)", with: "Reason for adding instant access places"
     click_on "Submit"
   end
-  alias_method :and_i_add_five_delayed_access_places, :and_i_add_five_instant_access_places
+
+  def and_i_add_five_delayed_access_places
+    fill_in "Additional places", with: 5
+    fill_in "Comment (optional)", with: "Reason for adding delayed access places"
+    click_on "Submit"
+  end
 
   def then_i_see_there_are_fifteen_instant_access_places
     expect(page).to have_content("Available instant access places 15")
@@ -143,6 +151,7 @@ RSpec.describe "Admin user updates settings" do
 
   def and_i_set_the_waiting_list_promotions_per_run_to_fifty
     fill_in "Promotions per run", with: 50
+    fill_in "Comment (optional)", with: "Reason for updating waiting list promotions per run"
     click_on "Submit"
   end
 
@@ -156,6 +165,7 @@ RSpec.describe "Admin user updates settings" do
 
   def and_i_set_the_max_waiting_list_places_to_fifteen
     fill_in "Maximum waiting list places", with: 15
+    fill_in "Comment (optional)", with: "Reason for updating maximum waiting list places"
     click_on "Submit"
   end
 
@@ -170,10 +180,16 @@ RSpec.describe "Admin user updates settings" do
   def then_i_can_see_the_audits_for_my_changes
     expect(page)
       .to have_content("Public access enabled set to false, downtime type permanent")
+      .and have_content("Reason for disabling public access")
       .and have_content("Sign up enabled set to true")
+      .and have_content("Reason for enabling sign-ups")
       .and have_content("Added 5 instant access places")
+      .and have_content("Reason for adding instant access places")
       .and have_content("Added 5 delayed access places")
+      .and have_content("Reason for adding delayed access places")
       .and have_content("Updated waiting list promotions per run to 50")
+      .and have_content("Reason for updating waiting list promotions per run")
       .and have_content("Updated maximum waiting list places to 15")
+      .and have_content("Reason for updating maximum waiting list places")
   end
 end
