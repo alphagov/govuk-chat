@@ -312,6 +312,7 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         revoked_at: nil,
         individual_question_limit: 0,
         questions_count: 7,
+        bannable_action_count: 5,
       )
 
       get admin_early_access_user_path(user)
@@ -332,6 +333,7 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         .and have_content("Unlimited")
         .and have_content("12")
         .and have_link("7", href: admin_questions_path(user_id: user.id))
+        .and have_content("5")
     end
 
     it "renders the links to manage the user" do
@@ -356,6 +358,34 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
       expect(response.body)
         .to have_content("9:10am on 2 January 2024")
         .and have_content("Asking too many questions")
+    end
+
+    it "renders the shadow banned details" do
+      user = create(
+        :early_access_user,
+        :shadow_banned,
+        shadow_banned_at: Time.zone.parse("2024-1-2 09:10:11"),
+      )
+
+      get admin_early_access_user_path(user)
+
+      expect(response.body)
+        .to have_content("9:10am on 2 January 2024")
+        .and have_content(user.shadow_banned_reason)
+    end
+
+    it "renders the restored details" do
+      user = create(
+        :early_access_user,
+        :restored,
+        restored_at: Time.zone.parse("2024-1-2 09:10:11"),
+      )
+
+      get admin_early_access_user_path(user)
+
+      expect(response.body)
+        .to have_content("9:10am on 2 January 2024")
+        .and have_content(user.restored_reason)
     end
   end
 

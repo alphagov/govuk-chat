@@ -53,6 +53,10 @@
       field: "Question limit",
       value: @user.unlimited_question_allowance? ? "Unlimited" : @user.question_limit,
     },
+    {
+      field: "Bannable action count",
+      value: @user.bannable_action_count,
+    },
   ]
 
   if @user.access_revoked?
@@ -69,6 +73,42 @@
   else
     summary_items << {
       field: "Revoked?",
+      value:  "No",
+    }
+  end
+
+  if @user.shadow_banned?
+    summary_items << [
+      {
+        field: "Shadow banned on",
+        value: @user.shadow_banned_at.to_fs(:time_and_date),
+      },
+      {
+        field: "Shadow banned reason",
+        value: @user.shadow_banned_reason,
+      },
+    ]
+  else
+    summary_items << {
+      field: "Shadow banned?",
+      value:  "No",
+    }
+  end
+
+  if @user.restored?
+    summary_items << [
+      {
+        field: "Restored on",
+        value: @user.restored_at.to_fs(:time_and_date),
+      },
+      {
+        field: "Restored reason",
+        value: @user.restored_reason,
+      },
+    ]
+  else
+    summary_items << {
+      field: "Restored?",
       value:  "No",
     }
   end
