@@ -410,6 +410,61 @@ RSpec.describe "Admin::MetricsController" do
     end
   end
 
+  describe "GET :question_routing_guardrails_failures" do
+    it "renders a successful JSON response" do
+      get admin_metrics_question_routing_guardrails_failures_path
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Content-Type"]).to match("application/json")
+      expect(JSON.parse(response.body)).to eq([])
+    end
+
+    it "returns data of the occurrences each guardrail over the last 24 hours" do
+      create_list(:answer,
+                  2,
+                  created_at: 2.hours.ago,
+                  question_routing_guardrails_status: :fail,
+                  question_routing_guardrails_failures: %w[guardrail_1])
+      create_list(:answer,
+                  3,
+                  created_at: 10.hours.ago,
+                  question_routing_guardrails_status: :fail,
+                  question_routing_guardrails_failures: %w[guardrail_1 guardrail_2])
+      create(:answer,
+             created_at: 26.hours.ago,
+             question_routing_guardrails_status: :fail,
+             question_routing_guardrails_failures: %w[guardrail_2 guardrail_3])
+
+      get admin_metrics_question_routing_guardrails_failures_path
+
+      expect(JSON.parse(response.body)).to contain_exactly(
+        ["guardrail_1", 5],
+        ["guardrail_2", 3],
+      )
+    end
+
+    context "when period is last_7_days" do
+      it "returns data of the individual occurrences of question_routing_guardrails_failures given to answers by day" do
+        create_list(:answer,
+                    4,
+                    created_at: 3.days.ago,
+                    question_routing_guardrails_status: :fail,
+                    question_routing_guardrails_failures: %w[guardrail_1])
+        create_list(:answer,
+                    2,
+                    created_at: 4.days.ago,
+                    question_routing_guardrails_status: :fail,
+                    question_routing_guardrails_failures: %w[guardrail_1 guardrail_2])
+
+        get admin_metrics_question_routing_guardrails_failures_path(period: "last_7_days")
+
+        expect(JSON.parse(response.body)).to contain_exactly(
+          { "name" => "guardrail_1", "data" => counts_for_last_7_days(days_ago_3: 4, days_ago_4: 2) },
+          { "name" => "guardrail_2", "data" => counts_for_last_7_days(days_ago_4: 2) },
+        )
+      end
+    end
+  end
+
   def counts_for_last_24_hours(options)
     invalid_keys = options.keys.reject { |key| key.to_s =~ /^hours_ago_(1?\d|2[0-3])$/ }
     if invalid_keys.any?

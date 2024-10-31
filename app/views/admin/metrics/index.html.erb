@@ -102,4 +102,18 @@ common_chart_options = { refresh: 30 }
       <%= pie_chart admin_metrics_answer_guardrails_failures_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
     <% end %>
   </div>
+
+<% if @period == :last_7_days %>
+</div>
+<div class="govuk-grid-row govuk-!-margin-bottom-8">
+<% end %>
+
+  <div class="<%= column_class %>" id="question-routing-guardrails-failures">
+    <h2 class="govuk-heading-l">Question routing guardrails failures</h2>
+    <% if @period == :last_7_days %>
+      <%= column_chart admin_metrics_question_routing_guardrails_failures_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% else %>
+      <%= pie_chart admin_metrics_question_routing_guardrails_failures_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% end %>
+  </div>
 </div>

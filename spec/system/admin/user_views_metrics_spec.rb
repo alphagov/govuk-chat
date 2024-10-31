@@ -25,6 +25,11 @@ RSpec.describe "Admin user views metrics", :js do
                 created_at: 15.hours.ago,
                 answer_guardrails_status: :fail,
                 answer_guardrails_failures: %w[guardrail_1 guardrail_2])
+    create_list(:answer,
+                2,
+                created_at: 5.hours.ago,
+                question_routing_guardrails_status: :fail,
+                question_routing_guardrails_failures: %w[guardrail_1 guardrail_2])
   end
 
   def when_i_visit_the_admin_area
@@ -47,6 +52,7 @@ RSpec.describe "Admin user views metrics", :js do
     expect(page).to have_selector("#answers-with-error-status canvas")
     expect(page).to have_selector("#question-routing-labels canvas")
     expect(page).to have_selector("#answer-guardrails-failures canvas")
+    expect(page).to have_selector("#question-routing-guardrails-failures canvas")
   end
 
   def and_i_can_see_its_for_last_24_hours

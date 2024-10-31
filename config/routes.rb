@@ -86,7 +86,10 @@ Rails.application.routes.draw do
         get "answer-abort-statuses", to: "metrics#answer_abort_statuses", as: :metrics_answer_abort_statuses
         get "answer-error-statuses", to: "metrics#answer_error_statuses", as: :metrics_answer_error_statuses
         get "question-routing-labels", to: "metrics#question_routing_labels", as: :metrics_question_routing_labels
-        get "answer-guardrails-failures", to: "metrics#answer_guardrails_failures", as: :metrics_answer_guardrails_failures
+        get "answer-guardrails-failures", to: "metrics#answer_guardrails_failures",
+                                          as: :metrics_answer_guardrails_failures
+        get "question-routing-guardrails-failures", to: "metrics#question_routing_guardrails_failures",
+                                                    as: :metrics_question_routing_guardrails_failures
       end
     end
 

@@ -109,6 +109,22 @@ class Admin::MetricsController < Admin::BaseController
     end
   end
 
+  def question_routing_guardrails_failures
+    scope = Answer.where(created_at: start_time..)
+                  .question_routing_guardrails_status_fail
+                  .group(:question_routing_guardrails_failures)
+
+    if @period == :last_7_days
+      data = scope.group_by_day(:created_at).count_guardrails_failures(:question_routing_guardrails_failures)
+
+      render json: populate_period_data(data).chart_json
+    else
+      data = scope.count_guardrails_failures(:question_routing_guardrails_failures)
+
+      render json: data.chart_json
+    end
+  end
+
 private
 
   def set_period
