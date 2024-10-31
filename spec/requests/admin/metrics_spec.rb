@@ -1,4 +1,7 @@
 RSpec.describe "Admin::MetricsController" do
+  # Prevent flaky tests if tests run at turn of hour or day
+  around { |example| freeze_time { example.run } }
+
   describe "GET :index" do
     it "defaults to rendering last 24 hours" do
       get admin_metrics_path
