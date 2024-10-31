@@ -3,170 +3,166 @@ content_for(:title, "Settings")
 content_for(:active_navigation_item, admin_settings_path)
 %>
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <%= render "govuk_publishing_components/components/secondary_navigation", {
-      aria_label: "Settings navigation",
-      items: [
-        {
-          label: "Settings",
-          href: admin_settings_path,
-          current: true,
+<%= render "govuk_publishing_components/components/secondary_navigation", {
+  aria_label: "Settings navigation",
+  items: [
+    {
+      label: "Settings",
+      href: admin_settings_path,
+      current: true,
+    },
+    {
+      label: "Audits",
+      href: admin_settings_audits_path,
+    },
+  ],
+} %>
+
+<div class="govuk-!-margin-bottom-8">
+  <%
+    downtime_message = if @settings.downtime_type_temporary?
+                         "temporarily offline"
+                       else
+                         "permanently offline"
+                       end
+  %>
+  <%= render "govuk_publishing_components/components/summary_list", {
+    title: "Public access",
+    id: "public-access",
+    heading_level: 2,
+    heading_size: "l",
+    items: [
+      {
+        field: "Enabled",
+        value: @settings.public_access_enabled ? "Yes" : "No - #{downtime_message}",
+        edit: {
+          href: admin_settings_edit_public_access_path,
+          link_text: "Edit",
         },
-        {
-          label: "Audits",
-          href: admin_settings_audits_path,
+      },
+      {
+        field: "Description",
+        value: "Whether the public can use GOV.UK Chat.",
+      },
+    ],
+  } %>
+</div>
+
+<div class="govuk-!-margin-bottom-8">
+  <%= render "govuk_publishing_components/components/summary_list", {
+    title: "Sign up enabled",
+    id: "sign-up-enabled",
+    heading_level: 2,
+    heading_size: "l",
+    items: [
+      {
+        field: "Enabled",
+        value: @settings.sign_up_enabled ? "Yes" : "No",
+        edit: {
+          href: admin_settings_edit_sign_up_enabled_path,
+          link_text: "Edit",
         },
-      ],
-    } %>
+      },
+      {
+        field: "Description",
+        value: "Whether anyone can currently sign-up for access.",
+      },
+    ],
+  } %>
+</div>
 
-    <div class="govuk-!-margin-bottom-8">
-      <%
-        downtime_message = if @settings.downtime_type_temporary?
-                             "temporarily offline"
-                           else
-                             "permanently offline"
-                           end
-      %>
-      <%= render "govuk_publishing_components/components/summary_list", {
-        title: "Public access",
-        id: "public-access",
-        heading_level: 2,
-        heading_size: "l",
-        items: [
-          {
-            field: "Enabled",
-            value: @settings.public_access_enabled ? "Yes" : "No - #{downtime_message}",
-            edit: {
-              href: admin_settings_edit_public_access_path,
-              link_text: "Edit",
-            },
-          },
-          {
-            field: "Description",
-            value: "Whether the public can use GOV.UK Chat.",
-          },
-        ],
-      } %>
-    </div>
+<div class="govuk-!-margin-bottom-8">
+  <%= render "govuk_publishing_components/components/summary_list", {
+    title: "Instant access places",
+    heading_level: 2,
+    heading_size: "l",
+    items: [
+      {
+        field: "Available instant access places",
+        value: @settings.instant_access_places,
+        edit: {
+          href: admin_settings_edit_instant_access_places_path,
+          link_text: "Edit",
+        },
 
-    <div class="govuk-!-margin-bottom-8">
-      <%= render "govuk_publishing_components/components/summary_list", {
-        title: "Sign up enabled",
-        id: "sign-up-enabled",
-        heading_level: 2,
-        heading_size: "l",
-        items: [
-          {
-            field: "Enabled",
-            value: @settings.sign_up_enabled ? "Yes" : "No",
-            edit: {
-              href: admin_settings_edit_sign_up_enabled_path,
-              link_text: "Edit",
-            },
-          },
-          {
-            field: "Description",
-            value: "Whether anyone can currently sign-up for access.",
-          },
-        ],
-      } %>
-    </div>
+      },
+      {
+        field: "Description",
+        value: "The number of places we have available for early access signups to be granted instant access.",
+      },
+    ],
+  } %>
+</div>
 
-    <div class="govuk-!-margin-bottom-8">
-      <%= render "govuk_publishing_components/components/summary_list", {
-        title: "Instant access places",
-        heading_level: 2,
-        heading_size: "l",
-        items: [
-          {
-            field: "Available instant access places",
-            value: @settings.instant_access_places,
-            edit: {
-              href: admin_settings_edit_instant_access_places_path,
-              link_text: "Edit",
-            },
+<div class="govuk-!-margin-bottom-8">
+  <%= render "govuk_publishing_components/components/summary_list", {
+    title: "Delayed access places",
+    heading_level: 2,
+    heading_size: "l",
+    items: [
+      {
+        field: "Available delayed access places",
+        value: @settings.delayed_access_places,
+        edit: {
+          href: admin_settings_edit_delayed_access_places_path,
+          link_text: "Edit",
+        },
+      },
+      {
+        field: "Description",
+        value: "The number of places we have available for people on the waiting list to be granted delayed access.",
+      },
+    ],
+  } %>
+</div>
 
-          },
-          {
-            field: "Description",
-            value: "The number of places we have available for early access signups to be granted instant access.",
-          },
-        ],
-      } %>
-    </div>
+<div class="govuk-!-margin-bottom-8">
+  <%= render "govuk_publishing_components/components/summary_list", {
+    title: "Waiting list promotions per run",
+    heading_level: 2,
+    heading_size: "l",
+    items: [
+      {
+        field: "Promotions per run",
+        value: @settings.waiting_list_promotions_per_run,
+        edit: {
+          href: admin_settings_edit_waiting_list_promotions_per_run_path,
+          link_text: "Edit",
+        },
+      },
+      {
+        field: "Description",
+        value: "The maximum number of waiting list users that we will be promoted to early access users in the "\
+               "hourly run (which runs at 30 minutes past the hour 7am - 10pm). For any promotions to occur " \
+               "there needs to be delayed access places available.",
+      },
+    ],
+  } %>
+</div>
 
-    <div class="govuk-!-margin-bottom-8">
-      <%= render "govuk_publishing_components/components/summary_list", {
-        title: "Delayed access places",
-        heading_level: 2,
-        heading_size: "l",
-        items: [
-          {
-            field: "Available delayed access places",
-            value: @settings.delayed_access_places,
-            edit: {
-              href: admin_settings_edit_delayed_access_places_path,
-              link_text: "Edit",
-            },
-          },
-          {
-            field: "Description",
-            value: "The number of places we have available for people on the waiting list to be granted delayed access.",
-          },
-        ],
-      } %>
-    </div>
-
-    <div class="govuk-!-margin-bottom-8">
-      <%= render "govuk_publishing_components/components/summary_list", {
-        title: "Waiting list promotions per run",
-        heading_level: 2,
-        heading_size: "l",
-        items: [
-          {
-            field: "Promotions per run",
-            value: @settings.waiting_list_promotions_per_run,
-            edit: {
-              href: admin_settings_edit_waiting_list_promotions_per_run_path,
-              link_text: "Edit",
-            },
-          },
-          {
-            field: "Description",
-            value: "The maximum number of waiting list users that we will be promoted to early access users in the "\
-                   "hourly run (which runs at 30 minutes past the hour 7am - 10pm). For any promotions to occur " \
-                   "there needs to be delayed access places available.",
-          },
-        ],
-      } %>
-    </div>
-
-    <div class="govuk-!-margin-bottom-8">
-      <%= render "govuk_publishing_components/components/summary_list", {
-        title: "Maximum Waiting list places",
-        heading_level: 2,
-        heading_size: "l",
-        items: [
-          {
-            field: "Maximum places",
-            value: @settings.max_waiting_list_places,
-            edit: {
-              href: admin_settings_edit_max_waiting_list_places_path,
-              link_text: "Edit",
-            },
-          },
-          {
-            field: "Users on waiting list",
-            value: WaitingListUser.count,
-          },
-          {
-            field: "Description",
-            value: "The maximum number of users we allow on the waiting list. Once this limit is reached, new users " \
-                    "will be unable to join the waiting list when signing up. Admins will still be able to add users.",
-          },
-        ],
-      } %>
-    </div>
-  </div>
+<div class="govuk-!-margin-bottom-8">
+  <%= render "govuk_publishing_components/components/summary_list", {
+    title: "Maximum Waiting list places",
+    heading_level: 2,
+    heading_size: "l",
+    items: [
+      {
+        field: "Maximum places",
+        value: @settings.max_waiting_list_places,
+        edit: {
+          href: admin_settings_edit_max_waiting_list_places_path,
+          link_text: "Edit",
+        },
+      },
+      {
+        field: "Users on waiting list",
+        value: WaitingListUser.count,
+      },
+      {
+        field: "Description",
+        value: "The maximum number of users we allow on the waiting list. Once this limit is reached, new users " \
+                "will be unable to join the waiting list when signing up. Admins will still be able to add users.",
+      },
+    ],
+  } %>
 </div>
