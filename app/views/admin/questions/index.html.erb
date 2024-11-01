@@ -2,6 +2,7 @@
 content_for(:title, "Questions")
 content_for(:active_navigation_item, admin_questions_path)
 %>
+
 <%= render "shared/error_summary",
   model: @filter,
   anchor_mappings: {

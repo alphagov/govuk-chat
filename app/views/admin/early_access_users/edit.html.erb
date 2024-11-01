@@ -8,7 +8,7 @@ content_for(:active_navigation_item, admin_early_access_users_path)
   <br>Set to 0 to remove the limit.
 <% end %>
 
-<%= content_for :breadcrumbs do %>
+<% content_for :breadcrumbs do %>
   <%= render "govuk_publishing_components/components/breadcrumbs", {
     collapse_on_mobile: true,
     breadcrumbs: [

@@ -3,7 +3,7 @@ content_for(:title, "User details")
 content_for(:active_navigation_item, admin_early_access_users_path)
 %>
 
-<%= content_for :breadcrumbs do %>
+<% content_for :breadcrumbs do %>
   <%= render "govuk_publishing_components/components/breadcrumbs", {
     collapse_on_mobile: true,
     breadcrumbs: [

@@ -3,7 +3,7 @@ content_for(:title, "Promote to early access user")
 content_for(:active_navigation_item, admin_waiting_list_users_path)
 %>
 
-<%= content_for :breadcrumbs do %>
+<% content_for :breadcrumbs do %>
   <%= render "govuk_publishing_components/components/breadcrumbs", {
     collapse_on_mobile: true,
     breadcrumbs: [
