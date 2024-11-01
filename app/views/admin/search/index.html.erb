@@ -1,4 +1,7 @@
-<%= content_for :title, "Search RAG index" %>
+<%
+content_for(:title, "Search RAG index")
+content_for(:active_navigation_item, admin_search_path)
+%>
 
 <%= form_with url: admin_search_url, method: :get do |f| %>
     <%= render "govuk_publishing_components/components/search", {

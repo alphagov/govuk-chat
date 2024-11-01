@@ -1,10 +1,13 @@
+<%
+content_for(:title, "Questions")
+content_for(:active_navigation_item, admin_questions_path)
+%>
 <%= render "shared/error_summary",
   model: @filter,
   anchor_mappings: {
     start_date_params: "#start_date_params",
     end_date_params: "#end_date_params",
   } %>
-<%= content_for :title, "Questions" %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-third">

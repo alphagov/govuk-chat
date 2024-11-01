@@ -1,4 +1,7 @@
-<%= content_for(:title,  "Chunk details: #{@chunk.title}") %>
+<%
+content_for(:title,  "Chunk details: #{@chunk.title}")
+content_for(:active_navigation_item, admin_search_path)
+%>
 
 <% if @back_link %>
   <%= content_for(:back_link, render("govuk_publishing_components/components/back_link",

@@ -1,5 +1,6 @@
 <%= content_for :title, "Edit waiting list promotions per run" %>
 <%= content_for :title_context, "Settings" %>
+<%= content_for(:active_navigation_item, admin_settings_path) %>
  <%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
                                     href: admin_settings_path) ) %>
 <%= render "shared/error_summary",
