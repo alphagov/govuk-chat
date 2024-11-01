@@ -1,11 +1,14 @@
-<% content_for(:browser_title, user_research_question_text(:user_description)) %>
+<%
+content_for(:browser_title, user_research_question_text(:user_description))
+content_for(:back_link, render("govuk_publishing_components/components/back_link",
+                               href: homepage_path))
+%>
+
 <%= render "shared/error_summary",
   model: @user_description_form,
   anchor_mappings: {
     choice: "#user_description_form_choice",
   } %>
-<%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
-                                  href: homepage_path) ) %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
