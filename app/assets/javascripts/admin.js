@@ -2,6 +2,7 @@
 //= require govuk_publishing_components/lib
 
 //= require govuk_publishing_components/components/character-count
+//= require govuk_publishing_components/components/layout-header
 //= require govuk_publishing_components/components/table
 //= require govuk_publishing_components/components/radio
 
