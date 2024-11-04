@@ -1,4 +1,16 @@
 RSpec.describe "Admin::EarlyAccessUsers::AccessController" do
+  it_behaves_like "redirects to the admin_early_access_user_path if the user is revoked",
+                  routes: {
+                    revoke_admin_early_access_user_path: %i[get patch],
+                    shadow_ban_admin_early_access_user_path: %i[get patch],
+                  }
+
+  it_behaves_like "redirects to the admin_early_access_user_path if the user is shadow banned",
+                  routes: { shadow_ban_admin_early_access_user_path: %i[get patch] }
+
+  it_behaves_like "redirects to the admin_early_access_user_path if the user has full access",
+                  routes: { restore_admin_early_access_user_path: %i[get patch] }
+
   describe "GET :revoke" do
     it "renders the revoke access form" do
       user = create(:early_access_user)
@@ -7,12 +19,6 @@ RSpec.describe "Admin::EarlyAccessUsers::AccessController" do
       expect(response.body)
         .to have_content("Reason for revoking access")
         .and have_selector("textarea#revoke-reason")
-    end
-
-    it "redirects to the user's page if the user's access is already revoked" do
-      user = create(:early_access_user, :revoked)
-      get revoke_admin_early_access_user_path(user)
-      expect(response).to redirect_to(admin_early_access_user_path(user))
     end
   end
 
@@ -43,12 +49,6 @@ RSpec.describe "Admin::EarlyAccessUsers::AccessController" do
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to have_selector(".govuk-error-summary")
     end
-
-    it "redirects to the user's page if the user's access is already revoked" do
-      user = create(:early_access_user, :revoked)
-      patch revoke_admin_early_access_user_path(user)
-      expect(response).to redirect_to(admin_early_access_user_path(user))
-    end
   end
 
   describe "GET :shadow_ban" do
@@ -59,12 +59,6 @@ RSpec.describe "Admin::EarlyAccessUsers::AccessController" do
       expect(response.body)
         .to have_content("Reason for shadow ban")
         .and have_selector("textarea#shadow-ban-reason")
-    end
-
-    it "redirects to the user's page if the user's access is already shadow banned" do
-      user = create(:early_access_user, :shadow_banned)
-      get shadow_ban_admin_early_access_user_path(user)
-      expect(response).to redirect_to(admin_early_access_user_path(user))
     end
   end
 
@@ -95,12 +89,6 @@ RSpec.describe "Admin::EarlyAccessUsers::AccessController" do
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to have_selector(".govuk-error-summary")
     end
-
-    it "redirects to the user's page if the user's access is already shadow banned" do
-      user = create(:early_access_user, :shadow_banned)
-      get shadow_ban_admin_early_access_user_path(user)
-      expect(response).to redirect_to(admin_early_access_user_path(user))
-    end
   end
 
   describe "GET :restore" do
@@ -110,12 +98,6 @@ RSpec.describe "Admin::EarlyAccessUsers::AccessController" do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to have_content("Reason for restoring access")
-    end
-
-    it "redirects to the user's page if the user's is not shadow banned or had their access revoked" do
-      user = create(:early_access_user)
-      patch restore_admin_early_access_user_path(user)
-      expect(response).to redirect_to(admin_early_access_user_path(user))
     end
   end
 
@@ -145,12 +127,6 @@ RSpec.describe "Admin::EarlyAccessUsers::AccessController" do
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to have_selector(".govuk-error-summary")
-    end
-
-    it "redirects to the user's page if the user's is not shadow banned or had their access revoked" do
-      user = create(:early_access_user)
-      patch restore_admin_early_access_user_path(user)
-      expect(response).to redirect_to(admin_early_access_user_path(user))
     end
   end
 end
