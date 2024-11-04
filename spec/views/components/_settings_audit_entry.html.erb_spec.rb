@@ -25,8 +25,22 @@ RSpec.describe "components/_settings_audit_entry.html.erb" do
 
     expect(rendered)
       .to have_selector(
-        ".app-c-settings-audit-entry .app-c-settings-audit-entry__author_comment",
+        ".app-c-settings-audit-entry .app-c-settings-audit-entry__author_comment p.govuk-body",
         text: "We need more places.",
+      )
+  end
+
+  it "renders any HTML in an author comment as text" do
+    render("components/settings_audit_entry", {
+      action: "Added 10 instant access places",
+      created_at: "11:00am on 1 January 2024",
+      author_comment: "<strong>I wondered if I could make this bold</strong>",
+    })
+
+    expect(rendered)
+      .to have_selector(
+        ".app-c-settings-audit-entry .app-c-settings-audit-entry__author_comment",
+        text: "<strong>I wondered if I could make this bold</strong>",
       )
   end
 

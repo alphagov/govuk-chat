@@ -40,13 +40,13 @@ RSpec.describe Admin::Form::Settings::MaxWaitingListPlacesForm do
         )
     end
 
-    it "updates the settings max_waiting_list_places to the places attibute" do
+    it "updates the settings max_waiting_list_places to the max_places attribute" do
       form = described_class.new(max_places: 15)
       form.submit
       expect(settings.reload.max_waiting_list_places).to eq 15
     end
 
-    it "doesn't create an audit if the max places value doesn't change" do
+    it "doesn't create an audit if the max_places value doesn't change" do
       form = described_class.new(max_places: 10)
       expect { form.submit }.not_to change(SettingsAudit, :count)
     end

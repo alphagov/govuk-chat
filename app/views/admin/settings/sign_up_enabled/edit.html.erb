@@ -20,6 +20,8 @@ content_for(:back_link, render("govuk_publishing_components/components/back_link
         heading_level: 2,
         margin_bottom: 8,
         name: "sign_up_enabled_form[enabled]",
+        hint: 'Setting this to "No" will prevent users signing up instantly or ' \
+              "joining the waiting list. Existing users will still be able to sign-in.",
         items: [
           {
             value: "true",

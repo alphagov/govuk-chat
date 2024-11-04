@@ -25,11 +25,11 @@ RSpec.describe "Admin::SettingsController" do
       expect(response.body).to have_content(/Appears first.*Appears second/m)
     end
 
-    it "renders 'No audits.' when there are no audits" do
+    it "renders 'No audited settings changes.' when there are no audits" do
       get admin_settings_audits_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to have_content("No audits.")
+      expect(response.body).to have_content("No audited settings changes.")
     end
 
     context "when there are more than 25 audits" do
