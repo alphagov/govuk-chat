@@ -1,5 +1,7 @@
 module SignUpRequestExamples
   shared_examples "redirects user to instant access start page when email is not in the sign_up session" do |routes:|
+    before { create(:settings, sign_up_enabled: true) }
+
     routes.each do |path, methods|
       describe "Redirects user to homepage_path when session['sign_up']['email'] is blank" do
         methods.each do |method|
@@ -153,12 +155,14 @@ module SignUpRequestExamples
 
   shared_context "with early access user email provided" do
     before do
+      create(:settings, sign_up_enabled: true)
       post homepage_path(sign_in_or_up_form: { email: "email@test.com" })
     end
   end
 
   shared_context "with early access user email and user description provided" do
     before do
+      create(:settings, sign_up_enabled: true)
       post homepage_path(sign_in_or_up_form: { email: "email@test.com" })
       post sign_up_user_description_path(user_description_form: { choice: "business_owner_or_self_employed" })
     end
@@ -166,6 +170,7 @@ module SignUpRequestExamples
 
   shared_context "with early access user email, user description and reason for visit provided" do |user_description = "business_owner_or_self_employed"|
     before do
+      create(:settings, sign_up_enabled: true)
       post homepage_path(sign_in_or_up_form: { email: "email@test.com" })
       post sign_up_user_description_path(user_description_form: { choice: user_description })
       post sign_up_reason_for_visit_path(reason_for_visit_form: { choice: "find_specific_answer" })
