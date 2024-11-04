@@ -10,7 +10,7 @@
 
   <% if author_comment.present? %>
     <div class="app-c-settings-audit-entry__author_comment">
-      <%= simple_format(html_escape(author_comment), { class: "govuk-body" }) %>
+      <%= escaped_simple_format(author_comment, { class: "govuk-body" }) %>
     </div>
   <% end %>
 
