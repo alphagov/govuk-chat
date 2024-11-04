@@ -8,6 +8,12 @@ RSpec.describe "Admin::EarlyAccessUsers::AccessController" do
         .to have_content("Reason for revoking access")
         .and have_selector("textarea#revoke-reason")
     end
+
+    it "redirects to the user's page if the user's access is already revoked" do
+      user = create(:early_access_user, :revoked)
+      get revoke_admin_early_access_user_path(user)
+      expect(response).to redirect_to(admin_early_access_user_path(user))
+    end
   end
 
   describe "PATCH :revoke_confirm" do
@@ -37,6 +43,12 @@ RSpec.describe "Admin::EarlyAccessUsers::AccessController" do
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to have_selector(".govuk-error-summary")
     end
+
+    it "redirects to the user's page if the user's access is already revoked" do
+      user = create(:early_access_user, :revoked)
+      patch revoke_admin_early_access_user_path(user)
+      expect(response).to redirect_to(admin_early_access_user_path(user))
+    end
   end
 
   describe "PATCH :restore" do
@@ -51,6 +63,12 @@ RSpec.describe "Admin::EarlyAccessUsers::AccessController" do
 
       expect(response).to redirect_to(admin_early_access_user_path(user))
       expect(flash[:notice]).to eq("Access restored")
+    end
+
+    it "redirects to the user's page if the user has not had their access revoked" do
+      user = create(:early_access_user)
+      patch restore_admin_early_access_user_path(user)
+      expect(response).to redirect_to(admin_early_access_user_path(user))
     end
   end
 end

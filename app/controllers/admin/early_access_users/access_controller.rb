@@ -1,11 +1,13 @@
 class Admin::EarlyAccessUsers::AccessController < Admin::BaseController
+  before_action :find_user
+  before_action :redirect_to_user_show_page_if_already_revoked, only: %i[revoke revoke_confirm]
+  before_action :redirect_to_user_show_page_unless_revoked_or_banned, only: %i[restore]
+
   def revoke
-    @user = EarlyAccessUser.find(params[:id])
     @form = Admin::Form::EarlyAccessUsers::RevokeAccessForm.new(user: @user)
   end
 
   def revoke_confirm
-    @user = EarlyAccessUser.find(params[:id])
     @form = Admin::Form::EarlyAccessUsers::RevokeAccessForm.new(revoke_params.merge(user: @user))
 
     if @form.valid?
@@ -17,13 +19,24 @@ class Admin::EarlyAccessUsers::AccessController < Admin::BaseController
   end
 
   def restore
-    user = EarlyAccessUser.find(params[:id])
-    user.update!(revoked_at: nil, revoked_reason: nil)
+    @user.update!(revoked_at: nil, revoked_reason: nil)
 
-    redirect_to admin_early_access_user_path(user), notice: "Access restored"
+    redirect_to admin_early_access_user_path(@user), notice: "Access restored"
   end
 
 private
+
+  def find_user
+    @user = EarlyAccessUser.find(params[:id])
+  end
+
+  def redirect_to_user_show_page_if_already_revoked
+    redirect_to admin_early_access_user_path(@user) if @user.access_revoked?
+  end
+
+  def redirect_to_user_show_page_unless_revoked_or_banned
+    redirect_to admin_early_access_user_path(@user) unless @user.access_revoked? || @user.shadow_banned?
+  end
 
   def revoke_params
     params.require(:access_form).permit(:revoke_reason)
