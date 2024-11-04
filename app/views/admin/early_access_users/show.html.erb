@@ -60,6 +60,10 @@ content_for(:active_navigation_item, admin_early_access_users_path)
       field: "Bannable action count",
       value: @user.bannable_action_count,
     },
+    {
+      field: "Previous sign up denied",
+      value: @user.previous_sign_up_denied? ? "Yes" : "No",
+    },
   ]
 
   if @user.access_revoked?

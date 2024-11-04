@@ -1,6 +1,6 @@
 class Admin::WaitingListUsersController < Admin::BaseController
   def index
-    filter_params = params.permit(:email, :page, :sort)
+    filter_params = params.permit(:email, :page, :sort, :previous_sign_up_denied)
     @filter = Admin::Filters::WaitingListUsersFilter.new(filter_params)
   end
 

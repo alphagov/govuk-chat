@@ -8,6 +8,7 @@ RSpec.describe PilotSignUp do
         user_description: "business_owner_or_self_employed",
         reason_for_visit: "find_specific_answer",
         found_chat: "search_engine",
+        previous_sign_up_denied: false,
       }
     end
 
@@ -38,6 +39,7 @@ RSpec.describe PilotSignUp do
           user_description: "business_owner_or_self_employed",
           found_chat: "search_engine",
           source: "instant_signup",
+          previous_sign_up_denied: false,
         )
       end
 

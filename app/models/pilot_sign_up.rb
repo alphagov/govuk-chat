@@ -5,12 +5,13 @@ class PilotSignUp
 
   def self.call(...) = new(...).call
 
-  def initialize(email:, user_description:, reason_for_visit:, found_chat:)
+  def initialize(email:, user_description:, reason_for_visit:, found_chat:, previous_sign_up_denied:)
     @email = email
     @user_description = user_description
     @reason_for_visit = reason_for_visit
     @found_chat = found_chat
     @settings = Settings.instance
+    @previous_sign_up_denied = previous_sign_up_denied
   end
 
   def call
@@ -36,7 +37,7 @@ class PilotSignUp
 
 private
 
-  attr_reader :email, :user_description, :reason_for_visit, :found_chat, :settings
+  attr_reader :email, :user_description, :reason_for_visit, :found_chat, :settings, :previous_sign_up_denied
 
   def waiting_list_full?
     settings.instant_access_places.zero? &&
@@ -50,6 +51,7 @@ private
       reason_for_visit:,
       found_chat:,
       source: "instant_signup",
+      previous_sign_up_denied:,
     )
     settings.update!(instant_access_places: settings.instant_access_places - 1)
     session = Passwordless::Session.create!(authenticatable: user)
@@ -63,6 +65,7 @@ private
       reason_for_visit:,
       found_chat:,
       source: "insufficient_instant_places",
+      previous_sign_up_denied:,
     )
   end
 end

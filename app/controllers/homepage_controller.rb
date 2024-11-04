@@ -33,7 +33,10 @@ class HomepageController < BaseController
       when :magic_link_limit
         render :magic_link_limit, status: :too_many_requests
       else
-        session["sign_up"] = { "email" => result.email }
+        session["sign_up"] = {
+          "email" => result.email,
+          "previous_sign_up_denied" => session["sign_up_denied"].present?,
+        }
         redirect_to sign_up_user_description_path
       end
     else

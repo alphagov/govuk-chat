@@ -10,6 +10,30 @@
     full_width: true,
   } %>
 
+  <%= render "govuk_publishing_components/components/select", {
+    id: "previous_sign_up_denied",
+    name: "previous_sign_up_denied",
+    label: "Previous sign up denied",
+    heading_size: "s",
+    full_width: true,
+    options: [
+      {
+        text: "",
+        value: "",
+      },
+      {
+        text: "Yes",
+        value: "true",
+        selected: params[:previous_sign_up_denied] == "true",
+      },
+      {
+        text: "No",
+        value: "false",
+        selected: params[:previous_sign_up_denied] == "false",
+      },
+    ],
+  } %>
+
   <%= render "govuk_publishing_components/components/button", {
     text: "Filter",
     margin_bottom: true,

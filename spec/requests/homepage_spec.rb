@@ -59,7 +59,19 @@ RSpec.describe "HomepageController" do
           post homepage_path(
             sign_in_or_up_form: { email: "email@test.com" },
           )
-          expect(session["sign_up"]).to eq({ "email" => "email@test.com" })
+          expect(session["sign_up"]).to eq({
+            "email" => "email@test.com", "previous_sign_up_denied" => false
+          })
+        end
+
+        context "and the user has previous been denied sign up" do
+          include_context "with early access user email, user description of none, and reason for sign up provided"
+
+          it "sets previous_sign_up_denied to true in the session" do
+            post homepage_path(sign_in_or_up_form: { email: "email@test.com" })
+
+            expect(session["sign_up"]["previous_sign_up_denied"]).to be(true)
+          end
         end
 
         it "redirects to the user_description path" do
