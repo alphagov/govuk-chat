@@ -18,6 +18,8 @@ class Admin::Form::EarlyAccessUsers::RevokeAccessForm
     user.update!(
       revoked_at: Time.zone.now,
       revoked_reason: revoke_reason,
+      restored_at: nil,
+      restored_reason: nil,
     )
   end
 end
