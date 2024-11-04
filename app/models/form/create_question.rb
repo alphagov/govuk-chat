@@ -26,8 +26,16 @@ class Form::CreateQuestion
       unsanitised_message: (@unsanitised_user_question if @sanitised_user_question != @unsanitised_user_question),
       conversation:,
     )
-    conversation.user.increment!(:questions_count) if conversation.user.present?
-    ComposeAnswerJob.perform_later(question.id)
+
+    user = conversation.user
+    user&.increment!(:questions_count)
+
+    if user&.shadow_banned?
+      ComposeAnswerJob.set(wait: rand(5..20).seconds).perform_later(question.id)
+    else
+      ComposeAnswerJob.perform_later(question.id)
+    end
+
     question
   end
 
