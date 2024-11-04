@@ -94,6 +94,30 @@
 
     <div class="govuk-!-margin-bottom-8">
       <%= render "govuk_publishing_components/components/summary_list", {
+        title: "Waiting list promotions per run",
+        heading_level: 2,
+        heading_size: "l",
+        items: [
+          {
+            field: "Promotions per run",
+            value: @settings.waiting_list_promotions_per_run,
+            edit: {
+              href: admin_settings_edit_waiting_list_promotions_per_run_path,
+              link_text: "Edit",
+            },
+          },
+          {
+            field: "Description",
+            value: "The maximum number of waiting list users that we will be promoted to early access users in the "\
+                   "hourly run (which runs at 30 minutes past the hour 7am - 10pm). For any promotions to occur " \
+                   "there needs to be delayed access places available.",
+          },
+        ],
+      } %>
+    </div>
+
+    <div class="govuk-!-margin-bottom-8">
+      <%= render "govuk_publishing_components/components/summary_list", {
         title: "Maximum Waiting list places",
         heading_level: 2,
         heading_size: "l",

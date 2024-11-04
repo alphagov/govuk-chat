@@ -56,9 +56,6 @@ module GovukChat
       max_questions_per_user: 70,
       question_warning_threshold: 20,
     )
-    config.early_access_users = Hashie::Mash.new(
-      max_waiting_list_promotions_per_run: 50,
-    )
     config.instant_access_places_schedule = Hashie::Mash.new(
       not_before: Date.new(2024, 9, 24),
       not_after: Date.new(2024, 10, 31),

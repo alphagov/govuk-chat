@@ -12,7 +12,7 @@ RSpec.describe "users rake tasks" do
     shared_examples "promotes waiting list users" do |expected_promotions|
       let(:max_places) do
         [
-          Rails.configuration.early_access_users.max_waiting_list_promotions_per_run,
+          settings.waiting_list_promotions_per_run,
           settings.delayed_access_places,
         ].min
       end
@@ -77,8 +77,7 @@ RSpec.describe "users rake tasks" do
 
     context "when the number of waiting list users exceeds the batch size" do
       before do
-        settings.update!(delayed_access_places: 10)
-        allow(Rails.configuration.early_access_users).to receive(:max_waiting_list_promotions_per_run).and_return(1)
+        settings.update!(delayed_access_places: 10, waiting_list_promotions_per_run: 1)
       end
 
       it_behaves_like "promotes waiting list users", 1
@@ -89,10 +88,10 @@ RSpec.describe "users rake tasks" do
         settings.update!(public_access_enabled: false)
       end
 
-      it "does not continue processing" do
-        expect(Rails.configuration).not_to receive(:early_access_users)
+      it "exits with a message" do
         expect { Rake::Task[task_name].invoke }
           .to output("Not promoting while public access is disabled\n").to_stdout
+          .and not_change(EarlyAccessUser, :count)
       end
     end
 
@@ -101,9 +100,23 @@ RSpec.describe "users rake tasks" do
         settings.update!(delayed_access_places: 0)
       end
 
-      it "does not continue processing" do
-        expect(Rails.configuration).not_to receive(:early_access_users)
-        expect { Rake::Task[task_name].invoke }.to output("No delayed access places available\n").to_stdout
+      it "exits with a message" do
+        expect { Rake::Task[task_name].invoke }
+          .to output("No delayed access places available\n").to_stdout
+          .and not_change(EarlyAccessUser, :count)
+      end
+    end
+
+    context "when waiting list promotions per run is set to zero" do
+      before do
+        settings.update!(delayed_access_places: 5,
+                         waiting_list_promotions_per_run: 0)
+      end
+
+      it "exits with a message" do
+        expect { Rake::Task[task_name].invoke }
+          .to output("Promotions per run set to zero\n").to_stdout
+          .and not_change(EarlyAccessUser, :count)
       end
     end
   end
