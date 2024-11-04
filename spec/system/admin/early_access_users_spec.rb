@@ -10,7 +10,7 @@ RSpec.describe "Admin user early access users functionality" do
   scenario "admin updates an early access user" do
     given_i_am_an_admin
     and_there_is_an_early_access_user
-    when_i_visit_an_early_access_user_page
+    when_i_visit_the_early_access_users_page
     and_i_update_the_user_question_limit
     then_i_see_the_question_limit_updated
   end
@@ -18,7 +18,7 @@ RSpec.describe "Admin user early access users functionality" do
   scenario "admin deletes an early access user" do
     given_i_am_an_admin
     and_there_is_an_early_access_user
-    when_i_visit_an_early_access_user_page
+    when_i_visit_the_early_access_users_page
     and_i_delete_the_user
     then_i_see_the_user_is_deleted
   end
@@ -26,12 +26,23 @@ RSpec.describe "Admin user early access users functionality" do
   scenario "admin revokes and restores an early access user's access" do
     given_i_am_an_admin
     and_there_is_an_early_access_user
-    when_i_visit_an_early_access_user_page
+    when_i_visit_the_early_access_users_page
     and_i_revoke_the_users_access
     then_i_see_the_user_is_revoked
 
     when_i_restore_the_users_access
     then_i_see_the_user_is_not_revoked
+    and_i_can_see_the_restore_reason
+  end
+
+  scenario "admin restores access for a shadow banned user" do
+    given_i_am_an_admin
+    and_there_is_a_shadow_banned_early_access_user
+    when_i_visit_the_early_access_users_page
+    then_i_can_see_that_they_are_shadow_banned
+
+    when_i_restore_the_users_access
+    then_i_see_the_user_is_not_shadow_banned
   end
 
   def when_i_visit_the_early_access_users_index_page
@@ -58,7 +69,7 @@ RSpec.describe "Admin user early access users functionality" do
     @user = create(:early_access_user)
   end
 
-  def when_i_visit_an_early_access_user_page
+  def when_i_visit_the_early_access_users_page
     visit admin_early_access_user_path(@user)
   end
 
@@ -102,10 +113,32 @@ RSpec.describe "Admin user early access users functionality" do
   end
 
   def when_i_restore_the_users_access
-    click_button("Restore access")
+    click_on "Restore access"
+    @restore_reason = "User has apologised"
+    fill_in "Reason for restoring access", with: @restore_reason
+    click_on "Submit"
   end
 
   def then_i_see_the_user_is_not_revoked
     expect(page).to have_content(/Revoked\?.*No/)
+  end
+
+  def and_i_can_see_the_restore_reason
+    expect(page).to have_content(@restore_reason)
+  end
+
+  def and_there_is_a_shadow_banned_early_access_user
+    freeze_time do
+      @user = create(:early_access_user, :shadow_banned)
+      @shadow_banned_at = @user.shadow_banned_at
+    end
+  end
+
+  def then_i_can_see_that_they_are_shadow_banned
+    expect(page).to have_content(/Shadow banned on.*#{@shadow_banned_at.to_fs(:time_and_date)}/)
+  end
+
+  def then_i_see_the_user_is_not_shadow_banned
+    expect(page).to have_content(/Shadow banned\?.*No/)
   end
 end

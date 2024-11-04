@@ -98,7 +98,8 @@ Rails.application.routes.draw do
         get "/delete", to: "early_access_users#delete", as: :delete
         get "/access/revoke", to: "early_access_users/access#revoke", as: :revoke
         patch "/access/revoke", to: "early_access_users/access#revoke_confirm"
-        patch "/access/restore", to: "early_access_users/access#restore", as: :restore
+        get "/access/restore", to: "early_access_users/access#restore", as: :restore
+        patch "/access/restore", to: "early_access_users/access#restore_confirm"
       end
     end
 

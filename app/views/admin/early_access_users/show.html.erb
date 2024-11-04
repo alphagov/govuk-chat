@@ -117,31 +117,36 @@ content_for(:active_navigation_item, admin_early_access_users_path)
   end
 %>
 
-<%= render "govuk_publishing_components/components/summary_list", {
-  items: summary_items.flatten,
-} %>
+<div class="govuk-!-margin-bottom-6">
+  <%= render "govuk_publishing_components/components/summary_list", {
+    items: summary_items.flatten,
+  } %>
+</div>
 
-<%= render "govuk_publishing_components/components/button", {
-  text: "Edit user",
-  href: edit_admin_early_access_user_path(@user),
-} %>
-
-<%= render "govuk_publishing_components/components/button", {
-  text: "Delete user",
-  href: delete_admin_early_access_user_path(@user),
-  destructive: true,
-} %>
-
-<% if @user.access_revoked? %>
-  <%= form_with url: restore_admin_early_access_user_path(@user), method: :patch do |f| %>
-    <%= render "govuk_publishing_components/components/button", {
-      text: "Restore access",
-    } %>
-  <% end %>
-<% else %>
+<div class="govuk-button-group">
   <%= render "govuk_publishing_components/components/button", {
-    text: "Revoke access",
-    href: revoke_admin_early_access_user_path(@user),
+    text: "Edit user",
+    href: edit_admin_early_access_user_path(@user),
+  } %>
+
+  <%= render "govuk_publishing_components/components/button", {
+    text: "Delete user",
+    href: delete_admin_early_access_user_path(@user),
     destructive: true,
   } %>
-<% end %>
+
+  <% unless @user.revoked? %>
+    <%= render "govuk_publishing_components/components/button", {
+      text: "Revoke access",
+      href: revoke_admin_early_access_user_path(@user),
+      destructive: true,
+    } %>
+  <% end %>
+
+  <% if @user.revoked_or_banned? %>
+    <%= render "govuk_publishing_components/components/button", {
+      text: "Restore access",
+      href: restore_admin_early_access_user_path(@user),
+    } %>
+  <% end %>
+</div>
