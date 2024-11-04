@@ -1,9 +1,12 @@
-<% content_for(:browser_title, user_research_question_text(:found_chat)) %>
+<%
+content_for(:browser_title, user_research_question_text(:found_chat))
+content_for(:back_link, render("govuk_publishing_components/components/back_link",
+                               href: sign_up_reason_for_visit_path))
+%>
+
 <%= render "shared/error_summary",
   model: @found_chat_form,
   anchor_mappings: { choice: "#found_chat_form_choice" } %>
-<%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
-                                  href: sign_up_reason_for_visit_path) ) %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">

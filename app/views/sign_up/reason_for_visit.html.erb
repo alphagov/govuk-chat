@@ -1,11 +1,14 @@
-<% content_for(:browser_title, user_research_question_text(:reason_for_visit)) %>
+<%
+content_for(:browser_title, user_research_question_text(:reason_for_visit))
+content_for(:back_link, render("govuk_publishing_components/components/back_link",
+                               href: sign_up_user_description_path))
+%>
+
 <%= render "shared/error_summary",
   model: @reason_for_visit_form,
   anchor_mappings: {
     choice: "#reason_for_visit_form_choice",
   } %>
-<%= content_for(:back_link, render("govuk_publishing_components/components/back_link",
-                                  href: sign_up_user_description_path) ) %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
