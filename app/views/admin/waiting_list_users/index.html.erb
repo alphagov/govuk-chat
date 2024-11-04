@@ -1,4 +1,7 @@
-<%= content_for :title, "Waiting list users" %>
+<%
+content_for(:title, "Waiting list users")
+content_for(:active_navigation_item, admin_waiting_list_users_path)
+%>
 
 <%= render "govuk_publishing_components/components/button", {
   text: "Add user",
