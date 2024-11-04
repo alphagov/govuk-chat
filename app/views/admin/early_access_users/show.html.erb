@@ -135,6 +135,14 @@ content_for(:active_navigation_item, admin_early_access_users_path)
     destructive: true,
   } %>
 
+  <% unless @user.revoked_or_banned? %>
+    <%= render "govuk_publishing_components/components/button", {
+      text: "Shadow ban",
+      href: shadow_ban_admin_early_access_user_path(@user),
+      destructive: true,
+    } %>
+  <% end %>
+
   <% unless @user.revoked? %>
     <%= render "govuk_publishing_components/components/button", {
       text: "Revoke access",

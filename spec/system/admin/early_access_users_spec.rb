@@ -35,14 +35,16 @@ RSpec.describe "Admin user early access users functionality" do
     and_i_can_see_the_restore_reason
   end
 
-  scenario "admin restores access for a shadow banned user" do
+  scenario "admin shadow bans and restores an early access user" do
     given_i_am_an_admin
-    and_there_is_a_shadow_banned_early_access_user
+    and_there_is_an_early_access_user
     when_i_visit_the_early_access_users_page
+    and_i_shadow_ban_the_user
     then_i_can_see_that_they_are_shadow_banned
 
     when_i_restore_the_users_access
     then_i_see_the_user_is_not_shadow_banned
+    and_i_can_see_the_restore_reason
   end
 
   def when_i_visit_the_early_access_users_index_page
@@ -127,10 +129,13 @@ RSpec.describe "Admin user early access users functionality" do
     expect(page).to have_content(@restore_reason)
   end
 
-  def and_there_is_a_shadow_banned_early_access_user
+  def and_i_shadow_ban_the_user
+    click_on "Shadow ban"
+
     freeze_time do
-      @user = create(:early_access_user, :shadow_banned)
-      @shadow_banned_at = @user.shadow_banned_at
+      @shadow_banned_at = Time.current
+      fill_in "Reason for shadow ban", with: "Malicious behaviour"
+      click_button("Submit")
     end
   end
 
