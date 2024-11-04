@@ -74,7 +74,6 @@ class Answer < ApplicationRecord
          error_jailbreak_guardrails: "error_jailbreak_guardrails",
          error_non_specific: "error_non_specific",
          error_timeout: "error_timeout",
-         error_question_routing: "error_question_routing",
          error_question_routing_guardrails: "error_question_routing_guardrails",
          success: "success",
        },

@@ -83,11 +83,6 @@ error_timeout:
   label_colour: "red"
   description: "no answer after configured timeout"
   label_and_description: "Error - no answer after configured timeout"
-error_question_routing:
-  label: "Error"
-  label_colour: "red"
-  description: "invalid response from question routing LLM call"
-  label_and_description: "Error - invalid response from question routing LLM call"
 error_question_routing_guardrails:
   label: "Error"
   label_colour: "red"
