@@ -132,4 +132,21 @@ class EarlyAccessUser < ApplicationRecord
   def unlimited_question_allowance?
     question_limit.zero?
   end
+
+  def handle_jailbreak_attempt
+    with_lock do
+      self.bannable_action_count += 1
+      if bannable_action_count >= BANNABLE_ACTION_COUNT_THRESHOLD
+        assign_attributes(
+          shadow_banned_at: Time.current,
+          shadow_banned_reason: "#{bannable_action_count} jailbreak attempts made by user.",
+          restored_at: nil,
+          restored_reason: nil,
+        )
+      end
+
+      save!
+    end
+    # slack call will be made here
+  end
 end

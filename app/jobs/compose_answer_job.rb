@@ -10,6 +10,11 @@ class ComposeAnswerJob < ApplicationJob
 
     begin
       answer.save!
+      user = answer.question.conversation.user
+
+      if user.present? && answer.status_abort_jailbreak_guardrails?
+        user.handle_jailbreak_attempt
+      end
     rescue ActiveRecord::RecordNotUnique
       logger.warn("Already an answer created for #{question_id}")
     end
