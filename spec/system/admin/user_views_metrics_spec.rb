@@ -4,22 +4,32 @@ RSpec.describe "Admin user views metrics", :js do
     and_there_has_been_activity
     when_i_visit_the_admin_area
     and_i_browse_to_the_metrics_section
-    then_i_can_see_this_activity
+    then_i_can_see_activity
+    and_i_can_see_its_for_last_24_hours
+
+    when_i_navigate_to_view_last_7_days
+    then_i_can_see_activity
+    and_i_can_see_its_for_last_7_days
   end
 
   def and_there_has_been_activity
-    create_list(:early_access_user, 3, created_at: 2.days.ago)
+    create_list(:early_access_user, 2, created_at: 2.hours.ago)
     create_list(:waiting_list_user, 2)
     create_list(:question, 2)
-    create_list(:answer_feedback, 3, created_at: 1.day.ago)
-    create_list(:answer, 3, created_at: 3.days.ago, status: :abort_llm_cannot_answer)
-    create_list(:answer, 5, created_at: 4.days.ago, status: :error_timeout)
-    create_list(:answer, 2, created_at: 1.day.ago, question_routing_label: :genuine_rag)
+    create_list(:answer_feedback, 1, created_at: 1.hour.ago)
+    create_list(:answer, 2, created_at: 6.hours.ago, status: :abort_llm_cannot_answer)
+    create_list(:answer, 3, created_at: 4.hours.ago, status: :error_timeout)
+    create_list(:answer, 1, created_at: 20.hours.ago, question_routing_label: :genuine_rag)
     create_list(:answer,
                 4,
-                created_at: 5.days.ago,
+                created_at: 15.hours.ago,
                 answer_guardrails_status: :fail,
                 answer_guardrails_failures: %w[guardrail_1 guardrail_2])
+    create_list(:answer,
+                2,
+                created_at: 5.hours.ago,
+                question_routing_guardrails_status: :fail,
+                question_routing_guardrails_failures: %w[guardrail_1 guardrail_2])
   end
 
   def when_i_visit_the_admin_area
@@ -30,7 +40,7 @@ RSpec.describe "Admin user views metrics", :js do
     click_link "Metrics"
   end
 
-  def then_i_can_see_this_activity
+  def then_i_can_see_activity
     # We're relying on the rendering of a successful chart results in a canvas
     # element, unclear how to assert correct chart
     expect(page).to have_selector("#early-access-users canvas")
@@ -42,5 +52,20 @@ RSpec.describe "Admin user views metrics", :js do
     expect(page).to have_selector("#answers-with-error-status canvas")
     expect(page).to have_selector("#question-routing-labels canvas")
     expect(page).to have_selector("#answer-guardrails-failures canvas")
+    expect(page).to have_selector("#question-routing-guardrails-failures canvas")
+  end
+
+  def and_i_can_see_its_for_last_24_hours
+    expect(page).to have_selector(".gem-c-secondary-navigation__list-item--current",
+                                  text: "Last 24 hours")
+  end
+
+  def when_i_navigate_to_view_last_7_days
+    click_link "Last 7 days"
+  end
+
+  def and_i_can_see_its_for_last_7_days
+    expect(page).to have_selector(".gem-c-secondary-navigation__list-item--current",
+                                  text: "Last 7 days")
   end
 end

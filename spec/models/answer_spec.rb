@@ -29,17 +29,27 @@ RSpec.describe Answer do
     end
   end
 
-  describe ".count_answers_guardrail_failures" do
-    context "when only grouped by answer_guardrails_failures" do
-      it "returns the count for each guardrail that failed" do
-        create(:answer, answer_guardrails_failures: %w[guardrail_1 guardrail_2])
-        create(:answer, answer_guardrails_failures: %w[guardrail_1])
-        create(:answer, answer_guardrails_failures: %w[guardrail_1 guardrail_2 guardrail_3])
-        create(:answer, answer_guardrails_failures: %w[guardrail_4])
-        create(:answer, answer_guardrails_failures: [])
+  describe ".count_guardrails_failures" do
+    it "raises an ArgumentError if given an attribute that isn't a guardrail failure column" do
+      expect { described_class.count_guardrails_failures(:other_attribute) }
+        .to raise_error(ArgumentError, "Unexpected attribute: other_attribute")
+    end
 
-        counts = described_class.group(:answer_guardrails_failures)
-                                .count_answer_guardrails_failures
+    it "raises an error when applied to a scope that isn't grouped by the attribute" do
+      expect { described_class.count_guardrails_failures(:answer_guardrails_failures) }
+        .to raise_error("must have grouped by answer_guardrails_failures")
+    end
+
+    context "when only grouped by a single attribute" do
+      it "returns counts of each guardrail failure" do
+        create(:answer, question_routing_guardrails_failures: %w[guardrail_1 guardrail_2])
+        create(:answer, question_routing_guardrails_failures: %w[guardrail_1])
+        create(:answer, question_routing_guardrails_failures: %w[guardrail_1 guardrail_2 guardrail_3])
+        create(:answer, question_routing_guardrails_failures: %w[guardrail_4])
+        create(:answer, question_routing_guardrails_failures: [])
+
+        counts = described_class.group(:question_routing_guardrails_failures)
+                                .count_guardrails_failures(:question_routing_guardrails_failures)
 
         expect(counts).to eq({ "guardrail_1" => 3,
                                "guardrail_2" => 2,
@@ -48,8 +58,8 @@ RSpec.describe Answer do
       end
     end
 
-    context "when grouped by answer_guardrails_failures and other groupings" do
-      it "returns the count for each guardrail that failed" do
+    context "when grouped by an attribute amongst and other groupings" do
+      it "returns the count for each guardrail that failed within the groupings" do
         create(:answer,
                question_routing_label: "about_mps",
                answer_guardrails_failures: %w[guardrail_1 guardrail_2],
@@ -78,7 +88,7 @@ RSpec.describe Answer do
         counts = described_class.group(:question_routing_label)
                                 .group(:answer_guardrails_failures)
                                 .group(:status)
-                                .count_answer_guardrails_failures
+                                .count_guardrails_failures(:answer_guardrails_failures)
 
         expect(counts).to eq({
           %w[about_mps guardrail_1 success] => 2,
@@ -87,13 +97,6 @@ RSpec.describe Answer do
           %w[genuine_rag guardrail_1 success] => 2,
           %w[genuine_rag guardrail_2 success] => 1,
         })
-      end
-    end
-
-    context "when not grouped by answer_guardrails_failures" do
-      it "raises an error" do
-        expect { described_class.count_answer_guardrails_failures }
-          .to raise_error("must have grouped by answer_guardrails_failures")
       end
     end
   end
