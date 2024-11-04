@@ -40,7 +40,7 @@
 %>
 
 <%= tag.div class: "app-c-question-form js-question-form-container", data: data_attributes do %>
-  <%= form_with url: url, class: "app-c-question-form__form js-question-form", data: { module: "ga4-form-tracker", ga4_form: { "event_name": "form_response", "type": "GOV.UK Chat user input", "section": "Enter your question" } } do |f| %>
+  <%= form_with url: url, class: "app-c-question-form__form js-question-form", data: { module: "ga4-form-tracker", ga4_form: { "event_name": "form_response", "type": "chat user input", "section": "Enter your question" } } do |f| %>
     <%= tag.ul(
       id: error_id,
       class: %w[govuk-list govuk-error-message js-question-form-errors-wrapper app-c-question-form__error-list],
