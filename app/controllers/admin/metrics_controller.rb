@@ -8,47 +8,40 @@ class Admin::MetricsController < Admin::BaseController
 
   def early_access_users
     active_scope = EarlyAccessUser.where(created_at: start_time..).group(:source)
-    active_scope = group_by_period(active_scope, :created_at)
+    active_count = count_by_period(active_scope, :created_at)
 
     deleted_scope = DeletedEarlyAccessUser.where(user_created_at: start_time..).group(:user_source)
-    deleted_scope = group_by_period(deleted_scope, :user_created_at)
+    deleted_count = count_by_period(deleted_scope, :user_created_at)
 
-    data = combine_data(active_scope.count, deleted_scope.count)
-
-    render json: populate_period_data(data).chart_json
+    render json: combine_data(active_count, deleted_count).chart_json
   end
 
   def waiting_list_users
     active_scope = WaitingListUser.where(created_at: start_time..).group(:source)
-    active_scope = group_by_period(active_scope, :created_at)
+    active_count = count_by_period(active_scope, :created_at)
 
     deleted_scope = DeletedWaitingListUser.where(user_created_at: start_time..).group(:user_source)
-    deleted_scope = group_by_period(deleted_scope, :user_created_at)
+    deleted_count = count_by_period(deleted_scope, :user_created_at)
 
-    data = combine_data(active_scope.count, deleted_scope.count)
-
-    render json: populate_period_data(data).chart_json
+    render json: combine_data(active_count, deleted_count).chart_json
   end
 
   def conversations
-    scope = group_by_period(Conversation.where(created_at: start_time..), :created_at)
+    scope = Conversation.where(created_at: start_time..)
 
-    render json: populate_period_data(scope.count).chart_json
+    render json: count_by_period(scope, :created_at).chart_json
   end
 
   def questions
     scope = Question.where(created_at: start_time..).group_by_aggregate_status
-    scope = group_by_period(scope, :created_at)
 
-    render json: populate_period_data(scope.count).chart_json
+    render json: count_by_period(scope, :created_at).chart_json
   end
 
   def answer_feedback
     scope = AnswerFeedback.where(created_at: start_time..)
                           .group_useful_by_label
-    scope = group_by_period(scope, :created_at)
-
-    render json: populate_period_data(scope.count).chart_json
+    render json: count_by_period(scope, :created_at).chart_json
   end
 
   def answer_abort_statuses
@@ -57,9 +50,7 @@ class Admin::MetricsController < Admin::BaseController
                   .group(:status)
 
     if @period == :last_7_days
-      data = scope.group_by_day(:created_at).count
-
-      render json: populate_period_data(data).chart_json
+      render json: count_by_period(scope, :created_at).chart_json
     else
       render json: scope.count.chart_json
     end
@@ -71,9 +62,7 @@ class Admin::MetricsController < Admin::BaseController
                   .group(:status)
 
     if @period == :last_7_days
-      data = scope.group_by_day(:created_at).count
-
-      render json: populate_period_data(data).chart_json
+      render json: count_by_period(scope, :created_at).chart_json
     else
       render json: scope.count.chart_json
     end
@@ -85,9 +74,7 @@ class Admin::MetricsController < Admin::BaseController
                   .group(:question_routing_label)
 
     if @period == :last_7_days
-      data = scope.group_by_day(:created_at).count
-
-      render json: populate_period_data(data).chart_json
+      render json: count_by_period(scope, :created_at).chart_json
     else
       render json: scope.count.chart_json
     end
@@ -98,15 +85,13 @@ class Admin::MetricsController < Admin::BaseController
                   .answer_guardrails_status_fail
                   .group(:answer_guardrails_failures)
 
-    if @period == :last_7_days
-      data = scope.group_by_day(:created_at).count_guardrails_failures(:answer_guardrails_failures)
+    data = if @period == :last_7_days
+             group_by_period(scope, :created_at).count_guardrails_failures(:answer_guardrails_failures)
+           else
+             scope.count_guardrails_failures(:answer_guardrails_failures)
+           end
 
-      render json: populate_period_data(data).chart_json
-    else
-      data = scope.count_guardrails_failures(:answer_guardrails_failures)
-
-      render json: data.chart_json
-    end
+    render json: data.chart_json
   end
 
   def question_routing_guardrails_failures
@@ -114,15 +99,13 @@ class Admin::MetricsController < Admin::BaseController
                   .question_routing_guardrails_status_fail
                   .group(:question_routing_guardrails_failures)
 
-    if @period == :last_7_days
-      data = scope.group_by_day(:created_at).count_guardrails_failures(:question_routing_guardrails_failures)
+    data = if @period == :last_7_days
+             group_by_period(scope, :created_at).count_guardrails_failures(:question_routing_guardrails_failures)
+           else
+             scope.count_guardrails_failures(:question_routing_guardrails_failures)
+           end
 
-      render json: populate_period_data(data).chart_json
-    else
-      data = scope.count_guardrails_failures(:question_routing_guardrails_failures)
-
-      render json: data.chart_json
-    end
+    render json: data.chart_json
   end
 
 private
@@ -145,64 +128,22 @@ private
 
   def group_by_period(scope, field)
     if @period == :last_7_days
-      scope.group_by_day(field)
+      scope.group_by_day(field, last: 7)
     else
-      scope.group_by_hour(field)
+      scope.group_by_hour(field, last: 24, format: ->(time) { time.to_fs(:time) })
     end
   end
 
-  def populate_period_data(values)
-    return values if values.empty?
-
-    if @period == :last_7_days
-      populate_7_days_data(values)
-    else
-      populate_24_hours_data(values)
-    end
+  def count_by_period(scope, field)
+    count = group_by_period(scope, field).count
+    remove_empty_count_data(count)
   end
 
-  def populate_24_hours_data(values)
-    if values.keys.first.is_a?(Array)
-      outer_group = values.keys.group_by(&:first).keys
-
-      outer_group.each_with_object(values) do |group, memo|
-        24.times do |index|
-          time = start_time + index.hours
-          memo[[group, time]] ||= 0
-        end
-      end
-    else
-      24.times do |index|
-        values[start_time + index.hours] ||= 0
-      end
-    end
-
-    values.sort.to_h.transform_keys do |key|
-      if key.is_a?(Array)
-        [*key[0...-1], key.last.to_fs(:time)]
-      else
-        key.to_fs(:time)
-      end
-    end
-  end
-
-  def populate_7_days_data(values)
-    if values.keys.first.is_a?(Array)
-      outer_group = values.keys.group_by(&:first).keys
-
-      outer_group.each_with_object(values) do |group, memo|
-        7.times do |index|
-          date = (start_time + index.days).to_date
-          memo[[group, date]] ||= 0
-        end
-      end
-    else
-      7.times do |index|
-        values[(start_time + index.days).to_date] ||= 0
-      end
-    end
-
-    values.sort.to_h
+  def remove_empty_count_data(count_data)
+    # Groupdate is inconsistent with returning no data or a hash of empty
+    # data (single group by hash of zero values, multiple group by empty hash)
+    # so we reset any that
+    count_data.values.all?(&:zero?) ? {} : count_data
   end
 
   def combine_data(hash_a, hash_b)
