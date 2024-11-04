@@ -66,6 +66,7 @@ class Answer < ApplicationRecord
          abort_question_routing: "abort_question_routing",
          abort_question_routing_guardrails: "abort_question_routing_guardrails",
          abort_question_routing_token_limit: "abort_question_routing_token_limit",
+         abort_user_shadow_banned: "abort_user_shadow_banned",
          error_answer_service_error: "error_answer_service_error",
          error_answer_guardrails: "error_answer_guardrails",
          error_context_length_exceeded: "error_context_length_exceeded",
