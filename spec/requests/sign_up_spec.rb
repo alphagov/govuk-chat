@@ -1,6 +1,4 @@
 RSpec.describe "SignUpController" do
-  before { create(:settings) }
-
   it_behaves_like "redirects user to instant access start page when email is not in the sign_up session",
                   routes: {
                     sign_up_user_description_path: %i[get post],
