@@ -3,6 +3,35 @@ RSpec.describe AnswerComposition::Composer do
   let(:retrieved_answer) { build :answer, question: }
 
   describe ".call" do
+    it "assigns metrics to the answer" do
+      answer = create(:answer)
+      allow(AnswerComposition::OpenAIAnswer).to receive(:call).and_return(answer)
+      allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
+
+      described_class.call(answer.question)
+      expect(answer.metrics["answer_composition"]).to match({
+        duration: 1.5,
+      })
+    end
+
+    context "when the user associated with the question has been shadow banned" do
+      it "returns an answer with the correct attributes" do
+        user = create(:early_access_user, :shadow_banned)
+        conversation = create(:conversation, user:)
+        question = create(:question, conversation:)
+
+        result = described_class.call(question)
+
+        expect(result)
+          .to be_an_instance_of(Answer)
+          .and have_attributes(
+            question:,
+            message: Answer::CannedResponses::SHADOW_BANNED_MESSAGE,
+            status: "abort_user_shadow_banned",
+          )
+      end
+    end
+
     context "when the question is for open ai" do
       context "and the answer strategy is 'openai_structured_answer'" do
         let(:question) { create :question, answer_strategy: :openai_structured_answer }
@@ -110,16 +139,5 @@ RSpec.describe AnswerComposition::Composer do
           )
       end
     end
-  end
-
-  it "assigns metrics to the answer" do
-    answer = create(:answer)
-    allow(AnswerComposition::OpenAIAnswer).to receive(:call).and_return(answer)
-    allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
-
-    described_class.call(answer.question)
-    expect(answer.metrics["answer_composition"]).to match({
-      duration: 1.5,
-    })
   end
 end

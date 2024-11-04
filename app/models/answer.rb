@@ -32,6 +32,7 @@ class Answer < ApplicationRecord
     MESSAGE
     LLM_CANNOT_ANSWER_MESSAGE = "Sorry, I cannot find anything on GOV.UK to help me answer your question. Please try asking a different question.".freeze
     FORBIDDEN_TERMS_MESSAGE = ANSWER_GUARDRAILS_FAILED_MESSAGE
+    SHADOW_BANNED_MESSAGE = JAILBREAK_GUARDRAILS_FAILED_MESSAGE
 
     def self.response_for_question_routing_label(label)
       canned_responses = Rails.configuration.question_routing_labels.dig(label, :canned_responses)
