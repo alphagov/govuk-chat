@@ -83,7 +83,7 @@ class EarlyAccessUser < ApplicationRecord
     end
   end
 
-  def access_revoked?
+  def revoked?
     revoked_at.present?
   end
 
@@ -96,11 +96,11 @@ class EarlyAccessUser < ApplicationRecord
   end
 
   def revoked_or_banned?
-    access_revoked? || shadow_banned?
+    revoked? || shadow_banned?
   end
 
   def sign_in(session)
-    raise AccessRevokedError if access_revoked?
+    raise AccessRevokedError if revoked?
 
     touch(:last_login_at)
     increment!(:login_count)

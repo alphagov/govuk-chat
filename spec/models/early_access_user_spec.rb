@@ -158,15 +158,15 @@ RSpec.describe EarlyAccessUser do
     end
   end
 
-  describe "#access_revoked?" do
+  describe "#revoked?" do
     it "returns true when revoked_at has a value" do
       instance = described_class.new(revoked_at: Time.current)
-      expect(instance.access_revoked?).to be(true)
+      expect(instance.revoked?).to be(true)
     end
 
     it "returns false when revoked_at doesn't have a value" do
       instance = described_class.new(revoked_at: nil)
-      expect(instance.access_revoked?).to be(false)
+      expect(instance.revoked?).to be(false)
     end
   end
 

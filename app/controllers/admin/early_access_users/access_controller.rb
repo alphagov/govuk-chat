@@ -31,7 +31,7 @@ private
   end
 
   def redirect_to_user_show_page_if_already_revoked
-    redirect_to admin_early_access_user_path(@user) if @user.access_revoked?
+    redirect_to admin_early_access_user_path(@user) if @user.revoked?
   end
 
   def redirect_to_user_show_page_unless_revoked_or_banned

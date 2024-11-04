@@ -62,7 +62,7 @@ content_for(:active_navigation_item, admin_early_access_users_path)
     },
   ]
 
-  if @user.access_revoked?
+  if @user.revoked?
     summary_items << [
       {
         field: "Revoked on",

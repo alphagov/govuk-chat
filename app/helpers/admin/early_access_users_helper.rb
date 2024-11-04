@@ -6,7 +6,7 @@ module Admin::EarlyAccessUsersHelper
                    user.email
                  end
 
-    user_suffix = if user.access_revoked?
+    user_suffix = if user.revoked?
                     " (revoked)"
                   elsif user.shadow_banned?
                     " (shadow banned)"
