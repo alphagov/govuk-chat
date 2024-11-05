@@ -2,12 +2,35 @@ RSpec.describe Admin::Form::EarlyAccessUsers::RevokeAccessForm do
   let(:user) { create(:early_access_user) }
 
   describe "validations" do
+    it "returns true when valid" do
+      form = described_class.new(user:, revoke_reason: "Asking too many questions")
+      expect(form).to be_valid
+    end
+
     it "returns false when the reason is missing" do
       form = described_class.new(user:)
 
       expect(form).to be_invalid
       expect(form.errors.count).to eq(1)
-      expect(form.errors.messages[:revoke_reason]).to eq(["Enter a reason for revoking access"])
+      expect(form.errors.messages[:revoke_reason])
+        .to eq([described_class::REVOKE_REASON_PRESENCE_ERROR_MESSAGE])
+    end
+
+    it "returns false when the reason has too many characters" do
+      form = described_class.new(
+        user:,
+        revoke_reason: "a" * (described_class::REVOKE_REASON_LENGTH_MAXIMUM + 1),
+      )
+
+      expect(form).to be_invalid
+      expect(form.errors.count).to eq(1)
+      expect(form.errors.messages[:revoke_reason])
+        .to eq([
+          sprintf(
+            described_class::REVOKE_REASON_LENGTH_ERROR_MESSAGE,
+            count: described_class::REVOKE_REASON_LENGTH_MAXIMUM,
+          ),
+        ])
     end
   end
 
