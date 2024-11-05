@@ -8,6 +8,7 @@ FactoryBot.define do
 
     trait :revoked do
       revoked_at { Time.zone.now }
+      revoked_reason { "User was being malicious" }
     end
 
     trait :shadow_banned do

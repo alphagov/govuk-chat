@@ -344,6 +344,8 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
       expect(response.body)
         .to have_link("Edit user", href: edit_admin_early_access_user_path(user))
         .and have_link("Delete user", href: delete_admin_early_access_user_path(user))
+        .and have_link("Revoke access", href: revoke_admin_early_access_user_path(user))
+        .and have_link("Shadow ban", href: shadow_ban_admin_early_access_user_path(user))
     end
 
     it "renders the revoked details" do
@@ -446,11 +448,13 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
             params: {
               update_early_access_user_form: {
                 question_limit: 3,
+                bannable_action_count: 1,
               },
             }
 
       expect(user.reload).to have_attributes(
         individual_question_limit: 3,
+        bannable_action_count: 1,
       )
 
       expect(response).to redirect_to(admin_early_access_user_path(user))

@@ -36,7 +36,7 @@ private
   def authenticate_early_access_user
     user = authenticate_by_session(EarlyAccessUser)
 
-    if user&.access_revoked?
+    if user&.revoked?
       sign_out_early_access_user
       nil
     else

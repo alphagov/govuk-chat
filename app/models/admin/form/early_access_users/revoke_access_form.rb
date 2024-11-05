@@ -5,7 +5,12 @@ class Admin::Form::EarlyAccessUsers::RevokeAccessForm
   attribute :revoke_reason, :string
   attribute :user
 
-  validates :revoke_reason, presence: { message: "Enter a reason for revoking access" }
+  REVOKE_REASON_PRESENCE_ERROR_MESSAGE = "Enter a reason for revoking access".freeze
+  REVOKE_REASON_LENGTH_MAXIMUM = 255
+  REVOKE_REASON_LENGTH_ERROR_MESSAGE = "Revoke reason must be %{count} characters or less".freeze
+
+  validates :revoke_reason, presence: { message: REVOKE_REASON_PRESENCE_ERROR_MESSAGE }
+  validates :revoke_reason, length: { maximum: REVOKE_REASON_LENGTH_MAXIMUM, message: REVOKE_REASON_LENGTH_ERROR_MESSAGE }
 
   def submit
     validate!
@@ -13,6 +18,8 @@ class Admin::Form::EarlyAccessUsers::RevokeAccessForm
     user.update!(
       revoked_at: Time.zone.now,
       revoked_reason: revoke_reason,
+      restored_at: nil,
+      restored_reason: nil,
     )
   end
 end

@@ -158,15 +158,15 @@ RSpec.describe EarlyAccessUser do
     end
   end
 
-  describe "#access_revoked?" do
+  describe "#revoked?" do
     it "returns true when revoked_at has a value" do
       instance = described_class.new(revoked_at: Time.current)
-      expect(instance.access_revoked?).to be(true)
+      expect(instance.revoked?).to be(true)
     end
 
     it "returns false when revoked_at doesn't have a value" do
       instance = described_class.new(revoked_at: nil)
-      expect(instance.access_revoked?).to be(false)
+      expect(instance.revoked?).to be(false)
     end
   end
 
@@ -191,6 +191,23 @@ RSpec.describe EarlyAccessUser do
     it "returns false when restored_at doesn't have a value" do
       instance = described_class.new(restored_at: nil)
       expect(instance.restored?).to be(false)
+    end
+  end
+
+  describe "#revoked_or_banned?" do
+    it "returns true when access is revoked" do
+      instance = build(:early_access_user, :revoked)
+      expect(instance.revoked_or_banned?).to be(true)
+    end
+
+    it "returns true when shadow banned" do
+      instance = build(:early_access_user, :shadow_banned)
+      expect(instance.revoked_or_banned?).to be(true)
+    end
+
+    it "returns false when not revoked or shadow banned" do
+      instance = build(:early_access_user)
+      expect(instance.revoked_or_banned?).to be(false)
     end
   end
 

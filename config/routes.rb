@@ -94,16 +94,23 @@ Rails.application.routes.draw do
     end
 
     resources :early_access_users, path: "/early-access-users" do
-      get "/delete", to: "early_access_users#delete", as: :delete, on: :member
-      get "/access/revoke", to: "early_access_users/access#revoke", as: :revoke, on: :member
-      patch "/access/revoke", to: "early_access_users/access#revoke_confirm", as: :revoke_confirm, on: :member
-      patch "/access/restore", to: "early_access_users/access#restore", as: :restore, on: :member
+      member do
+        get "/delete", to: "early_access_users#delete", as: :delete
+        get "/access/revoke", to: "early_access_users/access#revoke", as: :revoke
+        patch "/access/revoke", to: "early_access_users/access#revoke_confirm"
+        get "/access/shadow-ban", to: "early_access_users/access#shadow_ban", as: :shadow_ban
+        patch "/access/shadow-ban", to: "early_access_users/access#shadow_ban_confirm"
+        get "/access/restore", to: "early_access_users/access#restore", as: :restore
+        patch "/access/restore", to: "early_access_users/access#restore_confirm"
+      end
     end
 
     resources :waiting_list_users, path: "/waiting-list-users" do
-      get "/delete", to: "waiting_list_users#delete", as: :delete, on: :member
-      get "/promote", to: "waiting_list_users#promote", as: :promote, on: :member
-      post "/promote", to: "waiting_list_users#promote_confirm", as: :promote_confirm, on: :member
+      member do
+        get "/delete", to: "waiting_list_users#delete", as: :delete
+        get "/promote", to: "waiting_list_users#promote", as: :promote
+        post "/promote", to: "waiting_list_users#promote_confirm"
+      end
     end
 
     scope :settings do

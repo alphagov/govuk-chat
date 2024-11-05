@@ -21,7 +21,7 @@ class Form::EarlyAccess::SignInOrUp
     validate!
     user = EarlyAccessUser.find_by(email:) || WaitingListUser.find_by(email:)
     return Result.new(outcome: :new_user, email:, user: nil) unless user
-    return Result.new(outcome: :user_revoked, email:, user:) if user.try(:access_revoked?)
+    return Result.new(outcome: :user_revoked, email:, user:) if user.is_a?(EarlyAccessUser) && user.revoked?
     return Result.new(outcome: :magic_link_limit, email:, user:) if user_currently_at_max_sessions?(user)
 
     if user.is_a?(EarlyAccessUser)
