@@ -186,6 +186,8 @@ RSpec.describe "Admin::WaitingListUsersController" do
       user = create(
         :waiting_list_user,
         email: "alice@example.com",
+        created_at: Time.zone.parse("2024-1-1 12:13:14"),
+        updated_at: Time.zone.parse("2024-2-1 12:13:14"),
         user_description: :business_owner_or_self_employed,
         reason_for_visit: :find_specific_answer,
         found_chat: :govuk_website,
@@ -202,7 +204,8 @@ RSpec.describe "Admin::WaitingListUsersController" do
       expect(response.body)
         .to have_content("User details")
         .and have_content("alice@example.com")
-        .and have_content(user.created_at.to_fs(:time_and_date))
+        .and have_content(/Created\s+12:13pm on 1 January 2024/)
+        .and have_content(/Updated\s+12:13pm on 1 February 2024/)
         .and have_content(ur_question_text[:user_description])
         .and have_content(ur_question_text[:reason_for_visit])
         .and have_content(ur_question_text[:found_chat])
