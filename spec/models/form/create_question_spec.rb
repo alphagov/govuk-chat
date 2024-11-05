@@ -129,7 +129,7 @@ RSpec.describe Form::CreateQuestion do
 
     context "when the conversation passed in on initialisation is persisted" do
       let(:user) { create(:early_access_user) }
-      let(:conversation) { create(:conversation, user:, questions: [create(:question, :with_answer)]) }
+      let(:conversation) { create(:conversation, user:, questions: [create(:question, :with_answer, created_at: 1.second.ago)]) }
 
       it "adds a new question with the correct attributes to the conversation" do
         described_class.new(
@@ -173,6 +173,23 @@ RSpec.describe Form::CreateQuestion do
         it "sets the original question as the unsanitised message" do
           form.submit
           expect(Question.where(conversation:).last.unsanitised_message).to eq(message_with_unicode_tags)
+        end
+      end
+
+      context "and the user has been shadow banned" do
+        it "enqueues a ComposeAnswerJob with a random delay" do
+          freeze_time do
+            current_time = Time.current
+            user.update!(shadow_banned_at: current_time)
+
+            form = described_class.new(conversation:, user_question: "How much tax should I be paying?")
+
+            expect { form.submit }.to change(Sidekiq::Queues["default"], :size).by(1)
+            job_args = Sidekiq::Queues["default"].last["args"]
+            expect(job_args)
+              .to include(hash_including("job_class" => "ComposeAnswerJob", "arguments" => [Question.last.id]))
+            expect(job_args.first["scheduled_at"]).to be_between(current_time + 5.seconds, current_time + 20.seconds)
+          end
         end
       end
     end

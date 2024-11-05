@@ -376,4 +376,37 @@ RSpec.describe EarlyAccessUser do
       expect(user.questions_remaining).to eq(0)
     end
   end
+
+  describe "#handle_jailbreak_attempt" do
+    it "locks the user and increments their bannable_action_count" do
+      user = create(:early_access_user, bannable_action_count: 0)
+      expect(user).to receive(:with_lock).and_call_original
+
+      expect { user.handle_jailbreak_attempt }.to change { user.reload.bannable_action_count }.by(1)
+    end
+
+    context "when user is within 1 of the shadow ban threshold" do
+      it "shadow bans the user on their next jailbreak attempt" do
+        freeze_time do
+          user = create(
+            :early_access_user,
+            :restored,
+            bannable_action_count: described_class::BANNABLE_ACTION_COUNT_THRESHOLD - 1,
+          )
+          expect { user.handle_jailbreak_attempt }
+            .to change { user.reload.shadow_banned_at }.to(Time.current)
+            .and change { user.shadow_banned_reason }.to("#{described_class::BANNABLE_ACTION_COUNT_THRESHOLD} jailbreak attempts made by user.")
+            .and change { user.restored_at }.to(nil)
+            .and change { user.restored_reason }.to(nil)
+        end
+      end
+    end
+
+    context "when the user is not near the shadow ban threshold" do
+      it "does not shadow ban the user on their next jailbreak attempt" do
+        user = create(:early_access_user, bannable_action_count: 0)
+        expect { user.handle_jailbreak_attempt }.not_to(change { user.shadow_banned_at })
+      end
+    end
+  end
 end
