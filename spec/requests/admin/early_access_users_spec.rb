@@ -304,7 +304,9 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
       user = create(
         :early_access_user,
         email: "alice@example.com",
-        last_login_at: Time.zone.parse("2024-1-1 12:13:14"),
+        created_at: Time.zone.parse("2024-1-1 12:13:14"),
+        updated_at: Time.zone.parse("2024-2-1 12:13:14"),
+        last_login_at: Time.zone.parse("2024-3-1 12:13:14"),
         login_count: 12,
         user_description: :business_owner_or_self_employed,
         reason_for_visit: :find_specific_answer,
@@ -326,7 +328,9 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
       expect(response.body)
         .to have_content("User details")
         .and have_content("alice@example.com")
-        .and have_content("12:13pm on 1 January 2024")
+        .and have_content(/Created\s+12:13pm on 1 January 2024/)
+        .and have_content(/Updated\s+12:13pm on 1 February 2024/)
+        .and have_content(/Last login\s+12:13pm on 1 March 2024/)
         .and have_content(ur_question_text[:user_description])
         .and have_content(ur_question_text[:reason_for_visit])
         .and have_content(ur_question_text[:found_chat])

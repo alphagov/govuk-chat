@@ -25,6 +25,14 @@ content_for(:active_navigation_item, admin_early_access_users_path)
       value: @user.email,
     },
     {
+      field: "Created",
+      value: @user.created_at.to_fs(:time_and_date),
+    },
+    {
+      field: "Updated",
+      value: @user.updated_at.to_fs(:time_and_date),
+    },
+    {
       field: "Logins",
       value: @user.login_count,
     },
