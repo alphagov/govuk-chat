@@ -178,6 +178,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_31_203912) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "answer_strategy", default: "openai_structured_answer", null: false
+    t.string "unsanitised_message"
     t.index ["conversation_id"], name: "index_questions_on_conversation_id"
     t.index ["created_at"], name: "index_questions_on_created_at"
   end

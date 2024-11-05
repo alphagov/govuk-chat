@@ -1,6 +1,7 @@
 class Form::CreateQuestion
   include ActiveModel::Model
   include ActiveModel::Attributes
+  include ActiveModel::Validations::Callbacks
 
   attribute :user_question
   attribute :conversation
@@ -8,6 +9,8 @@ class Form::CreateQuestion
   USER_QUESTION_PRESENCE_ERROR_MESSAGE = "Ask a question. For example, 'how do I register for VAT?'".freeze
   USER_QUESTION_LENGTH_MAXIMUM = 300
   USER_QUESTION_LENGTH_ERROR_MESSAGE = "Question must be %{count} characters or less".freeze
+
+  before_validation :sanitise_user_question
 
   validates :user_question, presence: { message: USER_QUESTION_PRESENCE_ERROR_MESSAGE }
   validates :user_question, length: { maximum: USER_QUESTION_LENGTH_MAXIMUM, message: USER_QUESTION_LENGTH_ERROR_MESSAGE }
@@ -18,14 +21,24 @@ class Form::CreateQuestion
   def submit
     validate!
 
-    question = Question.new(message: user_question, conversation:)
-    question.save!
+    question = Question.create!(
+      message: @sanitised_user_question,
+      unsanitised_message: (@unsanitised_user_question if @sanitised_user_question != @unsanitised_user_question),
+      conversation:,
+    )
     conversation.user.increment!(:questions_count) if conversation.user.present?
     ComposeAnswerJob.perform_later(question.id)
     question
   end
 
 private
+
+  def sanitise_user_question
+    return if user_question == @unsanitised_user_question
+
+    @unsanitised_user_question = user_question if user_question&.match?(UnicodeTags::MATCH_REGEX)
+    @sanitised_user_question = user_question&.gsub(UnicodeTags::MATCH_REGEX, "")
+  end
 
   def all_questions_answered?
     if conversation.questions.unanswered.exists?
