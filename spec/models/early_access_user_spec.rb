@@ -386,19 +386,27 @@ RSpec.describe EarlyAccessUser do
     end
 
     context "when user is within 1 of the shadow ban threshold" do
+      let(:user) do
+        create(
+          :early_access_user,
+          :restored,
+          bannable_action_count: described_class::BANNABLE_ACTION_COUNT_THRESHOLD - 1,
+        )
+      end
+
       it "shadow bans the user on their next jailbreak attempt" do
         freeze_time do
-          user = create(
-            :early_access_user,
-            :restored,
-            bannable_action_count: described_class::BANNABLE_ACTION_COUNT_THRESHOLD - 1,
-          )
           expect { user.handle_jailbreak_attempt }
             .to change { user.reload.shadow_banned_at }.to(Time.current)
-            .and change { user.shadow_banned_reason }.to("#{described_class::BANNABLE_ACTION_COUNT_THRESHOLD} jailbreak attempts made by user.")
-            .and change { user.restored_at }.to(nil)
-            .and change { user.restored_reason }.to(nil)
+            .and change(user, :shadow_banned_reason).to("#{described_class::BANNABLE_ACTION_COUNT_THRESHOLD} jailbreak attempts made by user.")
+            .and change(user, :restored_at).to(nil)
+            .and change(user, :restored_reason).to(nil)
         end
+      end
+
+      it "notifies Slack" do
+        expect(SlackPoster).to receive(:shadow_ban_notification).with(user.id)
+        user.handle_jailbreak_attempt
       end
     end
 
