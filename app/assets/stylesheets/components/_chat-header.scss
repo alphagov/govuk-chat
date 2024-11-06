@@ -264,3 +264,7 @@
     right: calc(govuk-spacing(2) + 80px); // `.govuk-header__menu-button` menu button width and 10px padding
   }
 }
+
+.app-c-header__clear-chat--focusable-only {
+  @include govuk-visually-hidden-focusable;
+}

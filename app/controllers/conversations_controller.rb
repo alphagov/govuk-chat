@@ -176,6 +176,7 @@ private
     @questions = conversation.questions_for_showing_conversation
     @more_information = session[:more_information].present?
     @conversation_data_attributes = { module: "chat-conversation" }
+    @active_conversation = conversation.persisted?
   end
 
   def require_onboarding_completed

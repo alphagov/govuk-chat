@@ -33,3 +33,7 @@ examples:
   with_conversation:
     data:
       conversation: true
+  with_an_active_conversation:
+    data:
+      conversation: true
+      active_conversation: true

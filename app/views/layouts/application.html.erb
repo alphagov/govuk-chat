@@ -1,5 +1,6 @@
 <%
   conversation_layout ||= false
+  active_conversation ||= false
   html_classes = %w[govuk-template]
   html_classes << yield(:html_class)
   html_classes << "app-conversation-layout" if conversation_layout
@@ -55,6 +56,7 @@
     <%= render "components/chat_header", {
       signed_in: early_access_user.present?,
       conversation: conversation_layout,
+      active_conversation:,
     } %>
 
     <% if conversation_layout %>

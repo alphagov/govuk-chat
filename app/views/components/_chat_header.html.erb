@@ -2,6 +2,7 @@
   url_helpers = Rails.application.routes.url_helpers
   signed_in ||= false
   conversation ||= false
+  active_conversation ||= false
 
   data_attributes = { module: "chat-header" }
   data_attributes[:add_print_utility] = true if conversation
@@ -18,6 +19,9 @@
       data: { after_print: true},
     }
   end
+
+  clear_chat_link_class = %w[app-c-header__clear-chat]
+  clear_chat_link_class << "app-c-header__clear-chat--focusable-only" unless active_conversation
 %>
 
 <%= content_tag :header, class: "app-c-header govuk-header govuk-!-display-none-print", role: "banner", data: data_attributes do %>
@@ -51,7 +55,7 @@
           <% if conversation %>
             <%= link_to "Start new chat",
                          url_helpers.clear_conversation_path,
-                         class: "app-c-header__clear-chat" %>
+                         class: clear_chat_link_class %>
           <% end %>
         </div>
       </div>
