@@ -57,16 +57,16 @@ module GovukChat
       question_warning_threshold: 20,
     )
     config.instant_access_places_schedule = Hashie::Mash.new(
-      not_before: Date.new(2024, 9, 24),
-      not_after: Date.new(2024, 10, 31),
-      places: ENV.fetch("INSTANT_ACCESS_PLACES_SCHEDULE_INCREMENT", "26").to_i,
-      max_places: 150,
+      not_before: Date.new(2024, 11, 7),
+      not_after: Date.new(2024, 12, 1),
+      places: ENV.fetch("INSTANT_ACCESS_PLACES_SCHEDULE_INCREMENT", "25").to_i,
+      max_places: 200,
     )
     config.delayed_access_places_schedule = Hashie::Mash.new(
-      not_before: Date.new(2024, 9, 24),
-      not_after: Date.new(2024, 10, 31),
-      places: ENV.fetch("DELAYED_ACCESS_PLACES_SCHEDULE_INCREMENT", "26").to_i,
-      max_places: 150,
+      not_before: Date.new(2024, 11, 11),
+      not_after: Date.new(2024, 12, 1),
+      places: ENV.fetch("DELAYED_ACCESS_PLACES_SCHEDULE_INCREMENT", "100").to_i,
+      max_places: 1000,
     )
 
     config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]
