@@ -67,12 +67,17 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
         it "includes score calculation and back links in links to results" do
           get admin_search_path, params: { search_text: }
 
+          results = Search::ChunkedContentRepository.new.search_by_embedding(openai_embedding, max_chunks: 2)
+          result = results.detect { |r| r.digest == chunk_to_find[:digest] }
+          document_type_weight = Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS[chunk_to_find[:document_type]]
+          weighted_score = result.score * document_type_weight
+
           expected_link = admin_chunk_path(id: chunk_id, back_link: admin_search_path(search_text:))
-          score_calculation_pattern = /0.9\d+
+          score_calculation_pattern = /#{result.score}
                                       #{Regexp.escape(CGI.escape(' * '))}
-                                      1.2
+                                      #{document_type_weight}
                                       #{Regexp.escape(CGI.escape(' = '))}
-                                      1.19\d+/x
+                                      #{weighted_score}/x
           link_pattern = /#{Regexp.escape(expected_link)}&score_calculation=#{score_calculation_pattern}/
           expect(response.body).to have_link("Looking for this one", href: link_pattern)
         end
