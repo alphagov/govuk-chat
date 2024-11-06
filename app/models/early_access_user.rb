@@ -134,6 +134,8 @@ class EarlyAccessUser < ApplicationRecord
   end
 
   def handle_jailbreak_attempt
+    return if shadow_banned?
+
     with_lock do
       self.bannable_action_count += 1
       if bannable_action_count >= BANNABLE_ACTION_COUNT_THRESHOLD
@@ -146,7 +148,8 @@ class EarlyAccessUser < ApplicationRecord
       end
 
       save!
+
+      SlackPoster.shadow_ban_notification(id) if shadow_banned?
     end
-    # slack call will be made here
   end
 end
