@@ -1,60 +1,45 @@
 RSpec.describe "components/_chat_header.html.erb" do
   it "renders the chat header component correctly" do
-    render("components/chat_header", logo_href: "/chat")
+    render("components/chat_header")
 
     expect(rendered)
       .to have_selector(".app-c-header")
       .and have_selector(".app-c-header__tag", text: "Experimental")
-      .and have_selector(".app-c-header__container")
-      .and have_selector(".app-c-header-row")
       .and have_selector(".app-c-header__logo")
-      .and have_selector(".app-c-header__link.app-c-header__link--homepage[href='/chat']")
+      .and have_selector(".app-c-header__link.app-c-header__link--homepage[href='#{homepage_path}']")
       .and have_selector(".app-c-header__logotype")
       .and have_selector(".app-c-header__product-name")
+
+    expect(rendered).to have_selector(".govuk-header__navigation") do |navigation|
+      expect(navigation)
+        .to have_link("About", href: about_path)
+        .and have_link("Help and support", href: support_path)
+    end
 
     expect(rendered).not_to have_selector("[data-add-print-utility]")
   end
 
-  it "renders the chat header with links when navigation_items are specified" do
-    render("components/chat_header", {
-      logo_href: "#",
-      navigation_items: [
-        {
-          text: "Item 1",
-          href: "/item-1",
-        },
-        {
-          text: "Item 2",
-          href: "/item-2",
-        },
-      ],
-    })
+  context "when signed_in is true" do
+    it "has a sign out link when signed_in is true" do
+      render("components/chat_header", signed_in: true)
 
-    expect(rendered).to have_selector(".app-c-header__nav-container.app-c-header__nav-container--float-right-desktop")
-
-    expect(rendered).to have_selector(".govuk-header__navigation") do |navigation|
-      expect(navigation)
-        .to have_link("Item 1", href: "/item-1")
-        .and have_link("Item 2", href: "/item-2")
+      expect(rendered).to have_selector(".govuk-header__navigation") do |navigation|
+        expect(navigation).to have_link("Sign out", href: sign_out_path)
+      end
     end
   end
 
-  it "renders the chat header with a data-add-print-utility attribute when passed print_utility: true" do
-    render("components/chat_header", {
-      logo_href: "#",
-      navigation_items: [
-        {
-          text: "Item 1",
-          href: "/item-1",
-        },
-        {
-          text: "Item 2",
-          href: "/item-2",
-        },
-      ],
-      print_utility: true,
-    })
+  context "when conversation is true" do
+    it "has a 'Start new chat' link" do
+      render("components/chat_header", conversation: true)
 
-    expect(rendered).to have_selector("[data-add-print-utility]")
+      expect(rendered).to have_link("Start new chat", href: clear_conversation_path)
+    end
+
+    it "has a data-add-print-utility attribute" do
+      render("components/chat_header", conversation: true)
+
+      expect(rendered).to have_selector("[data-add-print-utility]")
+    end
   end
 end

@@ -18,7 +18,7 @@ RSpec.describe "User clears chat" do
   end
 
   def when_i_click_the_clear_chat_link
-    click_on "Start new chat (clear chat history)"
+    click_on "Start new chat"
   end
 
   def and_i_cancel

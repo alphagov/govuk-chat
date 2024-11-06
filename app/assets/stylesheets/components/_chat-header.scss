@@ -32,7 +32,7 @@
     }
   }
 
-  .js-header-navigation-item {
+  .js-enabled & .govuk-header__navigation-item {
     display: block;
     margin-top: govuk-spacing(1);
 
@@ -157,6 +157,33 @@
   font-weight: normal;
 }
 
+.app-c-header__tag-and-button-container {
+  display: inline-block;
+
+  @include govuk-media-query($until: 380px) {
+    width: 100%;
+  }
+
+  @include govuk-media-query($until: tablet) {
+    margin-top: govuk-spacing(2);
+  }
+}
+
+.js-enabled .app-c-header__tag-and-button-container {
+  @include govuk-media-query($until: 380px) {
+    width: auto;
+  }
+}
+
+.app-c-header__tag-and-button-container--flex-until-tablet {
+  @include govuk-media-query($until: tablet) {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
 .app-c-header__tag {
   background-color: govuk-tint(govuk-colour("yellow"), 75%);
   color: govuk-colour("black");
@@ -168,20 +195,9 @@
   vertical-align: middle;
   @include govuk-font($size: 19, $weight: regular);
 
-  @include govuk-media-query($until: 500px) {
-    margin-top: govuk-spacing(2);
-  }
-
   @include govuk-media-query($until: tablet) {
     margin-left: 0;
     padding: 2px 8px 3px;
-  }
-}
-
-.app-c-header__nav-container--float-right-desktop {
-  @include govuk-media-query($from: desktop) {
-    width: auto;
-    float: right;
   }
 }
 
@@ -209,5 +225,42 @@
 
   &:focus:hover {
     text-decoration: none;
+  }
+}
+
+.app-c-header__clear-chat {
+  display: block;
+  bottom: govuk-spacing(2);
+  color: govuk-colour("white");
+  right: 0;
+  @include govuk-font(16, $weight: "bold", $tabular: false, $line-height: false);
+  @include govuk-link-common;
+  @include govuk-link-style-no-underline;
+
+  @include govuk-media-query($until: 380px) {
+    float: right;
+  }
+
+  @include govuk-media-query($from: 380px) {
+    position: absolute;
+    top: govuk-spacing(4);
+  }
+
+  @include govuk-media-query($from: tablet) {
+    margin: govuk-spacing(1) 0 0;
+    padding: 7px 5px 10px;
+    position: absolute;
+    top: govuk-spacing(2);
+  }
+}
+
+.js-enabled .app-c-header__clear-chat {
+  @include govuk-media-query($from: 380px) {
+    position: static;
+  }
+
+  @include govuk-media-query($from: tablet) {
+    position: absolute;
+    right: calc(govuk-spacing(2) + 80px); // `.govuk-header__menu-button` menu button width and 10px padding
   }
 }
