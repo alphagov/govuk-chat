@@ -385,6 +385,12 @@ RSpec.describe EarlyAccessUser do
       expect { user.handle_jailbreak_attempt }.to change { user.reload.bannable_action_count }.by(1)
     end
 
+    it "does nothing if the user is already shadow banned" do
+      user = create(:early_access_user, :shadow_banned)
+
+      expect { user.handle_jailbreak_attempt }.not_to(change { user.reload.bannable_action_count })
+    end
+
     context "when user is within 1 of the shadow ban threshold" do
       let(:user) do
         create(
