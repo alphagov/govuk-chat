@@ -44,7 +44,7 @@ RSpec.describe Form::CreateQuestion do
       expect(form.errors.messages[:base]).to eq(["Previous question pending. Please wait for a response"])
     end
 
-    describe "#no_pii_present?" do
+    describe "personally identifiable information (pii) validation" do
       let(:pii_error_message) do
         "Personal data has been detected in your question. Please remove it and try asking again."
       end
@@ -69,7 +69,7 @@ RSpec.describe Form::CreateQuestion do
       end
     end
 
-    describe "#within_question_limit?" do
+    describe "within question limit validation" do
       let(:question_limit_error_message) { "You’ve reached the message limit for the GOV.UK Chat trial. You have no messages left." }
 
       it "adds a error message if over the question limit" do
