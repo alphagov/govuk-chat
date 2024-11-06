@@ -130,7 +130,7 @@ RSpec.describe "Sign in" do
   end
 
   def and_i_choose_to_start_a_new_chat
-    click_button "Start a new chat (clears history)"
+    click_button "Start a new chat (clears last chat)"
   end
 
   def then_i_cannot_see_my_previous_questions_and_answer
