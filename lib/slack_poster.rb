@@ -8,7 +8,7 @@ module SlackPoster
     )
 
     slack_poster.send_message(
-      "#{test_mode ? '[TEST] ' : ''}A new user has been shadow banned. [View user](#{url})",
+      "#{test_mode ? '[TEST] ' : ''}A new user has been shadow banned. <#{url}|View user>",
     )
   end
 

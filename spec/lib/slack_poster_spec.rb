@@ -24,14 +24,14 @@ RSpec.describe SlackPoster do
         user = create(:early_access_user)
 
         expect(slack_poster).to receive(:send_message).with(
-          "A new user has been shadow banned. [View user](http://chat.dev.gov.uk/admin/early-access-users/#{user.id})",
+          "A new user has been shadow banned. <http://chat.dev.gov.uk/admin/early-access-users/#{user.id}|View user>",
         )
         described_class.shadow_ban_notification(user.id)
       end
 
       it "prepends the message with a test string" do
         expect(slack_poster).to receive(:send_message).with(
-          "[TEST] A new user has been shadow banned. [View user](http://chat.dev.gov.uk/admin/early-access-users/1)",
+          "[TEST] A new user has been shadow banned. <http://chat.dev.gov.uk/admin/early-access-users/1|View user>",
         )
         described_class.shadow_ban_notification(1, test_mode: true)
       end
