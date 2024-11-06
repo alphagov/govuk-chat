@@ -10,6 +10,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.menuButton = module.querySelector('.govuk-js-header-toggle')
       this.navContainer = module.querySelector('.js-header-nav-container')
       this.navList = module.querySelector('.js-header-nav-container .govuk-header__navigation-list')
+      this.clearChatLink = module.querySelector('.js-header-clear-chat')
     }
 
     init () {
@@ -18,6 +19,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       }
 
       this.menuButton.addEventListener('click', e => this.handleClick(e))
+      document.addEventListener('conversation-active', () => this.handleConversationActive())
 
       // set the initial state of the navigation menu
       this.menuButton.hidden = false
@@ -29,6 +31,12 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.navList.hidden = !this.navList.hidden
       this.menuButton.ariaExpanded = !this.navList.hidden
       this.menuButton.classList.toggle('app-c-header__menu-button--expanded')
+    }
+
+    handleConversationActive () {
+      if (!this.clearChatLink) return
+
+      this.clearChatLink.classList.remove('app-c-header__clear-chat--focusable-only')
     }
 
     addPrintButton () {

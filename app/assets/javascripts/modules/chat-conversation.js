@@ -86,6 +86,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
             })
           )
 
+          this.module.dispatchEvent(new Event('conversation-active', { bubbles: true }))
+
           this.pendingAnswerUrl = responseJson.answer_url
           break
         }
