@@ -1,5 +1,5 @@
 module SlackPoster
-  def self.shadow_ban_notification(user_id)
+  def self.shadow_ban_notification(user_id, test_mode: false)
     return if ENV["AI_SLACK_CHANNEL_WEBHOOK_URL"].nil?
 
     url = Rails.application.routes.url_helpers.admin_early_access_user_url(
@@ -8,7 +8,7 @@ module SlackPoster
     )
 
     slack_poster.send_message(
-      "A new user has been shadow banned. [View user](#{url})",
+      "#{test_mode ? '[TEST] ' : ''}A new user has been shadow banned. [View user](#{url})",
     )
   end
 

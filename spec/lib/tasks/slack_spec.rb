@@ -4,15 +4,10 @@ RSpec.describe "Slack tasks" do
 
     before { Rake::Task[task_name].reenable }
 
-    it "raises an error if no user exists" do
-      expect { Rake::Task[task_name].invoke }
-        .to raise_error("Couldn't find user")
-    end
-
     it "notifies Slack" do
-      user = create(:early_access_user)
-
-      expect(SlackPoster).to receive(:shadow_ban_notification).with(user.id)
+      expect(SlackPoster)
+        .to receive(:shadow_ban_notification)
+        .with(instance_of(String), test_mode: true)
 
       Rake::Task[task_name].invoke
     end
