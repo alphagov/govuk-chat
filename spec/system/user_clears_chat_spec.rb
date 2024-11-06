@@ -26,7 +26,7 @@ RSpec.describe "User clears chat" do
   end
 
   def and_i_reset_my_conversation
-    click_on "Start a new chat (clears history)"
+    click_on "Start a new chat (clears last chat)"
   end
 
   def then_i_can_see_my_previous_questions_and_answer
