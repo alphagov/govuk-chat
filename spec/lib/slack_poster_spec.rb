@@ -1,25 +1,36 @@
 RSpec.describe SlackPoster do
-  describe ".shadow_ban_notification" do
-    it "does nothing if the Slack webhook URL is not set" do
+  describe "without a webhook url" do
+    it "does not send a message" do
       ClimateControl.modify(AI_SLACK_CHANNEL_WEBHOOK_URL: nil) do
         expect(Slack::Poster).not_to receive(:new)
-        described_class.shadow_ban_notification(1)
+        described_class.waiting_list_full
+      end
+    end
+  end
+
+  describe "with a webhook url" do
+    around do |example|
+      ClimateControl.modify(AI_SLACK_CHANNEL_WEBHOOK_URL: "https://slack.com/webhook") do
+        example.run
       end
     end
 
-    context "when the Slack webhook URL is set" do
-      let(:slack_poster) { instance_double(Slack::Poster) }
+    let(:slack_poster) { instance_double(Slack::Poster) }
 
-      before do
-        allow(Slack::Poster).to receive(:new).and_return(slack_poster)
+    before do
+      allow(Slack::Poster).to receive(:new).and_return(slack_poster)
+    end
+
+    describe ".test_message" do
+      it "sends the message prepended with a test string" do
+        expect(slack_poster).to receive(:send_message).with(
+          "[TEST] The message",
+        )
+        described_class.test_message("The message")
       end
+    end
 
-      around do |example|
-        ClimateControl.modify(AI_SLACK_CHANNEL_WEBHOOK_URL: "https://slack.com/webhook") do
-          example.run
-        end
-      end
-
+    describe ".shadow_ban_notification" do
       it "posts a message to the Slack channel" do
         user = create(:early_access_user)
 
@@ -28,12 +39,14 @@ RSpec.describe SlackPoster do
         )
         described_class.shadow_ban_notification(user.id)
       end
+    end
 
-      it "prepends the message with a test string" do
+    describe ".waiting_list_full" do
+      it "posts a message to the Slack channel" do
         expect(slack_poster).to receive(:send_message).with(
-          "[TEST] A new user has been shadow banned. <http://chat.dev.gov.uk/admin/early-access-users/1|View user>",
+          "The waiting list is full",
         )
-        described_class.shadow_ban_notification(1, test_mode: true)
+        described_class.waiting_list_full
       end
     end
   end
