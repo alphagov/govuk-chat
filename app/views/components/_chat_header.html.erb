@@ -1,16 +1,35 @@
 <%
-  navigation_items ||= []
-  print_utility ||= false
+  url_helpers = Rails.application.routes.url_helpers
+  signed_in ||= false
+  conversation ||= false
+  active_conversation ||= false
+
   data_attributes = { module: "chat-header" }
-  data_attributes[:add_print_utility] = true if print_utility
+  data_attributes[:add_print_utility] = true if conversation
+
+  navigation_items ||= [
+    { text: "About", href: url_helpers.about_path },
+    { text: "Help and support", href: url_helpers.support_path },
+  ]
+
+  if signed_in
+    navigation_items << {
+      text: "Sign out",
+      href: url_helpers.sign_out_path,
+      data: { after_print: true},
+    }
+  end
+
+  clear_chat_link_class = %w[app-c-header__clear-chat js-header-clear-chat]
+  clear_chat_link_class << "app-c-header__clear-chat--focusable-only" unless active_conversation
 %>
 
 <%= content_tag :header, class: "app-c-header govuk-header govuk-!-display-none-print", role: "banner", data: data_attributes do %>
   <div class="app-c-header__container govuk-header__container govuk-width-container">
     <div class="app-c-header-row govuk-grid-row">
-      <div class="app-c-header__logo govuk-grid-column-two-thirds">
+      <div class="app-c-header__logo govuk-grid-column-full">
         <%= link_to(
-          logo_href,
+          signed_in ? url_helpers.show_conversation_path : url_helpers.homepage_path,
           class: "app-c-header__link app-c-header__link--homepage govuk-header__link govuk-header__link--homepage",
           data: {
             module: "ga4-link-tracker",
@@ -29,29 +48,43 @@
           <span class="app-c-header__product-name">Chat</span>
         <% end %>
 
-        <span class="app-c-header__tag govuk-tag">
-          Experimental
-        </span>
+        <div class="app-c-header__tag-and-button-container app-c-header__tag-and-button-container--flex-until-tablet">
+          <span class="app-c-header__tag govuk-tag">
+            Experimental
+          </span>
+          <% if conversation %>
+            <%= link_to "Start new chat",
+                         url_helpers.clear_conversation_path,
+                         class: clear_chat_link_class,
+                         data: {
+                           module: "ga4-link-tracker",
+                           ga4_link: {
+                             "event_name": "navigation",
+                             "type": "header menu bar",
+                             "section": "About and support",
+                           },
+                           ga4_track_links_only: "",
+                           ga4_set_indexes: "",
+                         } %>
+          <% end %>
+        </div>
       </div>
 
-      <% if navigation_items.any? %>
-        <%= content_tag(
-          :div,
-          class: "app-c-header__nav-container app-c-header__nav-container--float-right-desktop js-header-nav-container govuk-grid-column-full",
-          data: {
-            module: "ga4-link-tracker",
-            ga4_link: {
-              "event_name": "navigation",
-              "type": "header menu bar",
-              "section": "About and support",
-            },
-            ga4_track_links_only: "",
-            ga4_set_indexes: "",
+      <%= content_tag(
+        :div,
+        class: "app-c-header__nav-container js-header-nav-container govuk-grid-column-full",
+        data: {
+          module: "ga4-link-tracker",
+          ga4_link: {
+            "event_name": "navigation",
+            "type": "header menu bar",
+            "section": "About and support",
           },
-        ) do %>
-            <%= render "govuk_publishing_components/components/layout_header/navigation_items", navigation_items: navigation_items %>
-          </div>
-        <% end %>
+          ga4_track_links_only: "",
+          ga4_set_indexes: "",
+        },
+      ) do %>
+        <%= render "govuk_publishing_components/components/layout_header/navigation_items", navigation_items: navigation_items %>
       <% end %>
     </div>
   </div>

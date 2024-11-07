@@ -84,6 +84,16 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     and_i_see_no_answer_loading_message
   end
 
+  scenario "showing clear chat link in navigation" do
+    given_i_am_a_signed_in_early_access_user
+    and_i_have_confirmed_i_understand_chat_risks
+    then_i_cant_see_the_clear_chat_link
+
+    when_i_enter_a_first_question
+    then_i_see_the_first_question_was_accepted
+    and_i_can_see_the_clear_chat_link
+  end
+
   scenario "print link is added to navigation" do
     given_i_am_a_signed_in_early_access_user
     and_i_have_confirmed_i_understand_chat_risks
@@ -308,6 +318,26 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
     parsed_answer = JSON.parse(answer)["answer"]
     stub_openai_output_guardrail(parsed_answer)
+  end
+
+  def then_i_cant_see_the_clear_chat_link
+    within(".app-c-header") do
+      # This is link is visually hidden but doesn't register as visible: :hidden
+      # to capybara so have to assert on CSS selector
+      expect(page).to have_selector(
+        "a.app-c-header__clear-chat.app-c-header__clear-chat--focusable-only",
+        text: "Start new chat",
+      )
+    end
+  end
+
+  def and_i_can_see_the_clear_chat_link
+    within(".app-c-header") do
+      expect(page).to have_selector(
+        "a.app-c-header__clear-chat:not(.app-c-header__clear-chat--focusable-only)",
+        text: "Start new chat",
+      )
+    end
   end
 
   def then_i_see_a_print_link_in_the_menu

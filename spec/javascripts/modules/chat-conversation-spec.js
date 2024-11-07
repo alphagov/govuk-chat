@@ -256,6 +256,18 @@ describe('ChatConversation module', () => {
         expect(formContainerEventSpy).toHaveBeenCalledWith(expectedEvent)
       })
 
+      it('dispatches a "conversation-active" event on the module element', async () => {
+        const moduleElementEventSpy = spyOn(moduleElement, 'dispatchEvent')
+
+        await module.handleFormSubmission(new Event('submit'))
+
+        const expectedEvent = jasmine.objectContaining({
+          type: 'conversation-active',
+          bubbles: true
+        })
+        expect(moduleElementEventSpy).toHaveBeenCalledWith(expectedEvent)
+      })
+
       it('starts the process to load an answer', async () => {
         await module.handleFormSubmission(new Event('submit'))
 

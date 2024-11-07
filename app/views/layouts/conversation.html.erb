@@ -1,5 +1,6 @@
 <%
   @conversation_data_attributes ||= {}
+  @active_conversation ||= false
   page_title = (content_for?(:page_title) ? yield(:page_title) : yield(:title)).presence
 %>
 
@@ -64,4 +65,4 @@
   </main>
 <% end %>
 
-<%= render template: "layouts/application", locals: { conversation_layout: true } %>
+<%= render template: "layouts/application", locals: { conversation_layout: true, active_conversation: @active_conversation } %>

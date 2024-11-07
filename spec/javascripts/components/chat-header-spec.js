@@ -1,12 +1,12 @@
 describe('ChatHeader component', () => {
   'use strict'
 
-  let module, header, menuButton, navContainer, navList, navListItems
+  let module, header, menuButton, navList, navListItems
 
   beforeEach(function () {
     header = document.createElement('header')
     header.innerHTML = `
-      <div class="app-c-header__nav-container--float-right-desktop js-header-nav-container">
+      <div class="js-header-nav-container">
         <nav>
           <button class="govuk-js-header-toggle">Menu</button>
           <ul class="govuk-header__navigation-list">
@@ -19,9 +19,8 @@ describe('ChatHeader component', () => {
     `
     document.body.appendChild(header)
     menuButton = header.querySelector('.govuk-js-header-toggle')
-    navContainer = header.querySelector('.js-header-nav-container')
-    navList = header.querySelector('.js-header-nav-container .govuk-header__navigation-list')
-    navListItems = header.querySelectorAll('.js-header-nav-container .govuk-header__navigation-item')
+    navList = header.querySelector('.govuk-header__navigation-list')
+    navListItems = header.querySelectorAll('.govuk-header__navigation-item')
     module = new window.GOVUK.Modules.ChatHeader(header)
   })
 
@@ -48,20 +47,6 @@ describe('ChatHeader component', () => {
       expect(menuButton.ariaExpanded).toBe('false')
     })
 
-    it('removes the "app-c-header__nav-container--float-right-desktop" class from the nav container', () => {
-      module.init()
-
-      expect(navContainer.classList).not.toContain('app-c-header__nav-container--float-right-desktop')
-    })
-
-    it('adds a "js-header-navigation-item" class to each list item', () => {
-      module.init()
-
-      navListItems.forEach(navListItem => {
-        expect(navListItem.classList).toContain('js-header-navigation-item')
-      })
-    })
-
     describe('when "[data-add-print-utility]" is not present', () => {
       it('does not add the print button', () => {
         module.init()
@@ -77,7 +62,7 @@ describe('ChatHeader component', () => {
         module.init()
 
         const printButton = navList.lastElementChild.querySelector('button.js-print-button')
-        const updatedNavListItems = header.querySelectorAll('.js-header-nav-container .govuk-header__navigation-item')
+        const updatedNavListItems = header.querySelectorAll('.govuk-header__navigation-item')
 
         expect(updatedNavListItems.length).toEqual(navListItems.length + 1)
         expect(printButton.textContent).toEqual('Print or save this chat')
@@ -158,6 +143,22 @@ describe('ChatHeader component', () => {
       printButton.dispatchEvent(new Event('click'))
 
       expect(printDialogSpy).toHaveBeenCalled()
+    })
+  })
+
+  describe('when document receives an event of conversation-active', () => {
+    it('removes the focusable only class from the clear chat link', () => {
+      const clearChatLink = document.createElement('a')
+      clearChatLink.classList.add('js-header-clear-chat', 'app-c-header__clear-chat--focusable-only')
+      header.prepend(clearChatLink)
+
+      // reinitialise module as we've changed the underlying HTML
+      module = new window.GOVUK.Modules.ChatHeader(header)
+      module.init()
+
+      document.dispatchEvent(new Event('conversation-active'))
+
+      expect(clearChatLink).not.toHaveClass('app-c-header__clear-chat--focusable-only')
     })
   })
 })

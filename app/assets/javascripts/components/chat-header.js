@@ -10,7 +10,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.menuButton = module.querySelector('.govuk-js-header-toggle')
       this.navContainer = module.querySelector('.js-header-nav-container')
       this.navList = module.querySelector('.js-header-nav-container .govuk-header__navigation-list')
-      this.navListItems = module.querySelectorAll('.js-header-nav-container .govuk-header__navigation-item')
+      this.clearChatLink = module.querySelector('.js-header-clear-chat')
     }
 
     init () {
@@ -19,17 +19,12 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       }
 
       this.menuButton.addEventListener('click', e => this.handleClick(e))
+      document.addEventListener('conversation-active', () => this.handleConversationActive())
 
       // set the initial state of the navigation menu
       this.menuButton.hidden = false
       this.menuButton.ariaExpanded = false
       this.navList.hidden = true
-
-      // removing/adding classes for styling the JS enhanced header
-      this.navContainer.classList.remove('app-c-header__nav-container--float-right-desktop')
-      this.navListItems.forEach(listItem => {
-        listItem.classList.add('js-header-navigation-item')
-      })
     }
 
     handleClick () {
@@ -38,9 +33,15 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.menuButton.classList.toggle('app-c-header__menu-button--expanded')
     }
 
+    handleConversationActive () {
+      if (!this.clearChatLink) return
+
+      this.clearChatLink.classList.remove('app-c-header__clear-chat--focusable-only')
+    }
+
     addPrintButton () {
       const li = document.createElement('li')
-      li.className = 'govuk-header__navigation-item js-header-navigation-item'
+      li.className = 'govuk-header__navigation-item'
 
       const button = document.createElement('button')
       button.textContent = 'Print or save this chat'

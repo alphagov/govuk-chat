@@ -1,5 +1,6 @@
 <%
   conversation_layout ||= false
+  active_conversation ||= false
   html_classes = %w[govuk-template]
   html_classes << yield(:html_class)
   html_classes << "app-conversation-layout" if conversation_layout
@@ -17,19 +18,6 @@
   rescue StandardError => e
     GovukError.notify(e)
     early_access_user = nil
-  end
-
-  navigation_items = [
-    { text: "About", href: about_path },
-    { text: "Help and support", href: support_path },
-  ]
-
-  if conversation_layout
-    navigation_items << { text: "Start new chat (clear chat history)", href: clear_conversation_path }
-  end
-
-  if early_access_user
-    navigation_items << { text: "Sign out", href: sign_out_path, data: { after_print: true} }
   end
 %>
 <!DOCTYPE html>
@@ -66,9 +54,9 @@
     } %>
 
     <%= render "components/chat_header", {
-      logo_href: early_access_user ? show_conversation_path : homepage_path,
-      navigation_items: ,
-      print_utility: conversation_layout,
+      signed_in: early_access_user.present?,
+      conversation: conversation_layout,
+      active_conversation:,
     } %>
 
     <% if conversation_layout %>

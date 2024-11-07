@@ -27,16 +27,13 @@ shared_accessibility_criteria:
   - link
 examples:
   default:
+  with_signed_in_user:
     data:
-      logo_href: /chat
-  with_navigation_items:
+      signed_in: true
+  with_conversation:
     data:
-      logo_href: /chat
-      navigation_items:
-      - text: Navigation item 1
-        href: "item-1"
-        active: true
-      - text: Navigation item 2
-        href: "item-2"
-      - text: Navigation item 3
-        href: "item-3"
+      conversation: true
+  with_an_active_conversation:
+    data:
+      conversation: true
+      active_conversation: true
