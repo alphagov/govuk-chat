@@ -101,6 +101,20 @@ RSpec.describe PilotSignUp do
               session: nil,
             )
         end
+
+        it "notifies Slack if the new user was the last waiting list user" do
+          Settings.instance.update!(max_waiting_list_places: 5)
+          create_list(:waiting_list_user, 4)
+          expect(NotifySlackWaitingListFullJob).to receive(:perform_later)
+          described_class.call(**args)
+        end
+
+        it "does not notify Slack if the new user was not the last waiting list user" do
+          Settings.instance.update!(max_waiting_list_places: 5)
+          create_list(:waiting_list_user, 2)
+          expect(NotifySlackWaitingListFullJob).not_to receive(:perform_later)
+          described_class.call(**args)
+        end
       end
 
       context "and there are no waiting list places available" do
