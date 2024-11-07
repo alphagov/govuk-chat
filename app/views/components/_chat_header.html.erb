@@ -55,7 +55,17 @@
           <% if conversation %>
             <%= link_to "Start new chat",
                          url_helpers.clear_conversation_path,
-                         class: clear_chat_link_class %>
+                         class: clear_chat_link_class,
+                         data: {
+                           module: "ga4-link-tracker",
+                           ga4_link: {
+                             "event_name": "navigation",
+                             "type": "header menu bar",
+                             "section": "About and support",
+                           },
+                           ga4_track_links_only: "",
+                           ga4_set_indexes: "",
+                         } %>
           <% end %>
         </div>
       </div>
