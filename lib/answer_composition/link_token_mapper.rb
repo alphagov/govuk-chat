@@ -1,5 +1,7 @@
 module AnswerComposition
   class LinkTokenMapper
+    TOKEN_PREFIX = "link_".freeze
+
     def initialize
       @mapping = {}
     end
@@ -24,7 +26,7 @@ module AnswerComposition
     def map_link_to_token(link)
       return mapping[link] if mapping[link]
 
-      token = "link_#{mapping.count + 1}"
+      token = "#{TOKEN_PREFIX}#{mapping.count + 1}"
       mapping[link] = token
       token
     end
@@ -62,6 +64,13 @@ module AnswerComposition
           # We frequently host GOV.UK chat in environments off www.gov.uk
           # and need links not to be relative so that they will work.
           el.attr["href"] = ensure_absolute_govuk_url(url)
+
+          # If we have a link where the text is e.g. "link_1" then we should replace
+          # it with "source". Showing "link_1" to the user makes it seem like something
+          # is broken
+          el.children.each do |child|
+            child.value = "source" if child.value =~ /#{TOKEN_PREFIX}\d+/
+          end
         end
       else
         # We don't have the link mapping stored, so we want to strip out the link
