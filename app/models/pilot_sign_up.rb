@@ -31,7 +31,14 @@ class PilotSignUp
     end
 
     EarlyAccessAuthMailer.access_granted(result.session).deliver_now if result.outcome == :early_access_user
-    EarlyAccessAuthMailer.waitlist(result.user).deliver_now if result.outcome == :waiting_list_user
+
+    if result.outcome == :waiting_list_user
+      EarlyAccessAuthMailer.waitlist(result.user).deliver_now
+      if WaitingListUser.count == settings.max_waiting_list_places
+        NotifySlackWaitingListFullJob.perform_later
+      end
+    end
+
     result
   end
 
