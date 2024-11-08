@@ -95,6 +95,20 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
         .and include("[3]: https://www.gov.uk/national-insurance/what-national-insurance-is")
     end
 
+    it "replaces link text that has not been substituted" do
+      mapper = described_class.new
+      mapper.map_links_to_tokens(html)
+
+      markdown = <<~MARKDOWN
+        Send a tax return ([link_1][1])
+
+        [1]: link_1
+      MARKDOWN
+
+      output = mapper.replace_tokens_with_links(markdown)
+      expect(output).to include("Send a tax return ([source][1])")
+    end
+
     it "strips the trailing newlines" do
       expect(described_class.new.replace_tokens_with_links("Some text\n\n")).to eq("Some text")
     end
