@@ -119,7 +119,7 @@ end
       items: [
         {
           field: "Current",
-          value: link_to(number_with_delimiter(@early_access_user_stats[:current]), admin_early_access_users_path),
+          value: link_to(number_with_delimiter(@early_access_user_stats[:current]), admin_early_access_users_path, class: "govuk-link"),
         },
         {
           field: "Unsubscribed",
@@ -145,7 +145,7 @@ end
       items: [
         {
           field: "Current",
-          value: link_to(number_with_delimiter(@waiting_list_user_stats[:current]), admin_waiting_list_users_path),
+          value: link_to(number_with_delimiter(@waiting_list_user_stats[:current]), admin_waiting_list_users_path, class: "govuk-link"),
         },
         {
           field: "Promoted to early access user",
