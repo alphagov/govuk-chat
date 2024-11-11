@@ -2,7 +2,7 @@ module AnswerComposition
   module Pipeline
     class AnswerGuardrails < OutputGuardrails
       def call
-        start_time = AnswerComposition.monotonic_time
+        start_time = Clock.monotonic_time
 
         if response.triggered
           context.abort_pipeline!(

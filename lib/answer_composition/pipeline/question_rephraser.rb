@@ -14,14 +14,14 @@ module AnswerComposition
       def call
         return if first_question?
 
-        start_time = AnswerComposition.monotonic_time
+        start_time = Clock.monotonic_time
 
         context.question_message = openai_response_choice.dig("message", "content")
 
         context.answer.assign_llm_response("question_rephrasing", openai_response_choice)
 
         context.answer.assign_metrics("question_rephrasing", {
-          duration: AnswerComposition.monotonic_time - start_time,
+          duration: Clock.monotonic_time - start_time,
           llm_prompt_tokens: openai_response.dig("usage", "prompt_tokens"),
           llm_completion_tokens: openai_response.dig("usage", "completion_tokens"),
           llm_cached_tokens: openai_response.dig("usage", "prompt_tokens_details", "cached_tokens"),

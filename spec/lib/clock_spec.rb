@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition do
+RSpec.describe Clock do
   describe "#monotonic_time" do
     it "returns the time" do
       allow(Process)

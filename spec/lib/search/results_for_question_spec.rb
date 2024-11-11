@@ -21,7 +21,7 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
         build(:chunked_content_record, title: "not found 2", document_type: "about", openai_embedding:),
       ])
 
-      allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5, 101.6, 103.6, 103.7, 104.7)
+      allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5, 101.6, 103.6, 103.7, 104.7)
     end
 
     it "retrieves an embedding for the question_message and searches the chunked content repository" do

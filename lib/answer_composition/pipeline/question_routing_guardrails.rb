@@ -4,7 +4,7 @@ module AnswerComposition
       def call
         return if context.answer.question_routing_label == "genuine_rag"
 
-        start_time = AnswerComposition.monotonic_time
+        start_time = Clock.monotonic_time
 
         if response.triggered
           context.answer.assign_attributes(

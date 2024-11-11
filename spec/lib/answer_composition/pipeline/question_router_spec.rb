@@ -96,7 +96,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
         function_name: "greetings",
         function_arguments: classification_response,
       )
-      allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
+      allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
       described_class.call(context)
 
