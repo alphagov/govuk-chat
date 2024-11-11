@@ -29,12 +29,16 @@ module AnswerComposition
 
       attr_reader :context
 
+      def results_for_question
+        @results_for_question ||= Search::ResultsForQuestion.call(question_message)
+      end
+
       def search_results
-        @search_results ||= Search::ResultsForQuestion.call(question_message).results
+        @search_results ||= results_for_question.results
       end
 
       def build_metrics(start_time)
-        { duration: AnswerComposition.monotonic_time - start_time }
+        { duration: AnswerComposition.monotonic_time - start_time }.merge(results_for_question.metrics)
       end
     end
   end

@@ -1,7 +1,13 @@
 RSpec.describe AnswerComposition::Pipeline::SearchResultFetcher, :chunked_content_index do
   let(:context) { build(:answer_pipeline_context) }
   let(:search_result) { build(:chunked_content_search_result) }
-  let(:search_results) { Search::ResultsForQuestion::ResultSet.new(results: [search_result], rejected_results: []) }
+  let(:search_results) do
+    Search::ResultsForQuestion::ResultSet.new(
+      results: [search_result],
+      rejected_results: [],
+      metrics: { embedding_duration: 1.5, search_duration: 2.0, reranking_duration: 1.0 },
+    )
+  end
 
   before do
     allow(Search::ResultsForQuestion).to receive(:call).and_return(search_results)
@@ -20,13 +26,22 @@ RSpec.describe AnswerComposition::Pipeline::SearchResultFetcher, :chunked_conten
 
       expect(context.answer.metrics["search_results"]).to match({
         duration: 1.5,
+        embedding_duration: 1.5,
+        search_duration: 2.0,
+        reranking_duration: 1.0,
       })
     end
   end
 
   context "when no search results are found" do
     let(:context) { build(:answer_pipeline_context) }
-    let(:search_results) { Search::ResultsForQuestion::ResultSet.new(results: [], rejected_results: []) }
+    let(:search_results) do
+      Search::ResultsForQuestion::ResultSet.new(
+        results: [],
+        rejected_results: [],
+        metrics: { embedding_duration: 1.5, search_duration: 2, reranking_duration: 0.0 },
+      )
+    end
 
     it "aborts the pipeline and updates the answers status and message attributes" do
       expect { described_class.call(context) }.to throw_symbol(:abort)
@@ -41,6 +56,9 @@ RSpec.describe AnswerComposition::Pipeline::SearchResultFetcher, :chunked_conten
 
       expect(context.answer.metrics["search_results"]).to match({
         duration: 1.5,
+        embedding_duration: 1.5,
+        search_duration: 2.0,
+        reranking_duration: 0.0,
       })
     end
   end
