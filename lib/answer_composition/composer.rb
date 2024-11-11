@@ -9,7 +9,7 @@ module AnswerComposition
     end
 
     def call
-      start_time = AnswerComposition.monotonic_time
+      start_time = Clock.monotonic_time
 
       compose_answer.tap do |answer|
         ForbiddenTermsChecker.call(answer)
@@ -54,7 +54,7 @@ module AnswerComposition
     end
 
     def build_metrics(start_time)
-      { duration: AnswerComposition.monotonic_time - start_time }
+      { duration: Clock.monotonic_time - start_time }
     end
   end
 end

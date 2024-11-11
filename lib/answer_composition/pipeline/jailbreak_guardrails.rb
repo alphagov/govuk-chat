@@ -8,7 +8,7 @@ module AnswerComposition
       end
 
       def call
-        start_time = AnswerComposition.monotonic_time
+        start_time = Clock.monotonic_time
 
         response = Guardrails::JailbreakChecker.call(context.question.message)
         context.answer.assign_attributes(jailbreak_guardrails_status: response.triggered ? :fail : :pass)
@@ -37,7 +37,7 @@ module AnswerComposition
 
       def build_metrics(start_time, response_or_error)
         {
-          duration: AnswerComposition.monotonic_time - start_time,
+          duration: Clock.monotonic_time - start_time,
           llm_prompt_tokens: response_or_error.llm_token_usage["prompt_tokens"],
           llm_completion_tokens: response_or_error.llm_token_usage["completion_tokens"],
           llm_cached_tokens: response_or_error.llm_token_usage.dig("prompt_tokens_details", "cached_tokens"),

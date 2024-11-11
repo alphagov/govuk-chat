@@ -20,6 +20,8 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
         build(:chunked_content_record, title: "not found 1", document_type: "notice", openai_embedding:),
         build(:chunked_content_record, title: "not found 2", document_type: "about", openai_embedding:),
       ])
+
+      allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5, 101.6, 103.6, 103.7, 104.7)
     end
 
     it "retrieves an embedding for the question_message and searches the chunked content repository" do
@@ -41,6 +43,11 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
       expect(result.rejected_results.map { |r| [r.title, r.weighted_score] })
         .to contain_exactly(["not found 1", a_value_between(0.3, 0.4)],
                             ["not found 2", a_value_between(0.2, 0.3)])
+    end
+
+    it "populates the metrics attribute with the durations of the embedding, search, and reranking steps" do
+      result = described_class.call(question_message)
+      expect(result.metrics).to eq({ embedding_duration: 1.5, search_duration: 2.0, reranking_duration: 1.0 })
     end
 
     context "when then are more results than the configured max_results" do

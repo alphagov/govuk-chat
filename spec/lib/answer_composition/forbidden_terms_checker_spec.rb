@@ -8,7 +8,7 @@ RSpec.describe AnswerComposition::ForbiddenTermsChecker do
 
   it "assigns the forbidden_terms_checker metric to the metrics values on the answer" do
     answer.assign_metrics("existing_metric", { duration: 1 })
-    allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
+    allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
     described_class.call(answer)
     expect(answer.metrics).to match(hash_including(
                                       "existing_metric" => { duration: 1 },

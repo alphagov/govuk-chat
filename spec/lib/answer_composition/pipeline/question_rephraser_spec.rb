@@ -69,7 +69,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
       end
 
       it "assigns metrics to the answer" do
-        allow(AnswerComposition).to receive(:monotonic_time).and_return(100.0, 101.5)
+        allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
         described_class.call(context)
 
