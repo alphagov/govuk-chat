@@ -66,7 +66,7 @@ module GovukChat
       not_before: Date.new(2024, 11, 8),
       not_after: Date.new(2024, 12, 1),
       places: ENV.fetch("DELAYED_ACCESS_PLACES_SCHEDULE_INCREMENT", "100").to_i,
-      max_places: 1000,
+      max_places: 500,
     )
 
     config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]
