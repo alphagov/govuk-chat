@@ -49,6 +49,19 @@ module Guardrails
 
     def self.call(...) = new(...).call
 
+    def self.collated_prompts(llm_prompt_name)
+      prompt = Prompt.new(llm_prompt_name)
+
+      <<~PROMPT
+        # System prompt
+
+        #{prompt.system_prompt}
+        # User prompt
+
+        #{prompt.user_prompt('<insert answer to check>')}
+      PROMPT
+    end
+
     def initialize(input, llm_prompt_name)
       @input = input
       @openai_client = OpenAIClient.build
