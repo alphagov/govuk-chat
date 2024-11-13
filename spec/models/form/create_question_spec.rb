@@ -159,6 +159,27 @@ RSpec.describe Form::CreateQuestion do
         expect { form.submit }.to change { user.reload.questions_count }.by(1)
       end
 
+      describe "feedback request email" do
+        it "emails the user requesting feedback if it's their first question" do
+          freeze_time do
+            form = described_class.new(user_question:, conversation:)
+            expect { form.submit }.to(
+              have_enqueued_mail(EarlyAccessUserFeedbackMailer, :request_feedback)
+                .with(user)
+                .at(10.minutes.from_now),
+            )
+          end
+        end
+
+        it "does not email the user requesting feedback if it's not their first question" do
+          conversation.user.update!(questions_count: 2)
+          form = described_class.new(user_question:, conversation:)
+          expect {
+            form.submit
+          }.not_to have_enqueued_mail(EarlyAccessUserFeedbackMailer, :request_feedback)
+        end
+      end
+
       context "when the user question contains unicode tags" do
         let(:message_with_unicode_tags) { "Message with hidden characters#{hidden_in_unicode_tags}" }
         let(:form) { described_class.new(conversation:, user_question: message_with_unicode_tags) }

@@ -49,6 +49,10 @@ RSpec.configure do |config|
     Rails.application.load_seed
   end
 
+  config.before do
+    Sidekiq::Queues.clear_all
+  end
+
   # configure system specs
   config.before(:each, type: :system) do
     driven_by :rack_test
