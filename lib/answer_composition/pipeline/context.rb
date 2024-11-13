@@ -20,7 +20,7 @@ module AnswerComposition::Pipeline
         llm_response.each { |namespace, values| answer.assign_llm_response(namespace, values) }
       end
 
-      answer.sources.each { |source| source.used = false }
+      answer.set_sources_as_unused
       answer.assign_attributes(answer_attrs)
       answer
     end

@@ -170,4 +170,8 @@ class Answer < ApplicationRecord
   def use_in_rephrasing?
     STATUSES_EXCLUDED_FROM_REPHRASING.exclude?(status)
   end
+
+  def set_sources_as_unused
+    sources.each { |source| source.used = false }
+  end
 end

@@ -1,5 +1,14 @@
 RSpec.describe AnswerComposition::ForbiddenTermsChecker do
-  let(:answer) { build(:answer, message: answer_message) }
+  let(:answer) do
+    build(
+      :answer,
+      message: answer_message,
+      sources: [
+        build(:answer_source, used: false),
+        build(:answer_source, used: true),
+      ],
+    )
+  end
   let(:answer_message) { "clean answer message" }
 
   before do
@@ -33,6 +42,11 @@ RSpec.describe AnswerComposition::ForbiddenTermsChecker do
     it "updates the status to abort forbidden terms" do
       expect { described_class.call(answer) }
         .to change(answer, :status).to("abort_forbidden_terms")
+    end
+
+    it "sets the sources as unused" do
+      described_class.call(answer)
+      expect(answer.sources.all?(&:used?)).to be(false)
     end
   end
 
