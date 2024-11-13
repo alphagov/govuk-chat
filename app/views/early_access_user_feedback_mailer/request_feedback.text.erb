@@ -11,4 +11,4 @@ Government Digital Service
 
 ---
 
-If you change your mind, you can [unsubscribe and cancel your access to GOV.UK Chat](<%= early_access_user_unsubscribe_url(@user_id, @unsubscribe_token) %>) at any time.
+<%= render "shared/early_access_user_mailer_unsubscribe_footer", id: @user_id, token: @unsubscribe_token %>
