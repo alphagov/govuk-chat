@@ -1,5 +1,6 @@
 RSpec.describe Form::CreateQuestion do
   let(:hidden_in_unicode_tags) { "\u{E0068}\u{E0069}\u{E0064}\u{E0064}\u{E0065}\u{E006E}" }
+  let(:user_question) { "How much tax should I be paying?" }
 
   describe "validations" do
     let(:conversation) { build(:conversation) }
@@ -35,10 +36,7 @@ RSpec.describe Form::CreateQuestion do
     it "is invalid when the conversation passed in has an unanswered question" do
       pending_question = build(:question)
       conversation = create(:conversation, questions: [pending_question])
-      form = described_class.new(
-        conversation:,
-        user_question: "How much tax should I be paying?",
-      )
+      form = described_class.new(conversation:, user_question:)
       form.validate
 
       expect(form.errors.messages[:base]).to eq(["Previous question pending. Please wait for a response"])
@@ -74,28 +72,19 @@ RSpec.describe Form::CreateQuestion do
 
       it "adds a error message if over the question limit" do
         conversation.user = build(:early_access_user, questions_count: 2, individual_question_limit: 1)
-        form = described_class.new(
-          conversation:,
-          user_question: "Anything",
-        )
+        form = described_class.new(conversation:, user_question:)
         form.validate
         expect(form.errors.messages[:base]).to eq([question_limit_error_message])
       end
 
       it "is valid when under the question limit" do
         conversation.user = build(:early_access_user, questions_count: 1, individual_question_limit: 2)
-        form = described_class.new(
-          conversation:,
-          user_question: "Anything",
-        )
+        form = described_class.new(conversation:, user_question:)
         expect(form).to be_valid
       end
 
       it "is valid when the conversation has no user" do
-        form = described_class.new(
-          conversation:,
-          user_question: "Anything",
-        )
+        form = described_class.new(conversation:, user_question:)
         expect(form).to be_valid
       end
     end
@@ -132,30 +121,24 @@ RSpec.describe Form::CreateQuestion do
       let(:conversation) { create(:conversation, user:, questions: [create(:question, :with_answer, created_at: 1.second.ago)]) }
 
       it "adds a new question with the correct attributes to the conversation" do
-        described_class.new(
-          user_question: "How much tax should I be paying?",
-          conversation:,
-        ).submit
+        described_class.new(user_question:, conversation:).submit
 
         expect(Question.where(conversation:).count).to eq 2
         expect(Question.where(conversation:).last)
           .to have_attributes(
-            message: "How much tax should I be paying?",
+            message: user_question,
             unsanitised_message: nil,
             answer_strategy: "openai_structured_answer",
           )
       end
 
       it "enqueues a ComposeAnswerJob" do
-        form = described_class.new(conversation:, user_question: "How much tax should I be paying?")
+        form = described_class.new(conversation:, user_question:)
         expect { form.submit }.to enqueue_job(ComposeAnswerJob)
       end
 
       it "increments the user's questions_count by 1 if a user is associated with the conversation" do
-        form = described_class.new(
-          user_question: "How much tax should I be paying?",
-          conversation:,
-        )
+        form = described_class.new(user_question:, conversation:)
         expect { form.submit }.to change { user.reload.questions_count }.by(1)
       end
 
@@ -201,7 +184,7 @@ RSpec.describe Form::CreateQuestion do
             current_time = Time.current
             user.update!(shadow_banned_at: current_time)
 
-            form = described_class.new(conversation:, user_question: "How much tax should I be paying?")
+            form = described_class.new(conversation:, user_question:)
 
             expect { form.submit }
               .to enqueue_job(ComposeAnswerJob)
@@ -216,7 +199,7 @@ RSpec.describe Form::CreateQuestion do
       let(:conversation) { build(:conversation, user:) }
 
       it "persists the conversation with the users question" do
-        form = described_class.new(user_question: "How much tax should I be paying?", conversation:)
+        form = described_class.new(user_question:, conversation:)
 
         expect { form.submit }
           .to change(Conversation, :count).by(1)
@@ -224,26 +207,23 @@ RSpec.describe Form::CreateQuestion do
       end
 
       it "returns the created question with the correct attributes" do
-        form = described_class.new(user_question: "How much tax should I be paying?", conversation:)
+        form = described_class.new(user_question:, conversation:)
         question = form.submit
 
         expect(question)
           .to have_attributes(
-            message: "How much tax should I be paying?",
+            message: user_question,
             answer_strategy: "openai_structured_answer",
           )
       end
 
       it "associates the conversation with an early access user if present on the conversation" do
-        form = described_class.new(user_question: "How much tax should I be paying?", conversation:)
+        form = described_class.new(user_question:, conversation:)
         expect { form.submit }.to change { user.reload.conversations.count }.by(1)
       end
 
       it "increments the user's questions_count by 1" do
-        form = described_class.new(
-          user_question: "How much tax should I be paying?",
-          conversation:,
-        )
+        form = described_class.new(user_question:, conversation:)
         expect { form.submit }.to change { user.reload.questions_count }.by(1)
       end
     end
