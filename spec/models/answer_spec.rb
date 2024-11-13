@@ -227,4 +227,21 @@ RSpec.describe Answer do
       end
     end
   end
+
+  describe "#set_sources_as_unused" do
+    it "sets the used attribute of each source to false" do
+      answer = create(
+        :answer,
+        sources: [
+          build(:answer_source, used: false),
+          build(:answer_source, used: true),
+          build(:answer_source, used: false),
+        ],
+      )
+
+      answer.set_sources_as_unused
+
+      expect(answer.sources.all?(&:used?)).to be(false)
+    end
+  end
 end
