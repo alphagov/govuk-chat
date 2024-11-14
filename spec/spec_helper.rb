@@ -33,6 +33,7 @@ RSpec.configure do |config|
   config.include AuthenticationHelpers, type: ->(spec) { spec.in?(%i[request system]) }
   config.include Capybara::RSpecMatchers, type: :request
   config.include FactoryBot::Syntax::Methods
+  config.include MailerExamples
   config.include StubOpenAIChat
   config.include PasswordlessRequestHelpers, type: :request
   config.include StubOpenAIEmbedding
@@ -46,6 +47,10 @@ RSpec.configure do |config|
 
   config.before :suite do
     Rails.application.load_seed
+  end
+
+  config.before do
+    Sidekiq::Queues.clear_all
   end
 
   # configure system specs
@@ -72,5 +77,16 @@ RSpec.configure do |config|
     Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
     example.run
     Rack::Attack.cache.store = old_store
+  end
+
+  config.around do |example|
+    if !example.metadata[:type].in?(%i[system request])
+      original_queue_adapter = ActiveJob::Base.queue_adapter
+      ActiveJob::Base.queue_adapter = :test
+      example.call
+      ActiveJob::Base.queue_adapter = original_queue_adapter
+    else
+      example.call
+    end
   end
 end
