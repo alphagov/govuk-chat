@@ -11,6 +11,39 @@ module Guardrails
       end
     end
 
+    class Prompt
+      attr_reader :prompts
+
+      Guardrail = Data.define(:key, :name, :content)
+
+      def initialize(prompt_name)
+        prompts = Rails.configuration.llm_prompts[prompt_name]
+        raise "No LLM prompts found for #{prompt_name}" unless prompts
+
+        @prompts = prompts
+      end
+
+      def system_prompt
+        guardrails_content = guardrails.map { |g| "#{g.key}. #{g.content}" }
+                                       .join("\n")
+
+        prompts.fetch(:system_prompt)
+               .sub("{guardrails}", guardrails_content)
+               .sub("{date}", Date.current.strftime("%A %d %B %Y"))
+      end
+
+      def user_prompt(input)
+        prompts.fetch(:user_prompt).sub("{input}", input)
+      end
+
+      def guardrails
+        @guardrails ||= prompts.fetch(:guardrails).map.with_index(1) do |name, key|
+          content = prompts.fetch(:guardrail_definitions).fetch(name)
+          Guardrail.new(key:, name:, content:)
+        end
+      end
+    end
+
     OPENAI_MODEL = "gpt-4o-mini".freeze
     MAX_TOKENS_BUFFER = 5
 
@@ -60,43 +93,13 @@ module Guardrails
 
     def messages
       [
-        { role: "system", content: system_prompt },
-        { role: "user", content: user_prompt },
+        { role: "system", content: prompt.system_prompt },
+        { role: "user", content: prompt.user_prompt(input) },
       ]
     end
 
-    def system_prompt
-      guardrails_llm_prompts.fetch(:system_prompt)
-                            .gsub("{guardrails}", system_prompt_guardrails)
-                            .gsub("{date}", Date.current.strftime("%A %d %B %Y"))
-    end
-
-    def guardrails_llm_prompts
-      prompts = Rails.configuration.llm_prompts[llm_prompt_name]
-
-      raise "No LLM prompts found for #{llm_prompt_name}" unless prompts
-
-      prompts
-    end
-
-    def system_prompt_guardrails
-      with_number = guardrails.map.with_index(1) do |guardrail, index|
-        "#{index}. #{guardrail_definitions.fetch(guardrail)}"
-      end
-
-      with_number.join("\n")
-    end
-
-    def guardrails
-      guardrails_llm_prompts.fetch(:guardrails)
-    end
-
-    def guardrail_definitions
-      guardrails_llm_prompts.fetch(:guardrail_definitions)
-    end
-
-    def user_prompt
-      guardrails_llm_prompts.fetch(:user_prompt).sub("{input}", input)
+    def prompt
+      @prompt ||= Prompt.new(llm_prompt_name)
     end
 
     def max_tokens
@@ -112,7 +115,7 @@ module Guardrails
     end
 
     def guardrail_numbers
-      (1..guardrails.count).to_a
+      prompt.guardrails.map(&:key)
     end
 
     def response_pattern
@@ -124,7 +127,7 @@ module Guardrails
 
     def extract_guardrails(parts)
       guardrail_numbers = parts.scan(/\d+/).map(&:to_i)
-      guardrail_numbers.map { |n| guardrails[n - 1] }
+      prompt.guardrails.select { |guardrail| guardrail.key.in?(guardrail_numbers) }.map(&:name)
     end
   end
 end
