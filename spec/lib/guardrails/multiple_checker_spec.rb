@@ -96,6 +96,11 @@ RSpec.describe Guardrails::MultipleChecker do
         expect(openai_request).to have_been_made
       end
 
+      it "throws an error if a guardrail definition is missing for a guardrail" do
+        guardrail_definitions.delete("costs")
+        expect { described_class.call(input, llm_prompt_name) }.to raise_error(KeyError)
+      end
+
       context "when :question_routing_guardrails is passed in as the llm_prompt_name" do
         let(:llm_prompt_name) { :question_routing_guardrails }
         let(:guardrail_definitions) do
