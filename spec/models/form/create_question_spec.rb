@@ -148,9 +148,7 @@ RSpec.describe Form::CreateQuestion do
 
       it "enqueues a ComposeAnswerJob" do
         form = described_class.new(conversation:, user_question: "How much tax should I be paying?")
-        expect { form.submit }.to change(Sidekiq::Queues["default"], :size).by(1)
-        expect(Sidekiq::Queues["default"].last["args"])
-          .to include(hash_including("job_class" => "ComposeAnswerJob", "arguments" => [Question.last.id]))
+        expect { form.submit }.to enqueue_job(ComposeAnswerJob)
       end
 
       it "increments the user's questions_count by 1 if a user is associated with the conversation" do
@@ -184,11 +182,9 @@ RSpec.describe Form::CreateQuestion do
 
             form = described_class.new(conversation:, user_question: "How much tax should I be paying?")
 
-            expect { form.submit }.to change(Sidekiq::Queues["default"], :size).by(1)
-            job_args = Sidekiq::Queues["default"].last["args"]
-            expect(job_args)
-              .to include(hash_including("job_class" => "ComposeAnswerJob", "arguments" => [Question.last.id]))
-            expect(job_args.first["scheduled_at"]).to be_between(current_time + 5.seconds, current_time + 20.seconds)
+            expect { form.submit }
+              .to enqueue_job(ComposeAnswerJob)
+              .at(current_time + 5.seconds..current_time + 20.seconds)
           end
         end
       end

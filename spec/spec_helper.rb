@@ -73,4 +73,15 @@ RSpec.configure do |config|
     example.run
     Rack::Attack.cache.store = old_store
   end
+
+  config.around do |example|
+    if !example.metadata[:type].in?(%i[system request])
+      original_queue_adapter = ActiveJob::Base.queue_adapter
+      ActiveJob::Base.queue_adapter = :test
+      example.call
+      ActiveJob::Base.queue_adapter = original_queue_adapter
+    else
+      example.call
+    end
+  end
 end
