@@ -58,23 +58,6 @@ module Guardrails
       )
     end
 
-    def response_pattern
-      @response_pattern ||= begin
-        guardrail_range = "[#{mapping_keys.min}-#{mapping_keys.max}]"
-        /^(False \| None|True \| "#{guardrail_range}(, #{guardrail_range})*")$/
-      end
-    end
-
-    def mapping_keys
-      guardrails_llm_prompts.fetch(:guardrail_mappings).keys.map(&:to_i)
-    end
-
-    def extract_guardrails(parts)
-      guardrail_numbers = parts.scan(/\d+/)
-      mappings = guardrails_llm_prompts.fetch(:guardrail_mappings)
-      guardrail_numbers.map { |n| mappings[n] }
-    end
-
     def messages
       [
         { role: "system", content: system_prompt },
@@ -83,11 +66,9 @@ module Guardrails
     end
 
     def system_prompt
-      guardrails_llm_prompts.fetch(:system_prompt).gsub("{date}", Date.current.strftime("%A %d %B %Y"))
-    end
-
-    def user_prompt
-      guardrails_llm_prompts.fetch(:user_prompt).sub("{input}", input)
+      guardrails_llm_prompts.fetch(:system_prompt)
+                            .gsub("{guardrails}", system_prompt_guardrails)
+                            .gsub("{date}", Date.current.strftime("%A %d %B %Y"))
     end
 
     def guardrails_llm_prompts
@@ -98,9 +79,29 @@ module Guardrails
       prompts
     end
 
+    def system_prompt_guardrails
+      with_number = guardrails.map.with_index(1) do |guardrail, index|
+        "#{index}. #{guardrail_definitions.fetch(guardrail)}"
+      end
+
+      with_number.join("\n")
+    end
+
+    def guardrails
+      guardrails_llm_prompts.fetch(:guardrails)
+    end
+
+    def guardrail_definitions
+      guardrails_llm_prompts.fetch(:guardrail_definitions)
+    end
+
+    def user_prompt
+      guardrails_llm_prompts.fetch(:user_prompt).sub("{input}", input)
+    end
+
     def max_tokens
-      all_mapping_keys = mapping_keys.map(&:to_s).join(", ")
-      longest_possible_response_string = %(True | "#{all_mapping_keys}")
+      all_guardrail_numbers = guardrail_numbers.map(&:to_s).join(", ")
+      longest_possible_response_string = %(True | "#{all_guardrail_numbers}")
 
       token_count = Tiktoken
        .encoding_for_model(OPENAI_MODEL)
@@ -108,6 +109,22 @@ module Guardrails
        .length
 
       token_count + MAX_TOKENS_BUFFER
+    end
+
+    def guardrail_numbers
+      (1..guardrails.count).to_a
+    end
+
+    def response_pattern
+      @response_pattern ||= begin
+        guardrail_range = "[#{guardrail_numbers.min}-#{guardrail_numbers.max}]"
+        /^(False \| None|True \| "#{guardrail_range}(, #{guardrail_range})*")$/
+      end
+    end
+
+    def extract_guardrails(parts)
+      guardrail_numbers = parts.scan(/\d+/).map(&:to_i)
+      guardrail_numbers.map { |n| guardrails[n - 1] }
     end
   end
 end
