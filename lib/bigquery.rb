@@ -1,7 +1,4 @@
 module Bigquery
-  TOP_LEVEL_MODELS_TO_EXPORT = [Question, AnswerFeedback].freeze
-  MODELS_WITH_AGGREGATE_STATS_TO_EXPORT = [EarlyAccessUser, WaitingListUser].freeze
-
   ExportTable = Data.define(:name, :time_partitioning_field)
 
   TABLES_TO_EXPORT = [
