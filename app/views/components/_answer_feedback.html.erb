@@ -1,5 +1,13 @@
+<%
+  answer_feedback_button_data = {
+    "event_name": "form_submit",
+    "type": "chat answer feedback",
+    "section": "How was this answer?",
+  }
+%>
+
 <%= content_tag :div, class: "app-c-answer-feedback js-answer-feedback", data: { module: "answer-feedback" } do %>
-  <%= form_with url:, class: "app-c-answer-feedback__form js-form" do |f| %>
+  <%= form_with url:, class: "app-c-answer-feedback__form js-form", data: { module: "ga4-event-tracker" } do |f| %>
     <fieldset class="app-c-answer-feedback__fieldset">
       <legend class="app-c-answer-feedback__legend">How was this answer?</legend>
       <div class="app-c-answer-feedback__button-group">
@@ -8,6 +16,9 @@
           class: "app-c-answer-feedback__button",
           name: "create_answer_feedback[useful]",
           value: "true",
+          data: {
+            ga4_event: answer_feedback_button_data.merge({ "text": "Useful" }),
+          },
         ) %>
         <span class="govuk-body"> or </span>
         <%= button_tag(
@@ -15,6 +26,9 @@
           class: "app-c-answer-feedback__button",
           name: "create_answer_feedback[useful]",
           value: "false",
+          data: {
+            ga4_event: answer_feedback_button_data.merge({ "text": "Not useful" }),
+          },
         ) %>
       </div>
     </fieldset>
