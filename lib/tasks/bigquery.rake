@@ -1,15 +1,13 @@
 require "google/cloud/bigquery"
 
 namespace :bigquery do
-  desc "Export question and answer data to Bigquery"
+  desc "Run an export of data to Bigquery"
   task export: :environment do
-    exported = Bigquery::Exporter.call
+    result = Bigquery::Exporter.call
 
-    print "BigQuery Export: "
-
-    puts "Records exported from #{exported[:from]} to #{exported[:until]}"
-    exported[:tables].each do |table, count|
-      puts "#{table} exported: #{count}"
+    puts "Records exported from #{result.exported_from} to #{result.exported_until}:"
+    result.tables.each do |(table_name, count)|
+      puts "Table #{table_name} (#{count})"
     end
   end
 
