@@ -1,16 +1,31 @@
 namespace "guardrails" do
-  desc "Output guardrail evaluation using Guardrails::MultipleChecker - supply a file path to write to JSON"
-  task :evaluate_answer_guardrails, %i[output_path] => :environment do |_, args|
+  desc "Output guardrail evaluation using Guardrails::MultipleChecker"
+  task :evaluate_guardrails, %i[guardrail_type dataset_path output_path] => :environment do |_, args|
+    guardrail_type = args[:guardrail_type].to_sym
+    valid_guardrail_types = %i[answer_guardrails question_routing_guardrails]
+    if guardrail_type.blank? || valid_guardrail_types.exclude?(guardrail_type)
+      abort("Invalid guardrail type. Valid guardrail types are #{valid_guardrail_types.to_sentence}")
+    end
+
+    dataset_path = args[:dataset_path]
+    if dataset_path.blank?
+      abort("No dataset path provided")
+    end
+
+    dataset_absolute_path = Pathname.new(Dir.pwd).join(args[:dataset_path])
+    unless File.exist?(dataset_absolute_path)
+      abort("No file found at #{dataset_absolute_path}")
+    end
+
     output_path = args[:output_path]
-    file_path = Rails.root.join("lib/data/output_guardrails/answer_guardrails_examples.csv")
 
     model_name = Guardrails::MultipleChecker::OPENAI_MODEL
     true_eval = ->(v) { v != "False | None" }
 
     prompt_token_counts = []
 
-    results = Guardrails::Evaluation.call(file_path, true_eval:) do |input|
-      result = Guardrails::MultipleChecker.call(input, :answer_guardrails)
+    results = Guardrails::Evaluation.call(dataset_absolute_path, true_eval:) do |input|
+      result = Guardrails::MultipleChecker.call(input, guardrail_type)
       prompt_token_counts << result.llm_token_usage["prompt_tokens"]
       result.llm_guardrail_result
     rescue Guardrails::MultipleChecker::ResponseError => e
