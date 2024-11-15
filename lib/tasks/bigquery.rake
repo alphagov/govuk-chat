@@ -11,6 +11,16 @@ namespace :bigquery do
     end
   end
 
+  desc "Backfill an export of a particular table up until last exported until"
+  task :backfill_table, %i[table_name] => :environment do |_, args|
+    table = Bigquery::TABLES_TO_EXPORT.find { |t| t.name == args[:table_name] }
+    abort "Table #{args[:table_name]} is not a table we export to" unless table
+
+    result = Bigquery::Backfiller.call(table)
+
+    puts "Exported #{result.count} records for table #{table.name}"
+  end
+
   desc "Delete a table from BigQuery"
   task :delete_table, %i[table_name] => :environment do |_, args|
     bigquery = Google::Cloud::Bigquery.new

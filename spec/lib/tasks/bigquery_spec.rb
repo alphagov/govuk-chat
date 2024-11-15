@@ -50,6 +50,43 @@ RSpec.describe "rake bigquery tasks" do
     end
   end
 
+  describe "bigquery:backfill_table" do
+    let(:task_name) { "bigquery:backfill_table" }
+
+    before do
+      Rake::Task[task_name].reenable
+      # We need evidence of past exports to do a backfill
+      create(:bigquery_export)
+    end
+
+    context "when given a table name that we export to" do
+      let(:table) { Bigquery::TABLES_TO_EXPORT.first }
+
+      it "prints what it has exported" do
+        expected = "Exported 0 records for table #{table.name}\n"
+
+        expect { Rake::Task[task_name].invoke(table.name) }
+          .to output(expected).to_stdout
+      end
+
+      it "delegates to Bigquery::Backfiller" do
+        expect(Bigquery::Backfiller).to receive(:call).with(table).and_call_original
+
+        expect { Rake::Task[task_name].invoke(table.name) }.to output.to_stdout
+      end
+    end
+
+    context "when given a table name that we don't know" do
+      it "exits with an error" do
+        expect(Bigquery::Backfiller).not_to receive(:call)
+
+        expect { Rake::Task[task_name].invoke("my_table") }
+          .to raise_error(SystemExit)
+          .and output("Table my_table is not a table we export to\n").to_stderr
+      end
+    end
+  end
+
   describe "bigquery:delete_table" do
     let(:task_name) { "bigquery:delete_table" }
 
