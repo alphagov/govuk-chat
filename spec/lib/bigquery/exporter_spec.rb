@@ -1,247 +1,124 @@
 RSpec.describe Bigquery::Exporter do
-  describe ".remove_nil_values" do
-    it "removes nil values from nested arrays and hashes" do
-      result = described_class.remove_nil_values({
-        "a" => {
-          "aa" => [1, 2],
-          "ab" => {
-            "aba" => "a",
-            "abb" => nil,
-          },
-          "ac" => nil,
-        },
-        "b" => [
-          "ba",
-          ["bb", nil],
-          { "bc" => %w[a], "bd" => nil },
-        ],
-      })
-
-      expect(result).to eq({
-        "a" => {
-          "aa" => [1, 2],
-          "ab" => { "aba" => "a" },
-        },
-        "b" => ["ba", %w[bb], { "bc" => %w[a] }],
-      })
-    end
-
-    it "removes empty arrays and empty hashes" do
-      result = described_class.remove_nil_values({
-        "a" => {
-          "aa" => [nil],
-          "ab" => {
-            "aba" => nil,
-          },
-          "ac" => "a",
-        },
-        "b" => [
-          "ba",
-          [nil],
-          { "bb" => %w[a], "bc" => [nil] },
-        ],
-      })
-
-      expect(result).to eq({
-        "a" => { "ac" => "a" },
-        "b" => ["ba", { "bb" => %w[a] }],
-      })
-    end
-  end
-
   describe ".call" do
     before do
+      allow(Bigquery::IndividualExport).to receive(:call) do
+        Bigquery::IndividualExport::Result.new(tempfile: Tempfile.new, count: 1)
+      end
+
       allow(Bigquery::Uploader).to receive(:call)
-      allow(Rails.configuration).to receive(:smart_survey).and_return(
-        Hashie::Mash.new(
-          survey_id: "12345",
-          api_key: "test_smart_survey_username",
-          api_key_secret: "test_smart_survey_password",
-        ),
-      )
-      stub_smart_survey_request
     end
 
-    it "creates a BigQueryExport record" do
+    it "returns a result object" do
       freeze_time do
-        expect { described_class.call }
-        .to change { BigqueryExport.where(exported_until: Time.current).count }.by(1)
+        tables = Bigquery::TABLES_TO_EXPORT.map { |table| [table.name, 1] }.to_h
+
+        expect(described_class.call)
+          .to have_attributes(exported_from: instance_of(ActiveSupport::TimeWithZone),
+                              exported_until: Time.current,
+                              tables:)
       end
     end
 
-    it "calls Bigquery::Uploader with the correct values for the default aggregate statistics tables" do
+    it "exports and uploads data for all Bigquery::TABLES_TO_EXPORT" do
+      described_class.call
+
+      tables_count = Bigquery::TABLES_TO_EXPORT.count
+
+      expect(Bigquery::IndividualExport)
+        .to have_received(:call).exactly(tables_count).times
+
+      expect(Bigquery::Uploader)
+        .to have_received(:call).exactly(tables_count).times
+    end
+
+    it "calls Bigquery::IndividualExport and Bigquery::Uploader with the expected arguments for a table" do
       freeze_time do
-        described_class.call
-
-        expect(Bigquery::Uploader)
-        .to have_received(:call).with(
-          "smart_survey_responses",
-          kind_of(Tempfile),
-          time_partitioning_field: "exported_until",
-        ) do |_table_id, file, _time_partioning_field|
-          json_record = JSON.parse(file.readline)
-          expect(json_record).to eq(
-            "exported_until" => Time.current.as_json,
-            "completed_surveys" => 1,
-          )
-        end
-
-        expect(Bigquery::Uploader)
-          .to have_received(:call).with(
-            "early_access_users",
-            kind_of(Tempfile),
-            time_partitioning_field: "exported_until",
-          ) do |_table_id, file, _time_partioning_field|
-            json_record = JSON.parse(file.readline)
-            expect(json_record).to match(
-              EarlyAccessUser.aggregate_export_data(Time.current),
-            )
-          end
-
-        expect(Bigquery::Uploader)
-          .to have_received(:call).with(
-            "waiting_list_users",
-            kind_of(Tempfile),
-            time_partitioning_field: "exported_until",
-          ) do |_table_id, file, _time_partioning_field|
-            json_record = JSON.parse(file.readline)
-            expect(json_record).to match(
-              WaitingListUser.aggregate_export_data(Time.current),
-            )
-          end
-      end
-    end
-
-    it "returns a hash of the outcome of the task" do
-      freeze_time do
-        last_export = create(:bigquery_export, exported_until: 1.day.ago)
-        result = described_class.call
-        expect(result)
-          .to eq(
-            tables: {
-              questions: 0,
-              answer_feedback: 0,
-            },
-            from: last_export.exported_until,
-            until: Time.current,
-          )
-      end
-    end
-
-    context "when the Smart Survey API request fails" do
-      before do
-        stub_smart_survey_request(status: 500)
-      end
-
-      it "raises an error" do
-        expect { described_class.call }.to raise_error(Faraday::Error)
-      end
-
-      it "doesn't create a BigQueryExport record" do
-        create(:bigquery_export, exported_until: 1.day.ago)
-
-        expect { described_class.call }
-          .to raise_error(Faraday::Error)
-          .and(not_change { BigqueryExport.count })
-      end
-
-      it "doesn't call the uploader" do
-        expect { described_class.call }.to raise_error(Faraday::Error)
-        expect(Bigquery::Uploader).not_to have_received(:call)
-      end
-    end
-
-    context "when there is new TOP_LEVEL_MODELS_TO_EXPORT data since the last export" do
-      let(:answer) { create(:answer, :with_sources, created_at: 2.days.ago) }
-      let!(:question) { answer.question }
-      let!(:answer_feedback) { create(:answer_feedback, created_at: 2.days.ago) }
-      let!(:last_export) { create(:bigquery_export, exported_until: 3.days.ago) }
-
-      it "calls Bigquery::Uploader with a table_id and tempfile with the correct JSON for each top level model" do
-        described_class.call
-
-        expect(Bigquery::Uploader).to have_received(:call).with("questions", kind_of(Tempfile)) do |_table_id, file|
-          first_json_record = JSON.parse(file.readline.chomp)
-          expect(first_json_record).to match(
-            described_class.remove_nil_values(question.serialize_for_export),
-          )
-        end
-
-        expect(Bigquery::Uploader).to have_received(:call).with("answer_feedback", kind_of(Tempfile)) do |_table_id, file|
-          first_json_record = JSON.parse(file.readline.chomp)
-          expect(first_json_record).to match(
-            described_class.remove_nil_values(answer_feedback.serialize_for_export),
-          )
-        end
-      end
-
-      it "removes nil values fron the serialised records" do
-        answer.update!(question_routing_confidence_score: nil)
+        first_table = Bigquery::TABLES_TO_EXPORT.first
 
         described_class.call
 
-        expect(Bigquery::Uploader).to have_received(:call).with("questions", kind_of(Tempfile)) do |_table_id, file|
-          first_json_record = JSON.parse(file.readline.chomp)
-          answer_json = first_json_record["answer"]
-          expect(answer_json.keys).not_to include("question_routing_confidence_score")
-        end
-      end
+        expect(Bigquery::IndividualExport)
+          .to have_received(:call).with(first_table.name,
+                                        export_from: instance_of(ActiveSupport::TimeWithZone),
+                                        export_until: Time.current)
 
-      it "increments the top level model counts in the outcome hash" do
+        expect(Bigquery::Uploader)
+          .to have_received(:call).with(first_table.name,
+                                        instance_of(Tempfile),
+                                        { time_partitioning_field: first_table.time_partitioning_field })
+      end
+    end
+
+    context "when there has been an export previously" do
+      let!(:previous_export) { create(:bigquery_export, exported_until: 1.hour.ago, created_at: 1.hour.ago) }
+
+      it "exports data from the time of that export until the current time" do
         freeze_time do
           result = described_class.call
-          expect(result)
-            .to eq(
-              tables: {
-                questions: 1,
-                answer_feedback: 1,
-              },
-              from: last_export.exported_until,
-              until: Time.current,
-            )
+
+          expect(result).to have_attributes(exported_from: previous_export.exported_until,
+                                            exported_until: Time.current)
+
+          expect(Bigquery::IndividualExport)
+            .to have_received(:call)
+            .with(anything, export_from: previous_export.exported_until, export_until: Time.current)
+            .at_least(:once)
+        end
+      end
+
+      it "creates a BigqueryExport model for the current time" do
+        freeze_time do
+          expect { described_class.call }.to change(BigqueryExport, :count).by(1)
+
+          expect(BigqueryExport.last.exported_until).to eq(Time.current)
         end
       end
     end
 
-    context "when there is no new data for top level data models since the last export" do
-      it "doesn't call Bigquery::Uploader for the top level models" do
-        create(:bigquery_export, exported_until: 1.day.ago)
-        create(:answer, created_at: 2.days.ago)
-
-        result = described_class.call
-
-        Bigquery::TOP_LEVEL_MODELS_TO_EXPORT.map(&:table_name).each do |table_name|
-          expect(Bigquery::Uploader).not_to have_received(:call).with(table_name, any_args)
-        end
-        expect(result[:tables]).to match(questions: 0, answer_feedback: 0)
-      end
-    end
-
-    context "when there are no existing bigquery export records" do
+    context "when there hasn't been an export previously" do
       before { BigqueryExport.delete_all }
 
-      it "creates one for 1st of January 2024" do
+      it "exports data from the 1st January 2024 until the current time" do
         freeze_time do
-          expect { described_class.call }
-          .to change { BigqueryExport.where(exported_until: Time.current).count }.by(1)
+          result = described_class.call
+
+          expect(result).to have_attributes(exported_from: Time.zone.local(2024, 1, 1),
+                                            exported_until: Time.current)
+
+          expect(Bigquery::IndividualExport)
+            .to have_received(:call)
+            .with(anything, export_from: Time.zone.local(2024, 1, 1), export_until: Time.current)
+            .at_least(:once)
         end
       end
-    end
-  end
 
-  def stub_smart_survey_request(status: 200)
-    stub_request(:get, "https://api.smartsurvey.io/v1/surveys/12345")
-      .with(
-        headers: {
-          "Accept" => "application/json",
-          "Authorization" => "Basic #{Base64.strict_encode64('test_smart_survey_username:test_smart_survey_password').chomp}",
-        },
-      )
-      .to_return_json(
-        status:,
-        body: {
-          responses: 1,
-        },
-      )
+      it "creates two Bigquery export models" do
+        expect { described_class.call }.to change(BigqueryExport, :count).by(2)
+      end
+    end
+
+    context "when a table doesn't have data" do
+      before do
+        allow(Bigquery::IndividualExport)
+          .to receive(:call)
+          .with(table_name, export_from: anything, export_until: anything) do
+            Bigquery::IndividualExport::Result.new(tempfile: nil, count: 0)
+          end
+      end
+
+      let(:table_name) { Bigquery::TABLES_TO_EXPORT.first.name }
+
+      it "does not call the uploader for that table" do
+        described_class.call
+
+        expect(Bigquery::Uploader).not_to have_received(:call).with(table_name, anything, anything)
+      end
+
+      it "returns a count of 0 in the table results" do
+        result = described_class.call
+
+        expect(result.tables[table_name]).to eq(0)
+      end
+    end
   end
 end
