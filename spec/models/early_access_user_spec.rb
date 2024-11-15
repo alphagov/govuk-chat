@@ -423,4 +423,42 @@ RSpec.describe EarlyAccessUser do
       end
     end
   end
+
+  describe "#serialize_for_export" do
+    let(:common_attributes) do
+      {
+        source: described_class.sources.keys.first,
+        user_description: described_class.user_descriptions.keys.first,
+        reason_for_visit: described_class.reason_for_visit.keys.first,
+        found_chat: described_class.found_chat.keys.first,
+        previous_sign_up_denied: false,
+      }
+    end
+
+    context "when a user has an email address that ends in gov.uk domain" do
+      it "returns the export data with a populated email_govuk_domain" do
+        instance = create(:early_access_user,
+                          common_attributes.merge(email: "someone@formal.government.department.gov.uk"))
+
+        expected = common_attributes.merge(id: instance.id,
+                                           created_at: instance.created_at,
+                                           email_govuk_domain: "formal.government.department.gov.uk")
+
+        expect(instance.serialize_for_export).to eq(expected.as_json)
+      end
+    end
+
+    context "when a user has a non gov.uk domain email address" do
+      it "returns the export data with an empty email_govuk_domain" do
+        instance = create(:early_access_user,
+                          common_attributes.merge(email: "someone@personalemail.com"))
+
+        expected = common_attributes.merge(id: instance.id,
+                                           created_at: instance.created_at,
+                                           email_govuk_domain: nil)
+
+        expect(instance.serialize_for_export).to eq(expected.as_json)
+      end
+    end
+  end
 end

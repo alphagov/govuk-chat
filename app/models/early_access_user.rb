@@ -34,6 +34,10 @@ class EarlyAccessUser < ApplicationRecord
     )
   }
 
+  scope :exportable, lambda { |start_date, end_date|
+                       where(created_at: start_date...end_date)
+                     }
+
   def self.promote_waiting_list_user(waiting_list_user, source = :admin_promoted)
     transaction do
       waiting_list_user.destroy_with_audit(deletion_type: :promotion)
@@ -151,5 +155,20 @@ class EarlyAccessUser < ApplicationRecord
 
       SlackPoster.shadow_ban_notification(id) if shadow_banned?
     end
+  end
+
+  def serialize_for_export
+    email_govuk_domain = email.match(/@(.*gov\.uk)$/)&.captures&.last
+
+    {
+      id:,
+      created_at:,
+      source:,
+      user_description:,
+      reason_for_visit:,
+      found_chat:,
+      previous_sign_up_denied:,
+      email_govuk_domain:,
+    }.as_json
   end
 end
