@@ -1,3 +1,5 @@
+require "google/cloud/bigquery"
+
 namespace :bigquery do
   desc "Export question and answer data to Bigquery"
   task export: :environment do
@@ -11,9 +13,34 @@ namespace :bigquery do
     end
   end
 
-  desc "Reset local BigqueryExport table and drop tables already in BigQuery"
+  desc "Delete a table from BigQuery"
+  task :delete_table, %i[table_name] => :environment do |_, args|
+    bigquery = Google::Cloud::Bigquery.new
+    dataset = bigquery.dataset(Rails.configuration.bigquery_dataset_id)
+    table_name = args[:table_name]
+    table = dataset.table(table_name)
+    abort "BigQuery table doesn't exist: #{table_name}" unless table
+
+    table.delete
+    puts "Deleted #{table_name} table from BigQuery"
+  end
+
+  desc "Delete all of our known Big Query tables and our data of exports"
   task reset: :environment do
-    Bigquery::Resetter.call
-    puts "BigQuery Export: reset"
+    bigquery = Google::Cloud::Bigquery.new
+    dataset = bigquery.dataset(Rails.configuration.bigquery_dataset_id)
+
+    deleted_tables = Bigquery::TABLES_TO_EXPORT.filter_map do |table|
+      next unless dataset.table(table.name)
+
+      dataset.table(table.name).delete
+      table.name
+    end
+
+    puts "Deleted tables: #{deleted_tables.join(', ')}"
+
+    records = BigqueryExport.delete_all
+
+    puts "Deleted all #{records} BigqueryExport records"
   end
 end
