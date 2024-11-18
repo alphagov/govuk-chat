@@ -82,7 +82,12 @@ module AnswerComposition
     end
 
     def ensure_absolute_govuk_url(url)
-      relative_uri = URI(url)
+      begin
+        relative_uri = URI(url)
+      rescue URI::InvalidURIError
+        return url
+      end
+
       return url if relative_uri.absolute?
 
       absolute_uri = URI(Plek.website_root)

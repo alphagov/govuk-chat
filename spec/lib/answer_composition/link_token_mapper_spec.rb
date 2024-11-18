@@ -109,6 +109,19 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
       expect(output).to include("Send a tax return ([source][1])")
     end
 
+    it "handles invalid URIs" do
+      html = '<p>Send a tax return to <a href="mailto:<user@example.com>">us</a></p>'
+      mapper = described_class.new
+      mapper.map_links_to_tokens(html)
+
+      markdown = <<~MARKDOWN
+        You should send a tax return to [us](link_1)
+      MARKDOWN
+
+      output = mapper.replace_tokens_with_links(markdown)
+      expect(output).to include("You should send a tax return to [us](mailto:<user@example.com>)")
+    end
+
     it "strips the trailing newlines" do
       expect(described_class.new.replace_tokens_with_links("Some text\n\n")).to eq("Some text")
     end
