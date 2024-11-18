@@ -1,20 +1,40 @@
 RSpec.describe "rake guardrails tasks" do
-  describe "guardrails:evaluate_answer_guardrails" do
-    let(:task_name) { "guardrails:evaluate_answer_guardrails" }
+  describe "guardrails:evaluate_guardrails" do
+    let(:task_name) { "guardrails:evaluate_guardrails" }
+    let(:dataset_path) { "spec/support/files/answer_guardrails_examples.csv" }
 
     before do
       Rake::Task[task_name].reenable
       stub_openai_output_guardrail("", 'True | "1"')
     end
 
+    it "aborts if an invalid guardrail type is provided" do
+      expect { Rake::Task[task_name].invoke("invalid_guardrail_type", dataset_path) }
+        .to output(/Invalid guardrail type/).to_stderr
+        .and raise_error(SystemExit)
+    end
+
+    it "aborts if no dataset_path is provided" do
+      expect { Rake::Task[task_name].invoke(:answer_guardrails) }
+        .to output(/No dataset path provided/).to_stderr
+        .and raise_error(SystemExit)
+    end
+
+    it "aborts if the dataset_path is invalid" do
+      expect { Rake::Task[task_name].invoke(:answer_guardrails, "invalid_path") }
+        .to output(/No file found at #{Rails.root.join('invalid_path')}/).to_stderr
+        .and raise_error(SystemExit)
+    end
+
     context "when given an output path" do
       it "runs successfully, outputs summary, and saves the results to a file with the given path" do
         temp = Tempfile.new
         begin
-          examples = CSV.read(Rails.root.join("lib/data/output_guardrails/answer_guardrails_examples.csv"), headers: true).length
+          examples = CSV.read(Rails.root.join(dataset_path), headers: true).length
           expect(Guardrails::MultipleChecker).to receive(:call).exactly(examples).times.and_call_original
 
-          expect { Rake::Task[task_name].invoke(temp.path) }.to output(/count=>[\s\S]*Full results/).to_stdout
+          expect { Rake::Task[task_name].invoke(:answer_guardrails, dataset_path, temp.path) }
+            .to output(/count=>[\s\S]*Full results/).to_stdout
           results = JSON.parse(File.read(temp.path))
 
           expect(results).to be_a(Hash)
@@ -38,7 +58,8 @@ RSpec.describe "rake guardrails tasks" do
 
     context "without an output path" do
       it "outputs the full structure to the console" do
-        expect { Rake::Task[task_name].invoke }.to output(/count=>[\s\S]*failures=>/).to_stdout
+        expect { Rake::Task[task_name].invoke(:question_routing_guardrails, dataset_path) }
+          .to output(/count=>[\s\S]*failures=>/).to_stdout
       end
     end
   end

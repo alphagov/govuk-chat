@@ -40,7 +40,7 @@ You can also use the playground to ask the reasoning behind any response it give
 
 ## Evaluation
 
-There is a rake task `guardrails:evaluate_multiple_checker` that will read a CSV and call the LLM with the content of the `input` column, compare the result to the `output` column and output metrics like this
+There is a rake task `guardrails:evaluate_guardrails` that will read a CSV and call the LLM with the content of the `input` column, compare the result to the `output` column and output metrics like this
 
 ```
 {:count=>116,
@@ -60,12 +60,30 @@ There is a rake task `guardrails:evaluate_multiple_checker` that will read a CSV
 ```
 This is intended to be run whenever we change the prompts and examples so we know if we are improving the performance.
 
+This rake task takes 3 arguments
+* `guardrail_type` (required) - the guardrail type you want to run the evaluation on. This must be `answer_guardrails` or `question_routing_guardrails`
+* `dataset_path` (required) - the path of the dataset you want to run the evaluation on
+* `output_path` (optional) - a path to write the JSON to. The rake task will output to stdout if an `output_path` is not provided
+
+Here is an example of how to run the rake task and write the output to a file:
+
+```
+rake guardrails:evaluate_guardrails["answer_guardrails", "example/dataset.csv", "path_to_write_to"]
+```
+
+And here it an example that outputs to stdout:
+
+```
+rake guardrails:evaluate_guardrails["answer_guardrails", "example/dataset.csv"]
+```
+
 ## Printing prompts
 
 The `guardrails:print_prompts` rake task outputs the combined system and user prompt for the answer or question routing guardrails. It takes one argument
 `guardrail_type` which is the type of guardrail prompt you want to output. It must be either `answer_guardrails` or `question_routing_guardrails`.
 
 The rake task outputs to stdout. Here is an example that outputs the answer guardrails prompt:
+
 ```
 rake guardrails:print_prompts["answer_guardrails"]
 ```
