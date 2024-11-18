@@ -115,8 +115,23 @@ RSpec.describe AnswerComposition::Composer do
         allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
         expect(result.metrics["answer_composition"]).to match({
-          "duration" => 1.5,
+          duration: 1.5,
         })
+      end
+
+      it "preserves the existing answer" do
+        question.build_answer(llm_responses: { "question_routing" => "something" })
+        expect(result.llm_responses).to eq("question_routing" => "something")
+      end
+
+      it "sets the answer sources to unused" do
+        answer = question.build_answer
+        build(:answer_source, answer:, used: true)
+        build(:answer_source, answer:, used: false)
+
+        result
+
+        expect(answer.sources.map(&:used?)).to all(be_true)
       end
     end
 
