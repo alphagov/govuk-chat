@@ -1,10 +1,10 @@
 RSpec.describe Guardrails::MultipleChecker do
-  describe ".call" do
-    let(:input) { "This is a test input." }
-    let(:formatted_date) { Date.current.strftime("%A %d %B %Y") }
-    let(:llm_prompt_name) { :answer_guardrails }
+  let(:input) { "This is a test input." }
+  let(:formatted_date) { Date.current.strftime("%A %d %B %Y") }
 
+  describe ".call" do
     context "when the request is successful" do
+      let(:llm_prompt_name) { :answer_guardrails }
       let(:guardrails_config) { Rails.configuration.llm_prompts.public_send(llm_prompt_name) }
       let(:guardrail_definitions) do
         {
@@ -39,7 +39,8 @@ RSpec.describe Guardrails::MultipleChecker do
       it "returns triggered: true with human readable guardrails" do
         guardrail_result = 'True | "1, 2"'
         stub_openai_output_guardrail(input, guardrail_result)
-        expect(described_class.call(input, llm_prompt_name)).to be_a(described_class::Result)
+        expect(described_class.call(input, llm_prompt_name))
+          .to be_a(described_class::Result)
           .and(having_attributes(
                  triggered: true,
                  guardrails: %w[costs personal],
@@ -53,7 +54,8 @@ RSpec.describe Guardrails::MultipleChecker do
       it "returns triggered: false with empty guardrails" do
         guardrail_result = "False | None"
         stub_openai_output_guardrail(input, guardrail_result)
-        expect(described_class.call(input, llm_prompt_name)).to be_a(described_class::Result)
+        expect(described_class.call(input, llm_prompt_name))
+          .to be_a(described_class::Result)
           .and(having_attributes(
                  triggered: false,
                  guardrails: [],
@@ -94,6 +96,11 @@ RSpec.describe Guardrails::MultipleChecker do
         described_class.call(input, llm_prompt_name)
 
         expect(openai_request).to have_been_made
+      end
+
+      it "throws an error if a guardrail definition is missing for a guardrail" do
+        guardrail_definitions.delete("costs")
+        expect { described_class.call(input, llm_prompt_name) }.to raise_error(KeyError)
       end
 
       context "when :question_routing_guardrails is passed in as the llm_prompt_name" do
@@ -154,6 +161,102 @@ RSpec.describe Guardrails::MultipleChecker do
       it "raises an error" do
         expect { described_class.call(input, llm_prompt_name) }
           .to raise_error("No LLM prompts found for #{llm_prompt_name}")
+      end
+    end
+  end
+
+  describe ".collated_prompts" do
+    let(:system_prompt) do
+      <<~PROMPT
+        This is the date:
+
+        {date}
+
+        These are the guardrails:
+
+        {guardrails}
+      PROMPT
+    end
+    let(:user_prompt) do
+      <<~PROMPT
+        This is the user prompt:
+
+        {input}
+      PROMPT
+    end
+
+    before do
+      guardrails_config = { system_prompt:, user_prompt:, guardrails:, guardrail_definitions: }.with_indifferent_access
+      allow(Rails.configuration.llm_prompts).to receive(:[]).with(llm_prompt_name).and_return(guardrails_config)
+    end
+
+    context "when the llm_prompt_name is :answer_guardrails" do
+      let(:llm_prompt_name) { :answer_guardrails }
+      let(:guardrail_definitions) do
+        {
+          "costs" => "This is a costs guardrail",
+          "personal" => "This is a personal guardrail",
+          "unique_answer_guardrail" => "This is a unique answer guardrail",
+        }
+      end
+      let(:guardrails) { %w[costs personal unique_answer_guardrail] }
+
+      it "returns the correct prompt template" do
+        expected_prompt = <<~PROMPT
+          # System prompt
+
+          This is the date:
+
+          #{formatted_date}
+
+          These are the guardrails:
+
+          1. This is a costs guardrail
+          2. This is a personal guardrail
+          3. This is a unique answer guardrail
+
+          # User prompt
+
+          This is the user prompt:
+
+          <insert answer to check>
+
+        PROMPT
+
+        expect(described_class.collated_prompts(llm_prompt_name)).to eq(expected_prompt)
+      end
+    end
+
+    context "when the llm_prompt_name is :question_routing_guardrails" do
+      let(:llm_prompt_name) { :question_routing_guardrails }
+      let(:guardrail_definitions) do
+        {
+          "unique_question_routing_guardrail" => "This is a unique question routing guardrail",
+        }
+      end
+      let(:guardrails) { %w[unique_question_routing_guardrail] }
+
+      it "returns the correct prompt template" do
+        expected_prompt = <<~PROMPT
+          # System prompt
+
+          This is the date:
+
+          #{formatted_date}
+
+          These are the guardrails:
+
+          1. This is a unique question routing guardrail
+
+          # User prompt
+
+          This is the user prompt:
+
+          <insert answer to check>
+
+        PROMPT
+
+        expect(described_class.collated_prompts(llm_prompt_name)).to eq(expected_prompt)
       end
     end
   end

@@ -59,3 +59,13 @@ There is a rake task `guardrails:evaluate_multiple_checker` that will read a CSV
 }
 ```
 This is intended to be run whenever we change the prompts and examples so we know if we are improving the performance.
+
+## Printing prompts
+
+The `guardrails:print_prompts` rake task outputs the combined system and user prompt for the answer or question routing guardrails. It takes one argument
+`guardrail_type` which is the type of guardrail prompt you want to output. It must be either `answer_guardrails` or `question_routing_guardrails`.
+
+The rake task outputs to stdout. Here is an example that outputs the answer guardrails prompt:
+```
+rake guardrails:print_prompts["answer_guardrails"]
+```
