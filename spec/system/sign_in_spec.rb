@@ -10,6 +10,9 @@ RSpec.describe "Sign in" do
     when_i_click_the_link_in_the_email
     then_i_arrive_on_the_onboarding_limitations_page
 
+    when_i_click_the_header_logo
+    then_i_see_a_signed_in_homepage
+
     when_i_sign_out
     then_i_see_i_am_signed_out
     and_trying_to_visit_a_conversation_redirects_me_to_the_homepage
@@ -136,5 +139,15 @@ RSpec.describe "Sign in" do
   def then_i_cannot_see_my_previous_questions_and_answer
     expect(page).not_to have_content("Example question")
     expect(page).not_to have_content("Example answer")
+  end
+
+  def when_i_click_the_header_logo
+    within(".app-c-header") do
+      click_link "Chat"
+    end
+  end
+
+  def then_i_see_a_signed_in_homepage
+    expect(page).to have_content("You are currently signed in with #{@email}")
   end
 end
