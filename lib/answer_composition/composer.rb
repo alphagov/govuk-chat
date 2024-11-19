@@ -17,12 +17,16 @@ module AnswerComposition
       end
     rescue StandardError => e
       GovukError.notify(e)
-      question.build_answer(
+      answer = question.answer || question.build_answer
+
+      answer.assign_attributes(
         message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
         status: "error_non_specific",
         error_message: "class: #{e.class} message: #{e.message}",
-        metrics: { answer_composition: build_metrics(start_time) },
       )
+      answer.set_sources_as_unused
+      answer.assign_metrics("answer_composition", build_metrics(start_time))
+      answer
     end
 
   private
