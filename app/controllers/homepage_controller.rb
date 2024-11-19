@@ -3,7 +3,6 @@ class HomepageController < BaseController
   skip_forgery_protection # as we cache the form we can't verify the token
 
   def index
-    request.session_options[:skip] = true
     expires_in(1.minute, public: true) unless Rails.env.development?
     early_access_auth = !Rails.configuration.available_without_early_access_authentication
 

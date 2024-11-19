@@ -51,15 +51,6 @@ RSpec.describe "HomepageController" do
 
       expect(response.headers["Cache-Control"]).to eq("max-age=60, public")
     end
-
-    it "skips regenerating session so the resource can be cached" do
-      # create a session
-      get show_conversation_path
-      expect(response.cookies.keys).to include("_govuk_chat_session")
-
-      get homepage_path
-      expect(response.cookies).to be_empty
-    end
   end
 
   describe "POST :sign_in_or_up" do
