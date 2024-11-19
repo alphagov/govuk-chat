@@ -1,7 +1,7 @@
 RSpec.describe "StaticController" do
   shared_examples "caches the page" do |path_method|
     context "when a user is not signed in" do
-      it "sets the cache headers to 5 mins with a vary of Cookie" do
+      it "sets the cache headers" do
         get public_send(path_method)
 
         expect(response.headers["Cache-Control"]).to eq("max-age=60, public")

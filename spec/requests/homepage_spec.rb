@@ -56,6 +56,7 @@ RSpec.describe "HomepageController" do
       get homepage_path
 
       expect(response.headers["Cache-Control"]).to eq("max-age=60, public")
+      expect(response.headers["Vary"]).to eq("Cookie")
     end
   end
 

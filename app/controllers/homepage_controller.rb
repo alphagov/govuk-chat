@@ -1,9 +1,12 @@
 class HomepageController < BaseController
   skip_before_action :ensure_early_access_user_if_required
   skip_forgery_protection # as we cache the form we can't verify the token
+  before_action(only: :index) do
+    expires_in(1.minute, public: true) unless current_early_access_user.present? || Rails.env.development?
+    add_cookie_to_vary_header
+  end
 
   def index
-    expires_in(1.minute, public: true) unless current_early_access_user.present? || Rails.env.development?
     early_access_auth = !Rails.configuration.available_without_early_access_authentication
 
     if current_early_access_user.present?
