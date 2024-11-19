@@ -1,5 +1,6 @@
 <%=
-  content_for :title, "Accessibility statement for GOV.UK Chat"
+  content_for(:title, "Accessibility statement for GOV.UK Chat")
+  content_for(:back_link, render("govuk_publishing_components/components/back_link", text: "Back to start page", href: homepage_path))
 %>
 
 <div class="govuk-grid-row">
