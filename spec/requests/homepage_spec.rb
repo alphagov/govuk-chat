@@ -44,9 +44,15 @@ RSpec.describe "HomepageController" do
         expect(response.body)
           .to have_text("You are currently signed in with #{EarlyAccessUser.last.email}")
       end
+
+      it "does not cache the page" do
+        get homepage_path
+
+        expect(response.headers["Cache-Control"]).to eq("max-age=0, private, must-revalidate")
+      end
     end
 
-    it "sets the cache headers to 5 mins" do
+    it "sets the cache headers" do
       get homepage_path
 
       expect(response.headers["Cache-Control"]).to eq("max-age=60, public")
