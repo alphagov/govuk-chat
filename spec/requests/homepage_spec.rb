@@ -34,6 +34,18 @@ RSpec.describe "HomepageController" do
       end
     end
 
+    context "when the user is signed in" do
+      include_context "when signed in"
+
+      it "renders the welcome page" do
+        get homepage_path
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body)
+          .to have_text("You are currently signed in with #{EarlyAccessUser.last.email}")
+      end
+    end
+
     it "sets the cache headers to 5 mins" do
       get homepage_path
 

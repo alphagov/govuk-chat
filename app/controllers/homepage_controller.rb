@@ -6,7 +6,10 @@ class HomepageController < BaseController
     request.session_options[:skip] = true
     expires_in(1.minute, public: true) unless Rails.env.development?
     early_access_auth = !Rails.configuration.available_without_early_access_authentication
-    if early_access_auth
+
+    if current_early_access_user.present?
+      render :index_signed_in
+    elsif early_access_auth
       @sign_in_or_up_form = Form::EarlyAccess::SignInOrUp.new
       render :index_early_access
     else

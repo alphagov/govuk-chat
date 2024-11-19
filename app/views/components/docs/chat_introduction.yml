@@ -39,3 +39,7 @@ examples:
     data:
       early_access: true
       input_value: "Example input value"
+  with_signed_in_user:
+    data:
+      signed_in_user_email: "user@example.com"
+      start_button_href: "/chat/conversation"
