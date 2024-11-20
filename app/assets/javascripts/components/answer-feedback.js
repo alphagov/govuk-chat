@@ -8,7 +8,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     constructor (module) {
       this.module = module
       this.form = this.module.querySelector('.js-form')
-      this.hideButton = this.module.querySelector('.js-hide-control')
       this.feedbackSubmittedContainer = this.module.querySelector('.js-feedback-submitted')
     }
 
@@ -20,7 +19,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       event.preventDefault()
 
       this.form.hidden = true
-      this.hideButton.addEventListener('click', e => this.hideComponent(e))
       this.feedbackSubmittedContainer.hidden = false
       this.feedbackSubmittedContainer.focus()
 
@@ -38,11 +36,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         console.error(error)
         this.form.submit()
       }
-    }
-
-    hideComponent (event) {
-      event.preventDefault()
-      this.module.hidden = true
     }
   }
 

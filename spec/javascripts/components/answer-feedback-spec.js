@@ -1,7 +1,7 @@
 describe('AnswerFeedback component', () => {
   'use strict'
 
-  let module, rootDiv, form, feedbackSubmittedContainer, hideButton, event, fetchSpy
+  let module, rootDiv, form, feedbackSubmittedContainer, event, fetchSpy
 
   beforeEach(function () {
     rootDiv = document.createElement('div')
@@ -9,13 +9,11 @@ describe('AnswerFeedback component', () => {
       <form class="js-form" action="/feedback">
       </form>
       <div class="js-feedback-submitted">
-        <button class="js-hide-control"></button>
       </div>
     `
     document.body.appendChild(rootDiv)
     form = rootDiv.querySelector('.js-form')
     feedbackSubmittedContainer = rootDiv.querySelector('.js-feedback-submitted')
-    hideButton = feedbackSubmittedContainer.querySelector('.js-hide-control')
     event = new Event('submit')
     event.submitter = { name: 'create_answer_feedback[useful]', value: 'true' }
     module = new window.GOVUK.Modules.AnswerFeedback(rootDiv)
@@ -75,28 +73,6 @@ describe('AnswerFeedback component', () => {
 
         expect(formSubmitSpy).toHaveBeenCalled()
       })
-    })
-  })
-
-  describe('when feedback has been submitted', () => {
-    beforeEach(() => {
-      module.init()
-      fetchSpy = spyOn(window, 'fetch')
-      form.dispatchEvent(event)
-    })
-
-    it('adds an event listener to the hide button which prevents default', () => {
-      const onClickEvent = new Event('click')
-      const preventDefaultSpy = spyOn(onClickEvent, 'preventDefault')
-
-      hideButton.dispatchEvent(onClickEvent)
-
-      expect(preventDefaultSpy).toHaveBeenCalled()
-    })
-
-    it('hides the component when the hide button is clicked', () => {
-      hideButton.dispatchEvent(new Event('click'))
-      expect(rootDiv.hidden).toEqual(true)
     })
   })
 })

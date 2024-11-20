@@ -4,6 +4,7 @@
   message: answer.message,
   question_message: answer.question.message,
   feedback_url: (answer_feedback_path(answer) if answer.feedback.blank?),
+  user_id: current_early_access_user&.id,
 } %>
 
 <% if question_limit_warning && show_question_limit_system_message?(current_early_access_user) %>

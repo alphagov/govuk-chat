@@ -5,6 +5,7 @@
   is_question ||= false
   is_loading ||= false
   feedback_url ||= false
+  user_id ||= nil
   message_classes = %w[app-c-conversation-message__message]
   message_classes << (is_question ? "app-c-conversation-message__message--user-message"
   : "app-c-conversation-message__message--govuk-message")
@@ -82,6 +83,7 @@
       <%= render "components/answer_feedback", {
         url: feedback_url,
         question_message: question_message,
+        user_id:,
       } %>
     </div>
   <% end %>
