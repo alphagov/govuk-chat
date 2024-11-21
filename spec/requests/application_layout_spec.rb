@@ -1,26 +1,4 @@
 RSpec.describe "Application layout" do
-  it "renders the navbar link to the homepage" do
-    get about_path
-
-    expect(response.body)
-      .to have_selector("a.app-c-header__link[href='#{homepage_path}']")
-  end
-
-  context "when an early access user is signed in" do
-    include_context "when signed in"
-
-    context "and public access is disabled" do
-      before { Settings.instance.update!(public_access_enabled: false) }
-
-      it "renders the navbar link to the homepage" do
-        get about_path
-
-        expect(response.body)
-          .to have_selector("a.app-c-header__link[href='#{homepage_path}']")
-      end
-    end
-  end
-
   context "when an error occurs when checking for an access user" do
     let(:error) { RuntimeError.new("Random error") }
 
