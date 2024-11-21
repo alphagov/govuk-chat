@@ -1,10 +1,13 @@
 <%
-  # View that is rendered when early access authentication is off (e.g. Heroku demo)
   assign_homepage_layout_classes
 %>
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <%= render "components/chat_introduction" %>
+    <%= render "components/chat_introduction", {
+      signed_in_user_email: current_early_access_user.email,
+      start_button_href: show_conversation_path,
+    } %>
   </div>
 
   <%= render "landing_page_animation" %>

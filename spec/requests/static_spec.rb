@@ -1,7 +1,7 @@
 RSpec.describe "StaticController" do
   shared_examples "caches the page" do |path_method|
     context "when a user is not signed in" do
-      it "sets the cache headers to 5 mins with a vary of Cookie" do
+      it "sets the cache headers" do
         get public_send(path_method)
 
         expect(response.headers["Cache-Control"]).to eq("max-age=60, public")
@@ -35,7 +35,9 @@ RSpec.describe "StaticController" do
     it "renders the view correctly" do
       get about_path
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("How GOV.UK Chat works")
+      expect(response.body)
+        .to include("How GOV.UK Chat works")
+        .and have_link("Back to start page", href: homepage_path)
     end
 
     include_examples "caches the page", :about_path
@@ -46,7 +48,9 @@ RSpec.describe "StaticController" do
     it "renders the view correctly" do
       get support_path
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("If you have a problem accessing GOV.UK Chat")
+      expect(response.body)
+        .to include("If you have a problem accessing GOV.UK Chat")
+        .and have_link("Back to start page", href: homepage_path)
     end
 
     include_examples "caches the page", :support_path
@@ -57,7 +61,9 @@ RSpec.describe "StaticController" do
     it "renders the view correctly" do
       get accessibility_path
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("How accessible this website is")
+      expect(response.body)
+        .to include("How accessible this website is")
+        .and have_link("Back to start page", href: homepage_path)
     end
 
     include_examples "caches the page", :accessibility_path

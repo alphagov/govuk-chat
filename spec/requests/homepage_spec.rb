@@ -34,19 +34,29 @@ RSpec.describe "HomepageController" do
       end
     end
 
-    it "sets the cache headers to 5 mins" do
+    context "when the user is signed in" do
+      include_context "when signed in"
+
+      it "renders the welcome page" do
+        get homepage_path
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body)
+          .to have_text("You are currently signed in with #{EarlyAccessUser.last.email}")
+      end
+
+      it "does not cache the page" do
+        get homepage_path
+
+        expect(response.headers["Cache-Control"]).to eq("max-age=0, private, must-revalidate")
+      end
+    end
+
+    it "sets the cache headers" do
       get homepage_path
 
       expect(response.headers["Cache-Control"]).to eq("max-age=60, public")
-    end
-
-    it "skips regenerating session so the resource can be cached" do
-      # create a session
-      get show_conversation_path
-      expect(response.cookies.keys).to include("_govuk_chat_session")
-
-      get homepage_path
-      expect(response.cookies).to be_empty
+      expect(response.headers["Vary"]).to eq("Cookie")
     end
   end
 

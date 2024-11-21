@@ -13,6 +13,7 @@
 
 .app-c-chat-introduction__svg-container {
   line-height: 0;
+
   @include govuk-media-query($until: 480px) {
     margin-bottom: govuk-spacing(6);
   }
@@ -48,6 +49,8 @@
 }
 
 .app-c-chat-introduction__info_text {
+  margin-top: govuk-spacing(8);
+
   @include govuk-media-query($from: tablet) {
     @include govuk-font-size(24, $line-height: false, $important: false);
   }

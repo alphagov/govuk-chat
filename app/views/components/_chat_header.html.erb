@@ -29,7 +29,7 @@
     <div class="app-c-header-row govuk-grid-row">
       <div class="app-c-header__logo govuk-grid-column-full">
         <%= link_to(
-          signed_in ? url_helpers.show_conversation_path : url_helpers.homepage_path,
+          url_helpers.homepage_path,
           class: "app-c-header__link app-c-header__link--homepage govuk-header__link govuk-header__link--homepage",
           data: {
             module: "ga4-link-tracker",
