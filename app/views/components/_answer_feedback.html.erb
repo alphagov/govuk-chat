@@ -4,6 +4,7 @@
     "type": "chat answer feedback",
     "section": "How was this answer?",
   }
+  user_id ||= nil
 %>
 
 <%= content_tag :div, class: "app-c-answer-feedback js-answer-feedback", data: { module: "answer-feedback" } do %>
@@ -36,7 +37,25 @@
 
   <div class="app-c-answer-feedback__feedback-submitted js-feedback-submitted" tabindex="-1" hidden>
     <p class="govuk-body">
-      Thanks for your feedback. <%= button_tag("Hide this message", class: "app-c-answer-feedback__button js-hide-control", type: "button") %>
+      Thanks. <%= link_to(
+                "Share feedback about your chat (opens in a new tab)",
+                "https://surveys.publishing.service.gov.uk/s/govuk-chat-beta/?user=#{user_id}&source=answer_feedback",
+                class: "govuk-body govuk-link govuk-link--no-visited-state js-survey-link",
+                target: "_blank",
+                rel: "noopener noreferrer",
+                data: {
+                  module: "ga4-link-tracker",
+                  ga4_link: {
+                    "event_name": "navigation",
+                    "type": "generic link",
+                    "index": {
+                      "index_link": 1,
+                    },
+                    "index_total": 1,
+                    "section": "Was this answer useful?",
+                  },
+                },
+              ) %>
     </p>
   </div>
 <% end %>

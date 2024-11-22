@@ -55,9 +55,6 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     when_the_first_answer_is_generated
     and_i_click_that_the_answer_was_useful
     then_i_am_thanked_for_my_feedback
-
-    when_i_click_hide_this_message
-    then_i_no_longer_see_the_thank_you_message
   end
 
   scenario "character limits" do
@@ -266,16 +263,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   def then_i_am_thanked_for_my_feedback
-    expect(page).to have_content("Thanks for your feedback.")
-  end
-
-  def when_i_click_hide_this_message
-    click_on "Hide this message"
-  end
-
-  def then_i_no_longer_see_the_thank_you_message
-    expect(page).not_to have_content("Thanks for your feedback.")
-    expect(page).not_to have_content("Hide this message")
+    expect(page).to have_content("Thanks.")
   end
 
   def when_i_type_in_a_question_approaching_the_character_count_limit
