@@ -8,6 +8,9 @@
   # After entering this percentage of the maxlength, the user will see the character count hint
   character_count_threshold = 80
 
+  label_text = "Message"
+  secondary_label_id = "#{input_id}-secondary_label"
+
   hint = "Please limit your question to #{maxlength} characters."
   hint_id = "#{input_id}-info" # The character-count component relies on an element with this ID being present
 
@@ -19,6 +22,7 @@
   remaining_questions_copy ||= ""
 
   aria_described_by = []
+  aria_described_by << secondary_label_id
   aria_described_by << hint_id
   aria_described_by << error_id if has_error
   aria_described_by << remaining_questions_hint_id if remaining_questions_copy.present?
@@ -66,9 +70,14 @@
       <%= content_tag :div, class: "app-c-question-form__input-wrapper" do %>
         <%= label_tag(
           input_id,
-          "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
+          label_text,
           class: "app-c-question-form__label govuk-visually-hidden",
         ) %>
+        <%= content_tag(:span, "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)",
+          id: secondary_label_id, class: "govuk-visually-hidden") %>
+
+        <%# Placeholder text is not an appropriate substitute for a persistent visible label. However, for this specific use case,
+          DAC recommends maintaining this convention, as users are familiar with and intuitively know how to use it %>
 
         <%= content_tag :div, class: "app-c-question-form__input-character-count-wrapper" do %>
           <%= text_field_tag(
@@ -79,6 +88,7 @@
               describedby: aria_described_by,
             },
             name: name,
+            placeholder: label_text,
           ) %>
         <% end %>
 

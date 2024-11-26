@@ -9,7 +9,8 @@ RSpec.describe "components/_question_form.html.erb" do
 
     expect(rendered).to have_selector('.app-c-question-form__form[action="/conversation"]') do |rendered_form|
       expect(rendered_form)
-        .to have_selector(".app-c-question-form__label.govuk-visually-hidden", text: /Enter your question/)
+        .to have_selector(".app-c-question-form__label.govuk-visually-hidden", text: /Message/)
+        .and have_selector(".app-c-question-form__input[placeholder=Message]")
         .and have_selector(".app-c-question-form__input[id=id][name=name][value=Value]")
         .and have_selector(".gem-c-hint", text: /Please limit your question/)
         .and have_selector(".govuk-error-message[hidden]", visible: :hidden)
