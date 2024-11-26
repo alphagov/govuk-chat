@@ -29,7 +29,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
 
   def and_i_enter_a_question
     @first_question = "How much tax should I be paying?"
-    fill_in "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)", with: @first_question
+    fill_in "Message", with: @first_question
     click_on "Send"
   end
 
@@ -98,7 +98,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
 
   def when_i_enter_a_second_question
     @second_question = "Are you sure?"
-    fill_in "Enter your question (please do not share personal or sensitive information in your conversations with GOV UK chat)", with: @second_question
+    fill_in "Message", with: @second_question
     click_on "Send"
   end
 
