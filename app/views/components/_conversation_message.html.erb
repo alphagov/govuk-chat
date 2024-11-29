@@ -6,6 +6,7 @@
   is_loading ||= false
   feedback_url ||= false
   user_id ||= nil
+  omit_govspeak ||= false
   message_classes = %w[app-c-conversation-message__message]
   message_classes << (is_question ? "app-c-conversation-message__message--user-message"
   : "app-c-conversation-message__message--govuk-message")
@@ -64,7 +65,11 @@
               ga4_set_indexes: "",
             },
           ) do %>
-            <%= render_answer_message(message) %>
+            <% if omit_govspeak %>
+              <%= message %>
+            <% else %>
+              <%= render_answer_message(message) %>
+            <% end %>
           <% end %>
 
           <% if sources.present? %>

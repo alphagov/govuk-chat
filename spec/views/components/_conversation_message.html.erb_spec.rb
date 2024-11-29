@@ -123,4 +123,25 @@ RSpec.describe "components/_conversation_message.html.erb" do
       expect(rendered).to have_selector(".app-c-answer-feedback__form[action='http://example.com']")
     end
   end
+
+  it "does not render messages using govspeak when omit_govspeak is true" do
+    render("components/conversation_message", {
+      id: "answer-5",
+      message: "Test message",
+      omit_govspeak: true,
+    })
+
+    expect(rendered)
+      .not_to have_selector(".app-c-conversation-message .app-c-conversation-message__answer .gem-c-govspeak.govuk-govspeak")
+  end
+
+  it "renders messages using govspeak when omit_govspeak is omitted" do
+    render("components/conversation_message", {
+      id: "answer-6",
+      message: "Test message",
+    })
+
+    expect(rendered)
+      .to have_selector(".app-c-conversation-message .app-c-conversation-message__answer .gem-c-govspeak.govuk-govspeak")
+  end
 end
