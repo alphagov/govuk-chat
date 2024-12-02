@@ -58,13 +58,11 @@ module GovukChat
     )
     config.instant_access_places_schedule = Hashie::Mash.new(
       not_before: Date.new(2024, 11, 7),
-      not_after: Date.new(2024, 12, 1),
       places: ENV.fetch("INSTANT_ACCESS_PLACES_SCHEDULE_INCREMENT", "25").to_i,
       max_places: 200,
     )
     config.delayed_access_places_schedule = Hashie::Mash.new(
       not_before: Date.new(2024, 11, 8),
-      not_after: Date.new(2024, 12, 1),
       places: ENV.fetch("DELAYED_ACCESS_PLACES_SCHEDULE_INCREMENT", "100").to_i,
       max_places: 500,
     )
