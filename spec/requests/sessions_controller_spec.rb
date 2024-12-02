@@ -153,6 +153,18 @@ RSpec.describe "sessions controller" do
         expect(response.body).to include("There is a problem with your link")
       end
     end
+
+    context "when the early access user has been deleted" do
+      let(:passwordless_session) { create :passwordless_session }
+
+      before { passwordless_session.authenticatable.destroy! }
+
+      it "disallows access" do
+        get magic_link
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to include("There is a problem with your link")
+      end
+    end
   end
 
   describe "GET :destroy" do
