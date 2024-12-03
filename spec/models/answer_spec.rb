@@ -19,7 +19,7 @@ RSpec.describe Answer do
 
   describe ".aggregate_status" do
     it "filters by the first portion of a status" do
-      create_list(:answer, 2, status: :abort_answer_guardrails)
+      create_list(:answer, 2, status: :guardrails_answer)
       create(:answer, status: :abort_question_routing)
       create_list(:answer, 3, status: :error_non_specific)
       create_list(:answer, 2, status: :error_timeout)
@@ -71,7 +71,7 @@ RSpec.describe Answer do
         create(:answer,
                question_routing_label: "about_mps",
                answer_guardrails_failures: %w[guardrail_1],
-               status: "abort_answer_guardrails")
+               status: "guardrails_answer")
         create(:answer,
                question_routing_label: "genuine_rag",
                answer_guardrails_failures: %w[guardrail_1 guardrail_2],
@@ -92,7 +92,7 @@ RSpec.describe Answer do
 
         expect(counts).to eq({
           %w[about_mps guardrail_1 success] => 2,
-          %w[about_mps guardrail_1 abort_answer_guardrails] => 1,
+          %w[about_mps guardrail_1 guardrails_answer] => 1,
           %w[about_mps guardrail_2 success] => 1,
           %w[genuine_rag guardrail_1 success] => 2,
           %w[genuine_rag guardrail_2 success] => 1,

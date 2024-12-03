@@ -27,7 +27,7 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
       }.to throw_symbol(:abort)
 
       expect(context.answer).to have_attributes(
-        status: "abort_answer_guardrails",
+        status: "guardrails_answer",
         message: Answer::CannedResponses::ANSWER_GUARDRAILS_FAILED_MESSAGE,
         answer_guardrails_status: "fail",
         answer_guardrails_failures: %w[political],

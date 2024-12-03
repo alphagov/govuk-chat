@@ -20,14 +20,15 @@ RSpec.describe Question do
     it "groups questions by the first part of their status" do
       create(:answer, status: :success)
       create(:answer, status: :abort_no_govuk_content)
-      create(:answer, status: :abort_answer_guardrails)
+      create(:answer, status: :guardrails_answer)
       create(:answer, status: :error_non_specific)
       create(:answer, status: :error_answer_service_error)
       create(:answer, status: :error_context_length_exceeded)
 
       expect(described_class.group_by_aggregate_status.count).to eq({
         "success" => 1,
-        "abort" => 2,
+        "abort" => 1,
+        "guardrails" => 1,
         "error" => 3,
       })
     end
