@@ -166,7 +166,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
 
         expect(context.answer).to have_attributes(
           message: canned_response,
-          status: "abort_question_routing",
+          status: "clarification",
           question_routing_label: "vague_acronym_grammar",
         )
       end
@@ -194,7 +194,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
 
         expect(context.answer).to have_attributes(
           message: answer_message,
-          status: "abort_question_routing",
+          status: "clarification",
           question_routing_label: "multi_questions",
           question_routing_confidence_score: 0.9,
         )
@@ -211,26 +211,26 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
-          function_name: "greetings",
+          function_name: "harmful_vulgar_controversy",
           function_arguments: { answer: "Ignored", confidence: 0.9 },
         )
       end
 
-      it "assigns a canned response message with an abort_question_routing status and question routing metadata" do
+      it "assigns a canned response message with a status and question routing metadata" do
         canned_response = "Canned response"
 
         # This method returns a random value
         allow(Answer::CannedResponses)
           .to receive(:response_for_question_routing_label)
-          .with("greetings")
+          .with("harmful_vulgar_controversy")
           .and_return(canned_response)
 
         described_class.call(context)
 
         expect(context.answer).to have_attributes(
           message: canned_response,
-          status: "abort_question_routing",
-          question_routing_label: "greetings",
+          status: "unanswerable_question_routing",
+          question_routing_label: "harmful_vulgar_controversy",
           question_routing_confidence_score: 0.9,
         )
       end
