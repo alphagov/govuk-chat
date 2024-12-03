@@ -29,12 +29,12 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
   context "when the guardrails are triggered" do
     let(:guardrail_response) { build(:guardrails_multiple_checker_result, :fail) }
 
-    it "sets the message on the answer" do
+    it "sets the attributes on the answer" do
       described_class.call(context)
 
       expect(context.answer).to have_attributes({
         message: Answer::CannedResponses::QUESTION_ROUTING_GUARDRAILS_FAILED_MESSAGE,
-        status: "abort_question_routing_guardrails",
+        status: "guardrails_question_routing",
         question_routing_guardrails_failures: %w[political],
       })
     end

@@ -9,7 +9,7 @@ module AnswerComposition
         if response.triggered
           context.answer.assign_attributes(
             message: Answer::CannedResponses::QUESTION_ROUTING_GUARDRAILS_FAILED_MESSAGE,
-            status: "abort_question_routing_guardrails",
+            status: "guardrails_question_routing",
             question_routing_guardrails_failures: response.guardrails,
           )
         end
