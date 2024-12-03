@@ -1,3 +1,18 @@
+<%
+  user_id ||= nil
+%>
+
+<% get_started_message_with_survey = capture do %>
+<%= link_to(
+  "Share feedback (opens in a new tab)",
+  "https://surveys.publishing.service.gov.uk/s/govuk-chat-beta/?user=#{user_id}&source=onboarding_message",
+  target: "_blank",
+  rel: "noopener noreferrer",
+) %> when you're done chatting.
+
+To get started, ask a question.
+<% end %>
+
 <%= render "components/conversation_message", {
   id: "start-chatting",
   message: "Okay",
@@ -5,5 +20,6 @@
 } %>
 
 <%= render "components/conversation_message", {
-  message: tag.p("Thanks! To get started, ask me a question."),
+  message: get_started_message_with_survey,
+  skip_sanitize: true,
 } %>

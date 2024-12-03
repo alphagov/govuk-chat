@@ -6,6 +6,7 @@
   is_loading ||= false
   feedback_url ||= false
   user_id ||= nil
+  skip_sanitize ||= false
   message_classes = %w[app-c-conversation-message__message]
   message_classes << (is_question ? "app-c-conversation-message__message--user-message"
   : "app-c-conversation-message__message--govuk-message")
@@ -64,7 +65,7 @@
               ga4_set_indexes: "",
             },
           ) do %>
-            <%= render_answer_message(message) %>
+            <%= render_answer_message(message, skip_sanitize:) %>
           <% end %>
 
           <% if sources.present? %>
