@@ -27,7 +27,7 @@ RSpec.describe AnswerComposition::Composer do
           .and have_attributes(
             question:,
             message: Answer::CannedResponses::SHADOW_BANNED_MESSAGE,
-            status: "abort_user_shadow_banned",
+            status: "banned",
           )
       end
     end
