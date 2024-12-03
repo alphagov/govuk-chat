@@ -39,9 +39,9 @@ RSpec.describe AnswerComposition::ForbiddenTermsChecker do
         .to change(answer, :message).to(Answer::CannedResponses::FORBIDDEN_TERMS_MESSAGE)
     end
 
-    it "updates the status to abort forbidden terms" do
+    it "updates the status" do
       expect { described_class.call(answer) }
-        .to change(answer, :status).to("abort_forbidden_terms")
+        .to change(answer, :status).to("guardrails_forbidden_terms")
     end
 
     it "sets the sources as unused" do

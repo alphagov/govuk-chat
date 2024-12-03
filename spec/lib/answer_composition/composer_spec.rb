@@ -150,7 +150,7 @@ RSpec.describe AnswerComposition::Composer do
           .to be_an_instance_of(Answer)
           .and have_attributes(
             message: Answer::CannedResponses::FORBIDDEN_TERMS_MESSAGE,
-            status: "abort_forbidden_terms",
+            status: "guardrails_forbidden_terms",
           )
       end
     end
