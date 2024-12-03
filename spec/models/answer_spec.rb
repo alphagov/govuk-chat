@@ -20,12 +20,12 @@ RSpec.describe Answer do
   describe ".aggregate_status" do
     it "filters by the first portion of a status" do
       create_list(:answer, 2, status: :guardrails_answer)
-      create(:answer, status: :abort_question_routing)
+      create(:answer, status: :unanswerable_question_routing)
       create_list(:answer, 3, status: :error_non_specific)
       create_list(:answer, 2, status: :error_timeout)
 
-      expect(described_class.aggregate_status("abort").count).to eq(3)
-      expect(described_class.aggregate_status("error").count).to eq(5)
+      expect(described_class.aggregate_status("guardrails").count).to eq(2)
+      expect(described_class.aggregate_status("unanswerable").count).to eq(1)
     end
   end
 

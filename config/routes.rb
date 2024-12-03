@@ -84,6 +84,8 @@ Rails.application.routes.draw do
         get "questions", to: "metrics#questions", as: :metrics_questions
         get "answer-feedback", to: "metrics#answer_feedback", as: :metrics_answer_feedback
         get "answer-abort-statuses", to: "metrics#answer_abort_statuses", as: :metrics_answer_abort_statuses
+        get "answer-unanswerable-statuses", to: "metrics#answer_unanswerable_statuses", as: :metrics_answer_unanswerable_statuses
+        get "answer-guardrails-statuses", to: "metrics#answer_guardrails_statuses", as: :metrics_answer_guardrails_statuses
         get "answer-error-statuses", to: "metrics#answer_error_statuses", as: :metrics_answer_error_statuses
         get "question-routing-labels", to: "metrics#question_routing_labels", as: :metrics_question_routing_labels
         get "answer-guardrails-failures", to: "metrics#answer_guardrails_failures",

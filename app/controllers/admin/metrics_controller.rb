@@ -56,6 +56,30 @@ class Admin::MetricsController < Admin::BaseController
     end
   end
 
+  def answer_unanswerable_statuses
+    scope = Answer.where(created_at: start_time..)
+                  .aggregate_status("unanswerable")
+                  .group(:status)
+
+    if @period == :last_7_days
+      render json: count_by_period(scope, :created_at).chart_json
+    else
+      render json: scope.count.chart_json
+    end
+  end
+
+  def answer_guardrails_statuses
+    scope = Answer.where(created_at: start_time..)
+                  .aggregate_status("guardrails")
+                  .group(:status)
+
+    if @period == :last_7_days
+      render json: count_by_period(scope, :created_at).chart_json
+    else
+      render json: scope.count.chart_json
+    end
+  end
+
   def answer_error_statuses
     scope = Answer.where(created_at: start_time..)
                   .aggregate_status("error")
