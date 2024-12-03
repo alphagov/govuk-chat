@@ -144,7 +144,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
         stub_openai_chat_question_routing(
           expected_message_history,
           tools:,
-          function_name: "greetings",
+          function_name: "vague_acronym_grammar",
           function_arguments: {
             answer: "A long answer that is terminated mid senten",
             confidence: 0.99,
@@ -153,21 +153,21 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
         )
       end
 
-      it "assigns a canned response message with an abort_question_routing_token_limit status" do
+      it "assigns a canned response message" do
         canned_response = "Canned response"
 
         # This method returns a random value
         allow(Answer::CannedResponses)
           .to receive(:response_for_question_routing_label)
-          .with("greetings")
+          .with("vague_acronym_grammar")
           .and_return(canned_response)
 
         described_class.call(context)
 
         expect(context.answer).to have_attributes(
           message: canned_response,
-          status: "abort_question_routing_token_limit",
-          question_routing_label: "greetings",
+          status: "abort_question_routing",
+          question_routing_label: "vague_acronym_grammar",
         )
       end
 
