@@ -15,7 +15,7 @@ module AnswerComposition
         if search_results.blank?
           context.abort_pipeline!(
             message: Answer::CannedResponses::NO_CONTENT_FOUND_REPONSE,
-            status: "abort_no_govuk_content",
+            status: "unanswerable_no_govuk_content",
             metrics: { "search_results" => build_metrics(start_time) },
           )
         else
