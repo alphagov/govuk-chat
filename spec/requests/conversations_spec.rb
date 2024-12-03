@@ -54,6 +54,16 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and the response type is HTML" do
+        it "renders an onboarding message with a feedback survey link" do
+          get show_conversation_path
+
+          expect(response).to have_http_status(:success)
+          expect(response.body)
+            .to have_selector('.app-c-conversation-message__answer a[href*="surveys.publishing.service.gov.uk"][target=_blank]',
+                              text: "Share feedback (opens in a new tab)")
+            .and have_content(/To get started, ask a question./)
+        end
+
         it "renders the question form" do
           get show_conversation_path
 
