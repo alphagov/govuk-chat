@@ -16,7 +16,7 @@ module AnswerComposition::Pipeline
       unless parsed_structured_response["answered"]
         return context.abort_pipeline!(
           message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
-          status: "abort_llm_cannot_answer",
+          status: "unanswerable_llm_cannot_answer",
           metrics: { "structured_answer" => build_metrics(start_time) },
         )
       end
