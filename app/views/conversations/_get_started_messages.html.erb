@@ -3,17 +3,15 @@
 %>
 
 <% get_started_message_with_survey = capture do %>
-  <p class="govuk-body">
-    <%= link_to(
-      "Share feedback (opens in a new tab)",
-      "https://surveys.publishing.service.gov.uk/s/govuk-chat-beta/?user=#{user_id}&source=onboarding_message",
-      class: "govuk-body govuk-link govuk-link--no-visited-state",
-      target: "_blank",
-      rel: "noopener noreferrer",
-    ) %> when you're done chatting.
-  </p>
-  
-  <p class="govuk-body govuk-!-margin-bottom-0">To get started, ask a question.</p>
+  <%= link_to(
+    "Share feedback (opens in a new tab)",
+    "https://surveys.publishing.service.gov.uk/s/govuk-chat-beta/?user=#{user_id}&source=onboarding_message",
+    class: "govuk-body govuk-link govuk-link--no-visited-state",
+    target: "_blank",
+    rel: "noopener noreferrer",
+  ) %> when you're done chatting.
+
+  To get started, ask a question.
 <% end %>
 
 <%= render "components/conversation_message", {

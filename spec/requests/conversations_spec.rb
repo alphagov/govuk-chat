@@ -79,7 +79,7 @@ RSpec.describe "ConversationsController" do
           expect(JSON.parse(response.body)).to match({
             "title" => "Your conversation",
             "conversation_data" => { "module" => "chat-conversation" },
-            "conversation_append_html" => /<p class="govuk-body govuk-!-margin-bottom-0">To get started, ask a question.<\/p>/,
+            "conversation_append_html" => /<p>To get started, ask a question.<\/p>/,
             "form_html" => /<div class="app-c-question-form/,
           })
         end
