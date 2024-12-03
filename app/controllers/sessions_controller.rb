@@ -13,7 +13,9 @@ class SessionsController < BaseController
       passwordless_session = Passwordless::Session.lock.find_by(identifier: params[:id],
                                                                 authenticatable_type: "EarlyAccessUser")
 
-      if passwordless_session.nil? || !passwordless_session.authenticate(params[:token])
+      if passwordless_session.nil? ||
+          !passwordless_session.authenticatable ||
+          !passwordless_session.authenticate(params[:token])
         return render :link_expired, status: :not_found
       end
 
