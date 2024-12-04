@@ -59,23 +59,23 @@ common_chart_options = { refresh: 30 }
 <div class="govuk-grid-row govuk-!-margin-bottom-8">
 <% end %>
 
-  <div class="<%= column_class %>" id="answers-with-abort-status">
-    <h2 class="govuk-heading-l">Answers with abort status</h2>
-    <% if @period == :last_7_days %>
-      <%= column_chart admin_metrics_answer_abort_statuses_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
-    <% else %>
-      <%= pie_chart admin_metrics_answer_abort_statuses_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
-    <% end %>
-  </div>
-</div>
-
-<div class="govuk-grid-row govuk-!-margin-bottom-8">
   <div class="<%= column_class %>" id="answers-with-unanswerable-status">
     <h2 class="govuk-heading-l">Unanswerable questions</h2>
     <% if @period == :last_7_days %>
       <%= column_chart admin_metrics_answer_unanswerable_statuses_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
     <% else %>
       <%= pie_chart admin_metrics_answer_unanswerable_statuses_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% end %>
+  </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-8">
+  <div class="<%= column_class %>" id="answers-with-guardrails-status">
+    <h2 class="govuk-heading-l">Guardrail triggers</h2>
+    <% if @period == :last_7_days %>
+      <%= column_chart admin_metrics_answer_guardrails_statuses_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% else %>
+      <%= pie_chart admin_metrics_answer_guardrails_statuses_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
     <% end %>
     </div>
 
@@ -84,17 +84,6 @@ common_chart_options = { refresh: 30 }
 <div class="govuk-grid-row govuk-!-margin-bottom-8">
 <% end %>
 
-  <div class="<%= column_class %>" id="answers-with-guardrails-status">
-    <h2 class="govuk-heading-l">Guardrail triggers</h2>
-    <% if @period == :last_7_days %>
-      <%= column_chart admin_metrics_answer_guardrails_statuses_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
-    <% else %>
-      <%= pie_chart admin_metrics_answer_guardrails_statuses_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
-    <% end %>
-  </div>
-</div>
-
-<div class="govuk-grid-row govuk-!-margin-bottom-8">
   <div class="<%= column_class %>" id="answers-with-error-status">
     <h2 class="govuk-heading-l">Answers with error status</h2>
     <% if @period == :last_7_days %>
@@ -103,12 +92,9 @@ common_chart_options = { refresh: 30 }
       <%= pie_chart admin_metrics_answer_error_statuses_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
     <% end %>
   </div>
-
-<% if @period == :last_7_days %>
 </div>
-<div class="govuk-grid-row govuk-!-margin-bottom-8">
-<% end %>
 
+<div class="govuk-grid-row govuk-!-margin-bottom-8">
   <div class="<%= column_class %>" id="question-routing-labels">
     <h2 class="govuk-heading-l">Question routing labels</h2>
     <% if @period == :last_7_days %>
@@ -117,9 +103,12 @@ common_chart_options = { refresh: 30 }
       <%= pie_chart admin_metrics_question_routing_labels_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
     <% end %>
   </div>
-</div>
 
+<% if @period == :last_7_days %>
+</div>
 <div class="govuk-grid-row govuk-!-margin-bottom-8">
+<% end %>
+
   <div class="<%= column_class %>" id="answer-guardrails-failures">
     <h2 class="govuk-heading-l">Answer guardrails failures</h2>
     <% if @period == :last_7_days %>
@@ -128,12 +117,9 @@ common_chart_options = { refresh: 30 }
       <%= pie_chart admin_metrics_answer_guardrails_failures_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
     <% end %>
   </div>
-
-<% if @period == :last_7_days %>
 </div>
-<div class="govuk-grid-row govuk-!-margin-bottom-8">
-<% end %>
 
+<div class="govuk-grid-row govuk-!-margin-bottom-8">
   <div class="<%= column_class %>" id="question-routing-guardrails-failures">
     <h2 class="govuk-heading-l">Question routing guardrails failures</h2>
     <% if @period == :last_7_days %>

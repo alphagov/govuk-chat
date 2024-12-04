@@ -45,10 +45,6 @@ class Answer < ApplicationRecord
   GUARDRAIL_STATUSES = { pass: "pass", fail: "fail", error: "error" }.freeze
 
   STATUSES_EXCLUDED_FROM_REPHRASING = %w[
-    abort_answer_guardrails
-    abort_forbidden_terms
-    abort_jailbreak_guardrails
-    abort_question_routing_guardrails
     guardrails_answer
     guardrails_forbidden_terms
     guardrails_jailbreak
@@ -63,15 +59,6 @@ class Answer < ApplicationRecord
 
   enum :status,
        {
-         abort_answer_guardrails: "abort_answer_guardrails", # TODO: remove after migration
-         abort_forbidden_terms: "abort_forbidden_terms", # TODO: remove after migration
-         abort_jailbreak_guardrails: "abort_jailbreak_guardrails", # TODO: remove after migration
-         abort_llm_cannot_answer: "abort_llm_cannot_answer", # TODO: remove after migration
-         abort_no_govuk_content: "abort_no_govuk_content", # TODO: remove after migration
-         abort_question_routing: "abort_question_routing", # TODO: remove after migration
-         abort_question_routing_guardrails: "abort_question_routing_guardrails", # TODO: remove after migration
-         abort_question_routing_token_limit: "abort_question_routing_token_limit", # TODO: remove after migration
-         abort_user_shadow_banned: "abort_user_shadow_banned", # TODO: remove after migration
          answered: "answered",
          banned: "banned",
          clarification: "clarification",
@@ -86,7 +73,6 @@ class Answer < ApplicationRecord
          guardrails_forbidden_terms: "guardrails_forbidden_terms",
          guardrails_jailbreak: "guardrails_jailbreak",
          guardrails_question_routing: "guardrails_question_routing",
-         success: "success", # TODO: remove after migration
          unanswerable_llm_cannot_answer: "unanswerable_llm_cannot_answer",
          unanswerable_no_govuk_content: "unanswerable_no_govuk_content",
          unanswerable_question_routing: "unanswerable_question_routing",
