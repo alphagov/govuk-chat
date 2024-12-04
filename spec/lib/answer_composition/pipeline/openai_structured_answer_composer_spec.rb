@@ -62,7 +62,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
         expect(context.answer.message.squish).to eq(
           "VAT (Value Added Tax) is a [tax][1] applied to most goods and services in the UK. [1]: https://www.test.gov.uk/what-is-tax",
         )
-        expect(context.answer.status).to eq("success")
+        expect(context.answer.status).to eq("answered")
         expect(context.answer.llm_responses["structured_answer"]).to match(
           hash_including_openai_response_with_tool_call("generate_answer_using_retrieved_contexts"),
         )
@@ -106,14 +106,14 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
           }.to_json
         end
 
-        it "aborts the pipeline and sets the answers status to 'abort_llm_cannot_answer'" do
+        it "aborts the pipeline and sets the answers status" do
           stub_openai_chat_completion_structured_response(
             expected_message_history,
             structured_response,
           )
 
           expect { described_class.call(context) }.to throw_symbol(:abort)
-            .and change { context.answer.status }.to("abort_llm_cannot_answer")
+            .and change { context.answer.status }.to("unanswerable_llm_cannot_answer")
             .and change { context.answer.message }.to(Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE)
         end
 

@@ -15,7 +15,7 @@ module AnswerComposition
       if contains_forbidden_term?
         answer.set_sources_as_unused
         answer.assign_attributes(
-          status: "abort_forbidden_terms",
+          status: "guardrails_forbidden_terms",
           message: Answer::CannedResponses::FORBIDDEN_TERMS_MESSAGE,
         )
       end

@@ -18,7 +18,7 @@ module AnswerComposition
         if response.triggered
           context.abort_pipeline!(
             message: Answer::CannedResponses::JAILBREAK_GUARDRAILS_FAILED_MESSAGE,
-            status: "abort_jailbreak_guardrails",
+            status: "guardrails_jailbreak",
           )
         end
       rescue Guardrails::JailbreakChecker::ResponseError => e

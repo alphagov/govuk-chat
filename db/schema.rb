@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_06_154723) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_03_093116) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
+  enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
-  enable_extension "plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
@@ -24,7 +24,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_06_154723) do
   create_enum "guardrails_status", ["pass", "fail", "error"]
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar"]
   create_enum "settings_downtime_type", ["temporary", "permanent"]
-  create_enum "status", ["success", "error_non_specific", "error_answer_service_error", "error_context_length_exceeded", "abort_no_govuk_content", "abort_llm_cannot_answer", "abort_question_routing", "error_timeout", "abort_forbidden_terms", "abort_jailbreak_guardrails", "error_jailbreak_guardrails", "abort_answer_guardrails", "error_answer_guardrails", "abort_question_routing_token_limit", "abort_question_routing_guardrails", "error_question_routing_guardrails", "abort_user_shadow_banned"]
+  create_enum "status", ["success", "error_non_specific", "error_answer_service_error", "error_context_length_exceeded", "abort_no_govuk_content", "abort_llm_cannot_answer", "abort_question_routing", "error_timeout", "abort_forbidden_terms", "abort_jailbreak_guardrails", "error_jailbreak_guardrails", "abort_answer_guardrails", "error_answer_guardrails", "abort_question_routing_token_limit", "abort_question_routing_guardrails", "error_question_routing_guardrails", "abort_user_shadow_banned", "answered", "banned", "clarification", "guardrails_answer", "guardrails_forbidden_terms", "guardrails_jailbreak", "guardrails_question_routing", "unanswerable_llm_cannot_answer", "unanswerable_no_govuk_content", "unanswerable_question_routing"]
   create_enum "ur_question_found_chat", ["govuk_website", "govuk_blog", "social_media", "news", "personal_contact", "professional_contact", "official_government_announcement", "search_engine", "other"]
   create_enum "ur_question_reason_for_visit", ["find_specific_answer", "complete_task", "understand_process", "research_topic", "other"]
   create_enum "ur_question_user_description", ["business_owner_or_self_employed", "starting_business_or_becoming_self_employed", "business_advisor", "business_administrator", "none"]

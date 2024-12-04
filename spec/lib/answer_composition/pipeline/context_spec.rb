@@ -35,7 +35,7 @@ RSpec.describe AnswerComposition::Pipeline::Context do
 
     it "accepts arguments to update the answer model" do
       instance = described_class.new(build(:question))
-      args = { message: "answer", status: "success" }
+      args = { message: "answer", status: "answered" }
       instance.abort_pipeline(**args)
       expect(instance.answer).to have_attributes(args)
     end
@@ -75,7 +75,7 @@ RSpec.describe AnswerComposition::Pipeline::Context do
 
     it "delegates to #abort_pipeline" do
       instance = described_class.new(build(:question))
-      args = { message: "answer", status: "success" }
+      args = { message: "answer", status: "answered" }
       allow(instance).to receive(:abort_pipeline)
       expect { instance.abort_pipeline!(**args) }.to throw_symbol(:abort)
       expect(instance).to have_received(:abort_pipeline).with(args)

@@ -15,13 +15,13 @@ RSpec.describe Admin::QuestionsHelper do
 
     context "when the status passed in does not have a corresponding description" do
       it "returns a tag with the status as the title attribute" do
-        tag = helper.format_answer_status_as_tag("success")
-        expect(tag).to eq('<span title="Success" class="govuk-tag govuk-tag--green">Success</span>')
+        tag = helper.format_answer_status_as_tag("answered")
+        expect(tag).to eq('<span title="Answered" class="govuk-tag govuk-tag--green">Answered</span>')
       end
 
       it "returns a tag with the status as the title attribute when with_description_suffix is true" do
-        tag = helper.format_answer_status_as_tag("success", with_description_suffix: true)
-        expect(tag).to eq('<span title="Success" class="govuk-tag govuk-tag--green">Success</span>')
+        tag = helper.format_answer_status_as_tag("answered", with_description_suffix: true)
+        expect(tag).to eq('<span title="Answered" class="govuk-tag govuk-tag--green">Answered</span>')
       end
     end
 

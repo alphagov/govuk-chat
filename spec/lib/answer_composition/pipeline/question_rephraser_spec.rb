@@ -95,7 +95,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
         it "does not include that question and answer in the history" do
           request = stub_openai_chat_completion(expected_messages, answer: rephrased)
           last_question = conversation.questions.strict_loading(false).last
-          create(:answer, question: last_question, status: :abort_jailbreak_guardrails)
+          create(:answer, question: last_question, status: :guardrails_jailbreak)
           create(:question, conversation:, message: last_question.message)
 
           described_class.call(context)

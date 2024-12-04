@@ -12,7 +12,7 @@ class ComposeAnswerJob < ApplicationJob
       answer.save!
       user = answer.question.conversation.user
 
-      if user.present? && answer.status_abort_jailbreak_guardrails?
+      if user.present? && answer.status_guardrails_jailbreak? || answer.status_abort_jailbreak_guardrails?
         user.handle_jailbreak_attempt
       end
     rescue ActiveRecord::RecordNotUnique

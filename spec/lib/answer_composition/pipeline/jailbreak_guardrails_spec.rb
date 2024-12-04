@@ -74,7 +74,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
       }.to throw_symbol(:abort)
 
       expect(context.answer).to have_attributes(
-        status: "abort_jailbreak_guardrails",
+        status: "guardrails_jailbreak",
         message: Answer::CannedResponses::JAILBREAK_GUARDRAILS_FAILED_MESSAGE,
         jailbreak_guardrails_status: "fail",
       )

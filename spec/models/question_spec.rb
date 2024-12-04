@@ -18,16 +18,17 @@ RSpec.describe Question do
     end
 
     it "groups questions by the first part of their status" do
-      create(:answer, status: :success)
-      create(:answer, status: :abort_no_govuk_content)
-      create(:answer, status: :abort_answer_guardrails)
+      create(:answer, status: :answered)
+      create(:answer, status: :unanswerable_no_govuk_content)
+      create(:answer, status: :guardrails_answer)
       create(:answer, status: :error_non_specific)
       create(:answer, status: :error_answer_service_error)
       create(:answer, status: :error_context_length_exceeded)
 
       expect(described_class.group_by_aggregate_status.count).to eq({
-        "success" => 1,
-        "abort" => 2,
+        "answered" => 1,
+        "unanswerable" => 1,
+        "guardrails" => 1,
         "error" => 3,
       })
     end
@@ -105,7 +106,7 @@ RSpec.describe Question do
   describe "#answer_status" do
     it "returns the status of the answer" do
       question = create(:question, :with_answer)
-      expect(question.answer_status).to eq "success"
+      expect(question.answer_status).to eq "answered"
     end
 
     it "returns 'pending' if the question has no answer" do

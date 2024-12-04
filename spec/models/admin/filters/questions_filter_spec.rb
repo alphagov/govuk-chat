@@ -121,12 +121,12 @@ RSpec.describe Admin::Filters::QuestionsFilter do
 
     it "filters the results by status" do
       question1 = create(:question)
-      question2 = create(:answer, status: "success").question
+      question2 = create(:answer, status: "answered").question
 
       filter = described_class.new(status: "pending")
       expect(filter.results).to eq([question1])
 
-      filter = described_class.new(status: "success")
+      filter = described_class.new(status: "answered")
       expect(filter.results).to eq([question2])
     end
 
@@ -265,7 +265,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       end_date_params = { day: today.day, month: today.month, year: today.year + 1 }
 
       filter = described_class.new(
-        status: "success",
+        status: "answered",
         search: "message",
         page: 2,
         start_date_params:,
@@ -278,7 +278,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.previous_page_params)
         .to eq(
           {
-            status: "success",
+            status: "answered",
             search: "message",
             answer_feedback_useful: true,
             start_date_params:,
@@ -303,7 +303,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       end_date_params = { day: today.day, month: today.month, year: today.year + 1 }
 
       filter = described_class.new(
-        status: "success",
+        status: "answered",
         search: "message",
         start_date_params:,
         end_date_params:,
@@ -315,7 +315,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.next_page_params)
         .to eq(
           {
-            status: "success",
+            status: "answered",
             search: "message",
             answer_feedback_useful: true,
             page: 2,

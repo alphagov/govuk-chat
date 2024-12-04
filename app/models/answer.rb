@@ -49,6 +49,10 @@ class Answer < ApplicationRecord
     abort_forbidden_terms
     abort_jailbreak_guardrails
     abort_question_routing_guardrails
+    guardrails_answer
+    guardrails_forbidden_terms
+    guardrails_jailbreak
+    guardrails_question_routing
   ].freeze
 
   scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
@@ -59,23 +63,33 @@ class Answer < ApplicationRecord
 
   enum :status,
        {
-         abort_answer_guardrails: "abort_answer_guardrails",
-         abort_forbidden_terms: "abort_forbidden_terms",
-         abort_jailbreak_guardrails: "abort_jailbreak_guardrails",
-         abort_llm_cannot_answer: "abort_llm_cannot_answer",
-         abort_no_govuk_content: "abort_no_govuk_content",
-         abort_question_routing: "abort_question_routing",
-         abort_question_routing_guardrails: "abort_question_routing_guardrails",
-         abort_question_routing_token_limit: "abort_question_routing_token_limit",
-         abort_user_shadow_banned: "abort_user_shadow_banned",
-         error_answer_service_error: "error_answer_service_error",
+         abort_answer_guardrails: "abort_answer_guardrails", # TODO: remove after migration
+         abort_forbidden_terms: "abort_forbidden_terms", # TODO: remove after migration
+         abort_jailbreak_guardrails: "abort_jailbreak_guardrails", # TODO: remove after migration
+         abort_llm_cannot_answer: "abort_llm_cannot_answer", # TODO: remove after migration
+         abort_no_govuk_content: "abort_no_govuk_content", # TODO: remove after migration
+         abort_question_routing: "abort_question_routing", # TODO: remove after migration
+         abort_question_routing_guardrails: "abort_question_routing_guardrails", # TODO: remove after migration
+         abort_question_routing_token_limit: "abort_question_routing_token_limit", # TODO: remove after migration
+         abort_user_shadow_banned: "abort_user_shadow_banned", # TODO: remove after migration
+         answered: "answered",
+         banned: "banned",
+         clarification: "clarification",
          error_answer_guardrails: "error_answer_guardrails",
+         error_answer_service_error: "error_answer_service_error",
          error_context_length_exceeded: "error_context_length_exceeded",
          error_jailbreak_guardrails: "error_jailbreak_guardrails",
          error_non_specific: "error_non_specific",
-         error_timeout: "error_timeout",
          error_question_routing_guardrails: "error_question_routing_guardrails",
-         success: "success",
+         error_timeout: "error_timeout",
+         guardrails_answer: "guardrails_answer",
+         guardrails_forbidden_terms: "guardrails_forbidden_terms",
+         guardrails_jailbreak: "guardrails_jailbreak",
+         guardrails_question_routing: "guardrails_question_routing",
+         success: "success", # TODO: remove after migration
+         unanswerable_llm_cannot_answer: "unanswerable_llm_cannot_answer",
+         unanswerable_no_govuk_content: "unanswerable_no_govuk_content",
+         unanswerable_question_routing: "unanswerable_question_routing",
        },
        prefix: true
 

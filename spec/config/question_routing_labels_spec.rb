@@ -20,4 +20,15 @@ RSpec.describe "Question routing labels" do
       match(hash_including("canned_responses" => be_present.and(only_strings_matcher))),
     )
   end
+
+  it "defines a valid answer_status property for each question routing label" do
+    answer_statuses = Rails.configuration.question_routing_labels.values
+      .map { |config| config["answer_status"] }
+      .compact
+      .uniq
+
+    valid_statuses = Answer.statuses.keys
+
+    expect(answer_statuses).to all(be_in(valid_statuses))
+  end
 end
