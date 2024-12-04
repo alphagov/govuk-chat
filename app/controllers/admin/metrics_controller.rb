@@ -44,18 +44,6 @@ class Admin::MetricsController < Admin::BaseController
     render json: count_by_period(scope, :created_at).chart_json
   end
 
-  def answer_abort_statuses
-    scope = Answer.where(created_at: start_time..)
-                  .aggregate_status("abort")
-                  .group(:status)
-
-    if @period == :last_7_days
-      render json: count_by_period(scope, :created_at).chart_json
-    else
-      render json: scope.count.chart_json
-    end
-  end
-
   def answer_unanswerable_statuses
     scope = Answer.where(created_at: start_time..)
                   .aggregate_status("unanswerable")

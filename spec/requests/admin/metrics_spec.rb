@@ -213,46 +213,6 @@ RSpec.describe "Admin::MetricsController" do
     end
   end
 
-  describe "GET :answer_abort_statuses" do
-    it "renders a successful JSON response" do
-      get admin_metrics_answer_abort_statuses_path
-      expect(response).to have_http_status(:ok)
-      expect(response.headers["Content-Type"]).to match("application/json")
-      expect(JSON.parse(response.body)).to eq([])
-    end
-
-    it "returns data of the occurrences each abort status over the last 24 hours" do
-      create_list(:answer, 3, created_at: 8.hours.ago, status: :abort_llm_cannot_answer)
-      create_list(:answer, 2, created_at: 16.hours.ago, status: :abort_question_routing)
-      create(:answer, created_at: 26.hours.ago, status: :abort_question_routing)
-      create(:answer, status: :success)
-      create(:answer, status: :error_timeout)
-
-      get admin_metrics_answer_abort_statuses_path
-
-      expect(JSON.parse(response.body)).to contain_exactly(
-        ["abort_llm_cannot_answer", 3],
-        ["abort_question_routing", 2],
-      )
-    end
-
-    context "when period is last_7_days" do
-      it "returns data of answers with abort status grouped by status and day" do
-        create_list(:answer, 3, created_at: 2.days.ago, status: :abort_llm_cannot_answer)
-        create_list(:answer, 2, created_at: 2.days.ago, status: :abort_question_routing)
-        create(:answer, status: :success)
-        create(:answer, status: :error_timeout)
-
-        get admin_metrics_answer_abort_statuses_path(period: "last_7_days")
-
-        expect(JSON.parse(response.body)).to contain_exactly(
-          { "name" => "abort_llm_cannot_answer", "data" => counts_for_last_7_days(days_ago_2: 3) },
-          { "name" => "abort_question_routing", "data" => counts_for_last_7_days(days_ago_2: 2) },
-        )
-      end
-    end
-  end
-
   describe "GET :answer_unanswerable_statuses" do
     it "renders a successful JSON response" do
       get admin_metrics_answer_unanswerable_statuses_path
