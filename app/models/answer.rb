@@ -45,10 +45,6 @@ class Answer < ApplicationRecord
   GUARDRAIL_STATUSES = { pass: "pass", fail: "fail", error: "error" }.freeze
 
   STATUSES_EXCLUDED_FROM_REPHRASING = %w[
-    abort_answer_guardrails
-    abort_forbidden_terms
-    abort_jailbreak_guardrails
-    abort_question_routing_guardrails
     guardrails_answer
     guardrails_forbidden_terms
     guardrails_jailbreak

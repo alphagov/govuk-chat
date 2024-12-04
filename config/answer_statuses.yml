@@ -1,10 +1,5 @@
-answered: # replaces success
+answered:
   label: "Answered"
-  label_colour: "green"
-  description:
-  label_and_description:
-success: # TODO: remove after migration
-  label: "Success"
   label_colour: "green"
   description:
   label_and_description:
@@ -13,96 +8,51 @@ pending:
   label_colour: "light-blue"
   description:
   label_and_description:
-clarification: # replaces abort_question_routing and abort_question_routing_token_limit (status depends on question routing label)
+clarification:
   label: "Clarification"
   label_colour: "turquoise"
   description: "question routing requested more information"
   label_and_description: "Clarification - question routing requested more information"
-unanswerable_question_routing: # replaces abort_question_routing and abort_question_routing_token_limit (status depends on question routing label)
+unanswerable_question_routing:
   label: "Unanswerable"
   label_colour: "blue"
   description: "question routing deemed unanswerable"
   label_and_description: "Unanswerable - question routing deemed unanswerable"
-unanswerable_llm_cannot_answer: # formally abort_llm_cannot_answer
+unanswerable_llm_cannot_answer:
   label: "Unanswerable"
   label_colour: "blue"
   description: "LLM couldn't answer the question"
   label_and_description: "Unanswerable - LLM couldn't answer the question"
-unanswerable_no_govuk_content: # formally abort_no_govuk_content
+unanswerable_no_govuk_content:
   label: "Unanswerable"
   label_colour: "blue"
   description: "no GOV.UK content found"
   label_and_description: "Unanswerable - no GOV.UK content found"
-guardrails_answer: # formally abort_answer_guardrails
+guardrails_answer:
   label: "Guardrails"
   label_colour: "yellow"
   description: "answer guardrails triggered"
   label_and_description: "Guardrails - answer guardrails triggered"
-guardrails_forbidden_terms: # formally abort_forbidden_terms
+guardrails_forbidden_terms:
   label: "Guardrails"
   label_colour: "yellow"
   description: "forbidden terms detected"
   label_and_description: "Guardrails - forbidden terms detected"
-guardrails_jailbreak: # formally abort_jailbreak_guardrails
+guardrails_jailbreak:
   label: "Guardrails"
   label_colour: "yellow"
   description: "jailbreak guardrails triggered"
   label_and_description: "Guardrails - jailbreak guardrails triggered"
-guardrails_question_routing: # formally abort_question_routing_guardrails
+guardrails_question_routing:
   label: "Guardrails"
   label_colour: "yellow"
   description: "question routing guardrails triggered"
   label_and_description: "Guardrails - question routing guardrails triggered"
-banned: # formally abort_user_shadow_banned
+banned:
   label: "Abort"
   label_colour: "purple"
   description: "user cannot generate answers due to shadow banning"
   label_and_description: "Banned - user cannot generate answers due to shadow banning"
-abort_answer_guardrails: # TODO: remove after migration
-  label: "Abort"
-  label_colour: "orange"
-  description: "answer guardrails triggered"
-  label_and_description: "Abort - answer guardrails triggered"
-abort_forbidden_terms: # TODO: remove after migration
-  label: "Abort"
-  label_colour: "orange"
-  description: "failed forbidden terms check"
-  label_and_description: "Abort - failed forbidden terms check"
-abort_jailbreak_guardrails: # TODO: remove after migration
-  label: "Abort"
-  label_colour: "orange"
-  description: "jailbreak guardrails triggered"
-  label_and_description: "Abort - jailbreak guardrails triggered"
-abort_llm_cannot_answer: # TODO: remove after migration
-  label: "Abort"
-  label_colour: "orange"
-  description: "LLM couldn't answer the question"
-  label_and_description: "Abort - LLM couldn't answer the question"
-abort_no_govuk_content: # TODO: remove after migration
-  label: "Abort"
-  label_colour: "orange"
-  description: "no GOV.UK content found"
-  label_and_description: "Abort - no GOV.UK content found"
-abort_question_routing: # TODO: remove after migration
-  label: "Abort"
-  label_colour: "orange"
-  description: "unsuitable question asked"
-  label_and_description: "Abort - unsuitable question asked"
-abort_question_routing_guardrails: # TODO: remove after migration
-  label: "Abort"
-  label_colour: "orange"
-  description: "question routing guardrails triggered"
-  label_and_description: "Abort - question routing guardrails triggered"
-abort_question_routing_token_limit: # TODO: remove after migration
-  label: "Abort"
-  label_colour: "orange"
-  description: "completion token limit reached"
-  label_and_description: "Abort - completion token limit reached"
-abort_user_shadow_banned: # TODO: remove after migration
-  label: "Abort"
-  label_colour: "orange"
-  description: "user cannot generate answers due to shadow banning"
-  label_and_description: "Abort - user cannot generate answers due to shadow banning"
 error_answer_guardrails:
   label: "Error"
   label_colour: "red"
