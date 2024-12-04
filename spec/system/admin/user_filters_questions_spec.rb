@@ -100,7 +100,7 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def when_i_filter_on_the_success_status
-    select "Success", from: "status"
+    select "Answered", from: "status"
     click_button "Filter"
   end
 

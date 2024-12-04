@@ -62,7 +62,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
         expect(context.answer.message.squish).to eq(
           "VAT (Value Added Tax) is a [tax][1] applied to most goods and services in the UK. [1]: https://www.test.gov.uk/what-is-tax",
         )
-        expect(context.answer.status).to eq("success")
+        expect(context.answer.status).to eq("answered")
         expect(context.answer.llm_responses["structured_answer"]).to match(
           hash_including_openai_response_with_tool_call("generate_answer_using_retrieved_contexts"),
         )

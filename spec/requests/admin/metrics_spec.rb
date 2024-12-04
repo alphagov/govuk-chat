@@ -153,7 +153,7 @@ RSpec.describe "Admin::MetricsController" do
 
       expect(JSON.parse(response.body)).to contain_exactly(
         { "name" => "pending", "data" => counts_for_last_24_hours(hours_ago_0: 1) },
-        { "name" => "success", "data" => counts_for_last_24_hours(hours_ago_10: 3) },
+        { "name" => "answered", "data" => counts_for_last_24_hours(hours_ago_10: 3) },
         { "name" => "clarification", "data" => counts_for_last_24_hours(hours_ago_2: 1) },
         { "name" => "guardrails", "data" => counts_for_last_24_hours(hours_ago_2: 1, hours_ago_3: 1) },
         { "name" => "unanswerable", "data" => counts_for_last_24_hours(hours_ago_5: 1, hours_ago_2: 1) },
@@ -170,7 +170,7 @@ RSpec.describe "Admin::MetricsController" do
 
         expect(JSON.parse(response.body)).to contain_exactly(
           { "name" => "pending", "data" => counts_for_last_7_days(days_ago_0: 1) },
-          { "name" => "success", "data" => counts_for_last_7_days(days_ago_1: 3) },
+          { "name" => "answered", "data" => counts_for_last_7_days(days_ago_1: 3) },
           { "name" => "unanswerable", "data" => counts_for_last_7_days(days_ago_1: 1) },
         )
       end
@@ -265,7 +265,7 @@ RSpec.describe "Admin::MetricsController" do
       create_list(:answer, 3, created_at: 8.hours.ago, status: :unanswerable_llm_cannot_answer)
       create_list(:answer, 2, created_at: 16.hours.ago, status: :unanswerable_question_routing)
       create(:answer, created_at: 26.hours.ago, status: :unanswerable_question_routing)
-      create(:answer, status: :success)
+      create(:answer, status: :answered)
       create(:answer, status: :error_timeout)
 
       get admin_metrics_answer_unanswerable_statuses_path
@@ -280,7 +280,7 @@ RSpec.describe "Admin::MetricsController" do
       it "returns data of answers with unanswerable status grouped by status and day" do
         create_list(:answer, 3, created_at: 2.days.ago, status: :unanswerable_llm_cannot_answer)
         create_list(:answer, 2, created_at: 2.days.ago, status: :unanswerable_question_routing)
-        create(:answer, status: :success)
+        create(:answer, status: :answered)
         create(:answer, status: :error_timeout)
 
         get admin_metrics_answer_unanswerable_statuses_path(period: "last_7_days")
@@ -345,7 +345,7 @@ RSpec.describe "Admin::MetricsController" do
       create_list(:answer, 5, created_at: 10.hours.ago, status: :error_non_specific)
       create_list(:answer, 3, created_at: 3.hours.ago, status: :error_timeout)
       create(:answer, created_at: 26.hours.ago, status: :error_timeout)
-      create(:answer, status: :success)
+      create(:answer, status: :answered)
       create(:answer, status: :unanswerable_llm_cannot_answer)
 
       get admin_metrics_answer_error_statuses_path
@@ -360,7 +360,7 @@ RSpec.describe "Admin::MetricsController" do
       it "returns data of answers with error status grouped by status and day" do
         create_list(:answer, 5, created_at: 1.day.ago, status: :error_non_specific)
         create_list(:answer, 3, created_at: 6.days.ago, status: :error_timeout)
-        create(:answer, status: :success)
+        create(:answer, status: :answered)
         create(:answer, status: :unanswerable_llm_cannot_answer)
 
         get admin_metrics_answer_error_statuses_path(period: "last_7_days")

@@ -25,7 +25,7 @@ module AnswerComposition::Pipeline
 
       set_context_sources
 
-      context.answer.assign_attributes(message:, status: "success")
+      context.answer.assign_attributes(message:, status: "answered")
       context.answer.assign_metrics("structured_answer", build_metrics(start_time))
     end
 

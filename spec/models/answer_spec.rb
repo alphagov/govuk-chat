@@ -63,11 +63,11 @@ RSpec.describe Answer do
         create(:answer,
                question_routing_label: "about_mps",
                answer_guardrails_failures: %w[guardrail_1 guardrail_2],
-               status: "success")
+               status: "answered")
         create(:answer,
                question_routing_label: "about_mps",
                answer_guardrails_failures: %w[guardrail_1],
-               status: "success")
+               status: "answered")
         create(:answer,
                question_routing_label: "about_mps",
                answer_guardrails_failures: %w[guardrail_1],
@@ -75,15 +75,15 @@ RSpec.describe Answer do
         create(:answer,
                question_routing_label: "genuine_rag",
                answer_guardrails_failures: %w[guardrail_1 guardrail_2],
-               status: "success")
+               status: "answered")
         create(:answer,
                question_routing_label: "genuine_rag",
                answer_guardrails_failures: %w[guardrail_1],
-               status: "success")
+               status: "answered")
         create(:answer,
                question_routing_label: "genuine_rag",
                answer_guardrails_failures: [],
-               status: "success")
+               status: "answered")
 
         counts = described_class.group(:question_routing_label)
                                 .group(:answer_guardrails_failures)
@@ -91,11 +91,11 @@ RSpec.describe Answer do
                                 .count_guardrails_failures(:answer_guardrails_failures)
 
         expect(counts).to eq({
-          %w[about_mps guardrail_1 success] => 2,
+          %w[about_mps guardrail_1 answered] => 2,
           %w[about_mps guardrail_1 guardrails_answer] => 1,
-          %w[about_mps guardrail_2 success] => 1,
-          %w[genuine_rag guardrail_1 success] => 2,
-          %w[genuine_rag guardrail_2 success] => 1,
+          %w[about_mps guardrail_2 answered] => 1,
+          %w[genuine_rag guardrail_1 answered] => 2,
+          %w[genuine_rag guardrail_2 answered] => 1,
         })
       end
     end
