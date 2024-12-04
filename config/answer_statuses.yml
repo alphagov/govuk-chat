@@ -15,7 +15,7 @@ pending:
   label_and_description:
 clarification: # replaces abort_question_routing and abort_question_routing_token_limit (status depends on question routing label)
   label: "Clarification"
-  label_colour: "turqoise"
+  label_colour: "turquoise"
   description: "question routing requested more information"
   label_and_description: "Clarification - question routing requested more information"
 unanswerable_question_routing: # replaces abort_question_routing and abort_question_routing_token_limit (status depends on question routing label)
