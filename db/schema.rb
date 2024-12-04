@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_03_113221) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_04_092504) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -18,13 +18,13 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_03_113221) do
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "answer_status", ["answered", "banned", "clarification", "error_answer_guardrails", "error_answer_service_error", "error_context_length_exceeded", "error_jailbreak_guardrails", "error_non_specific", "error_question_routing_guardrails", "error_timeout", "guardrails_answer", "guardrails_forbidden_terms", "guardrails_jailbreak", "guardrails_question_routing", "unanswerable_llm_cannot_answer", "unanswerable_no_govuk_content", "unanswerable_question_routing"]
   create_enum "deleted_early_access_user_deletion_type", ["unsubscribe", "admin"]
   create_enum "deleted_waiting_list_user_deletion_type", ["unsubscribe", "admin", "promotion"]
   create_enum "early_access_user_source", ["admin_added", "instant_signup", "admin_promoted", "delayed_signup"]
   create_enum "guardrails_status", ["pass", "fail", "error"]
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar"]
   create_enum "settings_downtime_type", ["temporary", "permanent"]
-  create_enum "status", ["success", "error_non_specific", "error_answer_service_error", "error_context_length_exceeded", "abort_no_govuk_content", "abort_llm_cannot_answer", "abort_question_routing", "error_timeout", "abort_forbidden_terms", "abort_jailbreak_guardrails", "error_jailbreak_guardrails", "abort_answer_guardrails", "error_answer_guardrails", "abort_question_routing_token_limit", "abort_question_routing_guardrails", "error_question_routing_guardrails", "abort_user_shadow_banned", "answered", "banned", "clarification", "guardrails_answer", "guardrails_forbidden_terms", "guardrails_jailbreak", "guardrails_question_routing", "unanswerable_llm_cannot_answer", "unanswerable_no_govuk_content", "unanswerable_question_routing"]
   create_enum "ur_question_found_chat", ["govuk_website", "govuk_blog", "social_media", "news", "personal_contact", "professional_contact", "official_government_announcement", "search_engine", "other"]
   create_enum "ur_question_reason_for_visit", ["find_specific_answer", "complete_task", "understand_process", "research_topic", "other"]
   create_enum "ur_question_user_description", ["business_owner_or_self_employed", "starting_business_or_becoming_self_employed", "business_advisor", "business_administrator", "none"]
@@ -76,7 +76,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_03_113221) do
     t.string "rephrased_question"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.enum "status", null: false, enum_type: "status"
+    t.enum "status", null: false, enum_type: "answer_status"
     t.string "error_message"
     t.enum "answer_guardrails_status", enum_type: "guardrails_status"
     t.string "answer_guardrails_failures", default: [], array: true
