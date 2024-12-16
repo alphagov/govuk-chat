@@ -49,7 +49,7 @@ guardrails_question_routing:
   description: "question routing guardrails triggered"
   label_and_description: "Guardrails - question routing guardrails triggered"
 banned:
-  label: "Abort"
+  label: "Banned"
   label_colour: "purple"
   description: "user cannot generate answers due to shadow banning"
   label_and_description: "Banned - user cannot generate answers due to shadow banning"
