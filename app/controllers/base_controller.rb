@@ -15,7 +15,12 @@ private
     response.headers["No-Fallback"] = "true"
 
     status = settings.downtime_type_temporary? ? :service_unavailable : :gone
-    render "downtime/unavailable", status:, layout: "application"
+
+    if status == :service_unavailable
+      render "downtime/unavailable", status:, layout: "application"
+    elsif status == :gone
+      render "downtime/shutdown", status:, layout: "application"
+    end
   end
 
   def settings
