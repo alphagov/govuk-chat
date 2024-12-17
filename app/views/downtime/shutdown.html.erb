@@ -1,6 +1,7 @@
 <%
   content_for(:browser_title, "GOV.UK Chat is closed")
   title = "GOV.UK Chat is closed"
+  assign_homepage_layout_classes
 %>
 
 <div class="govuk-grid-row">
@@ -20,4 +21,6 @@
         </p>
       </div>
   </div>
+
+  <%= render "homepage/landing_page_animation" %>
 </div>
