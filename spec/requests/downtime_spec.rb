@@ -31,6 +31,11 @@ RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" 
       get homepage_path
       expect(response.body).not_to include("Help and support")
     end
+
+    it "doesn't clobber error pages" do
+      get "/404"
+      expect(response).to have_http_status(:not_found)
+    end
   end
 
   context "when public_access_enabled is false and downtime_type is temporary" do

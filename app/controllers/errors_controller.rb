@@ -2,6 +2,7 @@ class ErrorsController < BaseController
   skip_before_action :verify_authenticity_token
   skip_before_action :ensure_signon_user_if_required
   skip_before_action :ensure_early_access_user_if_required
+  skip_before_action :check_chat_public_access
   after_action { response.headers["No-Fallback"] = "true" }
 
   def bad_request
