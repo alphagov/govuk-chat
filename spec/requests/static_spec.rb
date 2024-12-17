@@ -40,6 +40,29 @@ RSpec.describe "StaticController" do
         .and have_link("Back to start page", href: homepage_path)
     end
 
+    context "when public access is enabled" do
+      before { Settings.instance.update!(public_access_enabled: true) }
+
+      it "renders the support link correctly" do
+        get about_path
+        expect(response.body)
+          .to have_link("get help and support with GOV.UK Chat", href: support_path)
+      end
+    end
+
+    context "when public access is disabled" do
+      before { Settings.instance.update!(public_access_enabled: false) }
+
+      it "renders the support link correctly" do
+        get about_path
+        expect(response.body)
+          .to have_link(
+            "get help and support with GOV.UK Chat",
+            href: "https://surveys.publishing.service.gov.uk/s/govuk-chat-support/",
+          )
+      end
+    end
+
     include_examples "caches the page", :about_path
     include_examples "operates when public access is disabled", :about_path
   end
