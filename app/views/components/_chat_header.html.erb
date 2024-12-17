@@ -7,10 +7,7 @@
   data_attributes = { module: "chat-header" }
   data_attributes[:add_print_utility] = true if conversation
 
-  navigation_items ||= [
-    { text: "About", href: url_helpers.about_path },
-    { text: "Help and support", href: url_helpers.support_path },
-  ]
+  navigation_items ||= []
 
   if signed_in
     navigation_items << {

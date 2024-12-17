@@ -19,6 +19,38 @@
     GovukError.notify(e)
     early_access_user = nil
   end
+
+  public_access_enabled = settings.public_access_enabled? rescue true
+
+  header_navigation_items = [
+    {
+      href: about_url,
+      text: "About",
+    },
+    ({
+      href: support_url,
+      text: "Help and support",
+    } if public_access_enabled),
+  ].compact
+
+  footer_link_items = [
+    {
+      href: about_url,
+      text: "About GOV.UK Chat",
+    },
+    ({
+      href: support_url,
+      text: "Help and support",
+    } if public_access_enabled),
+    {
+      href: privacy_url,
+      text: "Privacy",
+    },
+    {
+      href: accessibility_url,
+      text: "Accessibility",
+    },
+  ].compact
 %>
 <!DOCTYPE html>
 <%= tag.html(class: html_classes, lang: "en") do %>
@@ -57,6 +89,7 @@
       signed_in: early_access_user.present?,
       conversation: conversation_layout,
       active_conversation:,
+      navigation_items: header_navigation_items,
     } %>
 
     <% if conversation_layout %>
@@ -93,28 +126,7 @@
           </div>
         <% end %>
 
-        <%= render "govuk_publishing_components/components/layout_footer", {
-          meta: {
-            items: [
-              {
-                href: about_url,
-                text: "About GOV.UK Chat",
-              },
-              {
-                href: support_url,
-                text: "Help and support",
-              },
-              {
-                href: privacy_url,
-                text: "Privacy",
-              },
-              {
-                href: accessibility_url,
-                text: "Accessibility",
-              },
-            ],
-          },
-        } %>
+        <%= render "govuk_publishing_components/components/layout_footer", { meta: { items: footer_link_items } } %>
       </div>
     <% end %>
 

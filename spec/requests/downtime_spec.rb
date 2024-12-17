@@ -26,6 +26,11 @@ RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" 
       get homepage_path
       expect(response.headers["No-Fallback"]).to eq("true")
     end
+
+    it "doesn't render the help and support link in the header of footer" do
+      get homepage_path
+      expect(response.body).not_to include("Help and support")
+    end
   end
 
   context "when public_access_enabled is false and downtime_type is temporary" do
