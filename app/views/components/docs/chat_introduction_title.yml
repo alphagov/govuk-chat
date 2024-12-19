@@ -1,0 +1,21 @@
+name: Chat Introduction title
+description: An h1 title with a GOV.UK Chat logo and optional standfirst content
+accessibility_criteria: |
+  The page title must:
+
+  * be part of a correct heading structure for a page
+  * be semantically represented as a heading
+  * convey the heading level
+
+  The lead paragraph(s) must:
+
+  * be visually distinct from other paragraphs.
+  * must have a text contrast ratio higher than 4.5:1 against the background colour to meet WCAG AA
+examples:
+  default:
+    data:
+      title: Title
+  with_standfirst_paragraphs:
+    data:
+      title: Title
+      standfirst_paragraphs: [ "Example standfirst paragraph." ]

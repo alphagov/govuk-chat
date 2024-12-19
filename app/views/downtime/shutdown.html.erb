@@ -1,0 +1,19 @@
+<%
+  title = "The GOV.UK Chat trial has closed"
+  content_for(:browser_title, title)
+  assign_homepage_layout_classes
+%>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <%= render "components/chat_introduction_title", {
+      title:,
+      standfirst_paragraphs: [
+        "You can no longer access previous conversations or sign up.",
+        "Thank you for participating in the trial.",
+      ],
+    } %>
+  </div>
+
+  <%= render "homepage/landing_page_animation" %>
+</div>

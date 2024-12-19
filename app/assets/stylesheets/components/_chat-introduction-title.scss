@@ -1,0 +1,40 @@
+.app-c-chat-introduction-title {
+  padding-top: 40px;
+}
+
+.app-c-chat-introduction-title__svg-container {
+  line-height: 0;
+
+  @include govuk-media-query($until: 480px) {
+    margin-bottom: govuk-spacing(6);
+  }
+}
+
+.app-c-chat-introduction-title__svg {
+  @include govuk-media-query($until: 500px) {
+    height: 60px;
+    width: 60px;
+  }
+}
+
+.app-c-chat-introduction-title__title {
+  margin: govuk-spacing(6) 0 govuk-spacing(5);
+  @include govuk-font($size: 48, $weight: bold);
+
+  @include govuk-media-query($from: tablet, $until: 1919px) {
+    @include govuk-font-size(36, $line-height: false, $important: false);
+  }
+}
+
+.app-c-chat-introduction-title__lead-paragraph {
+  margin-bottom: govuk-spacing(6);
+  @include govuk-font($size: 36, $weight: regular);
+
+  @include govuk-media-query($from: tablet) {
+    margin-bottom: govuk-spacing(7);
+  }
+
+  @include govuk-media-query($from: 1919px) {
+    @include govuk-font-size(48, $line-height: false, $important: false);
+  }
+}

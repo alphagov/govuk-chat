@@ -1,13 +1,13 @@
 name: Chat Introduction
 description: A branded introduction to GOV.UK Chat for use on the landing page.
 accessibility_criteria: |
-  The page title must:
+  Page titles in the component must:
 
   * be part of a correct heading structure for a page
   * be semantically represented as a heading
   * convey the heading level
 
-  The lead paragraph must:
+  Lead paragraphs in the component must:
 
   * be visually distinct from other paragraphs.
   * must have a text contrast ratio higher than 4.5:1 against the background colour to meet WCAG AA

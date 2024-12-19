@@ -1,11 +1,5 @@
 RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" do
-  shared_examples "prevents access to routes" do |status|
-    it "renders service unavailable content, with a #{status} status" do
-      get homepage_path
-      expect(response).to have_http_status(status)
-      expect(response.body).to match(/GOV.UK Chat is not currently available/)
-    end
-
+  shared_examples "prevents access to routes" do
     it "caches the response for 1 minute" do
       get homepage_path
       expect(response.headers["Cache-Control"]).to eq("max-age=60, public")
@@ -41,13 +35,25 @@ RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" 
   context "when public_access_enabled is false and downtime_type is temporary" do
     before { create(:settings, public_access_enabled: false, downtime_type: :temporary) }
 
-    include_examples "prevents access to routes", :service_unavailable
+    it "renders service unavailable content, with a service_unavailable status" do
+      get homepage_path
+      expect(response).to have_http_status(:service_unavailable)
+      expect(response.body).to match(/GOV.UK Chat is not currently available/)
+    end
+
+    include_examples "prevents access to routes"
   end
 
   context "when public_access_enabled is false and downtime_type is permanent" do
     before { create(:settings, public_access_enabled: false, downtime_type: :permanent) }
 
-    include_examples "prevents access to routes", :gone
+    it "renders shutdown content, with a gone status" do
+      get homepage_path
+      expect(response).to have_http_status(:gone)
+      expect(response.body).to match(/The GOV.UK Chat trial has closed/)
+    end
+
+    include_examples "prevents access to routes"
   end
 
   context "when public_access_enabled is true" do
