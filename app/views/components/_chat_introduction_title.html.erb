@@ -1,21 +1,15 @@
 <%
-  title ||= nil
-  with_logo ||= false
-  standfirst_paragraphs ||= nil
+  standfirst_paragraphs ||= []
 %>
 
 <div class="app-c-chat-introduction-title">
-  <% if with_logo %>
-    <%= content_tag :div, class: "app-c-chat-introduction-title__svg-container" do %>
-      <%= inline_svg_tag "components/chat_introduction/govuk-chat-chat-introduction-icon.svg", aria_hidden: true %>
-    <% end %>
+  <%= content_tag :div, class: "app-c-chat-introduction-title__svg-container" do %>
+    <%= inline_svg_tag "components/chat_introduction_title/govuk-chat-chat-introduction-icon.svg", class: "app-c-chat-introduction-title__svg", aria_hidden: true %>
   <% end %>
 
   <%= content_tag(:h1, title, class: "app-c-chat-introduction-title__title") %>
 
-  <% if standfirst_paragraphs %>
-    <% standfirst_paragraphs.each do |item| %>
-      <%= content_tag(:p, item, class: "app-c-chat-introduction-title__lead-paragraph govuk-body") %>
-    <% end %>
+  <% standfirst_paragraphs.each do |item| %>
+    <%= content_tag(:p, item, class: "app-c-chat-introduction-title__lead-paragraph govuk-body") %>
   <% end %>
 </div>

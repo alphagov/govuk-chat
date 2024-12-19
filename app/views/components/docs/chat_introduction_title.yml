@@ -1,5 +1,5 @@
 name: Chat Introduction title
-description: An h1 title with an optional GOV.UK Chat logo and standfirst content
+description: An h1 title with a GOV.UK Chat logo and optional standfirst content
 accessibility_criteria: |
   The page title must:
 
@@ -15,10 +15,6 @@ examples:
   default:
     data:
       title: Title
-  with_logo:
-    data:
-      title: Title
-      with_logo: true
   with_standfirst_paragraphs:
     data:
       title: Title

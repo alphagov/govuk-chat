@@ -7,19 +7,8 @@ RSpec.describe "components/_chat_introduction_title.html.erb" do
     expect(rendered)
       .to have_selector(".app-c-chat-introduction-title")
       .and have_selector(".app-c-chat-introduction-title__title", text: "Try GOV.UK Chat")
-  end
-
-  context "when with_logo is true" do
-    it "renders the chat logo" do
-      render("components/chat_introduction_title", {
-        title: "Title",
-        with_logo: true,
-      })
-
-      expect(rendered)
-        .to have_selector(".app-c-chat-introduction-title__svg-container")
-        .and have_selector(".app-c-chat-introduction-title__svg")
-    end
+      .and have_selector(".app-c-chat-introduction-title__svg-container")
+      .and have_selector(".app-c-chat-introduction-title__svg")
   end
 
   context "when standfirst paragraphs are provided" do
