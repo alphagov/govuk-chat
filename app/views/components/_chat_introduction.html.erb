@@ -15,12 +15,11 @@
 %>
 
 <%= content_tag :div, class: wrapper_classes do %>
-  <%= content_tag :div, class: "app-c-chat-introduction__svg-container" do %>
-    <%= inline_svg_tag "components/chat_introduction/govuk-chat-chat-introduction-icon.svg", aria_hidden: true %>
-  <% end %>
-
-  <%= content_tag(:h1, title, class: "app-c-chat-introduction__title") %>
-  <%= content_tag(:p, "An experimental new way to find answers to your business questions, powered by AI", class: "app-c-chat-introduction__lead-paragraph govuk-body") %>
+  <%= render "components/chat_introduction_title", {
+    with_logo: true,
+    title:,
+    standfirst_paragraphs: ["An experimental new way to find answers to your business questions, powered by AI"],
+  } %>
 
   <% if signed_in_user_email %>
     <%= render "components/blue_button", {

@@ -6,20 +6,14 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-      <div class="app-c-chat-introduction">
-        <%= content_tag :div, class: "app-c-chat-introduction__svg-container" do %>
-          <%= inline_svg_tag "components/chat_introduction/govuk-chat-chat-introduction-icon.svg", aria_hidden: true %>
-        <% end %>
-
-        <%= content_tag(:h1, title, class: "app-c-chat-introduction__title") %>
-
-        <p class="app-c-chat-introduction__lead-paragraph govuk-body">
-          You can no longer access previous conversations or sign up.
-        </p>
-        <p class="app-c-chat-introduction__lead-paragraph govuk-body">
-          Thank you for participating in the trial.
-        </p>
-      </div>
+    <%= render "components/chat_introduction_title", {
+      with_logo: true,
+      title:,
+      standfirst_paragraphs: [
+        "You can no longer access previous conversations or sign up.",
+        "Thank you for participating in the trial.",
+      ],
+    } %>
   </div>
 
   <%= render "homepage/landing_page_animation" %>
