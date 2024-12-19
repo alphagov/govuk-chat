@@ -106,7 +106,7 @@ RSpec.describe "StaticController" do
 
       it "renders the shutdown template" do
         get support_path
-        expect(response.body).to include("GOV.UK Chat is closed")
+        expect(response.body).to include("The GOV.UK Chat trial has closed")
       end
     end
   end

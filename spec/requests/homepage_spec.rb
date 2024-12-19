@@ -16,7 +16,7 @@ RSpec.describe "HomepageController" do
 
         expect(response).to have_http_status(:ok)
         expect(response.body)
-          .to have_selector(".app-c-chat-introduction__title", text: "Try GOV.UK Chat")
+          .to have_selector(".app-c-chat-introduction-title__title", text: "Try GOV.UK Chat")
       end
     end
 
@@ -30,7 +30,7 @@ RSpec.describe "HomepageController" do
 
         expect(response).to have_http_status(:ok)
         expect(response.body)
-          .to have_selector(".app-c-chat-introduction__title", text: "GOV.UK Chat")
+          .to have_selector(".app-c-chat-introduction-title__title", text: "GOV.UK Chat")
       end
     end
 

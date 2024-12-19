@@ -50,7 +50,7 @@ RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" 
     it "renders shutdown content, with a gone status" do
       get homepage_path
       expect(response).to have_http_status(:gone)
-      expect(response.body).to match(/GOV.UK Chat is closed/)
+      expect(response.body).to match(/The GOV.UK Chat trial has closed/)
     end
 
     include_examples "prevents access to routes"
