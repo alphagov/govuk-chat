@@ -61,7 +61,7 @@ module SignUpRequestExamples
             process(method.to_sym, public_send(path.to_sym))
             expect(response).to have_http_status(:forbidden)
             expect(response.body)
-              .to have_selector(".govuk-heading-xl", text: "Sign up is currently closed")
+              .to have_selector(".govuk-heading-xl", text: "Sign up is now closed")
           end
         end
       end
