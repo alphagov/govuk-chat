@@ -12,7 +12,7 @@ RSpec.describe AnswerComposition::ForbiddenTermsChecker do
   let(:answer_message) { "clean answer message" }
 
   before do
-    allow(Rails.configuration).to receive(:forbidden_terms).and_return(Set.new(["badterm", "extra bad term"]))
+    allow(Rails.configuration.govuk_chat_private).to receive(:forbidden_terms).and_return(Set.new(["badterm", "extra bad term"]))
   end
 
   it "assigns the forbidden_terms_checker metric to the metrics values on the answer" do

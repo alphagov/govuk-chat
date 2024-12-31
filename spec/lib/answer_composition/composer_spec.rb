@@ -139,7 +139,7 @@ RSpec.describe AnswerComposition::Composer do
       let(:answer) { build(:answer, message: "message with badword") }
 
       before do
-        allow(Rails.configuration).to receive(:forbidden_terms).and_return(Set.new(%w[badword]))
+        allow(Rails.configuration.govuk_chat_private).to receive(:forbidden_terms).and_return(Set.new(%w[badword]))
         allow(AnswerComposition::OpenAIAnswer).to receive(:call).and_return(answer)
       end
 
