@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/alphagov/govuk_chat_private.git
+  revision: 0b51219d105dacd79751c04c50925b6e0aac3a83
+  specs:
+    govuk_chat_private (0.0.1)
+      activesupport (>= 8)
+      railties (>= 8)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -852,6 +860,7 @@ DEPENDENCIES
   gds-sso
   google-cloud-bigquery
   govuk_app_config
+  govuk_chat_private!
   govuk_message_queue_consumer
   govuk_publishing_components
   govuk_schemas
