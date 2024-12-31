@@ -156,12 +156,7 @@ GEM
     faraday-typhoeus (1.1.0)
       faraday (~> 2.0)
       typhoeus (~> 1.4)
-    ffi (1.17.0-aarch64-linux-gnu)
-    ffi (1.17.0-arm-linux-gnu)
-    ffi (1.17.0-arm64-darwin)
-    ffi (1.17.0-x86-linux-gnu)
-    ffi (1.17.0-x86_64-darwin)
-    ffi (1.17.0-x86_64-linux-gnu)
+    ffi (1.17.0)
     gds-api-adapters (98.2.0)
       addressable
       link_header
@@ -205,21 +200,6 @@ GEM
     google-cloud-errors (1.4.0)
     google-logging-utils (0.1.0)
     google-protobuf (4.29.2)
-      bigdecimal
-      rake (>= 13)
-    google-protobuf (4.29.2-aarch64-linux)
-      bigdecimal
-      rake (>= 13)
-    google-protobuf (4.29.2-arm64-darwin)
-      bigdecimal
-      rake (>= 13)
-    google-protobuf (4.29.2-x86-linux)
-      bigdecimal
-      rake (>= 13)
-    google-protobuf (4.29.2-x86_64-darwin)
-      bigdecimal
-      rake (>= 13)
-    google-protobuf (4.29.2-x86_64-linux)
       bigdecimal
       rake (>= 13)
     googleapis-common-protos-types (1.16.0)
@@ -898,7 +878,7 @@ DEPENDENCIES
   webmock
 
 RUBY VERSION
-   ruby 3.3.6p108
+   ruby 3.4.1p0
 
 BUNDLED WITH
-   2.5.16
+   2.6.2
