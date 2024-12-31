@@ -78,15 +78,6 @@ module GovukChat
       api_key_secret: ENV["SMART_SURVEY_API_KEY_SECRET"],
     )
 
-    config.llm_prompts = ActiveSupport::OrderedOptions.new
-    Dir[Rails.root.join("config/llm_prompts/*.yml")].each do |path|
-      # use symbolize keys so top level keys can be accessed as an object, for
-      # example config.llm_prompts.openai_structured_answer
-      prompts = YAML.load_file(path, aliases: true).symbolize_keys
-      # allow naviagating prompt hashes via symbols or strings
-      config.llm_prompts.merge!(prompts.transform_values(&:with_indifferent_access))
-    end
-
     config.answer_statuses = Hashie::Mash.new(YAML.load_file("#{__dir__}/answer_statuses.yml"))
     config.question_routing_labels = Hashie::Mash.new(YAML.load_file("#{__dir__}/question_routing_labels.yml"))
     config.search = Hashie::Mash.new(YAML.load_file("#{__dir__}/search.yml"))
