@@ -31,6 +31,24 @@ Copy the `.env.example` file to `.env` and ask a team member for the values to u
 cp .env.example .env
 ```
 
+### Installing dependencies
+
+GOV.UK Chat uses the [govuk_chat_private](https://github.com/alphagov/govuk_chat_private) gem to provide some configuration files. This gem is hosted on a private Github repo, so it needs authentication to install it.
+
+Generate a personal access token (PAT) on Github [here](https://github.com/settings/personal-access-tokens/new). Scope the token to only allow access to the `govuk_chat_private` repo. Under the "Repository permissions" section, select "read only" under the "Contents" section.
+
+Configure Bundler to use the PAT:
+
+```bash
+bundle config --local github.com <token>
+```
+
+You can then install the dependencies like normal.
+
+```
+bundle
+```
+
 ### Running the test suite
 
 ```
