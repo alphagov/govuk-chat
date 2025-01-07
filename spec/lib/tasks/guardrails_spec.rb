@@ -34,7 +34,7 @@ RSpec.describe "rake guardrails tasks" do
           expect(Guardrails::MultipleChecker).to receive(:call).exactly(examples).times.and_call_original
 
           expect { Rake::Task[task_name].invoke(:answer_guardrails, dataset_path, temp.path) }
-            .to output(/count=>[\s\S]*Full results/).to_stdout
+            .to output(/count:[\s\S]*Full results/).to_stdout
           results = JSON.parse(File.read(temp.path))
 
           expect(results).to be_a(Hash)
@@ -59,7 +59,7 @@ RSpec.describe "rake guardrails tasks" do
     context "without an output path" do
       it "outputs the full structure to the console" do
         expect { Rake::Task[task_name].invoke(:question_routing_guardrails, dataset_path) }
-          .to output(/count=>[\s\S]*failures=>/).to_stdout
+          .to output(/count:[\s\S]*failures:/).to_stdout
       end
     end
   end

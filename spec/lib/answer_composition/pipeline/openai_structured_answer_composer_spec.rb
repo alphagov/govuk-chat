@@ -24,11 +24,11 @@ RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chu
     end
 
     it "sends OpenAI a series of messages combining system prompt and the user question" do
-      system_prompt_context = "[{:page_url=>\"link_1\", " \
-                              ":page_title=>\"Title\", " \
-                              ":page_description=>\"Description\", " \
-                              ":context_headings=>[\"Heading 1\", \"Heading 2\"], " \
-                              ":context_content=>\"<p>Some content</p><a href=\\\"link_2\\\">What is a tax?</a>\"}]"
+      system_prompt_context = "[{page_url: \"link_1\", " \
+                              "page_title: \"Title\", " \
+                              "page_description: \"Description\", " \
+                              "context_headings: [\"Heading 1\", \"Heading 2\"], " \
+                              "context_content: \"<p>Some content</p><a href=\\\"link_2\\\">What is a tax?</a>\"}]"
       expected_message_history = [
         { role: "system", content: system_prompt(system_prompt_context) },
         { role: "user", content: question.message },
