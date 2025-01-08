@@ -89,7 +89,7 @@ RSpec.describe "Chat Onboarding" do
 
   def then_i_see_the_chat_prompt
     expect(page).to have_content(/Okay/)
-    expect(page).to have_content(/To get started, ask a question./)
+    expect(page).to have_content(/To get started, ask me a question./)
 
     expect(page).to have_css(".js-question-form-group")
   end
