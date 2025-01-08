@@ -1,7 +1,6 @@
 <%
   input_id ||= "#{name.parameterize}-#{SecureRandom.hex(4)}"
   value ||= nil
-  user_id ||= nil
 
   maxlength = Form::CreateQuestion::USER_QUESTION_LENGTH_MAXIMUM
   presence_error_message = Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE
@@ -121,23 +120,4 @@
       <% end %>
     <% end %>
   <% end %>
-
-  <%= link_to(
-    "Share your feedback (opens in a new tab)",
-    "https://surveys.publishing.service.gov.uk/s/govuk-chat-beta/?user=#{user_id}",
-    class: "govuk-body govuk-link govuk-link--no-visited-state app-c-question-form__survey-link js-survey-link",
-    target: "_blank",
-    rel: "noopener noreferrer",
-    data: {
-      module: "ga4-link-tracker",
-      ga4_link: {
-        "event_name": "navigation",
-        "type": "generic link",
-        "index": {
-          "index_link": 1,
-        },
-        "index_total": 1,
-      },
-    },
-  ) %>
 <% end %>

@@ -17,20 +17,6 @@ RSpec.describe "components/_question_form.html.erb" do
         .and have_selector(".app-c-blue-button")
       expect(rendered).not_to have_selector(".app-c-question-form__error-message")
     end
-
-    expect(rendered).to have_link("Share your feedback (opens in a new tab)")
-  end
-
-  it "includes a user id if one is provided" do
-    user_id = SecureRandom.uuid
-    render("components/question_form", {
-      url: "/conversation",
-      name: "name",
-      user_id:,
-    })
-
-    expect(rendered)
-      .to have_link("Share your feedback (opens in a new tab)", href: /\?user=#{user_id}/)
   end
 
   it "includes data attributes of server side validation parameters" do
