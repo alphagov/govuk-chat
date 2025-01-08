@@ -14,8 +14,3 @@ examples:
     data:
       url: "/answer-feedback"
       question_message: "How do I apply for teacher training?"
-  with_user_id:
-    data:
-      url: "/answer-feedback"
-      question_message: "Example with user id"
-      user_id: "some-id-1"

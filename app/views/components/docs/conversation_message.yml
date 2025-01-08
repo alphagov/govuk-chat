@@ -99,5 +99,4 @@ examples:
       message: "This is a system generated conversation message with a feedback component."
       question_message: "How do I apply for teacher training?"
       feedback_url: "http://example.com"
-      user_id: "some-id-5"
       

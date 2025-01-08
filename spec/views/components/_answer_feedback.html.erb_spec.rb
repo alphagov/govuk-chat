@@ -15,7 +15,7 @@ RSpec.describe "components/_answer_feedback.html.erb" do
       end
   end
 
-  it "renders a hidden div with a thank you message and survey link" do
+  it "renders a hidden div with a thank you message" do
     user_id = SecureRandom.uuid
     render("components/answer_feedback", {
       url: "/answer-feedback",
@@ -27,10 +27,7 @@ RSpec.describe "components/_answer_feedback.html.erb" do
       .to have_selector(
         ".app-c-answer-feedback__feedback-submitted",
         visible: :hidden,
-        text: /Thanks./,
+        text: /Thanks for your feedback./,
       )
-    .and have_link("Share feedback about your chat (opens in a new tab)",
-                   href: /\?user=#{user_id}/,
-                   visible: :hidden)
   end
 end
