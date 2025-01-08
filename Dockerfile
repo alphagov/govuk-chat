@@ -8,6 +8,11 @@ FROM --platform=$TARGETPLATFORM $builder_image AS builder
 ENV SECRET_KEY_BASE_DUMMY=1
 
 WORKDIR $APP_HOME
+
+# This is to workaround an issue with the 0.0.10 release of tiktoken_ruby.
+# It should be removable once upgraded to > 0.0.10
+RUN apt-get install -y clang libclang-dev
+
 COPY Gemfile* .ruby-version ./
 RUN bundle install
 COPY . .
