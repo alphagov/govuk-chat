@@ -18,9 +18,6 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
     and_i_click_on_the_check_answer_button
     then_i_see_my_second_question_on_the_page
     and_i_can_see_the_second_answer
-
-    when_10_minutes_have_passed
-    then_i_receive_a_survey_email
   end
 
   def when_i_visit_the_conversation_page
@@ -104,14 +101,5 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
 
   def then_i_see_my_second_question_on_the_page
     expect(page).to have_content(@second_question)
-  end
-
-  def when_10_minutes_have_passed
-    travel_to 10.minutes.from_now
-  end
-
-  def then_i_receive_a_survey_email
-    mail = ActionMailer::Base.deliveries.last
-    expect(mail.subject).to eq("Share your experience of GOV.UK Chat")
   end
 end

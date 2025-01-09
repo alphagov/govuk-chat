@@ -263,7 +263,7 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   def then_i_am_thanked_for_my_feedback
-    expect(page).to have_content("Thanks.")
+    expect(page).to have_content("Thanks for your feedback.")
   end
 
   def when_i_type_in_a_question_approaching_the_character_count_limit

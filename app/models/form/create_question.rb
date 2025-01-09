@@ -30,12 +30,6 @@ class Form::CreateQuestion
     user = conversation.user
     user&.increment!(:questions_count)
 
-    if user&.questions_count == 1
-      EarlyAccessUserFeedbackMailer
-        .request_feedback(user)
-        .deliver_later(wait_until: 10.minutes.from_now)
-    end
-
     if user&.shadow_banned?
       ComposeAnswerJob.set(wait: rand(5..20).seconds).perform_later(question.id)
     else
