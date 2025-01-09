@@ -31,18 +31,6 @@
   z-index: -1;
 }
 
-.app-landing-page-layout__flex-container {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  justify-content: space-between;
-  
-  // This is to include .app-landing-page-layout__flex-container in the stacking context of the landing page.
-  // Without this z-index property, this element was overlaying the main element and therefore preventing interactive 
-  // elements, such as the start button, from being used.
-  z-index: -1;
-}
-
 .app-landing-page-layout__animation {
   animation: landing-page-animation 0.75s ease-in-out;
   position: absolute;
