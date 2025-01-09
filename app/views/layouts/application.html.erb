@@ -95,39 +95,37 @@
     <% if conversation_layout %>
       <%= yield(:content) %>
     <% else %>
-      <div class="app-landing-page-layout__flex-container">
-        <%= tag.main(class: main_classes, id: "content", role: "main") do %>
-          <div class="govuk-width-container">
-            <%= yield(:back_link) %>
+      <%= tag.main(class: main_classes, id: "content", role: "main") do %>
+        <div class="govuk-width-container">
+          <%= yield(:back_link) %>
 
-            <div class="govuk-grid-row">
-              <div class="govuk-grid-column-full">
-                <% if content_for?(:error_summary) %>
-                  <%= yield(:error_summary) %>
-                <% end %>
-              </div>
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+              <% if content_for?(:error_summary) %>
+                <%= yield(:error_summary) %>
+              <% end %>
             </div>
           </div>
+        </div>
 
-          <% if page_title %>
-            <div class="govuk-width-container">
-              <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                  <%= render "govuk_publishing_components/components/title", {
-                    title: page_title,
-                  } %>
-                </div>
+        <% if page_title %>
+          <div class="govuk-width-container">
+            <div class="govuk-grid-row">
+              <div class="govuk-grid-column-two-thirds">
+                <%= render "govuk_publishing_components/components/title", {
+                  title: page_title,
+                } %>
               </div>
             </div>
-          <% end %>
-
-          <div class="govuk-width-container">
-            <%= yield %>
           </div>
         <% end %>
 
-        <%= render "govuk_publishing_components/components/layout_footer", { meta: { items: footer_link_items } } %>
-      </div>
+        <div class="govuk-width-container">
+          <%= yield %>
+        </div>
+      <% end %>
+
+      <%= render "govuk_publishing_components/components/layout_footer", { meta: { items: footer_link_items } } %>
     <% end %>
 
     <%= javascript_include_tag "application", type: "module", nonce: true %>
