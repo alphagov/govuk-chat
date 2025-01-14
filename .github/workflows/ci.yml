@@ -21,6 +21,8 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+        env:
+          BUNDLE_GITHUB__COM: "x-access-token:${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}"
 
       - name: Run Brakeman
         run: bundle exec brakeman .
@@ -48,17 +50,23 @@ jobs:
   lint-erb:
     name: Lint ERB
     uses: ./.github/workflows/linterb.yml
+    secrets: inherit
 
   lint-ruby:
     name: Lint Ruby
     uses: alphagov/govuk-infrastructure/.github/workflows/rubocop.yml@main
+    secrets:
+      BUNDLER_GITHUB_TOKEN: ${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}
 
   test-javascript:
     name: Test JavaScript
     uses: alphagov/govuk-infrastructure/.github/workflows/jasmine.yml@main
     with:
       useWithRails: true
+    secrets:
+      BUNDLER_GITHUB_TOKEN: ${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}
 
   test-ruby:
     name: Test Ruby
     uses: ./.github/workflows/rspec.yml
+    secrets: inherit
