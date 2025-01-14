@@ -52,12 +52,16 @@ jobs:
   lint-ruby:
     name: Lint Ruby
     uses: alphagov/govuk-infrastructure/.github/workflows/rubocop.yml@main
+    secrets:
+      BUNDLER_GITHUB_TOKEN: ${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}
 
   test-javascript:
     name: Test JavaScript
     uses: alphagov/govuk-infrastructure/.github/workflows/jasmine.yml@main
     with:
       useWithRails: true
+    secrets:
+      BUNDLER_GITHUB_TOKEN: ${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}
 
   test-ruby:
     name: Test Ruby
