@@ -32,6 +32,9 @@ jobs:
       id-token: write
       contents: read
       packages: write
+    secrets:
+      BUILD_SECRETS: |
+        "BUNDLE_GITHUB__COM=x-access-token:${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}"
   trigger-deploy:
     name: Trigger deploy to ${{ inputs.environment || 'integration' }}
     needs: build-and-publish-image
