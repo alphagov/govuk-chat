@@ -12,20 +12,13 @@ on:
 jobs:
   security-analysis:
     name: Security Analysis
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          show-progress: false
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-        env:
-          BUNDLE_GITHUB__COM: "x-access-token:${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}"
-
-      - name: Run Brakeman
-        run: bundle exec brakeman .
+    uses: alphagov/govuk-infrastructure/.github/workflows/brakeman.yml@main
+    secrets:
+      BUNDLER_GITHUB_TOKEN: ${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
 
   lint-scss:
     name: Lint SCSS
@@ -49,8 +42,9 @@ jobs:
 
   lint-erb:
     name: Lint ERB
-    uses: ./.github/workflows/linterb.yml
-    secrets: inherit
+    uses: alphagov/govuk-infrastructure/.github/workflows/erblint.yml@main
+    secrets:
+      BUNDLER_GITHUB_TOKEN: ${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}
 
   lint-ruby:
     name: Lint Ruby
