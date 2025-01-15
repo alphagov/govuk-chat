@@ -22,6 +22,9 @@
     "BASIC_AUTH_PASSWORD": {
       "required": true
     },
+    "BUNDLE_GITHUB__COM": {
+      "required": true
+    },
     "AVAILABLE_WITHOUT_SIGNON_AUTHENTICATION": {
       "value": "true"
     },
