@@ -12,6 +12,10 @@ on:
         required: false
         default: main
         type: string
+      govukChatPrivateRef:
+        description: 'The branch, tag or SHA to checkout govuk_chat_private'
+        required: false
+        type: string
 
 jobs:
   run-rspec:
@@ -46,6 +50,8 @@ jobs:
         with:
           repository: alphagov/govuk-chat
           ref: ${{ inputs.ref || github.ref }}
+          # TODO: remove this when we've open sourced govuk-chat
+          token: ${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}
 
       - name: Checkout Publishing API (for Content Schemas)
         uses: actions/checkout@v3
@@ -54,12 +60,31 @@ jobs:
           ref: ${{ inputs.publishingApiRef }}
           path: vendor/publishing-api
 
+      - name: Checkout govuk_chat_private
+        if: inputs.govukChatPrivateRef != ''
+        uses: actions/checkout@v3
+        with:
+          repository: alphagov/govuk_chat_private
+          ref: ${{ inputs.govukChatPrivateRef }}
+          path: govuk_chat_private
+          token: ${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
         env:
           BUNDLE_GITHUB__COM: "x-access-token:${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}"
+
+      - name: Configure Bundler to use checked-out version of govuk_chat_private
+        if: inputs.govukChatPrivateRef != ''
+        run: |
+          bundle config local.govuk_chat_private govuk_chat_private
+          bundle config set disable_local_branch_check true
+          bundle config set disable_local_revision_check true
+          bundle config set frozen false
+          bundle update --conservative govuk_chat_private
+          bundle info govuk_chat_private
 
       - name: Setup Node
         uses: alphagov/govuk-infrastructure/.github/actions/setup-node@main
