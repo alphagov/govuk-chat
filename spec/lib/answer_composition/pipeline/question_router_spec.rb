@@ -52,8 +52,8 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
   end
 
   before do
-    allow(Rails.configuration.llm_prompts.question_routing).to receive(:[]).and_call_original
-    allow(Rails.configuration.llm_prompts.question_routing)
+    allow(Rails.configuration.govuk_chat_private.llm_prompts.question_routing).to receive(:[]).and_call_original
+    allow(Rails.configuration.govuk_chat_private.llm_prompts.question_routing)
     .to receive(:[]).with(:classifications).and_return([classification])
   end
 
@@ -242,7 +242,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
     end
 
     def llm_prompts
-      Rails.configuration.llm_prompts.question_routing
+      Rails.configuration.govuk_chat_private.llm_prompts.question_routing
     end
   end
 end

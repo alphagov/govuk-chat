@@ -6,7 +6,7 @@ module AnswerComposition
 
     def initialize(answer)
       @answer = answer
-      @forbidden_terms = Rails.configuration.forbidden_terms
+      @forbidden_terms = Rails.configuration.govuk_chat_private.forbidden_terms
     end
 
     def call

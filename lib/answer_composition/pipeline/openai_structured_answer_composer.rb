@@ -99,7 +99,7 @@ module AnswerComposition::Pipeline
     end
 
     def llm_prompts
-      Rails.configuration.llm_prompts.openai_structured_answer
+      Rails.configuration.govuk_chat_private.llm_prompts.openai_structured_answer
     end
 
     def openai_client

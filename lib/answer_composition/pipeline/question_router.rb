@@ -111,7 +111,7 @@ module AnswerComposition
       end
 
       def config
-        Rails.configuration.llm_prompts.question_routing
+        Rails.configuration.govuk_chat_private.llm_prompts.question_routing
       end
 
       def openai_client
