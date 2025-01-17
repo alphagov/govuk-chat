@@ -4,9 +4,13 @@ updates:
     directory: /
     schedule:
       interval: daily
-    ignore:
-      - dependency-name: govuk_chat_private
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: daily
+registries:
+  github-octocat:
+    type: git
+    url: https://github.com
+    username: x-access-token
+    password: ${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}
