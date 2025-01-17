@@ -1,6 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: bundler
+    registries: "*"
     directory: /
     schedule:
       interval: daily
@@ -9,7 +10,7 @@ updates:
     schedule:
       interval: daily
 registries:
-  github-octocat:
+  github:
     type: git
     url: https://github.com
     username: x-access-token
