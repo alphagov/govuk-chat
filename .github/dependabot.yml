@@ -2,6 +2,7 @@ version: 2
 updates:
   - package-ecosystem: bundler
     registries: "*"
+    insecure-external-code-execution: allow
     directory: /
     schedule:
       interval: daily
