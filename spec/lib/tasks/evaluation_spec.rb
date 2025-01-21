@@ -17,20 +17,25 @@ RSpec.describe "rake evaluation tasks" do
       allow(Evaluation::ReportGenerator).to receive(:call).and_return(evaluation_data)
     end
 
-    it "generates the results as JSONL and prints them" do
+    it "raises an error if input_path is not specified" do
       expect { Rake::Task[task_name].invoke }
+        .to raise_error(/Usage: evaluation:generate_report/)
+    end
+
+    it "generates the results as JSONL and prints them" do
+      expect { Rake::Task[task_name].invoke("input.yml") }
         .to output(/#{jsonl}/).to_stdout
     end
 
     it "generates the results as JSONL and writes them to a file" do
       temp = Tempfile.new
-      path = temp.path
+      output_path = temp.path
 
       begin
-        expect { Rake::Task[task_name].invoke(path) }
-          .to output(/Written to #{path}/).to_stdout
+        expect { Rake::Task[task_name].invoke("input.yml", output_path) }
+          .to output(/Written to #{output_path}/).to_stdout
 
-        expect(File.read(path)).to eq(jsonl)
+        expect(File.read(output_path)).to eq(jsonl)
       ensure
         temp.close
         temp.unlink
@@ -39,7 +44,7 @@ RSpec.describe "rake evaluation tasks" do
 
     it "sets GOVUK_WEBSITE_ROOT, if not set, to specify https://www.gov.uk links" do
       ClimateControl.modify(GOVUK_WEBSITE_ROOT: nil) do
-        expect { Rake::Task[task_name].invoke }.to output.to_stdout
+        expect { Rake::Task[task_name].invoke("input.yml") }.to output.to_stdout
 
         expect(ENV["GOVUK_WEBSITE_ROOT"]).to eq("https://www.gov.uk")
       end
@@ -47,7 +52,7 @@ RSpec.describe "rake evaluation tasks" do
 
     it "doesn't change GOVUK_WEBSITE_ROOT when already set" do
       ClimateControl.modify(GOVUK_WEBSITE_ROOT: "http://test.gov.uk") do
-        expect { Rake::Task[task_name].invoke }.to output.to_stdout
+        expect { Rake::Task[task_name].invoke("input.yml") }.to output.to_stdout
 
         expect(ENV["GOVUK_WEBSITE_ROOT"]).to eq("http://test.gov.uk")
       end

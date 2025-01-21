@@ -2,12 +2,10 @@ module Evaluation
   class ReportGenerator
     def self.call(...) = new.call(...)
 
-    def self.evaluation_questions
-      YAML.load_file(Rails.root.join("lib/data/evaluation/questions.yml"))
-    end
+    def call(input_path)
+      raise "File #{input_path} does not exist" unless File.exist?(input_path)
 
-    def call
-      questions = self.class.evaluation_questions
+      questions = YAML.load_file(input_path)
 
       questions.map.with_index do |evaluation_question, index|
         yield questions.size, index + 1, evaluation_question if block_given?
