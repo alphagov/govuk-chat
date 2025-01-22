@@ -1,5 +1,11 @@
 RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
   let(:evaluation_questions) { ["How do I pay VAT?", "Do I need a visa?"] }
+  let(:input_file) do
+    temp_file = Tempfile.new
+    temp_file.write(evaluation_questions.to_yaml)
+    temp_file.close
+    temp_file
+  end
 
   let(:answers) do
     [
@@ -39,8 +45,6 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
   end
 
   before do
-    allow(described_class).to receive(:evaluation_questions).and_return(evaluation_questions)
-
     populate_chunked_content_index({
       "id1" => build(
         :chunked_content_record,
@@ -65,17 +69,16 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
     allow(AnswerComposition::Composer).to receive(:call).and_return(*answers)
   end
 
-  describe ".evaluation_questions" do
-    it "loads the questions from the YAML file" do
-      questions = described_class.evaluation_questions
-      expect(questions).to be_an(Array)
-      expect(questions.map(&:class).uniq).to eq([String])
-    end
-  end
+  after { input_file.unlink }
 
   describe ".call" do
+    it "raises an error if the file does not exist" do
+      expect { described_class.call("nonexistent.yml") }
+        .to raise_error("File nonexistent.yml does not exist")
+    end
+
     it "returns the items" do
-      items = described_class.call
+      items = described_class.call(input_file.path)
 
       expect(items).to match([
         {
@@ -95,7 +98,7 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
     end
 
     it "builds retrieved context items" do
-      items = described_class.call
+      items = described_class.call(input_file.path)
       context = items.first[:retrieved_context].first
 
       expect(context).to eq({
@@ -114,7 +117,7 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
       end
 
       it "includes an error in the retrieved_context" do
-        items = described_class.call
+        items = described_class.call(input_file.path)
         context = items.first[:retrieved_context].first
 
         expect(context).to include(error: "Could not find content chunk")
@@ -131,7 +134,7 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
       end
 
       it "includes an error in the retrieved_context" do
-        items = described_class.call
+        items = described_class.call(input_file.path)
         context = items.first[:retrieved_context].first
 
         expect(context).to include(error: "Content chunk digest mismatch")
@@ -139,7 +142,7 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
     end
 
     it "yields the progress" do
-      expect { |block| described_class.call(&block) }.to yield_successive_args(
+      expect { |block| described_class.call(input_file.path, &block) }.to yield_successive_args(
         [2, 1, "How do I pay VAT?"],
         [2, 2, "Do I need a visa?"],
       )
