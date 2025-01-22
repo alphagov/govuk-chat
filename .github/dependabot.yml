@@ -1,7 +1,11 @@
 version: 2
 updates:
   - package-ecosystem: bundler
-    registries: "*"
+    directory: /
+    schedule:
+      interval: daily
+  - package-ecosystem: bundler
+    registries: "github"
     insecure-external-code-execution: allow
     directory: /
     schedule:
