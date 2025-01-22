@@ -10,8 +10,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
         },
       },
       required: %w[answer],
-      
-      
     }
   end
   let(:classification) do
@@ -19,7 +17,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
   end
 
   let(:tools) do
-
     properties = classification[:properties] || {}
 
     [{
