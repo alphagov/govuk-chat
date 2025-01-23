@@ -5,7 +5,8 @@ updates:
     schedule:
       interval: daily
   - package-ecosystem: bundler
-    registries: "github"
+    registries:
+      - github
     insecure-external-code-execution: allow
     directory: /
     schedule:
