@@ -101,5 +101,7 @@ module GovukChat
     config.conversation_js_progressive_disclosure_delay = nil
 
     config.bigquery_dataset_id = ENV["BIGQUERY_DATASET"]
+
+    config.answer_strategy = ENV.fetch("ANSWER_STRATEGY", "openai_structured_answer")
   end
 end
