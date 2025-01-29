@@ -6,6 +6,7 @@ ruby "~> #{File.read('.ruby-version').strip}"
 
 gem "rails", "8.0.1"
 
+gem "aws-sdk-bedrockruntime"
 gem "bootsnap"
 gem "chartkick"
 gem "csv"
