@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition::OpenAIAnswer do # rubocop:disable RSpec/SpecFilePathFormat
+RSpec.describe AnswerComposition::PipelineRunner do
   describe "#call" do
     let(:question) { build(:question) }
 
@@ -91,7 +91,7 @@ RSpec.describe AnswerComposition::OpenAIAnswer do # rubocop:disable RSpec/SpecFi
           .and have_attributes(
             question:,
             status: "error_answer_service_error",
-            message: Answer::CannedResponses::OPENAI_CLIENT_ERROR_RESPONSE,
+            message: Answer::CannedResponses::OPENAI_ERROR_RESPONSE,
             error_message: "class: OpenAIClient::RequestError message: nested error message",
           )
       end

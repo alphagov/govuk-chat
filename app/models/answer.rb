@@ -5,7 +5,7 @@ class Answer < ApplicationRecord
     CONTEXT_LENGTH_EXCEEDED_RESPONSE = "Sorry, your last question was too complex for me to answer. " \
       "Could you make your question more specific? You can also try splitting it into multiple " \
       "smaller questions and asking them separately.".freeze
-    OPENAI_CLIENT_ERROR_RESPONSE = <<~MESSAGE.freeze
+    ANSWER_SERVICE_ERROR_RESPONSE = <<~MESSAGE.freeze
       Sorry, something went wrong while trying to answer your question. Try again later.
 
       We saved your conversation. Check [GOV.UK guidance for businesses](https://www.gov.uk/browse/business) if you need information now.

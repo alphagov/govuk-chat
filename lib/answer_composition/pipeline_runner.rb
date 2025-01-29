@@ -1,5 +1,5 @@
 module AnswerComposition
-  class OpenAIAnswer
+  class PipelineRunner
     def self.call(...) = new(...).call
 
     def initialize(question:, pipeline: [])
@@ -26,9 +26,16 @@ module AnswerComposition
     rescue OpenAIClient::RequestError => e
       GovukError.notify(e)
       context.abort_pipeline(
-        message: Answer::CannedResponses::OPENAI_CLIENT_ERROR_RESPONSE,
+        message: Answer::CannedResponses::ANSWER_SERVICE_ERROR_RESPONSE,
         status: "error_answer_service_error",
         error_message: error_message(e),
+      )
+    rescue Aws::Errors::ServiceError => e
+      GovukError.notify(e)
+      context.abort_pipeline(
+        message: Answer::CannedResponses::ANSWER_SERVICE_ERROR_RESPONSE,
+        status: "error_answer_service_error",
+        error_message: e.message,
       )
     end
 
