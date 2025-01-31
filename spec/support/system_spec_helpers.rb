@@ -1,4 +1,10 @@
 module SystemSpecHelpers
+  def given_i_am_using_the_claude_structured_answer_strategy
+    allow(Rails.configuration)
+      .to receive(:answer_strategy)
+      .and_return("claude_structured_answer")
+  end
+
   def given_i_have_confirmed_i_understand_chat_risks
     visit onboarding_limitations_path
 
