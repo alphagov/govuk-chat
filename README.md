@@ -21,9 +21,7 @@ This is a Ruby on Rails app, and should follow [our Rails app conventions](https
 
 You can use the [GOV.UK Docker environment](https://github.com/alphagov/govuk-docker) to run the application and its tests with all the necessary dependencies. Follow [the usage instructions](https://github.com/alphagov/govuk-docker#usage) to get started.
 
-**Use GOV.UK Docker to run any commands that follow.**
-
-### Before running the application
+### Before running the app
 
 Copy the `.env.example` file to `.env` and ask a team member for the values to use.
 
@@ -45,14 +43,34 @@ bundle config --local github.com <token>
 
 You can then install the dependencies like normal.
 
-```
+```bash
 bundle
 ```
 
 ### Running the test suite
 
-```
+```bash
 bundle exec rake
+```
+
+Or can be run in govuk-docker with:
+
+```bash
+govuk-docker run govuk-chat-lite bundle exec rake
+```
+
+### Starting the app
+
+To start the app in govuk-docker from your local machine:
+
+```bash
+bin/setup --govuk-docker
+```
+
+If you're not using govuk-docker you can run:
+
+```bash
+bin/setup
 ```
 
 ### Further documentation
