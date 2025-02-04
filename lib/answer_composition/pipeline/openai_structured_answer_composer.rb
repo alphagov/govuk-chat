@@ -89,7 +89,7 @@ module AnswerComposition::Pipeline
           page_title: result.title,
           page_description: result.description,
           context_headings: result.heading_hierarchy,
-          context_content: link_token_mapper.map_links_to_tokens(result.html_content),
+          context_content: link_token_mapper.map_links_to_tokens(result.html_content, result.exact_path),
         }
       end
     end
