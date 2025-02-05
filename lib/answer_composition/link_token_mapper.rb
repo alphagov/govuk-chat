@@ -6,11 +6,15 @@ module AnswerComposition
       @mapping = {}
     end
 
-    def map_links_to_tokens(html_content)
+    def map_links_to_tokens(html_content, exact_path)
       doc = Nokogiri::HTML::DocumentFragment.parse(html_content)
 
       doc.css("a").each do |link|
-        href = link["href"]
+        href = begin
+          URI.join(ensure_absolute_govuk_url(exact_path), link["href"]).to_s
+        rescue URI::InvalidURIError
+          link["href"]
+        end
 
         if mapping.key?(href)
           link["href"] = mapping[href]
@@ -61,9 +65,7 @@ module AnswerComposition
 
       if (url = link_for_token(token))
         link_element.tap do |el|
-          # We frequently host GOV.UK chat in environments off www.gov.uk
-          # and need links not to be relative so that they will work.
-          el.attr["href"] = ensure_absolute_govuk_url(url)
+          el.attr["href"] = url
 
           # If we have a link where the text is e.g. "link_1" then we should replace
           # it with "source". Showing "link_1" to the user makes it seem like something
@@ -82,11 +84,9 @@ module AnswerComposition
     end
 
     def ensure_absolute_govuk_url(url)
-      begin
-        relative_uri = URI(url)
-      rescue URI::InvalidURIError
-        return url
-      end
+      # We frequently host GOV.UK chat in environments off www.gov.uk
+      # and need links not to be relative so that they will work.
+      relative_uri = URI(url)
 
       return url if relative_uri.absolute?
 
