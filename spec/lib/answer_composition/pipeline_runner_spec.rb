@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition::OpenAIAnswer do # rubocop:disable RSpec/SpecFilePathFormat
+RSpec.describe AnswerComposition::PipelineRunner do
   describe "#call" do
     let(:question) { build(:question) }
 
@@ -91,7 +91,7 @@ RSpec.describe AnswerComposition::OpenAIAnswer do # rubocop:disable RSpec/SpecFi
           .and have_attributes(
             question:,
             status: "error_answer_service_error",
-            message: Answer::CannedResponses::OPENAI_CLIENT_ERROR_RESPONSE,
+            message: Answer::CannedResponses::ANSWER_SERVICE_ERROR_RESPONSE,
             error_message: "class: OpenAIClient::RequestError message: nested error message",
           )
       end
@@ -117,6 +117,31 @@ RSpec.describe AnswerComposition::OpenAIAnswer do # rubocop:disable RSpec/SpecFi
           result = described_class.call(question:, pipeline: [pipeline_step])
           expect(result.error_message).to eq "class: OpenAIClient::RequestError message: default error message"
         end
+      end
+    end
+
+    context "when the step raises an Aws::Errors::ServiceError" do
+      let(:pipeline_step) do
+        client = stub_bedrock_converse("ServerError")
+        ->(_context) { client.converse(model_id: "just-generating-an-error") }
+      end
+
+      it "notifies sentry" do
+        expect(GovukError).to receive(:notify).with(kind_of(Aws::Errors::ServiceError))
+        described_class.call(question:, pipeline: [pipeline_step])
+      end
+
+      it "returns the context's answer with the correct message, status and error_message" do
+        result = described_class.call(question:, pipeline: [pipeline_step])
+
+        expect(result)
+          .to be_a(Answer)
+          .and have_attributes(
+            question:,
+            status: "error_answer_service_error",
+            message: Answer::CannedResponses::ANSWER_SERVICE_ERROR_RESPONSE,
+            error_message: "stubbed-response-error-message",
+          )
       end
     end
   end

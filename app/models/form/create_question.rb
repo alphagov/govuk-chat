@@ -22,6 +22,7 @@ class Form::CreateQuestion
     validate!
 
     question = Question.create!(
+      answer_strategy: Rails.configuration.answer_strategy,
       message: @sanitised_user_question,
       unsanitised_message: (@unsanitised_user_question if @sanitised_user_question != @unsanitised_user_question),
       conversation:,

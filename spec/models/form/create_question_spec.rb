@@ -128,7 +128,7 @@ RSpec.describe Form::CreateQuestion do
           .to have_attributes(
             message: user_question,
             unsanitised_message: nil,
-            answer_strategy: "openai_structured_answer",
+            answer_strategy: Rails.configuration.answer_strategy,
           )
       end
 
@@ -192,7 +192,7 @@ RSpec.describe Form::CreateQuestion do
         expect(question)
           .to have_attributes(
             message: user_question,
-            answer_strategy: "openai_structured_answer",
+            answer_strategy: Rails.configuration.answer_strategy,
           )
       end
 

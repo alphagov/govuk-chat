@@ -3,6 +3,7 @@ class Question < ApplicationRecord
        {
          open_ai_rag_completion: "open_ai_rag_completion", # legacy strategy - no longer used
          openai_structured_answer: "openai_structured_answer",
+         claude_structured_answer: "claude_structured_answer",
        },
        prefix: true
 

@@ -5,7 +5,7 @@ RSpec.describe AnswerComposition::Composer do
   describe ".call" do
     it "assigns metrics to the answer" do
       answer = create(:answer)
-      allow(AnswerComposition::OpenAIAnswer).to receive(:call).and_return(answer)
+      allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
       described_class.call(answer.question)
@@ -36,7 +36,7 @@ RSpec.describe AnswerComposition::Composer do
       context "and the answer strategy is 'openai_structured_answer'" do
         let(:question) { create :question, answer_strategy: :openai_structured_answer }
 
-        it "calls OpenAIAnswer with the correct pipeline" do
+        it "calls PipelineRunner with the correct pipeline" do
           expected_pipeline = [
             AnswerComposition::Pipeline::JailbreakGuardrails,
             AnswerComposition::Pipeline::QuestionRephraser,
@@ -49,7 +49,7 @@ RSpec.describe AnswerComposition::Composer do
           expected_pipeline.each do |pipeline|
             allow(pipeline).to receive(:call) { |context| context }
           end
-          expect(AnswerComposition::OpenAIAnswer).to receive(:call).and_call_original
+          expect(AnswerComposition::PipelineRunner).to receive(:call).and_call_original
           result = described_class.call(question)
 
           expect(result)
@@ -88,7 +88,7 @@ RSpec.describe AnswerComposition::Composer do
       let(:result) { described_class.call(question) }
 
       before do
-        allow(AnswerComposition::OpenAIAnswer)
+        allow(AnswerComposition::PipelineRunner)
         .to receive(:call)
         .and_raise(StandardError, "error message")
       end
@@ -140,7 +140,7 @@ RSpec.describe AnswerComposition::Composer do
 
       before do
         allow(Rails.configuration.govuk_chat_private).to receive(:forbidden_terms).and_return(Set.new(%w[badword]))
-        allow(AnswerComposition::OpenAIAnswer).to receive(:call).and_return(answer)
+        allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
       end
 
       it "returns an answer with FORBIDDEN_TERMS_MESSAGE" do

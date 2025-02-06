@@ -43,7 +43,7 @@ module AnswerComposition
 
       case answer_strategy
       when "openai_structured_answer"
-        OpenAIAnswer.call(question:, pipeline: [
+        PipelineRunner.call(question:, pipeline: [
           Pipeline::JailbreakGuardrails,
           Pipeline::QuestionRephraser,
           Pipeline::QuestionRouter,
@@ -51,6 +51,10 @@ module AnswerComposition
           Pipeline::SearchResultFetcher,
           Pipeline::OpenAIStructuredAnswerComposer,
           Pipeline::AnswerGuardrails,
+        ])
+      when "claude_structured_answer"
+        PipelineRunner.call(question:, pipeline: [
+          Pipeline::Claude::StructuredAnswerComposer,
         ])
       else
         raise "Answer strategy #{answer_strategy} not configured"
