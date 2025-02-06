@@ -63,9 +63,11 @@ RSpec.describe "Conversation with Claude with a structured answer" do
   end
 
   def when_the_second_answer_is_generated
+    rephrased_question = "Rephrased #{@second_question}"
     @second_answer = "Even more tax."
     stub_bedrock_converse(
-      bedrock_claude_structured_answer_response(@second_question, @second_answer),
+      bedrock_claude_text_response(rephrased_question, user_message: Regexp.new(@second_question)),
+      bedrock_claude_structured_answer_response(rephrased_question, @second_answer),
     )
     execute_queued_sidekiq_jobs
   end
