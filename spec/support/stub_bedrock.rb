@@ -37,8 +37,8 @@ module StubBedrock
       end
 
       bedrock_claude_tool_response(
-        { "answer" => answer, "confidence" => 0.9 },
-        tool_name: "answer_confidence",
+        { "answer" => answer, "answered" => true, "sources_used" => %w[link_1] },
+        tool_name: "output_schema",
       )
     end
   end

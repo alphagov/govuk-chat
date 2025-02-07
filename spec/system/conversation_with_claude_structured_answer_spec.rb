@@ -1,4 +1,4 @@
-RSpec.describe "Conversation with Claude with a structured answer" do
+RSpec.describe "Conversation with Claude with a structured answer", :chunked_content_index do
   scenario do
     given_i_am_using_the_claude_structured_answer_strategy
     and_i_am_a_signed_in_early_access_user
@@ -37,6 +37,14 @@ RSpec.describe "Conversation with Claude with a structured answer" do
   end
 
   def when_the_first_answer_is_generated
+    openai_embedding = mock_openai_embedding(@first_question)
+    allow(Search::TextToEmbedding)
+      .to receive(:call)
+      .and_return(openai_embedding)
+    populate_chunked_content_index([
+      build(:chunked_content_record, openai_embedding:, exact_path: "/pay-more-tax#yes-really"),
+    ])
+
     @first_answer = "Lots of tax."
     stub_bedrock_converse(
       bedrock_claude_structured_answer_response(@first_question, @first_answer),
