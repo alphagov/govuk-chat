@@ -109,6 +109,10 @@ module Admin
                       ),
                   },
                   {
+                    field: "Answer strategy",
+                    value: question.answer_strategy.humanize,
+                  },
+                  {
                     field: "Jailbreak guardrails status",
                     value: answer.jailbreak_guardrails_status,
                   },
