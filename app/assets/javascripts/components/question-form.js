@@ -6,9 +6,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 (function (Modules) {
   'use strict'
 
-  // workaround for https://github.com/alphagov/govuk-frontend/issues/5047
-  const CharacterCount = window.GOVUKFrontend.CharacterCount
-
   class QuestionForm {
     constructor (module) {
       this.module = module
@@ -34,7 +31,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       // used to inform other components that this component is initialised.
       this.module.dispatchEvent(new Event('init'))
 
-      new CharacterCount(this.module) // eslint-disable-line no-new
+      new window.GOVUKFrontend.CharacterCount(this.module) // eslint-disable-line no-new
     }
 
     handleSubmit (event) {
