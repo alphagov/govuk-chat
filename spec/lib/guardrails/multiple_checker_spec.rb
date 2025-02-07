@@ -5,7 +5,7 @@ RSpec.describe Guardrails::MultipleChecker do
   describe ".call" do
     context "when the request is successful" do
       let(:llm_prompt_name) { :answer_guardrails }
-      let(:guardrails_config) { Rails.configuration.govuk_chat_private.llm_prompts.public_send(llm_prompt_name) }
+      let(:guardrails_config) { Rails.configuration.govuk_chat_private.llm_prompts.openai.public_send(llm_prompt_name) }
       let(:guardrail_definitions) do
         {
           "costs" => "This is a costs guardrail",
@@ -187,7 +187,7 @@ RSpec.describe Guardrails::MultipleChecker do
 
     before do
       guardrails_config = { system_prompt:, user_prompt:, guardrails:, guardrail_definitions: }.with_indifferent_access
-      allow(Rails.configuration.govuk_chat_private.llm_prompts).to receive(:[]).with(llm_prompt_name).and_return(guardrails_config)
+      allow(Rails.configuration.govuk_chat_private.llm_prompts.openai).to receive(:[]).with(llm_prompt_name).and_return(guardrails_config)
     end
 
     context "when the llm_prompt_name is :answer_guardrails" do

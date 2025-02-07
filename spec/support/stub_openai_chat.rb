@@ -36,7 +36,7 @@ module StubOpenAIChat
   end
 
   def stub_openai_chat_completion_structured_response(question_or_history, answer, chat_options: {})
-    output_schema = Rails.configuration.govuk_chat_private.llm_prompts.openai_structured_answer[:output_schema]
+    output_schema = Rails.configuration.govuk_chat_private.llm_prompts.openai.structured_answer[:output_schema]
 
     structured_generation_chat_options = chat_options.merge(
       {
@@ -103,7 +103,7 @@ module StubOpenAIChat
   end
 
   def stub_openai_question_rephrasing(original_question, rephrased_question)
-    config = Rails.configuration.govuk_chat_private.llm_prompts.question_rephraser
+    config = Rails.configuration.govuk_chat_private.llm_prompts.openai.question_rephraser
 
     stub_openai_chat_completion(
       array_including(

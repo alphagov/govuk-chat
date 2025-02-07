@@ -31,7 +31,7 @@ module Guardrails
     end
 
     def self.guardrails_llm_prompts
-      Rails.configuration.govuk_chat_private.llm_prompts.jailbreak_guardrails
+      Rails.configuration.govuk_chat_private.llm_prompts.openai.jailbreak_guardrails
     end
 
     def self.call(...) = new(...).call

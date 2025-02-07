@@ -17,7 +17,7 @@ module Guardrails
       Guardrail = Data.define(:key, :name, :content)
 
       def initialize(prompt_name)
-        prompts = Rails.configuration.govuk_chat_private.llm_prompts[prompt_name]
+        prompts = Rails.configuration.govuk_chat_private.llm_prompts.openai[prompt_name]
         raise "No LLM prompts found for #{prompt_name}" unless prompts
 
         @prompts = prompts
