@@ -42,6 +42,15 @@
     },
     "REDIS_SSL_VERIFY_NONE": {
       "value": "true"
+    },
+    "AWS_REGION": {
+      "value": "eu-west-1"
+    },
+    "AWS_ACCESS_KEY_ID": {
+      "required": true
+    },
+    "AWS_SECRET_ACCESS_KEY": {
+      "required": true
     }
   },
   "formation": {
