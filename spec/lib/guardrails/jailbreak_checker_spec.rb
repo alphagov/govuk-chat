@@ -2,8 +2,9 @@ RSpec.describe Guardrails::JailbreakChecker do
   let(:input) { "User question" }
 
   it "calls OpenAI to check for jailbreak attempts" do
-    system_prompt = Rails.configuration.govuk_chat_private.llm_prompts.jailbreak_guardrails[:system_prompt]
-    user_prompt = Rails.configuration.govuk_chat_private.llm_prompts.jailbreak_guardrails[:user_prompt].sub("{input}", input)
+    prompts = Rails.configuration.govuk_chat_private.llm_prompts.openai
+    system_prompt = prompts.jailbreak_guardrails[:system_prompt]
+    user_prompt = prompts.jailbreak_guardrails[:user_prompt].sub("{input}", input)
     messages = array_including(
       { "role" => "system", "content" => system_prompt },
       { "role" => "user", "content" => user_prompt },

@@ -164,6 +164,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
   end
 
   def config
-    Rails.configuration.govuk_chat_private.llm_prompts.question_rephraser
+    Rails.configuration.govuk_chat_private.llm_prompts.openai.question_rephraser
   end
 end

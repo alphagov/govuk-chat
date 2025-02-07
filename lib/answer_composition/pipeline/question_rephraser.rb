@@ -79,7 +79,7 @@ module AnswerComposition
       end
 
       def config
-        Rails.configuration.govuk_chat_private.llm_prompts.question_rephraser
+        Rails.configuration.govuk_chat_private.llm_prompts.openai.question_rephraser
       end
 
       def user_prompt
