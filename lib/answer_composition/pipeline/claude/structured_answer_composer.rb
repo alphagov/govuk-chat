@@ -50,19 +50,10 @@ module AnswerComposition::Pipeline::Claude
     end
 
     def system_prompt
-      sprintf(claude_prompts[:system_prompt], context: system_prompt_context)
-    end
-
-    def system_prompt_context
-      context.search_results.map do |result|
-        {
-          page_url: link_token_mapper.map_link_to_token(result.exact_path),
-          page_title: result.title,
-          page_description: result.description,
-          context_headings: result.heading_hierarchy,
-          context_content: link_token_mapper.map_links_to_tokens(result.html_content, result.exact_path),
-        }
-      end
+      sprintf(
+        claude_prompts[:system_prompt],
+        context: context.search_results_prompt_formatted(link_token_mapper),
+      )
     end
 
     def claude_prompts

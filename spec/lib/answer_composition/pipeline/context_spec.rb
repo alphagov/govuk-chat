@@ -203,4 +203,28 @@ RSpec.describe AnswerComposition::Pipeline::Context do
       expect(unused_source.relevancy).to eq(1)
     end
   end
+
+  describe "#search_results_prompt_formatted" do
+    it "returns an array of hashes with the correct structure" do
+      instance = described_class.new(build(:question))
+      instance.search_results = build_list(:chunked_content_search_result, 2)
+      link_token_mapper = AnswerComposition::LinkTokenMapper.new
+
+      formatted = instance.search_results_prompt_formatted(link_token_mapper)
+
+      formatted.each_with_index do |hash, index|
+        result = instance.search_results[index]
+        expect(hash).to include(
+          page_url: link_token_mapper.map_link_to_token(result.exact_path),
+          page_title: result.title,
+          page_description: result.description,
+          context_headings: result.heading_hierarchy,
+          context_content: link_token_mapper.map_links_to_tokens(
+            result.html_content,
+            result.exact_path,
+          ),
+        )
+      end
+    end
+  end
 end
