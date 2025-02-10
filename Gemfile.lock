@@ -170,8 +170,8 @@ GEM
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
-    faraday-multipart (1.0.4)
-      multipart-post (~> 2)
+    faraday-multipart (1.1.0)
+      multipart-post (~> 2.0)
     faraday-net_http (3.4.0)
       net-http (>= 0.5.0)
     faraday-typhoeus (1.1.0)
@@ -307,7 +307,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jmespath (1.6.2)
-    json (2.9.1)
+    json (2.10.0)
     json-schema (4.3.1)
       addressable (>= 2.8)
     jwt (2.9.3)
@@ -759,7 +759,7 @@ GEM
       rubocop (~> 1.0)
     rubocop-rspec (3.3.0)
       rubocop (~> 1.61)
-    ruby-openai (7.3.1)
+    ruby-openai (7.4.0)
       event_stream_parser (>= 0.3.0, < 2.0.0)
       faraday (>= 1)
       faraday-multipart (>= 1)
