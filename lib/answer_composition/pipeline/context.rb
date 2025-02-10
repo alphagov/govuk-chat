@@ -68,5 +68,20 @@ module AnswerComposition::Pipeline
 
       answer.sources = used_sources + unused_sources
     end
+
+    def search_results_prompt_formatted(link_token_mapper)
+      search_results.map do |result|
+        {
+          page_url: link_token_mapper.map_link_to_token(result.exact_path),
+          page_title: result.title,
+          page_description: result.description,
+          context_headings: result.heading_hierarchy,
+          context_content: link_token_mapper.map_links_to_tokens(
+            result.html_content,
+            result.exact_path,
+          ),
+        }
+      end
+    end
   end
 end
