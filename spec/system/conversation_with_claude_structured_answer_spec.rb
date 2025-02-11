@@ -47,6 +47,7 @@ RSpec.describe "Conversation with Claude with a structured answer", :chunked_con
 
     @first_answer = "Lots of tax."
     stub_bedrock_converse(
+      bedrock_claude_question_routing_response(@first_question),
       bedrock_claude_structured_answer_response(@first_question, @first_answer),
     )
     execute_queued_sidekiq_jobs
@@ -75,6 +76,7 @@ RSpec.describe "Conversation with Claude with a structured answer", :chunked_con
     @second_answer = "Even more tax."
     stub_bedrock_converse(
       bedrock_claude_text_response(rephrased_question, user_message: Regexp.new(@second_question)),
+      bedrock_claude_question_routing_response(rephrased_question),
       bedrock_claude_structured_answer_response(rephrased_question, @second_answer),
     )
     execute_queued_sidekiq_jobs
