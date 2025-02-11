@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer, :chunked_content_index do # rubocop:disable RSpec/SpecFilePathFormat
+RSpec.describe AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer, :chunked_content_index do # rubocop:disable RSpec/SpecFilePathFormat
   describe ".call" do
     let(:question) { build :question }
     let(:context) { build(:answer_pipeline_context, question:) }
