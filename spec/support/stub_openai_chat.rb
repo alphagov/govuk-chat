@@ -40,7 +40,7 @@ module StubOpenAIChat
 
     structured_generation_chat_options = chat_options.merge(
       {
-        model: AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer::OPENAI_MODEL,
+        model: AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer::OPENAI_MODEL,
         tools: [
           {
             type: "function",

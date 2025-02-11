@@ -46,7 +46,7 @@ RSpec.describe AnswerComposition::Composer do
           AnswerComposition::Pipeline::QuestionRouter,
           AnswerComposition::Pipeline::QuestionRoutingGuardrails,
           AnswerComposition::Pipeline::SearchResultFetcher,
-          AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer,
+          AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer,
           AnswerComposition::Pipeline::AnswerGuardrails,
         ]
         expected_pipeline.each do |pipeline|

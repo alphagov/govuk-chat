@@ -49,7 +49,7 @@ module AnswerComposition
           Pipeline::QuestionRouter,
           Pipeline::QuestionRoutingGuardrails,
           Pipeline::SearchResultFetcher,
-          Pipeline::OpenAIStructuredAnswerComposer,
+          Pipeline::OpenAI::StructuredAnswerComposer,
           Pipeline::AnswerGuardrails,
         ])
       when "claude_structured_answer"
