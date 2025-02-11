@@ -45,7 +45,7 @@ module AnswerComposition
       when "openai_structured_answer"
         PipelineRunner.call(question:, pipeline: [
           Pipeline::JailbreakGuardrails,
-          Pipeline::QuestionRephraser,
+          Pipeline::QuestionRephraser.new(llm_provider: :openai),
           Pipeline::QuestionRouter,
           Pipeline::QuestionRoutingGuardrails,
           Pipeline::SearchResultFetcher,
@@ -54,6 +54,7 @@ module AnswerComposition
         ])
       when "claude_structured_answer"
         PipelineRunner.call(question:, pipeline: [
+          Pipeline::QuestionRephraser.new(llm_provider: :claude),
           Pipeline::Claude::StructuredAnswerComposer,
         ])
       else

@@ -1,99 +1,47 @@
 module AnswerComposition
   module Pipeline
     class QuestionRephraser
-      OPENAI_MODEL = "gpt-4o-mini".freeze
+      Result = Data.define(:llm_response, :rephrased_question, :metrics)
 
-      delegate :question, to: :context
-
-      def self.call(...) = new(...).call
-
-      def initialize(context)
-        @context = context
+      def initialize(llm_provider:)
+        @llm_provider = llm_provider
       end
 
-      def call
-        return if first_question?
+      def call(context)
+        records = message_records(context.question.conversation)
+
+        return if records.blank? # First question in a conversation
 
         start_time = Clock.monotonic_time
+        klass = case llm_provider
+                when :openai
+                  Pipeline::OpenAI::QuestionRephraser
+                when :claude
+                  Pipeline::Claude::QuestionRephraser
+                else
+                  raise "Unknown llm provider: #{llm_provider}"
+                end
 
-        context.question_message = openai_response_choice.dig("message", "content")
+        result = klass.call(context.question.message, records)
 
-        context.answer.assign_llm_response("question_rephrasing", openai_response_choice)
-
-        context.answer.assign_metrics("question_rephrasing", {
-          duration: Clock.monotonic_time - start_time,
-          llm_prompt_tokens: openai_response.dig("usage", "prompt_tokens"),
-          llm_completion_tokens: openai_response.dig("usage", "completion_tokens"),
-          llm_cached_tokens: openai_response.dig("usage", "prompt_tokens_details", "cached_tokens"),
-        })
+        context.answer.assign_llm_response("question_rephrasing", result.llm_response)
+        context.question_message = result.rephrased_question
+        context.answer.assign_metrics(
+          "question_rephrasing",
+          { duration: Clock.monotonic_time - start_time }.merge(result.metrics),
+        )
       end
 
     private
 
-      attr_reader :context
+      attr_reader :llm_provider
 
-      def openai_response
-        @openai_response ||= openai_client.chat(
-          parameters: {
-            model: OPENAI_MODEL,
-            messages:,
-            temperature: 0.0,
-          },
-        )
-      end
-
-      def openai_response_choice
-        @openai_response_choice ||= openai_response.dig("choices", 0)
-      end
-
-      def messages
-        [
-          { role: "system", content: config[:system_prompt] },
-          { role: "user", content: user_prompt },
-        ]
-      end
-
-      def message_records
-        @message_records ||= Question.where(conversation: question.conversation)
+      def message_records(conversation)
+        @message_records ||= Question.where(conversation:)
                                      .includes(:answer)
                                      .joins(:answer)
                                      .last(5)
                                      .select(&:use_in_rephrasing?)
-      end
-
-      def message_history
-        message_records.flat_map(&method(:map_question)).join("\n")
-      end
-
-      def map_question(question)
-        question_message = question.answer.rephrased_question || question.message
-
-        [
-          format_messsage("user", question_message),
-          format_messsage("assistant", question.answer.message),
-        ]
-      end
-
-      def first_question?
-        message_records.blank?
-      end
-
-      def config
-        Rails.configuration.govuk_chat_private.llm_prompts.openai.question_rephraser
-      end
-
-      def user_prompt
-        config[:user_prompt]
-          .sub("{question}", question.message)
-          .sub("{message_history}", message_history)
-      end
-
-      def openai_client
-        @openai_client ||= OpenAIClient.build
-      end
-
-      def format_messsage(actor, message)
-        ["#{actor}:", '"""', message, '"""'].join("\n")
       end
     end
   end

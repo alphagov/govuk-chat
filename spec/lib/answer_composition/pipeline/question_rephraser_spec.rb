@@ -1,9 +1,24 @@
 RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
+  let(:instance) { described_class.new(llm_provider: :claude) }
+  let(:rephrasing_result) do
+    described_class::Result.new(
+      llm_response: { stop_reason: "end_turn" },
+      rephrased_question: "Rephrased question",
+      metrics: { llm_prompt_tokens: 10, llm_completion_tokens: 20 },
+    )
+  end
+
+  before do
+    allow(AnswerComposition::Pipeline::Claude::QuestionRephraser).to(
+      receive(:call).and_return(rephrasing_result),
+    )
+  end
+
   context "when the question is the beginning of the conversation" do
     let(:context) { build(:answer_pipeline_context) }
 
     it "returns nil" do
-      expect(described_class.call(context)).to be_nil
+      expect(instance.call(context)).to be_nil
     end
   end
 
@@ -18,152 +33,79 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
       latest_question = create(:question, conversation:)
       context = build(:answer_pipeline_context, question: latest_question)
 
-      expect(described_class.call(context)).to be_nil
+      expect(instance.call(context)).to be_nil
     end
   end
 
   context "when the question is part of an ongoing chat" do
     let(:conversation) { create :conversation, :with_history }
-    let(:question) { conversation.questions.strict_loading(false).last }
     let(:context) { build(:answer_pipeline_context, question:) }
+    let(:question) { conversation.questions.strict_loading(false).last }
+    let(:question_records_for_rephrasing) { conversation.questions.joins(:answer) }
 
-    context "when there is a valid response from OpenAI" do
-      let(:expected_messages) do
-        message_history = <<~HISTORY.strip
-          user:
-          """
-          How do I pay my tax
-          """
-          assistant:
-          """
-          What type of tax
-          """
-          user:
-          """
-          What types are there
-          """
-          assistant:
-          """
-          Self-assessment, PAYE, Corporation tax
-          """
-        HISTORY
-
-        user_prompt = config[:user_prompt]
-                      .sub("{message_history}", message_history)
-                      .sub("{question}", "corporation tax")
-
-        [
-          { role: "system", content: config[:system_prompt] },
-          { role: "user", content: user_prompt },
-        ]
-      end
-      let(:rephrased) { "How do I pay my corporation tax" }
-
-      before do
-        stub_openai_chat_completion(expected_messages, answer: rephrased)
-      end
-
-      it "updates the contexts question_message with the rephrased question" do
-        described_class.call(context)
-        expect(context.question_message).to eq(rephrased)
-      end
-
-      it "assigns metrics to the answer" do
-        allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
-
-        described_class.call(context)
-
-        expect(context.answer.metrics["question_rephrasing"]).to eq({
-          duration: 1.5,
-          llm_prompt_tokens: 13,
-          llm_completion_tokens: 7,
-          llm_cached_tokens: 10,
-        })
-      end
-
-      it "assigns the llm response to the answer" do
-        described_class.call(context)
-        expect(context.answer.llm_responses["question_rephrasing"]).to match(
-          a_hash_including(
-            "finish_reason" => "stop",
-            "message" => a_hash_including({ "content" => rephrased }),
-          ),
-        )
-      end
-
-      context "and one of the answers statuses is in Answer::STATUSES_EXCLUDED_FROM_REPHRASING" do
-        it "does not include that question and answer in the history" do
-          request = stub_openai_chat_completion(expected_messages, answer: rephrased)
-          last_question = conversation.questions.strict_loading(false).last
-          create(:answer, question: last_question, status: :guardrails_jailbreak)
-          create(:question, conversation:, message: last_question.message)
-
-          described_class.call(context)
-          expect(request).to have_been_made
-        end
-      end
+    it "raises an error if the llm_provider is unknown" do
+      expect { described_class.new(llm_provider: :unknown).call(context) }
+        .to raise_error("Unknown llm provider: unknown")
     end
 
-    context "when a question has been rephrased" do
-      let(:conversation) { create(:conversation) }
-      let(:question) { create(:question, conversation:) }
-      let(:context) { build(:answer_pipeline_context, question:) }
-      let(:answer) { build(:answer, rephrased_question: "A rephrased question") }
+    it "calls the OpenAI rephraser" do
+      expect(AnswerComposition::Pipeline::OpenAI::QuestionRephraser).to(
+        receive(:call).with(question.message, question_records_for_rephrasing),
+      ).and_return(rephrasing_result)
 
-      before { create(:question, conversation:, answer:) }
-
-      it "includes the rephrased question in the history" do
-        request = stub_openai_question_rephrasing(answer.rephrased_question, "Answer from OpenAI")
-        described_class.call(context)
-        expect(request).to have_been_made
-      end
+      described_class.new(llm_provider: :openai).call(context)
     end
 
-    context "with a long history" do
-      let(:conversation) { create(:conversation) }
-      let(:question) { create(:question, message: "Question 7", conversation:) }
-      let(:context) { build(:answer_pipeline_context, question:) }
-      let(:user_prompt) do
-        message_history = (2..6).map do |n|
-          <<~MESSAGE.strip
-            user:
-            """
-            Question #{n}
-            """
-            assistant:
-            """
-            Answer #{n}
-            """
-          MESSAGE
-        end
+    it "calls the Claude rephraser" do
+      expect(AnswerComposition::Pipeline::Claude::QuestionRephraser).to(
+        receive(:call).with(question.message, question_records_for_rephrasing),
+      )
 
-        config[:user_prompt]
-          .sub("{message_history}", message_history.join("\n"))
-          .sub("{question}", "Question 7")
-      end
-      let(:expected_messages) do
-        [
-          { role: "system", content: config[:system_prompt] },
-          { role: "user", content: user_prompt },
-        ]
-      end
+      instance.call(context)
+    end
 
-      before do
-        (1..6).each do |n|
-          answer = build(:answer, message: "Answer #{n}")
-          create(:question, answer:, conversation:, message: "Question #{n}")
-        end
-      end
+    it "updates the context's question_message with the rephrased question" do
+      instance.call(context)
+      expect(context.question_message).to eq("Rephrased question")
+    end
 
-      it "truncates the history to the last 5 Q/A pairs" do # rubocop:disable RSpec/NoExpectationExample
-        rephrased = "How do I pay my corporation tax"
-        stub_openai_chat_completion(expected_messages, answer: rephrased)
-        described_class.call(context)
-      end
+    it "assigns metrics to the answer" do
+      allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
+
+      instance.call(context)
+
+      expect(context.answer.metrics["question_rephrasing"])
+        .to eq(rephrasing_result.metrics.merge(duration: 1.5))
+    end
+
+    it "assigns the llm response to the answer" do
+      instance.call(context)
+
+      expect(context.answer.llm_responses["question_rephrasing"])
+        .to eq(rephrasing_result.llm_response)
     end
   end
 
-  def config
-    Rails.configuration.govuk_chat_private.llm_prompts.openai.question_rephraser
+  context "with a long history" do
+    let(:conversation) { create(:conversation) }
+    let(:question) { create(:question, message: "Question 7", conversation:) }
+    let(:context) { build(:answer_pipeline_context, question:) }
+
+    before do
+      (1..6).each do |n|
+        answer = build(:answer, message: "Answer #{n}")
+        create(:question, answer:, conversation:, message: "Question #{n}")
+      end
+    end
+
+    it "truncates the history to the last 5 Q/A pairs" do
+      question_records_for_rephrasing = conversation.questions.joins(:answer).last(5)
+
+      expect(AnswerComposition::Pipeline::Claude::QuestionRephraser).to(
+        receive(:call).with("Question 7", question_records_for_rephrasing),
+      )
+
+      instance.call(context)
+    end
   end
 end

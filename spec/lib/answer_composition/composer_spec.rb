@@ -32,31 +32,58 @@ RSpec.describe AnswerComposition::Composer do
       end
     end
 
-    context "when the question is for open ai" do
-      context "and the answer strategy is 'openai_structured_answer'" do
-        let(:question) { create :question, answer_strategy: :openai_structured_answer }
+    context "when the question is for the 'openai_structured_answer' strategy" do
+      let(:question) { create :question, answer_strategy: :openai_structured_answer }
 
-        it "calls PipelineRunner with the correct pipeline" do
-          expected_pipeline = [
-            AnswerComposition::Pipeline::JailbreakGuardrails,
-            AnswerComposition::Pipeline::QuestionRephraser,
-            AnswerComposition::Pipeline::QuestionRouter,
-            AnswerComposition::Pipeline::QuestionRoutingGuardrails,
-            AnswerComposition::Pipeline::SearchResultFetcher,
-            AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer,
-            AnswerComposition::Pipeline::AnswerGuardrails,
-          ]
-          expected_pipeline.each do |pipeline|
-            allow(pipeline).to receive(:call) { |context| context }
-          end
-          expect(AnswerComposition::PipelineRunner).to receive(:call).and_call_original
-          result = described_class.call(question)
+      it "calls PipelineRunner with the correct pipeline" do
+        rephraser = instance_double(AnswerComposition::Pipeline::QuestionRephraser)
+        allow(AnswerComposition::Pipeline::QuestionRephraser)
+          .to receive(:new).with(llm_provider: :openai).and_return(rephraser)
 
-          expect(result)
-            .to be_an_instance_of(Answer)
-            .and have_attributes(question:)
-          expect(expected_pipeline).to all(have_received(:call))
+        expected_pipeline = [
+          AnswerComposition::Pipeline::JailbreakGuardrails,
+          AnswerComposition::Pipeline::QuestionRephraser.new(llm_provider: :openai),
+          AnswerComposition::Pipeline::QuestionRouter,
+          AnswerComposition::Pipeline::QuestionRoutingGuardrails,
+          AnswerComposition::Pipeline::SearchResultFetcher,
+          AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer,
+          AnswerComposition::Pipeline::AnswerGuardrails,
+        ]
+        expected_pipeline.each do |pipeline|
+          allow(pipeline).to receive(:call) { |context| context }
         end
+        expect(AnswerComposition::PipelineRunner).to receive(:call).and_call_original
+        result = described_class.call(question)
+
+        expect(result)
+          .to be_an_instance_of(Answer)
+          .and have_attributes(question:)
+        expect(expected_pipeline).to all(have_received(:call))
+      end
+    end
+
+    context "when the question is for the 'claude_structured_answer' strategy" do
+      let(:question) { create :question, answer_strategy: :claude_structured_answer }
+
+      it "calls PipelineRunner with the correct pipeline" do
+        rephraser = instance_double(AnswerComposition::Pipeline::QuestionRephraser)
+        allow(AnswerComposition::Pipeline::QuestionRephraser)
+          .to receive(:new).with(llm_provider: :claude).and_return(rephraser)
+
+        expected_pipeline = [
+          AnswerComposition::Pipeline::QuestionRephraser.new(llm_provider: :claude),
+          AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
+        ]
+        expected_pipeline.each do |pipeline|
+          allow(pipeline).to receive(:call) { it }
+        end
+        expect(AnswerComposition::PipelineRunner).to receive(:call).and_call_original
+        result = described_class.call(question)
+
+        expect(result)
+          .to be_an_instance_of(Answer)
+          .and have_attributes(question:)
+        expect(expected_pipeline).to all(have_received(:call))
       end
     end
 

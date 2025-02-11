@@ -43,24 +43,60 @@ module StubBedrock
     end
   end
 
+  def bedrock_claude_text_response(response_text,
+                                   user_message: nil,
+                                   input_tokens: 10,
+                                   output_tokens: 20)
+    lambda do |context|
+      if user_message.present?
+        included_in_messages = context.params[:messages].any? do |msg|
+          if user_message.is_a?(String)
+            msg[:role] == "user" && msg[:content].first[:text] == user_message
+          elsif user_message.is_a?(Regexp)
+            msg[:role] == "user" && msg[:content].first[:text] =~ user_message
+          end
+        end
+
+        unless included_in_messages
+          err = <<~MSG
+            Message not found in prompt messages.
+
+            Expected message:
+            #{user_message}
+
+            Prompt messages:
+            #{context.params[:messages].inspect}
+          MSG
+          raise(err)
+        end
+      end
+
+      bedrock_claude_response({ text: response_text }, input_tokens:, output_tokens:)
+    end
+  end
+
   def bedrock_claude_tool_response(tool_input,
                                    tool_name:,
                                    tool_use_id: SecureRandom.hex,
                                    input_tokens: 10,
                                    output_tokens: 20)
+    message_content = {
+      tool_use: {
+        input: tool_input,
+        tool_use_id:,
+        name: tool_name,
+      },
+    }
+
+    bedrock_claude_response(message_content, input_tokens:, output_tokens:)
+  end
+
+  def bedrock_claude_response(message_content, input_tokens: 10, output_tokens: 20)
     {
       output: {
         message: {
           role: "assistant",
-          content: [
-            {
-              tool_use: {
-                input: tool_input,
-                tool_use_id:,
-                name: tool_name,
-              },
-            },
-          ],
+          content: [message_content],
         },
       },
       stop_reason: "end_turn",
