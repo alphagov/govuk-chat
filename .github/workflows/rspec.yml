@@ -21,7 +21,9 @@ jobs:
   run-rspec:
     services:
       opensearch-2:
-        image: opensearchproject/opensearch:2
+        # TODO: Loosen the pin back to opensearch:2 - set to exact version
+        # because 2.19.0 seems to hang and rspec process never completes
+        image: opensearchproject/opensearch:2.18.0
         env:
           discovery.type: single-node
           OPENSEARCH_JAVA_OPTS: -Xms2g -Xmx2g
