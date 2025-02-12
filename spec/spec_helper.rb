@@ -42,7 +42,9 @@ RSpec.configure do |config|
   config.include SystemSpecHelpers, type: :system
 
   config.before(:each, :chunked_content_index) do
+    puts "prior to creating search index"
     Search::ChunkedContentRepository.new.create_index!
+    puts "after creating search index"
     config.include SearchChunkedContentHelpers
   end
 
