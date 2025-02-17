@@ -46,7 +46,7 @@ RSpec.describe AnswerComposition::Composer do
           AnswerComposition::Pipeline::QuestionRouter,
           AnswerComposition::Pipeline::QuestionRoutingGuardrails,
           AnswerComposition::Pipeline::SearchResultFetcher,
-          AnswerComposition::Pipeline::OpenAIStructuredAnswerComposer,
+          AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer,
           AnswerComposition::Pipeline::AnswerGuardrails,
         ]
         expected_pipeline.each do |pipeline|
@@ -69,9 +69,13 @@ RSpec.describe AnswerComposition::Composer do
         rephraser = instance_double(AnswerComposition::Pipeline::QuestionRephraser)
         allow(AnswerComposition::Pipeline::QuestionRephraser)
           .to receive(:new).with(llm_provider: :claude).and_return(rephraser)
+        search_result_fetcher = instance_double(AnswerComposition::Pipeline::SearchResultFetcher)
+        allow(AnswerComposition::Pipeline::SearchResultFetcher)
+          .to receive(:new).with(llm_provider: :claude).and_return(search_result_fetcher)
 
         expected_pipeline = [
           AnswerComposition::Pipeline::QuestionRephraser.new(llm_provider: :claude),
+          AnswerComposition::Pipeline::SearchResultFetcher,
           AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
         ]
         expected_pipeline.each do |pipeline|

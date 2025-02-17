@@ -2,6 +2,27 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :c
   describe ".call" do
     let(:question) { build :question }
     let(:context) { build(:answer_pipeline_context, question:) }
+    let(:search_result) do
+      build(
+        :chunked_content_search_result,
+        _id: "1",
+        score: 1.0,
+        exact_path: "/vat-rates#vat-basics",
+        html_content: '<p>Some content</p><a href="/what-is-tax">What is a tax?</a>',
+      )
+    end
+    let(:unused_search_result) do
+      build(
+        :chunked_content_search_result,
+        _id: "2",
+        score: 0.5,
+        exact_path: "/vat-rates#vat-rates",
+      )
+    end
+
+    before do
+      context.search_results = [search_result]
+    end
 
     it "uses Bedrock converse endpoint to assign the correct values to the context's answer" do
       answer = "VAT (Value Added Tax) is a tax applied to most goods and services in the UK."
@@ -12,14 +33,14 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :c
 
       described_class.call(context)
 
-      expect(context.answer.message).to eq(answer)
+      expect(context.answer.message.squish).to eq(answer)
       expect(context.answer.status).to eq("answered")
     end
 
     it "stores the LLM response" do
       response = bedrock_claude_tool_response(
-        { "answer" => "answer", "confidence" => 0.9 },
-        tool_name: "answer_confidence",
+        { "answer" => "answer", "answered" => true, "sources_used" => %w[link_1] },
+        tool_name: "output_schema",
       )
 
       stub_bedrock_converse(response)
@@ -33,8 +54,8 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :c
 
       stub_bedrock_converse(
         bedrock_claude_tool_response(
-          { "answer" => "answer", "confidence" => 0.9 },
-          tool_name: "answer_confidence",
+          { "answer" => "answer", "answered" => true, "sources_used" => %w[link_1] },
+          tool_name: "output_schema",
           input_tokens: 15,
           output_tokens: 25,
         ),
@@ -47,6 +68,19 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :c
         llm_prompt_tokens: 15,
         llm_completion_tokens: 25,
       })
+    end
+
+    it "sets the 'used' boolean to false for unused sources" do
+      context.search_results = [search_result, unused_search_result]
+      response = bedrock_claude_tool_response(
+        { "answer" => "answer", "answered" => true, "sources_used" => %w[link_1] },
+        tool_name: "output_schema",
+      )
+
+      stub_bedrock_converse(response)
+
+      described_class.call(context)
+      expect(context.answer.sources.map(&:used)).to eq([true, false])
     end
   end
 end

@@ -49,12 +49,13 @@ module AnswerComposition
           Pipeline::QuestionRouter,
           Pipeline::QuestionRoutingGuardrails,
           Pipeline::SearchResultFetcher,
-          Pipeline::OpenAIStructuredAnswerComposer,
+          Pipeline::OpenAI::StructuredAnswerComposer,
           Pipeline::AnswerGuardrails,
         ])
       when "claude_structured_answer"
         PipelineRunner.call(question:, pipeline: [
           Pipeline::QuestionRephraser.new(llm_provider: :claude),
+          Pipeline::SearchResultFetcher,
           Pipeline::Claude::StructuredAnswerComposer,
         ])
       else

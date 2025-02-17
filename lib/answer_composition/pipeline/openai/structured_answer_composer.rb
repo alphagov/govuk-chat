@@ -1,5 +1,5 @@
-module AnswerComposition::Pipeline
-  class OpenAIStructuredAnswerComposer
+module AnswerComposition::Pipeline::OpenAI
+  class StructuredAnswerComposer
     OPENAI_MODEL = "gpt-4o-2024-08-06".freeze
 
     def self.call(...) = new(...).call
@@ -79,26 +79,17 @@ module AnswerComposition::Pipeline
     end
 
     def system_prompt
-      sprintf(llm_prompts[:system_prompt], context: system_prompt_context)
-    end
-
-    def system_prompt_context
-      context.search_results.map do |result|
-        {
-          page_url: link_token_mapper.map_link_to_token(result.exact_path),
-          page_title: result.title,
-          page_description: result.description,
-          context_headings: result.heading_hierarchy,
-          context_content: link_token_mapper.map_links_to_tokens(result.html_content, result.exact_path),
-        }
-      end
+      sprintf(
+        openai_prompts[:system_prompt],
+        context: context.search_results_prompt_formatted(link_token_mapper),
+      )
     end
 
     def output_schema
-      llm_prompts[:output_schema]
+      openai_prompts[:output_schema]
     end
 
-    def llm_prompts
+    def openai_prompts
       Rails.configuration.govuk_chat_private.llm_prompts.openai.structured_answer
     end
 
