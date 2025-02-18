@@ -43,15 +43,17 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
 
   let(:expected_message_history) do
     [
-      { role: "system", content: llm_prompts[:system_prompt] },
+      { role: "system", content: "The system prompt" },
       { role: "user", content: question.message },
     ]
   end
 
   before do
-    allow(Rails.configuration.govuk_chat_private.llm_prompts.openai.question_routing).to receive(:[]).and_call_original
-    allow(Rails.configuration.govuk_chat_private.llm_prompts.openai.question_routing)
-    .to receive(:[]).with(:classifications).and_return([classification])
+    config = Rails.configuration.govuk_chat_private.llm_prompts.openai
+    allow(config).to receive(:question_routing).and_return(
+      classifications: [classification],
+      system_prompt: "The system prompt",
+    )
   end
 
   describe ".call" do
