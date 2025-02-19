@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition::Pipeline::QuestionRouter do
+RSpec.describe AnswerComposition::Pipeline::OpenAI::QuestionRouter do # rubocop:disable RSpec/SpecFilePathFormat
   let(:classification_attributes) do
     {
       name: "greetings",

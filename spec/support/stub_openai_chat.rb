@@ -77,10 +77,10 @@ module StubOpenAIChat
     function_arguments = function_arguments.to_json unless function_arguments.is_a?(String)
 
     chat_options = {
-      model: AnswerComposition::Pipeline::QuestionRouter::OPENAI_MODEL,
+      model: AnswerComposition::Pipeline::OpenAI::QuestionRouter::OPENAI_MODEL,
       tools:,
       tool_choice: "required",
-      max_completion_tokens: AnswerComposition::Pipeline::QuestionRouter::MAX_COMPLETION_TOKENS,
+      max_completion_tokens: AnswerComposition::Pipeline::OpenAI::QuestionRouter::MAX_COMPLETION_TOKENS,
     }
 
     stub_openai_chat_completion(

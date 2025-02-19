@@ -43,7 +43,7 @@ RSpec.describe AnswerComposition::Composer do
         expected_pipeline = [
           AnswerComposition::Pipeline::JailbreakGuardrails,
           AnswerComposition::Pipeline::QuestionRephraser.new(llm_provider: :openai),
-          AnswerComposition::Pipeline::QuestionRouter,
+          AnswerComposition::Pipeline::OpenAI::QuestionRouter,
           AnswerComposition::Pipeline::QuestionRoutingGuardrails,
           AnswerComposition::Pipeline::SearchResultFetcher,
           AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer,
