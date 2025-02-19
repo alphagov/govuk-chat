@@ -6,7 +6,7 @@ module StubOpenAIChat
     tool_calls: nil,
     finish_reason: "stop"
   )
-    history = if question_or_history.is_a?(String)
+    history = if question_or_history.is_a?(String) || question_or_history.is_a?(Regexp)
                 array_including({ "role" => "user", "content" => question_or_history })
               else
                 question_or_history
@@ -36,7 +36,12 @@ module StubOpenAIChat
   end
 
   def stub_openai_chat_completion_structured_response(question_or_history, answer, chat_options: {})
-    output_schema = Rails.configuration.govuk_chat_private.llm_prompts.openai.structured_answer[:output_schema]
+    config = Rails.configuration.govuk_chat_private.llm_prompts.openai
+    output_schema = { type: "object", properties: { answer: { type: "string" } }, required: %w[answer] }
+    allow(config).to receive(:structured_answer).and_return(
+      output_schema:,
+      system_prompt: "System prompt. %{context}",
+    )
 
     structured_generation_chat_options = chat_options.merge(
       {
@@ -103,11 +108,15 @@ module StubOpenAIChat
   end
 
   def stub_openai_question_rephrasing(original_question, rephrased_question)
-    config = Rails.configuration.govuk_chat_private.llm_prompts.openai.question_rephraser
+    config = Rails.configuration.govuk_chat_private.llm_prompts.openai
+    allow(config).to receive(:question_rephraser).and_return(
+      user_prompt: "{question}\n{message_history}",
+      system_prompt: "You are an assistant",
+    )
 
     stub_openai_chat_completion(
       array_including(
-        { "role" => "system", "content" => config[:system_prompt] },
+        { "role" => "system", "content" => "You are an assistant" },
         { "role" => "user", "content" => a_string_including(original_question) },
       ),
       answer: rephrased_question,
@@ -122,13 +131,23 @@ module StubOpenAIChat
     )
   end
 
-  def stub_openai_jailbreak_guardrails(to_check, response = Guardrails::JailbreakChecker.pass_value)
+  def stub_openai_jailbreak_guardrails(to_check, response = "PassValue")
+    prompts = Rails.configuration.govuk_chat_private.llm_prompts.openai
+    allow(prompts).to receive(:jailbreak_guardrails).and_return(
+      user_prompt: "{input}",
+      system_prompt: "The system prompt",
+      pass_value: "PassValue",
+      fail_value: "FailValue",
+      max_tokens: 1,
+      logit_bias: {},
+    )
+
     stub_openai_chat_completion(
       array_including({ "role" => "user", "content" => a_string_including(to_check) }),
       answer: response,
       chat_options: { model: Guardrails::JailbreakChecker::OPENAI_MODEL,
-                      max_tokens: Guardrails::JailbreakChecker.max_tokens,
-                      logit_bias: Guardrails::JailbreakChecker.logit_bias },
+                      max_tokens: 1,
+                      logit_bias: {} },
     )
   end
 

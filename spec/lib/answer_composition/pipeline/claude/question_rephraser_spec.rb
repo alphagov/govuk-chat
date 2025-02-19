@@ -5,7 +5,18 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser do
   let(:question_records) { conversation.questions.joins(:answer) }
 
   context "when there is a valid response from Claude" do
-    let(:expected_user_prompt) do
+    let(:rephrased) { "How do I pay my corporation tax" }
+
+    it "includes the current question in the user prompt" do
+      client = stub_bedrock_converse(
+        bedrock_claude_text_response(rephrased, user_message: Regexp.new(question.message)),
+      )
+      described_class.call(question.message, question_records)
+
+      expect(client.api_requests.size).to eq(1)
+    end
+
+    it "includes the message_history in the user prompt" do
       message_history = <<~HISTORY.strip
         user:
         """
@@ -25,19 +36,16 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser do
         """
       HISTORY
 
-      config[:user_prompt]
-        .sub("{message_history}", message_history)
-        .sub("{question}", "corporation tax")
-    end
-    let(:rephrased) { "How do I pay my corporation tax" }
-
-    before do
-      stub_bedrock_converse(
-        bedrock_claude_text_response(rephrased, user_message: expected_user_prompt),
+      client = stub_bedrock_converse(
+        bedrock_claude_text_response(rephrased, user_message: Regexp.new(message_history)),
       )
+      described_class.call(question.message, question_records)
+
+      expect(client.api_requests.size).to eq(1)
     end
 
     it "returns a result object" do
+      stub_bedrock_converse(bedrock_claude_text_response(rephrased))
       result = described_class.call(question.message, question_records)
 
       llm_response = result.llm_response
@@ -60,7 +68,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser do
 
     before { create(:question, conversation:, answer:) }
 
-    it "includes the rephrased question in the history" do # rubocop:disable RSpec/NoExpectationExample
+    it "includes the rephrased question in the history" do
       message_history = <<~HISTORY.strip
         user:
         """
@@ -72,19 +80,15 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser do
         """
       HISTORY
 
-      expected_user_prompt = config[:user_prompt]
-        .sub("{message_history}", message_history)
-        .sub("{question}", question.message)
-
-      stub_bedrock_converse(
-        bedrock_claude_text_response("A second rephrased question", user_message: expected_user_prompt),
+      client = stub_bedrock_converse(
+        bedrock_claude_text_response(
+          "A second rephrased question", user_message: Regexp.new(message_history)
+        ),
       )
 
       described_class.call(question.message, conversation.questions.joins(:answer))
+
+      expect(client.api_requests.size).to eq(1)
     end
   end
-end
-
-def config
-  Rails.configuration.govuk_chat_private.llm_prompts.claude.question_rephraser
 end

@@ -64,8 +64,7 @@ module StubBedrock
             Expected message:
             #{user_message}
 
-            Prompt messages:
-            #{context.params[:messages].inspect}
+            #{ENV['CI'].blank? ? "Prompt messages:\n#{context.params[:messages].inspect}\n" : 'Not shown in CI'}
           MSG
           raise(err)
         end

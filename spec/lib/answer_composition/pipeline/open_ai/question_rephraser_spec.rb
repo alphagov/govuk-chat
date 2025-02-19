@@ -4,8 +4,8 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::QuestionRephraser do
   let(:question_records) { conversation.questions.joins(:answer) }
 
   context "when there is a valid response from OpenAI" do
-    let(:expected_messages) do
-      message_history = <<~HISTORY.strip
+    let(:message_history) do
+      <<~HISTORY.strip
         user:
         """
         How do I pay my tax
@@ -23,23 +23,24 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::QuestionRephraser do
         Self-assessment, PAYE, Corporation tax
         """
       HISTORY
-
-      user_prompt = config[:user_prompt]
-                    .sub("{message_history}", message_history)
-                    .sub("{question}", "corporation tax")
-
-      [
-        { role: "system", content: config[:system_prompt] },
-        { role: "user", content: user_prompt },
-      ]
     end
     let(:rephrased) { "How do I pay my corporation tax" }
 
-    before do
-      stub_openai_chat_completion(expected_messages, answer: rephrased)
+    it "includes the current question in the user prompt" do
+      request = stub_openai_chat_completion(Regexp.new(question.message))
+      described_class.call(question.message, question_records)
+      expect(request).to have_been_made
+    end
+
+    it "includes the message history in the user prompt" do
+      request = stub_openai_chat_completion(Regexp.new(message_history))
+      described_class.call(question.message, question_records)
+      expect(request).to have_been_made
     end
 
     it "returns a result object" do
+      stub_openai_chat_completion(Regexp.new(question.message), answer: rephrased)
+
       result = described_class.call(question.message, question_records)
 
       expect(result.llm_response).to match(
@@ -72,8 +73,4 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::QuestionRephraser do
       expect(request).to have_been_made
     end
   end
-end
-
-def config
-  Rails.configuration.govuk_chat_private.llm_prompts.openai.question_rephraser
 end

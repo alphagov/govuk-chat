@@ -30,7 +30,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer, :c
                               "context_headings: [\"Heading 1\", \"Heading 2\"], " \
                               "context_content: \"<p>Some content</p><a href=\\\"link_2\\\">What is a tax?</a>\"}]"
       expected_message_history = [
-        { role: "system", content: system_prompt(system_prompt_context) },
+        { role: "system", content: "System prompt. #{system_prompt_context}" },
         { role: "user", content: question.message },
       ]
       .flatten
@@ -134,14 +134,6 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer, :c
           })
         end
       end
-    end
-
-    def system_prompt(context)
-      sprintf(llm_prompts[:system_prompt], context:)
-    end
-
-    def llm_prompts
-      Rails.configuration.govuk_chat_private.llm_prompts.openai.structured_answer
     end
   end
 end

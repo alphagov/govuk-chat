@@ -5,7 +5,7 @@ RSpec.describe Guardrails::MultipleChecker do
   describe ".call" do
     context "when the request is successful" do
       let(:llm_prompt_name) { :answer_guardrails }
-      let(:guardrails_config) { Rails.configuration.govuk_chat_private.llm_prompts.openai.public_send(llm_prompt_name) }
+      let(:guardrails_config) { Rails.configuration.govuk_chat_private.llm_prompts.openai }
       let(:guardrail_definitions) do
         {
           "costs" => "This is a costs guardrail",
@@ -17,9 +17,12 @@ RSpec.describe Guardrails::MultipleChecker do
 
       before do
         allow(Rails.logger).to receive(:error)
-        allow(guardrails_config).to receive(:fetch).and_call_original
-        allow(guardrails_config).to receive(:fetch).with(:guardrails).and_return(guardrails)
-        allow(guardrails_config).to receive(:fetch).with(:guardrail_definitions).and_return(guardrail_definitions)
+        allow(guardrails_config).to receive(:[]).with(llm_prompt_name).and_return(
+          guardrails:,
+          guardrail_definitions:,
+          system_prompt: "{guardrails} {date}",
+          user_prompt: "{input}",
+        )
       end
 
       it "calls OpenAI to check for guardrail violations with the correct system prompt and the input in the user prompt" do

@@ -2,18 +2,20 @@ RSpec.describe Guardrails::JailbreakChecker do
   let(:input) { "User question" }
 
   it "calls OpenAI to check for jailbreak attempts" do
-    prompts = Rails.configuration.govuk_chat_private.llm_prompts.openai
-    system_prompt = prompts.jailbreak_guardrails[:system_prompt]
-    user_prompt = prompts.jailbreak_guardrails[:user_prompt].sub("{input}", input)
+    prompts = Rails.configuration.govuk_chat_private.llm_prompts.openai.jailbreak_guardrails
+    allow(prompts).to receive(:[]).and_call_original
+    allow(prompts).to receive(:[]).with(:system_prompt).and_return("The system prompt")
+    allow(prompts).to receive(:[]).with(:user_prompt).and_return("{input}")
+
     messages = array_including(
-      { "role" => "system", "content" => system_prompt },
-      { "role" => "user", "content" => user_prompt },
+      { "role" => "system", "content" => "The system prompt" },
+      { "role" => "user", "content" => input },
     )
-    openai_request = stub_openai_chat_completion(messages, answer: described_class.pass_value, chat_options: {
-      model: described_class::OPENAI_MODEL,
-      max_tokens: described_class.max_tokens,
-      logit_bias: described_class.logit_bias,
-    })
+    openai_request = stub_openai_chat_completion(
+      messages,
+      answer: described_class.pass_value,
+      chat_options: { model: described_class::OPENAI_MODEL },
+    )
 
     described_class.call(input)
     expect(openai_request).to have_been_made
@@ -33,12 +35,12 @@ RSpec.describe Guardrails::JailbreakChecker do
   end
 
   it "returns a result object with triggered true when guardrails fail" do
-    stub_openai_jailbreak_guardrails(input, described_class.fail_value)
+    stub_openai_jailbreak_guardrails(input, "FailValue")
     expect(described_class.call(input)).to have_attributes(triggered: true)
   end
 
   it "returns a result object with triggered false when guardrails pass" do
-    stub_openai_jailbreak_guardrails(input, described_class.pass_value)
+    stub_openai_jailbreak_guardrails(input, "PassValue")
     expect(described_class.call(input)).to have_attributes(triggered: false)
   end
 
