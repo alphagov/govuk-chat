@@ -46,7 +46,7 @@ module AnswerComposition
         PipelineRunner.call(question:, pipeline: [
           Pipeline::JailbreakGuardrails,
           Pipeline::QuestionRephraser.new(llm_provider: :openai),
-          Pipeline::QuestionRouter,
+          Pipeline::OpenAI::QuestionRouter,
           Pipeline::QuestionRoutingGuardrails,
           Pipeline::SearchResultFetcher,
           Pipeline::OpenAI::StructuredAnswerComposer,
