@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition::Pipeline::OpenAI::QuestionRephraser do
+RSpec.describe AnswerComposition::Pipeline::OpenAI::QuestionRephraser do # rubocop:disable RSpec/SpecFilePathFormat
   let(:conversation) { create :conversation, :with_history }
   let(:question) { conversation.questions.strict_loading(false).last }
   let(:question_records) { conversation.questions.joins(:answer) }
