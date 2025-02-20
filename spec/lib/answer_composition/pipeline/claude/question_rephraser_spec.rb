@@ -2,7 +2,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser do
   let(:conversation) { create :conversation, :with_history }
   let(:question) { conversation.questions.strict_loading(false).last }
   let(:context) { build(:answer_pipeline_context, question:) }
-  let(:question_records) { conversation.questions.joins(:answer) }
+  let(:question_records) { conversation.questions.joins(:answer).order(created_at: :asc) }
 
   context "when there is a valid response from Claude" do
     let(:rephrased) { "How do I pay my corporation tax" }
