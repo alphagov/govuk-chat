@@ -94,12 +94,22 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
     before do
       (1..6).each do |n|
         answer = build(:answer, message: "Answer #{n}")
-        create(:question, answer:, conversation:, message: "Question #{n}")
+        create(
+          :question,
+          answer:,
+          conversation:,
+          message: "Question #{n}",
+          created_at: rand(0..10).days.ago,
+        )
       end
     end
 
     it "truncates the history to the last 5 Q/A pairs" do
-      question_records_for_rephrasing = conversation.questions.joins(:answer).last(5)
+      question_records_for_rephrasing = conversation
+                                        .questions
+                                        .joins(:answer)
+                                        .sort_by(&:created_at)
+                                        .last(5)
 
       expect(AnswerComposition::Pipeline::Claude::QuestionRephraser).to(
         receive(:call).with("Question 7", question_records_for_rephrasing),
