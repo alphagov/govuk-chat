@@ -76,6 +76,7 @@ RSpec.describe AnswerComposition::Composer do
         expected_pipeline = [
           AnswerComposition::Pipeline::QuestionRephraser.new(llm_provider: :claude),
           AnswerComposition::Pipeline::SearchResultFetcher,
+          AnswerComposition::Pipeline::Claude::QuestionRouter,
           AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
         ]
         expected_pipeline.each do |pipeline|

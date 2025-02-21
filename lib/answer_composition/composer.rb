@@ -56,6 +56,7 @@ module AnswerComposition
         PipelineRunner.call(question:, pipeline: [
           Pipeline::QuestionRephraser.new(llm_provider: :claude),
           Pipeline::SearchResultFetcher,
+          Pipeline::Claude::QuestionRouter,
           Pipeline::Claude::StructuredAnswerComposer,
         ])
       else
