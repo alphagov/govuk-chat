@@ -265,7 +265,7 @@ GEM
     govuk_personalisation (1.1.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
-    govuk_publishing_components (52.0.0)
+    govuk_publishing_components (52.1.0)
       govuk_app_config
       govuk_personalisation (>= 0.7.0)
       kramdown
@@ -833,7 +833,7 @@ GEM
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
     statsd-ruby (1.5.0)
-    stringio (3.1.4)
+    stringio (3.1.5)
     terser (1.2.5)
       execjs (>= 0.3.0, < 3)
     thor (1.3.2)
@@ -1016,7 +1016,7 @@ CHECKSUMS
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (5.0.1) sha256=4ed9d38640c3db37a7cd3780156b3b8f0a91f6205161fb95b51bb47b5c6ddb88
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
-  govuk_publishing_components (52.0.0) sha256=9c5061d8c600de457388f6b8463a2480e049024027ab46f0a9a9e78208ef8077
+  govuk_publishing_components (52.1.0) sha256=81ce22c36c172b50b4617636b2b375254aa414029f777c453296e3a8f5790087
   govuk_schemas (5.0.4) sha256=e5d347983cf173efeef341aec6bdd8479e8f1385b6a0526174c21f8df4043394
   govuk_sidekiq (9.0.6) sha256=15197544ff441b2c0de0b4f59475ee87ea4179991c0c22df1eaaf3f8ddc75f1f
   govuk_test (4.1.0) sha256=97a350be96b8930fcd1082e2b248c3b4ccb6f9bed40310e1194dcffae02023fe
@@ -1210,7 +1210,7 @@ CHECKSUMS
   sprockets (4.2.1) sha256=951b13dd2f2fcae840a7184722689a803e0ff9d2702d902bd844b196da773f97
   sprockets-rails (3.5.2) sha256=a9e88e6ce9f8c912d349aa5401509165ec42326baf9e942a85de4b76dbc4119e
   statsd-ruby (1.5.0) sha256=369ddf09537408e273849e09b84d4edbdac24ac461f5c9b6cacb0e4398190109
-  stringio (3.1.4) sha256=7dd68f6f1a88610817c21f6d926dbf36e1fc585d3869fcd4a56c1f3210591d70
+  stringio (3.1.5) sha256=bca92461515a131535743bc81d5559fa1de7d80cff9a654d6c0af6f9f27e35c8
   terser (1.2.5) sha256=f1e49770b61af6897770217f87c6574d5e6f81881712fb0fc6a609bab0ccbfa7
   thor (1.3.2) sha256=eef0293b9e24158ccad7ab383ae83534b7ad4ed99c09f96f1a6b036550abbeda
   tiktoken_ruby (0.0.11.1) sha256=adffa735711bf1b19554423c82ba2e2be4a77d7776186cbaf19f837680f8cb8b
