@@ -13,7 +13,7 @@ module AnswerComposition::Pipeline
         start_time = Clock.monotonic_time
 
         answer = context.answer
-        answer.assign_llm_response("question_routing", bedrock_response.to_h)
+        answer.assign_llm_response("question_routing", bedrock_response)
 
         if genuine_rag?
           answer.assign_attributes(
@@ -69,9 +69,11 @@ module AnswerComposition::Pipeline
       end
 
       def llm_classification_function
-        @llm_classification_function ||= bedrock_response.dig(
-          "output", "message", "content", 0, "tool_use"
-        )
+        tool_use = bedrock_response["content"].detect { it["type"] == "tool_use" }
+
+        raise "No tool use" if tool_use.nil?
+
+        tool_use
       end
 
       def llm_classification_data
@@ -83,37 +85,31 @@ module AnswerComposition::Pipeline
       end
 
       def bedrock_response
-        @bedrock_response ||= bedrock_client.converse(
-          system: [{ text: prompt_config[:system_prompt] }],
-          model_id: BEDROCK_MODEL,
-          messages:,
-          inference_config:,
-          tool_config:,
-        )
-      end
-
-      def inference_config
-        {
-          max_tokens: 4096,
-          temperature: 0.0,
-        }
+        @bedrock_response ||= begin
+          response = bedrock_client.invoke_model(
+            model_id: BEDROCK_MODEL,
+            content_type: "application/json",
+            accept: "application/json",
+            body: JSON.generate({
+              messages:,
+              max_tokens: 4096,
+              system: prompt_config[:system_prompt],
+              anthropic_version: "bedrock-2023-05-31",
+              tools:,
+            }),
+          )
+          JSON.parse(response.body.string)
+        end
       end
 
       def messages
         [
-          { role: "user", content: [{ text: context.question_message }] },
+          { role: "user", content: [{ type: "text", text: context.question_message }] },
         ]
       end
 
       def prompt_config
         Claude.prompt_config.question_routing
-      end
-
-      def tool_config
-        {
-          tools:,
-          tool_choice: { any: {} },
-        }
       end
 
       def tools
@@ -129,16 +125,12 @@ module AnswerComposition::Pipeline
           end
 
           {
-            tool_spec: {
-              name: classification[:name],
-              description: build_description(classification),
-              input_schema: {
-                json: {
-                  type: "object",
-                  properties:,
-                  required:,
-                },
-              },
+            name: classification[:name],
+            description: build_description(classification),
+            input_schema: {
+              type: "object",
+              properties:,
+              required:,
             },
           }
         end
