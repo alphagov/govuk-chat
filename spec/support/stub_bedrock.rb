@@ -39,7 +39,22 @@ module StubBedrock
       bedrock_claude_tool_response(
         { "answer" => answer, "answered" => true, "sources_used" => %w[link_1] },
         tool_name: "output_schema",
-      )
+      ).call(context)
+    end
+  end
+
+  def bedrock_claude_question_routing_response(question)
+    lambda do |context|
+      given_question = context.params.dig(:messages, -1, :content, 0, :text)
+
+      if question && given_question != question
+        raise "Unexpected question received: \"#{given_question}\". Expected \"#{question}\"."
+      end
+
+      bedrock_claude_tool_response(
+        { "answer" => "This is RAG.", "confidence" => 0.9 },
+        tool_name: "genuine_rag",
+      ).call(context)
     end
   end
 
@@ -78,19 +93,42 @@ module StubBedrock
                                    tool_name:,
                                    tool_use_id: SecureRandom.hex,
                                    input_tokens: 10,
-                                   output_tokens: 20)
-    message_content = {
-      tool_use: {
-        input: tool_input,
-        tool_use_id:,
-        name: tool_name,
-      },
-    }
+                                   output_tokens: 20,
+                                   requested_tools: nil,
+                                   stop_reason: "end_turn")
+    lambda do |context|
+      if requested_tools.present?
+        given_tools = context.params.dig(:tool_config, :tools)
 
-    bedrock_claude_response(message_content, input_tokens:, output_tokens:)
+        if requested_tools != given_tools
+          err = <<~MSG
+            Unexpected tools received.
+
+            Expected tools:
+            #{requested_tools}
+
+            #{ENV['CI'].blank? ? "Prompt messages:\n#{given_tools.inspect}" : 'Not shown in CI'}
+          MSG
+          raise(err)
+        end
+      end
+
+      message_content = {
+        tool_use: {
+          input: tool_input,
+          tool_use_id:,
+          name: tool_name,
+        },
+      }
+
+      bedrock_claude_response(message_content, input_tokens:, output_tokens:, stop_reason:)
+    end
   end
 
-  def bedrock_claude_response(message_content, input_tokens: 10, output_tokens: 20)
+  def bedrock_claude_response(message_content,
+                              input_tokens: 10,
+                              output_tokens: 20,
+                              stop_reason: "end_turn")
     {
       output: {
         message: {
@@ -98,7 +136,7 @@ module StubBedrock
           content: [message_content],
         },
       },
-      stop_reason: "end_turn",
+      stop_reason:,
       usage: {
         input_tokens:,
         output_tokens:,
