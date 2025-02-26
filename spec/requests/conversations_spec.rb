@@ -304,7 +304,7 @@ RSpec.describe "ConversationsController" do
         expect(response).to have_http_status(:redirect)
         follow_redirect!
         expect(response.body)
-          .to have_selector(".gem-c-title__text", text: "GOV.UK Chat is generating an answer")
+          .to have_selector("h1", text: "GOV.UK Chat is generating an answer")
       end
 
       context "and the params are invalid while the last question is answered" do
@@ -435,7 +435,7 @@ RSpec.describe "ConversationsController" do
 
       expect(response).to have_http_status(:accepted)
       expect(response.body)
-        .to have_selector(".gem-c-title__text", text: "GOV.UK Chat is generating an answer")
+        .to have_selector("h1", text: "GOV.UK Chat is generating an answer")
         .and have_selector(".govuk-button[href='#{answer_question_path(question)}?refresh=true']",
                            text: "Check if an answer has been generated")
     end
@@ -637,7 +637,7 @@ RSpec.describe "ConversationsController" do
 
         expect(response).to have_http_status(:ok)
         expect(response.body)
-          .to have_selector(".gem-c-title__text", text: "Do you want to start a new chat?")
+          .to have_selector("h1", text: "Do you want to start a new chat?")
       end
     end
   end

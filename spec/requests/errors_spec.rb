@@ -4,7 +4,7 @@ RSpec.describe "ErrorController" do
     it "returns a #{title} response" do
       get "/#{code}"
       expect(response).to have_http_status(status)
-      expect(response.body).to have_selector(".gem-c-title__text", text: page_title)
+      expect(response.body).to have_selector("h1", text: page_title)
       expect(response.headers["No-Fallback"]).to eq "true"
     end
   end
