@@ -112,8 +112,10 @@
           <div class="govuk-width-container">
             <div class="govuk-grid-row">
               <div class="govuk-grid-column-two-thirds">
-                <%= render "govuk_publishing_components/components/title", {
-                  title: page_title,
+                <%= render "govuk_publishing_components/components/heading", {
+                  text: page_title,
+                  font_size: "xl",
+                  heading_level: 1,
                 } %>
               </div>
             </div>
