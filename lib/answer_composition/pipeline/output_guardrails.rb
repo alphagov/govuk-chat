@@ -1,28 +1,35 @@
 module AnswerComposition
   module Pipeline
     class OutputGuardrails
-      def self.call(...) = new(...).call
-
-      def initialize(context)
-        @context = context
+      def initialize(llm_provider: :openai)
+        @llm_provider = llm_provider
       end
 
     protected
 
-      attr_reader :context
+      attr_reader :llm_provider
 
       def build_metrics(start_time, response_or_error)
-        {
-          duration: Clock.monotonic_time - start_time,
-          llm_prompt_tokens: response_or_error.llm_token_usage["prompt_tokens"],
-          llm_completion_tokens: response_or_error.llm_token_usage["completion_tokens"],
-          llm_cached_tokens: response_or_error.llm_token_usage.dig("prompt_tokens_details", "cached_tokens"),
-        }
+        case llm_provider
+        when :openai
+          {
+            duration: Clock.monotonic_time - start_time,
+            llm_prompt_tokens: response_or_error.llm_token_usage["prompt_tokens"],
+            llm_completion_tokens: response_or_error.llm_token_usage["completion_tokens"],
+            llm_cached_tokens: response_or_error.llm_token_usage.dig("prompt_tokens_details", "cached_tokens"),
+          }
+        when :claude
+          {
+            duration: Clock.monotonic_time - start_time,
+            llm_prompt_tokens: response_or_error.llm_token_usage["input_tokens"],
+            llm_completion_tokens: response_or_error.llm_token_usage["output_tokens"],
+          }
+        end
       end
 
-      def response
+      def response(context)
         @response ||= begin
-          result = ::Guardrails::MultipleChecker.call(context.answer.message, guardrail_name)
+          result = ::Guardrails::MultipleChecker.call(context.answer.message, guardrail_name, llm_provider)
 
           context.answer.assign_llm_response(guardrail_name, result.llm_response)
 
@@ -34,7 +41,7 @@ module AnswerComposition
         self.class.name.split("::").last.underscore
       end
 
-      def abort_after_response_error(error, start_time, message)
+      def abort_after_response_error(context, error, start_time, message)
         context.abort_pipeline!(
           message:,
           status: "error_#{guardrail_name}",
