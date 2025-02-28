@@ -40,14 +40,22 @@ RSpec.describe AnswerComposition::Composer do
         allow(AnswerComposition::Pipeline::QuestionRephraser)
           .to receive(:new).with(llm_provider: :openai).and_return(rephraser)
 
+        question_routing_guardrails = instance_double(AnswerComposition::Pipeline::QuestionRoutingGuardrails)
+        allow(AnswerComposition::Pipeline::QuestionRoutingGuardrails)
+          .to receive(:new).with(llm_provider: :openai).and_return(question_routing_guardrails)
+
+        answer_guardrails = instance_double(AnswerComposition::Pipeline::AnswerGuardrails)
+        allow(AnswerComposition::Pipeline::AnswerGuardrails)
+          .to receive(:new).with(llm_provider: :openai).and_return(answer_guardrails)
+
         expected_pipeline = [
           AnswerComposition::Pipeline::JailbreakGuardrails,
           AnswerComposition::Pipeline::QuestionRephraser.new(llm_provider: :openai),
           AnswerComposition::Pipeline::OpenAI::QuestionRouter,
-          AnswerComposition::Pipeline::QuestionRoutingGuardrails,
+          AnswerComposition::Pipeline::QuestionRoutingGuardrails.new(llm_provider: :openai),
           AnswerComposition::Pipeline::SearchResultFetcher,
           AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer,
-          AnswerComposition::Pipeline::AnswerGuardrails,
+          AnswerComposition::Pipeline::AnswerGuardrails.new(llm_provider: :openai),
         ]
         expected_pipeline.each do |pipeline|
           allow(pipeline).to receive(:call) { |context| context }

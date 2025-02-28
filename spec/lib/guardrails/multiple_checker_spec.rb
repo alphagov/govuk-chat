@@ -35,14 +35,14 @@ RSpec.describe Guardrails::MultipleChecker do
           model: described_class::OPENAI_MODEL,
         })
 
-        described_class.call(input, llm_prompt_name)
+        described_class.call(input, llm_prompt_name, :openai)
         expect(openai_request).to have_been_made
       end
 
       it "returns triggered: true with human readable guardrails" do
         guardrail_result = 'True | "1, 2"'
         stub_openai_output_guardrail(input, guardrail_result)
-        expect(described_class.call(input, llm_prompt_name))
+        expect(described_class.call(input, llm_prompt_name, :openai))
           .to be_a(described_class::Result)
           .and(having_attributes(
                  triggered: true,
@@ -57,7 +57,7 @@ RSpec.describe Guardrails::MultipleChecker do
       it "returns triggered: false with empty guardrails" do
         guardrail_result = "False | None"
         stub_openai_output_guardrail(input, guardrail_result)
-        expect(described_class.call(input, llm_prompt_name))
+        expect(described_class.call(input, llm_prompt_name, :openai))
           .to be_a(described_class::Result)
           .and(having_attributes(
                  triggered: false,
@@ -71,7 +71,7 @@ RSpec.describe Guardrails::MultipleChecker do
 
       it "returns the LLM token usage" do
         stub_openai_output_guardrail(input)
-        result = described_class.call(input, llm_prompt_name)
+        result = described_class.call(input, llm_prompt_name, :openai)
 
         expect(result.llm_token_usage).to eq({
           "prompt_tokens" => 13,
@@ -96,14 +96,14 @@ RSpec.describe Guardrails::MultipleChecker do
           chat_options: { max_tokens: },
         )
 
-        described_class.call(input, llm_prompt_name)
+        described_class.call(input, llm_prompt_name, :openai)
 
         expect(openai_request).to have_been_made
       end
 
       it "throws an error if a guardrail definition is missing for a guardrail" do
         guardrail_definitions.delete("costs")
-        expect { described_class.call(input, llm_prompt_name) }.to raise_error(KeyError)
+        expect { described_class.call(input, llm_prompt_name, :openai) }.to raise_error(KeyError)
       end
 
       context "when :question_routing_guardrails is passed in as the llm_prompt_name" do
@@ -125,7 +125,7 @@ RSpec.describe Guardrails::MultipleChecker do
           )
           openai_request = stub_openai_chat_completion(messages, answer: "False | None", chat_options: {})
 
-          described_class.call(input, llm_prompt_name)
+          described_class.call(input, llm_prompt_name, :openai)
 
           expect(openai_request).to have_been_made
         end
@@ -135,7 +135,7 @@ RSpec.describe Guardrails::MultipleChecker do
         it "throws a ResponseError" do
           guardrail_result = 'False | "1, 2"'
           stub_openai_output_guardrail(input, guardrail_result)
-          expect { described_class.call(input, llm_prompt_name) }
+          expect { described_class.call(input, llm_prompt_name, :openai) }
             .to raise_error(
               an_instance_of(described_class::ResponseError)
                 .and(having_attributes(message: "Error parsing guardrail response",
@@ -148,7 +148,7 @@ RSpec.describe Guardrails::MultipleChecker do
         it "throws a ResponseError" do
           guardrail_result = 'False | "1, 8"'
           stub_openai_output_guardrail(input, guardrail_result)
-          expect { described_class.call(input, llm_prompt_name) }
+          expect { described_class.call(input, llm_prompt_name, :openai) }
             .to raise_error(
               an_instance_of(described_class::ResponseError)
                 .and(having_attributes(message: "Error parsing guardrail response",
@@ -162,7 +162,7 @@ RSpec.describe Guardrails::MultipleChecker do
       let(:llm_prompt_name) { "non_existent_llm_prompt_name" }
 
       it "raises an error" do
-        expect { described_class.call(input, llm_prompt_name) }
+        expect { described_class.call(input, llm_prompt_name, :openai) }
           .to raise_error("No LLM prompts found for #{llm_prompt_name}")
       end
     end

@@ -13,7 +13,7 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
     it_behaves_like "a passing guardrail pipeline step", "answer_guardrails"
 
     it "does not abort the pipeline" do
-      described_class.call(context)
+      described_class.new(llm_provider: :openai).call(context)
       expect(context.aborted?).to be false
     end
   end
@@ -23,7 +23,7 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
 
     it "aborts the pipeline and updates the answer's status and message attributes" do
       expect {
-        described_class.call(context)
+        described_class.new(llm_provider: :openai).call(context)
       }.to throw_symbol(:abort)
 
       expect(context.answer).to have_attributes(
@@ -35,14 +35,14 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
     end
 
     it "assigns the llm response to the answer" do
-      expect { described_class.call(context) }.to throw_symbol(:abort)
+      expect { described_class.new(llm_provider: :openai).call(context) }.to throw_symbol(:abort)
       expect(context.answer.llm_responses["answer_guardrails"]).to eq(guardrail_response.llm_response)
     end
 
     it "assigns metrics to the answer" do
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
-      expect { described_class.call(context) }.to throw_symbol(:abort)
+      expect { described_class.new(llm_provider: :openai).call(context) }.to throw_symbol(:abort)
 
       expect(context.answer.metrics["answer_guardrails"]).to eq({
         duration: 1.5,
