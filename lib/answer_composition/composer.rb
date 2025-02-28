@@ -47,10 +47,10 @@ module AnswerComposition
           Pipeline::JailbreakGuardrails,
           Pipeline::QuestionRephraser.new(llm_provider: :openai),
           Pipeline::OpenAI::QuestionRouter,
-          Pipeline::QuestionRoutingGuardrails,
+          Pipeline::QuestionRoutingGuardrails.new(llm_provider: :openai),
           Pipeline::SearchResultFetcher,
           Pipeline::OpenAI::StructuredAnswerComposer,
-          Pipeline::AnswerGuardrails,
+          Pipeline::AnswerGuardrails.new(llm_provider: :openai),
         ])
       when "claude_structured_answer"
         PipelineRunner.call(question:, pipeline: [

@@ -62,10 +62,11 @@ module Guardrails
       PROMPT
     end
 
-    def initialize(input, llm_prompt_name)
+    def initialize(input, llm_prompt_name, llm_provider)
       @input = input
       @openai_client = OpenAIClient.build
       @llm_prompt_name = llm_prompt_name
+      @llm_provider = llm_provider
     end
 
     def call
