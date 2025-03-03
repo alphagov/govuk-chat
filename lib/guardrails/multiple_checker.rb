@@ -16,8 +16,9 @@ module Guardrails
 
       Guardrail = Data.define(:key, :name, :content)
 
-      def initialize(prompt_name)
-        prompts = Rails.configuration.govuk_chat_private.llm_prompts.openai[prompt_name]
+      def initialize(prompt_name, llm_provider)
+        prompts = Rails.configuration.govuk_chat_private.llm_prompts[llm_provider][prompt_name]
+
         raise "No LLM prompts found for #{prompt_name}" unless prompts
 
         @prompts = prompts
@@ -49,8 +50,8 @@ module Guardrails
 
     def self.call(...) = new(...).call
 
-    def self.collated_prompts(llm_prompt_name)
-      prompt = Prompt.new(llm_prompt_name)
+    def self.collated_prompts(llm_prompt_name, llm_provider)
+      prompt = Prompt.new(llm_prompt_name, llm_provider)
 
       <<~PROMPT
         # System prompt
@@ -92,7 +93,7 @@ module Guardrails
 
   private
 
-    attr_reader :input, :openai_client, :llm_prompt_name
+    attr_reader :input, :openai_client, :llm_prompt_name, :llm_provider
 
     def openai_response
       @openai_response ||= openai_client.chat(
@@ -113,7 +114,7 @@ module Guardrails
     end
 
     def prompt
-      @prompt ||= Prompt.new(llm_prompt_name)
+      @prompt ||= Prompt.new(llm_prompt_name, llm_provider)
     end
 
     def max_tokens

@@ -59,7 +59,7 @@ namespace "guardrails" do
       abort("Invalid guardrail type. Valid guardrail types are #{valid_guardrail_types.to_sentence}")
     end
 
-    prompt = Guardrails::MultipleChecker.collated_prompts(guardrail_type)
+    prompt = Guardrails::MultipleChecker.collated_prompts(guardrail_type, :openai)
     puts prompt
   end
 end
