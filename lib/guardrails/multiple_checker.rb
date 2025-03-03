@@ -16,7 +16,7 @@ module Guardrails
 
       Guardrail = Data.define(:key, :name, :content)
 
-      def initialize(prompt_name, llm_provider)
+      def initialize(prompt_name, llm_provider = :openai)
         prompts = Rails.configuration.govuk_chat_private.llm_prompts[llm_provider][prompt_name]
 
         raise "No LLM prompts found for #{prompt_name}" unless prompts
@@ -46,6 +46,7 @@ module Guardrails
     end
 
     OPENAI_MODEL = "gpt-4o-mini".freeze
+    CLAUDE_MODEL = "claude-3-5-sonnet-20240620-v1:0".freeze
     MAX_TOKENS_BUFFER = 5
 
     def self.call(...) = new(...).call
@@ -71,29 +72,34 @@ module Guardrails
     end
 
     def call
-      llm_response = openai_response.dig("choices", 0)
-      llm_guardrail_result = llm_response.dig("message", "content")
-      llm_token_usage = openai_response["usage"]
+      case llm_provider
+      when :openai
+        llm_response = openai_response.dig("choices", 0)
+        llm_guardrail_result = llm_response.dig("message", "content")
+        llm_token_usage = openai_response["usage"]
 
-      unless response_pattern =~ llm_guardrail_result
-        raise ResponseError.new(
-          "Error parsing guardrail response", llm_guardrail_result, llm_token_usage
-        )
+        unless response_pattern =~ llm_guardrail_result
+          raise ResponseError.new(
+            "Error parsing guardrail response", llm_guardrail_result, llm_token_usage
+          )
+        end
+
+        parts = llm_guardrail_result.split(" | ")
+        triggered = parts.first.chomp == "True"
+        guardrails = if triggered
+                       extract_guardrails(parts.second)
+                     else
+                       []
+                     end
+        Result.new(triggered:, llm_response:, guardrails:, llm_token_usage:, llm_guardrail_result:)
+      when :claude
+        Claude::MultipleChecker.call(input, llm_prompt_name)
       end
-
-      parts = llm_guardrail_result.split(" | ")
-      triggered = parts.first.chomp == "True"
-      guardrails = if triggered
-                     extract_guardrails(parts.second)
-                   else
-                     []
-                   end
-      Result.new(triggered:, llm_response:, guardrails:, llm_token_usage:, llm_guardrail_result:)
     end
 
   private
 
-    attr_reader :input, :openai_client, :llm_prompt_name, :llm_provider
+    attr_reader :input, :openai_client, :claude_client, :llm_prompt_name, :llm_provider
 
     def openai_response
       @openai_response ||= openai_client.chat(
