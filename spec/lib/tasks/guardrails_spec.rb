@@ -80,7 +80,7 @@ RSpec.describe "rake guardrails tasks" do
 
     it "calls MultipleChecker.collated_prompts with the correct arg and outputs to stdout" do
       expect { Rake::Task[task_name].invoke("answer_guardrails") }.to output(/# System prompt/).to_stdout
-      expect(Guardrails::MultipleChecker).to have_received(:collated_prompts).with(:answer_guardrails)
+      expect(Guardrails::MultipleChecker).to have_received(:collated_prompts).with(:answer_guardrails, :openai)
     end
   end
 end
