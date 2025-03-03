@@ -226,7 +226,7 @@ RSpec.describe Guardrails::MultipleChecker do
 
         PROMPT
 
-        expect(described_class.collated_prompts(llm_prompt_name)).to eq(expected_prompt)
+        expect(described_class.collated_prompts(llm_prompt_name, :openai)).to eq(expected_prompt)
       end
     end
 
@@ -259,7 +259,7 @@ RSpec.describe Guardrails::MultipleChecker do
 
         PROMPT
 
-        expect(described_class.collated_prompts(llm_prompt_name)).to eq(expected_prompt)
+        expect(described_class.collated_prompts(llm_prompt_name, :openai)).to eq(expected_prompt)
       end
     end
   end
