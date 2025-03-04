@@ -45,9 +45,7 @@ module Guardrails
       end
     end
 
-    OPENAI_MODEL = "gpt-4o-mini".freeze
-    CLAUDE_MODEL = "claude-3-5-sonnet-20240620-v1:0".freeze
-    MAX_TOKENS_BUFFER = 5
+    attr_reader :input, :llm_provider, :llm_prompt_name
 
     def self.call(...) = new(...).call
 
@@ -66,7 +64,6 @@ module Guardrails
 
     def initialize(input, llm_prompt_name, llm_provider)
       @input = input
-      @openai_client = OpenAIClient.build
       @llm_prompt_name = llm_prompt_name
       @llm_provider = llm_provider
     end
@@ -74,81 +71,10 @@ module Guardrails
     def call
       case llm_provider
       when :openai
-        llm_response = openai_response.dig("choices", 0)
-        llm_guardrail_result = llm_response.dig("message", "content")
-        llm_token_usage = openai_response["usage"]
-
-        unless response_pattern =~ llm_guardrail_result
-          raise ResponseError.new(
-            "Error parsing guardrail response", llm_guardrail_result, llm_token_usage
-          )
-        end
-
-        parts = llm_guardrail_result.split(" | ")
-        triggered = parts.first.chomp == "True"
-        guardrails = if triggered
-                       extract_guardrails(parts.second)
-                     else
-                       []
-                     end
-        Result.new(triggered:, llm_response:, guardrails:, llm_token_usage:, llm_guardrail_result:)
+        OpenAI::MultipleChecker.call(input, llm_prompt_name)
       when :claude
         Claude::MultipleChecker.call(input, llm_prompt_name)
       end
-    end
-
-  private
-
-    attr_reader :input, :openai_client, :claude_client, :llm_prompt_name, :llm_provider
-
-    def openai_response
-      @openai_response ||= openai_client.chat(
-        parameters: {
-          model: OPENAI_MODEL,
-          messages:,
-          temperature: 0.0,
-          max_tokens:,
-        },
-      )
-    end
-
-    def messages
-      [
-        { role: "system", content: prompt.system_prompt },
-        { role: "user", content: prompt.user_prompt(input) },
-      ]
-    end
-
-    def prompt
-      @prompt ||= Prompt.new(llm_prompt_name, llm_provider)
-    end
-
-    def max_tokens
-      all_guardrail_numbers = guardrail_numbers.map(&:to_s).join(", ")
-      longest_possible_response_string = %(True | "#{all_guardrail_numbers}")
-
-      token_count = Tiktoken
-       .encoding_for_model(OPENAI_MODEL)
-       .encode(longest_possible_response_string)
-       .length
-
-      token_count + MAX_TOKENS_BUFFER
-    end
-
-    def guardrail_numbers
-      prompt.guardrails.map(&:key)
-    end
-
-    def response_pattern
-      @response_pattern ||= begin
-        guardrail_range = "[#{guardrail_numbers.min}-#{guardrail_numbers.max}]"
-        /^(False \| None|True \| "#{guardrail_range}(, #{guardrail_range})*")$/
-      end
-    end
-
-    def extract_guardrails(parts)
-      guardrail_numbers = parts.scan(/\d+/).map(&:to_i)
-      prompt.guardrails.select { |guardrail| guardrail.key.in?(guardrail_numbers) }.map(&:name)
     end
   end
 end
