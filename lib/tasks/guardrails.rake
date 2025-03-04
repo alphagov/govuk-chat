@@ -19,7 +19,7 @@ namespace "guardrails" do
 
     output_path = args[:output_path]
 
-    model_name = Guardrails::MultipleChecker::OPENAI_MODEL
+    model_name = Guardrails::OpenAI::MultipleChecker::OPENAI_MODEL
     true_eval = ->(v) { v != "False | None" }
 
     prompt_token_counts = []

@@ -39,7 +39,7 @@ RSpec.describe "rake guardrails tasks" do
 
           expect(results).to be_a(Hash)
           expect(results).to include("count", "model")
-          expect(results["model"]).to eq(Guardrails::MultipleChecker::OPENAI_MODEL)
+          expect(results["model"]).to eq(Guardrails::OpenAI::MultipleChecker::OPENAI_MODEL)
 
           # Average token count depends on the number of examples, so we'll just
           # check the presence of a value here so the tests won't fail when the
