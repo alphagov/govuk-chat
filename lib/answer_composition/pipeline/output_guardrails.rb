@@ -1,15 +1,13 @@
 module AnswerComposition
   module Pipeline
     class OutputGuardrails
-      def self.call(...) = new(...).call
-
-      def initialize(context)
-        @context = context
+      def initialize(llm_provider:)
+        @llm_provider = llm_provider
       end
 
     protected
 
-      attr_reader :context
+      attr_reader :llm_provider
 
       def build_metrics(start_time, response_or_error)
         {
@@ -22,7 +20,7 @@ module AnswerComposition
 
       def response
         @response ||= begin
-          result = ::Guardrails::MultipleChecker.call(context.answer.message, guardrail_name)
+          result = ::Guardrails::MultipleChecker.call(context.answer.message, guardrail_name, llm_provider)
 
           context.answer.assign_llm_response(guardrail_name, result.llm_response)
 
