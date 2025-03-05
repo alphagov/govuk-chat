@@ -56,6 +56,85 @@ RSpec.describe Guardrails::Claude::MultipleChecker do
         expect(result.llm_response.message.content.first.text)
         .to eq(guardrail_result)
       end
+
+      it "returns triggered: false with empty guardrails" do
+        guardrail_result = "False | None"
+
+        stub_bedrock_converse(
+          bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
+        )
+
+        result = described_class.call(input, llm_prompt_name)
+
+        expect(result)
+          .to be_a(::Guardrails::MultipleChecker::Result)
+          .and(having_attributes(
+                 triggered: false,
+                 guardrails: [],
+                 llm_guardrail_result: guardrail_result,
+               ))
+
+        expect(result.llm_response.message.content.first.text)
+        .to eq(guardrail_result)
+      end
+
+      it "returns the LLM token usage" do
+        guardrail_result = "False | None"
+
+        stub_bedrock_converse(
+          bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
+        )
+        result = described_class.call(input, llm_prompt_name)
+
+        expect(result.llm_token_usage.input_tokens).to eq(10)
+        expect(result.llm_token_usage.output_tokens).to eq(20)
+        expect(result.llm_token_usage.total_tokens).to eq(30)
+      end
+
+      context "when the Claude response format is incorrect" do
+        it "throws a ResponseError" do
+          guardrail_result = 'False | "1, 2"'
+          stub_bedrock_converse(
+            bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
+          )
+          expect { described_class.call(input, llm_prompt_name) }
+            .to raise_error(
+              an_instance_of(::Guardrails::MultipleChecker::ResponseError)
+                .and(having_attributes(message: "Error parsing guardrail response",
+                                       llm_response: guardrail_result)),
+            )
+        end
+      end
+
+      context "when the Claude response contains an unknown guardrail number" do
+        it "throws a ResponseError" do
+          guardrail_result = 'False | "1, 8"'
+          stub_bedrock_converse(
+            bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
+          )
+          expect { described_class.call(input, llm_prompt_name) }
+            .to raise_error(
+              an_instance_of(::Guardrails::MultipleChecker::ResponseError)
+                .and(having_attributes(message: "Error parsing guardrail response",
+                                       llm_response: guardrail_result)),
+            )
+        end
+      end
+    end
+
+    context "with a non-existent llm_prompt_name" do
+      let(:llm_prompt_name) { "non_existent_llm_prompt_name" }
+
+      it "raises an error" do
+        guardrail_result = "False | None"
+
+        stub_bedrock_converse(
+          bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
+        )
+
+        expect { described_class.call(input, llm_prompt_name) }
+        .to raise_error("No LLM prompts found for #{llm_prompt_name}")
+      end
     end
   end
 end

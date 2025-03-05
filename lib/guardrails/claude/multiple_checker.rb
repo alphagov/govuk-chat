@@ -24,6 +24,12 @@ module Guardrails
         llm_guardrail_result = llm_response.dig("message", "content", 0, "text")
         llm_token_usage = claude_response.usage
 
+        unless response_pattern =~ llm_guardrail_result
+          raise ::Guardrails::MultipleChecker::ResponseError.new(
+            "Error parsing guardrail response", llm_guardrail_result, llm_token_usage
+          )
+        end
+
         parts = llm_guardrail_result.split(" | ")
         triggered = parts.first.chomp == "True"
         guardrails = if triggered
@@ -52,6 +58,17 @@ module Guardrails
       def extract_guardrails(parts)
         guardrail_numbers = parts.scan(/\d+/).map(&:to_i)
         prompt.guardrails.select { |guardrail| guardrail.key.in?(guardrail_numbers) }.map(&:name)
+      end
+
+      def guardrail_numbers
+        prompt.guardrails.map(&:key)
+      end
+
+      def response_pattern
+        @response_pattern ||= begin
+          guardrail_range = "[#{guardrail_numbers.min}-#{guardrail_numbers.max}]"
+          /^(False \| None|True \| "#{guardrail_range}(, #{guardrail_range})*")$/
+        end
       end
     end
   end
