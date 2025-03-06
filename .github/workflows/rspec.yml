@@ -48,7 +48,7 @@ jobs:
         uses: alphagov/govuk-infrastructure/.github/actions/setup-redis@main
 
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: alphagov/govuk-chat
           ref: ${{ inputs.ref || github.ref }}
@@ -56,7 +56,7 @@ jobs:
           token: ${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}
 
       - name: Checkout Publishing API (for Content Schemas)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: alphagov/publishing-api
           ref: ${{ inputs.publishingApiRef }}
@@ -64,7 +64,7 @@ jobs:
 
       - name: Checkout govuk_chat_private
         if: inputs.govukChatPrivateRef != ''
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: alphagov/govuk_chat_private
           ref: ${{ inputs.govukChatPrivateRef }}
