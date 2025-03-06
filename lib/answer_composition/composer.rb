@@ -56,8 +56,10 @@ module AnswerComposition
         PipelineRunner.call(question:, pipeline: [
           Pipeline::QuestionRephraser.new(llm_provider: :claude),
           Pipeline::Claude::QuestionRouter,
+          Pipeline::QuestionRoutingGuardrails.new(llm_provider: :claude),
           Pipeline::SearchResultFetcher,
           Pipeline::Claude::StructuredAnswerComposer,
+          Pipeline::AnswerGuardrails.new(llm_provider: :claude),
         ])
       else
         raise "Answer strategy #{answer_strategy} not configured"
