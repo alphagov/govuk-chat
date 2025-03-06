@@ -2,6 +2,38 @@ RSpec.describe Guardrails::MultipleChecker do
   let(:input) { "This is a test input." }
   let(:formatted_date) { Date.current.strftime("%A %d %B %Y") }
 
+  describe ".call" do
+    let(:input) { "This is a test input." }
+    let(:llm_prompt_name) { :answer_guardrails }
+    let(:guardrail_response) { build(:guardrails_multiple_checker_result, :pass) }
+
+    context "when the llm_provider is :openai" do
+      let(:llm_provider) { :openai }
+
+      before do
+        allow(Guardrails::OpenAI::MultipleChecker).to receive(:call).and_return(guardrail_response)
+      end
+
+      it "calls the OpenAI multiple checker" do
+        described_class.call(input, llm_prompt_name, llm_provider)
+        expect(Guardrails::OpenAI::MultipleChecker).to have_received(:call).with(input, llm_prompt_name)
+      end
+    end
+
+    context "when the llm_provider is :claude" do
+      let(:llm_provider) { :claude }
+
+      before do
+        allow(Guardrails::Claude::MultipleChecker).to receive(:call).and_return(guardrail_response)
+      end
+
+      it "calls the Claude multiple checker" do
+        described_class.call(input, llm_prompt_name, llm_provider)
+        expect(Guardrails::Claude::MultipleChecker).to have_received(:call).with(input, llm_prompt_name)
+      end
+    end
+  end
+
   describe ".collated_prompts" do
     let(:system_prompt) do
       <<~PROMPT
