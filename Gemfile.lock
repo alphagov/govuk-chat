@@ -220,22 +220,22 @@ GEM
       faraday (>= 1.0, < 3.a)
     google-cloud-errors (1.4.0)
     google-logging-utils (0.1.0)
-    google-protobuf (4.29.3)
+    google-protobuf (4.30.0)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.29.3-aarch64-linux)
+    google-protobuf (4.30.0-aarch64-linux)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.29.3-arm64-darwin)
+    google-protobuf (4.30.0-arm64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.29.3-x86-linux)
+    google-protobuf (4.30.0-x86-linux)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.29.3-x86_64-darwin)
+    google-protobuf (4.30.0-x86_64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.29.3-x86_64-linux)
+    google-protobuf (4.30.0-x86_64-linux)
       bigdecimal
       rake (>= 13)
     googleapis-common-protos-types (1.18.0)
@@ -248,9 +248,9 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.16.3)
+    govuk_app_config (9.16.4)
       logstasher (~> 2.1)
-      opentelemetry-exporter-otlp (>= 0.25, < 0.30)
+      opentelemetry-exporter-otlp (>= 0.25, < 0.31)
       opentelemetry-instrumentation-all (>= 0.39.1, < 0.75.0)
       opentelemetry-sdk (~> 1.2)
       plek (>= 4, < 6)
@@ -413,7 +413,7 @@ GEM
     opentelemetry-api (1.4.0)
     opentelemetry-common (0.22.0)
       opentelemetry-api (~> 1.0)
-    opentelemetry-exporter-otlp (0.29.1)
+    opentelemetry-exporter-otlp (0.30.0)
       google-protobuf (>= 3.18)
       googleapis-common-protos-types (~> 1.3)
       opentelemetry-api (~> 1.1)
@@ -627,7 +627,7 @@ GEM
       bcrypt (>= 3.1.11)
       rails (>= 5.1.4)
     pg (1.5.9)
-    plek (5.2.0)
+    plek (5.2.1)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -1009,15 +1009,15 @@ CHECKSUMS
   google-cloud-env (2.2.1) sha256=3c6062aee0b5c863b83f3ce125ea7831507aadf1af7c0d384b74a116c4f649cf
   google-cloud-errors (1.4.0) sha256=0b4e2e0f563db1708732ab4037421d9f26de5cbbbc04be710f2c9cf358e2de14
   google-logging-utils (0.1.0) sha256=70950b1e49314273cf2e167adb47b62af7917a4691b580da7e9be67b9205fcd5
-  google-protobuf (4.29.3) sha256=9a5576c0059f57d7e07107bda8287ac14d0c59c71fe939b260855d3f46b9b566
-  google-protobuf (4.29.3-aarch64-linux) sha256=2b670a80eac7377f6055a48caa8db52561195a80718e0ea8289e8c8aeb4b2502
-  google-protobuf (4.29.3-arm64-darwin) sha256=c0fc9a33e674d08a72f12565e27b888d3c22cb03a20731e83c015fc58719a407
-  google-protobuf (4.29.3-x86-linux) sha256=d4e7406c9830e520504ea96aaf6daa55ce436dd403fa2c09b10c4b0fe4ae3023
-  google-protobuf (4.29.3-x86_64-darwin) sha256=2d1051fd88ca2c7f6a09d2f12feabe8ded7b13f049799423b62d83ee88f968b4
-  google-protobuf (4.29.3-x86_64-linux) sha256=4ac194b06c59559457ce1d1d57d03760b50e009dbcfe5ef065a1af48ce4a2d0e
+  google-protobuf (4.30.0) sha256=4427249acaccb0ec4d64bc4dbd551d1630f9ca50e4e34bd5601e30e75cd842e9
+  google-protobuf (4.30.0-aarch64-linux) sha256=fdc118bedd9267279dfcd7c006e594341d817ad4e26d9741732b6dbfe7441c7f
+  google-protobuf (4.30.0-arm64-darwin) sha256=791d5bec1e468848c84cec390dfb3a6016afee04cfebc564e3cb2e3c264e6415
+  google-protobuf (4.30.0-x86-linux) sha256=d1d709b096ca38621ee611111025a28a2cec15110658532115086f4dd0bdd31a
+  google-protobuf (4.30.0-x86_64-darwin) sha256=135195ff560031018e31b1b7b8cb935e60e3731c2ec257a1a7750e3bd3b7a7d9
+  google-protobuf (4.30.0-x86_64-linux) sha256=a5b3f1a7e7bc832249a136d20c2d520e693c2340d682e32bc73fe8e28190148d
   googleapis-common-protos-types (1.18.0) sha256=280d19dcf431f86b9ff7ed8b23994915c5f4f7a0282ad3e870a2d3595976559f
   googleauth (1.12.0) sha256=1a42b8e34d79d9eb5c4cc266596be2de0ff26d207d5b252ff935ff2041d3ccc2
-  govuk_app_config (9.16.3) sha256=cc4325ac4be4520a0e52a8486b6535e389a598a738862a9423cd077d6614b142
+  govuk_app_config (9.16.4) sha256=727da5bb195516e7272d3ee8c0cd7fcf970593401422a91d957fa1f422f813d0
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (5.0.1) sha256=4ed9d38640c3db37a7cd3780156b3b8f0a91f6205161fb95b51bb47b5c6ddb88
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
@@ -1086,7 +1086,7 @@ CHECKSUMS
   opensearch-ruby (3.4.0) sha256=0a8621686bed3c59b4c23e08cbaef873685a3fe4568e9d2703155ca92b8ca05d
   opentelemetry-api (1.4.0) sha256=a733dee4d56c2140e946eb5ba99993575d4e96dd97e07ac948823af03b664036
   opentelemetry-common (0.22.0) sha256=ce5e96a0f838d67eb70a1d32e02bdbe7b8f41767bc71994d73b299a8b0c5878d
-  opentelemetry-exporter-otlp (0.29.1) sha256=3244c5f489f4ee1900dbb197a15e8ed49d0c777aaa52a5cd1d1fb3cb0a190eb0
+  opentelemetry-exporter-otlp (0.30.0) sha256=07cb0446bb782dfcf7cc27d2d6ebcf9aef1a4585b3f4952be6276a1e77d5ba97
   opentelemetry-helpers-mysql (0.2.0) sha256=dd05f5f40bf5169cd3b8fef355fb050506542fa6b32ace19e8124f6dec5b261f
   opentelemetry-helpers-sql-obfuscation (0.3.0) sha256=f5d866d58f98267b5302be479c9dddad25ddf7db19030d44fb5ab93025ea9e4b
   opentelemetry-instrumentation-action_mailer (0.4.0) sha256=e8b5959572038dc0367300b5425f2f7b297fc0b372a966832b1aad4af06ee9a2
@@ -1141,7 +1141,7 @@ CHECKSUMS
   parser (3.3.7.1) sha256=7dbe61618025519024ac72402a6677ead02099587a5538e84371b76659e6aca1
   passwordless (1.8.0) sha256=2bc96ab041079eab4d677efe0daf4a771066948671fa327a7a563d26b12c4b5e
   pg (1.5.9) sha256=761efbdf73b66516f0c26fcbe6515dc7500c3f0aa1a1b853feae245433c64fdc
-  plek (5.2.0) sha256=7c9f35bdb7c687c38903c2084d68511597e1491447a0ddf1dabce1fb73ed2d0e
+  plek (5.2.1) sha256=7d517824da095ab3e8070023cf57cc8504554ea8f897ee1d7e71a67df6295521
   pp (0.6.2) sha256=947ec3120c6f92195f8ee8aa25a7b2c5297bb106d83b41baa02983686577b6ff
   prettyprint (0.2.0) sha256=2bc9e15581a94742064a3cc8b0fb9d45aae3d03a1baa6ef80922627a0766f193
   prometheus_exporter (2.2.0) sha256=38a71af112da26b588f67948e5dcc32d539b26cfbf25115e92caca8db8437497
