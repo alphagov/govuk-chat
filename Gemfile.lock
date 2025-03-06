@@ -283,7 +283,7 @@ GEM
       govuk_app_config (>= 1.1)
       redis-client (>= 0.22.2)
       sidekiq (~> 7.0, < 8)
-    govuk_test (4.1.0)
+    govuk_test (4.1.1)
       brakeman (>= 5.0.2)
       capybara (>= 3.36)
       puma
@@ -774,7 +774,7 @@ GEM
       faraday (>= 1)
       faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
-    rubyzip (2.3.2)
+    rubyzip (2.4.1)
     sass-embedded (1.81.0-aarch64-linux-gnu)
       google-protobuf (~> 4.28)
     sass-embedded (1.81.0-arm-linux-gnueabihf)
@@ -788,7 +788,7 @@ GEM
     sass-embedded (1.81.0-x86_64-linux-gnu)
       google-protobuf (~> 4.28)
     securerandom (0.4.1)
-    selenium-webdriver (4.26.0)
+    selenium-webdriver (4.29.1)
       base64 (~> 0.2)
       logger (~> 1.4)
       rexml (~> 3.2, >= 3.2.5)
@@ -1024,7 +1024,7 @@ CHECKSUMS
   govuk_publishing_components (53.0.0) sha256=6c4c8cc4248d2855b995c9dc67cc4beddaad17956b6a0e4b11d45613f8fa07c9
   govuk_schemas (5.0.4) sha256=e5d347983cf173efeef341aec6bdd8479e8f1385b6a0526174c21f8df4043394
   govuk_sidekiq (9.0.6) sha256=15197544ff441b2c0de0b4f59475ee87ea4179991c0c22df1eaaf3f8ddc75f1f
-  govuk_test (4.1.0) sha256=97a350be96b8930fcd1082e2b248c3b4ccb6f9bed40310e1194dcffae02023fe
+  govuk_test (4.1.1) sha256=c055990407fdc37ca2c1020da421dd5f7c521e7f09975cefb939898296e361cc
   groupdate (6.5.1) sha256=a0a78d051a510d61864fe987f00089d8f03739741eadc41e6ad4ea6f786da110
   hashdiff (1.1.2) sha256=2c30eeded6ed3dce8401d2b5b99e6963fe5f14ed85e60dd9e33c545a44b71a77
   hashie (5.0.0) sha256=9d6c4e51f2a36d4616cbc8a322d619a162d8f42815a792596039fc95595603da
@@ -1191,7 +1191,7 @@ CHECKSUMS
   rubocop-rspec (3.5.0) sha256=710c942fe1af884ba8eea75cbb8bdbb051929a2208880a6fc2e2dce1eed5304c
   ruby-openai (7.4.0) sha256=879f2446cbe5d85eabdd651d8cea8f29eb59d335dc4a5bf0a2c56961d1d6dcf4
   ruby-progressbar (1.13.0) sha256=80fc9c47a9b640d6834e0dc7b3c94c9df37f08cb072b7761e4a71e22cff29b33
-  rubyzip (2.3.2) sha256=3f57e3935dc2255c414484fbf8d673b4909d8a6a57007ed754dde39342d2373f
+  rubyzip (2.4.1) sha256=8577c88edc1fde8935eb91064c5cb1aef9ad5494b940cf19c775ee833e075615
   sass-embedded (1.81.0-aarch64-linux-gnu) sha256=9087759cf2f16d0a9263eb97a812dce9882ce79353cfb416f5721835ba2d8706
   sass-embedded (1.81.0-arm-linux-gnueabihf) sha256=f5537ac4549a046d5c3387d8d216ab7bccf2c4c7e635299afb2d2100bdba973f
   sass-embedded (1.81.0-arm64-darwin) sha256=85a852fb2fc1cc644ff193b25b96e2fec1196b9c9a687344d1927e3f39135ec7
@@ -1199,7 +1199,7 @@ CHECKSUMS
   sass-embedded (1.81.0-x86_64-darwin) sha256=fb5f26a6a9a43cfddda74510ce5dbc75c4e8e5b77e51346540d6750792bfa05c
   sass-embedded (1.81.0-x86_64-linux-gnu) sha256=5e2c5ed82496eb4e217bf171300e8b66cb5a06394eeb1009bfa99ec271099ecf
   securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
-  selenium-webdriver (4.26.0) sha256=bb0426ffe50e5940a6a5ed2978b4dfb1cb29e0e1c4d0a420d6aabf0f6c8e0690
+  selenium-webdriver (4.29.1) sha256=0a7fe53cc4d2c515adbb89e115c6e786c64e9b98f85939d21071c6e32883a146
   sentry-rails (5.22.4) sha256=79efc31b72ec7deb68a1ec6c63f0aeb1b76549af0ff57a6cbed2c0b5d71a2d9f
   sentry-ruby (5.22.4) sha256=e48daf000ab386958a8f8f6c200be29b0b2ef24f23384b7fe7c5eccec091a82c
   sentry-sidekiq (5.22.4) sha256=bdbee654ddc78fad3616bb54981c9d7667e6da91aa256d10001e6081aa034002
