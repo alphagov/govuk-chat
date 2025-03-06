@@ -80,12 +80,20 @@ RSpec.describe AnswerComposition::Composer do
         search_result_fetcher = instance_double(AnswerComposition::Pipeline::SearchResultFetcher)
         allow(AnswerComposition::Pipeline::SearchResultFetcher)
           .to receive(:new).with(llm_provider: :claude).and_return(search_result_fetcher)
+        question_routing_guardrails = instance_double(AnswerComposition::Pipeline::QuestionRoutingGuardrails)
+        allow(AnswerComposition::Pipeline::QuestionRoutingGuardrails)
+          .to receive(:new).with(llm_provider: :claude).and_return(question_routing_guardrails)
+        answer_guardrails = instance_double(AnswerComposition::Pipeline::AnswerGuardrails)
+        allow(AnswerComposition::Pipeline::AnswerGuardrails)
+          .to receive(:new).with(llm_provider: :claude).and_return(answer_guardrails)
 
         expected_pipeline = [
           AnswerComposition::Pipeline::QuestionRephraser.new(llm_provider: :claude),
           AnswerComposition::Pipeline::Claude::QuestionRouter,
+          AnswerComposition::Pipeline::QuestionRoutingGuardrails.new(llm_provider: :claude),
           AnswerComposition::Pipeline::SearchResultFetcher,
           AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
+          AnswerComposition::Pipeline::AnswerGuardrails.new(llm_provider: :claude),
         ]
         expected_pipeline.each do |pipeline|
           allow(pipeline).to receive(:call) { it }
