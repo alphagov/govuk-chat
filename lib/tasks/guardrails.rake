@@ -19,13 +19,13 @@ namespace "guardrails" do
 
     output_path = args[:output_path]
 
-    model_name = Guardrails::MultipleChecker::OPENAI_MODEL
+    model_name = Guardrails::OpenAI::MultipleChecker::OPENAI_MODEL
     true_eval = ->(v) { v != "False | None" }
 
     prompt_token_counts = []
 
     results = Guardrails::Evaluation.call(dataset_absolute_path, true_eval:) do |input|
-      result = Guardrails::MultipleChecker.call(input, guardrail_type)
+      result = Guardrails::MultipleChecker.call(input, guardrail_type, :openai)
       prompt_token_counts << result.llm_token_usage["prompt_tokens"]
       result.llm_guardrail_result
     rescue Guardrails::MultipleChecker::ResponseError => e
@@ -59,7 +59,7 @@ namespace "guardrails" do
       abort("Invalid guardrail type. Valid guardrail types are #{valid_guardrail_types.to_sentence}")
     end
 
-    prompt = Guardrails::MultipleChecker.collated_prompts(guardrail_type)
+    prompt = Guardrails::MultipleChecker.collated_prompts(guardrail_type, :openai)
     puts prompt
   end
 end

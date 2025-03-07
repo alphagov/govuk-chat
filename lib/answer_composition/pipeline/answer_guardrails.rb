@@ -1,7 +1,9 @@
 module AnswerComposition
   module Pipeline
     class AnswerGuardrails < OutputGuardrails
-      def call
+      def call(context)
+        @context = context
+
         start_time = Clock.monotonic_time
 
         if response.triggered
@@ -19,6 +21,10 @@ module AnswerComposition
       rescue ::Guardrails::MultipleChecker::ResponseError => e
         abort_after_response_error(e, start_time, Answer::CannedResponses::ANSWER_GUARDRAILS_FAILED_MESSAGE)
       end
+
+    private
+
+      attr_reader :context
     end
   end
 end
