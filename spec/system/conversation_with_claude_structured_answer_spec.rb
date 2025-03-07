@@ -49,6 +49,7 @@ RSpec.describe "Conversation with Claude with a structured answer", :chunked_con
     stub_bedrock_converse(
       bedrock_claude_question_routing_response(@first_question),
       bedrock_claude_structured_answer_response(@first_question, @first_answer),
+      bedrock_claude_guardrail_response(triggered: false),
     )
     execute_queued_sidekiq_jobs
   end
@@ -78,6 +79,7 @@ RSpec.describe "Conversation with Claude with a structured answer", :chunked_con
       bedrock_claude_text_response(rephrased_question, user_message: Regexp.new(@second_question)),
       bedrock_claude_question_routing_response(rephrased_question),
       bedrock_claude_structured_answer_response(rephrased_question, @second_answer),
+      bedrock_claude_guardrail_response(triggered: false),
     )
     execute_queued_sidekiq_jobs
   end
