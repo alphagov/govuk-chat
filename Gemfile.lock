@@ -82,7 +82,7 @@ GEM
       uri (>= 0.13.1)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
-    amq-protocol (2.3.2)
+    amq-protocol (2.3.3)
     ast (2.4.2)
     aws-eventstream (1.3.1)
     aws-partitions (1.1061.0)
@@ -260,8 +260,9 @@ GEM
       sentry-rails (~> 5.3)
       sentry-ruby (~> 5.3)
       statsd-ruby (~> 1.5)
-    govuk_message_queue_consumer (5.0.1)
+    govuk_message_queue_consumer (5.0.2)
       bunny (~> 2.17)
+      ostruct
     govuk_personalisation (1.1.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
@@ -803,7 +804,7 @@ GEM
     sentry-sidekiq (5.22.4)
       sentry-ruby (~> 5.22.4)
       sidekiq (>= 3.0)
-    set (1.1.0)
+    set (1.1.1)
     sidekiq (7.3.8)
       base64
       connection_pool (>= 2.3.0)
@@ -951,7 +952,7 @@ CHECKSUMS
   activestorage (8.0.1) sha256=91a8f156638568fac971ff25962a617d9c58fdc0e44eb6bd0edff36aff7df205
   activesupport (8.0.1) sha256=fd5bc74641c24ac3541055c2879789198ff42adee3e39c2933289ba008912e37
   addressable (2.8.7) sha256=462986537cf3735ab5f3c0f557f14155d778f4b43ea4f485a9deb9c8f7c58232
-  amq-protocol (2.3.2) sha256=3d155ef8f2aed26b2f3fafd6d7ab57e5105865d409c3d9c43e72a40b73dda816
+  amq-protocol (2.3.3) sha256=85b42738290913a35dcc487a2ca0dd260a4150b40ed1954c9c1932df466abc1f
   ast (2.4.2) sha256=1e280232e6a33754cde542bc5ef85520b74db2aac73ec14acef453784447cc12
   aws-eventstream (1.3.1) sha256=4465b2add71d69a36fb1268a738d9b3d1a593c789e0286f28fad38e132d4403b
   aws-partitions (1.1061.0) sha256=665e0b012737d54506daa51a5dbe3412c9a3bfb45ebb87270e119dbac18f3a22
@@ -1019,7 +1020,7 @@ CHECKSUMS
   googleauth (1.12.0) sha256=1a42b8e34d79d9eb5c4cc266596be2de0ff26d207d5b252ff935ff2041d3ccc2
   govuk_app_config (9.16.4) sha256=727da5bb195516e7272d3ee8c0cd7fcf970593401422a91d957fa1f422f813d0
   govuk_chat_private (0.0.1)
-  govuk_message_queue_consumer (5.0.1) sha256=4ed9d38640c3db37a7cd3780156b3b8f0a91f6205161fb95b51bb47b5c6ddb88
+  govuk_message_queue_consumer (5.0.2) sha256=d0aaee42bcff8faf6c8fe0d8ff68f210a90957e37acf615392617ee29d25ae73
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
   govuk_publishing_components (54.0.1) sha256=2eb1fbc50ae17f8bdd3cf1afccb80ad3aa463ee465aa898fc3ddbc694c160cd6
   govuk_schemas (5.0.4) sha256=e5d347983cf173efeef341aec6bdd8479e8f1385b6a0526174c21f8df4043394
@@ -1203,7 +1204,7 @@ CHECKSUMS
   sentry-rails (5.22.4) sha256=79efc31b72ec7deb68a1ec6c63f0aeb1b76549af0ff57a6cbed2c0b5d71a2d9f
   sentry-ruby (5.22.4) sha256=e48daf000ab386958a8f8f6c200be29b0b2ef24f23384b7fe7c5eccec091a82c
   sentry-sidekiq (5.22.4) sha256=bdbee654ddc78fad3616bb54981c9d7667e6da91aa256d10001e6081aa034002
-  set (1.1.0) sha256=57233af23b1259a1bb3ce5baeef67ad0a8ad73cc1cc557e64049f0808eea7597
+  set (1.1.1) sha256=6c7ac6c06d5907216395a4d5dae3ffe52ca5ee8a372befe6d4dea794383f98f0
   sidekiq (7.3.8) sha256=766173cd223fc03d2476a95b0ba72d86941c4f1dba2274fa6ae06472764d381c
   signet (0.19.0) sha256=537f3939f57f141f691e6069a97ec40f34fadafc4c7e5ba94edb06cf4350dd31
   simplecov (0.22.0) sha256=fe2622c7834ff23b98066bb0a854284b2729a569ac659f82621fc22ef36213a5
