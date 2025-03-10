@@ -14,6 +14,7 @@ RSpec.describe Guardrails::Claude::MultipleChecker do
         }
       end
       let(:guardrails) { %w[costs personal unique_answer_guardrail] }
+      let(:prompt) { instance_double(Guardrails::MultipleChecker::Prompt) }
 
       before do
         allow(Rails.logger).to receive(:error)
@@ -23,6 +24,22 @@ RSpec.describe Guardrails::Claude::MultipleChecker do
           system_prompt: "{guardrails} {date}",
           user_prompt: "{input}",
         )
+
+        allow(Guardrails::MultipleChecker::Prompt).to receive(:new).with(llm_prompt_name, :claude).and_return(prompt)
+
+        guardrail_objects = guardrails.map.with_index(1) do |name, key|
+          Guardrails::MultipleChecker::Prompt::Guardrail.new(
+            key: key,
+            name: name,
+            content: guardrail_definitions[name],
+          )
+        end
+
+        allow(prompt).to receive_messages(
+          system_prompt: "1. This is a costs guardrail\n2. This is a personal guardrail\n3. This is a unique answer guardrail #{formatted_date}",
+          guardrails: guardrail_objects,
+        )
+        allow(prompt).to receive(:user_prompt).with(input).and_return(input)
       end
 
       it "calls Claude to check for guardrail violations with the correct system prompt and the input in the user prompt" do
@@ -32,50 +49,30 @@ RSpec.describe Guardrails::Claude::MultipleChecker do
           bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
         )
 
-        described_class.call(input, llm_prompt_name)
+        described_class.call(input, prompt)
         expect(client.api_requests.size).to eq(1)
       end
 
-      it "returns triggered: true with human readable guardrails" do
+      it "returns a true result with human readable guardrails" do
         guardrail_result = 'True | "1, 2"'
 
         stub_bedrock_converse(
           bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
         )
 
-        result = described_class.call(input, llm_prompt_name)
-
-        expect(result)
-          .to be_a(::Guardrails::MultipleChecker::Result)
-          .and(having_attributes(
-                 triggered: true,
-                 guardrails: %w[costs personal],
-                 llm_guardrail_result: guardrail_result,
-               ))
-
-        expect(result.llm_response.message.content.first.text)
-        .to eq(guardrail_result)
+        result = described_class.call(input, prompt)
+        expect(result[:llm_guardrail_result]).to eq(guardrail_result)
       end
 
-      it "returns triggered: false with empty guardrails" do
+      it "returns a false result with empty guardrails" do
         guardrail_result = "False | None"
 
         stub_bedrock_converse(
           bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
         )
 
-        result = described_class.call(input, llm_prompt_name)
-
-        expect(result)
-          .to be_a(::Guardrails::MultipleChecker::Result)
-          .and(having_attributes(
-                 triggered: false,
-                 guardrails: [],
-                 llm_guardrail_result: guardrail_result,
-               ))
-
-        expect(result.llm_response.message.content.first.text)
-        .to eq(guardrail_result)
+        result = described_class.call(input, prompt)
+        expect(result[:llm_guardrail_result]).to eq(guardrail_result)
       end
 
       it "returns the LLM token usage" do
@@ -84,41 +81,11 @@ RSpec.describe Guardrails::Claude::MultipleChecker do
         stub_bedrock_converse(
           bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
         )
-        result = described_class.call(input, llm_prompt_name)
+        result = described_class.call(input, prompt)
 
-        expect(result.llm_token_usage.input_tokens).to eq(10)
-        expect(result.llm_token_usage.output_tokens).to eq(20)
-        expect(result.llm_token_usage.total_tokens).to eq(30)
-      end
-
-      context "when the Claude response format is incorrect" do
-        it "throws a ResponseError" do
-          guardrail_result = 'False | "1, 2"'
-          stub_bedrock_converse(
-            bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
-          )
-          expect { described_class.call(input, llm_prompt_name) }
-            .to raise_error(
-              an_instance_of(::Guardrails::MultipleChecker::ResponseError)
-                .and(having_attributes(message: "Error parsing guardrail response",
-                                       llm_response: guardrail_result)),
-            )
-        end
-      end
-
-      context "when the Claude response contains an unknown guardrail number" do
-        it "throws a ResponseError" do
-          guardrail_result = 'False | "1, 8"'
-          stub_bedrock_converse(
-            bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
-          )
-          expect { described_class.call(input, llm_prompt_name) }
-            .to raise_error(
-              an_instance_of(::Guardrails::MultipleChecker::ResponseError)
-                .and(having_attributes(message: "Error parsing guardrail response",
-                                       llm_response: guardrail_result)),
-            )
-        end
+        expect(result[:llm_token_usage].input_tokens).to eq(10)
+        expect(result[:llm_token_usage].output_tokens).to eq(20)
+        expect(result[:llm_token_usage].total_tokens).to eq(30)
       end
     end
 
@@ -132,7 +99,7 @@ RSpec.describe Guardrails::Claude::MultipleChecker do
           bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
         )
 
-        expect { described_class.call(input, llm_prompt_name) }
+        expect { Guardrails::MultipleChecker::Prompt.new(llm_prompt_name, :claude) }
         .to raise_error("No LLM prompts found for #{llm_prompt_name}")
       end
     end

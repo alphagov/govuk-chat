@@ -1,5 +1,7 @@
 module Guardrails
   class MultipleChecker
+    MAX_TOKENS_BUFFER = 5
+
     Result = Data.define(:triggered, :guardrails, :llm_response, :llm_token_usage, :llm_guardrail_result)
     class ResponseError < StandardError
       attr_reader :llm_response, :llm_token_usage
@@ -71,12 +73,53 @@ module Guardrails
     def call
       case llm_provider
       when :openai
-        prompt = Prompt.new(llm_prompt_name, :openai)
-        OpenAI::MultipleChecker.call(input, prompt)
+        response = OpenAI::MultipleChecker.call(input, prompt)
       when :claude
-        prompt = Prompt.new(llm_prompt_name, llm_provider)
-        Claude::MultipleChecker.call(input, prompt)
+        response = Claude::MultipleChecker.call(input, prompt)
       end
+      parse_response(**response)
+    end
+
+  private
+
+    def parse_response(llm_response:, llm_guardrail_result:, llm_token_usage:)
+      unless response_pattern =~ llm_guardrail_result
+        raise ResponseError.new(
+          "Error parsing guardrail response", llm_guardrail_result, llm_token_usage
+        )
+      end
+
+      parts = llm_guardrail_result.split(" | ")
+      triggered = parts.first.chomp == "True"
+      guardrails = triggered ? extract_guardrails(parts.second) : []
+
+      Result.new(
+        llm_response: llm_response,
+        llm_guardrail_result: llm_guardrail_result,
+        triggered: triggered,
+        guardrails: guardrails,
+        llm_token_usage: llm_token_usage,
+      )
+    end
+
+    def prompt
+      @prompt ||= Prompt.new(llm_prompt_name, llm_provider)
+    end
+
+    def guardrail_numbers
+      prompt.guardrails.map(&:key)
+    end
+
+    def response_pattern
+      @response_pattern ||= begin
+        guardrail_range = "[#{guardrail_numbers.min}-#{guardrail_numbers.max}]"
+        /^(False \| None|True \| "#{guardrail_range}(, #{guardrail_range})*")$/
+      end
+    end
+
+    def extract_guardrails(parts)
+      guardrail_numbers = parts.scan(/\d+/).map(&:to_i)
+      prompt.guardrails.select { |guardrail| guardrail.key.in?(guardrail_numbers) }.map(&:name)
     end
   end
 end
