@@ -14,6 +14,7 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
         }
       end
       let(:guardrails) { %w[costs personal unique_answer_guardrail] }
+      let(:prompt) { instance_double(Guardrails::MultipleChecker::Prompt) }
 
       before do
         allow(Rails.logger).to receive(:error)
@@ -23,11 +24,28 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
           system_prompt: "{guardrails} {date}",
           user_prompt: "{input}",
         )
+
+        allow(Guardrails::MultipleChecker::Prompt).to receive(:new).with(llm_prompt_name, :openai).and_return(prompt)
+
+        guardrail_objects = guardrails.map.with_index(1) do |name, key|
+          Guardrails::MultipleChecker::Prompt::Guardrail.new(
+            key: key,
+            name: name,
+            content: guardrail_definitions[name],
+          )
+        end
+
+        allow(prompt).to receive_messages(
+          system_prompt: "1. This is a costs guardrail\n2. This is a personal guardrail\n3. This is a unique answer guardrail #{formatted_date}",
+          guardrails: guardrail_objects,
+        )
+        allow(prompt).to receive(:user_prompt).with(input).and_return(input)
       end
 
       it "throws an error if a guardrail definition is missing for a guardrail" do
         guardrail_definitions.delete("costs")
-        expect { described_class.call(input, llm_prompt_name) }.to raise_error(KeyError)
+        allow(prompt).to receive(:guardrails).and_raise(KeyError)
+        expect { described_class.call(input, prompt) }.to raise_error(KeyError)
       end
 
       it "calls OpenAI to check for guardrail violations with the correct system prompt and the input in the user prompt" do
@@ -40,14 +58,14 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
           model: described_class::OPENAI_MODEL,
         })
 
-        described_class.call(input, llm_prompt_name)
+        described_class.call(input, prompt)
         expect(openai_request).to have_been_made
       end
 
       it "returns triggered: true with human readable guardrails" do
         guardrail_result = 'True | "1, 2"'
         stub_openai_output_guardrail(input, guardrail_result)
-        expect(described_class.call(input, llm_prompt_name))
+        expect(described_class.call(input, prompt))
           .to be_a(::Guardrails::MultipleChecker::Result)
           .and(having_attributes(
                  triggered: true,
@@ -62,7 +80,7 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
       it "returns triggered: false with empty guardrails" do
         guardrail_result = "False | None"
         stub_openai_output_guardrail(input, guardrail_result)
-        expect(described_class.call(input, llm_prompt_name))
+        expect(described_class.call(input, prompt))
           .to be_a(::Guardrails::MultipleChecker::Result)
           .and(having_attributes(
                  triggered: false,
@@ -76,7 +94,7 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
 
       it "returns the LLM token usage" do
         stub_openai_output_guardrail(input)
-        result = described_class.call(input, llm_prompt_name)
+        result = described_class.call(input, prompt)
 
         expect(result.llm_token_usage).to eq({
           "prompt_tokens" => 13,
@@ -101,7 +119,7 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
           chat_options: { max_tokens: },
         )
 
-        described_class.call(input, llm_prompt_name)
+        described_class.call(input, prompt)
         expect(openai_request).to have_been_made
       end
 
@@ -115,6 +133,25 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
           }
         end
         let(:guardrails) { %w[costs personal unique_question_routing_guardrail] }
+        let(:question_routing_prompt) { instance_double(Guardrails::MultipleChecker::Prompt) }
+
+        before do
+          allow(Guardrails::MultipleChecker::Prompt).to receive(:new).with(llm_prompt_name, :openai).and_return(question_routing_prompt)
+
+          question_routing_guardrail_objects = guardrails.map.with_index(1) do |name, key|
+            Guardrails::MultipleChecker::Prompt::Guardrail.new(
+              key: key,
+              name: name,
+              content: guardrail_definitions[name],
+            )
+          end
+
+          allow(question_routing_prompt).to receive_messages(
+            system_prompt: "1. This is a costs guardrail\n2. This is a personal guardrail\n3. This is a unique question routing guardrail #{formatted_date}",
+            guardrails: question_routing_guardrail_objects,
+          )
+          allow(question_routing_prompt).to receive(:user_prompt).with(input).and_return(input)
+        end
 
         it "uses the correct guardrails for question routing" do
           expected_question_routing_guardrails = "1. This is a costs guardrail\n2. This is a personal guardrail\n3. This is a unique question routing guardrail"
@@ -124,7 +161,7 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
           )
           openai_request = stub_openai_chat_completion(messages, answer: "False | None", chat_options: {})
 
-          described_class.call(input, llm_prompt_name)
+          described_class.call(input, question_routing_prompt)
 
           expect(openai_request).to have_been_made
         end
@@ -134,7 +171,7 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
         it "throws a ResponseError" do
           guardrail_result = 'False | "1, 2"'
           stub_openai_output_guardrail(input, guardrail_result)
-          expect { described_class.call(input, llm_prompt_name) }
+          expect { described_class.call(input, prompt) }
             .to raise_error(
               an_instance_of(::Guardrails::MultipleChecker::ResponseError)
                 .and(having_attributes(message: "Error parsing guardrail response",
@@ -147,7 +184,7 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
         it "throws a ResponseError" do
           guardrail_result = 'False | "1, 8"'
           stub_openai_output_guardrail(input, guardrail_result)
-          expect { described_class.call(input, llm_prompt_name) }
+          expect { described_class.call(input, prompt) }
             .to raise_error(
               an_instance_of(::Guardrails::MultipleChecker::ResponseError)
                 .and(having_attributes(message: "Error parsing guardrail response",
@@ -161,7 +198,7 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
       let(:llm_prompt_name) { "non_existent_llm_prompt_name" }
 
       it "raises an error" do
-        expect { described_class.call(input, llm_prompt_name) }
+        expect { Guardrails::MultipleChecker::Prompt.new(llm_prompt_name, :openai) }
           .to raise_error("No LLM prompts found for #{llm_prompt_name}")
       end
     end
