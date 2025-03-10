@@ -6,11 +6,10 @@ module Guardrails
 
       def self.call(...) = new(...).call
 
-      def initialize(input, llm_prompt_name)
+      def initialize(input, prompt)
         @input = input
-        @llm_prompt_name = llm_prompt_name
+        @prompt = prompt
         @openai_client = OpenAIClient.build
-        @prompt_loader = ::Guardrails::MultipleChecker::Prompt
       end
 
       def call
@@ -42,7 +41,7 @@ module Guardrails
 
     private
 
-      attr_reader :input, :openai_client, :llm_prompt_name, :prompt_loader
+      attr_reader :input, :openai_client, :prompt
 
       def openai_response
         @openai_response ||= openai_client.chat(
@@ -60,10 +59,6 @@ module Guardrails
           { role: "system", content: prompt.system_prompt },
           { role: "user", content: prompt.user_prompt(input) },
         ]
-      end
-
-      def prompt
-        @prompt ||= prompt_loader.new(llm_prompt_name, :openai)
       end
 
       def max_tokens

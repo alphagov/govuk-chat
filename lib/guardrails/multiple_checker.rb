@@ -71,9 +71,11 @@ module Guardrails
     def call
       case llm_provider
       when :openai
-        OpenAI::MultipleChecker.call(input, llm_prompt_name)
+        prompt = Prompt.new(llm_prompt_name, :openai)
+        OpenAI::MultipleChecker.call(input, prompt)
       when :claude
-        Claude::MultipleChecker.call(input, llm_prompt_name)
+        prompt = Prompt.new(llm_prompt_name, llm_provider)
+        Claude::MultipleChecker.call(input, prompt)
       end
     end
   end
