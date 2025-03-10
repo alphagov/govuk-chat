@@ -5,18 +5,46 @@ RSpec.describe Guardrails::MultipleChecker do
   describe ".call" do
     let(:input) { "This is a test input." }
     let(:llm_prompt_name) { :answer_guardrails }
-    let(:guardrail_response) { build(:guardrails_multiple_checker_result, :pass) }
+    let(:guardrail_response_hash) do
+      {
+        llm_response: {
+          "message" => {
+            "role" => "assistant",
+            "content" => "False | None",
+          },
+          "finish_reason" => "stop",
+        },
+        llm_guardrail_result: "False | None",
+        llm_token_usage: {
+          "prompt_tokens" => 13,
+          "completion_tokens" => 7,
+          "prompt_tokens_details" => { "cached_tokens" => 10 },
+        },
+      }
+    end
 
     context "when the llm_provider is :openai" do
       let(:llm_provider) { :openai }
 
       before do
-        allow(Guardrails::OpenAI::MultipleChecker).to receive(:call).and_return(guardrail_response)
+        guardrails_config = {
+          system_prompt: "{guardrails} {date}",
+          user_prompt: "{input}",
+          guardrails: %w[costs personal unique_answer_guardrail],
+          guardrail_definitions: {
+            "costs" => "This is a costs guardrail",
+            "personal" => "This is a personal guardrail",
+            "unique_answer_guardrail" => "This is a unique answer guardrail",
+          },
+        }.with_indifferent_access
+
+        allow(Rails.configuration.govuk_chat_private.llm_prompts.openai).to receive(:[]).with(llm_prompt_name).and_return(guardrails_config)
+        allow(Guardrails::OpenAI::MultipleChecker).to receive(:call).and_return(guardrail_response_hash)
       end
 
       it "calls the OpenAI multiple checker" do
         described_class.call(input, llm_prompt_name, llm_provider)
-        expect(Guardrails::OpenAI::MultipleChecker).to have_received(:call).with(input, llm_prompt_name)
+        expect(Guardrails::OpenAI::MultipleChecker).to have_received(:call).with(input, instance_of(Guardrails::MultipleChecker::Prompt))
       end
     end
 
@@ -24,12 +52,54 @@ RSpec.describe Guardrails::MultipleChecker do
       let(:llm_provider) { :claude }
 
       before do
-        allow(Guardrails::Claude::MultipleChecker).to receive(:call).and_return(guardrail_response)
+        guardrails_config = {
+          system_prompt: "{guardrails} {date}",
+          user_prompt: "{input}",
+          guardrails: %w[costs personal unique_answer_guardrail],
+          guardrail_definitions: {
+            "costs" => "This is a costs guardrail",
+            "personal" => "This is a personal guardrail",
+            "unique_answer_guardrail" => "This is a unique answer guardrail",
+          },
+        }.with_indifferent_access
+
+        allow(Rails.configuration.govuk_chat_private.llm_prompts.claude).to receive(:[]).with(llm_prompt_name).and_return(guardrails_config)
+        allow(Guardrails::Claude::MultipleChecker).to receive(:call).and_return(guardrail_response_hash)
       end
 
       it "calls the Claude multiple checker" do
         described_class.call(input, llm_prompt_name, llm_provider)
-        expect(Guardrails::Claude::MultipleChecker).to have_received(:call).with(input, llm_prompt_name)
+        expect(Guardrails::Claude::MultipleChecker).to have_received(:call).with(input, instance_of(Guardrails::MultipleChecker::Prompt))
+      end
+
+      context "when the response format is incorrect" do
+        it "throws a ResponseError" do
+          guardrail_result = 'False | "1, 2"'
+          guardrail_response_hash[:llm_guardrail_result] = guardrail_result
+          allow(Guardrails::Claude::MultipleChecker).to receive(:call).and_return(guardrail_response_hash)
+
+          expect { described_class.call(input, llm_prompt_name, llm_provider) }
+            .to raise_error(
+              an_instance_of(::Guardrails::MultipleChecker::ResponseError)
+                .and(having_attributes(message: "Error parsing guardrail response",
+                                       llm_response: guardrail_result)),
+            )
+        end
+      end
+
+      context "when the response contains an unknown guardrail number" do
+        it "throws a ResponseError" do
+          guardrail_result = 'False | "1, 8"'
+          guardrail_response_hash[:llm_guardrail_result] = guardrail_result
+          allow(Guardrails::Claude::MultipleChecker).to receive(:call).and_return(guardrail_response_hash)
+
+          expect { described_class.call(input, llm_prompt_name, llm_provider) }
+            .to raise_error(
+              an_instance_of(::Guardrails::MultipleChecker::ResponseError)
+                .and(having_attributes(message: "Error parsing guardrail response",
+                                       llm_response: guardrail_result)),
+            )
+        end
       end
     end
   end

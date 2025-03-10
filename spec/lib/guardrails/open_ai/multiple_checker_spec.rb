@@ -45,7 +45,13 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
       it "throws an error if a guardrail definition is missing for a guardrail" do
         guardrail_definitions.delete("costs")
         allow(prompt).to receive(:guardrails).and_raise(KeyError)
-        expect { described_class.call(input, prompt) }.to raise_error(KeyError)
+
+        stub_openai_output_guardrail(input, "False | None")
+
+        expect {
+          allow(prompt).to receive(:system_prompt).and_raise(KeyError)
+          described_class.call(input, prompt)
+        }.to raise_error(KeyError)
       end
 
       it "calls OpenAI to check for guardrail violations with the correct system prompt and the input in the user prompt" do
@@ -56,71 +62,47 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
         )
         openai_request = stub_openai_chat_completion(messages, answer: "False | None", chat_options: {
           model: described_class::OPENAI_MODEL,
+          max_tokens: described_class::MAX_TOKENS,
         })
 
         described_class.call(input, prompt)
         expect(openai_request).to have_been_made
       end
 
-      it "returns triggered: true with human readable guardrails" do
+      it "returns a true result with human readable guardrails" do
         guardrail_result = 'True | "1, 2"'
         stub_openai_output_guardrail(input, guardrail_result)
         expect(described_class.call(input, prompt))
-          .to be_a(::Guardrails::MultipleChecker::Result)
-          .and(having_attributes(
-                 triggered: true,
-                 guardrails: %w[costs personal],
-                 llm_response: a_hash_including(
-                   "message" => a_hash_including("content" => guardrail_result),
-                 ),
-                 llm_guardrail_result: guardrail_result,
-               ))
+          .to include(
+            llm_response: a_hash_including(
+              "message" => a_hash_including("content" => guardrail_result),
+            ),
+            llm_guardrail_result: guardrail_result,
+          )
       end
 
-      it "returns triggered: false with empty guardrails" do
+      it "returns a false result with empty guardrails" do
         guardrail_result = "False | None"
         stub_openai_output_guardrail(input, guardrail_result)
         expect(described_class.call(input, prompt))
-          .to be_a(::Guardrails::MultipleChecker::Result)
-          .and(having_attributes(
-                 triggered: false,
-                 guardrails: [],
-                 llm_response: a_hash_including(
-                   "message" => a_hash_including("content" => guardrail_result),
-                 ),
-                 llm_guardrail_result: guardrail_result,
-               ))
+          .to include(
+            llm_response: a_hash_including(
+              "message" => a_hash_including("content" => guardrail_result),
+            ),
+            llm_guardrail_result: guardrail_result,
+          )
       end
 
       it "returns the LLM token usage" do
         stub_openai_output_guardrail(input)
         result = described_class.call(input, prompt)
 
-        expect(result.llm_token_usage).to eq({
+        expect(result[:llm_token_usage]).to eq({
           "prompt_tokens" => 13,
           "completion_tokens" => 7,
           "total_tokens" => 20,
           "prompt_tokens_details" => { "cached_tokens" => 10 },
         })
-      end
-
-      it "calculates the max_tokens param from the guardrail config" do
-        longest_possible_response_string = %(True | "#{(1..guardrails.count).to_a.join(', ')}")
-        token_count = Tiktoken
-                        .encoding_for_model(described_class::OPENAI_MODEL)
-                        .encode(longest_possible_response_string)
-                        .length
-
-        max_tokens = token_count + described_class::MAX_TOKENS_BUFFER
-
-        openai_request = stub_openai_chat_completion(
-          anything,
-          answer: "False | None",
-          chat_options: { max_tokens: },
-        )
-
-        described_class.call(input, prompt)
-        expect(openai_request).to have_been_made
       end
 
       context "when :question_routing_guardrails is passed in as the llm_prompt_name" do
@@ -164,32 +146,6 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
           described_class.call(input, question_routing_prompt)
 
           expect(openai_request).to have_been_made
-        end
-      end
-
-      context "when the OpenAI response format is incorrect" do
-        it "throws a ResponseError" do
-          guardrail_result = 'False | "1, 2"'
-          stub_openai_output_guardrail(input, guardrail_result)
-          expect { described_class.call(input, prompt) }
-            .to raise_error(
-              an_instance_of(::Guardrails::MultipleChecker::ResponseError)
-                .and(having_attributes(message: "Error parsing guardrail response",
-                                       llm_response: guardrail_result)),
-            )
-        end
-      end
-
-      context "when the OpenAI response contains an unknown guardrail number" do
-        it "throws a ResponseError" do
-          guardrail_result = 'False | "1, 8"'
-          stub_openai_output_guardrail(input, guardrail_result)
-          expect { described_class.call(input, prompt) }
-            .to raise_error(
-              an_instance_of(::Guardrails::MultipleChecker::ResponseError)
-                .and(having_attributes(message: "Error parsing guardrail response",
-                                       llm_response: guardrail_result)),
-            )
         end
       end
     end
