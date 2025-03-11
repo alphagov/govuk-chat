@@ -195,9 +195,9 @@ GEM
       warden-oauth2 (~> 0.0.1)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    google-apis-bigquery_v2 (0.82.0)
+    google-apis-bigquery_v2 (0.84.0)
       google-apis-core (>= 0.15.0, < 2.a)
-    google-apis-core (0.15.1)
+    google-apis-core (0.16.0)
       addressable (~> 2.5, >= 2.5.1)
       googleauth (~> 1.9)
       httpclient (>= 2.8.3, < 3.a)
@@ -205,7 +205,7 @@ GEM
       mutex_m
       representable (~> 3.0)
       retriable (>= 2.0, < 4.a)
-    google-cloud-bigquery (1.51.1)
+    google-cloud-bigquery (1.52.0)
       bigdecimal (~> 3.0)
       concurrent-ruby (~> 1.0)
       google-apis-bigquery_v2 (~> 0.71)
@@ -213,12 +213,12 @@ GEM
       google-cloud-core (~> 1.6)
       googleauth (~> 1.9)
       mini_mime (~> 1.0)
-    google-cloud-core (1.7.1)
+    google-cloud-core (1.8.0)
       google-cloud-env (>= 1.0, < 3.a)
       google-cloud-errors (~> 1.0)
     google-cloud-env (2.2.1)
       faraday (>= 1.0, < 3.a)
-    google-cloud-errors (1.4.0)
+    google-cloud-errors (1.5.0)
     google-logging-utils (0.1.0)
     google-protobuf (4.30.0)
       bigdecimal
@@ -240,7 +240,7 @@ GEM
       rake (>= 13)
     googleapis-common-protos-types (1.18.0)
       google-protobuf (>= 3.18, < 5.a)
-    googleauth (1.12.0)
+    googleauth (1.13.1)
       faraday (>= 1.0, < 3.a)
       google-cloud-env (~> 2.2)
       google-logging-utils (~> 0.1)
@@ -296,7 +296,8 @@ GEM
     http-accept (1.7.0)
     http-cookie (1.0.8)
       domain_name (~> 0.5)
-    httpclient (2.8.3)
+    httpclient (2.9.0)
+      mutex_m
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     inline_svg (1.10.0)
@@ -311,7 +312,7 @@ GEM
     json (2.10.1)
     json-schema (4.3.1)
       addressable (>= 2.8)
-    jwt (2.9.3)
+    jwt (2.10.1)
       base64
     kaminari (1.2.2)
       activesupport (>= 4.1.0)
@@ -1003,12 +1004,12 @@ CHECKSUMS
   gds-api-adapters (98.2.0) sha256=1cf27299894efaa5ad55db3df9c6ea2b302a45fed0f7cb7ca0d955b455dbd0b5
   gds-sso (19.1.0) sha256=52bdf93aa0ced00298989a691c66a0e3d3f46340650d4f7ba8d0a5c285955bf6
   globalid (1.2.1) sha256=70bf76711871f843dbba72beb8613229a49429d1866828476f9c9d6ccc327ce9
-  google-apis-bigquery_v2 (0.82.0) sha256=ea0237466e6a96869229b386a3aecea78bcdd8fa49aed913a2d1d156ded9b621
-  google-apis-core (0.15.1) sha256=91484122791af5b2f3d3f4297912748febe2b5d704d04ad54cbf5df87339a71a
-  google-cloud-bigquery (1.51.1) sha256=89efa4cdb299df2043747ddd7a39214cdd5dc17432ebaf408bf7f6bd4dc4f9d6
-  google-cloud-core (1.7.1) sha256=5af2818a9c140b276ae14451092f6b80135c3fc740e1f92b16165723f6f7012e
+  google-apis-bigquery_v2 (0.84.0) sha256=d15575f11279a76d2e188624006a6ba009683a44ff9d7e743b9a9c6853a2044b
+  google-apis-core (0.16.0) sha256=046a2c30a5ec123b2a6bc5e64348be781ce5fcd18dd4e85982e7a6a8da9d0dcc
+  google-cloud-bigquery (1.52.0) sha256=8060dc88b947a8d2c73cdd10e8fb365220b3edf676eb2e8a436c73afdd6fd37c
+  google-cloud-core (1.8.0) sha256=e572edcbf189cfcab16590628a516cec3f4f63454b730e59f0b36575120281cf
   google-cloud-env (2.2.1) sha256=3c6062aee0b5c863b83f3ce125ea7831507aadf1af7c0d384b74a116c4f649cf
-  google-cloud-errors (1.4.0) sha256=0b4e2e0f563db1708732ab4037421d9f26de5cbbbc04be710f2c9cf358e2de14
+  google-cloud-errors (1.5.0) sha256=b56be28b8c10628125214dde571b925cfcebdbc58619e598250c37a2114f7b4b
   google-logging-utils (0.1.0) sha256=70950b1e49314273cf2e167adb47b62af7917a4691b580da7e9be67b9205fcd5
   google-protobuf (4.30.0) sha256=4427249acaccb0ec4d64bc4dbd551d1630f9ca50e4e34bd5601e30e75cd842e9
   google-protobuf (4.30.0-aarch64-linux) sha256=fdc118bedd9267279dfcd7c006e594341d817ad4e26d9741732b6dbfe7441c7f
@@ -1017,7 +1018,7 @@ CHECKSUMS
   google-protobuf (4.30.0-x86_64-darwin) sha256=135195ff560031018e31b1b7b8cb935e60e3731c2ec257a1a7750e3bd3b7a7d9
   google-protobuf (4.30.0-x86_64-linux) sha256=a5b3f1a7e7bc832249a136d20c2d520e693c2340d682e32bc73fe8e28190148d
   googleapis-common-protos-types (1.18.0) sha256=280d19dcf431f86b9ff7ed8b23994915c5f4f7a0282ad3e870a2d3595976559f
-  googleauth (1.12.0) sha256=1a42b8e34d79d9eb5c4cc266596be2de0ff26d207d5b252ff935ff2041d3ccc2
+  googleauth (1.13.1) sha256=33448ce662e40afeb3e6db5eb9f4ee712467b1701f3857ef9c0aecac8447eca0
   govuk_app_config (9.16.4) sha256=727da5bb195516e7272d3ee8c0cd7fcf970593401422a91d957fa1f422f813d0
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (5.0.2) sha256=d0aaee42bcff8faf6c8fe0d8ff68f210a90957e37acf615392617ee29d25ae73
@@ -1031,7 +1032,7 @@ CHECKSUMS
   hashie (5.0.0) sha256=9d6c4e51f2a36d4616cbc8a322d619a162d8f42815a792596039fc95595603da
   http-accept (1.7.0) sha256=c626860682bfbb3b46462f8c39cd470fd7b0584f61b3cc9df5b2e9eb9972a126
   http-cookie (1.0.8) sha256=b14fe0445cf24bf9ae098633e9b8d42e4c07c3c1f700672b09fbfe32ffd41aa6
-  httpclient (2.8.3) sha256=2951e4991214464c3e92107e46438527d23048e634f3aee91c719e0bdfaebda6
+  httpclient (2.9.0) sha256=4b645958e494b2f86c2f8a2f304c959baa273a310e77a2931ddb986d83e498c8
   i18n (1.14.7) sha256=ceba573f8138ff2c0915427f1fc5bdf4aa3ab8ae88c8ce255eb3ecf0a11a5d0f
   inline_svg (1.10.0) sha256=5b652934236fd9f8adc61f3fd6e208b7ca3282698b19f28659971da84bf9a10f
   io-console (0.8.0) sha256=cd6a9facbc69871d69b2cb8b926fc6ea7ef06f06e505e81a64f14a470fddefa2
@@ -1039,7 +1040,7 @@ CHECKSUMS
   jmespath (1.6.2) sha256=238d774a58723d6c090494c8879b5e9918c19485f7e840f2c1c7532cf84ebcb1
   json (2.10.1) sha256=ddc88ad91a1baf3f0038c174f253af3b086d30dc74db17ca4259bbde982f94dc
   json-schema (4.3.1) sha256=d5e68dc32b94408d0b06ad04f9382ccbb6fe5a44910e066f8547f56c471a7825
-  jwt (2.9.3) sha256=55fd07ccdd64c622d36859748f2290fb9c119ce30b482867504e9f12654d6a65
+  jwt (2.10.1) sha256=e6424ae1d813f63e761a04d6284e10e7ec531d6f701917fadcd0d9b2deaf1cc5
   kaminari (1.2.2) sha256=c4076ff9adccc6109408333f87b5c4abbda5e39dc464bd4c66d06d9f73442a3e
   kaminari-actionview (1.2.2) sha256=1330f6fc8b59a4a4ef6a549ff8a224797289ebf7a3a503e8c1652535287cc909
   kaminari-activerecord (1.2.2) sha256=0dd3a67bab356a356f36b3b7236bcb81cef313095365befe8e98057dd2472430
