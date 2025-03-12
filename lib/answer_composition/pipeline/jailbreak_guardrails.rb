@@ -1,16 +1,14 @@
 module AnswerComposition
   module Pipeline
     class JailbreakGuardrails
-      def self.call(...) = new(...).call
-
-      def initialize(context)
-        @context = context
+      def initialize(llm_provider:)
+        @llm_provider = llm_provider
       end
 
-      def call
+      def call(context)
         start_time = Clock.monotonic_time
 
-        response = Guardrails::JailbreakChecker.call(context.question.message)
+        response = Guardrails::JailbreakChecker.call(context.question.message, llm_provider)
         context.answer.assign_attributes(jailbreak_guardrails_status: response.triggered ? :fail : :pass)
         context.answer.assign_llm_response("jailbreak_guardrails", response.llm_response)
         context.answer.assign_metrics("jailbreak_guardrails", build_metrics(start_time, response))
@@ -33,7 +31,7 @@ module AnswerComposition
 
     private
 
-      attr_reader :context
+      attr_reader :llm_provider
 
       def build_metrics(start_time, response_or_error)
         {

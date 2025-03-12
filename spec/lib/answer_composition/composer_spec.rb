@@ -39,9 +39,12 @@ RSpec.describe AnswerComposition::Composer do
         rephraser = instance_double(AnswerComposition::Pipeline::QuestionRephraser)
         allow(AnswerComposition::Pipeline::QuestionRephraser)
           .to receive(:new).with(llm_provider: :openai).and_return(rephraser)
+        jailbreak_guardrails = instance_double(AnswerComposition::Pipeline::JailbreakGuardrails)
+        allow(AnswerComposition::Pipeline::JailbreakGuardrails)
+          .to receive(:new).with(llm_provider: :openai).and_return(jailbreak_guardrails)
 
         expected_pipeline = [
-          AnswerComposition::Pipeline::JailbreakGuardrails,
+          AnswerComposition::Pipeline::JailbreakGuardrails.new(llm_provider: :openai),
           AnswerComposition::Pipeline::QuestionRephraser.new(llm_provider: :openai),
           AnswerComposition::Pipeline::OpenAI::QuestionRouter,
           AnswerComposition::Pipeline::QuestionRoutingGuardrails,
@@ -74,6 +77,7 @@ RSpec.describe AnswerComposition::Composer do
           .to receive(:new).with(llm_provider: :claude).and_return(search_result_fetcher)
 
         expected_pipeline = [
+          AnswerComposition::Pipeline::JailbreakGuardrails.new(llm_provider: :claude),
           AnswerComposition::Pipeline::QuestionRephraser.new(llm_provider: :claude),
           AnswerComposition::Pipeline::Claude::QuestionRouter,
           AnswerComposition::Pipeline::SearchResultFetcher,
