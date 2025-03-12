@@ -22,7 +22,12 @@ module Guardrails
     end
 
     def call
-      result = OpenAI::JailbreakChecker.call(input)
+      case llm_provider
+      when :openai
+        result = OpenAI::JailbreakChecker.call(input)
+      when :claude
+        result = Claude::JailbreakChecker.call(input)
+      end
 
       case result[:llm_guardrail_result]
       when FAIL_VALUE
@@ -38,6 +43,6 @@ module Guardrails
 
   private
 
-    attr_reader :input
+    attr_reader :input, :llm_provider
   end
 end
