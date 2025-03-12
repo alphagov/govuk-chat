@@ -1,6 +1,7 @@
 module Guardrails
   class JailbreakChecker
     Result = Data.define(:triggered, :llm_response, :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens)
+
     class ResponseError < StandardError
       attr_reader :llm_guardrail_result, :llm_response, :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens
 
@@ -14,16 +15,6 @@ module Guardrails
       end
     end
 
-    OPENAI_MODEL = "gpt-4o-mini".freeze
-
-    def self.max_tokens
-      guardrails_llm_prompts.fetch(:max_tokens)
-    end
-
-    def self.logit_bias
-      guardrails_llm_prompts.fetch(:logit_bias)
-    end
-
     def self.pass_value
       guardrails_llm_prompts.fetch(:pass_value)
     end
@@ -33,78 +24,53 @@ module Guardrails
     end
 
     def self.guardrails_llm_prompts
-      Rails.configuration.govuk_chat_private.llm_prompts.openai.jailbreak_guardrails
+      Rails.configuration.govuk_chat_private.llm_prompts.common.jailbreak_guardrails
     end
 
     def self.call(...) = new(...).call
 
-    def initialize(input)
+    def initialize(input, llm_provider)
       @input = input
-      @openai_client = OpenAIClient.build
+      @llm_provider = llm_provider
     end
 
     def call
-      llm_response = openai_response.dig("choices", 0)
-      llm_guardrail_result = llm_response.dig("message", "content")
-      llm_token_usage = openai_response["usage"]
+      result = OpenAI::JailbreakChecker.call(input)
 
-      llm_prompt_tokens = llm_token_usage["prompt_tokens"]
-      llm_completion_tokens = llm_token_usage["completion_tokens"]
-      llm_cached_tokens = llm_token_usage.dig("prompt_tokens_details", "cached_tokens")
-
-      case llm_guardrail_result
+      case result[:llm_guardrail_result]
       when fail_value
-        Result.new(
-          triggered: true,
-          llm_response:,
-          llm_prompt_tokens:,
-          llm_completion_tokens:,
-          llm_cached_tokens:,
-        )
+        create_result(result, triggered: true)
       when pass_value
-        Result.new(
-          triggered: false,
-          llm_response:,
-          llm_prompt_tokens:,
-          llm_completion_tokens:,
-          llm_cached_tokens:,
-        )
+        create_result(result, triggered: false)
       else
         raise ResponseError.new(
           "Error parsing jailbreak guardrails response",
-          llm_guardrail_result:,
-          llm_response:,
-          llm_prompt_tokens:,
-          llm_completion_tokens:,
-          llm_cached_tokens:,
+          llm_guardrail_result: result[:llm_guardrail_result],
+          **result_attributes(result),
         )
       end
     end
 
   private
 
-    attr_reader :input, :openai_client
+    attr_reader :input
 
-    delegate :guardrails_llm_prompts, :max_tokens, :logit_bias, :pass_value, :fail_value, to: :class
+    delegate :guardrails_llm_prompts, :pass_value, :fail_value, to: :class
 
-    def openai_response
-      @openai_response ||= openai_client.chat(
-        parameters: {
-          model: OPENAI_MODEL,
-          messages:,
-          temperature: 0.0,
-          max_tokens:,
-          logit_bias:,
-        },
+    def create_result(result, triggered:)
+      Result.new(
+        triggered:,
+        **result_attributes(result),
       )
     end
 
-    def messages
-      user_prompt = guardrails_llm_prompts[:user_prompt].sub("{input}", input)
-      [
-        { role: "system", content: guardrails_llm_prompts[:system_prompt] },
-        { role: "user", content: user_prompt },
-      ]
+    def result_attributes(result)
+      {
+        llm_response: result[:llm_response],
+        llm_prompt_tokens: result[:llm_prompt_tokens],
+        llm_completion_tokens: result[:llm_completion_tokens],
+        llm_cached_tokens: result[:llm_cached_tokens],
+      }
     end
   end
 end
