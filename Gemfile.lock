@@ -248,7 +248,7 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.16.4)
+    govuk_app_config (9.16.5)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.31)
       opentelemetry-instrumentation-all (>= 0.39.1, < 0.75.0)
@@ -412,7 +412,7 @@ GEM
     opensearch-ruby (3.4.0)
       faraday (>= 1.0, < 3)
       multi_json (>= 1.0)
-    opentelemetry-api (1.4.0)
+    opentelemetry-api (1.5.0)
     opentelemetry-common (0.22.0)
       opentelemetry-api (~> 1.0)
     opentelemetry-exporter-otlp (0.30.0)
@@ -449,8 +449,8 @@ GEM
     opentelemetry-instrumentation-active_record (0.9.0)
       opentelemetry-api (~> 1.0)
       opentelemetry-instrumentation-base (~> 0.23.0)
-    opentelemetry-instrumentation-active_storage (0.1.0)
-      opentelemetry-api (~> 1.4.0)
+    opentelemetry-instrumentation-active_storage (0.1.1)
+      opentelemetry-api (~> 1.0)
       opentelemetry-instrumentation-active_support (~> 0.7)
       opentelemetry-instrumentation-base (~> 0.23.0)
     opentelemetry-instrumentation-active_support (0.8.0)
@@ -1019,7 +1019,7 @@ CHECKSUMS
   google-protobuf (4.30.0-x86_64-linux) sha256=a5b3f1a7e7bc832249a136d20c2d520e693c2340d682e32bc73fe8e28190148d
   googleapis-common-protos-types (1.18.0) sha256=280d19dcf431f86b9ff7ed8b23994915c5f4f7a0282ad3e870a2d3595976559f
   googleauth (1.13.1) sha256=33448ce662e40afeb3e6db5eb9f4ee712467b1701f3857ef9c0aecac8447eca0
-  govuk_app_config (9.16.4) sha256=727da5bb195516e7272d3ee8c0cd7fcf970593401422a91d957fa1f422f813d0
+  govuk_app_config (9.16.5) sha256=6041a230a5ac939eb62b1699200db52911235435fae9c54184459296f412fba1
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (5.0.2) sha256=d0aaee42bcff8faf6c8fe0d8ff68f210a90957e37acf615392617ee29d25ae73
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
@@ -1086,7 +1086,7 @@ CHECKSUMS
   omniauth (2.1.2) sha256=def03277298b8f8a5d3ff16cdb2eb5edb9bffed60ee7dda24cc0c89b3ae6a0ce
   omniauth-oauth2 (1.8.0) sha256=b2f8e9559cc7e2d4efba57607691d6d2b634b879fc5b5b6ccfefa3da85089e78
   opensearch-ruby (3.4.0) sha256=0a8621686bed3c59b4c23e08cbaef873685a3fe4568e9d2703155ca92b8ca05d
-  opentelemetry-api (1.4.0) sha256=a733dee4d56c2140e946eb5ba99993575d4e96dd97e07ac948823af03b664036
+  opentelemetry-api (1.5.0) sha256=8dcc33e7aba70b1da630065ce0db3d6f50cb8ebd2017383209739439025ea997
   opentelemetry-common (0.22.0) sha256=ce5e96a0f838d67eb70a1d32e02bdbe7b8f41767bc71994d73b299a8b0c5878d
   opentelemetry-exporter-otlp (0.30.0) sha256=07cb0446bb782dfcf7cc27d2d6ebcf9aef1a4585b3f4952be6276a1e77d5ba97
   opentelemetry-helpers-mysql (0.2.0) sha256=dd05f5f40bf5169cd3b8fef355fb050506542fa6b32ace19e8124f6dec5b261f
@@ -1097,7 +1097,7 @@ CHECKSUMS
   opentelemetry-instrumentation-active_job (0.8.0) sha256=9d5d884e05421ca9444635ac9c96886bccf1a042d4ee5d3282f620d0acd5613d
   opentelemetry-instrumentation-active_model_serializers (0.22.0) sha256=fdfd0fafb1c90e4f121c4c215540abdc928f72c4de4b0643db870459d56c4bbe
   opentelemetry-instrumentation-active_record (0.9.0) sha256=9cbcb92dbfd48fa7bbf7524e3567e334f1773055467e9c6fbeaa49d911a60140
-  opentelemetry-instrumentation-active_storage (0.1.0) sha256=1325706ee9e13980d66caea90af4965ceaebda3441be7ee2737a65fd6ab64d6f
+  opentelemetry-instrumentation-active_storage (0.1.1) sha256=a654926abbeca00ec1fe942f9e4ded610530e23630d2cfb88fb876eabef4a703
   opentelemetry-instrumentation-active_support (0.8.0) sha256=9be102354e420ed08a6841d113e39d9c5480ed35940fe7268c7297656167d999
   opentelemetry-instrumentation-all (0.74.0) sha256=1d382a2189a5fe3ed478295bd02787f23f249f739ffee50e60d1ee3ffc025c14
   opentelemetry-instrumentation-aws_lambda (0.3.0) sha256=00e4ccec484f598a65ce4aa7ea9caccaeab3b8c6219690d93072c814299706b4
