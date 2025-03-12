@@ -35,7 +35,14 @@ module Guardrails
     end
 
     def call
-      result = OpenAI::JailbreakChecker.call(input)
+      case llm_provider
+      when :openai
+        result = OpenAI::JailbreakChecker.call(input)
+      when :claude
+        result = Claude::JailbreakChecker.call(input)
+      else
+        raise "Unsupported provider: #{llm_provider}"
+      end
 
       case result[:llm_guardrail_result]
       when fail_value
@@ -53,7 +60,7 @@ module Guardrails
 
   private
 
-    attr_reader :input
+    attr_reader :input, :llm_provider
 
     delegate :guardrails_llm_prompts, :pass_value, :fail_value, to: :class
 
