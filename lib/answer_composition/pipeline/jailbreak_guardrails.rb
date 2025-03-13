@@ -38,9 +38,9 @@ module AnswerComposition
       def build_metrics(start_time, response_or_error)
         {
           duration: Clock.monotonic_time - start_time,
-          llm_prompt_tokens: response_or_error.llm_token_usage["prompt_tokens"],
-          llm_completion_tokens: response_or_error.llm_token_usage["completion_tokens"],
-          llm_cached_tokens: response_or_error.llm_token_usage.dig("prompt_tokens_details", "cached_tokens"),
+          llm_prompt_tokens: response_or_error.llm_prompt_tokens,
+          llm_completion_tokens: response_or_error.llm_completion_tokens,
+          llm_cached_tokens: response_or_error.llm_cached_tokens,
         }
       end
     end

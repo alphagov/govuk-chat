@@ -25,10 +25,13 @@ module Guardrails
         llm_response = claude_response.output
         llm_guardrail_result = llm_response.dig("message", "content", 0, "text")
         llm_token_usage = claude_response.usage
+
         {
           llm_response:,
           llm_guardrail_result:,
-          llm_token_usage:,
+          llm_prompt_tokens: llm_token_usage["input_tokens"],
+          llm_completion_tokens: llm_token_usage["output_tokens"],
+          llm_cached_tokens: nil,
         }
       end
 

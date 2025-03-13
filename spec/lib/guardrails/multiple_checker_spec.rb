@@ -15,11 +15,9 @@ RSpec.describe Guardrails::MultipleChecker do
           "finish_reason" => "stop",
         },
         llm_guardrail_result: "False | None",
-        llm_token_usage: {
-          "prompt_tokens" => 13,
-          "completion_tokens" => 7,
-          "prompt_tokens_details" => { "cached_tokens" => 10 },
-        },
+        llm_prompt_tokens: 13,
+        llm_completion_tokens: 7,
+        llm_cached_tokens: 10,
       }
     end
 

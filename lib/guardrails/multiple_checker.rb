@@ -1,15 +1,16 @@
 module Guardrails
   class MultipleChecker
-    MAX_TOKENS_BUFFER = 5
-
-    Result = Data.define(:triggered, :guardrails, :llm_response, :llm_token_usage, :llm_guardrail_result)
+    Result = Data.define(:triggered, :guardrails, :llm_response, :llm_guardrail_result,
+                         :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens)
     class ResponseError < StandardError
-      attr_reader :llm_response, :llm_token_usage
+      attr_reader :llm_response, :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens
 
-      def initialize(message, llm_response, llm_token_usage)
+      def initialize(message, llm_response, llm_prompt_tokens, llm_completion_tokens, llm_cached_tokens)
         super(message)
         @llm_response = llm_response
-        @llm_token_usage = llm_token_usage
+        @llm_prompt_tokens = llm_prompt_tokens
+        @llm_completion_tokens = llm_completion_tokens
+        @llm_cached_tokens = llm_cached_tokens
       end
     end
 
@@ -82,10 +83,10 @@ module Guardrails
 
   private
 
-    def parse_response(llm_response:, llm_guardrail_result:, llm_token_usage:)
+    def parse_response(llm_response:, llm_guardrail_result:, llm_prompt_tokens:, llm_completion_tokens:, llm_cached_tokens:)
       unless response_pattern =~ llm_guardrail_result
         raise ResponseError.new(
-          "Error parsing guardrail response", llm_guardrail_result, llm_token_usage
+          "Error parsing guardrail response", llm_guardrail_result, llm_prompt_tokens, llm_completion_tokens, llm_cached_tokens
         )
       end
 
@@ -98,7 +99,9 @@ module Guardrails
         llm_guardrail_result: llm_guardrail_result,
         triggered: triggered,
         guardrails: guardrails,
-        llm_token_usage: llm_token_usage,
+        llm_prompt_tokens: llm_prompt_tokens,
+        llm_completion_tokens: llm_completion_tokens,
+        llm_cached_tokens: llm_cached_tokens,
       )
     end
 
