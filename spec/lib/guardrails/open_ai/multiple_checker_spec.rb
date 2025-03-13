@@ -97,12 +97,9 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
         stub_openai_output_guardrail(input)
         result = described_class.call(input, prompt)
 
-        expect(result[:llm_token_usage]).to eq({
-          "prompt_tokens" => 13,
-          "completion_tokens" => 7,
-          "total_tokens" => 20,
-          "prompt_tokens_details" => { "cached_tokens" => 10 },
-        })
+        expect(result[:llm_prompt_tokens]).to eq(13)
+        expect(result[:llm_completion_tokens]).to eq(7)
+        expect(result[:llm_cached_tokens]).to eq(10)
       end
 
       context "when :question_routing_guardrails is passed in as the llm_prompt_name" do

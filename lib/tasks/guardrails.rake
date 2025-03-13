@@ -30,12 +30,10 @@ namespace "guardrails" do
 
     results = Guardrails::Evaluation.call(dataset_absolute_path, true_eval:) do |input|
       result = Guardrails::MultipleChecker.call(input, guardrail_type, llm_provider)
-      token_key = llm_provider == :openai ? "prompt_tokens" : "input_tokens"
-      prompt_token_counts << result.llm_token_usage[token_key]
+      prompt_token_counts << result.llm_prompt_tokens
       result.llm_guardrail_result
     rescue Guardrails::MultipleChecker::ResponseError => e
-      token_key = llm_provider == :openai ? "prompt_tokens" : "input_tokens"
-      prompt_token_counts << e.llm_token_usage[token_key]
+      prompt_token_counts << e.llm_prompt_tokens
       "ERR: #{e.llm_response}"
     end
 

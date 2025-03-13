@@ -1,14 +1,16 @@
 module Guardrails
   class JailbreakChecker
-    Result = Data.define(:triggered, :llm_response, :llm_token_usage)
+    Result = Data.define(:triggered, :llm_response, :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens)
     class ResponseError < StandardError
-      attr_reader :llm_guardrail_result, :llm_response, :llm_token_usage
+      attr_reader :llm_guardrail_result, :llm_response, :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens
 
-      def initialize(message, llm_guardrail_result:, llm_response:, llm_token_usage:)
+      def initialize(message, llm_guardrail_result:, llm_response:, llm_prompt_tokens:, llm_completion_tokens:, llm_cached_tokens:)
         super(message)
         @llm_guardrail_result = llm_guardrail_result
         @llm_response = llm_response
-        @llm_token_usage = llm_token_usage
+        @llm_prompt_tokens = llm_prompt_tokens
+        @llm_completion_tokens = llm_completion_tokens
+        @llm_cached_tokens = llm_cached_tokens
       end
     end
 
@@ -46,14 +48,35 @@ module Guardrails
       llm_guardrail_result = llm_response.dig("message", "content")
       llm_token_usage = openai_response["usage"]
 
+      llm_prompt_tokens = llm_token_usage["prompt_tokens"]
+      llm_completion_tokens = llm_token_usage["completion_tokens"]
+      llm_cached_tokens = llm_token_usage.dig("prompt_tokens_details", "cached_tokens")
+
       case llm_guardrail_result
       when fail_value
-        Result.new(triggered: true, llm_response:, llm_token_usage:)
+        Result.new(
+          triggered: true,
+          llm_response:,
+          llm_prompt_tokens:,
+          llm_completion_tokens:,
+          llm_cached_tokens:,
+        )
       when pass_value
-        Result.new(triggered: false, llm_response:, llm_token_usage:)
+        Result.new(
+          triggered: false,
+          llm_response:,
+          llm_prompt_tokens:,
+          llm_completion_tokens:,
+          llm_cached_tokens:,
+        )
       else
         raise ResponseError.new(
-          "Error parsing jailbreak guardrails response", llm_guardrail_result:, llm_response:, llm_token_usage:
+          "Error parsing jailbreak guardrails response",
+          llm_guardrail_result:,
+          llm_response:,
+          llm_prompt_tokens:,
+          llm_completion_tokens:,
+          llm_cached_tokens:,
         )
       end
     end

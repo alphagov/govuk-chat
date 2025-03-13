@@ -18,7 +18,9 @@ module Guardrails
         {
           llm_response: openai_response.dig("choices", 0),
           llm_guardrail_result: openai_response.dig("choices", 0, "message", "content"),
-          llm_token_usage:,
+          llm_prompt_tokens: llm_token_usage["prompt_tokens"],
+          llm_completion_tokens: llm_token_usage["completion_tokens"],
+          llm_cached_tokens: llm_token_usage.dig("prompt_tokens_details", "cached_tokens"),
         }
       end
 

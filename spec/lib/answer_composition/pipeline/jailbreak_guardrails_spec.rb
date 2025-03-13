@@ -13,15 +13,21 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
     }
   end
 
-  let(:llm_token_usage) do
-    { "prompt_tokens" => 10, "completion_tokens" => 5, "prompt_tokens_details" => { "cached_tokens" => 0 } }
-  end
+  let(:llm_prompt_tokens) { 10 }
+  let(:llm_completion_tokens) { 5 }
+  let(:llm_cached_tokens) { 0 }
 
   context "when the guardrails are not triggered" do
     before do
       allow(Guardrails::JailbreakChecker)
         .to receive(:call)
-        .and_return(Guardrails::JailbreakChecker::Result.new(triggered: false, llm_response:, llm_token_usage:))
+        .and_return(Guardrails::JailbreakChecker::Result.new(
+                      triggered: false,
+                      llm_response:,
+                      llm_prompt_tokens:,
+                      llm_completion_tokens:,
+                      llm_cached_tokens:,
+                    ))
     end
 
     it "calls the guardrails with the question message" do
@@ -65,7 +71,13 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
     before do
       allow(Guardrails::JailbreakChecker)
         .to receive(:call)
-        .and_return(Guardrails::JailbreakChecker::Result.new(triggered: true, llm_response:, llm_token_usage:))
+        .and_return(Guardrails::JailbreakChecker::Result.new(
+                      triggered: true,
+                      llm_response:,
+                      llm_prompt_tokens:,
+                      llm_completion_tokens:,
+                      llm_cached_tokens:,
+                    ))
     end
 
     it "aborts the pipeline and updates the answer's status and message attributes" do
@@ -105,7 +117,9 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
         "An error occurred",
         llm_guardrail_result: "?",
         llm_response:,
-        llm_token_usage:,
+        llm_prompt_tokens:,
+        llm_completion_tokens:,
+        llm_cached_tokens:,
       )
       allow(Guardrails::JailbreakChecker).to receive(:call).and_raise(error)
     end
