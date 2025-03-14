@@ -1,13 +1,16 @@
 module Guardrails
   class MultipleChecker
-    Result = Data.define(:triggered, :guardrails, :llm_response, :llm_token_usage, :llm_guardrail_result)
+    Result = Data.define(:triggered, :guardrails, :llm_response, :llm_guardrail_result,
+                         :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens)
     class ResponseError < StandardError
-      attr_reader :llm_response, :llm_token_usage
+      attr_reader :llm_response, :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens
 
-      def initialize(message, llm_response, llm_token_usage)
+      def initialize(message, llm_response, llm_prompt_tokens, llm_completion_tokens, llm_cached_tokens)
         super(message)
         @llm_response = llm_response
-        @llm_token_usage = llm_token_usage
+        @llm_prompt_tokens = llm_prompt_tokens
+        @llm_completion_tokens = llm_completion_tokens
+        @llm_cached_tokens = llm_cached_tokens
       end
     end
 
@@ -16,8 +19,9 @@ module Guardrails
 
       Guardrail = Data.define(:key, :name, :content)
 
-      def initialize(prompt_name)
-        prompts = Rails.configuration.govuk_chat_private.llm_prompts.openai[prompt_name]
+      def initialize(prompt_name, llm_provider = :openai)
+        prompts = Rails.configuration.govuk_chat_private.llm_prompts[llm_provider][prompt_name]
+
         raise "No LLM prompts found for #{prompt_name}" unless prompts
 
         @prompts = prompts
@@ -44,13 +48,12 @@ module Guardrails
       end
     end
 
-    OPENAI_MODEL = "gpt-4o-mini".freeze
-    MAX_TOKENS_BUFFER = 5
+    attr_reader :input, :llm_provider, :llm_prompt_name
 
     def self.call(...) = new(...).call
 
-    def self.collated_prompts(llm_prompt_name)
-      prompt = Prompt.new(llm_prompt_name)
+    def self.collated_prompts(llm_prompt_name, llm_provider)
+      prompt = Prompt.new(llm_prompt_name, llm_provider)
 
       <<~PROMPT
         # System prompt
@@ -62,69 +65,48 @@ module Guardrails
       PROMPT
     end
 
-    def initialize(input, llm_prompt_name)
+    def initialize(input, llm_prompt_name, llm_provider)
       @input = input
-      @openai_client = OpenAIClient.build
       @llm_prompt_name = llm_prompt_name
+      @llm_provider = llm_provider
     end
 
     def call
-      llm_response = openai_response.dig("choices", 0)
-      llm_guardrail_result = llm_response.dig("message", "content")
-      llm_token_usage = openai_response["usage"]
+      case llm_provider
+      when :openai
+        response = OpenAI::MultipleChecker.call(input, prompt)
+      when :claude
+        response = Claude::MultipleChecker.call(input, prompt)
+      end
+      parse_response(**response)
+    end
 
+  private
+
+    def parse_response(llm_response:, llm_guardrail_result:, llm_prompt_tokens:, llm_completion_tokens:, llm_cached_tokens:)
       unless response_pattern =~ llm_guardrail_result
         raise ResponseError.new(
-          "Error parsing guardrail response", llm_guardrail_result, llm_token_usage
+          "Error parsing guardrail response", llm_guardrail_result, llm_prompt_tokens, llm_completion_tokens, llm_cached_tokens
         )
       end
 
       parts = llm_guardrail_result.split(" | ")
       triggered = parts.first.chomp == "True"
-      guardrails = if triggered
-                     extract_guardrails(parts.second)
-                   else
-                     []
-                   end
-      Result.new(triggered:, llm_response:, guardrails:, llm_token_usage:, llm_guardrail_result:)
-    end
+      guardrails = triggered ? extract_guardrails(parts.second) : []
 
-  private
-
-    attr_reader :input, :openai_client, :llm_prompt_name
-
-    def openai_response
-      @openai_response ||= openai_client.chat(
-        parameters: {
-          model: OPENAI_MODEL,
-          messages:,
-          temperature: 0.0,
-          max_tokens:,
-        },
+      Result.new(
+        llm_response: llm_response,
+        llm_guardrail_result: llm_guardrail_result,
+        triggered: triggered,
+        guardrails: guardrails,
+        llm_prompt_tokens: llm_prompt_tokens,
+        llm_completion_tokens: llm_completion_tokens,
+        llm_cached_tokens: llm_cached_tokens,
       )
     end
 
-    def messages
-      [
-        { role: "system", content: prompt.system_prompt },
-        { role: "user", content: prompt.user_prompt(input) },
-      ]
-    end
-
     def prompt
-      @prompt ||= Prompt.new(llm_prompt_name)
-    end
-
-    def max_tokens
-      all_guardrail_numbers = guardrail_numbers.map(&:to_s).join(", ")
-      longest_possible_response_string = %(True | "#{all_guardrail_numbers}")
-
-      token_count = Tiktoken
-       .encoding_for_model(OPENAI_MODEL)
-       .encode(longest_possible_response_string)
-       .length
-
-      token_count + MAX_TOKENS_BUFFER
+      @prompt ||= Prompt.new(llm_prompt_name, llm_provider)
     end
 
     def guardrail_numbers
