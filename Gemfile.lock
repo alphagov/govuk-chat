@@ -220,22 +220,22 @@ GEM
       faraday (>= 1.0, < 3.a)
     google-cloud-errors (1.5.0)
     google-logging-utils (0.1.0)
-    google-protobuf (4.30.0)
+    google-protobuf (4.30.1)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.30.0-aarch64-linux)
+    google-protobuf (4.30.1-aarch64-linux)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.30.0-arm64-darwin)
+    google-protobuf (4.30.1-arm64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.30.0-x86-linux)
+    google-protobuf (4.30.1-x86-linux)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.30.0-x86_64-darwin)
+    google-protobuf (4.30.1-x86_64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.30.0-x86_64-linux)
+    google-protobuf (4.30.1-x86_64-linux)
       bigdecimal
       rake (>= 13)
     googleapis-common-protos-types (1.18.0)
@@ -266,7 +266,7 @@ GEM
     govuk_personalisation (1.1.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
-    govuk_publishing_components (54.0.1)
+    govuk_publishing_components (55.0.1)
       govuk_app_config
       govuk_personalisation (>= 0.7.0)
       kramdown
@@ -359,7 +359,7 @@ GEM
     mime-types-data (3.2025.0204)
     mini_mime (1.1.5)
     mini_portile2 (2.8.8)
-    minitest (5.25.4)
+    minitest (5.25.5)
     msgpack (1.7.5)
     multi_json (1.15.0)
     multi_xml (0.7.1)
@@ -1011,19 +1011,19 @@ CHECKSUMS
   google-cloud-env (2.2.1) sha256=3c6062aee0b5c863b83f3ce125ea7831507aadf1af7c0d384b74a116c4f649cf
   google-cloud-errors (1.5.0) sha256=b56be28b8c10628125214dde571b925cfcebdbc58619e598250c37a2114f7b4b
   google-logging-utils (0.1.0) sha256=70950b1e49314273cf2e167adb47b62af7917a4691b580da7e9be67b9205fcd5
-  google-protobuf (4.30.0) sha256=4427249acaccb0ec4d64bc4dbd551d1630f9ca50e4e34bd5601e30e75cd842e9
-  google-protobuf (4.30.0-aarch64-linux) sha256=fdc118bedd9267279dfcd7c006e594341d817ad4e26d9741732b6dbfe7441c7f
-  google-protobuf (4.30.0-arm64-darwin) sha256=791d5bec1e468848c84cec390dfb3a6016afee04cfebc564e3cb2e3c264e6415
-  google-protobuf (4.30.0-x86-linux) sha256=d1d709b096ca38621ee611111025a28a2cec15110658532115086f4dd0bdd31a
-  google-protobuf (4.30.0-x86_64-darwin) sha256=135195ff560031018e31b1b7b8cb935e60e3731c2ec257a1a7750e3bd3b7a7d9
-  google-protobuf (4.30.0-x86_64-linux) sha256=a5b3f1a7e7bc832249a136d20c2d520e693c2340d682e32bc73fe8e28190148d
+  google-protobuf (4.30.1) sha256=0c88b433866eac8a07d13ea19182e23334b14ac99d2a186cd88b72e2413d0778
+  google-protobuf (4.30.1-aarch64-linux) sha256=5e155eae7b686bd4f826f947f311d1c00b4c3b467ca21b27c47610b400a215c5
+  google-protobuf (4.30.1-arm64-darwin) sha256=f69682f65a0c2f689040714e2c6407c838b9113dce87d76e7e568f1213b7fdeb
+  google-protobuf (4.30.1-x86-linux) sha256=8a0184b952f2af573b15056ed467f771cb99512e8f8904b53eba086ffd91b05a
+  google-protobuf (4.30.1-x86_64-darwin) sha256=626836baf2470c5590fedda795598cea1c3385f690a97f2ed6d7d43a31110d9a
+  google-protobuf (4.30.1-x86_64-linux) sha256=84c87b239dec7a200dddbcbd9bdb03a59c109f4b32667a50bec84286faa9784e
   googleapis-common-protos-types (1.18.0) sha256=280d19dcf431f86b9ff7ed8b23994915c5f4f7a0282ad3e870a2d3595976559f
   googleauth (1.13.1) sha256=33448ce662e40afeb3e6db5eb9f4ee712467b1701f3857ef9c0aecac8447eca0
   govuk_app_config (9.16.5) sha256=6041a230a5ac939eb62b1699200db52911235435fae9c54184459296f412fba1
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (5.0.2) sha256=d0aaee42bcff8faf6c8fe0d8ff68f210a90957e37acf615392617ee29d25ae73
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
-  govuk_publishing_components (54.0.1) sha256=2eb1fbc50ae17f8bdd3cf1afccb80ad3aa463ee465aa898fc3ddbc694c160cd6
+  govuk_publishing_components (55.0.1) sha256=c4a4ebdfc1a3f22ed346998b736f63e587babb0944bff9d20cc4a4a4dbf9b04e
   govuk_schemas (5.0.4) sha256=e5d347983cf173efeef341aec6bdd8479e8f1385b6a0526174c21f8df4043394
   govuk_sidekiq (9.0.6) sha256=15197544ff441b2c0de0b4f59475ee87ea4179991c0c22df1eaaf3f8ddc75f1f
   govuk_test (4.1.1) sha256=c055990407fdc37ca2c1020da421dd5f7c521e7f09975cefb939898296e361cc
@@ -1061,7 +1061,7 @@ CHECKSUMS
   mime-types-data (3.2025.0204) sha256=de3659d75ab211affa8e0f7579959d5b9ca60b76ff9a5abd550bf3a7d4e3f58a
   mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
   mini_portile2 (2.8.8) sha256=8e47136cdac04ce81750bb6c09733b37895bf06962554e4b4056d78168d70a75
-  minitest (5.25.4) sha256=9cf2cae25ac4dfc90c988ebc3b917f53c054978b673273da1bd20bcb0778f947
+  minitest (5.25.5) sha256=391b6c6cb43a4802bfb7c93af1ebe2ac66a210293f4a3fb7db36f2fc7dc2c756
   msgpack (1.7.5) sha256=ffb04979f51e6406823c03abe50e1da2c825c55a37dee138518cdd09d9d3aea8
   multi_json (1.15.0) sha256=1fd04138b6e4a90017e8d1b804c039031399866ff3fbabb7822aea367c78615d
   multi_xml (0.7.1) sha256=4fce100c68af588ff91b8ba90a0bb3f0466f06c909f21a32f4962059140ba61b
