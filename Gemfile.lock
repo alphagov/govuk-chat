@@ -178,7 +178,7 @@ GEM
       faraday (~> 2.0)
       typhoeus (~> 1.4)
     ffi (1.17.0)
-    gds-api-adapters (98.2.0)
+    gds-api-adapters (98.3.0)
       addressable
       link_header
       null_logger
@@ -356,7 +356,7 @@ GEM
     mime-types (3.6.0)
       logger
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2025.0204)
+    mime-types-data (3.2025.0304)
     mini_mime (1.1.5)
     mini_portile2 (2.8.8)
     minitest (5.25.5)
@@ -1001,7 +1001,7 @@ CHECKSUMS
   faraday-net_http (3.4.0) sha256=a1f1e4cd6a2cf21599c8221595e27582d9936819977bbd4089a601f24c64e54a
   faraday-typhoeus (1.1.0) sha256=24c6147c213818dde3ebc50ae47ab92f9a7e554903aa362707126f749c6890e7
   ffi (1.17.0) sha256=51630e43425078311c056ca75f961bb3bda1641ab36e44ad4c455e0b0e4a231c
-  gds-api-adapters (98.2.0) sha256=1cf27299894efaa5ad55db3df9c6ea2b302a45fed0f7cb7ca0d955b455dbd0b5
+  gds-api-adapters (98.3.0) sha256=898ac18c76ff3e2a672dd2b35df2d24ef666a54af5ee046bffd1e324025be934
   gds-sso (19.1.0) sha256=52bdf93aa0ced00298989a691c66a0e3d3f46340650d4f7ba8d0a5c285955bf6
   globalid (1.2.1) sha256=70bf76711871f843dbba72beb8613229a49429d1866828476f9c9d6ccc327ce9
   google-apis-bigquery_v2 (0.84.0) sha256=d15575f11279a76d2e188624006a6ba009683a44ff9d7e743b9a9c6853a2044b
@@ -1058,7 +1058,7 @@ CHECKSUMS
   matrix (0.4.2) sha256=71083ccbd67a14a43bfa78d3e4dc0f4b503b9cc18e5b4b1d686dc0f9ef7c4cc0
   method_source (1.1.0) sha256=181301c9c45b731b4769bc81e8860e72f9161ad7d66dd99103c9ab84f560f5c5
   mime-types (3.6.0) sha256=6f71db957840ceae44211531eff3e2f7e0dd4645fefb5f535dbaeb6307ab6464
-  mime-types-data (3.2025.0204) sha256=de3659d75ab211affa8e0f7579959d5b9ca60b76ff9a5abd550bf3a7d4e3f58a
+  mime-types-data (3.2025.0304) sha256=7ed9385881432d708b7f4e9cf2a4a9e1d4e8bf8abcd08283c23a0d5cd7205097
   mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
   mini_portile2 (2.8.8) sha256=8e47136cdac04ce81750bb6c09733b37895bf06962554e4b4056d78168d70a75
   minitest (5.25.5) sha256=391b6c6cb43a4802bfb7c93af1ebe2ac66a210293f4a3fb7db36f2fc7dc2c756
