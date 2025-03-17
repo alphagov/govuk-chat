@@ -4,7 +4,7 @@ source "https://rubygems.org"
 
 ruby "~> #{File.read('.ruby-version').strip}"
 
-gem "rails", "8.0.1"
+gem "rails", "8.0.2"
 
 gem "aws-sdk-bedrockruntime"
 gem "bootsnap"
