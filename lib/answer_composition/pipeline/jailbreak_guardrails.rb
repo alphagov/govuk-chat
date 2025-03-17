@@ -1,7 +1,7 @@
 module AnswerComposition
   module Pipeline
     class JailbreakGuardrails
-      def initialize(llm_provider:)
+      def initialize(llm_provider: :openai)
         @llm_provider = llm_provider
       end
 

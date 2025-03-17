@@ -43,7 +43,7 @@ module Guardrails::Claude
 
     def inference_config
       {
-        max_tokens: 10,
+        max_tokens: max_tokens,
         temperature: 0.0,
       }
     end

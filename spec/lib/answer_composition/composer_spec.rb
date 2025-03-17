@@ -45,6 +45,7 @@ RSpec.describe AnswerComposition::Composer do
         stub_pipeline_initialize(AnswerComposition::Pipeline::QuestionRephraser, llm_provider: :openai)
         stub_pipeline_initialize(AnswerComposition::Pipeline::QuestionRoutingGuardrails, llm_provider: :openai)
         stub_pipeline_initialize(AnswerComposition::Pipeline::AnswerGuardrails, llm_provider: :openai)
+        stub_pipeline_initialize(AnswerComposition::Pipeline::JailbreakGuardrails, llm_provider: :openai)
 
         expected_pipeline = [
           AnswerComposition::Pipeline::JailbreakGuardrails.new(llm_provider: :openai),
@@ -75,6 +76,7 @@ RSpec.describe AnswerComposition::Composer do
         stub_pipeline_initialize(AnswerComposition::Pipeline::QuestionRephraser, llm_provider: :claude)
         stub_pipeline_initialize(AnswerComposition::Pipeline::QuestionRoutingGuardrails, llm_provider: :claude)
         stub_pipeline_initialize(AnswerComposition::Pipeline::AnswerGuardrails, llm_provider: :claude)
+        stub_pipeline_initialize(AnswerComposition::Pipeline::JailbreakGuardrails, llm_provider: :claude)
 
         expected_pipeline = [
           AnswerComposition::Pipeline::JailbreakGuardrails.new(llm_provider: :claude),
