@@ -30,7 +30,9 @@ RSpec.describe Guardrails::JailbreakChecker do
       .and have_attributes(
         triggered: boolean,
         llm_response: hash_including("message", "finish_reason", "index"),
-        llm_token_usage: hash_including("prompt_tokens", "completion_tokens", "total_tokens"),
+        llm_prompt_tokens: be_a(Integer),
+        llm_completion_tokens: be_a(Integer),
+        llm_cached_tokens: be_a(Integer).or(be_nil),
       )
   end
 
@@ -51,7 +53,9 @@ RSpec.describe Guardrails::JailbreakChecker do
         message: "Error parsing jailbreak guardrails response",
         llm_guardrail_result: "?",
         llm_response: hash_including("message", "finish_reason", "index"),
-        llm_token_usage: hash_including("prompt_tokens", "completion_tokens", "total_tokens"),
+        llm_prompt_tokens: be_a(Integer),
+        llm_completion_tokens: be_a(Integer),
+        llm_cached_tokens: be_a(Integer).or(be_nil),
       ),
     )
 

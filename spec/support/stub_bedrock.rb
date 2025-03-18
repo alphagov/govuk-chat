@@ -58,6 +58,18 @@ module StubBedrock
     end
   end
 
+  def bedrock_claude_guardrail_response(triggered: false, triggered_guardrails: [])
+    lambda do |context|
+      response_text = if triggered
+                        "True | #{triggered_guardrails.join(', ')}"
+                      else
+                        "False | None"
+                      end
+
+      bedrock_claude_text_response(response_text).call(context)
+    end
+  end
+
   def bedrock_claude_text_response(response_text,
                                    user_message: nil,
                                    input_tokens: 10,

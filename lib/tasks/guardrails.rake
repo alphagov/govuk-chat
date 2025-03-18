@@ -1,6 +1,6 @@
 namespace "guardrails" do
   desc "Output guardrail evaluation using Guardrails::MultipleChecker"
-  task :evaluate_guardrails, %i[guardrail_type dataset_path output_path] => :environment do |_, args|
+  task :evaluate_guardrails, %i[guardrail_type dataset_path output_path llm_provider] => :environment do |_, args|
     guardrail_type = args[:guardrail_type].to_sym
     valid_guardrail_types = %i[answer_guardrails question_routing_guardrails]
     if guardrail_type.blank? || valid_guardrail_types.exclude?(guardrail_type)
@@ -18,25 +18,28 @@ namespace "guardrails" do
     end
 
     output_path = args[:output_path]
+    llm_provider = (args[:llm_provider] || :openai).to_sym
+    valid_providers = %i[openai claude]
+    if valid_providers.exclude?(llm_provider)
+      abort("Invalid LLM provider. Valid providers are #{valid_providers.to_sentence}")
+    end
 
-    model_name = Guardrails::MultipleChecker::OPENAI_MODEL
     true_eval = ->(v) { v != "False | None" }
 
     prompt_token_counts = []
 
     results = Guardrails::Evaluation.call(dataset_absolute_path, true_eval:) do |input|
-      result = Guardrails::MultipleChecker.call(input, guardrail_type)
-      prompt_token_counts << result.llm_token_usage["prompt_tokens"]
+      result = Guardrails::MultipleChecker.call(input, guardrail_type, llm_provider)
+      prompt_token_counts << result.llm_prompt_tokens
       result.llm_guardrail_result
     rescue Guardrails::MultipleChecker::ResponseError => e
-      prompt_token_counts << e.llm_token_usage["prompt_tokens"]
+      prompt_token_counts << e.llm_prompt_tokens
       "ERR: #{e.llm_response}"
     end
 
     average_prompt_token_count = prompt_token_counts.sum / prompt_token_counts.size
 
     results.merge!(
-      model: model_name,
       average_prompt_token_count:,
       max_prompt_token_count: prompt_token_counts.max,
     )
@@ -52,14 +55,20 @@ namespace "guardrails" do
   end
 
   desc "Print prompts for a guardrail type"
-  task :print_prompts, %i[guardrail_type] => :environment do |_, args|
+  task :print_prompts, %i[guardrail_type llm_provider] => :environment do |_, args|
     guardrail_type = args[:guardrail_type].to_sym
     valid_guardrail_types = %i[answer_guardrails question_routing_guardrails]
     if guardrail_type.blank? || valid_guardrail_types.exclude?(guardrail_type)
       abort("Invalid guardrail type. Valid guardrail types are #{valid_guardrail_types.to_sentence}")
     end
 
-    prompt = Guardrails::MultipleChecker.collated_prompts(guardrail_type)
+    llm_provider = (args[:llm_provider] || :openai).to_sym
+    valid_providers = %i[openai claude]
+    if valid_providers.exclude?(llm_provider)
+      abort("Invalid LLM provider. Valid providers are #{valid_providers.to_sentence}")
+    end
+
+    prompt = Guardrails::MultipleChecker.collated_prompts(guardrail_type, llm_provider)
     puts prompt
   end
 end
