@@ -52,8 +52,6 @@ jobs:
         with:
           repository: alphagov/govuk-chat
           ref: ${{ inputs.ref || github.ref }}
-          # TODO: remove this when we've open sourced govuk-chat
-          token: ${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}
 
       - name: Checkout Publishing API (for Content Schemas)
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
