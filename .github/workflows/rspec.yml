@@ -48,7 +48,7 @@ jobs:
         uses: alphagov/govuk-infrastructure/.github/actions/setup-redis@main
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: alphagov/govuk-chat
           ref: ${{ inputs.ref || github.ref }}
@@ -56,7 +56,7 @@ jobs:
           token: ${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}
 
       - name: Checkout Publishing API (for Content Schemas)
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: alphagov/publishing-api
           ref: ${{ inputs.publishingApiRef }}
@@ -64,7 +64,7 @@ jobs:
 
       - name: Checkout govuk_chat_private
         if: inputs.govukChatPrivateRef != ''
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: alphagov/govuk_chat_private
           ref: ${{ inputs.govukChatPrivateRef }}
@@ -72,7 +72,7 @@ jobs:
           token: ${{ secrets.GOVUK_CI_GITHUB_API_TOKEN }}
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@922ebc4c5262cd14e07bb0e1db020984b6c064fe # v1.226.0
         with:
           bundler-cache: true
         env:
