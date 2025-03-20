@@ -43,4 +43,17 @@ namespace :evaluation do
     answer = AnswerComposition::Composer.call(question)
     puts({ message: answer.message }.to_json)
   end
+
+  desc "Produce the output of the jailbreak response for a user input"
+  task :generate_jailbreak_guardrail_response, %i[provider] => :environment do |_, args|
+    raise "Requires an INPUT env var" if ENV["INPUT"].blank?
+    raise "Requires a provider" if args[:provider].blank?
+
+    # TODO: Update once we support providers other than OpenAI
+    raise "Unsupported provider: #{args[:provider]}" unless args[:provider] == "openai"
+
+    response = Guardrails::JailbreakChecker.call(ENV["INPUT"])
+
+    puts(response.to_json)
+  end
 end

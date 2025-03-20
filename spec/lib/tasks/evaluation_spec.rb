@@ -86,4 +86,45 @@ RSpec.describe "rake evaluation tasks" do
       end
     end
   end
+
+  describe "generate_jailbreak_guardrail_response" do
+    let(:task_name) { "evaluation:generate_jailbreak_guardrail_response" }
+    let(:input) { "Is this a jailbreak?" }
+
+    before { Rake::Task[task_name].reenable }
+
+    it "requires a INPUT env var" do
+      expect { Rake::Task[task_name].invoke("openai") }
+        .to raise_error("Requires an INPUT env var")
+    end
+
+    it "requires a provider" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke }
+          .to raise_error("Requires a provider")
+      end
+    end
+
+    it "requires a known provider" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke("unknown") }
+          .to raise_error("Unsupported provider: unknown")
+      end
+    end
+
+    it "outputs the response as JSON to stdout" do
+      ClimateControl.modify(INPUT: input) do
+        result = Guardrails::JailbreakChecker::Result.new(
+          triggered: true,
+          llm_response: {},
+          llm_prompt_tokens: 100,
+          llm_completion_tokens: 100,
+          llm_cached_tokens: 0,
+        )
+        allow(Guardrails::JailbreakChecker).to receive(:call).with(input).and_return(result)
+        expect { Rake::Task[task_name].invoke("openai") }
+          .to output("#{result.to_json}\n").to_stdout
+      end
+    end
+  end
 end
