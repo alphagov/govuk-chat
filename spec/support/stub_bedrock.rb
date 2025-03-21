@@ -43,6 +43,24 @@ module StubBedrock
     end
   end
 
+  def bedrock_claude_jailbreak_guardrails_response(triggered: false)
+    common_prompts = Rails.configuration.govuk_chat_private.llm_prompts.common
+    allow(common_prompts).to receive(:jailbreak_guardrails).and_return(
+      pass_value: "PassValue",
+      fail_value: "FailValue",
+    )
+
+    lambda do |context|
+      response_text = if triggered
+                        "FailValue"
+                      else
+                        "PassValue"
+                      end
+
+      bedrock_claude_text_response(response_text).call(context)
+    end
+  end
+
   def bedrock_claude_question_routing_response(question)
     lambda do |context|
       given_question = context.params.dig(:messages, -1, :content, 0, :text)

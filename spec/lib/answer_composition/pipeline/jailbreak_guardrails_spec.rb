@@ -1,5 +1,6 @@
 RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
   let(:context) { build(:answer_pipeline_context) }
+  let(:default_provider) { :openai }
 
   let(:llm_response) do
     {
@@ -31,24 +32,24 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
     end
 
     it "calls the guardrails with the question message" do
-      described_class.call(context)
-      expect(Guardrails::JailbreakChecker).to have_received(:call).with(context.question.message)
+      described_class.new.call(context)
+      expect(Guardrails::JailbreakChecker).to have_received(:call).with(context.question.message, default_provider)
     end
 
     it "does not abort the pipeline" do
-      expect { described_class.call(context) }.not_to change(context, :aborted?).from(false)
+      expect { described_class.new.call(context) }.not_to change(context, :aborted?).from(false)
     end
 
     it "does not change the message" do
-      expect { described_class.call(context) }.not_to change(context.answer, :message)
+      expect { described_class.new.call(context) }.not_to change(context.answer, :message)
     end
 
     it "sets the jailbreak_guardrails_status" do
-      expect { described_class.call(context) }.to change(context.answer, :jailbreak_guardrails_status).to("pass")
+      expect { described_class.new.call(context) }.to change(context.answer, :jailbreak_guardrails_status).to("pass")
     end
 
     it "assigns the llm response to the answer" do
-      described_class.call(context)
+      described_class.new.call(context)
 
       expect(context.answer.llm_responses["jailbreak_guardrails"]).to eq(llm_response)
     end
@@ -56,7 +57,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
     it "assigns metrics to the answer" do
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
-      described_class.call(context)
+      described_class.new.call(context)
 
       expect(context.answer.metrics["jailbreak_guardrails"]).to eq({
         duration: 1.5,
@@ -82,7 +83,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
 
     it "aborts the pipeline and updates the answer's status and message attributes" do
       expect {
-        described_class.call(context)
+        described_class.new.call(context)
       }.to throw_symbol(:abort)
 
       expect(context.answer).to have_attributes(
@@ -93,14 +94,14 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
     end
 
     it "assigns the llm response to the answer" do
-      expect { described_class.call(context) }.to throw_symbol(:abort)
+      expect { described_class.new.call(context) }.to throw_symbol(:abort)
       expect(context.answer.llm_responses["jailbreak_guardrails"]).to eq(llm_response)
     end
 
     it "assigns metrics to the answer" do
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
-      expect { described_class.call(context) }.to throw_symbol(:abort)
+      expect { described_class.new.call(context) }.to throw_symbol(:abort)
 
       expect(context.answer.metrics["jailbreak_guardrails"]).to eq({
         duration: 1.5,
@@ -125,7 +126,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
     end
 
     it "aborts the pipeline and updates the answer's status with an error message" do
-      expect { described_class.call(context) }.to throw_symbol(:abort)
+      expect { described_class.new.call(context) }.to throw_symbol(:abort)
       expect(context.answer).to have_attributes(
         status: "error_jailbreak_guardrails",
         message: Answer::CannedResponses::JAILBREAK_GUARDRAILS_FAILED_MESSAGE,
@@ -134,14 +135,14 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
     end
 
     it "assigns the llm response to the answer" do
-      expect { described_class.call(context) }.to throw_symbol(:abort)
+      expect { described_class.new.call(context) }.to throw_symbol(:abort)
       expect(context.answer.llm_responses["jailbreak_guardrails"]).to eq(llm_response)
     end
 
     it "assigns metrics to the answer" do
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
-      expect { described_class.call(context) }.to throw_symbol(:abort)
+      expect { described_class.new.call(context) }.to throw_symbol(:abort)
 
       expect(context.answer.metrics["jailbreak_guardrails"]).to eq({
         duration: 1.5,

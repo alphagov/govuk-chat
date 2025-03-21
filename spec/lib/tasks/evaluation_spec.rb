@@ -121,7 +121,7 @@ RSpec.describe "rake evaluation tasks" do
           llm_completion_tokens: 100,
           llm_cached_tokens: 0,
         )
-        allow(Guardrails::JailbreakChecker).to receive(:call).with(input).and_return(result)
+        allow(Guardrails::JailbreakChecker).to receive(:call).with(input, :openai).and_return(result)
         expect { Rake::Task[task_name].invoke("openai") }
           .to output("#{result.to_json}\n").to_stdout
       end

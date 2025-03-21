@@ -1,24 +1,54 @@
 RSpec.describe Guardrails::JailbreakChecker do
   let(:input) { "User question" }
+  let(:pass_value) { "PassValue" }
+  let(:fail_value) { "FailValue" }
 
-  it "calls OpenAI to check for jailbreak attempts" do
-    prompts = Rails.configuration.govuk_chat_private.llm_prompts.openai.jailbreak_guardrails
-    allow(prompts).to receive(:[]).and_call_original
-    allow(prompts).to receive(:[]).with(:system_prompt).and_return("The system prompt")
-    allow(prompts).to receive(:[]).with(:user_prompt).and_return("{input}")
+  before do
+    allow(described_class).to receive_messages(pass_value:, fail_value:)
+  end
 
-    messages = array_including(
-      { "role" => "system", "content" => "The system prompt" },
-      { "role" => "user", "content" => input },
-    )
-    openai_request = stub_openai_chat_completion(
-      messages,
-      answer: described_class.pass_value,
-      chat_options: { model: described_class::OPENAI_MODEL },
-    )
+  it "calls the OpenAI jailbreak checker by default" do
+    result = {
+      llm_guardrail_result: pass_value,
+      llm_response: {
+        "message" => { "content" => pass_value },
+        "finish_reason" => "stop",
+        "index" => 0,
+      },
+      llm_token_usage: {
+        "prompt_tokens" => 100,
+        "completion_tokens" => 2,
+        "total_tokens" => 102,
+      },
+    }
+
+    allow(Guardrails::OpenAI::JailbreakChecker).to receive(:call).and_return(result)
+    stub_openai_jailbreak_guardrails(input)
 
     described_class.call(input)
-    expect(openai_request).to have_been_made
+    expect(Guardrails::OpenAI::JailbreakChecker).to have_received(:call).with(input)
+  end
+
+  it "calls the Claude jailbreak checker when the provider is specified as :claude" do
+    result = {
+      llm_guardrail_result: pass_value,
+      llm_response: {
+        "message" => { "content" => pass_value },
+        "finish_reason" => "stop",
+        "index" => 0,
+      },
+      llm_token_usage: {
+        "prompt_tokens" => 100,
+        "completion_tokens" => 2,
+        "total_tokens" => 102,
+      },
+    }
+
+    allow(Guardrails::Claude::JailbreakChecker).to receive(:call).and_return(result)
+    stub_openai_jailbreak_guardrails(input)
+
+    described_class.call(input, :claude)
+    expect(Guardrails::Claude::JailbreakChecker).to have_received(:call).with(input)
   end
 
   it "returns a result object" do
@@ -37,21 +67,34 @@ RSpec.describe Guardrails::JailbreakChecker do
   end
 
   it "returns a result object with triggered true when guardrails fail" do
-    stub_openai_jailbreak_guardrails(input, "FailValue")
+    stub_openai_jailbreak_guardrails(input, triggered: true)
     expect(described_class.call(input)).to have_attributes(triggered: true)
   end
 
   it "returns a result object with triggered false when guardrails pass" do
-    stub_openai_jailbreak_guardrails(input, "PassValue")
+    stub_openai_jailbreak_guardrails(input, triggered: false)
     expect(described_class.call(input)).to have_attributes(triggered: false)
   end
 
   it "raises a response error when the LLM returns a different response" do
-    stub_openai_jailbreak_guardrails(input, "?")
+    allow(Guardrails::OpenAI::JailbreakChecker).to receive(:call).and_return({
+      llm_response: {
+        "message" => { "content" => "unexpected" },
+        "finish_reason" => "stop",
+        "index" => 0,
+      },
+      llm_guardrail_result: "unexpected",
+      llm_prompt_tokens: 10,
+      llm_completion_tokens: 10,
+      llm_cached_tokens: nil,
+    })
+
+    stub_openai_jailbreak_guardrails(input)
+
     expected_error = an_instance_of(described_class::ResponseError).and(
       having_attributes(
         message: "Error parsing jailbreak guardrails response",
-        llm_guardrail_result: "?",
+        llm_guardrail_result: "unexpected",
         llm_response: hash_including("message", "finish_reason", "index"),
         llm_prompt_tokens: be_a(Integer),
         llm_completion_tokens: be_a(Integer),

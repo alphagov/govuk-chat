@@ -49,10 +49,7 @@ namespace :evaluation do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
     raise "Requires a provider" if args[:provider].blank?
 
-    # TODO: Update once we support providers other than OpenAI
-    raise "Unsupported provider: #{args[:provider]}" unless args[:provider] == "openai"
-
-    response = Guardrails::JailbreakChecker.call(ENV["INPUT"])
+    response = Guardrails::JailbreakChecker.call(ENV["INPUT"], args[:provider].to_sym)
 
     puts(response.to_json)
   end

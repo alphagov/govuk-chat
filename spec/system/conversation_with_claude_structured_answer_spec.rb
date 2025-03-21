@@ -47,6 +47,7 @@ RSpec.describe "Conversation with Claude with a structured answer", :chunked_con
 
     @first_answer = "Lots of tax."
     stub_bedrock_converse(
+      bedrock_claude_jailbreak_guardrails_response(triggered: false),
       bedrock_claude_question_routing_response(@first_question),
       bedrock_claude_structured_answer_response(@first_question, @first_answer),
       bedrock_claude_guardrail_response(triggered: false),
@@ -76,6 +77,7 @@ RSpec.describe "Conversation with Claude with a structured answer", :chunked_con
     rephrased_question = "Rephrased #{@second_question}"
     @second_answer = "Even more tax."
     stub_bedrock_converse(
+      bedrock_claude_jailbreak_guardrails_response(triggered: false),
       bedrock_claude_text_response(rephrased_question, user_message: Regexp.new(@second_question)),
       bedrock_claude_question_routing_response(rephrased_question),
       bedrock_claude_structured_answer_response(rephrased_question, @second_answer),

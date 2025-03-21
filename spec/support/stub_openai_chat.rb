@@ -131,21 +131,27 @@ module StubOpenAIChat
     )
   end
 
-  def stub_openai_jailbreak_guardrails(to_check, response = "PassValue")
-    prompts = Rails.configuration.govuk_chat_private.llm_prompts.openai
-    allow(prompts).to receive(:jailbreak_guardrails).and_return(
+  def stub_openai_jailbreak_guardrails(to_check, triggered: false)
+    openai_prompts = Rails.configuration.govuk_chat_private.llm_prompts.openai
+    allow(openai_prompts).to receive(:jailbreak_guardrails).and_return(
       user_prompt: "{input}",
       system_prompt: "The system prompt",
-      pass_value: "PassValue",
-      fail_value: "FailValue",
       max_tokens: 1,
       logit_bias: {},
     )
 
+    common_prompts = Rails.configuration.govuk_chat_private.llm_prompts.common
+    allow(common_prompts).to receive(:jailbreak_guardrails).and_return(
+      pass_value: "PassValue",
+      fail_value: "FailValue",
+    )
+
+    response = triggered ? "FailValue" : "PassValue"
+
     stub_openai_chat_completion(
       array_including({ "role" => "user", "content" => a_string_including(to_check) }),
       answer: response,
-      chat_options: { model: Guardrails::JailbreakChecker::OPENAI_MODEL,
+      chat_options: { model: Guardrails::OpenAI::JailbreakChecker::OPENAI_MODEL,
                       max_tokens: 1,
                       logit_bias: {} },
     )

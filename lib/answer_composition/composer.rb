@@ -44,7 +44,7 @@ module AnswerComposition
       case answer_strategy
       when "openai_structured_answer"
         PipelineRunner.call(question:, pipeline: [
-          Pipeline::JailbreakGuardrails,
+          Pipeline::JailbreakGuardrails.new(llm_provider: :openai),
           Pipeline::QuestionRephraser.new(llm_provider: :openai),
           Pipeline::OpenAI::QuestionRouter,
           Pipeline::QuestionRoutingGuardrails.new(llm_provider: :openai),
@@ -54,6 +54,7 @@ module AnswerComposition
         ])
       when "claude_structured_answer"
         PipelineRunner.call(question:, pipeline: [
+          Pipeline::JailbreakGuardrails.new(llm_provider: :claude),
           Pipeline::QuestionRephraser.new(llm_provider: :claude),
           Pipeline::Claude::QuestionRouter,
           Pipeline::QuestionRoutingGuardrails.new(llm_provider: :claude),
