@@ -2,6 +2,12 @@ RSpec.describe AnswerComposition::Composer do
   let(:question) { create :question }
   let(:retrieved_answer) { build :answer, question: }
 
+  def stub_pipeline_initialize(klass, *args, **kwargs)
+    double = instance_double(klass)
+    allow(klass).to receive(:new).with(*args, **kwargs).and_return(double)
+    double
+  end
+
   describe ".call" do
     it "assigns metrics to the answer" do
       answer = create(:answer)
@@ -36,17 +42,9 @@ RSpec.describe AnswerComposition::Composer do
       let(:question) { create :question, answer_strategy: :openai_structured_answer }
 
       it "calls PipelineRunner with the correct pipeline" do
-        rephraser = instance_double(AnswerComposition::Pipeline::QuestionRephraser)
-        allow(AnswerComposition::Pipeline::QuestionRephraser)
-          .to receive(:new).with(llm_provider: :openai).and_return(rephraser)
-
-        question_routing_guardrails = instance_double(AnswerComposition::Pipeline::QuestionRoutingGuardrails)
-        allow(AnswerComposition::Pipeline::QuestionRoutingGuardrails)
-          .to receive(:new).with(llm_provider: :openai).and_return(question_routing_guardrails)
-
-        answer_guardrails = instance_double(AnswerComposition::Pipeline::AnswerGuardrails)
-        allow(AnswerComposition::Pipeline::AnswerGuardrails)
-          .to receive(:new).with(llm_provider: :openai).and_return(answer_guardrails)
+        stub_pipeline_initialize(AnswerComposition::Pipeline::QuestionRephraser, llm_provider: :openai)
+        stub_pipeline_initialize(AnswerComposition::Pipeline::QuestionRoutingGuardrails, llm_provider: :openai)
+        stub_pipeline_initialize(AnswerComposition::Pipeline::AnswerGuardrails, llm_provider: :openai)
 
         expected_pipeline = [
           AnswerComposition::Pipeline::JailbreakGuardrails,
@@ -74,18 +72,9 @@ RSpec.describe AnswerComposition::Composer do
       let(:question) { create :question, answer_strategy: :claude_structured_answer }
 
       it "calls PipelineRunner with the correct pipeline" do
-        rephraser = instance_double(AnswerComposition::Pipeline::QuestionRephraser)
-        allow(AnswerComposition::Pipeline::QuestionRephraser)
-          .to receive(:new).with(llm_provider: :claude).and_return(rephraser)
-        search_result_fetcher = instance_double(AnswerComposition::Pipeline::SearchResultFetcher)
-        allow(AnswerComposition::Pipeline::SearchResultFetcher)
-          .to receive(:new).with(llm_provider: :claude).and_return(search_result_fetcher)
-        question_routing_guardrails = instance_double(AnswerComposition::Pipeline::QuestionRoutingGuardrails)
-        allow(AnswerComposition::Pipeline::QuestionRoutingGuardrails)
-          .to receive(:new).with(llm_provider: :claude).and_return(question_routing_guardrails)
-        answer_guardrails = instance_double(AnswerComposition::Pipeline::AnswerGuardrails)
-        allow(AnswerComposition::Pipeline::AnswerGuardrails)
-          .to receive(:new).with(llm_provider: :claude).and_return(answer_guardrails)
+        stub_pipeline_initialize(AnswerComposition::Pipeline::QuestionRephraser, llm_provider: :claude)
+        stub_pipeline_initialize(AnswerComposition::Pipeline::QuestionRoutingGuardrails, llm_provider: :claude)
+        stub_pipeline_initialize(AnswerComposition::Pipeline::AnswerGuardrails, llm_provider: :claude)
 
         expected_pipeline = [
           AnswerComposition::Pipeline::QuestionRephraser.new(llm_provider: :claude),
