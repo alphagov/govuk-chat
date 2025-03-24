@@ -104,6 +104,8 @@ RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
                   { "href" => "/link-1", "text" => "Link 1", "context" => "rendered in span" },
                   { "href" => "/link-2", "text" => "Link 2" },
                   { "href" => "/link-3", "text" => "Link 3" },
+                  { "text" => "Item without link" },
+                  { "text" => "Item without link", "context" => "but has context (oddly)" },
                 ],
               },
             ],
@@ -118,9 +120,11 @@ RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
             <p>Should be the first bit of content.</p>
             <h2>A step with a list of ordered links</h2>
             <p>This step contains a non-bulleted list.</p>
-            <ol><li><a href="/link-1">Link 1</a><span>rendered in span</span></li>
+            <ol><li><a href="/link-1">Link 1</a> <span>rendered in span</span></li>
             <li><a href="/link-2">Link 2</a></li>
-            <li><a href="/link-3">Link 3</a></li></ol>
+            <li><a href="/link-3">Link 3</a></li>
+            <li>Item without link</li>
+            <li>Item without link <span>but has context (oddly)</span></li></ol>
           HTML
           .strip
 
@@ -143,6 +147,8 @@ RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
                   { "href" => "/link-4", "text" => "Link 4", "context" => "rendered in span" },
                   { "href" => "/link-5", "text" => "Link 5" },
                   { "href" => "/link-6", "text" => "Link 6" },
+                  { "text" => "Item without link" },
+                  { "text" => "Item without link", "context" => "but has context (oddly)" },
                 ],
               },
             ],
@@ -157,9 +163,11 @@ RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
             <p>Should be the first bit of content.</p>
             <h2>This step has a bulleted list</h2>
             <p>Bulleted lists are also allowed.</p>
-            <ul><li><a href="/link-4">Link 4</a><span>rendered in span</span></li>
+            <ul><li><a href="/link-4">Link 4</a> <span>rendered in span</span></li>
             <li><a href="/link-5">Link 5</a></li>
-            <li><a href="/link-6">Link 6</a></li></ul>
+            <li><a href="/link-6">Link 6</a></li>
+            <li>Item without link</li>
+            <li>Item without link <span>but has context (oddly)</span></li></ul>
           HTML
           .strip
 
@@ -279,7 +287,7 @@ RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
           <h2>Maybe I will try and sneak &lt;script&gt;unsanitized HTML in here &lt;/script&gt;</h2>
           <p>Sneaky script in a paragraph &lt;script&gt;xss attempt&lt;/script&gt;</p>
           <ol><li><a href="/sneaky">&lt;script&gt;sneaky script&lt;/script&gt;</a></li>
-          <li><a href="/extra-sneaky">nothing to see here</a><span>&lt;script&gt;extra sneaky script&lt;/script&gt;</span></li></ol>
+          <li><a href="/extra-sneaky">nothing to see here</a> <span>&lt;script&gt;extra sneaky script&lt;/script&gt;</span></li></ol>
         HTML
         .strip
 
