@@ -10,6 +10,8 @@ module AnswerComposition
       doc = Nokogiri::HTML::DocumentFragment.parse(html_content)
 
       doc.css("a").each do |link|
+        next unless link["href"]
+
         href = begin
           URI.join(ensure_absolute_govuk_url(exact_path), link["href"]).to_s
         rescue URI::InvalidURIError
