@@ -42,7 +42,7 @@ module MessageQueue
         logger.warn("#{content_identifier(payload)} scheduled for retry due to this base_path already being synched")
         message.retry
       else
-        logger.error("#{content_identifier(payload)} ignored after 5 retries")
+        logger.error("#{content_identifier(payload)} ignored after #{MAX_RETRIES} retries")
         message.done
       end
     rescue StandardError => e
@@ -58,7 +58,7 @@ module MessageQueue
         logger.error("#{content_identifier(payload)} scheduled for retry due to error: #{e.class} #{e.message}")
         message.retry
       else
-        logger.error("#{content_identifier(payload)} ignored after 5 retries")
+        logger.error("#{content_identifier(payload)} ignored after #{MAX_RETRIES} retries")
         notify_sentry(e, message.payload)
         message.done
       end
