@@ -347,7 +347,7 @@ GEM
       net-imap
       net-pop
       net-smtp
-    mail-notify (2.0.0)
+    mail-notify (2.1.0)
       actionmailer (>= 5.2.8.1)
       actionpack (>= 5.2.8.1)
       actionview (>= 5.2.8.1)
@@ -1062,7 +1062,7 @@ CHECKSUMS
   logstasher (2.1.5) sha256=095e9208d9a72b9da521909b3947cf3776c70517e933acbf071228617dcd0d02
   loofah (2.24.0) sha256=61e6a710883abb8210887f3dc868cf3ed66594c509d9ff6987621efa6651ee1e
   mail (2.8.1) sha256=ec3b9fadcf2b3755c78785cb17bc9a0ca9ee9857108a64b6f5cfc9c0b5bfc9ad
-  mail-notify (2.0.0) sha256=53af5d17766145da8084a71b59a7b51cd99d1330f4f250763dca16dd007c504f
+  mail-notify (2.1.0) sha256=a981d6dd9a2922ad8449a6625467519848856b7ded2049060665acc68d3e5a79
   marcel (1.0.4) sha256=0d5649feb64b8f19f3d3468b96c680bae9746335d02194270287868a661516a4
   matrix (0.4.2) sha256=71083ccbd67a14a43bfa78d3e4dc0f4b503b9cc18e5b4b1d686dc0f9ef7c4cc0
   method_source (1.1.0) sha256=181301c9c45b731b4769bc81e8860e72f9161ad7d66dd99103c9ab84f560f5c5
