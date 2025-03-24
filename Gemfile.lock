@@ -84,7 +84,7 @@ GEM
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     amq-protocol (2.3.3)
-    ast (2.4.2)
+    ast (2.4.3)
     aws-eventstream (1.3.1)
     aws-partitions (1.1061.0)
     aws-sdk-bedrockruntime (1.40.0)
@@ -626,7 +626,7 @@ GEM
     os (1.1.4)
     ostruct (0.6.1)
     parallel (1.26.3)
-    parser (3.3.7.1)
+    parser (3.3.7.2)
       ast (~> 2.4.1)
       racc
     passwordless (1.8.1)
@@ -755,14 +755,14 @@ GEM
       rubocop-ast (>= 1.38.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 4.0)
-    rubocop-ast (1.39.0)
-      parser (>= 3.3.1.0)
+    rubocop-ast (1.41.0)
+      parser (>= 3.3.7.2)
     rubocop-capybara (2.22.1)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
-    rubocop-govuk (5.1.0)
+    rubocop-govuk (5.1.1)
       rubocop (= 1.74.0)
-      rubocop-ast (= 1.39.0)
+      rubocop-ast (= 1.41.0)
       rubocop-capybara (= 2.22.1)
       rubocop-rails (= 2.30.3)
       rubocop-rake (= 0.7.1)
@@ -962,7 +962,7 @@ CHECKSUMS
   activesupport (8.0.2) sha256=8565cddba31b900cdc17682fd66ecd020441e3eef320a9930285394e8c07a45e
   addressable (2.8.7) sha256=462986537cf3735ab5f3c0f557f14155d778f4b43ea4f485a9deb9c8f7c58232
   amq-protocol (2.3.3) sha256=85b42738290913a35dcc487a2ca0dd260a4150b40ed1954c9c1932df466abc1f
-  ast (2.4.2) sha256=1e280232e6a33754cde542bc5ef85520b74db2aac73ec14acef453784447cc12
+  ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   aws-eventstream (1.3.1) sha256=4465b2add71d69a36fb1268a738d9b3d1a593c789e0286f28fad38e132d4403b
   aws-partitions (1.1061.0) sha256=665e0b012737d54506daa51a5dbe3412c9a3bfb45ebb87270e119dbac18f3a22
   aws-sdk-bedrockruntime (1.40.0) sha256=46c8e5a53c117305db35cdd48cab277bab7df574d3707a91ddf853c7221fb582
@@ -1149,7 +1149,7 @@ CHECKSUMS
   os (1.1.4) sha256=57816d6a334e7bd6aed048f4b0308226c5fb027433b67d90a9ab435f35108d3f
   ostruct (0.6.1) sha256=09a3fb7ecc1fa4039f25418cc05ae9c82bd520472c5c6a6f515f03e4988cb817
   parallel (1.26.3) sha256=d86babb7a2b814be9f4b81587bf0b6ce2da7d45969fab24d8ae4bf2bb4d4c7ef
-  parser (3.3.7.1) sha256=7dbe61618025519024ac72402a6677ead02099587a5538e84371b76659e6aca1
+  parser (3.3.7.2) sha256=c71de9076be0b84459a268581b5aa75e5eeaac892b564430371d1f8eb55fb65f
   passwordless (1.8.1) sha256=9508004b820361ee1d57c7a137b866acf082e691e8bcb9c805f481d7a79c59f0
   pg (1.5.9) sha256=761efbdf73b66516f0c26fcbe6515dc7500c3f0aa1a1b853feae245433c64fdc
   plek (5.2.1) sha256=7d517824da095ab3e8070023cf57cc8504554ea8f897ee1d7e71a67df6295521
@@ -1196,9 +1196,9 @@ CHECKSUMS
   rspec-rails (7.1.1) sha256=e15dccabed211e2fd92f21330c819adcbeb1591c1d66c580d8f2d8288557e331
   rspec-support (3.13.2) sha256=cea3a2463fd9b84b9dcc9685efd80ea701aa8f7b3decb3b3ce795ed67737dbec
   rubocop (1.74.0) sha256=06138a35d7d11c963d5abc0148b355e3999007cb0225a619940db0e75521379b
-  rubocop-ast (1.39.0) sha256=b6ba0f677ceced033b81c69405ac8931f4963116c572b8da5e15a03619a8236c
+  rubocop-ast (1.41.0) sha256=0eeff9ad3743f42823e3c687cbc15f8c552ff63c9f8e3d35fbafe746977c7c0d
   rubocop-capybara (2.22.1) sha256=ced88caef23efea53f46e098ff352f8fc1068c649606ca75cb74650970f51c0c
-  rubocop-govuk (5.1.0) sha256=f71a8e3d60fea437441d18b46889f7c49059cd07810c2bcbf4714e31937bc2c6
+  rubocop-govuk (5.1.1) sha256=7a0d2c307c85a5b239b6d54ef4056d69a946ae51ea7a5e6f6717ef8e7bb448eb
   rubocop-rails (2.30.3) sha256=fc5a6506daa916d15e282cc806943afa64a020bf592b93a94025d89a2a78a715
   rubocop-rake (0.7.1) sha256=3797f2b6810c3e9df7376c26d5f44f3475eda59eb1adc38e6f62ecf027cbae4d
   rubocop-rspec (3.5.0) sha256=710c942fe1af884ba8eea75cbb8bdbb051929a2208880a6fc2e2dce1eed5304c
