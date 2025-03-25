@@ -41,6 +41,13 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
       expect(links[4]["href"]).to eq("link_4")
       expect(links[4].text).to eq("an anchor tag")
     end
+
+    it "ignores any links that are missing a href" do
+      html = "<p>This is text with a <a>missing href link</a></p>"
+      result = described_class.new.map_links_to_tokens(html, "/exact-path")
+
+      expect(result).to eq(html)
+    end
   end
 
   describe "#map_link_to_token" do
