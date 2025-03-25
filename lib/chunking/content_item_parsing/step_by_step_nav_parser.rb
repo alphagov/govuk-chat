@@ -60,9 +60,15 @@ module Chunking::ContentItemParsing
       links = content["contents"]
 
       list_items = links.map do |link|
-        link_html = tag.a(link["text"], href: link["href"])
-        link_html << tag.span(link["context"]) if link["context"].present?
-        tag.li(link_html)
+        item = if link["href"]
+                 tag.a(link["text"], href: link["href"])
+               else
+                 link["text"]
+               end
+
+        item = safe_join([item, tag.span(link["context"])], " ") if link["context"]
+
+        tag.li(item)
       end
 
       list_type = content["style"] == "choice" ? "ul" : "ol"
