@@ -16,14 +16,15 @@ RSpec.describe MailRecipientInterceptor do
 
   it "prefixes the body with the intended recipients" do
     send_email(to: "a@gmail.com, b@gmail.com", body: "Message")
-    expect(last_email_sent.body.raw_source)
+    expect(last_email_sent.personalisation[:body])
       .to eq("Intended recipient(s): a@gmail.com, b@gmail.com\n\nMessage")
   end
 
   def send_email(to: "user@gmail.com", subject: "Subject", body: "Body")
-    ApplicationMailer.view_mail(
+    ApplicationMailer.template_mail(
       notify_template_id,
-      { to:, subject:, body: },
+      to:,
+      personalisation: { subject:, body: },
     ).deliver_now
 
     ActionMailer::Base.deliveries.last

@@ -34,8 +34,9 @@ RSpec.describe "Notify tasks" do
       Rake::Task["notify:send_email"].invoke(email_address)
       message = ActionMailer::Base.deliveries.last
 
-      expect(message.body.raw_source).to eq("Test email notification")
-      expect(message.subject).to eq("Test email notification")
+      personalisations = message.personalisation
+      expect(personalisations[:subject]).to eq("Test email notification")
+      expect(personalisations[:body]).to eq("Test email notification")
     end
   end
 end
