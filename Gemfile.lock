@@ -165,7 +165,7 @@ GEM
     factory_bot_rails (6.4.4)
       factory_bot (~> 6.5)
       railties (>= 5.0.0)
-    faker (3.4.2)
+    faker (3.5.1)
       i18n (>= 1.8.11, < 2)
     faraday (2.12.2)
       faraday-net_http (>= 2.0, < 3.5)
@@ -277,9 +277,9 @@ GEM
       rouge
       sprockets (>= 3)
       sprockets-rails
-    govuk_schemas (5.0.4)
-      faker (~> 3.4.1)
-      json-schema (>= 2.8, < 4.4)
+    govuk_schemas (6.0.0)
+      faker (>= 3.4.1, < 3.6.0)
+      json-schema (>= 2.8, < 5.2)
     govuk_sidekiq (9.0.6)
       gds-api-adapters (>= 19.1.0)
       govuk_app_config (>= 1.1)
@@ -311,8 +311,9 @@ GEM
       reline (>= 0.4.2)
     jmespath (1.6.2)
     json (2.10.2)
-    json-schema (4.3.1)
-      addressable (>= 2.8)
+    json-schema (5.1.1)
+      addressable (~> 2.8)
+      bigdecimal (~> 3.1)
     jwt (2.10.1)
       base64
     kaminari (1.2.2)
@@ -1003,7 +1004,7 @@ CHECKSUMS
   execjs (2.10.0) sha256=6bcb8be8f0052ff9d370b65d1c080f2406656e150452a0abdb185a133048450d
   factory_bot (6.5.0) sha256=6374b3a3593b8077ee9856d553d2e84d75b47b912cc24eafea4062f9363d2261
   factory_bot_rails (6.4.4) sha256=139e17caa2c50f098fddf5e5e1f29e8067352024e91ca1186d018b36589e5c88
-  faker (3.4.2) sha256=516b5a342020e6286b061084d7a60c848c024e9c91f7db6f94bf5bab45ef40f6
+  faker (3.5.1) sha256=1ad1fbea279d882f486059c23fe3ddb816ccd1d7052c05a45014b4450d859bfc
   faraday (2.12.2) sha256=157339c25c7b8bcb739f5cf1207cb0cefe8fa1c65027266bcbc34c90c84b9ad6
   faraday-multipart (1.1.0) sha256=856b0f1c7316a4d6c052dd2eef5c42f887d56d93a171fe8880da1af064ca0751
   faraday-net_http (3.4.0) sha256=a1f1e4cd6a2cf21599c8221595e27582d9936819977bbd4089a601f24c64e54a
@@ -1032,7 +1033,7 @@ CHECKSUMS
   govuk_message_queue_consumer (5.0.2) sha256=d0aaee42bcff8faf6c8fe0d8ff68f210a90957e37acf615392617ee29d25ae73
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
   govuk_publishing_components (56.0.0) sha256=714856eb8080fa2836e300a286cb9f353b4ba6102a3e2d499687eb976988c5fe
-  govuk_schemas (5.0.4) sha256=e5d347983cf173efeef341aec6bdd8479e8f1385b6a0526174c21f8df4043394
+  govuk_schemas (6.0.0) sha256=e53d5bb946a0bac29aa75635146fe29b8b28dfc186035b39603583b0dbd14a8b
   govuk_sidekiq (9.0.6) sha256=15197544ff441b2c0de0b4f59475ee87ea4179991c0c22df1eaaf3f8ddc75f1f
   govuk_test (4.1.1) sha256=c055990407fdc37ca2c1020da421dd5f7c521e7f09975cefb939898296e361cc
   groupdate (6.5.1) sha256=a0a78d051a510d61864fe987f00089d8f03739741eadc41e6ad4ea6f786da110
@@ -1047,7 +1048,7 @@ CHECKSUMS
   irb (1.15.1) sha256=d9bca745ac4207a8b728a52b98b766ca909b86ff1a504bcde3d6f8c84faae890
   jmespath (1.6.2) sha256=238d774a58723d6c090494c8879b5e9918c19485f7e840f2c1c7532cf84ebcb1
   json (2.10.2) sha256=34e0eada93022b2a0a3345bb0b5efddb6e9ff5be7c48e409cfb54ff8a36a8b06
-  json-schema (4.3.1) sha256=d5e68dc32b94408d0b06ad04f9382ccbb6fe5a44910e066f8547f56c471a7825
+  json-schema (5.1.1) sha256=b3829ad9bcdfc5010d8a160c4c2bebb8fed8d05d22de65648f6ba646b071f9bf
   jwt (2.10.1) sha256=e6424ae1d813f63e761a04d6284e10e7ec531d6f701917fadcd0d9b2deaf1cc5
   kaminari (1.2.2) sha256=c4076ff9adccc6109408333f87b5c4abbda5e39dc464bd4c66d06d9f73442a3e
   kaminari-actionview (1.2.2) sha256=1330f6fc8b59a4a4ef6a549ff8a224797289ebf7a3a503e8c1652535287cc909
