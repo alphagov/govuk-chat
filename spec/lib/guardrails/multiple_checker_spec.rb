@@ -21,6 +21,11 @@ RSpec.describe Guardrails::MultipleChecker do
       }
     end
 
+    it "raises an error if the llm_provider is unknown" do
+      expect { described_class.call(input, llm_prompt_name, :unknown_provider) }
+        .to raise_error(RuntimeError, "Unsupported provider: unknown_provider")
+    end
+
     context "when the llm_provider is :openai" do
       let(:llm_provider) { :openai }
 

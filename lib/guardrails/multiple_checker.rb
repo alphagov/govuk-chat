@@ -77,6 +77,8 @@ module Guardrails
         response = OpenAI::MultipleChecker.call(input, prompt)
       when :claude
         response = Claude::MultipleChecker.call(input, prompt)
+      else
+        raise "Unsupported provider: #{llm_provider}"
       end
       parse_response(**response)
     end
