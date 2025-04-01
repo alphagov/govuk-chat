@@ -127,4 +127,39 @@ RSpec.describe "rake evaluation tasks" do
       end
     end
   end
+
+  describe "generate_output_guardrail_response" do
+    let(:task_name) { "evaluation:generate_output_guardrail_response" }
+    let(:input) { "input" }
+
+    before { Rake::Task[task_name].reenable }
+
+    it "requires a INPUT env var" do
+      expect { Rake::Task[task_name].invoke("openai", "answer_guardrails") }
+        .to raise_error("Requires an INPUT env var")
+    end
+
+    it "requires a provider" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke }
+          .to raise_error("Requires a provider")
+      end
+    end
+
+    it "requires a guardrail type" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke("openai") }
+          .to raise_error("Requires a guardrail type")
+      end
+    end
+
+    it "outputs the response as JSON to stdout" do
+      ClimateControl.modify(INPUT: input) do
+        result = build(:guardrails_multiple_checker_result, :pass)
+        allow(Guardrails::MultipleChecker).to receive(:call).with(input, :answer_guardrails, :openai).and_return(result)
+        expect { Rake::Task[task_name].invoke("openai", "answer_guardrails") }
+          .to output("#{result.to_json}\n").to_stdout
+      end
+    end
+  end
 end

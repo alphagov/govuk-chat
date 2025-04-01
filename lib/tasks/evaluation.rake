@@ -53,4 +53,15 @@ namespace :evaluation do
 
     puts(response.to_json)
   end
+
+  desc "Produce the output guardrails response for a user input"
+  task :generate_output_guardrail_response, %i[provider guardrail_type] => :environment do |_, args|
+    raise "Requires an INPUT env var" if ENV["INPUT"].blank?
+    raise "Requires a provider" if args[:provider].blank?
+    raise "Requires a guardrail type" if args[:guardrail_type].blank?
+
+    response = Guardrails::MultipleChecker.call(ENV["INPUT"], args[:guardrail_type].to_sym, args[:provider].to_sym)
+
+    puts(response.to_json)
+  end
 end
