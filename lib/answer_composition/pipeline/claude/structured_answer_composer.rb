@@ -22,6 +22,15 @@ module AnswerComposition::Pipeline
         )
 
         tool_output = response.dig("output", "message", "content", 0, "tool_use", "input")
+
+        unless tool_output["answered"]
+          return context.abort_pipeline!(
+            message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
+            status: "unanswerable_llm_cannot_answer",
+            metrics: { "structured_answer" => build_metrics(start_time, response) },
+          )
+        end
+
         set_context_sources(tool_output["sources_used"])
 
         context.answer.assign_llm_response("structured_answer", response.to_h)
