@@ -64,4 +64,30 @@ namespace :evaluation do
 
     puts(response.to_json)
   end
+
+  desc "Produce the output of a RAG response for a user input"
+  task :generate_rag_structured_answer_response, %i[provider] => :environment do |_, args|
+    raise "Requires an INPUT env var" if ENV["INPUT"].blank?
+    raise "Requires a provider" if args[:provider].blank?
+
+    question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
+    answer = case args[:provider]
+             when "openai"
+               AnswerComposition::PipelineRunner.call(question:, pipeline: [
+                 AnswerComposition::Pipeline::SearchResultFetcher,
+                 AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer,
+               ])
+             when "claude"
+               AnswerComposition::PipelineRunner.call(question:, pipeline: [
+                 AnswerComposition::Pipeline::SearchResultFetcher,
+                 AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
+               ])
+             else
+               raise "Unexpected provider #{args[:provider]}"
+             end
+
+    raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/
+
+    puts(answer.to_json)
+  end
 end
