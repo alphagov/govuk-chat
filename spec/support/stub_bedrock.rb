@@ -28,7 +28,7 @@ module StubBedrock
     bedrock_client
   end
 
-  def bedrock_claude_structured_answer_response(question, answer)
+  def bedrock_claude_structured_answer_response(question, answer, answered: true)
     lambda do |context|
       given_question = context.params.dig(:messages, -1, :content, 0, :text)
 
@@ -37,7 +37,7 @@ module StubBedrock
       end
 
       bedrock_claude_tool_response(
-        { "answer" => answer, "answered" => true, "sources_used" => %w[link_1] },
+        { "answer" => answer, "answered" => answered, "sources_used" => %w[link_1] },
         tool_name: "output_schema",
       ).call(context)
     end

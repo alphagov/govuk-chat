@@ -82,5 +82,41 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :c
       described_class.call(context)
       expect(context.answer.sources.map(&:used)).to eq([true, false])
     end
+
+    context "when answered is 'false'" do
+      it "aborts the pipeline and sets the answers status and message to the correct values" do
+        stub_bedrock_converse(
+          bedrock_claude_structured_answer_response(
+            question.message,
+            "Sorry i cannot answer that question.",
+            answered: false,
+          ),
+        )
+
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+          .and change { context.answer.status }.to("unanswerable_llm_cannot_answer")
+          .and change { context.answer.message }.to(Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE)
+      end
+
+      it "assigns metrics to the answer" do
+        allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
+
+        stub_bedrock_converse(
+          bedrock_claude_tool_response(
+            { "answer" => "answer", "answered" => false, "sources_used" => [] },
+            tool_name: "output_schema",
+            input_tokens: 15,
+            output_tokens: 25,
+          ),
+        )
+
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+        expect(context.answer.metrics["structured_answer"]).to eq({
+          duration: 1.5,
+          llm_prompt_tokens: 15,
+          llm_completion_tokens: 25,
+        })
+      end
+    end
   end
 end
