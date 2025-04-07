@@ -78,7 +78,7 @@ module Guardrails
       when :claude
         response = Claude::MultipleChecker.call(input, prompt)
       else
-        raise "Unsupported provider: #{llm_provider}"
+        raise "Unexpected provider #{llm_provider}"
       end
       parse_response(**response)
     end
