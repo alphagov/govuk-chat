@@ -250,7 +250,7 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.16.8)
+    govuk_app_config (9.16.9)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.31)
       opentelemetry-instrumentation-all (>= 0.39.1, < 0.75.0)
@@ -306,7 +306,7 @@ GEM
       activesupport (>= 3.0)
       nokogiri (>= 1.6)
     io-console (0.8.0)
-    irb (1.15.1)
+    irb (1.15.2)
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
@@ -603,7 +603,7 @@ GEM
     opentelemetry-instrumentation-ruby_kafka (0.22.0)
       opentelemetry-api (~> 1.0)
       opentelemetry-instrumentation-base (~> 0.23.0)
-    opentelemetry-instrumentation-sidekiq (0.26.0)
+    opentelemetry-instrumentation-sidekiq (0.26.1)
       opentelemetry-api (~> 1.0)
       opentelemetry-instrumentation-base (~> 0.23.0)
     opentelemetry-instrumentation-sinatra (0.25.0)
@@ -714,7 +714,7 @@ GEM
     redis-client (0.24.0)
       connection_pool
     regexp_parser (2.10.0)
-    reline (0.6.0)
+    reline (0.6.1)
       io-console (~> 0.5)
     representable (3.2.0)
       declarative (< 0.1.0)
@@ -1031,7 +1031,7 @@ CHECKSUMS
   google-protobuf (4.30.2-x86_64-linux) sha256=c96993d98732ea185d98279f6c76e130eb9595437dda39610b3398c9e348518e
   googleapis-common-protos-types (1.19.0) sha256=aecb76ca5326f8bcc47ab083259bbc4971d07e87f56808af7e210669d9765694
   googleauth (1.13.1) sha256=33448ce662e40afeb3e6db5eb9f4ee712467b1701f3857ef9c0aecac8447eca0
-  govuk_app_config (9.16.8) sha256=3d8f03be795fabebe4a72f6d8f1c3eaa576a34213f4449fe5e507ad5fd607bdf
+  govuk_app_config (9.16.9) sha256=b87596672d4c9ed8438a10e60ca6a16499c603198751bf304793bf1b8d86523d
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
@@ -1048,7 +1048,7 @@ CHECKSUMS
   i18n (1.14.7) sha256=ceba573f8138ff2c0915427f1fc5bdf4aa3ab8ae88c8ce255eb3ecf0a11a5d0f
   inline_svg (1.10.0) sha256=5b652934236fd9f8adc61f3fd6e208b7ca3282698b19f28659971da84bf9a10f
   io-console (0.8.0) sha256=cd6a9facbc69871d69b2cb8b926fc6ea7ef06f06e505e81a64f14a470fddefa2
-  irb (1.15.1) sha256=d9bca745ac4207a8b728a52b98b766ca909b86ff1a504bcde3d6f8c84faae890
+  irb (1.15.2) sha256=222f32952e278da34b58ffe45e8634bf4afc2dc7aa9da23fed67e581aa50fdba
   jmespath (1.6.2) sha256=238d774a58723d6c090494c8879b5e9918c19485f7e840f2c1c7532cf84ebcb1
   json (2.10.2) sha256=34e0eada93022b2a0a3345bb0b5efddb6e9ff5be7c48e409cfb54ff8a36a8b06
   json-schema (5.1.1) sha256=b3829ad9bcdfc5010d8a160c4c2bebb8fed8d05d22de65648f6ba646b071f9bf
@@ -1144,7 +1144,7 @@ CHECKSUMS
   opentelemetry-instrumentation-resque (0.6.0) sha256=b61d5c3fb3d3e96a1dc34cb242addfdd8cf8f6471a9518d3ffa57d26b99e917f
   opentelemetry-instrumentation-restclient (0.23.0) sha256=a8cedef3979f14e5c9b97e24150d6e5cd8d2646452d8816360875cf4d4d9a7b9
   opentelemetry-instrumentation-ruby_kafka (0.22.0) sha256=a79f2138ab0daf251ab9b7721b9d91938a8b63b8ee5375173b95ce5a6cc65ada
-  opentelemetry-instrumentation-sidekiq (0.26.0) sha256=c2caa1e5799d35bf655a9fe714f630871b922176ee9d76e737866077370ebe41
+  opentelemetry-instrumentation-sidekiq (0.26.1) sha256=853aea9d88642643b29a8ed818e290e374586f72f304c785b672b9086360f3d2
   opentelemetry-instrumentation-sinatra (0.25.0) sha256=6aa6f76eecfb0d8a216f9f3d92d7ad0ca59791a53dfa06a8b721664153927498
   opentelemetry-instrumentation-trilogy (0.61.0) sha256=d7ee7ebc727ee07ab00284c2d131dc04bd66e95502ef91f33548899f5cc38a03
   opentelemetry-registry (0.4.0) sha256=903fa6bfaa29eac1c1d73a4fdd29b850977b5353b84b8cdff11222c00ad2968f
@@ -1188,7 +1188,7 @@ CHECKSUMS
   rdoc (6.13.1) sha256=62a0dac99493c94e8eb7a3fb44e55aefcb4cecb119f7991f25bddc5ed8d472f7
   redis-client (0.24.0) sha256=ee65ee39cb2c38608b734566167fd912384f3c1241f59075e22858f23a085dbb
   regexp_parser (2.10.0) sha256=cb6f0ddde88772cd64bff1dbbf68df66d376043fe2e66a9ef77fcb1b0c548c61
-  reline (0.6.0) sha256=57620375dcbe56ec09bac7192bfb7460c716bbf0054dc94345ecaa5438e539d2
+  reline (0.6.1) sha256=1afcc9d7cb1029cdbe780d72f2f09251ce46d3780050f3ec39c3ccc6b60675fb
   representable (3.2.0) sha256=cc29bf7eebc31653586849371a43ffe36c60b54b0a6365b5f7d95ec34d1ebace
   request_store (1.7.0) sha256=e1b75d5346a315f452242a68c937ef8e48b215b9453a77a6c0acdca2934c88cb
   rest-client (2.1.0) sha256=35a6400bdb14fae28596618e312776c158f7ebbb0ccad752ff4fa142bf2747e3
