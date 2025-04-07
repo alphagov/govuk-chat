@@ -245,4 +245,85 @@ RSpec.describe "rake evaluation tasks" do
       end
     end
   end
+
+  describe "generate_question_routing_response" do
+    let(:task_name) { "evaluation:generate_question_routing_response" }
+    let(:input) { "Question" }
+
+    before { Rake::Task[task_name].reenable }
+
+    it "requires a INPUT env var" do
+      expect { Rake::Task[task_name].invoke }
+        .to raise_error("Requires an INPUT env var")
+    end
+
+    it "requires a provider" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke }
+          .to raise_error("Requires a provider")
+      end
+    end
+
+    it "raises an error when given an unknown provider" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke("super-duper-ai") }
+          .to raise_error("Unexpected provider super-duper-ai")
+      end
+    end
+
+    it "outputs the response as JSON to stdout" do
+      ClimateControl.modify(INPUT: input) do
+        answer = build(:answer, question_routing_label: "genuine_rag")
+        allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
+        expect { Rake::Task[task_name].invoke("openai") }
+          .to output("{\"question_routing_label\":\"genuine_rag\"}\n").to_stdout
+      end
+    end
+
+    it "raises an error if the the answer has an error status" do
+      ClimateControl.modify(INPUT: input) do
+        error_message = "Oh no!"
+        answer = build(:answer, status: :error_answer_service_error, error_message:)
+        allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
+        expect { Rake::Task[task_name].invoke("openai") }
+          .to raise_error("Error occurred generating answer: Oh no!")
+      end
+    end
+
+    context "when provider is openai" do
+      it "calls the pipeline runner with the tasks to generate an OpenAI question routing response" do
+        ClimateControl.modify(INPUT: input) do
+          answer = build(:answer)
+          allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
+
+          expect { Rake::Task[task_name].invoke("openai") }
+            .to output.to_stdout
+
+          expect(AnswerComposition::PipelineRunner)
+            .to have_received(:call)
+            .with(question: instance_of(Question), pipeline: [
+              AnswerComposition::Pipeline::OpenAI::QuestionRouter,
+            ])
+        end
+      end
+    end
+
+    context "when provider is claude" do
+      it "calls the pipeline runner with the tasks to generate a Claude question routing response" do
+        ClimateControl.modify(INPUT: input) do
+          answer = build(:answer)
+          allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
+
+          expect { Rake::Task[task_name].invoke("claude") }
+            .to output.to_stdout
+
+          expect(AnswerComposition::PipelineRunner)
+            .to have_received(:call)
+            .with(question: instance_of(Question), pipeline: [
+              AnswerComposition::Pipeline::Claude::QuestionRouter,
+            ])
+        end
+      end
+    end
+  end
 end

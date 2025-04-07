@@ -90,4 +90,26 @@ namespace :evaluation do
 
     puts(answer.to_json)
   end
+
+  desc "Produce the output of question routing for a user input"
+  task :generate_question_routing_response, %i[provider] => :environment do |_, args|
+    raise "Requires an INPUT env var" if ENV["INPUT"].blank?
+    raise "Requires a provider" if args[:provider].blank?
+
+    klass = case args[:provider]
+            when "openai"
+              AnswerComposition::Pipeline::OpenAI::QuestionRouter
+            when "claude"
+              AnswerComposition::Pipeline::Claude::QuestionRouter
+            else
+              raise "Unexpected provider #{args[:provider]}"
+            end
+
+    question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
+    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [klass])
+
+    raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/
+
+    puts({ question_routing_label: answer.question_routing_label }.to_json)
+  end
 end
