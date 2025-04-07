@@ -41,7 +41,7 @@ module Guardrails
       when :claude
         result = Claude::JailbreakChecker.call(input)
       else
-        raise "Unsupported provider: #{llm_provider}"
+        raise "Unexpected provider #{llm_provider}"
       end
 
       case result[:llm_guardrail_result]
