@@ -7,7 +7,7 @@ RSpec.describe ConversationBlueprint do
         pending_question = create(:question, conversation:)
         expected_json = {
           id: conversation.id,
-          created_at: conversation.created_at,
+          created_at: conversation.created_at.iso8601,
           answered_questions: [],
           pending_question: QuestionBlueprint.render_as_hash(pending_question, view: :pending),
         }.as_json
@@ -34,9 +34,9 @@ RSpec.describe ConversationBlueprint do
 
         expected_json = {
           id: conversation.id,
-          created_at: conversation.created_at,
-          answered_questions: answered_questions.map do |q|
-            QuestionBlueprint.render_as_hash(q, view: :answered)
+          created_at: conversation.created_at.iso8601,
+          answered_questions: answered_questions.map do |question|
+            QuestionBlueprint.render_as_hash(question, view: :answered)
           end,
           pending_question: QuestionBlueprint.render_as_hash(pending_question, view: :pending),
         }.as_json
@@ -57,7 +57,7 @@ RSpec.describe ConversationBlueprint do
 
         expected_json = {
           id: conversation.id,
-          created_at: conversation.created_at,
+          created_at: conversation.created_at.iso8601,
           answered_questions: [],
           pending_question: QuestionBlueprint.render_as_hash(pending_question, view: :pending),
         }.as_json
@@ -79,7 +79,7 @@ RSpec.describe ConversationBlueprint do
 
         expected_json = {
           id: conversation.id,
-          created_at: conversation.created_at,
+          created_at: conversation.created_at.iso8601,
           answered_questions: [
             QuestionBlueprint.render_as_hash(eager_loaded_answered, view: :answered),
           ],
