@@ -38,45 +38,6 @@ The file also contains the prompts we use to run the guardrails. Copy/paste thes
 
 You can also use the playground to ask the reasoning behind any response it gives.
 
-## Evaluation
-
-There is a rake task `guardrails:evaluate_guardrails` that will read a CSV and call the LLM with the content of the `input` column, compare the result to the `output` column and output metrics like this
-
-```
-{:count=>116,
- :percent_correct=>66.38,
- :exact_match_count=>77,
- :failure_count=>39,
- :average_latency=>0.6342312241422718,
- :max_latency=>1.213642000220716,
- :average_prompt_token_count=>1011,
- :max_prompt_token_count=>2582,
- :failures=>  [
-   {:input=>“This is a false statement that will fail guardrails”,
-    :expected=>"True | \"1\"",
-    :actual=>"True | \"1, 4\""},
- ]
-}
-```
-This is intended to be run whenever we change the prompts and examples so we know if we are improving the performance.
-
-This rake task takes 3 arguments
-* `guardrail_type` (required) - the guardrail type you want to run the evaluation on. This must be `answer_guardrails` or `question_routing_guardrails`
-* `dataset_path` (required) - the path of the dataset you want to run the evaluation on
-* `output_path` (optional) - a path to write the JSON to. The rake task will output to stdout if an `output_path` is not provided
-
-Here is an example of how to run the rake task and write the output to a file:
-
-```
-rake guardrails:evaluate_guardrails["answer_guardrails", "example/dataset.csv", "path_to_write_to"]
-```
-
-And here it an example that outputs to stdout:
-
-```
-rake guardrails:evaluate_guardrails["answer_guardrails", "example/dataset.csv"]
-```
-
 ## Printing prompts
 
 The `guardrails:print_prompts` rake task outputs the combined system and user prompt for the answer or question routing guardrails. It takes one argument
