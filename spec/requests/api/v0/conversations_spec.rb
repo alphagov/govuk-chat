@@ -44,7 +44,8 @@ RSpec.describe "Api::V0::ConversationsController" do
 
       it "returns an error message in JSON format" do
         get api_conversation_path(id: "invalid-id")
-        expect(response.body).to eq({ error: "Conversation not found" }.to_json)
+        expect(response.body)
+          .to eq({ error: { message: "Couldn't find Conversation with 'id'=invalid-id" } }.to_json)
       end
     end
   end

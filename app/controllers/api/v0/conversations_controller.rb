@@ -6,7 +6,7 @@ class Api::V0::ConversationsController < ApplicationController
     pending_question = conversation.questions.unanswered.last
 
     render json: ConversationBlueprint.render(conversation, answered_questions:, pending_question:), status: :ok
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Conversation not found" }, status: :not_found
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { error: ErrorBlueprint.render_as_hash({ message: e.message }) }, status: :not_found
   end
 end
