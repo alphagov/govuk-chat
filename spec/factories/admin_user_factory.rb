@@ -5,5 +5,9 @@ FactoryBot.define do
     trait :admin do
       permissions { %w[admin-area] }
     end
+
+    trait :api_user do
+      permissions { %w[api-user] }
+    end
   end
 end
