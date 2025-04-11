@@ -110,6 +110,11 @@ namespace :evaluation do
 
     raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/
 
-    puts({ question_routing_label: answer.question_routing_label }.to_json)
+    result = {
+      classification: answer.question_routing_label,
+      confidence_score: answer.question_routing_confidence_score,
+    }
+
+    puts(result.to_json)
   end
 end

@@ -228,10 +228,10 @@ RSpec.describe "rake evaluation tasks" do
 
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input) do
-        answer = build(:answer, question_routing_label: "genuine_rag")
+        answer = build(:answer, question_routing_label: "genuine_rag", question_routing_confidence_score: 0.2)
         allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
         expect { Rake::Task[task_name].invoke("openai") }
-          .to output("{\"question_routing_label\":\"genuine_rag\"}\n").to_stdout
+          .to output("{\"classification\":\"genuine_rag\",\"confidence_score\":0.2}\n").to_stdout
       end
     end
 
