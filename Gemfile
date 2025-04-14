@@ -48,6 +48,7 @@ end
 
 group :test do
   gem "climate_control"
+  gem "committee"
   gem "govuk_schemas"
   gem "simplecov"
   gem "webmock"
