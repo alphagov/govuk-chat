@@ -52,7 +52,7 @@ RSpec.describe "Api::V0::ConversationsController" do
     end
 
     context "when a conversation does not exist with the given ID" do
-      it_behaves_like "adheres to the OpenAPI specification", :api_conversation_path, 404 do
+      it_behaves_like "adheres to the OpenAPI specification", :api_conversation_path, status_code: 404 do
         let(:route_params) { %w[invalid_id] }
       end
 
@@ -73,10 +73,17 @@ RSpec.describe "Api::V0::ConversationsController" do
     let(:user_question) { "What is the capital of France?" }
 
     context "with valid user params" do
+      it_behaves_like "adheres to the OpenAPI specification",
+                      :api_create_conversation_path,
+                      http_method: :post,
+                      status_code: 201 do
+                        let(:params) { { user_question: } }
+                      end
+
       it "creates a conversation and question based on the question_message param" do
         expect { post api_create_conversation_path, params: { user_question: } }
-          .to change { Question.count }.by(1)
-          .and change { Conversation.count }.by(1)
+          .to change(Question, :count).by(1)
+          .and change(Conversation, :count).by(1)
 
         expect(response).to have_http_status(:created)
         expect(Question.last.message).to eq(user_question)
