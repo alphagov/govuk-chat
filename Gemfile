@@ -54,6 +54,7 @@ group :test do
 end
 
 group :development, :test do
+  gem "committee"
   gem "dotenv"
   gem "erb_lint", require: false
   gem "factory_bot_rails"
