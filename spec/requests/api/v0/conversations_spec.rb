@@ -68,4 +68,19 @@ RSpec.describe "Api::V0::ConversationsController" do
       end
     end
   end
+
+  describe "POST :create" do
+    let(:user_question) { "What is the capital of France?" }
+
+    context "with valid user params" do
+      it "creates a conversation and question based on the question_message param" do
+        expect { post api_create_conversation_path, params: { user_question: } }
+          .to change { Question.count }.by(1)
+          .and change { Conversation.count }.by(1)
+
+        expect(response).to have_http_status(:created)
+        expect(Question.last.message).to eq(user_question)
+      end
+    end
+  end
 end

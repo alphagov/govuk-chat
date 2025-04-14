@@ -9,4 +9,11 @@ class Api::V0::ConversationsController < ApplicationController
   rescue ActiveRecord::RecordNotFound => e
     render json: ErrorBlueprint.render_as_hash({ message: e.message }), status: :not_found
   end
+
+  def create
+    question = Question.new(message: params[:user_question], conversation: Conversation.new)
+    question.save!
+
+    render json: QuestionBlueprint.render(question, view: :pending), status: :created
+  end
 end
