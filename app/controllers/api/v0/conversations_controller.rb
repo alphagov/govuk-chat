@@ -7,6 +7,6 @@ class Api::V0::ConversationsController < ApplicationController
 
     render json: ConversationBlueprint.render(conversation, answered_questions:, pending_question:), status: :ok
   rescue ActiveRecord::RecordNotFound => e
-    render json: { error: ErrorBlueprint.render_as_hash({ message: e.message }) }, status: :not_found
+    render json: ErrorBlueprint.render_as_hash({ message: e.message }), status: :not_found
   end
 end
