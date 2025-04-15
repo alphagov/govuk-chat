@@ -3,6 +3,10 @@ RSpec.describe "Api::V0::ConversationsController" do
 
   describe "GET :show" do
     context "when a conversation exists with the given ID" do
+      it_behaves_like "adheres to the OpenAPI specification", :api_conversation_path do
+        let(:route_params) { [create(:conversation)] }
+      end
+
       it "returns a 200 response" do
         get api_conversation_path(conversation)
         expect(response).to have_http_status(:success)
@@ -13,9 +17,28 @@ RSpec.describe "Api::V0::ConversationsController" do
         expect(response.body).to eq(ConversationBlueprint.render(conversation))
       end
 
-      context "when the conversation has answered questions" do
+      context "and an invalid response is returned" do
+        it "is caught by the Committee middleware" do
+          conversation_blueprint = ConversationBlueprint.render_as_hash(conversation)
+          conversation_blueprint.delete(:created_at)
+          allow(ConversationBlueprint).to receive(:render).and_return(conversation_blueprint)
+
+          get api_conversation_path(conversation)
+
+          expect(response).to have_http_status(:internal_server_error)
+          expect(JSON.parse(response.body)["message"])
+            .to match(/missing required parameters: created_at/)
+        end
+      end
+
+      context "and the conversation has answered questions" do
+        let!(:answered_question) { create(:question, :with_answer, conversation:) }
+
+        it_behaves_like "adheres to the OpenAPI specification", :api_conversation_path do
+          let(:route_params) { [create(:conversation)] }
+        end
+
         it "returns the answered questions in the JSON response" do
-          answered_question = create(:question, :with_answer, conversation:)
           eager_loaded_answered_question = Question.includes(answer: %i[sources feedback]).find(answered_question.id)
           get api_conversation_path(conversation)
 
@@ -24,10 +47,16 @@ RSpec.describe "Api::V0::ConversationsController" do
         end
       end
 
-      context "when the conversation has a pending question" do
+      context "and the conversation has a pending question" do
+        let!(:pending_question) { create(:question, conversation:) }
+
+        it_behaves_like "adheres to the OpenAPI specification", :api_conversation_path do
+          let(:route_params) { [create(:conversation)] }
+        end
+
         it "returns the pending question in the JSON response" do
-          pending_question = create(:question, conversation:)
           eager_loaded_pending_question = Question.includes(answer: %i[sources feedback]).find(pending_question.id)
+
           get api_conversation_path(conversation)
 
           expect(JSON.parse(response.body)["pending_question"])
@@ -37,6 +66,10 @@ RSpec.describe "Api::V0::ConversationsController" do
     end
 
     context "when a conversation does not exist with the given ID" do
+      it_behaves_like "adheres to the OpenAPI specification", :api_conversation_path, status_code: 404 do
+        let(:route_params) { %w[invalid_id] }
+      end
+
       it "returns a 404 response" do
         get api_conversation_path(id: "invalid-id")
         expect(response).to have_http_status(:not_found)
@@ -45,7 +78,29 @@ RSpec.describe "Api::V0::ConversationsController" do
       it "returns an error message in JSON format" do
         get api_conversation_path(id: "invalid-id")
         expect(response.body)
-          .to eq({ error: { message: "Couldn't find Conversation with 'id'=invalid-id" } }.to_json)
+          .to eq({ message: "Couldn't find Conversation with 'id'=invalid-id" }.to_json)
+      end
+    end
+  end
+
+  describe "POST :create" do
+    let(:user_question) { "What is the capital of France?" }
+
+    context "with valid user params" do
+      it_behaves_like "adheres to the OpenAPI specification",
+                      :api_create_conversation_path,
+                      http_method: :post,
+                      status_code: 201 do
+                        let(:params) { { user_question: } }
+                      end
+
+      it "creates a conversation and question based on the question_message param" do
+        expect { post api_create_conversation_path, params: { user_question: } }
+          .to change(Question, :count).by(1)
+          .and change(Conversation, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+        expect(Question.last.message).to eq(user_question)
       end
     end
   end
