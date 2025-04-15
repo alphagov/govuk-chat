@@ -17,7 +17,21 @@ RSpec.describe "Api::V0::ConversationsController" do
         expect(response.body).to eq(ConversationBlueprint.render(conversation))
       end
 
-      context "when the conversation has answered questions" do
+      context "and an invalid response is returned" do
+        it "is caught by the Committee middleware" do
+          conversation_blueprint = ConversationBlueprint.render_as_hash(conversation)
+          conversation_blueprint.delete(:created_at)
+          allow(ConversationBlueprint).to receive(:render).and_return(conversation_blueprint)
+
+          get api_conversation_path(conversation)
+
+          expect(response).to have_http_status(:internal_server_error)
+          expect(JSON.parse(response.body)["message"])
+            .to match(/missing required parameters: created_at/)
+        end
+      end
+
+      context "and the conversation has answered questions" do
         let!(:answered_question) { create(:question, :with_answer, conversation:) }
 
         it_behaves_like "adheres to the OpenAPI specification", :api_conversation_path do
@@ -33,7 +47,7 @@ RSpec.describe "Api::V0::ConversationsController" do
         end
       end
 
-      context "when the conversation has a pending question" do
+      context "and the conversation has a pending question" do
         let!(:pending_question) { create(:question, conversation:) }
 
         it_behaves_like "adheres to the OpenAPI specification", :api_conversation_path do
