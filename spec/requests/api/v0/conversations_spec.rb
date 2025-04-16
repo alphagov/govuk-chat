@@ -20,6 +20,19 @@ RSpec.describe "Api::V0::ConversationsController" do
     end
   end
 
+  describe "middleware ensures adherance to the OpenAPI specification" do
+    context "when the response returned does not conform to the OpenAPI specification" do
+      it "raises an error and returns the invalid params in the error message" do
+        create(:answer, question:)
+        allow(AnswerBlueprint).to receive(:render).and_return({}.to_json)
+
+        get api_v0_answer_question_path(conversation, question)
+        expect(response).to have_http_status(:internal_server_error)
+        expect(response.body).to include("Sorry, there is a problem with GOV.UK Chat")
+      end
+    end
+  end
+
   describe "GET :answer" do
     it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
                     :api_v0_answer_question_path,
