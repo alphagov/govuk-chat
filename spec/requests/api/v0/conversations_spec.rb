@@ -2,7 +2,31 @@ RSpec.describe "Api::V0::ConversationsController" do
   let(:conversation) { create(:conversation) }
   let(:question) { create(:question, conversation:) }
 
+  before do
+    login_as(create(:signon_user, :conversation_api))
+  end
+
+  shared_examples "responds with forbidden if user doesn't have conversation-api permission" do |path, method|
+    let(:route_params) { {} }
+    let(:params) { {} }
+
+    describe "responds with forbidden if user doesn't have conversation-api permission" do
+      it "returns with 403 for #{path}" do
+        login_as(create(:signon_user))
+        process(method.to_sym, public_send(path.to_sym, *route_params), params:, as: :json)
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+  end
+
   describe "GET :answer" do
+    it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
+                    :api_v0_answer_question_path,
+                    :get do
+      let(:route_params) { [create(:conversation), create(:question)] }
+    end
+
     context "when an answer has been generated for the question" do
       let!(:answer) { create(:answer, question:) }
 

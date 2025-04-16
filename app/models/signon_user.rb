@@ -3,6 +3,7 @@ class SignonUser < ApplicationRecord
 
   module Permissions
     ADMIN_AREA = "admin-area".freeze
+    CONVERSATION_API = "conversation-api".freeze
     DEVELOPER_TOOLS = "developer-tools".freeze
   end
 end

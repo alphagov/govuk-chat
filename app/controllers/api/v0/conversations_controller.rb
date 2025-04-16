@@ -1,6 +1,5 @@
 class Api::V0::ConversationsController < ApplicationController
-  before_action :find_conversation
-  before_action :find_question
+  before_action { authorise_user!(SignonUser::Permissions::CONVERSATION_API) }
 
   def answer
     conversation = Conversation.includes(questions: { answer: %i[sources feedback] })
