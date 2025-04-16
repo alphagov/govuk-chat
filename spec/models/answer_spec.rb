@@ -244,4 +244,65 @@ RSpec.describe Answer do
       expect(answer.sources.all?(&:used?)).to be(false)
     end
   end
+
+  describe "#group_used_answer_sources_by_base_path" do
+    context "when there is one source per base path" do
+      let(:answer) do
+        create(:answer, sources: [
+          create(
+            :answer_source,
+            base_path: "/childcare-provider",
+            exact_path: "/childcare-provider/how-to-get-a-childcare-provider",
+            title: "Childcare providers",
+            heading: "How to get a childcare provider",
+          ),
+        ])
+      end
+
+      it "builds the sources using the exact path and including the heading" do
+        expect(answer.group_used_answer_sources_by_base_path).to contain_exactly(
+          {
+            href: "#{Plek.website_root}/childcare-provider/how-to-get-a-childcare-provider",
+            title: "Childcare providers: How to get a childcare provider",
+          },
+        )
+      end
+
+      it "filters out unused sources" do
+        answer.sources << create(:answer_source, used: false, answer:)
+
+        expect(answer.group_used_answer_sources_by_base_path.length).to eq 1
+      end
+    end
+
+    context "when there are multiple sources per base path" do
+      let(:answer) do
+        create(:answer, sources: [
+          create(
+            :answer_source,
+            base_path: "/childcare-provider",
+            exact_path: "/childcare-provider/how-to-get-a-childcare-provider",
+            title: "Childcare providers",
+            heading: "How to get a childcare provider",
+          ),
+          create(
+            :answer_source,
+            base_path: "/childcare-provider",
+            exact_path: "/childcare-provider/how-much-it-costs",
+            title: "Childcare providers",
+            heading: "How much it costs",
+          ),
+        ])
+      end
+
+      it "builds the sources using the base path and excluding the heading" do
+        expect(answer.group_used_answer_sources_by_base_path).to contain_exactly(
+          {
+            href: "#{Plek.website_root}/childcare-provider",
+            title: "Childcare providers",
+          },
+        )
+      end
+    end
+  end
 end

@@ -174,4 +174,21 @@ class Answer < ApplicationRecord
   def set_sources_as_unused
     sources.each { |source| source.used = false }
   end
+
+  def group_used_answer_sources_by_base_path
+    sources_by_base_path = sources.used.group_by(&:base_path)
+
+    sources_by_base_path.map do |base_path, group|
+      result = group.first
+      path = group.count == 1 ? result.exact_path : base_path
+
+      title = result.title
+      title += ": #{result.heading}" if group.count == 1 && result.heading.present?
+
+      {
+        href: "#{Plek.website_root}#{path}",
+        title:,
+      }
+    end
+  end
 end
