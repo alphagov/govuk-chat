@@ -1,4 +1,5 @@
 class Api::V0::ConversationsController < ApplicationController
+  before_action :authorise_user
   before_action :find_conversation
   before_action :find_question
 
@@ -13,6 +14,10 @@ class Api::V0::ConversationsController < ApplicationController
   end
 
 private
+
+  def authorise_user
+    authorise_user!("api-user")
+  end
 
   def find_conversation
     @conversation = Conversation.includes(questions: { answer: %i[sources feedback] })

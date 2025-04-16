@@ -2,6 +2,10 @@ RSpec.describe "Api::V0::ConversationsController" do
   let(:conversation) { create(:conversation) }
   let!(:question) { create(:question, conversation:) }
 
+  before do
+    login_as(create(:admin_user, :api_user))
+  end
+
   describe "GET :answer" do
     context "when an answer has been generated for the question" do
       let!(:answer) { create(:answer, question:) }
@@ -62,6 +66,14 @@ RSpec.describe "Api::V0::ConversationsController" do
       it "returns the correct expected JSON" do
         get api_v0_answer_question_path(conversation, "invalid-question-id")
         expect(JSON.parse(response.body)).to eq({ "message" => "Question not found" })
+      end
+    end
+
+    context "when the user does not have the correct permissions to use the API" do
+      it "returns a forbidden status" do
+        login_as(create(:admin_user))
+        get api_v0_answer_question_path(conversation, question)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
