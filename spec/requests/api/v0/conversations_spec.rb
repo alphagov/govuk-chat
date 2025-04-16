@@ -76,5 +76,20 @@ RSpec.describe "Api::V0::ConversationsController" do
         expect(response).to have_http_status(:forbidden)
       end
     end
+
+    context "when the response returned does not conform to the OpenAPI specification" do
+      it "raises an error and returns the invalid params in the error message" do
+        answer = create(:answer, question:)
+        eager_loaded_answer = Answer.includes(:sources, :feedback).find(answer.id)
+        answer_blueprint = AnswerBlueprint.render_as_hash(eager_loaded_answer)
+        answer_blueprint.delete(:created_at)
+        allow(AnswerBlueprint).to receive(:render).and_return(answer_blueprint)
+
+        expect { get api_v0_answer_question_path(conversation, question) }
+          .to raise_error(Committee::InvalidResponse) do |error|
+            expect(error.message).to match(/missing required parameters: created_at/)
+          end
+      end
+    end
   end
 end
