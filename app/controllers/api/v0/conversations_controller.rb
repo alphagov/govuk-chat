@@ -1,4 +1,5 @@
 class Api::V0::ConversationsController < ApplicationController
+  before_action { authorise_user!(AdminUser::Permissions::API_USER) }
   before_action :find_conversation
   before_action :find_question
 
