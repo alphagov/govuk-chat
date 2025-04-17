@@ -75,11 +75,11 @@ class EarlyAccessUser < ApplicationRecord
     hash
   end
 
-  def destroy_with_audit(deletion_type:, deleted_by_admin_user_id: nil)
+  def destroy_with_audit(deletion_type:, deleted_by_signon_user_id: nil)
     transaction do
       destroy!
       DeletedEarlyAccessUser.create!(id:,
-                                     deleted_by_admin_user_id:,
+                                     deleted_by_signon_user_id:,
                                      deletion_type:,
                                      login_count:,
                                      user_source: source,

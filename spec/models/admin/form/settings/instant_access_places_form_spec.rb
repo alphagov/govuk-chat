@@ -20,7 +20,7 @@ RSpec.describe Admin::Form::Settings::InstantAccessPlacesForm do
     end
 
     it "creates a settings audit with the correct attributes on successful save" do
-      form = described_class.new(places: 5, author_comment: "More places.", user: build(:admin_user))
+      form = described_class.new(places: 5, author_comment: "More places.", user: build(:signon_user))
 
       expect { form.submit }.to change(SettingsAudit, :count).by(1)
       expect(SettingsAudit.includes(:user).last)

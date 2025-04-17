@@ -107,7 +107,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_120236) do
     t.datetime "user_created_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "deleted_by_admin_user_id"
+    t.uuid "deleted_by_signon_user_id"
   end
 
   create_table "deleted_waiting_list_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -116,7 +116,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_120236) do
     t.datetime "user_created_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "deleted_by_admin_user_id"
+    t.uuid "deleted_by_signon_user_id"
   end
 
   create_table "early_access_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
