@@ -1,0 +1,336 @@
+openapi: "3.0.4"
+info:
+  title: GOV.UK Chat API
+  description: |
+    Initial, proof of concept of documenting what an API for GOV.UK Chat
+    could be that reflects current system modelling.
+    It is intended to help shape chats with the app team about capabilities
+    of chat in app and inform design decisions.
+
+    Worth noting that onboarding aspects of conversation (Informing user of
+    limitations and accepting) are not included as within GOV.UK Chat these
+    are a UI construct and not a part of core domain constructs.
+  version: "0.1.0"
+servers:
+  - url: https://chat.publishing.service.gov.uk/api/v0
+paths:
+  /conversation:
+    post:
+      summary: Start conversation
+      description: Create a conversation by posting an initial question
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UserQuestion"
+      responses:
+        "201":
+          description: Successfully created first question in a conversation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PendingQuestion"
+        "422":
+          description: |
+            Validation error on question submission (such as PII in question)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+
+  /conversation/{conversation_id}:
+    get:
+      summary: Retrieve a conversation
+      description: |
+        Accesses the questions of a conversation should a conversation with
+        the id be available.
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: |
+            Returns a list of AnsweredQuestions with potentially one PendingQuestion.
+            Is limited to returning 500 questions for a conversation and only
+            questions asked within last 30 days.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversation"
+        "404":
+          description: |
+            Either a conversation never existed with this id or has now expired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericError"
+
+    put:
+      summary: Update a conversation with a new question
+      description: |
+        Add an additional question to a conversation, requires a conversation
+        to not have a pending question.
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UserQuestion"
+      responses:
+        "201":
+          description: Successfully added a new question
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PendingQuestion"
+        "422":
+          description: |
+            Validation error on question submission (such as PII in question
+            or user already has a pending question)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+
+  /conversation/{conversation_id}/questions/{question_id}/answer:
+    get:
+      summary: Look up the answer to a question
+      description:
+        This endpoint is intended to be polled while awaiting an answer to a
+        question
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: question_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: The answer is available and is returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Answer"
+        "202":
+          description: The answer is still being generated
+        "404":
+          description: Conversation or question do not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericError"
+
+  /conversation/{conversation_id}/answers/{answer_id}/feedback:
+    post:
+      summary: Provide user feedback on an individual answer
+      description: |
+        A user can provide feedback on an answer defining it as useful or not,
+        once a user has set this it cannot be changed or removed
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: answer_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - useful
+              properties:
+                useful:
+                  type: boolean
+      responses:
+        "201":
+          description: Feedback successfully submitted
+        "422":
+          description: Validation error processing the feedback
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "404":
+          description: Conversation or answer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericError"
+
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: |
+        GOV.UK Signon issued bearer token which is used to authenticate the
+        client application (e.g. GOV.UK App) and not an individual end user
+      scheme: bearer
+  schemas:
+    UserQuestion:
+      type: object
+      required:
+        - user_question
+      properties:
+        user_question:
+          type: string
+    Conversation:
+      type: object
+      required:
+        - id
+        - answered_questions
+        - created_at
+      properties:
+        answered_questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnsweredQuestion"
+        pending_question:
+          $ref: "#/components/schemas/PendingQuestion"
+        created_at:
+          type: string
+          format: date-time
+    AnsweredQuestion:
+      type: object
+      required:
+        - id
+        - conversation_id
+        - message
+        - answer
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        conversation_id:
+          type: string
+          format: uuid
+        message:
+          description: The question the user provided in plain text
+          type: string
+        answer:
+          $ref: "#/components/schemas/Answer"
+        created_at:
+          type: string
+          format: date-time
+    PendingQuestion:
+      type: object
+      required:
+        - id
+        - conversation_id
+        - message
+        - answer_url
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        conversation_id:
+          type: string
+          format: uuid
+        message:
+          description: The question the user provided in plain text
+          type: string
+        answer_url:
+          description: |
+            A URL that can be polled to check whether the answer is available
+          type: string
+          format: uri
+        created_at:
+          type: string
+          format: date-time
+    Answer:
+      type: object
+      required:
+        - id
+        - created_at
+        - message
+      properties:
+        id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        message:
+          description: |
+            The LLM generated answer returned in markdown format.
+          type: string
+        useful:
+          description: |
+            Whether a user has flagged this answer as useful or not
+          type: boolean
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnswerSource"
+    AnswerSource:
+      type: object
+      required:
+        - title
+        - url
+      properties:
+        title:
+          description: Title of the GOV.UK document used
+          type: string
+        heading:
+          description: Heading of the section used for content
+          type: string
+        url:
+          description: |
+            URL of the page on GOV.UK that was used to generate answer
+            with potentially a fragment to appropriate section
+          type: string
+          format: uri
+    GenericError:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+    ValidationError:
+      type: object
+      required:
+        - message
+        - fields
+      properties:
+        message:
+          type: string
+        fields:
+          description: |
+            an object structure of field name to an array of errors
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string

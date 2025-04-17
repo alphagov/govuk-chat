@@ -7,6 +7,7 @@ ruby "~> #{File.read(File.join(__dir__, '.ruby-version')).strip}"
 gem "rails", "8.0.2"
 
 gem "aws-sdk-bedrockruntime"
+gem "blueprinter"
 gem "bootsnap"
 gem "chartkick"
 gem "csv"
@@ -53,6 +54,7 @@ group :test do
 end
 
 group :development, :test do
+  gem "committee"
   gem "dotenv"
   gem "erb_lint", require: false
   gem "factory_bot_rails"
