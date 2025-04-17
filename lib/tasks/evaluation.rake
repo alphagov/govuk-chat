@@ -61,8 +61,12 @@ namespace :evaluation do
     raise "Requires a guardrail type" if args[:guardrail_type].blank?
 
     response = Guardrails::MultipleChecker.call(ENV["INPUT"], args[:guardrail_type].to_sym, args[:provider].to_sym)
+    guardrail_names = Guardrails::MultipleChecker::Prompt.new(
+      args[:guardrail_type],
+      args[:provider],
+    ).prompts["guardrail_definitions"].keys
 
-    puts(response.to_json)
+    puts({ response: response, guardrail_names: guardrail_names }.to_json)
   end
 
   desc "Produce the output of a RAG response for a user input"
