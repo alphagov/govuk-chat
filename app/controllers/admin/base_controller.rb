@@ -1,5 +1,5 @@
 class Admin::BaseController < ApplicationController
   layout "admin"
-  before_action { authorise_user!(AdminUser::Permissions::ADMIN_AREA) }
-  before_action { Current.admin_user = current_user }
+  before_action { authorise_user!(SignonUser::Permissions::ADMIN_AREA) }
+  before_action { Current.signon_user = current_user }
 end

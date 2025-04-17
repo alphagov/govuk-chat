@@ -29,15 +29,15 @@ RSpec.describe Admin::Form::Settings::WaitingListPromotionsPerRunForm do
     end
 
     it "creates a settings audit with the correct attributes on successful save" do
-      admin_user = build(:admin_user)
+      signon_user = build(:signon_user)
       form = described_class.new(promotions_per_run: 15,
                                  author_comment: "Less promotions please.",
-                                 user: admin_user)
+                                 user: signon_user)
 
       expect { form.submit }.to change(SettingsAudit, :count).by(1)
       expect(SettingsAudit.includes(:user).last)
         .to have_attributes(
-          user: admin_user,
+          user: signon_user,
           author_comment: "Less promotions please.",
           action: "Updated waiting list promotions per run to 15",
         )

@@ -152,7 +152,7 @@ Rails.application.routes.draw do
     match "/500" => "errors#internal_server_error"
   end
 
-  constraints(GDS::SSO::AuthorisedUserConstraint.new(AdminUser::Permissions::DEVELOPER_TOOLS)) do
+  constraints(GDS::SSO::AuthorisedUserConstraint.new(SignonUser::Permissions::DEVELOPER_TOOLS)) do
     mount Sidekiq::Web => "/sidekiq"
 
     mount GovukPublishingComponents::Engine, at: "/component-guide"

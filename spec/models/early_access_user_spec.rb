@@ -141,9 +141,9 @@ RSpec.describe EarlyAccessUser do
 
     it "records the user id of the admin that deleted the user if passed one" do
       instance = create(:early_access_user, login_count: 3)
-      admin_user_id = SecureRandom.uuid
+      signon_user_id = SecureRandom.uuid
 
-      expect { instance.destroy_with_audit(deletion_type: :admin, deleted_by_admin_user_id: admin_user_id) }
+      expect { instance.destroy_with_audit(deletion_type: :admin, deleted_by_signon_user_id: signon_user_id) }
         .to change(described_class, :count).by(-1)
         .and change(DeletedEarlyAccessUser, :count).by(1)
 
@@ -153,7 +153,7 @@ RSpec.describe EarlyAccessUser do
         user_source: instance.source,
         user_created_at: instance.created_at,
         deletion_type: "admin",
-        deleted_by_admin_user_id: admin_user_id,
+        deleted_by_signon_user_id: signon_user_id,
       )
     end
   end

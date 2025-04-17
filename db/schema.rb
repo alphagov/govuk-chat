@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_04_092504) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_15_120236) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -29,20 +29,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_04_092504) do
   create_enum "ur_question_reason_for_visit", ["find_specific_answer", "complete_task", "understand_process", "research_topic", "other"]
   create_enum "ur_question_user_description", ["business_owner_or_self_employed", "starting_business_or_becoming_self_employed", "business_advisor", "business_administrator", "none"]
   create_enum "waiting_list_users_source", ["admin_added", "insufficient_instant_places"]
-
-  create_table "admin_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.string "uid"
-    t.string "organisation_slug"
-    t.string "organisation_content_id"
-    t.string "app_name"
-    t.string "permissions", default: [], array: true
-    t.boolean "remotely_signed_out", default: false
-    t.boolean "disabled", default: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
 
   create_table "answer_feedback", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
@@ -121,7 +107,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_04_092504) do
     t.datetime "user_created_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "deleted_by_admin_user_id"
+    t.uuid "deleted_by_signon_user_id"
   end
 
   create_table "deleted_waiting_list_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -130,7 +116,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_04_092504) do
     t.datetime "user_created_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "deleted_by_admin_user_id"
+    t.uuid "deleted_by_signon_user_id"
   end
 
   create_table "early_access_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -207,6 +193,20 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_04_092504) do
     t.index ["user_id"], name: "index_settings_audits_on_user_id"
   end
 
+  create_table "signon_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "uid"
+    t.string "organisation_slug"
+    t.string "organisation_content_id"
+    t.string "app_name"
+    t.string "permissions", default: [], array: true
+    t.boolean "remotely_signed_out", default: false
+    t.boolean "disabled", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "waiting_list_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.citext "email", null: false
     t.enum "user_description", enum_type: "ur_question_user_description"
@@ -224,5 +224,5 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_04_092504) do
   add_foreign_key "answer_sources", "answers", on_delete: :cascade
   add_foreign_key "answers", "questions", on_delete: :cascade
   add_foreign_key "questions", "conversations"
-  add_foreign_key "settings_audits", "admin_users", column: "user_id", on_delete: :nullify
+  add_foreign_key "settings_audits", "signon_users", column: "user_id", on_delete: :nullify
 end

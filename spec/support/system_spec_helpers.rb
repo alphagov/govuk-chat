@@ -28,7 +28,7 @@ module SystemSpecHelpers
   end
 
   def given_i_am_an_admin
-    login_as(create(:admin_user, :admin))
+    login_as(create(:signon_user, :admin))
   end
 
   def extract_links_from_last_email

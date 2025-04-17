@@ -46,9 +46,9 @@ RSpec.describe "Admin::HomepageController" do
     context "when a user has the developer tools permission" do
       before do
         user = create(
-          :admin_user,
-          permissions: [AdminUser::Permissions::ADMIN_AREA,
-                        AdminUser::Permissions::DEVELOPER_TOOLS],
+          :signon_user,
+          permissions: [SignonUser::Permissions::ADMIN_AREA,
+                        SignonUser::Permissions::DEVELOPER_TOOLS],
         )
         login_as(user)
       end
