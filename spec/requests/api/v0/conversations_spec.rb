@@ -92,4 +92,91 @@ RSpec.describe "Api::V0::ConversationsController" do
       end
     end
   end
+
+  describe "POST :answer_feedback" do
+    context "when an answer has no feedback" do
+      let!(:answer) { create(:answer, question:) }
+
+      it "returns a created status" do
+        post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }
+        expect(response).to have_http_status(:created)
+      end
+
+      it "returns an empty JSON" do
+        post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }
+
+        expect(JSON.parse(response.body)).to eq({})
+      end
+
+      it "creates feedback for the answer" do
+        expect{
+          post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }
+      }.to change(AnswerFeedback, :count).by(1)
+      
+        answer_feedback = AnswerFeedback.includes(:answer).last
+        expect(answer_feedback.answer).to eq(answer)
+        expect(answer_feedback.useful).to be true
+      end
+    end
+
+    context "when an answer already has feedback" do
+      it "returns an unprocessable_entity status" do
+        answer = create(:answer, question:)
+        create(:answer_feedback, answer:)
+
+        post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it "returns the correct expected JSON" do
+        answer = create(:answer, question:)
+        create(:answer_feedback, answer:)
+
+        post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }
+
+        expect(JSON.parse(response.body)).to eq({ "message" => "Could not save answer feedback", "fields" => { "answer_feedback" => ["Feedback already provided"] } })
+      end
+    end
+
+    context "when useful parameter is missing" do
+      it "returns an unprocessable_entity status" do
+        answer = create(:answer, question:)
+
+        post api_v0_answer_feedback_path(conversation, answer)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it "returns the correct expected JSON" do
+        answer = create(:answer, question:)
+
+        post api_v0_answer_feedback_path(conversation, answer)
+
+        expect(JSON.parse(response.body)).to eq({ "message" => "Could not save answer feedback", "fields" => { "useful" => ["Useful must be true or false"] } })
+      end
+    end 
+
+    context "when conversation doesn't exist" do
+      it "returns a not_found status" do
+        post api_v0_answer_feedback_path("invalid-conversation-id", "invalid-answer-id"), params: { useful: true }
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns the correct expected JSON" do
+        post api_v0_answer_feedback_path("invalid-conversation-id", "invalid-answer-id"), params: { useful: true }
+        expect(JSON.parse(response.body)).to eq({ "message" => "Conversation not found" })
+      end
+    end
+
+    context "when the answer doesn't exist" do
+      it "returns a not_found status" do
+        post api_v0_answer_feedback_path(conversation, "invalid-answer-id"), params: { useful: true }
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns the correct expected JSON" do
+        post api_v0_answer_feedback_path(conversation, "invalid-answer-id"), params: { useful: true }
+        expect(JSON.parse(response.body)).to eq({ "message" => "Answer not found" })
+      end
+    end
+  end
 end
