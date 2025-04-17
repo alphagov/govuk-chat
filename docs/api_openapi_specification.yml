@@ -322,11 +322,11 @@ components:
       type: object
       required:
         - message
-        - fields
+        - errors
       properties:
         message:
           type: string
-        fields:
+        errors:
           description: |
             an object structure of field name to an array of errors
           type: object
