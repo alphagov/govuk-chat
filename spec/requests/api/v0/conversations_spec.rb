@@ -20,6 +20,25 @@ RSpec.describe "Api::V0::ConversationsController" do
     end
   end
 
+  it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
+                  :api_v0_show_conversation_path,
+                  :get do
+    let(:route_params) { [SecureRandom.uuid] }
+  end
+
+  it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
+                  :api_v0_answer_question_path,
+                  :get do
+    let(:route_params) { [SecureRandom.uuid, SecureRandom.uuid] }
+  end
+
+  it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
+                  :api_v0_answer_feedback_path,
+                  :post do
+    let(:route_params) { [SecureRandom.uuid, SecureRandom.uuid] }
+    let(:params) { { useful: true } }
+  end
+
   describe "middleware ensures adherance to the OpenAPI specification" do
     context "when the response returned does not conform to the OpenAPI specification" do
       it "raises an error and returns the invalid params in the error message" do
@@ -34,14 +53,6 @@ RSpec.describe "Api::V0::ConversationsController" do
   end
 
   describe "GET :show" do
-    it_behaves_like(
-      "responds with forbidden if user doesn't have conversation-api permission",
-      :api_v0_show_conversation_path,
-      :get,
-    ) do
-      let(:route_params) { [create(:conversation)] }
-    end
-
     it "returns the expected JSON" do
       pending_question = create(:question, conversation:)
       get api_v0_show_conversation_path(conversation)
@@ -62,12 +73,6 @@ RSpec.describe "Api::V0::ConversationsController" do
   end
 
   describe "GET :answer" do
-    it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
-                    :api_v0_answer_question_path,
-                    :get do
-      let(:route_params) { [create(:conversation), create(:question)] }
-    end
-
     context "when an answer has been generated for the question" do
       let!(:answer) { create(:answer, question:) }
 
@@ -103,6 +108,76 @@ RSpec.describe "Api::V0::ConversationsController" do
       it "returns an empty JSON response" do
         get api_v0_answer_question_path(conversation, question)
         expect(JSON.parse(response.body)).to eq({})
+      end
+    end
+  end
+
+  describe "POST :answer_feedback" do
+    context "when the params are valid" do
+      let!(:answer) { create(:answer, question:) }
+
+      context "and the answer has no feedback" do
+        it "returns a created status" do
+          post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }
+          expect(response).to have_http_status(:created)
+        end
+
+        it "returns an empty JSON" do
+          post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }
+
+          expect(JSON.parse(response.body)).to eq({})
+        end
+
+        it "creates feedback for the answer" do
+          expect {
+            post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }
+          }.to change(AnswerFeedback, :count).by(1)
+
+          answer_feedback = AnswerFeedback.includes(:answer).last
+          expect(answer_feedback.answer).to eq(answer)
+          expect(answer_feedback.useful).to be true
+        end
+      end
+
+      context "and an answer already has feedback" do
+        before do
+          create(:answer_feedback, answer:)
+        end
+
+        it "returns an unprocessable_entity status" do
+          post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }, as: :json
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it "returns the correct expected JSON" do
+          post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }, as: :json
+
+          expect(JSON.parse(response.body))
+            .to eq({ "message" => "Unprocessable entity", "errors" => { "answer_feedback" => ["Feedback already provided"] } })
+        end
+      end
+    end
+
+    context "when the params are invalid" do
+      it "returns an unprocessable_entity status" do
+        answer = create(:answer, question:)
+
+        post api_v0_answer_feedback_path(conversation, answer)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it "returns the correct expected JSON" do
+        answer = create(:answer, question:)
+
+        post api_v0_answer_feedback_path(conversation, answer)
+
+        expect(JSON.parse(response.body))
+          .to eq(
+            {
+              "message" => "Unprocessable entity",
+              "errors" => { "useful" => ["Useful must be true or false"] },
+            },
+          )
       end
     end
   end
