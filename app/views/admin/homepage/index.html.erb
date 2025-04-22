@@ -1,6 +1,6 @@
 <%
 content_for(:title, "GOV.UK Chat Admin")
-has_developer_tools_permission = Current.admin_user.has_permission?(AdminUser::Permissions::DEVELOPER_TOOLS)
+has_developer_tools_permission = Current.signon_user.has_permission?(SignonUser::Permissions::DEVELOPER_TOOLS)
 settings = Settings.instance
 
 dashboard_link_items = []

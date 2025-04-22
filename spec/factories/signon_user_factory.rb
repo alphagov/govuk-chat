@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :admin_user do
+  factory :signon_user do
     sequence(:email) { |n| "admin.user#{n}@dev.gov.uk" }
 
     trait :admin do

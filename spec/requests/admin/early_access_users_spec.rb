@@ -506,13 +506,13 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
 
     it "creates a DeletedEarlyAccessUser with 'admin' as deletion_type and records the admin id" do
       user = create(:early_access_user)
-      admin_user = create(:admin_user, :admin)
+      admin_user = create(:signon_user, :admin)
       login_as(admin_user)
 
       expect { delete admin_early_access_user_path(user) }
       .to change { DeletedEarlyAccessUser.where(deletion_type: :admin).count }.by(1)
 
-      expect(DeletedEarlyAccessUser.last.deleted_by_admin_user_id).to eq admin_user.id
+      expect(DeletedEarlyAccessUser.last.deleted_by_signon_user_id).to eq admin_user.id
     end
 
     it "keeps the user's conversations" do

@@ -343,13 +343,13 @@ RSpec.describe "Admin::WaitingListUsersController" do
 
     it "creates a DeletedWaitingListUser with 'admin' as deletion_type and records the admin id" do
       user = create(:waiting_list_user)
-      admin_user = create(:admin_user, :admin)
+      admin_user = create(:signon_user, :admin)
       login_as(admin_user)
 
       expect { delete admin_waiting_list_user_path(user) }
         .to change { DeletedWaitingListUser.where(deletion_type: :admin).count }.by(1)
 
-      expect(DeletedWaitingListUser.last.deleted_by_admin_user_id).to eq admin_user.id
+      expect(DeletedWaitingListUser.last.deleted_by_signon_user_id).to eq admin_user.id
     end
   end
 

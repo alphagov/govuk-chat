@@ -35,11 +35,11 @@ class WaitingListUser < ApplicationRecord
     hash
   end
 
-  def destroy_with_audit(deletion_type:, deleted_by_admin_user_id: nil)
+  def destroy_with_audit(deletion_type:, deleted_by_signon_user_id: nil)
     transaction do
       destroy!
       DeletedWaitingListUser.create!(id:,
-                                     deleted_by_admin_user_id:,
+                                     deleted_by_signon_user_id:,
                                      deletion_type:,
                                      user_source: source,
                                      user_created_at: created_at)
