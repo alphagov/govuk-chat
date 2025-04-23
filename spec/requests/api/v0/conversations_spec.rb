@@ -50,6 +50,23 @@ RSpec.describe "Api::V0::ConversationsController" do
         expect(JSON.parse(response.body)).to eq({ "message" => "Internal server error" })
       end
     end
+
+    context "when the request does not conform to the OpenAPI specification" do
+      it "returns a bad request status code" do
+        post api_v0_answer_feedback_path(conversation_id: conversation.id, answer_id: question.id),
+             params: { useful: "not a boolean" },
+             as: :json
+
+        expect(response).to have_http_status(:bad_request)
+      end
+
+      it "returns the correct JSON in the body" do
+        post api_v0_answer_feedback_path(conversation_id: conversation.id, answer_id: question.id),
+             params: { useful: "not a boolean" },
+             as: :json
+        expect(JSON.parse(response.body)).to match({ "message" => /useful expected boolean, but received String: "not a boolean"/ })
+      end
+    end
   end
 
   describe "GET :show" do
@@ -66,7 +83,7 @@ RSpec.describe "Api::V0::ConversationsController" do
     end
 
     it "returns a 404 if the conversation cannot be found" do
-      get api_v0_show_conversation_path(-1)
+      get api_v0_show_conversation_path(SecureRandom.uuid)
 
       expect(response).to have_http_status(:not_found)
     end
@@ -77,12 +94,12 @@ RSpec.describe "Api::V0::ConversationsController" do
       let!(:answer) { create(:answer, question:) }
 
       it "returns a success status" do
-        get api_v0_answer_question_path(conversation, question)
+        get api_v0_answer_question_path(conversation, question), as: :json
         expect(response).to have_http_status(:ok)
       end
 
       it "returns the expected JSON" do
-        get api_v0_answer_question_path(conversation, question)
+        get api_v0_answer_question_path(conversation, question), as: :json
 
         eager_loaded_answer = Answer.includes(:sources, :feedback).find(answer.id)
         expected_response = AnswerBlueprint.render_as_json(eager_loaded_answer)
@@ -92,7 +109,7 @@ RSpec.describe "Api::V0::ConversationsController" do
       it "returns the correct JSON for answer sources" do
         source = create(:answer_source, answer:)
 
-        get api_v0_answer_question_path(conversation, question)
+        get api_v0_answer_question_path(conversation, question), as: :json
 
         expect(JSON.parse(response.body)["sources"])
           .to eq([{ url: source.url, title: "#{source.title}: #{source.heading}" }.as_json])
@@ -101,81 +118,61 @@ RSpec.describe "Api::V0::ConversationsController" do
 
     context "when an answer has not been generated for the question" do
       it "returns an accepted status" do
-        get api_v0_answer_question_path(conversation, question)
+        get api_v0_answer_question_path(conversation, question), as: :json
         expect(response).to have_http_status(:accepted)
       end
 
       it "returns an empty JSON response" do
-        get api_v0_answer_question_path(conversation, question)
+        get api_v0_answer_question_path(conversation, question), as: :json
         expect(JSON.parse(response.body)).to eq({})
       end
     end
   end
 
   describe "POST :answer_feedback" do
-    context "when the params are valid" do
-      let!(:answer) { create(:answer, question:) }
+    let!(:answer) { create(:answer, question:) }
 
-      context "and the answer has no feedback" do
-        it "returns a created status" do
-          post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }
-          expect(response).to have_http_status(:created)
-        end
-
-        it "returns an empty JSON" do
-          post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }
-
-          expect(JSON.parse(response.body)).to eq({})
-        end
-
-        it "creates feedback for the answer" do
-          expect {
-            post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }
-          }.to change(AnswerFeedback, :count).by(1)
-
-          answer_feedback = AnswerFeedback.includes(:answer).last
-          expect(answer_feedback.answer).to eq(answer)
-          expect(answer_feedback.useful).to be true
-        end
+    context "when the answer has no feedback" do
+      it "returns a created status" do
+        post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }, as: :json
+        expect(response).to have_http_status(:created)
       end
 
-      context "and an answer already has feedback" do
-        before do
-          create(:answer_feedback, answer:)
-        end
+      it "returns an empty JSON" do
+        post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }, as: :json
 
-        it "returns an unprocessable_entity status" do
+        expect(JSON.parse(response.body)).to eq({})
+      end
+
+      it "creates feedback for the answer" do
+        expect {
           post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }, as: :json
-          expect(response).to have_http_status(:unprocessable_entity)
-        end
+        }.to change(AnswerFeedback, :count).by(1)
 
-        it "returns the correct expected JSON" do
-          post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }, as: :json
-
-          expect(JSON.parse(response.body))
-            .to eq({ "message" => "Unprocessable entity", "errors" => { "base" => ["Feedback already provided for this answer"] } })
-        end
+        answer_feedback = AnswerFeedback.includes(:answer).last
+        expect(answer_feedback.answer).to eq(answer)
+        expect(answer_feedback.useful).to be true
       end
     end
 
-    context "when the params are invalid" do
-      it "returns an unprocessable_entity status" do
-        answer = create(:answer, question:)
+    context "when an answer already has feedback" do
+      before do
+        create(:answer_feedback, answer:)
+      end
 
-        post api_v0_answer_feedback_path(conversation, answer)
+      it "returns an unprocessable_entity status" do
+        post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it "returns the correct expected JSON" do
-        answer = create(:answer, question:)
-
-        post api_v0_answer_feedback_path(conversation, answer)
+        post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }, as: :json
 
         expect(JSON.parse(response.body))
           .to eq(
             {
               "message" => "Unprocessable entity",
-              "errors" => { "useful" => ["Useful must be true or false"] },
+              "errors" => { "base" => ["Feedback already provided for this answer"] },
             },
           )
       end
