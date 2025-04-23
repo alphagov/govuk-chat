@@ -90,6 +90,7 @@ module GovukChat
     config.action_dispatch.rescue_responses.merge!(
       "Search::ChunkedContentRepository::NotFound" => :not_found,
       "ThrottledRequest" => :too_many_requests,
+      "Committee::InvalidResponse" => :internal_server_error,
     )
 
     config.exceptions_app = routes

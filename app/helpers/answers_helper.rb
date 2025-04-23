@@ -10,23 +10,6 @@ module AnswersHelper
     end
   end
 
-  def group_used_answer_sources_by_base_path(answer)
-    sources_by_base_path = answer.sources.used.group_by(&:base_path)
-
-    sources_by_base_path.map do |base_path, group|
-      result = group.first
-      path = group.count == 1 ? result.exact_path : base_path
-
-      title = result.title
-      title += ": #{result.heading}" if group.count == 1 && result.heading.present?
-
-      {
-        href: "#{Plek.website_root}#{path}",
-        title:,
-      }
-    end
-  end
-
   def show_question_limit_system_message?(user)
     return false if user.nil?
     return false if user.unlimited_question_allowance?

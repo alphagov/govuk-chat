@@ -143,6 +143,12 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :api, format: false, defaults: { format: "json" } do
+    namespace :v0 do
+      get "/conversation/:conversation_id/questions/:question_id/answer", to: "conversations#answer", as: :answer_question
+    end
+  end
+
   scope via: :all do
     match "/400" => "errors#bad_request"
     match "/403" => "errors#forbidden"
