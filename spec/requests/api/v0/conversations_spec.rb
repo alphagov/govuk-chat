@@ -28,7 +28,7 @@ RSpec.describe "Api::V0::ConversationsController" do
 
         get api_v0_answer_question_path(conversation, question)
         expect(response).to have_http_status(:internal_server_error)
-        expect(response.body).to include("Sorry, there is a problem with GOV.UK Chat")
+        expect(JSON.parse(response.body)).to eq({ "message" => "Internal server error" })
       end
     end
   end

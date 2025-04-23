@@ -6,26 +6,62 @@ class ErrorsController < BaseController
   after_action { response.headers["No-Fallback"] = "true" }
 
   def bad_request
-    render status: :bad_request, formats: :html
+    respond_to do |format|
+      format.json do
+        render json: GenericErrorBlueprint.render(message: "Bad request"),
+               status: :bad_request
+      end
+      format.any { render status: :bad_request, formats: :html }
+    end
   end
 
   def forbidden
-    render status: :forbidden, formats: :html
+    respond_to do |format|
+      format.json do
+        render json: GenericErrorBlueprint.render(message: "Forbidden"),
+               status: :forbidden
+      end
+      format.any { render status: :forbidden, formats: :html }
+    end
   end
 
   def not_found
-    render status: :not_found, formats: :html
+    respond_to do |format|
+      format.json do
+        render json: GenericErrorBlueprint.render(message: "Not found"),
+               status: :not_found
+      end
+      format.any { render status: :not_found, formats: :html }
+    end
   end
 
   def unprocessable_entity
-    render status: :unprocessable_entity, formats: :html
+    respond_to do |format|
+      format.json do
+        render json: GenericErrorBlueprint.render(message: "Unprocessable entity"),
+               status: :unprocessable_entity
+      end
+      format.any { render status: :unprocessable_entity, formats: :html }
+    end
   end
 
   def too_many_requests
-    render status: :too_many_requests, formats: :html
+    respond_to do |format|
+      format.json do
+        render json: GenericErrorBlueprint.render(message: "Too many requests"),
+               status: :too_many_requests
+      end
+      format.any { render status: :too_many_requests, formats: :html }
+    end
   end
 
   def internal_server_error
-    render status: :internal_server_error, formats: :html
+    respond_to do |format|
+      format.json do
+        render json: GenericErrorBlueprint.render(message: "Internal server error"),
+               status: :internal_server_error
+      end
+      format.any { render status: :internal_server_error, formats: :html }
+    end
   end
 end
