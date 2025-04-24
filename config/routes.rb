@@ -145,6 +145,7 @@ Rails.application.routes.draw do
 
   namespace :api, format: false, defaults: { format: "json" } do
     namespace :v0 do
+      get "/conversation/:conversation_id", to: "conversations#show", as: :show_conversation
       get "/conversation/:conversation_id/questions/:question_id/answer", to: "conversations#answer", as: :answer_question
     end
   end

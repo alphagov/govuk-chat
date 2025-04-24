@@ -33,6 +33,34 @@ RSpec.describe "Api::V0::ConversationsController" do
     end
   end
 
+  describe "GET :show" do
+    it_behaves_like(
+      "responds with forbidden if user doesn't have conversation-api permission",
+      :api_v0_show_conversation_path,
+      :get,
+    ) do
+      let(:route_params) { [create(:conversation)] }
+    end
+
+    it "returns the expected JSON" do
+      pending_question = create(:question, conversation:)
+      get api_v0_show_conversation_path(conversation)
+
+      expected_response = ConversationBlueprint.render_as_json(
+        conversation,
+        pending_question:,
+      )
+      expect(JSON.parse(response.body)).to eq(expected_response)
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns a 404 if the conversation cannot be found" do
+      get api_v0_show_conversation_path(-1)
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "GET :answer" do
     it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
                     :api_v0_answer_question_path,
