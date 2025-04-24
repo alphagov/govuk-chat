@@ -7,7 +7,8 @@ Dockerfile
 Procfile
 README.md
 coverage
-docs
+docs/**
+!docs/api_openapi_specification.yml
 features
 log
 node_modules
