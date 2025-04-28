@@ -34,6 +34,13 @@ RSpec.describe "Api::V0::ConversationsController" do
   end
 
   it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
+                  :api_v0_update_conversation_path,
+                  :put do
+    let(:route_params) { [SecureRandom.uuid] }
+    let(:params) { { user_question: "question" } }
+  end
+
+  it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
                   :api_v0_answer_question_path,
                   :get do
     let(:route_params) { [SecureRandom.uuid, SecureRandom.uuid] }
@@ -137,6 +144,57 @@ RSpec.describe "Api::V0::ConversationsController" do
               },
             )
         end
+      end
+    end
+  end
+
+  describe "PUT :update" do
+    context "when the params are valid" do
+      let(:user_question) { "What is the capital of France?" }
+      let(:params) { { user_question: } }
+
+      it "returns a created status" do
+        put api_v0_update_conversation_path(conversation), params:, as: :json
+        expect(response).to have_http_status(:created)
+      end
+
+      it "creates a question on the conversation" do
+        expect {
+          put api_v0_update_conversation_path(conversation), params:, as: :json
+        }.to change(conversation.questions, :count).by(1)
+        expect(conversation.questions.strict_loading(false).last.message)
+          .to eq(user_question)
+      end
+
+      it "returns the expected JSON" do
+        put api_v0_update_conversation_path(conversation), params:, as: :json
+
+        expected_response = QuestionBlueprint.render_as_json(
+          conversation.questions.strict_loading(false).last,
+          view: :pending,
+        )
+        expect(JSON.parse(response.body)).to eq(expected_response)
+      end
+    end
+
+    context "when the params are invalid" do
+      let(:params) { { user_question: "" } }
+
+      it "returns an unprocessable_entity status" do
+        put api_v0_update_conversation_path(conversation), params:, as: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it "returns the correct expected JSON" do
+        put api_v0_update_conversation_path(conversation), params:, as: :json
+
+        expect(JSON.parse(response.body))
+          .to eq(
+            {
+              "message" => "Unprocessable entity",
+              "errors" => { "user_question" => [Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE] },
+            },
+          )
       end
     end
   end

@@ -1,11 +1,10 @@
 class Api::V0::ConversationsController < ApplicationController
   before_action { authorise_user!(SignonUser::Permissions::CONVERSATION_API) }
-  before_action :find_conversation, only: %i[show answer answer_feedback]
+  before_action :find_conversation, only: %i[show update answer answer_feedback]
 
   def create
     conversation = Conversation.new
-
-    form = Form::CreateQuestion.new(conversation:, user_question: question_params[:user_question])
+    form = Form::CreateQuestion.new(question_params.merge(conversation:))
 
     if form.valid?
       question = form.submit
@@ -23,6 +22,20 @@ class Api::V0::ConversationsController < ApplicationController
       json: ConversationBlueprint.render(@conversation, answered_questions:, pending_question:),
       status: :ok,
     )
+  end
+
+  def update
+    form = Form::CreateQuestion.new(question_params.merge(conversation: @conversation))
+
+    if form.valid?
+      question = form.submit
+
+      render json: QuestionBlueprint.render(question, view: :pending), status: :created
+    else
+      render json: ValidationErrorBlueprint.render(
+        errors: form.errors.messages,
+      ), status: :unprocessable_entity
+    end
   end
 
   def answer
