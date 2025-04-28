@@ -17,7 +17,7 @@ RSpec.describe Form::CreateAnswerFeedback do
       answer_with_feedback = build(:answer, :with_feedback)
       form = described_class.new(useful: true, answer: answer_with_feedback)
       expect(form).to be_invalid
-      expect(form.errors[:answer_feedback]).to eq(["Feedback already provided"])
+      expect(form.errors[:base]).to eq(["Feedback already provided for this answer"])
     end
   end
 

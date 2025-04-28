@@ -153,7 +153,7 @@ RSpec.describe "Api::V0::ConversationsController" do
           post api_v0_answer_feedback_path(conversation, answer), params: { useful: true }, as: :json
 
           expect(JSON.parse(response.body))
-            .to eq({ "message" => "Unprocessable entity", "errors" => { "answer_feedback" => ["Feedback already provided"] } })
+            .to eq({ "message" => "Unprocessable entity", "errors" => { "base" => ["Feedback already provided for this answer"] } })
         end
       end
     end
