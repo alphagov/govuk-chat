@@ -16,6 +16,6 @@ class Form::CreateAnswerFeedback
 private
 
   def no_feedback_present?
-    errors.add(:answer_feedback, "Feedback already provided") if answer.feedback.present?
+    errors.add(:base, "Feedback already provided for this answer") if answer.feedback.present?
   end
 end

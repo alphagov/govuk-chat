@@ -616,7 +616,7 @@ RSpec.describe "ConversationsController" do
         expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: true }, format: :json } }
         .not_to change(AnswerFeedback, :count)
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(JSON.parse(response.body)).to eq({ "error_messages" => ["Feedback already provided"] })
+        expect(JSON.parse(response.body)).to eq({ "error_messages" => ["Feedback already provided for this answer"] })
       end
     end
   end
