@@ -20,7 +20,15 @@ RSpec.describe Form::CreateQuestion do
       )
       form.validate
 
-      expect(form.errors.messages[:user_question]).to eq(["Question must be 300 characters or less"])
+      expect(form.errors.messages[:user_question])
+        .to eq(
+          [
+            sprintf(
+              described_class::USER_QUESTION_LENGTH_ERROR_MESSAGE,
+              count: described_class::USER_QUESTION_LENGTH_MAXIMUM,
+            ),
+          ],
+        )
     end
 
     it "is invalid when user_question is blank" do
@@ -30,7 +38,7 @@ RSpec.describe Form::CreateQuestion do
       )
       form.validate
 
-      expect(form.errors.messages[:user_question]).to eq(["Ask a question. For example, 'how do I register for VAT?'"])
+      expect(form.errors.messages[:user_question]).to eq([described_class::USER_QUESTION_PRESENCE_ERROR_MESSAGE])
     end
 
     it "is invalid when the conversation passed in has an unanswered question" do
@@ -39,14 +47,10 @@ RSpec.describe Form::CreateQuestion do
       form = described_class.new(conversation:, user_question:)
       form.validate
 
-      expect(form.errors.messages[:base]).to eq(["Previous question pending. Please wait for a response"])
+      expect(form.errors.messages[:base]).to eq([described_class::UNANSWERED_QUESTION_ERROR_MESSAGE])
     end
 
     describe "personally identifiable information (pii) validation" do
-      let(:pii_error_message) do
-        "Personal data has been detected in your question. Please remove it and try asking again."
-      end
-
       it "adds an error message when pii is present" do
         form = described_class.new(
           conversation:,
@@ -54,7 +58,7 @@ RSpec.describe Form::CreateQuestion do
         )
         form.validate
 
-        expect(form.errors.messages[:user_question]).to eq([pii_error_message])
+        expect(form.errors.messages[:user_question]).to eq([described_class::USER_QUESTION_PII_ERROR_MESSAGE])
       end
 
       it "doesn't add an error message when no pii is present" do
@@ -68,13 +72,11 @@ RSpec.describe Form::CreateQuestion do
     end
 
     describe "within question limit validation" do
-      let(:question_limit_error_message) { "You’ve reached the message limit for the GOV.UK Chat trial. You have no messages left." }
-
       it "adds a error message if over the question limit" do
         conversation.user = build(:early_access_user, questions_count: 2, individual_question_limit: 1)
         form = described_class.new(conversation:, user_question:)
         form.validate
-        expect(form.errors.messages[:base]).to eq([question_limit_error_message])
+        expect(form.errors.messages[:base]).to eq([described_class::QUESTION_LIMIT_REACHED_MESSAGE])
       end
 
       it "is valid when under the question limit" do

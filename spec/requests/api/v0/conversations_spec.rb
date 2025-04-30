@@ -6,45 +6,55 @@ RSpec.describe "Api::V0::ConversationsController" do
     login_as(create(:signon_user, :conversation_api))
   end
 
-  shared_examples "responds with forbidden if user doesn't have conversation-api permission" do |path, method|
-    let(:route_params) { {} }
-    let(:params) { {} }
+  shared_examples "responds with forbidden if user doesn't have conversation-api permission" do |routes:|
+    before { login_as(create(:signon_user)) }
 
-    describe "responds with forbidden if user doesn't have conversation-api permission" do
-      it "returns with 403 for #{path}" do
-        login_as(create(:signon_user))
-        process(method.to_sym, public_send(path.to_sym, *route_params), params:, as: :json)
+    routes.each do |route|
+      describe "responds with forbidden if user doesn't have conversation-api permission" do
+        it "returns with 403 for #{route[:method]} #{route[:path]}" do
+          process(
+            route[:method.to_sym],
+            public_send(route[:path].to_sym, *(route[:route_params] || [])),
+            params: route[:params] || {},
+            as: :json,
+          )
 
-        expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:forbidden)
+        end
       end
     end
   end
 
   it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
-                  :api_v0_create_conversation_path,
-                  :post do
-    let(:route_params) { [] }
-    let(:params) { { user_question: "" } }
-  end
-
-  it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
-                  :api_v0_show_conversation_path,
-                  :get do
-    let(:route_params) { [SecureRandom.uuid] }
-  end
-
-  it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
-                  :api_v0_answer_question_path,
-                  :get do
-    let(:route_params) { [SecureRandom.uuid, SecureRandom.uuid] }
-  end
-
-  it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
-                  :api_v0_answer_feedback_path,
-                  :post do
-    let(:route_params) { [SecureRandom.uuid, SecureRandom.uuid] }
-    let(:params) { { useful: true } }
-  end
+                  routes: [
+                    {
+                      path: :api_v0_create_conversation_path,
+                      method: :post,
+                      params: { user_question: "question" },
+                    },
+                    {
+                      path: :api_v0_show_conversation_path,
+                      method: :get,
+                      route_params: [SecureRandom.uuid],
+                    },
+                    {
+                      path: :api_v0_update_conversation_path,
+                      method: :put,
+                      route_params: [SecureRandom.uuid],
+                      params: { user_question: "question" },
+                    },
+                    {
+                      path: :api_v0_answer_question_path,
+                      method: :get,
+                      route_params: [SecureRandom.uuid, SecureRandom.uuid],
+                    },
+                    {
+                      path: :api_v0_answer_feedback_path,
+                      method: :post,
+                      route_params: [SecureRandom.uuid, SecureRandom.uuid],
+                      params: { useful: true },
+                    },
+                  ]
 
   describe "middleware ensures adherance to the OpenAPI specification" do
     context "when the response returned does not conform to the OpenAPI specification" do
@@ -137,6 +147,57 @@ RSpec.describe "Api::V0::ConversationsController" do
               },
             )
         end
+      end
+    end
+  end
+
+  describe "PUT :update" do
+    context "when the params are valid" do
+      let(:user_question) { "What is the capital of France?" }
+      let(:params) { { user_question: } }
+
+      it "returns a created status" do
+        put api_v0_update_conversation_path(conversation), params:, as: :json
+        expect(response).to have_http_status(:created)
+      end
+
+      it "creates a question on the conversation" do
+        expect {
+          put api_v0_update_conversation_path(conversation), params:, as: :json
+        }.to change(conversation.questions, :count).by(1)
+        expect(conversation.questions.strict_loading(false).last.message)
+          .to eq(user_question)
+      end
+
+      it "returns the expected JSON" do
+        put api_v0_update_conversation_path(conversation), params:, as: :json
+
+        expected_response = QuestionBlueprint.render_as_json(
+          conversation.questions.strict_loading(false).last,
+          view: :pending,
+        )
+        expect(JSON.parse(response.body)).to eq(expected_response)
+      end
+    end
+
+    context "when the params are invalid" do
+      let(:params) { { user_question: "" } }
+
+      it "returns an unprocessable_entity status" do
+        put api_v0_update_conversation_path(conversation), params:, as: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it "returns the correct expected JSON" do
+        put api_v0_update_conversation_path(conversation), params:, as: :json
+
+        expect(JSON.parse(response.body))
+          .to eq(
+            {
+              "message" => "Unprocessable entity",
+              "errors" => { "user_question" => [Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE] },
+            },
+          )
       end
     end
   end
