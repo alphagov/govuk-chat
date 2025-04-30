@@ -6,52 +6,55 @@ RSpec.describe "Api::V0::ConversationsController" do
     login_as(create(:signon_user, :conversation_api))
   end
 
-  shared_examples "responds with forbidden if user doesn't have conversation-api permission" do |path, method|
-    let(:route_params) { {} }
-    let(:params) { {} }
+  shared_examples "responds with forbidden if user doesn't have conversation-api permission" do |routes:|
+    before { login_as(create(:signon_user)) }
 
-    describe "responds with forbidden if user doesn't have conversation-api permission" do
-      it "returns with 403 for #{path}" do
-        login_as(create(:signon_user))
-        process(method.to_sym, public_send(path.to_sym, *route_params), params:, as: :json)
+    routes.each do |route|
+      describe "responds with forbidden if user doesn't have conversation-api permission" do
+        it "returns with 403 for #{route[:method]} #{route[:path]}" do
+          process(
+            route[:method.to_sym],
+            public_send(route[:path].to_sym, *(route[:route_params] || [])),
+            params: route[:params] || {},
+            as: :json,
+          )
 
-        expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:forbidden)
+        end
       end
     end
   end
 
   it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
-                  :api_v0_create_conversation_path,
-                  :post do
-    let(:route_params) { [] }
-    let(:params) { { user_question: "" } }
-  end
-
-  it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
-                  :api_v0_show_conversation_path,
-                  :get do
-    let(:route_params) { [SecureRandom.uuid] }
-  end
-
-  it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
-                  :api_v0_update_conversation_path,
-                  :put do
-    let(:route_params) { [SecureRandom.uuid] }
-    let(:params) { { user_question: "question" } }
-  end
-
-  it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
-                  :api_v0_answer_question_path,
-                  :get do
-    let(:route_params) { [SecureRandom.uuid, SecureRandom.uuid] }
-  end
-
-  it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
-                  :api_v0_answer_feedback_path,
-                  :post do
-    let(:route_params) { [SecureRandom.uuid, SecureRandom.uuid] }
-    let(:params) { { useful: true } }
-  end
+                  routes: [
+                    {
+                      path: :api_v0_create_conversation_path,
+                      method: :post,
+                      params: { user_question: "question" },
+                    },
+                    {
+                      path: :api_v0_show_conversation_path,
+                      method: :get,
+                      route_params: [SecureRandom.uuid],
+                    },
+                    {
+                      path: :api_v0_update_conversation_path,
+                      method: :put,
+                      route_params: [SecureRandom.uuid],
+                      params: { user_question: "question" },
+                    },
+                    {
+                      path: :api_v0_answer_question_path,
+                      method: :get,
+                      route_params: [SecureRandom.uuid, SecureRandom.uuid],
+                    },
+                    {
+                      path: :api_v0_answer_feedback_path,
+                      method: :post,
+                      route_params: [SecureRandom.uuid, SecureRandom.uuid],
+                      params: { useful: true },
+                    },
+                  ]
 
   describe "middleware ensures adherance to the OpenAPI specification" do
     context "when the response returned does not conform to the OpenAPI specification" do
