@@ -2,6 +2,19 @@ class Api::V0::ConversationsController < ApplicationController
   before_action { authorise_user!(SignonUser::Permissions::CONVERSATION_API) }
   before_action :find_conversation, only: %i[show answer answer_feedback]
 
+  def create
+    conversation = Conversation.new
+
+    form = Form::CreateQuestion.new(conversation:, user_question: question_params[:user_question])
+
+    if form.valid?
+      question = form.submit
+      render json: QuestionBlueprint.render(question, view: :pending), status: :created
+    else
+      render json: ValidationErrorBlueprint.render(message: "Could not create question", errors: form.errors.messages), status: :unprocessable_entity
+    end
+  end
+
   def show
     answered_questions = @conversation.questions.joins(:answer)
     pending_question = @conversation.questions.unanswered.last
@@ -48,5 +61,9 @@ private
 
   def answer_feedback_params
     params.permit(:useful)
+  end
+
+  def question_params
+    params.permit(:user_question)
   end
 end

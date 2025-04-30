@@ -21,6 +21,13 @@ RSpec.describe "Api::V0::ConversationsController" do
   end
 
   it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
+                  :api_v0_create_conversation_path,
+                  :post do
+    let(:route_params) { [] }
+    let(:params) { { user_question: "" } }
+  end
+
+  it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
                   :api_v0_show_conversation_path,
                   :get do
     let(:route_params) { [SecureRandom.uuid] }
@@ -86,6 +93,51 @@ RSpec.describe "Api::V0::ConversationsController" do
       get api_v0_show_conversation_path(SecureRandom.uuid)
 
       expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe "POST :create" do
+    context "when the question is valid" do
+      let(:payload) { { user_question: "What is the capital of France?" } }
+
+      it "creates a Conversation and a Question and returns 201" do
+        expect {
+          post api_v0_create_conversation_path, params: payload, as: :json
+        }.to change(Conversation, :count).by(1)
+        .and change(Question, :count).by(1)
+        expect(response).to have_http_status(:created)
+      end
+
+      it "returns the expected json" do
+        post api_v0_create_conversation_path, params: payload, as: :json
+
+        question = Question.last
+        expected_payload = QuestionBlueprint.render_as_json(question, view: :pending)
+
+        expect(JSON.parse(response.body)).to eq(expected_payload)
+      end
+
+      context "when the question is invalid" do
+        let(:payload) { { user_question: "" } }
+
+        it "returns a 422 Unprocessable Entity status" do
+          post api_v0_create_conversation_path, params: payload, as: :json
+
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it "returns the correct JSON in the body" do
+          post api_v0_create_conversation_path, params: payload, as: :json
+
+          expect(JSON.parse(response.body))
+            .to eq(
+              {
+                "message" => "Unprocessable entity",
+                "errors" => { "user_question" => [Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE] },
+              },
+            )
+        end
+      end
     end
   end
 
