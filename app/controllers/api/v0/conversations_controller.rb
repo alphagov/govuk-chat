@@ -10,7 +10,7 @@ class Api::V0::ConversationsController < ApplicationController
       question = form.submit
       render json: QuestionBlueprint.render(question, view: :pending), status: :created
     else
-      render json: ValidationErrorBlueprint.render(message: "Could not create question", errors: form.errors.messages), status: :unprocessable_entity
+      render json: ValidationErrorBlueprint.render(errors: form.errors.messages), status: :unprocessable_entity
     end
   end
 
