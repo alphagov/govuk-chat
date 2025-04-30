@@ -1,7 +1,14 @@
 module Guardrails
   class MultipleChecker
     Result = Data.define(:triggered, :guardrails, :llm_response, :llm_guardrail_result,
-                         :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens)
+                         :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens) do
+      def triggered_guardrails
+        return [] unless guardrails
+
+        guardrails.select { |_, v| v }.keys
+      end
+    end
+
     class ResponseError < StandardError
       attr_reader :llm_response, :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens
 
@@ -94,7 +101,7 @@ module Guardrails
 
       parts = llm_guardrail_result.split(" | ")
       triggered = parts.first.chomp == "True"
-      guardrails = triggered ? extract_guardrails(parts.second) : []
+      guardrails = to_guardrail_hash(parts.second)
 
       Result.new(
         llm_response: llm_response,
@@ -122,9 +129,12 @@ module Guardrails
       end
     end
 
-    def extract_guardrails(parts)
-      guardrail_numbers = parts.scan(/\d+/).map(&:to_i)
-      prompt.guardrails.select { |guardrail| guardrail.key.in?(guardrail_numbers) }.map(&:name)
+    def to_guardrail_hash(parts)
+      triggered_guardrail_numbers = parts.scan(/\d+/).map(&:to_i)
+
+      prompt.guardrails.each_with_object({}) do |guardrail, guardrails_hash|
+        guardrails_hash[guardrail.name.to_sym] = triggered_guardrail_numbers.include?(guardrail.key)
+      end
     end
   end
 end

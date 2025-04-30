@@ -8,11 +8,11 @@ RSpec.describe Guardrails::MultipleChecker do
     let(:guardrail_response_hash) do
       {
         llm_response: {
-          "message" => {
-            "role" => "assistant",
-            "content" => "False | None",
+          message: {
+            role: "assistant",
+            content: "False | None",
           },
-          "finish_reason" => "stop",
+          finish_reason: "stop",
         },
         llm_guardrail_result: "False | None",
         llm_prompt_tokens: 13,
@@ -20,6 +20,7 @@ RSpec.describe Guardrails::MultipleChecker do
         llm_cached_tokens: 10,
       }
     end
+    let(:guardrail_result) { build(:guardrails_multiple_checker_result, :pass) }
 
     it "raises an error if the llm_provider is unknown" do
       expect { described_class.call(input, llm_prompt_name, :unknown_provider) }
@@ -33,11 +34,10 @@ RSpec.describe Guardrails::MultipleChecker do
         guardrails_config = {
           system_prompt: "{guardrails} {date}",
           user_prompt: "{input}",
-          guardrails: %w[costs personal unique_answer_guardrail],
+          guardrails: %w[political appropriate_language],
           guardrail_definitions: {
-            "costs" => "This is a costs guardrail",
-            "personal" => "This is a personal guardrail",
-            "unique_answer_guardrail" => "This is a unique answer guardrail",
+            "political" => "This is a political guardrail",
+            "appropriate_language" => "This is an appropriate language guardrail",
           },
         }.with_indifferent_access
 
@@ -49,6 +49,11 @@ RSpec.describe Guardrails::MultipleChecker do
         described_class.call(input, llm_prompt_name, llm_provider)
         expect(Guardrails::OpenAI::MultipleChecker).to have_received(:call).with(input, instance_of(Guardrails::MultipleChecker::Prompt))
       end
+
+      it "returns the guardrail result" do
+        result = described_class.call(input, llm_prompt_name, llm_provider)
+        expect(result).to eq(guardrail_result)
+      end
     end
 
     context "when the llm_provider is :claude" do
@@ -58,11 +63,10 @@ RSpec.describe Guardrails::MultipleChecker do
         guardrails_config = {
           system_prompt: "{guardrails} {date}",
           user_prompt: "{input}",
-          guardrails: %w[costs personal unique_answer_guardrail],
+          guardrails: %w[political appropriate_language],
           guardrail_definitions: {
-            "costs" => "This is a costs guardrail",
-            "personal" => "This is a personal guardrail",
-            "unique_answer_guardrail" => "This is a unique answer guardrail",
+            "political" => "This is a political guardrail",
+            "appropriate_language" => "This is an appropriate language guardrail",
           },
         }.with_indifferent_access
 
@@ -73,6 +77,11 @@ RSpec.describe Guardrails::MultipleChecker do
       it "calls the Claude multiple checker" do
         described_class.call(input, llm_prompt_name, llm_provider)
         expect(Guardrails::Claude::MultipleChecker).to have_received(:call).with(input, instance_of(Guardrails::MultipleChecker::Prompt))
+      end
+
+      it "returns the guardrail result" do
+        result = described_class.call(input, llm_prompt_name, llm_provider)
+        expect(result).to eq(guardrail_result)
       end
 
       context "when the response format is incorrect" do

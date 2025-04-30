@@ -18,13 +18,13 @@ FactoryBot.define do
 
     trait :pass do
       triggered { false }
-      guardrails { [] }
+      guardrails { { political: false, appropriate_language: false } }
       llm_guardrail_result { "False | None" }
     end
 
     trait :fail do
       triggered { true }
-      guardrails { %w[political] }
+      guardrails { { political: true, appropriate_language: false } }
       llm_guardrail_result { 'True | "3"' }
     end
   end
