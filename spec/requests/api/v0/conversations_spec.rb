@@ -126,27 +126,27 @@ RSpec.describe "Api::V0::ConversationsController" do
 
         expect(JSON.parse(response.body)).to eq(expected_payload)
       end
+    end
 
-      context "when the question is invalid" do
-        let(:payload) { { user_question: "" } }
+    context "when the question is invalid" do
+      let(:payload) { { user_question: "" } }
 
-        it "returns a 422 Unprocessable Entity status" do
-          post api_v0_create_conversation_path, params: payload, as: :json
+      it "returns a 422 Unprocessable Entity status" do
+        post api_v0_create_conversation_path, params: payload, as: :json
 
-          expect(response).to have_http_status(:unprocessable_entity)
-        end
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
 
-        it "returns the correct JSON in the body" do
-          post api_v0_create_conversation_path, params: payload, as: :json
+      it "returns the correct JSON in the body" do
+        post api_v0_create_conversation_path, params: payload, as: :json
 
-          expect(JSON.parse(response.body))
-            .to eq(
-              {
-                "message" => "Unprocessable entity",
-                "errors" => { "user_question" => [Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE] },
-              },
-            )
-        end
+        expect(JSON.parse(response.body))
+          .to eq(
+            {
+              "message" => "Unprocessable entity",
+              "errors" => { "user_question" => [Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE] },
+            },
+          )
       end
     end
   end
