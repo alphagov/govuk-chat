@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_15_120236) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_01_150559) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -96,8 +96,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_120236) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "early_access_user_id"
+    t.uuid "signon_user_id"
     t.index ["created_at"], name: "index_conversations_on_created_at"
     t.index ["early_access_user_id"], name: "index_conversations_on_early_access_user_id"
+    t.index ["signon_user_id"], name: "index_conversations_on_signon_user_id"
   end
 
   create_table "deleted_early_access_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -223,6 +225,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_120236) do
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade
   add_foreign_key "answer_sources", "answers", on_delete: :cascade
   add_foreign_key "answers", "questions", on_delete: :cascade
+  add_foreign_key "conversations", "signon_users", on_delete: :restrict
   add_foreign_key "questions", "conversations"
   add_foreign_key "settings_audits", "signon_users", column: "user_id", on_delete: :nullify
 end
