@@ -1,9 +1,10 @@
 RSpec.describe "Api::V0::ConversationsController" do
   let(:conversation) { create(:conversation) }
   let(:question) { create(:question, conversation:) }
+  let(:api_user) { create(:signon_user, :conversation_api) }
 
   before do
-    login_as(create(:signon_user, :conversation_api))
+    login_as(api_user)
   end
 
   shared_examples "responds with forbidden if user doesn't have conversation-api permission" do |routes:|
@@ -125,6 +126,13 @@ RSpec.describe "Api::V0::ConversationsController" do
         expected_payload = QuestionBlueprint.render_as_json(question, view: :pending)
 
         expect(JSON.parse(response.body)).to eq(expected_payload)
+      end
+
+      it "associates the conversation with the SignonUser" do
+        post api_v0_create_conversation_path, params: payload, as: :json
+
+        conversation = Conversation.includes(:signon_user).last
+        expect(conversation.signon_user).to eq(api_user)
       end
     end
 

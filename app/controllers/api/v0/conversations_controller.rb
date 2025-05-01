@@ -3,7 +3,7 @@ class Api::V0::ConversationsController < ApplicationController
   before_action :find_conversation, only: %i[show update answer answer_feedback]
 
   def create
-    conversation = Conversation.new
+    conversation = Conversation.new(signon_user: current_user)
     form = Form::CreateQuestion.new(question_params.merge(conversation:))
 
     if form.valid?
