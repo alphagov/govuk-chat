@@ -24,7 +24,11 @@ module Evaluation
   private
 
     def build_question(question_message)
-      Question.new(message: question_message, conversation: Conversation.new)
+      Question.new(
+        message: question_message,
+        conversation: Conversation.new,
+        answer_strategy: Rails.configuration.answer_strategy,
+      )
     end
 
     def absolute_govuk_url(path)
