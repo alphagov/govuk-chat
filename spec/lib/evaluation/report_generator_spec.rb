@@ -77,6 +77,16 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
         .to raise_error("File nonexistent.yml does not exist")
     end
 
+    it "uses the configured answer strategy" do
+      allow(Rails.configuration).to receive(:answer_strategy).and_return("claude_structured_answer")
+
+      described_class.call(input_file.path)
+
+      expect(AnswerComposition::Composer).to have_received(:call).with(
+        an_object_having_attributes(answer_strategy: "claude_structured_answer"),
+      ).twice
+    end
+
     it "returns the items" do
       items = described_class.call(input_file.path)
 
