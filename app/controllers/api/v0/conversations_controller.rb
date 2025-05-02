@@ -1,9 +1,10 @@
 class Api::V0::ConversationsController < ApplicationController
+  skip_before_action :verify_authenticity_token
   before_action { authorise_user!(SignonUser::Permissions::CONVERSATION_API) }
   before_action :find_conversation, only: %i[show update answer answer_feedback]
 
   def create
-    conversation = Conversation.new
+    conversation = Conversation.new(signon_user: current_user)
     form = Form::CreateQuestion.new(question_params.merge(conversation:))
 
     if form.valid?
@@ -69,6 +70,7 @@ private
   def find_conversation
     @conversation = Conversation
                     .includes(questions: { answer: %i[sources feedback] })
+                    .where(signon_user_id: current_user.id)
                     .find(params[:conversation_id])
   end
 

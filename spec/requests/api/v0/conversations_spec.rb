@@ -1,9 +1,10 @@
 RSpec.describe "Api::V0::ConversationsController" do
-  let(:conversation) { create(:conversation) }
+  let(:api_user) { create(:signon_user, :conversation_api) }
+  let(:conversation) { create(:conversation, signon_user: api_user) }
   let(:question) { create(:question, conversation:) }
 
   before do
-    login_as(create(:signon_user, :conversation_api))
+    login_as(api_user)
   end
 
   shared_examples "responds with forbidden if user doesn't have conversation-api permission" do |routes:|
@@ -104,6 +105,15 @@ RSpec.describe "Api::V0::ConversationsController" do
 
       expect(response).to have_http_status(:not_found)
     end
+
+    it "returns a 404 if the conversation is not associated with the user" do
+      different_user = create(:signon_user, :conversation_api)
+      conversation = create(:conversation, signon_user: different_user)
+
+      get api_v0_show_conversation_path(conversation)
+
+      expect(response).to have_http_status(:not_found)
+    end
   end
 
   describe "POST :create" do
@@ -127,26 +137,33 @@ RSpec.describe "Api::V0::ConversationsController" do
         expect(JSON.parse(response.body)).to eq(expected_payload)
       end
 
-      context "when the question is invalid" do
-        let(:payload) { { user_question: "" } }
+      it "associates the conversation with the SignonUser" do
+        post api_v0_create_conversation_path, params: payload, as: :json
 
-        it "returns a 422 Unprocessable Entity status" do
-          post api_v0_create_conversation_path, params: payload, as: :json
+        conversation = Conversation.includes(:signon_user).last
+        expect(conversation.signon_user).to eq(api_user)
+      end
+    end
 
-          expect(response).to have_http_status(:unprocessable_entity)
-        end
+    context "when the question is invalid" do
+      let(:payload) { { user_question: "" } }
 
-        it "returns the correct JSON in the body" do
-          post api_v0_create_conversation_path, params: payload, as: :json
+      it "returns a 422 Unprocessable Entity status" do
+        post api_v0_create_conversation_path, params: payload, as: :json
 
-          expect(JSON.parse(response.body))
-            .to eq(
-              {
-                "message" => "Unprocessable entity",
-                "errors" => { "user_question" => [Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE] },
-              },
-            )
-        end
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it "returns the correct JSON in the body" do
+        post api_v0_create_conversation_path, params: payload, as: :json
+
+        expect(JSON.parse(response.body))
+          .to eq(
+            {
+              "message" => "Unprocessable entity",
+              "errors" => { "user_question" => [Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE] },
+            },
+          )
       end
     end
   end

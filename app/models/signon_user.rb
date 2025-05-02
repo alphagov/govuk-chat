@@ -6,4 +6,6 @@ class SignonUser < ApplicationRecord
     CONVERSATION_API = "conversation-api".freeze
     DEVELOPER_TOOLS = "developer-tools".freeze
   end
+
+  has_many :conversations
 end
