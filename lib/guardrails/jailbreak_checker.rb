@@ -13,6 +13,17 @@ module Guardrails
         @llm_completion_tokens = llm_completion_tokens
         @llm_cached_tokens = llm_cached_tokens
       end
+
+      def as_json
+        {
+          message:,
+          llm_guardrail_result:,
+          llm_response:,
+          llm_prompt_tokens:,
+          llm_completion_tokens:,
+          llm_cached_tokens:,
+        }
+      end
     end
 
     def self.pass_value

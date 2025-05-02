@@ -119,18 +119,41 @@ RSpec.describe "rake evaluation tasks" do
     it_behaves_like "a task requiring input and provider"
     it_behaves_like "a task requiring a known provider"
 
-    it "outputs the response as JSON to stdout" do
-      ClimateControl.modify(INPUT: input) do
-        result = Guardrails::JailbreakChecker::Result.new(
-          triggered: true,
-          llm_response: {},
-          llm_prompt_tokens: 100,
-          llm_completion_tokens: 100,
-          llm_cached_tokens: 0,
-        )
-        allow(Guardrails::JailbreakChecker).to receive(:call).with(input, :openai).and_return(result)
-        expect { Rake::Task[task_name].invoke("openai") }
-          .to output("#{result.to_json}\n").to_stdout
+    context "when a successful check occurs" do
+      it "outputs the response as JSON to stdout with a success key" do
+        ClimateControl.modify(INPUT: input) do
+          result = Guardrails::JailbreakChecker::Result.new(
+            triggered: true,
+            llm_response: {},
+            llm_prompt_tokens: 100,
+            llm_completion_tokens: 100,
+            llm_cached_tokens: 0,
+          )
+          allow(Guardrails::JailbreakChecker).to receive(:call).with(input, :openai).and_return(result)
+          expected = { success: result }.to_json
+          expect { Rake::Task[task_name].invoke("openai") }
+            .to output("#{expected}\n").to_stdout
+        end
+      end
+    end
+
+    context "when a response error is returned" do
+      it "outputs the error as JSON to stdout with a response_error key" do
+        ClimateControl.modify(INPUT: input) do
+          error = Guardrails::JailbreakChecker::ResponseError.new(
+            "Error parsing jailbreak guardrails response",
+            llm_guardrail_result: "Unexpected",
+            llm_response: {},
+            llm_prompt_tokens: 100,
+            llm_completion_tokens: 100,
+            llm_cached_tokens: 0,
+          )
+          allow(Guardrails::JailbreakChecker).to receive(:call).with(input, :openai).and_raise(error)
+
+          expected = { response_error: error }.to_json
+          expect { Rake::Task[task_name].invoke("openai") }
+            .to output("#{expected}\n").to_stdout
+        end
       end
     end
   end

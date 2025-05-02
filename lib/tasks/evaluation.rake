@@ -49,9 +49,13 @@ namespace :evaluation do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
     raise "Requires a provider" if args[:provider].blank?
 
-    response = Guardrails::JailbreakChecker.call(ENV["INPUT"], args[:provider].to_sym)
+    begin
+      response = Guardrails::JailbreakChecker.call(ENV["INPUT"], args[:provider].to_sym)
 
-    puts(response.to_json)
+      puts({ success: response }.to_json)
+    rescue Guardrails::JailbreakChecker::ResponseError => e
+      puts({ response_error: e }.to_json)
+    end
   end
 
   desc "Produce the output guardrails response for a user input"
