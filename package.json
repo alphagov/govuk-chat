@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "jasmine-browser-runner": "^3.0.0",
-    "jasmine-core": "^5.7.0",
+    "jasmine-core": "^5.7.1",
     "standard": "^17.1.2",
     "stylelint": "^16.19.1",
     "stylelint-config-gds": "^2.0.0"
