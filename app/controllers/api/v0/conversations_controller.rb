@@ -1,4 +1,5 @@
 class Api::V0::ConversationsController < ApplicationController
+  skip_before_action :verify_authenticity_token
   before_action { authorise_user!(SignonUser::Permissions::CONVERSATION_API) }
   before_action :find_conversation, only: %i[show update answer answer_feedback]
 
