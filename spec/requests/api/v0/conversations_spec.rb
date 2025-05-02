@@ -1,7 +1,7 @@
 RSpec.describe "Api::V0::ConversationsController" do
-  let(:conversation) { create(:conversation) }
-  let(:question) { create(:question, conversation:) }
   let(:api_user) { create(:signon_user, :conversation_api) }
+  let(:conversation) { create(:conversation, signon_user: api_user) }
+  let(:question) { create(:question, conversation:) }
 
   before do
     login_as(api_user)
@@ -102,6 +102,15 @@ RSpec.describe "Api::V0::ConversationsController" do
 
     it "returns a 404 if the conversation cannot be found" do
       get api_v0_show_conversation_path(SecureRandom.uuid)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "returns a 404 if the conversation is not associated with the user" do
+      different_user = create(:signon_user, :conversation_api)
+      conversation = create(:conversation, signon_user: different_user)
+
+      get api_v0_show_conversation_path(conversation)
 
       expect(response).to have_http_status(:not_found)
     end
