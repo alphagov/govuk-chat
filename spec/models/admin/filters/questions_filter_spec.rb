@@ -220,6 +220,29 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([bob_question])
     end
 
+    it "filters the results by signon user" do
+      alice = create(:signon_user, email: "alice@example.com")
+      bob = create(:signon_user, email: "bob@example.com")
+      alice_question = create(:question, conversation: create(:conversation, signon_user: alice))
+      bob_question = create(:question, conversation: create(:conversation, signon_user: bob))
+
+      filter = described_class.new(signon_user_id: alice.id)
+      expect(filter.results).to eq([alice_question])
+
+      filter = described_class.new(signon_user_id: bob.id)
+      expect(filter.results).to eq([bob_question])
+    end
+
+    it "doesn't filter the results by signon user if signon_user_id and user_id are passed in" do
+      alice = create(:signon_user, email: "alice@example.com")
+      bob = create(:early_access_user, email: "bob@example.com")
+      create(:question, conversation: create(:conversation, signon_user: alice))
+      bob_question = create(:question, conversation: create(:conversation, user: bob))
+
+      filter = described_class.new(signon_user_id: alice.id, user_id: bob.id)
+      expect(filter.results).to eq([bob_question])
+    end
+
     it "filters the results by question routing label" do
       create(:question, answer: build(:answer, question_routing_label: "genuine_rag"))
       non_english_question = create(:question, answer: build(:answer, question_routing_label: "non_english"))
