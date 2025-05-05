@@ -36,3 +36,17 @@
 .app-c-conversation-message__body {
   border-radius: 10px;
 }
+
+.app-c-question-form__input {
+  border: 1px solid govuk-colour("mid-grey");
+  border-radius: 10px;
+}
+
+.app-c-blue-button {
+  color: govuk-colour("blue");
+  font-weight: 500;
+  background-color: govuk-tint(govuk-colour("light-blue"), 90%);
+  border: 1px solid govuk-tint(govuk-colour("light-blue"), 50%);
+  border-radius: 10px; 
+  box-shadow: none;
+}
