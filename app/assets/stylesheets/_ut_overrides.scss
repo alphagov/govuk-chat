@@ -50,3 +50,14 @@
   border-radius: 10px; 
   box-shadow: none;
 }
+
+.mobile-footer-icons {
+  border-top: 1px solid govuk-colour("mid-grey");
+  display: flex;
+  justify-content: space-evenly;
+
+  svg {
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+  }
+}
