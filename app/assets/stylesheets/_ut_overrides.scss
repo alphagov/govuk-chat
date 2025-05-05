@@ -1,0 +1,34 @@
+.govuk-header {
+  background-color: govuk-colour("blue");
+  min-height: 7rem;
+  position: relative;
+}
+
+.govuk-header__container {
+  position: static;
+}
+
+.govuk-header__logotype, .app-c-header__tag, .app-c-header .govuk-js-header-toggle  {
+  display: none;
+}
+
+.app-c-header__product-name {
+  font-weight: bold;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 1rem;
+}
+
+.app-c-header__container {
+ border-bottom: none;
+}
+
+.mobile-top-icons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mobile-top-icons__time {
+  font-weight: bold;
+  margin-left: 1rem;
+}

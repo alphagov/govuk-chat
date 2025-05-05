@@ -17,45 +17,16 @@
   <div class="app-c-header__container govuk-header__container govuk-width-container">
     <div class="app-c-header-row govuk-grid-row">
       <div class="app-c-header__logo govuk-grid-column-full">
-        <%= link_to(
-          url_helpers.homepage_path,
-          class: "app-c-header__link app-c-header__link--homepage govuk-header__link govuk-header__link--homepage",
-          data: {
-            module: "ga4-link-tracker",
-            ga4_link: {
-              "event_name": "navigation",
-              "type": "header menu bar",
-              "index": {
-                "index_link": 1,
-              },
-              "index_total": 1,
-              "section": "Logo",
-            },
-          },
-        ) do %>
-          <%= inline_svg_tag "components/chat_header/govuk-logo.svg", class: %w[app-c-header__logotype govuk-header__logotype] %>
-          <span class="app-c-header__product-name">Chat</span>
-        <% end %>
-
-        <div class="app-c-header__tag-and-button-container app-c-header__tag-and-button-container--flex-until-tablet">
-          <span class="app-c-header__tag govuk-tag">
-            Experimental
+        <div class="mobile-top-icons">
+          <span class="mobile-top-icons__time"><time>9:41</time></span>
+          <span class="mobile-top-icons__icons">
+            <%= inline_svg_tag "mobile_icons/mobile-signal.svg", class: "mobile-top-icons__icons-signal", aria_hidden: true %>
+            <%= inline_svg_tag "mobile_icons/wifi.svg", class: "mobile-top-icons__icons-wifi", aria_hidden: true %>
+            <%= inline_svg_tag "mobile_icons/battery.svg", class: "mobile-top-icons__icons-battery", aria_hidden: true %>
           </span>
-          <% if conversation %>
-            <%= link_to "Start new chat",
-                         url_helpers.clear_conversation_path,
-                         class: clear_chat_link_class,
-                         data: {
-                           module: "ga4-link-tracker",
-                           ga4_link: {
-                             "event_name": "navigation",
-                             "type": "header menu bar",
-                             "section": "About and support",
-                           },
-                           ga4_track_links_only: "",
-                           ga4_set_indexes: "",
-                         } %>
-          <% end %>
+        </div>
+        <div>
+          <span class="app-c-header__product-name">Chat</span>
         </div>
       </div>
 

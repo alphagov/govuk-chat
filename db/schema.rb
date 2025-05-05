@@ -139,12 +139,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_04_123754) do
     t.string "unsubscribe_token", default: -> { "gen_random_uuid()" }, null: false
     t.integer "login_count", default: 0
     t.enum "found_chat", enum_type: "ur_question_found_chat"
+    t.boolean "previous_sign_up_denied", default: false, null: false
     t.datetime "shadow_banned_at"
     t.string "shadow_banned_reason"
     t.integer "bannable_action_count", default: 0, null: false
     t.datetime "restored_at"
     t.string "restored_reason"
-    t.boolean "previous_sign_up_denied", default: false, null: false
     t.index ["email"], name: "index_early_access_users_on_email", unique: true
   end
 
