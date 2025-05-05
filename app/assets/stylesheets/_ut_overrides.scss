@@ -61,3 +61,15 @@
     margin-bottom: 2rem;
   }
 }
+
+.accuracy-warning {
+  display: flex;
+
+  svg {
+    margin-right: 0.5rem;
+  }
+
+  p {
+    width: 100%;
+  }
+}
