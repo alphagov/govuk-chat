@@ -143,6 +143,13 @@ RSpec.describe "Api::V0::ConversationsController" do
         conversation = Conversation.includes(:signon_user).last
         expect(conversation.signon_user).to eq(api_user)
       end
+
+      it "sets the conversations source to :api" do
+        post api_v0_create_conversation_path, params: payload, as: :json
+
+        conversation = Conversation.last
+        expect(conversation.source).to eq("api")
+      end
     end
 
     context "when the question is invalid" do
