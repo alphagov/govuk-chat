@@ -130,6 +130,17 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([question2])
     end
 
+    it "filters the results by conversation source" do
+      question1 = create(:question)
+      question2 = create(:question, conversation: build(:conversation, :api))
+
+      filter = described_class.new(source: "web")
+      expect(filter.results).to eq([question1])
+
+      filter = described_class.new(source: "api")
+      expect(filter.results).to eq([question2])
+    end
+
     it "filters the results by start date" do
       question = create(:question)
       create(:question, created_at: 2.days.ago)

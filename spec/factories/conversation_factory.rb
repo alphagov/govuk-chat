@@ -34,5 +34,9 @@ FactoryBot.define do
         create(:question, :with_answer, conversation:)
       end
     end
+
+    trait :api do
+      source { :api }
+    end
   end
 end
