@@ -76,33 +76,55 @@ RSpec.describe Guardrails::JailbreakChecker do
     expect(described_class.call(input)).to have_attributes(triggered: false)
   end
 
-  it "raises a response error when the LLM returns a different response" do
-    allow(Guardrails::OpenAI::JailbreakChecker).to receive(:call).and_return({
-      llm_response: {
-        "message" => { "content" => "unexpected" },
-        "finish_reason" => "stop",
-        "index" => 0,
-      },
-      llm_guardrail_result: "unexpected",
-      llm_prompt_tokens: 10,
-      llm_completion_tokens: 10,
-      llm_cached_tokens: nil,
-    })
+  context "when the LLM returns a different response" do
+    before do
+      allow(Guardrails::OpenAI::JailbreakChecker).to receive(:call).and_return({
+        llm_response: {
+          "message" => { "content" => "unexpected" },
+          "finish_reason" => "stop",
+          "index" => 0,
+        },
+        llm_guardrail_result: "unexpected",
+        llm_prompt_tokens: 10,
+        llm_completion_tokens: 10,
+        llm_cached_tokens: nil,
+      })
 
-    stub_openai_jailbreak_guardrails(input)
+      stub_openai_jailbreak_guardrails(input)
+    end
 
-    expected_error = an_instance_of(described_class::ResponseError).and(
-      having_attributes(
+    it "raises a response error when the LLM returns a different response" do
+      expected_error = an_instance_of(described_class::ResponseError).and(
+        having_attributes(
+          message: "Error parsing jailbreak guardrails response",
+          llm_guardrail_result: "unexpected",
+          llm_response: hash_including("message", "finish_reason", "index"),
+          llm_prompt_tokens: be_a(Integer),
+          llm_completion_tokens: be_a(Integer),
+          llm_cached_tokens: be_a(Integer).or(be_nil),
+        ),
+      )
+
+      expect { described_class.call(input) }
+        .to raise_error(expected_error)
+    end
+
+    it "raises an error that can be represented as JSON" do
+      error = nil
+      begin
+        described_class.call(input)
+      rescue described_class::ResponseError => e
+        error = e
+      end
+
+      expect(error.as_json).to match({
         message: "Error parsing jailbreak guardrails response",
         llm_guardrail_result: "unexpected",
         llm_response: hash_including("message", "finish_reason", "index"),
         llm_prompt_tokens: be_a(Integer),
         llm_completion_tokens: be_a(Integer),
         llm_cached_tokens: be_a(Integer).or(be_nil),
-      ),
-    )
-
-    expect { described_class.call(input) }
-      .to raise_error(expected_error)
+      })
+    end
   end
 end
