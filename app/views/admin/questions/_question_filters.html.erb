@@ -74,6 +74,30 @@
     end,
   } %>
 
+  <%= render "govuk_publishing_components/components/select", {
+    id: "source",
+    name: "source",
+    label: "Source",
+    heading_size: "s",
+    full_width: true,
+    options: [
+      {
+        text: "",
+        value: "",
+      },
+      {
+        text: "Web",
+        value: "web",
+        selected: params[:source] == "web",
+      },
+      {
+        text: "API",
+        value: "api",
+        selected: params[:source] == "api",
+      },
+    ],
+  } %>
+
   <%= render "govuk_publishing_components/components/fieldset", {
     legend_text: "Start date",
     heading_size: "s",
