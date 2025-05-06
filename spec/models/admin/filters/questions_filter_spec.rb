@@ -273,6 +273,63 @@ RSpec.describe Admin::Filters::QuestionsFilter do
     end
   end
 
+  describe "#user" do
+    it "returns the user if user_id is passed in" do
+      user = create(:early_access_user)
+      filter = described_class.new(user_id: user.id)
+
+      expect(filter.user).to eq(user)
+    end
+
+    it "returns nil if user_id is not passed in" do
+      filter = described_class.new
+      expect(filter.user).to be_nil
+    end
+
+    it "returns nil if user_id is passed in but the user does not exist" do
+      filter = described_class.new(user_id: "invalid_id")
+      expect(filter.user).to be_nil
+    end
+  end
+
+  describe "#signon_user" do
+    it "returns the signon_user if signon_user_id is passed in" do
+      signon_user = create(:signon_user)
+      filter = described_class.new(signon_user_id: signon_user.id)
+
+      expect(filter.signon_user).to eq(signon_user)
+    end
+
+    it "returns nil if signon_user_id is not passed in" do
+      filter = described_class.new
+      expect(filter.signon_user).to be_nil
+    end
+
+    it "returns nil if signon_user_id is passed in but the signon_user does not exist" do
+      filter = described_class.new(signon_user_id: "invalid_id")
+      expect(filter.signon_user).to be_nil
+    end
+  end
+
+  describe "#conversation" do
+    it "returns the conversation if conversation_id is passed in" do
+      conversation = create(:conversation)
+      filter = described_class.new(conversation_id: conversation.id)
+
+      expect(filter.conversation).to eq(conversation)
+    end
+
+    it "returns nil if conversation_id is not passed in" do
+      filter = described_class.new
+      expect(filter.conversation).to be_nil
+    end
+
+    it "returns nil if conversation_id is passed in but the conversation does not exist" do
+      filter = described_class.new(conversation_id: "invalid_id")
+      expect(filter.conversation).to be_nil
+    end
+  end
+
   it_behaves_like "a paginatable filter", :question
 
   describe "#previous_page_params" do

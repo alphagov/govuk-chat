@@ -46,7 +46,13 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   def user
     return @user if defined?(@user)
 
-    @user = EarlyAccessUser.includes(:conversations).find_by(id: user_id)
+    @user = EarlyAccessUser.includes(:conversations).find_by_id(user_id)
+  end
+
+  def signon_user
+    return @signon_user if defined?(@signon_user)
+
+    @signon_user = SignonUser.includes(:conversations).find_by_id(signon_user_id)
   end
 
   def conversation
