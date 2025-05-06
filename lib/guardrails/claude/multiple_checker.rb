@@ -1,7 +1,6 @@
 module Guardrails
   module Claude
     class MultipleChecker
-      BEDROCK_MODEL = "eu.anthropic.claude-3-5-sonnet-20240620-v1:0".freeze
       MAX_TOKENS = 100
 
       def self.call(...) = new(...).call
@@ -15,7 +14,7 @@ module Guardrails
       def call
         claude_response = bedrock_client.converse(
           system: [{ text: prompt.system_prompt }],
-          model_id: BEDROCK_MODEL,
+          model_id: BedrockModels::CLAUDE_3_7_SONNET,
           messages: [{ role: "user", content: [{ text: prompt.user_prompt(input) }] }],
           inference_config: {
             max_tokens: MAX_TOKENS,

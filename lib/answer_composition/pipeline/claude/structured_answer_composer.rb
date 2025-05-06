@@ -1,8 +1,6 @@
 module AnswerComposition::Pipeline
   module Claude
     class StructuredAnswerComposer
-      BEDROCK_MODEL = "eu.anthropic.claude-3-5-sonnet-20240620-v1:0".freeze
-
       def self.call(...) = new(...).call
 
       def initialize(context)
@@ -15,7 +13,7 @@ module AnswerComposition::Pipeline
 
         response = bedrock_client.converse(
           system: [{ text: system_prompt }],
-          model_id: BEDROCK_MODEL,
+          model_id: BedrockModels::CLAUDE_3_7_SONNET,
           messages:,
           inference_config:,
           tool_config:,
