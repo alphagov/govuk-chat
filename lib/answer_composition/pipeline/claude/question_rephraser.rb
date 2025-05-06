@@ -1,9 +1,6 @@
 module AnswerComposition::Pipeline
   module Claude
     class QuestionRephraser
-      # TODO: change this to a more basic model
-      BEDROCK_MODEL = "eu.anthropic.claude-3-5-sonnet-20240620-v1:0".freeze
-
       def self.call(...) = new(...).call
 
       def initialize(question_message, message_records)
@@ -14,7 +11,7 @@ module AnswerComposition::Pipeline
       def call
         response = bedrock_client.converse(
           system: [{ text: config[:system_prompt] }],
-          model_id: BEDROCK_MODEL,
+          model_id: BedrockModels::CLAUDE_3_7_SONNET, # TODO: change this to a more basic model
           messages:,
           inference_config:,
         )
