@@ -25,6 +25,7 @@ private
       :page,
       :sort,
       :user_id,
+      :signon_user_id,
       :conversation_id,
     )
   end

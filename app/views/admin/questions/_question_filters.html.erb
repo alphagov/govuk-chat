@@ -1,6 +1,7 @@
 <%
   user = filter.user
   conversation = filter.conversation
+  signon_user = filter.signon_user
 %>
 
 <%= form_with(url: admin_questions_path, method: :get) do %>
@@ -14,6 +15,11 @@
       <% end %>
     </p>
     <%= hidden_field_tag(:user_id, params[:user_id]) %>
+  <% elsif signon_user.present? %>
+    <p class="govuk-body">
+      Filtering by API user: <%= signon_user.name %>
+    </p>
+    <%= hidden_field_tag(:signon_user_id, params[:signon_user_id]) %>
   <% end %>
 
   <% if user.present? %>
