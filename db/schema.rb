@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_01_150559) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_06_133220) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -19,6 +19,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_150559) do
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "answer_status", ["answered", "banned", "clarification", "error_answer_guardrails", "error_answer_service_error", "error_context_length_exceeded", "error_jailbreak_guardrails", "error_non_specific", "error_question_routing_guardrails", "error_timeout", "guardrails_answer", "guardrails_forbidden_terms", "guardrails_jailbreak", "guardrails_question_routing", "unanswerable_llm_cannot_answer", "unanswerable_no_govuk_content", "unanswerable_question_routing"]
+  create_enum "conversation_source", ["web", "api"]
   create_enum "deleted_early_access_user_deletion_type", ["unsubscribe", "admin"]
   create_enum "deleted_waiting_list_user_deletion_type", ["unsubscribe", "admin", "promotion"]
   create_enum "early_access_user_source", ["admin_added", "instant_signup", "admin_promoted", "delayed_signup"]
@@ -97,6 +98,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_150559) do
     t.datetime "updated_at", null: false
     t.uuid "early_access_user_id"
     t.uuid "signon_user_id"
+    t.enum "source", default: "web", null: false, enum_type: "conversation_source"
     t.index ["created_at"], name: "index_conversations_on_created_at"
     t.index ["early_access_user_id"], name: "index_conversations_on_early_access_user_id"
     t.index ["signon_user_id"], name: "index_conversations_on_signon_user_id"

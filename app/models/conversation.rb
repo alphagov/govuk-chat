@@ -6,6 +6,13 @@ class Conversation < ApplicationRecord
 
   scope :active, -> { where(Question.active.where("questions.conversation_id = conversations.id").arel.exists) }
 
+  enum :source,
+       {
+         api: "api",
+         web: "web",
+       },
+       prefix: true
+
   def questions_for_showing_conversation
     Question.where(conversation: self)
             .includes(answer: %i[feedback sources])
