@@ -54,6 +54,7 @@ RSpec.describe Admin::QuestionsHelper do
         "Question created at",
         "Question",
         "Show search results",
+        "Source",
         "Status",
       ]
 
@@ -72,6 +73,7 @@ RSpec.describe Admin::QuestionsHelper do
         "Question",
         "Show search results",
         "Early access user",
+        "Source",
         "Rephrased question",
         "Status",
         "Answer created at",
@@ -186,6 +188,19 @@ RSpec.describe Admin::QuestionsHelper do
           "View all questions",
           href: admin_questions_path(signon_user_id: conversation.signon_user.id),
         )
+    end
+
+    it "returns a row with the source of the conversation" do
+      result = helper.question_show_summary_list_rows(question, nil, 1, 1)
+
+      row = result.find { |r| r[:field] == "Source" }
+      expect(row[:value]).to eq("Web")
+
+      conversation.update!(source: :api)
+      result = helper.question_show_summary_list_rows(question, nil, 1, 1)
+
+      row = result.find { |r| r[:field] == "Source" }
+      expect(row[:value]).to eq("API")
     end
   end
 

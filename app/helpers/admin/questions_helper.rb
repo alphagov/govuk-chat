@@ -97,6 +97,11 @@ module Admin
         }
       end
 
+      rows << {
+        field: "Source",
+        value: conversation.source_api? ? "API" : conversation.source.humanize,
+      }
+
       rows << if answer.present?
                 [
                   {
