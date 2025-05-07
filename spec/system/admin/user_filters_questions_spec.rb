@@ -107,8 +107,8 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def and_there_are_questions_associated_with_signon_users
-    @conversation1 = build(:conversation, signon_user: @signon_user)
-    conversation2 = build(:conversation, signon_user: @signon_user)
+    @conversation1 = build(:conversation, :api, signon_user: @signon_user)
+    conversation2 = build(:conversation, :api, signon_user: @signon_user)
     create(:question, conversation: @conversation1, message: "Hello world")
     create(:question, conversation: conversation2, message: "Greetings world")
 

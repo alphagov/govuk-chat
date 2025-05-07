@@ -178,7 +178,7 @@ RSpec.describe Admin::QuestionsHelper do
 
     it "returns a row with a link to filter the questions table by the signon user" do
       signon_user = create(:signon_user)
-      conversation.update!(signon_user:)
+      conversation.update!(signon_user:, source: :api)
       result = helper.question_show_summary_list_rows(question, nil, 1, 1)
 
       row = result.find { |r| r[:field] == "API user" }
@@ -201,6 +201,14 @@ RSpec.describe Admin::QuestionsHelper do
 
       row = result.find { |r| r[:field] == "Source" }
       expect(row[:value]).to eq("API")
+    end
+
+    it "doesn't return a signon user row if the conversation wasn't created via the API" do
+      signon_user = create(:signon_user)
+      conversation.update!(signon_user:)
+
+      result = helper.question_show_summary_list_rows(question, nil, 1, 1)
+      expect(returned_keys(result)).not_to include("API user")
     end
   end
 

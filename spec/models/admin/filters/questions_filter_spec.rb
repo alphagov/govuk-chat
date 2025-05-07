@@ -234,14 +234,23 @@ RSpec.describe Admin::Filters::QuestionsFilter do
     it "filters the results by signon user" do
       alice = create(:signon_user, email: "alice@example.com")
       bob = create(:signon_user, email: "bob@example.com")
-      alice_question = create(:question, conversation: create(:conversation, signon_user: alice))
-      bob_question = create(:question, conversation: create(:conversation, signon_user: bob))
+      alice_question = create(:question, conversation: create(:conversation, :api, signon_user: alice))
+      bob_question = create(:question, conversation: create(:conversation, :api, signon_user: bob))
 
       filter = described_class.new(signon_user_id: alice.id)
       expect(filter.results).to eq([alice_question])
 
       filter = described_class.new(signon_user_id: bob.id)
       expect(filter.results).to eq([bob_question])
+    end
+
+    it "filters out results assoicated with a signon user that weren't created via the API" do
+      signon_user = create(:signon_user)
+      create(:question, conversation: create(:conversation, signon_user:))
+
+      filter = described_class.new(signon_user_id: signon_user.id)
+
+      expect(filter.results).to eq([])
     end
 
     it "doesn't filter the results by signon user if signon_user_id and user_id are passed in" do

@@ -134,7 +134,7 @@ private
   def signon_user_scope(scope)
     return scope if signon_user_id.blank? || user_id.present?
 
-    scope.joins(:conversation).where(conversation: { signon_user_id: signon_user_id })
+    scope.joins(:conversation).where(conversation: { signon_user_id: signon_user_id, source: :api })
   end
 
   def question_routing_label_scope(scope)
