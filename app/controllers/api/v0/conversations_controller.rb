@@ -70,7 +70,7 @@ private
   def find_conversation
     @conversation = Conversation
                     .includes(questions: { answer: %i[sources feedback] })
-                    .where(signon_user_id: current_user.id)
+                    .where(signon_user_id: current_user.id, source: :api)
                     .find(params[:conversation_id])
   end
 
