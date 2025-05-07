@@ -25,13 +25,13 @@ RSpec.describe MessageQueue::ContentSynchroniser::IndexContentItem, :chunked_con
     end
 
     it "applies OpenAI embedding to the data going into the search index" do
-      allow(Search::TextToEmbedding).to receive(:call).and_call_original
+      allow(Search::TextToEmbedding::OpenAI).to receive(:call).and_call_original
 
       expect { described_class.call(content_item, repository) }
         .to change { repository.count(exists: { field: :openai_embedding }) }
         .by(chunks.length)
 
-      expect(Search::TextToEmbedding).to have_received(:call)
+      expect(Search::TextToEmbedding::OpenAI).to have_received(:call)
     end
 
     it "returns a Result object" do

@@ -60,7 +60,7 @@ namespace :search do
       end
     end
 
-    embeddings = Search::TextToEmbedding.call(chunks.map(&:plain_content))
+    embeddings = Search::TextToEmbedding.call(chunks.map(&:plain_content), llm_provider: :openai)
     repository = Search::ChunkedContentRepository.new
     indexed = 0
 

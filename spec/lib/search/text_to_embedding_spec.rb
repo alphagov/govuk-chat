@@ -8,11 +8,6 @@ RSpec.describe Search::TextToEmbedding do
       described_class.call(text, llm_provider: provider)
     end
 
-    it "defaults to using OpenAI if no provider is specified" do
-      expect(Search::TextToEmbedding::OpenAI).to receive(:call).with(text)
-      described_class.call(text)
-    end
-
     context "when an unknown provider is specified" do
       let(:provider) { :unknown_provider }
 
