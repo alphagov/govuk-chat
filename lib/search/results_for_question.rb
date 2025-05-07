@@ -17,6 +17,7 @@ module Search
       search_start_time = Clock.monotonic_time
       results = ChunkedContentRepository.new.search_by_embedding(embedding, max_chunks:)
       metrics[:search_duration] = Clock.monotonic_time - search_start_time
+      metrics[:embedding_provider] = provider
 
       reranking_start_time = Clock.monotonic_time
       weighted_results = Search::ResultsForQuestion::Reranker.call(results)

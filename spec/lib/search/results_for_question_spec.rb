@@ -47,9 +47,9 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
                             ["not found 2", a_value_between(0.2, 0.3)])
     end
 
-    it "populates the metrics attribute with the durations of the embedding, search, and reranking steps" do
+    it "populates the metrics attribute" do
       result = described_class.call(question_message)
-      expect(result.metrics).to eq({ embedding_duration: 1.5, search_duration: 2.0, reranking_duration: 1.0 })
+      expect(result.metrics).to eq({ embedding_duration: 1.5, search_duration: 2.0, reranking_duration: 1.0, embedding_provider: "openai" })
     end
 
     context "when then are more results than the configured max_results" do
