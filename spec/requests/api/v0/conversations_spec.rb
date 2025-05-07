@@ -79,6 +79,29 @@ RSpec.describe "Api::V0::ConversationsController" do
                     },
                   ]
 
+  it_behaves_like "throttles traffic from a single IP address",
+                  routes: {
+                    api_v0_show_conversation_path: %i[get],
+                    api_v0_answer_question_path: %i[get],
+                    api_v0_create_conversation_path: %i[post],
+                    api_v0_update_conversation_path: %i[put],
+                    api_v0_answer_feedback_path: %i[post],
+                  },
+                  limit: 2,
+                  period: 1.minute,
+                  request_type: :json do
+    let(:api_user) { create(:signon_user, :conversation_api) }
+    let(:conversation) { create(:conversation, :api, signon_user: api_user) }
+    let(:route_params) { { conversation_id: SecureRandom.uuid, question_id: SecureRandom.uuid, answer_id: SecureRandom.uuid } }
+
+    before do
+      read_throttle = Rack::Attack.throttles["get requests to Conversations API"]
+      allow(read_throttle).to receive(:limit).and_return(2)
+      write_throttle = Rack::Attack.throttles["all other http method requests to Conversations API"]
+      allow(write_throttle).to receive(:limit).and_return(2)
+    end
+  end
+
   describe "middleware ensures adherance to the OpenAPI specification" do
     context "when the response returned does not conform to the OpenAPI specification" do
       it "raises an error and returns the invalid params in the error message" do

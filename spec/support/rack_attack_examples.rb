@@ -1,6 +1,13 @@
 module RackAttackExamples
-  shared_examples "throttles traffic from a single IP address" do |routes:, limit:, period:|
+  shared_examples "throttles traffic from a single IP address" do |routes:, limit:, period:, request_type: nil|
     let(:route_params) { {} }
+    let(:options) do
+      {
+        params: {},
+        headers: { "HTTP_TRUE_CLIENT_IP" => ip_address },
+        as: request_type.presence,
+      }.compact
+    end
 
     routes.each do |path, methods|
       methods.each do |method|
@@ -11,7 +18,7 @@ module RackAttackExamples
             limit.times do |i|
               process(method.to_sym,
                       public_send(path, **route_params),
-                      headers: { "HTTP_TRUE_CLIENT_IP": ip_address })
+                      **options)
               raise "Returning too_many_requests on request #{i + 1}" if response.status == 429
             end
           end
@@ -19,15 +26,17 @@ module RackAttackExamples
           it "rejects the next request from that IP address" do
             process(method.to_sym,
                     public_send(path, **route_params),
-                    headers: { "HTTP_TRUE_CLIENT_IP": ip_address })
+                    **options)
 
             expect(response).to have_http_status(:too_many_requests)
           end
 
           it "doesn't reject a request from a different IP address" do
+            options.merge!(headers: { "REMOTE_ADDR" => "4.5.6.7", "HTTP_TRUE_CLIENT_IP": "4.5.6.7" })
+
             process(method.to_sym,
                     public_send(path, **route_params),
-                    headers: { "HTTP_TRUE_CLIENT_IP": "4.5.6.7" })
+                    **options)
 
             expect(response).not_to have_http_status(:too_many_requests)
           end
@@ -36,7 +45,7 @@ module RackAttackExamples
             travel_to(Time.current + period + 1.second) do
               process(method.to_sym,
                       public_send(path, **route_params),
-                      headers: { "HTTP_TRUE_CLIENT_IP": ip_address })
+                      **options)
 
               expect(response).not_to have_http_status(:too_many_requests)
             end

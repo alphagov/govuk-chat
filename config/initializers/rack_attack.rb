@@ -1,4 +1,6 @@
 class Rack::Attack
+  CONVERSATION_API_PATH_REGEX = /^\/api\/v\d+\/conversation/
+
   throttle("sign-in or sign-ups by IP", limit: 10, period: 5.minutes) do |request|
     homepage_path = Rails.application.routes.url_helpers.homepage_path
     next cdn_client_ip(request) if request.path == homepage_path && request.post?
@@ -24,6 +26,18 @@ class Rack::Attack
   throttle("waiting list user unsubscribe attempts", limit: 20, period: 5.minutes) do |request|
     if rails_controller_action(request.url) == "unsubscribe#waiting_list_user" && request.get?
       cdn_client_ip(request)
+    end
+  end
+
+  throttle("get requests to Conversations API", limit: 1000, period: 1.minute) do |request|
+    if request.path.match?(CONVERSATION_API_PATH_REGEX) && request.get?
+      request.ip
+    end
+  end
+
+  throttle("all other http method requests to Conversations API", limit: 150, period: 1.minute) do |request|
+    if request.path.match?(CONVERSATION_API_PATH_REGEX) && !request.get?
+      request.ip
     end
   end
 
