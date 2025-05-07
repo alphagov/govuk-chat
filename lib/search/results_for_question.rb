@@ -7,9 +7,11 @@ module Search
       max_results = Rails.configuration.search.thresholds.max_results
       max_chunks = Rails.configuration.search.thresholds.retrieved_from_index
 
+      provider = Rails.configuration.embedding_provider
+
       metrics = {}
       embedding_start_time = Clock.monotonic_time
-      embedding = Search::TextToEmbedding.call(question_message)
+      embedding = Search::TextToEmbedding.call(question_message, llm_provider: provider)
       metrics[:embedding_duration] = Clock.monotonic_time - embedding_start_time
 
       search_start_time = Clock.monotonic_time
