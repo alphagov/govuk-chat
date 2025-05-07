@@ -220,7 +220,11 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
     end
 
     it "returns an array of Result objects" do
-      result = repository.search_by_embedding(openai_embedding, max_chunks: 10)
+      result = repository.search_by_embedding(
+        openai_embedding,
+        max_chunks: 10,
+        llm_provider: :openai,
+      )
       expected_attributes = chunked_content_records.first
                                                    .except(:openai_embedding)
                                                    .merge(score: a_value_between(0.9, 1))
@@ -229,12 +233,26 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
       expect(result.first).to have_attributes(**expected_attributes)
     end
 
-    context "when there are more then the maxiumum chunks" do
+    it "raises an error if the llm provider is not recognised" do
+      expect {
+        repository.search_by_embedding(
+          openai_embedding,
+          max_chunks: 10,
+          llm_provider: :unknown,
+        )
+      }.to raise_error("Unknown provider: unknown")
+    end
+
+    context "when there are more than the maxiumum chunks" do
       let(:max_chunks) { 10 }
       let(:chunked_content_records) { build_list(:chunked_content_record, 11, openai_embedding:) }
 
       it "only returns the first max_chunks" do
-        result = repository.search_by_embedding(openai_embedding, max_chunks:)
+        result = repository.search_by_embedding(
+          openai_embedding,
+          max_chunks:,
+          llm_provider: :openai,
+        )
         expect(result.count).to eq max_chunks
       end
     end

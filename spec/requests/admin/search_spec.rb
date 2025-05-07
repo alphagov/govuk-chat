@@ -67,7 +67,7 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
         it "includes score calculation and back links in links to results" do
           get admin_search_path, params: { search_text: }
 
-          results = Search::ChunkedContentRepository.new.search_by_embedding(openai_embedding, max_chunks: 2)
+          results = Search::ChunkedContentRepository.new.search_by_embedding(openai_embedding, max_chunks: 2, llm_provider: :openai)
           result = results.detect { |r| r.digest == chunk_to_find[:digest] }
           document_type_weight = Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS[chunk_to_find[:document_type]]
           weighted_score = result.score * document_type_weight

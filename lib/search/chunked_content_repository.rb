@@ -141,14 +141,21 @@ module Search
       items
     end
 
-    def search_by_embedding(embedding, max_chunks:)
+    def search_by_embedding(embedding, max_chunks:, llm_provider:)
+      field_name = case llm_provider.to_sym
+                   when :openai
+                     :openai_embedding
+                   else
+                     raise "Unknown provider: #{llm_provider}"
+                   end
+
       response = client.search(
         index:,
         body: {
           size: max_chunks,
           query: {
             knn: {
-              openai_embedding: {
+              "#{field_name}": {
                 vector: embedding,
                 k: max_chunks,
               },
