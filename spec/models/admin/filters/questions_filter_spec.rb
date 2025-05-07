@@ -220,6 +220,29 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([bob_question])
     end
 
+    it "filters the results by signon user" do
+      alice = create(:signon_user, email: "alice@example.com")
+      bob = create(:signon_user, email: "bob@example.com")
+      alice_question = create(:question, conversation: create(:conversation, signon_user: alice))
+      bob_question = create(:question, conversation: create(:conversation, signon_user: bob))
+
+      filter = described_class.new(signon_user_id: alice.id)
+      expect(filter.results).to eq([alice_question])
+
+      filter = described_class.new(signon_user_id: bob.id)
+      expect(filter.results).to eq([bob_question])
+    end
+
+    it "doesn't filter the results by signon user if signon_user_id and user_id are passed in" do
+      alice = create(:signon_user, email: "alice@example.com")
+      bob = create(:early_access_user, email: "bob@example.com")
+      create(:question, conversation: create(:conversation, signon_user: alice))
+      bob_question = create(:question, conversation: create(:conversation, user: bob))
+
+      filter = described_class.new(signon_user_id: alice.id, user_id: bob.id)
+      expect(filter.results).to eq([bob_question])
+    end
+
     it "filters the results by question routing label" do
       create(:question, answer: build(:answer, question_routing_label: "genuine_rag"))
       non_english_question = create(:question, answer: build(:answer, question_routing_label: "non_english"))
@@ -247,6 +270,63 @@ RSpec.describe Admin::Filters::QuestionsFilter do
 
         expect(filter.results).to eq([question1])
       end
+    end
+  end
+
+  describe "#user" do
+    it "returns the user if user_id is passed in" do
+      user = create(:early_access_user)
+      filter = described_class.new(user_id: user.id)
+
+      expect(filter.user).to eq(user)
+    end
+
+    it "returns nil if user_id is not passed in" do
+      filter = described_class.new
+      expect(filter.user).to be_nil
+    end
+
+    it "returns nil if user_id is passed in but the user does not exist" do
+      filter = described_class.new(user_id: "invalid_id")
+      expect(filter.user).to be_nil
+    end
+  end
+
+  describe "#signon_user" do
+    it "returns the signon_user if signon_user_id is passed in" do
+      signon_user = create(:signon_user)
+      filter = described_class.new(signon_user_id: signon_user.id)
+
+      expect(filter.signon_user).to eq(signon_user)
+    end
+
+    it "returns nil if signon_user_id is not passed in" do
+      filter = described_class.new
+      expect(filter.signon_user).to be_nil
+    end
+
+    it "returns nil if signon_user_id is passed in but the signon_user does not exist" do
+      filter = described_class.new(signon_user_id: "invalid_id")
+      expect(filter.signon_user).to be_nil
+    end
+  end
+
+  describe "#conversation" do
+    it "returns the conversation if conversation_id is passed in" do
+      conversation = create(:conversation)
+      filter = described_class.new(conversation_id: conversation.id)
+
+      expect(filter.conversation).to eq(conversation)
+    end
+
+    it "returns nil if conversation_id is not passed in" do
+      filter = described_class.new
+      expect(filter.conversation).to be_nil
+    end
+
+    it "returns nil if conversation_id is passed in but the conversation does not exist" do
+      filter = described_class.new(conversation_id: "invalid_id")
+      expect(filter.conversation).to be_nil
     end
   end
 

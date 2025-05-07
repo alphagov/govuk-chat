@@ -173,6 +173,20 @@ RSpec.describe Admin::QuestionsHelper do
       result = helper.question_show_summary_list_rows(question, nil, 1, 1)
       expect(returned_keys(result)).not_to include("Early access user")
     end
+
+    it "returns a row with a link to filter the questions table by the signon user" do
+      signon_user = create(:signon_user)
+      conversation.update!(signon_user:)
+      result = helper.question_show_summary_list_rows(question, nil, 1, 1)
+
+      row = result.find { |r| r[:field] == "API user" }
+      expect(row[:value])
+        .to include(conversation.signon_user.name)
+        .and have_link(
+          "View all questions",
+          href: admin_questions_path(signon_user_id: conversation.signon_user.id),
+        )
+    end
   end
 
   describe "#decode_and_mark_unicode_tag_segments" do

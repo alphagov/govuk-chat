@@ -110,6 +110,30 @@ RSpec.describe "Admin::QuestionsController" do
 
         expect(response.body.squish).to have_content("Filtering by conversation ID:   #{conversation.id}")
       end
+
+      it "renders the signon user's details when filtering by signon_user_id" do
+        signon_user = create(:signon_user)
+        create(:conversation, signon_user:)
+        get admin_questions_path(signon_user_id: signon_user.id)
+
+        expect(response.body.squish)
+          .to have_content("Filtering by API user: #{signon_user.name}")
+      end
+
+      context "and filter params are present for user and signon user" do
+        it "doesn't render the signon user's details" do
+          signon_user = create(:signon_user)
+          create(:conversation, signon_user:)
+
+          get admin_questions_path(
+            signon_user_id: signon_user.id,
+            user_id: SecureRandom.uuid,
+          )
+
+          expect(response.body.squish)
+            .not_to have_content("Filtering by API user: #{signon_user.name}")
+        end
+      end
     end
 
     context "when the sort param is not the default value" do

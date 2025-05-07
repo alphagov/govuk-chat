@@ -7,6 +7,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :answer_feedback_useful, :boolean
   attribute :question_routing_label
   attribute :user_id
+  attribute :signon_user_id
 
   validate :validate_dates
 
@@ -36,6 +37,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
       scope = question_routing_label_scope(scope)
       scope = ordering_scope(scope)
       scope = user_scope(scope)
+      scope = signon_user_scope(scope)
       scope.page(page)
            .per(25)
     end
@@ -44,7 +46,13 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   def user
     return @user if defined?(@user)
 
-    @user = EarlyAccessUser.includes(:conversations).find_by(id: user_id)
+    @user = EarlyAccessUser.includes(:conversations).find_by_id(user_id)
+  end
+
+  def signon_user
+    return @signon_user if defined?(@signon_user)
+
+    @signon_user = SignonUser.includes(:conversations).find_by_id(signon_user_id)
   end
 
   def conversation
@@ -113,6 +121,12 @@ private
     return scope if user_id.blank?
 
     scope.joins(:conversation).where("conversations.early_access_user_id = ?", user_id)
+  end
+
+  def signon_user_scope(scope)
+    return scope if signon_user_id.blank? || user_id.present?
+
+    scope.joins(:conversation).where(conversation: { signon_user_id: signon_user_id })
   end
 
   def question_routing_label_scope(scope)

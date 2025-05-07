@@ -84,6 +84,19 @@ module Admin
         }
       end
 
+      signon_user = conversation.signon_user
+      if signon_user.present?
+        rows << {
+          field: "API user",
+          value: safe_join([
+            signon_user.name,
+            " (",
+            link_to("View all questions", admin_questions_path(signon_user_id: signon_user.id), class: "govuk-link"),
+            ")",
+          ]),
+        }
+      end
+
       rows << if answer.present?
                 [
                   {

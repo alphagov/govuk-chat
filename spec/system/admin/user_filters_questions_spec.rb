@@ -58,9 +58,27 @@ RSpec.describe "Admin user filters questions" do
     then_i_see_the_question_from_the_first_conversation
   end
 
+  scenario "filtered by a signon user" do
+    given_i_am_an_admin
+    and_there_are_signon_users
+    and_there_are_questions_associated_with_signon_users
+
+    when_i_visit_the_questions_section_filtered_by_a_signon_user
+    then_i_see_that_signon_users_details_in_the_sidebar
+    and_i_see_all_the_questions_for_that_signon_user
+
+    when_i_search_for_a_question_from_the_signon_user
+    then_i_see_the_filtered_questions_for_that_signon_user
+  end
+
   def and_there_are_early_access_users
     @user = create(:early_access_user)
     @user2 = create(:early_access_user)
+  end
+
+  def and_there_are_signon_users
+    @signon_user = create(:signon_user)
+    @signon_user2 = create(:signon_user)
   end
 
   def and_there_are_questions
@@ -78,6 +96,16 @@ RSpec.describe "Admin user filters questions" do
     create(:question, conversation: conversation2, message: "Greetings world")
 
     conversation3 = build(:conversation, user: @user2)
+    create(:question, conversation: conversation3, message: "Goodbye")
+  end
+
+  def and_there_are_questions_associated_with_signon_users
+    @conversation1 = build(:conversation, signon_user: @signon_user)
+    conversation2 = build(:conversation, signon_user: @signon_user)
+    create(:question, conversation: @conversation1, message: "Hello world")
+    create(:question, conversation: conversation2, message: "Greetings world")
+
+    conversation3 = build(:conversation, signon_user: @signon_user2)
     create(:question, conversation: conversation3, message: "Goodbye")
   end
 
@@ -123,6 +151,10 @@ RSpec.describe "Admin user filters questions" do
     expect(page).to have_content("Filtering by user: #{@user.email}")
   end
 
+  def then_i_see_that_signon_users_details_in_the_sidebar
+    expect(page).to have_content("Filtering by API user: #{@signon_user.name}")
+  end
+
   def and_i_see_all_the_questions_for_that_user
     within(".govuk-table") do
       expect(page).to have_content("Hello world")
@@ -130,6 +162,7 @@ RSpec.describe "Admin user filters questions" do
       expect(page).not_to have_content("Goodbye")
     end
   end
+  alias_method :and_i_see_all_the_questions_for_that_signon_user, :and_i_see_all_the_questions_for_that_user
 
   def then_i_see_the_filtered_questions_for_that_user
     within(".govuk-table") do
@@ -138,6 +171,7 @@ RSpec.describe "Admin user filters questions" do
       expect(page).not_to have_content("Goodbye")
     end
   end
+  alias_method :then_i_see_the_filtered_questions_for_that_signon_user, :then_i_see_the_filtered_questions_for_that_user
 
   def when_clear_the_search_filter
     fill_in "search", with: ""
@@ -174,6 +208,7 @@ RSpec.describe "Admin user filters questions" do
     fill_in "Search", with: "Greetings"
     click_button "Filter"
   end
+  alias_method :when_i_search_for_a_question_from_the_signon_user, :when_i_search_for_a_question_from_the_user
 
   def then_i_see_questions_related_to_my_search
     expect(page).to have_content(@question1.message)
@@ -235,5 +270,9 @@ RSpec.describe "Admin user filters questions" do
 
   def when_i_visit_the_questions_section_filtered_by_a_user
     visit admin_questions_path(user_id: @user.id)
+  end
+
+  def when_i_visit_the_questions_section_filtered_by_a_signon_user
+    visit admin_questions_path(signon_user_id: @signon_user.id)
   end
 end
