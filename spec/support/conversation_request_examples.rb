@@ -86,13 +86,32 @@ module ConversationRequestExamples
     end
   end
 
-  shared_examples "requires a conversation" do |routes:|
+  shared_examples "requires a conversation created via the chat interface" do |routes:|
     let(:route_params) { [] }
     include_context "when signed in"
     include_context "with onboarding completed"
 
     routes.each do |path, methods|
       describe "requests without a conversation for #{path}" do
+        methods.each do |method|
+          it "redirects to onboarding limitations for a HTML request for #{method} #{path}" do
+            process(method.to_sym, public_send(path.to_sym, *route_params), params: { format: :html })
+            expect(response).to redirect_to(onboarding_limitations_path)
+          end
+
+          it "returns a to onboarding limitations for a JSON request for #{method} #{path}" do
+            process(method.to_sym, public_send(path.to_sym, *route_params), params: { format: :json })
+            expect(response).to have_http_status(:not_found)
+          end
+        end
+      end
+
+      describe "requests with a conversation which wasn't created via chat interface for #{path}" do
+        before do
+          conversation = create(:conversation, source: :api)
+          cookies[:conversation_id] = conversation.id
+        end
+
         methods.each do |method|
           it "redirects to onboarding limitations for a HTML request for #{method} #{path}" do
             process(method.to_sym, public_send(path.to_sym, *route_params), params: { format: :html })

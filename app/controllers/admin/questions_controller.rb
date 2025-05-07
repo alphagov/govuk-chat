@@ -20,6 +20,7 @@ private
     params.permit(
       :search,
       :status,
+      :source,
       { start_date_params: %i[day month year], end_date_params: %i[day month year] },
       :answer_feedback_useful,
       :question_routing_label,

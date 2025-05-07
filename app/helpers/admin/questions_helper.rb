@@ -85,7 +85,7 @@ module Admin
       end
 
       signon_user = conversation.signon_user
-      if signon_user.present?
+      if signon_user.present? && conversation.source_api?
         rows << {
           field: "API user",
           value: safe_join([
@@ -96,6 +96,11 @@ module Admin
           ]),
         }
       end
+
+      rows << {
+        field: "Source",
+        value: conversation.source_api? ? "API" : conversation.source.humanize,
+      }
 
       rows << if answer.present?
                 [

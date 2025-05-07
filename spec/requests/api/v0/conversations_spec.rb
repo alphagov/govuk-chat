@@ -1,32 +1,54 @@
 RSpec.describe "Api::V0::ConversationsController" do
   let(:api_user) { create(:signon_user, :conversation_api) }
-  let(:conversation) { create(:conversation, signon_user: api_user) }
+  let(:conversation) { create(:conversation, :api, signon_user: api_user) }
   let(:question) { create(:question, conversation:) }
 
   before do
     login_as(api_user)
   end
 
-  shared_examples "responds with forbidden if user doesn't have conversation-api permission" do |routes:|
-    before { login_as(create(:signon_user)) }
-
+  shared_examples "limits access based on permissions and conversation source" do |routes:|
     routes.each do |route|
+      method = route[:method]
+      path = route[:path]
+      route_params = route[:route_params] || []
+      params = route[:params] || {}
+
       describe "responds with forbidden if user doesn't have conversation-api permission" do
-        it "returns with 403 for #{route[:method]} #{route[:path]}" do
+        before { login_as(create(:signon_user)) }
+
+        it "returns 403 for #{method} #{path}" do
           process(
-            route[:method.to_sym],
-            public_send(route[:path].to_sym, *(route[:route_params] || [])),
-            params: route[:params] || {},
+            method.to_sym,
+            public_send(path.to_sym, *route_params),
+            params: params,
             as: :json,
           )
 
           expect(response).to have_http_status(:forbidden)
         end
       end
+
+      next if path == :api_v0_create_conversation_path
+
+      describe "ensures the conversation was created by the API" do
+        it "returns 404 when conversation source is not :api for #{method} #{path}" do
+          conversation.update!(source: :web)
+
+          process(
+            method.to_sym,
+            public_send(path.to_sym, *route_params),
+            params: params,
+            as: :json,
+          )
+
+          expect(response).to have_http_status(:not_found)
+        end
+      end
     end
   end
 
-  it_behaves_like "responds with forbidden if user doesn't have conversation-api permission",
+  it_behaves_like "limits access based on permissions and conversation source",
                   routes: [
                     {
                       path: :api_v0_create_conversation_path,
@@ -142,6 +164,13 @@ RSpec.describe "Api::V0::ConversationsController" do
 
         conversation = Conversation.includes(:signon_user).last
         expect(conversation.signon_user).to eq(api_user)
+      end
+
+      it "sets the conversations source to :api" do
+        post api_v0_create_conversation_path, params: payload, as: :json
+
+        conversation = Conversation.last
+        expect(conversation.source).to eq("api")
       end
     end
 

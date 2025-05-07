@@ -1,6 +1,7 @@
 class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :status
   attribute :search
+  attribute :source
   attribute :start_date_params, default: {}
   attribute :end_date_params, default: {}
   attribute :conversation_id
@@ -30,6 +31,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
                       .left_outer_joins(:answer)
       scope = search_scope(scope)
       scope = status_scope(scope)
+      scope = source_scope(scope)
       scope = start_date_scope(scope)
       scope = end_date_scope(scope)
       scope = answer_feedback_useful_scope(scope)
@@ -93,6 +95,12 @@ private
     end
   end
 
+  def source_scope(scope)
+    return scope if source.blank?
+
+    scope.joins(:conversation).where(conversations: { source: })
+  end
+
   def start_date_scope(scope)
     return scope if errors[:start_date_params].present? || start_date.nil?
 
@@ -126,7 +134,7 @@ private
   def signon_user_scope(scope)
     return scope if signon_user_id.blank? || user_id.present?
 
-    scope.joins(:conversation).where(conversation: { signon_user_id: signon_user_id })
+    scope.joins(:conversation).where(conversation: { signon_user_id: signon_user_id, source: :api })
   end
 
   def question_routing_label_scope(scope)
