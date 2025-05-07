@@ -35,7 +35,7 @@ RSpec.describe "ConversationsController" do
     let(:route_params) { [SecureRandom.uuid] }
   end
 
-  it_behaves_like "requires a conversation", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
+  it_behaves_like "requires a conversation created via the chat interface", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
     let(:route_params) { [SecureRandom.uuid] }
   end
 
