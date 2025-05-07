@@ -15,7 +15,11 @@ module Search
       metrics[:embedding_duration] = Clock.monotonic_time - embedding_start_time
 
       search_start_time = Clock.monotonic_time
-      results = ChunkedContentRepository.new.search_by_embedding(embedding, max_chunks:)
+      results = ChunkedContentRepository.new.search_by_embedding(
+        embedding,
+        max_chunks:,
+        llm_provider: provider,
+      )
       metrics[:search_duration] = Clock.monotonic_time - search_start_time
       metrics[:embedding_provider] = provider
 
