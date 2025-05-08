@@ -1,5 +1,6 @@
 class Rack::Attack
   CONVERSATION_API_PATH_REGEX = /^\/api\/v\d+\/conversation/
+  BEARER_TOKEN_REGEX = /^Bearer (.+)$/
 
   throttle("sign-in or sign-ups by IP", limit: 10, period: 5.minutes) do |request|
     homepage_path = Rails.application.routes.url_helpers.homepage_path
@@ -38,6 +39,24 @@ class Rack::Attack
   throttle("all other http method requests to Conversations API", limit: 150, period: 1.minute) do |request|
     if request.path.match?(CONVERSATION_API_PATH_REGEX) && !request.get?
       request.ip
+    end
+  end
+
+  # Other options for throttling
+  ## Throttle by auth token
+  throttle("get requests to Conversations API with token", limit: 5000, period: 1.minute) do |request|
+    if request.path.match?(CONVERSATION_API_PATH_REGEX) && request.get?
+      auth_header = request.env["HTTP_AUTHORIZATION"]
+      token = auth_header.to_s.match(BEARER_TOKEN_REGEX)&.captures&.first
+      token.presence
+    end
+  end
+
+  throttle("all other http method requests to Conversations API with token", limit: 200, period: 1.minute) do |request|
+    if request.path.match?(CONVERSATION_API_PATH_REGEX) && !request.get?
+      auth_header = request.env["HTTP_AUTHORIZATION"]
+      token = auth_header.to_s.match(BEARER_TOKEN_REGEX)&.captures&.first
+      token.presence
     end
   end
 
