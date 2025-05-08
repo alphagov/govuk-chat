@@ -1,6 +1,6 @@
 RSpec.describe "rake evaluation tasks" do
   shared_examples "a task requiring input and provider" do
-    it "requires a INPUT env var" do
+    it "requires an INPUT env var" do
       expect { Rake::Task[task_name].invoke("openai") }
         .to raise_error("Requires an INPUT env var")
     end
@@ -301,6 +301,54 @@ RSpec.describe "rake evaluation tasks" do
               AnswerComposition::Pipeline::Claude::QuestionRouter,
             ])
         end
+      end
+    end
+  end
+
+  describe "search_results_for_question" do
+    let(:task_name) { "evaluation:search_results_for_question" }
+    let(:input) { "Question" }
+
+    before { Rake::Task[task_name].reenable }
+
+    it "requires an INPUT env var" do
+      expect { Rake::Task[task_name].invoke }.to raise_error("Requires an INPUT env var")
+    end
+
+    it "requires an EMBEDDING_PROVIDER env var" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke }.to raise_error("Requires an EMBEDDING_PROVIDER env var")
+      end
+    end
+
+    it "outputs the response as JSON to stdout" do
+      ClimateControl.modify(INPUT: input, EMBEDDING_PROVIDER: "openai") do
+        search_results = [
+          build(
+            :chunked_content_search_result,
+            exact_path: "/path1",
+            plain_content: "Content 1",
+          ),
+          build(
+            :chunked_content_search_result,
+            exact_path: "/path2",
+            plain_content: "Content 2",
+          ),
+        ]
+        result_set = Search::ResultsForQuestion::ResultSet.new(
+          results: search_results,
+          rejected_results: [],
+          metrics: {},
+        )
+        allow(Search::ResultsForQuestion).to receive(:call).with(input).and_return(result_set)
+
+        expected_output = [
+          { exact_path: "/path1", plain_content: "Content 1" },
+          { exact_path: "/path2", plain_content: "Content 2" },
+        ].to_json
+
+        expect { Rake::Task[task_name].invoke }
+          .to output("#{expected_output}\n").to_stdout
       end
     end
   end
