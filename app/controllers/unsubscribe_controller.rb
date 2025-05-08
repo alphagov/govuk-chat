@@ -1,16 +1,12 @@
-class UnsubscribeController < BaseController
-  skip_before_action :ensure_early_access_user_if_required
-  before_action { head(:ok) if request.head? }
-
-  def waiting_list_user
-    WaitingListUser
-      .find_by!(id: params[:id], unsubscribe_token: params[:token])
-      .destroy_with_audit(deletion_type: :unsubscribe)
-  end
+class UnsubscribeController < ApplicationController
+  # Minimal implementation kept temporarily so that unsubscribe URLs used in
+  # mailers can be generated. TODO: Remove this once the mailers are updated.
 
   def early_access_user
-    EarlyAccessUser
-      .find_by!(id: params[:id], unsubscribe_token: params[:token])
-      .destroy_with_audit(deletion_type: :unsubscribe)
+    head :gone
+  end
+
+  def waiting_list_user
+    head :gone
   end
 end
