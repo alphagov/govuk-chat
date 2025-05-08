@@ -73,3 +73,11 @@
     width: 100%;
   }
 }
+
+.app-c-conversation-message {
+  a::after {
+    content: url('mobile_icons/android/open_link_icon.svg');
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+}
