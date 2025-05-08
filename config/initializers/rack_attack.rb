@@ -41,6 +41,18 @@ class Rack::Attack
     end
   end
 
+  throttle("read requests to Conversations API with device id", limit: 120, period: 1.minute) do |request|
+    if request.path.match?(CONVERSATION_API_PATH_REGEX) && read_method?(request)
+      request.get_header("HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID").presence
+    end
+  end
+
+  throttle("write requests to Conversations API with device id", limit: 20, period: 1.minute) do |request|
+    if request.path.match?(CONVERSATION_API_PATH_REGEX) && !read_method?(request)
+      request.get_header("HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID").presence
+    end
+  end
+
   def self.rails_controller_action(url)
     route = Rails.application.routes.recognize_path(url)
 

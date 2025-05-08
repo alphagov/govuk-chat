@@ -97,6 +97,24 @@ RSpec.describe "Api::V0::ConversationsController" do
                     end
                   end
 
+  it_behaves_like "throttles traffic for a single device",
+                  routes: {
+                    api_v0_show_conversation_path: %i[get],
+                    api_v0_answer_question_path: %i[get],
+                    api_v0_create_conversation_path: %i[post],
+                    api_v0_update_conversation_path: %i[put],
+                    api_v0_answer_feedback_path: %i[post],
+                  },
+                  period: 1.minute do
+    let(:route_params) do
+      {
+        conversation_id: SecureRandom.uuid,
+        question_id: SecureRandom.uuid,
+        answer_id: SecureRandom.uuid,
+      }
+    end
+  end
+
   describe "middleware ensures adherance to the OpenAPI specification" do
     context "when the response returned does not conform to the OpenAPI specification" do
       it "raises an error and returns the invalid params in the error message" do
