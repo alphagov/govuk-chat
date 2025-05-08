@@ -60,6 +60,19 @@ class Rack::Attack
     end
   end
 
+  ## Throttle by device ID - the app team would have to pass this to us in the header
+  throttle("get requests to Conversations API with device id", limit: 120, period: 1.minute) do |request|
+    if request.path.match?(CONVERSATION_API_PATH_REGEX) && request.get?
+      request.get_header("HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID").presence
+    end
+  end
+
+  throttle("all other http method requests to Conversations API with device id", limit: 20, period: 1.minute) do |request|
+    if request.path.match?(CONVERSATION_API_PATH_REGEX) && !request.get?
+      request.get_header("HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID").presence
+    end
+  end
+
   def self.rails_controller_action(url)
     route = Rails.application.routes.recognize_path(url)
 
