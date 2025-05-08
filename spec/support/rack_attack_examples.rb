@@ -45,4 +45,68 @@ module RackAttackExamples
       end
     end
   end
+
+  shared_examples "throttles traffic for an access token" do |routes:, period:|
+    let(:route_params) { {} }
+    let(:auth_token) { "Bearer testtoken123" }
+
+    before do
+      read_throttle = Rack::Attack.throttles["read requests to Conversations API with token"]
+      allow(read_throttle).to receive(:limit).and_return(1)
+      write_throttle = Rack::Attack.throttles["write requests to Conversations API with token"]
+      allow(write_throttle).to receive(:limit).and_return(1)
+    end
+
+    routes.each do |path, methods|
+      methods.each do |method|
+        before do
+          process(method.to_sym,
+                  public_send(path, **route_params),
+                  headers: { "HTTP_AUTHORIZATION" => auth_token })
+        end
+
+        context "when a access token uses it's allowance", :rack_attack do
+          it "rejects the next request to #{method} #{path}" do
+            process(method.to_sym,
+                    public_send(path, **route_params),
+                    headers: { "HTTP_AUTHORIZATION" => auth_token })
+
+            expect(response).to have_http_status(:too_many_requests)
+          end
+
+          it "normalises Bearer tokens with different formats" do
+            [
+              "bearer testtoken123",
+              "BEARER testtoken123",
+              " Bearer testtoken123",
+              "Bearer testtoken123 ",
+            ].each do |auth_value|
+              process(method.to_sym,
+                      public_send(path, **route_params),
+                      headers: { "HTTP_AUTHORIZATION" => auth_value })
+              expect(response).to have_http_status(:too_many_requests)
+            end
+          end
+
+          it "doesn't reject a request with a different token" do
+            process(method.to_sym,
+                    public_send(path, **route_params),
+                    headers: { "HTTP_AUTHORIZATION" => "Bearer testtoken456" })
+
+            expect(response).not_to have_http_status(:too_many_requests)
+          end
+
+          it "doesn't reject a request after the time period" do
+            travel_to(Time.current + period + 1.second) do
+              process(method.to_sym,
+                      public_send(path, **route_params),
+                      headers: { "HTTP_AUTHORIZATION" => auth_token })
+
+              expect(response).not_to have_http_status(:too_many_requests)
+            end
+          end
+        end
+      end
+    end
+  end
 end
