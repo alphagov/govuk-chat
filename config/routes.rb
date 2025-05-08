@@ -37,9 +37,6 @@ Rails.application.routes.draw do
     get "sign-out", to: "sessions#destroy"
     get "sign-in/:id/:token", to: "sessions#confirm", as: :magic_link
 
-    get "unsubscribe/waiting-list/:id/:token", to: "unsubscribe#waiting_list_user", as: :waiting_list_user_unsubscribe
-    get "unsubscribe/early-access/:id/:token", to: "unsubscribe#early_access_user", as: :early_access_user_unsubscribe
-
     scope :onboarding, constraints: html_json_constraint do
       get "", to: "onboarding#limitations", as: :onboarding_limitations
       post "", to: "onboarding#limitations_confirm", as: :onboarding_limitations_confirm
@@ -78,8 +75,6 @@ Rails.application.routes.draw do
     scope :metrics do
       get "", to: "metrics#index", as: :metrics
       scope defaults: { format: "json" }, constraints: html_json_constraint do
-        get "early-access-users", to: "metrics#early_access_users", as: :metrics_early_access_users
-        get "waiting-list-users", to: "metrics#waiting_list_users", as: :metrics_waiting_list_users
         get "conversations", to: "metrics#conversations", as: :metrics_conversations
         get "questions", to: "metrics#questions", as: :metrics_questions
         get "answer-feedback", to: "metrics#answer_feedback", as: :metrics_answer_feedback
@@ -94,26 +89,6 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :early_access_users, path: "/early-access-users" do
-      member do
-        get "/delete", to: "early_access_users#delete", as: :delete
-        get "/access/revoke", to: "early_access_users/access#revoke", as: :revoke
-        patch "/access/revoke", to: "early_access_users/access#revoke_confirm"
-        get "/access/shadow-ban", to: "early_access_users/access#shadow_ban", as: :shadow_ban
-        patch "/access/shadow-ban", to: "early_access_users/access#shadow_ban_confirm"
-        get "/access/restore", to: "early_access_users/access#restore", as: :restore
-        patch "/access/restore", to: "early_access_users/access#restore_confirm"
-      end
-    end
-
-    resources :waiting_list_users, path: "/waiting-list-users" do
-      member do
-        get "/delete", to: "waiting_list_users#delete", as: :delete
-        get "/promote", to: "waiting_list_users#promote", as: :promote
-        post "/promote", to: "waiting_list_users#promote_confirm"
-      end
-    end
-
     scope :settings do
       get "", to: "settings#show", as: :settings
 
@@ -122,16 +97,6 @@ Rails.application.routes.draw do
 
       get "/delayed-access-places", to: "settings/delayed_access_places#edit", as: :settings_edit_delayed_access_places
       patch "/delayed-access-places", to: "settings/delayed_access_places#update"
-
-      get "/max-waiting-list-places",
-          to: "settings/max_waiting_list_places#edit",
-          as: :settings_edit_max_waiting_list_places
-      patch "/max-waiting-list-places", to: "settings/max_waiting_list_places#update"
-
-      get "/waiting-list-promotions-per-run",
-          to: "settings/waiting_list_promotions_per_run#edit",
-          as: :settings_edit_waiting_list_promotions_per_run
-      patch "/waiting-list-promotions-per-run", to: "settings/waiting_list_promotions_per_run#update"
 
       get "/sign-up-enabled", to: "settings/sign_up_enabled#edit", as: :settings_edit_sign_up_enabled
       patch "/sign-up-enabled", to: "settings/sign_up_enabled#update"

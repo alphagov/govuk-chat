@@ -6,26 +6,6 @@ class Admin::MetricsController < Admin::BaseController
     policy.style_src(*policy.style_src, :unsafe_inline)
   end
 
-  def early_access_users
-    active_scope = EarlyAccessUser.where(created_at: start_time..).group(:source)
-    active_count = count_by_period(active_scope, :created_at)
-
-    deleted_scope = DeletedEarlyAccessUser.where(user_created_at: start_time..).group(:user_source)
-    deleted_count = count_by_period(deleted_scope, :user_created_at)
-
-    render json: combine_data(active_count, deleted_count).chart_json
-  end
-
-  def waiting_list_users
-    active_scope = WaitingListUser.where(created_at: start_time..).group(:source)
-    active_count = count_by_period(active_scope, :created_at)
-
-    deleted_scope = DeletedWaitingListUser.where(user_created_at: start_time..).group(:user_source)
-    deleted_count = count_by_period(deleted_scope, :user_created_at)
-
-    render json: combine_data(active_count, deleted_count).chart_json
-  end
-
   def conversations
     scope = Conversation.where(created_at: start_time..)
 
