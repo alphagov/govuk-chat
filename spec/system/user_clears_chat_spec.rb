@@ -1,6 +1,5 @@
 RSpec.describe "User clears chat" do
   scenario do
-    given_i_am_a_signed_in_early_access_user
     and_i_have_an_active_conversation_with_an_answered_question
     when_i_click_the_clear_chat_link
     and_i_cancel
@@ -11,7 +10,7 @@ RSpec.describe "User clears chat" do
   end
 
   def and_i_have_an_active_conversation_with_an_answered_question
-    @conversation = create(:conversation, user: @user)
+    @conversation = create(:conversation)
     set_rack_cookie(:conversation_id, @conversation.id)
     answer = build(:answer, message: "Example answer")
     create(:question, answer:, conversation: @conversation, message: "Example question")
