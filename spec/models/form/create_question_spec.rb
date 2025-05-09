@@ -71,26 +71,6 @@ RSpec.describe Form::CreateQuestion do
       end
     end
 
-    describe "within question limit validation" do
-      it "adds a error message if over the question limit" do
-        conversation.user = build(:early_access_user, questions_count: 2, individual_question_limit: 1)
-        form = described_class.new(conversation:, user_question:)
-        form.validate
-        expect(form.errors.messages[:base]).to eq([described_class::QUESTION_LIMIT_REACHED_MESSAGE])
-      end
-
-      it "is valid when under the question limit" do
-        conversation.user = build(:early_access_user, questions_count: 1, individual_question_limit: 2)
-        form = described_class.new(conversation:, user_question:)
-        expect(form).to be_valid
-      end
-
-      it "is valid when the conversation has no user" do
-        form = described_class.new(conversation:, user_question:)
-        expect(form).to be_valid
-      end
-    end
-
     describe "unicode tags" do
       let(:form) do
         described_class.new(
@@ -119,8 +99,7 @@ RSpec.describe Form::CreateQuestion do
     end
 
     context "when the conversation passed in on initialisation is persisted" do
-      let(:user) { create(:early_access_user) }
-      let(:conversation) { create(:conversation, user:, questions: [create(:question, :with_answer, created_at: 1.second.ago)]) }
+      let(:conversation) { create(:conversation, questions: [create(:question, :with_answer, created_at: 1.second.ago)]) }
 
       it "adds a new question with the correct attributes to the conversation" do
         described_class.new(user_question:, conversation:).submit
@@ -139,11 +118,6 @@ RSpec.describe Form::CreateQuestion do
         expect { form.submit }.to enqueue_job(ComposeAnswerJob)
       end
 
-      it "increments the user's questions_count by 1 if a user is associated with the conversation" do
-        form = described_class.new(user_question:, conversation:)
-        expect { form.submit }.to change { user.reload.questions_count }.by(1)
-      end
-
       context "when the user question contains unicode tags" do
         let(:message_with_unicode_tags) { "Message with hidden characters#{hidden_in_unicode_tags}" }
         let(:form) { described_class.new(conversation:, user_question: message_with_unicode_tags) }
@@ -158,26 +132,10 @@ RSpec.describe Form::CreateQuestion do
           expect(Question.where(conversation:).last.unsanitised_message).to eq(message_with_unicode_tags)
         end
       end
-
-      context "and the user has been shadow banned" do
-        it "enqueues a ComposeAnswerJob with a random delay" do
-          freeze_time do
-            current_time = Time.current
-            user.update!(shadow_banned_at: current_time)
-
-            form = described_class.new(conversation:, user_question:)
-
-            expect { form.submit }
-              .to enqueue_job(ComposeAnswerJob)
-              .at(current_time + 5.seconds..current_time + 20.seconds)
-          end
-        end
-      end
     end
 
     context "when the conversation that is passed is a new record" do
-      let(:user) { create(:early_access_user) }
-      let(:conversation) { build(:conversation, user:) }
+      let(:conversation) { build(:conversation) }
 
       it "persists the conversation with the users question" do
         form = described_class.new(user_question:, conversation:)
@@ -196,16 +154,6 @@ RSpec.describe Form::CreateQuestion do
             message: user_question,
             answer_strategy: Rails.configuration.answer_strategy,
           )
-      end
-
-      it "associates the conversation with an early access user if present on the conversation" do
-        form = described_class.new(user_question:, conversation:)
-        expect { form.submit }.to change { user.reload.conversations.count }.by(1)
-      end
-
-      it "increments the user's questions_count by 1" do
-        form = described_class.new(user_question:, conversation:)
-        expect { form.submit }.to change { user.reload.questions_count }.by(1)
       end
     end
   end
