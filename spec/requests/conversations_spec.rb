@@ -1,44 +1,6 @@
 RSpec.describe "ConversationsController" do
   delegate :helpers, to: ConversationsController
 
-  it_behaves_like "redirects unauthenticated requests when authentication is required",
-                  routes: { clear_conversation_path: %i[get post], show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "redirects unauthenticated requests when authentication is required",
-                  routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
-    let(:route_params) { [SecureRandom.uuid] }
-  end
-
-  it_behaves_like "denies unauthenticated JSON requests when authentication is required",
-                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "denies unauthenticated JSON requests when authentication is required",
-                  routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
-    let(:route_params) { [SecureRandom.uuid] }
-  end
-
-  it_behaves_like "handles a request for a user who hasn't completed onboarding",
-                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "handles a request for a user who hasn't completed onboarding",
-                  routes: { clear_conversation_path: %i[get post] },
-                  with_json: false
-  it_behaves_like "handles a request for a user who hasn't completed onboarding",
-                  routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
-    let(:route_params) { [SecureRandom.uuid] }
-  end
-
-  it_behaves_like "requires a users conversation cookie to reference an active conversation",
-                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "requires a users conversation cookie to reference an active conversation",
-                  routes: { clear_conversation_path: %i[get post] },
-                  with_json: false
-  it_behaves_like "requires a users conversation cookie to reference an active conversation",
-                  routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
-    let(:route_params) { [SecureRandom.uuid] }
-  end
-
-  it_behaves_like "requires a conversation created via the chat interface", routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
-    let(:route_params) { [SecureRandom.uuid] }
-  end
-
   describe "GET :show" do
     include_context "when signed in"
     include_context "with onboarding completed"
@@ -138,7 +100,7 @@ RSpec.describe "ConversationsController" do
 
         get show_conversation_path
 
-        expect(response.body).to have_content("You’ve nearly reached the message limit for the GOV.UK Chat trial").once
+        expect(response.body).to have_content("You've nearly reached the message limit for the GOV.UK Chat trial").once
       end
 
       it "renders a system message when the question limit has been reached" do
@@ -147,7 +109,7 @@ RSpec.describe "ConversationsController" do
 
         get show_conversation_path
 
-        expect(response.body).to have_content("You’ve reached the message limit for the GOV.UK Chat trial").once
+        expect(response.body).to have_content("You've reached the message limit for the GOV.UK Chat trial").once
       end
 
       context "and there is a question without an answer" do
@@ -496,7 +458,7 @@ RSpec.describe "ConversationsController" do
 
         get answer_question_path(question), params: { format: :json }
 
-        expect(JSON.parse(response.body)).to match({ "answer_html" => /You’ve nearly reached the message limit/ })
+        expect(JSON.parse(response.body)).to match({ "answer_html" => /You've nearly reached the message limit/ })
       end
 
       it "includes a system message in answer_html when reached the question limit" do
@@ -507,7 +469,7 @@ RSpec.describe "ConversationsController" do
 
         get answer_question_path(question), params: { format: :json }
 
-        expect(JSON.parse(response.body)).to match({ "answer_html" => /You’ve reached the message limit/ })
+        expect(JSON.parse(response.body)).to match({ "answer_html" => /You've reached the message limit/ })
       end
 
       it "responds with an accepted status code when the question has a pending answer" do

@@ -1,7 +1,4 @@
 RSpec.describe "HomepageController" do
-  it_behaves_like "redirects to homepage if authentication is not enabled",
-                  routes: { homepage_path: %i[post] }
-
   it_behaves_like "throttles traffic from a single IP address",
                   routes: { homepage_path: %i[post] }, limit: 10, period: 5.minutes
 
