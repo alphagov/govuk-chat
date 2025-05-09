@@ -135,4 +135,82 @@ module RackAttackExamples
       end
     end
   end
+
+  RSpec.shared_examples "throttles traffic for a single device" do |read_routes:, write_routes:, period:|
+    include_context "with rack attack helpers"
+
+    let(:route_params) { {} }
+    let(:device_id) { "test-device-123" }
+
+    before do
+      read_throttle = Rack::Attack.throttles["get requests to Conversations API with device id"]
+      allow(read_throttle).to receive(:limit).and_return(read_routes.count)
+      write_throttle = Rack::Attack.throttles["all other http method requests to Conversations API with device id"]
+      allow(write_throttle).to receive(:limit).and_return(write_routes.count)
+    end
+
+    [read_routes, write_routes].each do |routes|
+      before do
+        first_routes_path = routes.first.first.to_sym
+        first_routes_method = routes.first.second.first.to_sym
+
+        routes.count.times do |i|
+          process_request(
+            first_routes_method,
+            first_routes_path,
+            {
+              params: {},
+              headers: { "HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID" => device_id },
+              as: :json,
+            },
+          )
+          raise "Returning too_many_requests on request #{i + 1}" if response.status == 429
+        end
+      end
+
+      routes.each do |path, methods|
+        context "when a users device uses its allowance", :rack_attack do
+          methods.each do |method|
+            it "rejects the next request to #{method} #{path}" do
+              expect_throttled_response(
+                method,
+                path,
+                {
+                  params: {},
+                  headers: { "HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID" => device_id },
+                  as: :json,
+                },
+              )
+            end
+
+            it "doesn't reject a request with a different device id" do
+              expect_not_throttled_response(
+                method,
+                path,
+                {
+                  params: {},
+                  headers: { "HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID" => "test-device-456" },
+                  as: :json,
+                },
+              )
+            end
+
+            it "doesn't reject a request after the time period" do
+              travel_to(Time.current + period + 1.second) do
+                expect_not_throttled_response(
+                  method,
+                  path,
+                  {
+                    params: {},
+                    headers: { "HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID" => device_id },
+                    as: :json,
+                  },
+                )
+              end
+            end
+          end
+        end
+      end
+    end
+  end
 end
