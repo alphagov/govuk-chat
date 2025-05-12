@@ -28,6 +28,13 @@ module StubBedrock
     bedrock_client
   end
 
+  def stub_bedrock_invoke_model(*responses)
+    bedrock_client = Aws::BedrockRuntime::Client.new(stub_responses: true)
+    allow(Aws::BedrockRuntime::Client).to receive(:new).and_return(bedrock_client)
+    bedrock_client.stub_responses(:invoke_model, responses)
+    bedrock_client
+  end
+
   def bedrock_claude_structured_answer_response(question, answer, answered: true)
     lambda do |context|
       given_question = context.params.dig(:messages, -1, :content, 0, :text)
@@ -86,6 +93,15 @@ module StubBedrock
 
       bedrock_claude_text_response(response_text).call(context)
     end
+  end
+
+  def bedrock_titan_embedding_response(embedding_array)
+    {
+      content_type: "application/json",
+      body: {
+        embedding: embedding_array,
+      }.to_json,
+    }
   end
 
   def bedrock_claude_text_response(response_text,
