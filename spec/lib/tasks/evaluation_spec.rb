@@ -139,6 +139,23 @@ RSpec.describe "rake evaluation tasks" do
                                           conversation: an_instance_of(Conversation),
                                           answer_strategy: default_answer_strategy))
     end
+
+    it "warns when an answer has an erorr status" do
+      error_message = "Something is broken"
+      answer = build(:answer, status: :error_answer_service_error, error_message:)
+
+      allow(AnswerComposition::Composer)
+        .to receive(:call)
+        .with(an_instance_of(Question))
+        .and_return(answer)
+
+      ClimateControl.modify(QUESTION: "What is the current VAT rate?") do
+        expected_message = "Warning: answer has an error status: error_answer_service_error\n#{error_message}\n"
+        expect { Rake::Task[task_name].invoke("claude_structured_answer") }
+          .to output.to_stdout
+          .and output(expected_message).to_stderr
+      end
+    end
   end
 
   describe "generate_jailbreak_guardrail_response" do

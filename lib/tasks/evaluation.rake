@@ -44,6 +44,12 @@ namespace :evaluation do
 
     question = Question.new(message: ENV["QUESTION"], conversation: Conversation.new, answer_strategy:)
     answer = AnswerComposition::Composer.call(question)
+
+    if answer.status =~ /^error/
+      warn "Warning: answer has an error status: #{answer.status}"
+      warn answer.error_message
+    end
+
     puts({ message: answer.message }.to_json)
   end
 
