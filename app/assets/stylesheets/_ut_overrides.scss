@@ -14,6 +14,10 @@
   display: none;
 }
 
+.govuk-link, .app-c-conversation-message__body a {
+  text-decoration: none;
+}
+
 .app-c-header__product-name {
   font-weight: bold;
   position: absolute;
