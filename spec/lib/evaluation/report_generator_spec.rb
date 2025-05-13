@@ -93,16 +93,17 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
       expect(items).to match([
         {
           question: "How do I pay VAT?",
-          llm_answer: "First answer from OpenAI",
+          answer: hash_including("message" => "First answer from OpenAI"),
           retrieved_context: [
-            hash_including(title: "Late payments"),
-            hash_including(title: "Pay your VAT bill online"),
+            hash_including(title: "Late payments", used: true),
+            hash_including(title: "Pay your VAT bill online", used: true),
+            hash_including(title: "Unused source", used: false),
           ],
         },
         {
           question: "Do I need a visa?",
-          llm_answer: "Second answer from OpenAI",
-          retrieved_context: [hash_including(title: "Check if you need a visa")],
+          answer: hash_including("message" => "Second answer from OpenAI"),
+          retrieved_context: [hash_including(title: "Check if you need a visa", used: true)],
         },
       ])
     end
@@ -113,12 +114,23 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
 
       expect(context).to eq({
         title: "Late payments",
+        used: true,
+        exact_path: "https://www.test.gov.uk/vat-payments/late-payments",
+        base_path: "https://www.test.gov.uk/vat-payments",
+        content_chunk_id: "id2",
+        content_chunk_available: true,
         heading_hierarchy: ["VAT", "Late payments"],
         description: "Paying your VAT bill",
         html_content: "<p>Some content</p>",
-        exact_path: "https://www.test.gov.uk/vat-payments/late-payments",
-        base_path: "https://www.test.gov.uk/vat-payments",
       })
+    end
+
+    it "returns all the answer fields except ones written on DB persistence" do
+      items = described_class.call(input_file.path)
+      answer_data = items.first[:answer]
+      expected_answer_data = answers.first.as_json(except: %i[id question_id created_at updated_at])
+
+      expect(answer_data).to match(expected_answer_data)
     end
 
     context "when the content chunk cannot be found" do
@@ -126,11 +138,14 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
         [build(:answer, sources: [build(:answer_source, content_chunk_id: "id999")])]
       end
 
-      it "includes an error in the retrieved_context" do
+      it "marks the chunk as unavailable" do
         items = described_class.call(input_file.path)
         context = items.first[:retrieved_context].first
 
-        expect(context).to include(error: "Could not find content chunk")
+        expect(context).to include(
+          content_chunk_id: "id999",
+          content_chunk_available: false,
+        )
       end
     end
 
@@ -143,11 +158,14 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
         ]
       end
 
-      it "includes an error in the retrieved_context" do
+      it "marks the content chunk as unavailable" do
         items = described_class.call(input_file.path)
         context = items.first[:retrieved_context].first
 
-        expect(context).to include(error: "Content chunk digest mismatch")
+        expect(context).to include(
+          content_chunk_id: "id1",
+          content_chunk_available: false,
+        )
       end
     end
 

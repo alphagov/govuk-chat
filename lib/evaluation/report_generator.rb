@@ -13,10 +13,13 @@ module Evaluation
         question = build_question(evaluation_question)
         answer = AnswerComposition::Composer.call(question)
 
+        # without DB persistence data as it isn't saved to the DB
+        answer_json = answer.as_json(except: %i[id question_id created_at updated_at])
+
         {
           question: evaluation_question,
-          llm_answer: answer.message,
-          retrieved_context: answer.sources.select(&:used?).flat_map(&method(:build_retrieved_context)),
+          answer: answer_json,
+          retrieved_context: answer.sources.flat_map(&method(:build_retrieved_context)),
         }
       end
     end
@@ -36,24 +39,31 @@ module Evaluation
     end
 
     def build_retrieved_context(source)
+      data = {
+        title: source.title,
+        used: source.used,
+        exact_path: absolute_govuk_url(source.exact_path),
+        base_path: absolute_govuk_url(source.base_path),
+        content_chunk_id: source.content_chunk_id,
+        content_chunk_available: false,
+      }
+
       begin
         chunk = repository.chunk(source.content_chunk_id)
       rescue Search::ChunkedContentRepository::NotFound
-        return { error: "Could not find content chunk" }
+        return data
       end
 
       if chunk.digest != source.content_chunk_digest
-        return { error: "Content chunk digest mismatch" }
+        return data
       end
 
-      {
-        title: source.title,
+      data.merge({
+        content_chunk_available: true,
         heading_hierarchy: chunk.heading_hierarchy,
         description: chunk.description,
         html_content: chunk.html_content,
-        exact_path: absolute_govuk_url(source.exact_path),
-        base_path: absolute_govuk_url(source.base_path),
-      }
+      })
     end
 
     def repository
