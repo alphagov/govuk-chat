@@ -1,3 +1,5 @@
+@import "mixins";
+
 .govuk-header {
   background-color: govuk-colour("blue");
   min-height: 7rem;
@@ -84,4 +86,40 @@
 
 .app-c-conversation-message__feedback {
   display: none;
+}
+
+.app-c-conversation-sources__details {
+  position: relative;
+}
+
+.app-c-conversation-sources__summary::marker {
+  content: "";
+}
+
+.app-c-conversation-sources__summary::after {
+  @include chevron(govuk-colour("blue"), false);
+  position: absolute;
+  right: 0;
+  top: 9px;
+}
+
+.app-c-conversation-sources-list {
+  padding-left: 0;
+}
+
+.app-c-conversation-sources-list__item {
+  list-style: none;
+  position: relative;
+  padding-bottom: govuk-spacing(3);
+  border-bottom: 1px solid govuk-tint(govuk-colour("light-blue"), 50%);
+
+  a::after {
+    position: absolute;
+    right: 0;
+    top: 0
+  }
+}
+
+.app-c-conversation-sources-list__item:last-of-type {
+  border-bottom: none;
 }
