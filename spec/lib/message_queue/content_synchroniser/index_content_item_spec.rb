@@ -13,6 +13,7 @@ RSpec.describe MessageQueue::ContentSynchroniser::IndexContentItem, :chunked_con
 
     before do
       stub_any_openai_embedding
+      stub_bedrock_embedding(:titan)
       allow(Chunking::ContentItemToChunks).to receive(:call).with(content_item).and_return(chunks)
     end
 
