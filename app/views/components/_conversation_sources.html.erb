@@ -1,34 +1,28 @@
 <div class="app-c-conversation-sources">
-  <div class="app-c-warning-text">
-    <span class="app-c-warning-text__icon" aria-hidden="true">!</span>
-    <span class="app-c-warning-text__text">
-      <span class="govuk-visually-hidden">Warning</span>
-      <strong>Check this answer</strong>
-      <span class="app-c-warning-text__opens-in-new-tab">(links open in a new tab)</span>
-    </span>
-  </div>
+  <details class="app-c-conversation-sources__details">
+    <summary class="app-c-conversation-sources__summary govuk-body">
+      <strong>Pages used in this answer</strong>
+    </summary>
 
-  <ul class="app-c-conversation-sources-list gem-c-list govuk-list govuk-list--bullet" data-module="ga4-link-tracker">
-    <% sources.map.with_index do |source, index| %>
-      <%= tag.li class: "app-c-conversation-sources-list__item" do %>
-        <%= link_to source.fetch(:href),
-          class: "govuk-link",
-          target: "_blank",
-          rel: "noopener noreferrer",
-          data: {
-            ga4_link: {
-              "event_name": "navigation",
-              "index": {
-                "index_link": index + 1,
+    <ul class="app-c-conversation-sources-list gem-c-list govuk-list govuk-list--bullet" data-module="ga4-link-tracker">
+      <% sources.map.with_index do |source, index| %>
+        <%= tag.li class: "app-c-conversation-sources-list__item" do %>
+          <%= link_to source.fetch(:href),
+            class: "govuk-link",
+            data: {
+              ga4_link: {
+                "event_name": "navigation",
+                "index": {
+                  "index_link": index + 1,
+                },
+                "index_total": sources.count,
+                "type": "chat source",
               },
-              "index_total": sources.count,
-              "type": "chat source",
-            },
-          } do %>
-          <%= source.fetch(:title).html_safe + tag.span("(opens in new tab)",
-            class: "govuk-visually-hidden") %>
+            } do %>
+            <%= source.fetch(:title).html_safe %>
+          <% end %>
         <% end %>
       <% end %>
-    <% end %>
-  </ul>
+    </ul>
+  </details>
 </div>
