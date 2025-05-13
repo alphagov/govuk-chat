@@ -96,17 +96,48 @@ RSpec.describe "rake evaluation tasks" do
 
     it "outputs the answer as JSON to stdout" do
       answer = build(:answer)
+      question = "What is the current VAT rate?"
+      answer_strategy = "claude_structured_answer"
 
       allow(AnswerComposition::Composer)
         .to receive(:call)
         .with(an_instance_of(Question))
         .and_return(answer)
 
-      ClimateControl.modify(QUESTION: "What is the current VAT rate?") do
+      ClimateControl.modify(QUESTION: question) do
         answer_json = { message: answer.message }.to_json
-        expect { Rake::Task[task_name].invoke }
+        expect { Rake::Task[task_name].invoke(answer_strategy) }
           .to output("#{answer_json}\n").to_stdout
       end
+
+      expect(AnswerComposition::Composer)
+        .to have_received(:call)
+        .with(an_object_having_attributes(message: question,
+                                          conversation: an_instance_of(Conversation),
+                                          answer_strategy: answer_strategy))
+    end
+
+    it "warns when an answer_strategy argument isn't given" do
+      answer = build(:answer)
+      question = "What is the current VAT rate?"
+      default_answer_strategy = Rails.configuration.answer_strategy
+
+      allow(AnswerComposition::Composer)
+        .to receive(:call)
+        .with(an_instance_of(Question))
+        .and_return(answer)
+
+      ClimateControl.modify(QUESTION: question) do
+        expect { Rake::Task[task_name].invoke }
+          .to output.to_stdout
+          .and output("No answer strategy argument provided, using #{default_answer_strategy}\n").to_stderr
+      end
+
+      expect(AnswerComposition::Composer)
+        .to have_received(:call)
+        .with(an_object_having_attributes(message: question,
+                                          conversation: an_instance_of(Conversation),
+                                          answer_strategy: default_answer_strategy))
     end
   end
 

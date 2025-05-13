@@ -36,10 +36,13 @@ namespace :evaluation do
   end
 
   desc "Generate a single answer to a question returned as JSON, for 3rd party evaluation tools"
-  task generate_answer: :environment do
+  task :generate_answer, %i[answer_strategy] => :environment do |_, args|
     raise "requires a QUESTION env var" if ENV["QUESTION"].blank?
 
-    question = Question.new(message: ENV["QUESTION"], conversation: Conversation.new)
+    answer_strategy = args.fetch(:answer_strategy, Rails.configuration.answer_strategy)
+    warn "No answer strategy argument provided, using #{answer_strategy}" unless args[:answer_strategy]
+
+    question = Question.new(message: ENV["QUESTION"], conversation: Conversation.new, answer_strategy:)
     answer = AnswerComposition::Composer.call(question)
     puts({ message: answer.message }.to_json)
   end
