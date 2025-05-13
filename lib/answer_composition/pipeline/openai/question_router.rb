@@ -18,14 +18,14 @@ module AnswerComposition::Pipeline::OpenAI
       if genuine_rag?
         answer.assign_attributes(
           question_routing_label:,
-          question_routing_confidence_score: llm_classification_data["confidence"],
+          question_routing_confidence_score: confidence_score,
         )
       else
         answer.assign_attributes(
           message: use_llm_answer? ? llm_answer : Answer::CannedResponses.response_for_question_routing_label(question_routing_label),
           status: answer_status,
           question_routing_label:,
-          question_routing_confidence_score: llm_classification_data["confidence"],
+          question_routing_confidence_score: confidence_score,
         )
 
         context.abort_pipeline unless use_llm_answer?
@@ -56,6 +56,12 @@ module AnswerComposition::Pipeline::OpenAI
 
     def openai_token_limit_reached?
       openai_response_choice["finish_reason"] == "length"
+    end
+
+    def confidence_score
+      return if openai_token_limit_reached?
+
+      llm_classification_data["confidence"]
     end
 
     def llm_answer
