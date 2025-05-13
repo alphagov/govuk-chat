@@ -71,8 +71,12 @@ RSpec.describe "rake search tasks" do
     before do
       Rake::Task[task_name].reenable
 
-      allow(Search::TextToEmbedding).to receive(:call) do |arg|
+      allow(Search::TextToEmbedding::OpenAI).to receive(:call) do |arg|
         arg.map { |a| mock_openai_embedding(a) }
+      end
+
+      allow(Search::TextToEmbedding::Titan).to receive(:call) do |arg|
+        arg.map { |a| mock_titan_embedding(a) }
       end
     end
 
