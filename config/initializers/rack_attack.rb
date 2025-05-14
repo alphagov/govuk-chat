@@ -1,3 +1,8 @@
+require "api/rate_limit"
+require "api/rate_limit/middleware"
+
+Rails.application.config.middleware.insert_after ActionDispatch::Executor, Api::RateLimit::Middleware
+
 class Rack::Attack
   CONVERSATION_API_PATH_REGEX = /^\/api\/v\d+\/conversation/
 
@@ -29,25 +34,25 @@ class Rack::Attack
     end
   end
 
-  throttle("read requests to Conversations API with token", limit: 10_000, period: 1.minute) do |request|
+  throttle(Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME, limit: 10_000, period: 1.minute) do |request|
     if request.path.match?(CONVERSATION_API_PATH_REGEX) && read_method?(request)
       normalise_auth_header(request.get_header("HTTP_AUTHORIZATION"))
     end
   end
 
-  throttle("write requests to Conversations API with token", limit: 500, period: 1.minute) do |request|
+  throttle(Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME, limit: 500, period: 1.minute) do |request|
     if request.path.match?(CONVERSATION_API_PATH_REGEX) && !read_method?(request)
       normalise_auth_header(request.get_header("HTTP_AUTHORIZATION"))
     end
   end
 
-  throttle("read requests to Conversations API with device id", limit: 120, period: 1.minute) do |request|
+  throttle(Api::RateLimit::GOVUK_CLIENT_DEVICE_READ_THROTTLE_NAME, limit: 120, period: 1.minute) do |request|
     if request.path.match?(CONVERSATION_API_PATH_REGEX) && read_method?(request)
       request.get_header("HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID").presence
     end
   end
 
-  throttle("write requests to Conversations API with device id", limit: 20, period: 1.minute) do |request|
+  throttle(Api::RateLimit::GOVUK_CLIENT_DEVICE_WRITE_THROTTLE_NAME, limit: 20, period: 1.minute) do |request|
     if request.path.match?(CONVERSATION_API_PATH_REGEX) && !read_method?(request)
       request.get_header("HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID").presence
     end

@@ -55,9 +55,9 @@ module RackAttackExamples
     let(:headers) { { "HTTP_AUTHORIZATION" => "Bearer testtoken123" } }
 
     before do
-      read_throttle = Rack::Attack.throttles["read requests to Conversations API with token"]
+      read_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME]
       allow(read_throttle).to receive(:limit).and_return(1)
-      write_throttle = Rack::Attack.throttles["write requests to Conversations API with token"]
+      write_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME]
       allow(write_throttle).to receive(:limit).and_return(1)
     end
 
@@ -95,6 +95,19 @@ module RackAttackExamples
               expect_not_throttled_response(method, path, headers)
             end
           end
+
+          it "returns rate limit details in the headers" do
+            travel_to(Time.zone.local(2000, 1, 1)) do
+              process_request(method, path, headers)
+
+              expect(response.headers.keys)
+                .to include(
+                  a_string_matching(/govuk-api-user-(read|write)-ratelimit-limit/),
+                  a_string_matching(/govuk-api-user-(read|write)-ratelimit-remaining/),
+                  a_string_matching(/govuk-api-user-(read|write)-ratelimit-reset/),
+                )
+            end
+          end
         end
       end
     end
@@ -106,10 +119,10 @@ module RackAttackExamples
     let(:headers) { { "HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID" => "test-device-123" } }
 
     before do
-      read_throttle = Rack::Attack.throttles["read requests to Conversations API with device id"]
+      read_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_CLIENT_DEVICE_READ_THROTTLE_NAME]
       allow(read_throttle).to receive(:limit).and_return(1)
 
-      write_throttle = Rack::Attack.throttles["write requests to Conversations API with device id"]
+      write_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_CLIENT_DEVICE_WRITE_THROTTLE_NAME]
       allow(write_throttle).to receive(:limit).and_return(1)
     end
 
@@ -133,6 +146,19 @@ module RackAttackExamples
           it "doesn't reject a request to #{method} #{path} after the time period" do
             travel_to(Time.current + period + 1.second) do
               expect_not_throttled_response(method, path, headers)
+            end
+          end
+
+          it "returns rate limit details in the headers" do
+            travel_to(Time.zone.local(2000, 1, 1)) do
+              process_request(method, path, headers)
+
+              expect(response.headers.keys)
+                .to include(
+                  a_string_matching(/govuk-client-device-id-(read|write)-ratelimit-limit/),
+                  a_string_matching(/govuk-client-device-id-(read|write)-ratelimit-remaining/),
+                  a_string_matching(/govuk-client-device-id-(read|write)-ratelimit-reset/),
+                )
             end
           end
         end
