@@ -127,3 +127,16 @@
 .app-c-conversation-sources-list__item:last-of-type {
   border-bottom: none;
 }
+
+.app-c-conversation-message__message--accuracy-warning {
+  margin: govuk-spacing(3) 0;
+  @include govuk-media-query($from: tablet) {
+    margin: govuk-spacing(5) 0;
+  }
+
+  width: calc(100% - 40px);
+}
+
+.app-c-conversation-message__body--accuracy-warning {
+  padding: 0;
+}
