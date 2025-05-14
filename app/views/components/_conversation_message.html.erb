@@ -9,6 +9,7 @@
   message_classes = %w[app-c-conversation-message__message]
   message_classes << (is_question ? "app-c-conversation-message__message--user-message"
   : "app-c-conversation-message__message--govuk-message")
+  status ||= nil
 %>
 
 <%= content_tag :li, id:, class: "app-c-conversation-message js-conversation-message", data: data_attributes do %>
@@ -75,6 +76,27 @@
         <% end %>
       </div>
     <% end %>
+  <% end %>
+
+  <% if status === "answered" %>
+    <div class="app-c-conversation-message__message app-c-conversation-message__message--accuracy-warning">
+      <div class="app-c-conversation-message__identifier">
+        <% if !is_question %>
+          <%=
+            inline_svg_tag "mobile_icons/ios/speech-bubble-white.svg",
+            class: "app-c-conversation-message__identifier-icon",
+            aria_hidden: true
+          %>
+        <% end %>
+      </div>
+      
+      <div class="app-c-conversation-message__body app-c-conversation-message__body--accuracy-warning">
+        <div class="accuracy-warning">
+          <%= inline_svg_tag "mobile_icons/ios/accuracy-warning-icon.svg", class: "accuracy-warning-icon", aria_hidden: true %>
+          <p class="govuk-body govuk-!-margin-bottom-0">Chat can make mistakes. Check GOV.UK pages directly for important information.</p>
+        </div>
+      </div>
+    </div>
   <% end %>
 
   <% if feedback_url.present? %>
