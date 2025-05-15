@@ -33,6 +33,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PendingQuestion"
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
+            Govuk-Api-User-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
+            Govuk-Api-User-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
+            Govuk-Client-Device-Id-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitLimit'
+            Govuk-Client-Device-Id-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitRemaining'
+            Govuk-Client-Device-Id-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitReset'
         "422":
           description: |
             Validation error on question submission (such as PII in question)
@@ -40,6 +53,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
+            Govuk-Api-User-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
+            Govuk-Api-User-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
+            Govuk-Client-Device-Id-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitLimit'
+            Govuk-Client-Device-Id-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitRemaining'
+            Govuk-Client-Device-Id-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitReset'
+        "429":
+          description: |
+            Too many requests to write endpoints from an Api User or Device ID
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
+            Govuk-Api-User-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
+            Govuk-Api-User-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
+            Govuk-Client-Device-Id-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitLimit'
+            Govuk-Client-Device-Id-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitRemaining'
+            Govuk-Client-Device-Id-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitReset'
 
   /conversation/{conversation_id}:
     get:
@@ -65,6 +107,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Conversation"
+          headers:
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-Client-Device-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitLimit'
+            Govuk-Client-Device-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitRemaining'
+            Govuk-Client-Device-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
         "404":
           description: |
             Either a conversation never existed with this id or has now expired
@@ -72,6 +127,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenericError"
+          headers:
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-Client-Device-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitLimit'
+            Govuk-Client-Device-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitRemaining'
+            Govuk-Client-Device-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
+        "429":
+          description: |
+            Too many requests to read endpoints from an Api User or Device ID
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-Client-Device-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitLimit'
+            Govuk-Client-Device-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitRemaining'
+            Govuk-Client-Device-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
 
     put:
       summary: Update a conversation with a new question
@@ -99,6 +183,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PendingQuestion"
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
+            Govuk-Api-User-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
+            Govuk-Api-User-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
+            Govuk-Client-Device-Id-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitLimit'
+            Govuk-Client-Device-Id-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitRemaining'
+            Govuk-Client-Device-Id-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitReset'
         "422":
           description: |
             Validation error on question submission (such as PII in question
@@ -107,11 +204,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
+            Govuk-Api-User-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
+            Govuk-Api-User-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
+            Govuk-Client-Device-Id-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitLimit'
+            Govuk-Client-Device-Id-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitRemaining'
+            Govuk-Client-Device-Id-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitReset'
+        "429":
+          description: |
+            Too many requests to write endpoints from an Api User or Device ID
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
+            Govuk-Api-User-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
+            Govuk-Api-User-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
+            Govuk-Client-Device-Id-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitLimit'
+            Govuk-Client-Device-Id-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitRemaining'
+            Govuk-Client-Device-Id-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitReset'
 
   /conversation/{conversation_id}/questions/{question_id}/answer:
     get:
       summary: Look up the answer to a question
-      description:
+      description: |
         This endpoint is intended to be polled while awaiting an answer to a
         question
       parameters:
@@ -135,14 +261,69 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Answer"
+          headers:
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-Client-Device-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitLimit'
+            Govuk-Client-Device-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitRemaining'
+            Govuk-Client-Device-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
         "202":
           description: The answer is still being generated
+          headers:
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-Client-Device-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitLimit'
+            Govuk-Client-Device-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitRemaining'
+            Govuk-Client-Device-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
         "404":
           description: Conversation or question do not exist
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenericError"
+          headers:
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-Client-Device-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitLimit'
+            Govuk-Client-Device-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitRemaining'
+            Govuk-Client-Device-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
+        "429":
+          description: |
+            Too many requests to read endpoints from an Api User or Device ID
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-Client-Device-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitLimit'
+            Govuk-Client-Device-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitRemaining'
+            Govuk-Client-Device-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
 
   /conversation/{conversation_id}/answers/{answer_id}/feedback:
     post:
@@ -178,18 +359,74 @@ paths:
       responses:
         "201":
           description: Feedback successfully submitted
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
+            Govuk-Api-User-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
+            Govuk-Api-User-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
+            Govuk-Client-Device-Id-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitLimit'
+            Govuk-Client-Device-Id-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitRemaining'
+            Govuk-Client-Device-Id-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitReset'
         "422":
           description: Validation error processing the feedback
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
+            Govuk-Api-User-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
+            Govuk-Api-User-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
+            Govuk-Client-Device-Id-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitLimit'
+            Govuk-Client-Device-Id-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitRemaining'
+            Govuk-Client-Device-Id-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitReset'
         "404":
           description: Conversation or answer does not exist
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenericError"
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
+            Govuk-Api-User-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
+            Govuk-Api-User-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
+            Govuk-Client-Device-Id-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitLimit'
+            Govuk-Client-Device-Id-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitRemaining'
+            Govuk-Client-Device-Id-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitReset'
+        "429":
+          description: |
+            Too many requests to write endpoints from an Api User or Device ID
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
+            Govuk-Api-User-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
+            Govuk-Api-User-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
+            Govuk-Client-Device-Id-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitLimit'
+            Govuk-Client-Device-Id-Write-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitRemaining'
+            Govuk-Client-Device-Id-Write-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitReset'
+
 
 security:
   - bearerAuth: []
@@ -210,6 +447,67 @@ components:
         An identifier for an individual end-user client to be used to provide
         individual end-user rate limiting to ensure that no one client can
         consume all of an API users' limits.
+      schema:
+        type: string
+  headers:
+    GovukApiUserReadRateLimitLimit:
+      description: The request limit for the API user in the current period.
+      schema:
+        type: string
+    GovukApiUserReadRateLimitRemaining:
+      description: The number of remaining requests for the API user in the current period.
+      schema:
+        type: string
+    GovukApiUserReadRateLimitReset:
+      description: |
+        Time remaining in seconds until the read request limit is reset for the API User.
+        If the api user is currently at the limit, this is the time until next request can be made without returning
+        a 429 Too Many Requests response.
+      schema:
+        type: string
+    GovukClientDeviceIdReadRateLimitLimit:
+      description: The request limit for the Device ID in the current period.
+      schema:
+        type: string
+    GovukClientDeviceIdReadRateLimitRemaining:
+      description: The number of remaining requests for the Device ID in the current period.
+      schema:
+        type: string
+    GovukClientDeviceIdReadRateLimitReset:
+      description: |
+        Time remaining in seconds until the read request limit is reset for the Device ID.
+        If the Device ID is currently at the limit, this is the time until next request can be made without returning
+        a 429 Too Many Requests response.
+      schema:
+        type: string
+    GovukApiUserWriteRateLimitLimit:
+      description: The request limit for API User writes in the current period.
+      schema:
+        type: string
+    GovukApiUserWriteRateLimitRemaining:
+      description: The number of remaining API User write requests in the current period.
+      schema:
+        type: string
+    GovukApiUserWriteRateLimitReset:
+      description: |
+        Time remaining in seconds until the write request limit is reset for the API User.
+        If the api user is currently at the limit, this is the time until next request can be made without returning
+        a 429 Too Many Requests response.
+      schema:
+        type: string
+    GovukClientDeviceIdWriteRateLimitLimit:
+      description: The request limit for Device ID writes in the current period.
+      schema:
+        type: string
+    GovukClientDeviceIdWriteRateLimitRemaining:
+      description: The number of remaining Device ID write requests in the current period.
+      schema:
+        type: string
+    GovukClientDeviceIdWriteRateLimitReset:
+      description: |
+        Time remaining in seconds until the write request limit is reset for the Device ID.
+        If the Device ID is currently at the limit, this is the time until next request can be made without returning
+        a 429 Too Many Requests response.
       schema:
         type: string
   schemas:
