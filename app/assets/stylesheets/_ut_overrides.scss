@@ -46,6 +46,11 @@
 .app-c-question-form__input {
   border: 1px solid govuk-colour("mid-grey");
   border-radius: 10px;
+  height: 100%;
+}
+
+.app-c-question-form__input-character-count-wrapper {
+  height: 100%;
 }
 
 .app-c-blue-button {
