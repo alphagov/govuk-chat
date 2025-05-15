@@ -37,9 +37,6 @@ Rails.application.routes.draw do
     get "sign-out", to: "sessions#destroy"
     get "sign-in/:id/:token", to: "sessions#confirm", as: :magic_link
 
-    get "unsubscribe/waiting-list/:id/:token", to: "unsubscribe#waiting_list_user", as: :waiting_list_user_unsubscribe
-    get "unsubscribe/early-access/:id/:token", to: "unsubscribe#early_access_user", as: :early_access_user_unsubscribe
-
     scope :onboarding, constraints: html_json_constraint do
       get "", to: "onboarding#limitations", as: :onboarding_limitations
       post "", to: "onboarding#limitations_confirm", as: :onboarding_limitations_confirm
