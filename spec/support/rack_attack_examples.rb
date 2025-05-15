@@ -13,6 +13,10 @@ module RackAttackExamples
       process_request(method, path, headers)
       expect(response).not_to have_http_status(:too_many_requests)
     end
+
+    def read_request?
+      request.get? || request.head? || request.options?
+    end
   end
 
   RSpec.shared_examples "throttles traffic from a single IP address" do |routes:, limit:, period:|
@@ -55,9 +59,9 @@ module RackAttackExamples
     let(:headers) { { "HTTP_AUTHORIZATION" => "Bearer testtoken123" } }
 
     before do
-      read_throttle = Rack::Attack.throttles["read requests to Conversations API with token"]
+      read_throttle = Rack::Attack.throttles[Rack::Attack::TOKEN_READ_THROTTLE_NAME]
       allow(read_throttle).to receive(:limit).and_return(1)
-      write_throttle = Rack::Attack.throttles["write requests to Conversations API with token"]
+      write_throttle = Rack::Attack.throttles[Rack::Attack::TOKEN_WRITE_THROTTLE_NAME]
       allow(write_throttle).to receive(:limit).and_return(1)
     end
 
@@ -95,6 +99,17 @@ module RackAttackExamples
               expect_not_throttled_response(method, path, headers)
             end
           end
+
+          it "returns rate limit details in the headers" do
+            freeze_time do
+              process_request(method, path, headers)
+              prefix = read_request? ? "token-read" : "token-write"
+
+              expect(response.headers["#{prefix}-ratelimit-limit"]).to eq("1")
+              expect(response.headers["#{prefix}-ratelimit-remaining"]).to eq("0")
+              expect(response.headers["#{prefix}-ratelimit-reset"]).to eq("#{period}s")
+            end
+          end
         end
       end
     end
@@ -106,10 +121,10 @@ module RackAttackExamples
     let(:headers) { { "HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID" => "test-device-123" } }
 
     before do
-      read_throttle = Rack::Attack.throttles["read requests to Conversations API with device id"]
+      read_throttle = Rack::Attack.throttles[Rack::Attack::DEVICE_READ_THROTTLE_NAME]
       allow(read_throttle).to receive(:limit).and_return(1)
 
-      write_throttle = Rack::Attack.throttles["write requests to Conversations API with device id"]
+      write_throttle = Rack::Attack.throttles[Rack::Attack::DEVICE_WRITE_THROTTLE_NAME]
       allow(write_throttle).to receive(:limit).and_return(1)
     end
 
@@ -133,6 +148,17 @@ module RackAttackExamples
           it "doesn't reject a request to #{method} #{path} after the time period" do
             travel_to(Time.current + period + 1.second) do
               expect_not_throttled_response(method, path, headers)
+            end
+          end
+
+          it "returns rate limit details in the headers" do
+            freeze_time do
+              process_request(method, path, headers)
+              prefix = read_request? ? "device-id-read" : "device-id-write"
+
+              expect(response.headers["#{prefix}-ratelimit-limit"]).to eq("1")
+              expect(response.headers["#{prefix}-ratelimit-remaining"]).to eq("0")
+              expect(response.headers["#{prefix}-ratelimit-reset"]).to eq("#{period}s")
             end
           end
         end
