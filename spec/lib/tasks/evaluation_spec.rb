@@ -26,8 +26,8 @@ RSpec.describe "rake evaluation tasks" do
     let(:task_name) { "evaluation:generate_report" }
     let(:evaluation_data) do
       [
-        { question: "First question", llm_answer: "First answer" },
-        { question: "Second question", llm_answer: "Second answer" },
+        { question: "First question", answer: { "message" => "First answer" }, retrieved_context: [] },
+        { question: "Second question", answer: { "message" => "Second answer" }, retrieved_context: [] },
       ]
     end
     let(:jsonl) do
@@ -47,7 +47,7 @@ RSpec.describe "rake evaluation tasks" do
 
     it "generates the results as JSONL and prints them" do
       expect { Rake::Task[task_name].invoke("input.yml") }
-        .to output(/#{jsonl}/).to_stdout
+        .to output(/#{Regexp.escape(jsonl)}/).to_stdout
     end
 
     it "generates the results as JSONL and writes them to a file" do
