@@ -31,12 +31,6 @@ module SystemSpecHelpers
     login_as(create(:signon_user, :admin))
   end
 
-  def extract_links_from_last_email
-    email_body = ActionMailer::Base.deliveries.last.body.raw_source
-    # URI.extract infers that the closing link markdown parenthesis ")" is part of the href
-    URI.extract(email_body).map { |link| link.gsub(")", "") }
-  end
-
   def given_i_am_a_signed_in_early_access_user
     @user ||= create(:early_access_user)
     session = Passwordless::Session.create!(authenticatable: @user)

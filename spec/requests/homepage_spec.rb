@@ -106,14 +106,6 @@ RSpec.describe "HomepageController" do
           )
           expect(response.body).to have_selector(".govuk-heading-xl", text: "You've been sent a new link")
         end
-
-        it "emails a magic link to the user" do
-          expect {
-            post homepage_path(
-              sign_in_or_up_form: { email: early_access_user.email },
-            )
-          }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-        end
       end
 
       context "and the user is on the waiting list" do
@@ -154,14 +146,6 @@ RSpec.describe "HomepageController" do
             .to have_selector(".govuk-heading-xl", text: "You do not have access to this page")
             .and have_link("report a technical fault", href: "https://surveys.publishing.service.gov.uk/s/govuk-chat-support")
         end
-
-        it "doesn't send a magic link to the user" do
-          expect {
-            post homepage_path(
-              sign_in_or_up_form: { email: early_access_user.email },
-            )
-          }.not_to change(EarlyAccessAuthMailer.deliveries, :count)
-        end
       end
 
       context "and the user has requested 3 links in the last 5 minutes" do
@@ -182,14 +166,6 @@ RSpec.describe "HomepageController" do
           )
           expect(response.body)
             .to have_selector(".govuk-heading-xl", text: "You've requested too many links")
-        end
-
-        it "doesn't send a magic link to the user" do
-          expect {
-            post homepage_path(
-              sign_in_or_up_form: { email: early_access_user.email },
-            )
-          }.not_to change(EarlyAccessAuthMailer.deliveries, :count)
         end
       end
     end

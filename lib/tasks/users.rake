@@ -16,10 +16,7 @@ namespace :users do
       end
       settings.save!
     end
-    users_to_notify.each do |user|
-      session = Passwordless::Session.create!(authenticatable: user)
-      EarlyAccessAuthMailer.access_granted(session).deliver_now
-    end
+
     puts "Promoted #{users_to_notify.length} user(s)"
   end
 end

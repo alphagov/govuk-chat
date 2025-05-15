@@ -209,15 +209,6 @@ RSpec.describe "SignUpController" do
           expect(response.body).to have_selector(".govuk-heading-xl", text: "You can now start using GOV.UK Chat")
         end
 
-        it "emails a magic link to the user" do
-          expect {
-            post sign_up_found_chat_path(
-              found_chat_form: { choice: "search_engine" },
-            )
-          }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-          expect(EarlyAccessAuthMailer.deliveries.last.subject).to eq("You can now access GOV.UK Chat")
-        end
-
         it "deletes the session['sign_up'] variable" do
           post sign_up_found_chat_path(
             found_chat_form: { choice: "search_engine" },
@@ -243,15 +234,6 @@ RSpec.describe "SignUpController" do
             found_chat_form: { choice: "search_engine" },
           )
           expect(response.body).to have_selector(".govuk-heading-xl", text: "You have been added to the waitlist")
-        end
-
-        it "emails the user informing them they've been added to the waitlist" do
-          expect {
-            post sign_up_found_chat_path(
-              found_chat_form: { choice: "search_engine" },
-            )
-          }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-          expect(EarlyAccessAuthMailer.deliveries.last.subject).to eq("You're on the waitlist for GOV.UK Chat")
         end
 
         it "deletes the session['sign_up'] variable" do

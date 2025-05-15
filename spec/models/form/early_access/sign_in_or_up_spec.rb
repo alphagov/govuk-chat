@@ -23,10 +23,6 @@ RSpec.describe Form::EarlyAccess::SignInOrUp do
   end
 
   describe "#submit" do
-    before do
-      allow(EarlyAccessAuthMailer).to receive(:access_granted).and_call_original
-    end
-
     it "raises an error when the form object is invalid" do
       form = described_class.new(email: "")
       expect { form.submit }.to raise_error(ActiveModel::ValidationError)
@@ -60,12 +56,6 @@ RSpec.describe Form::EarlyAccess::SignInOrUp do
       it "assigns the early access user" do
         form.submit
         expect(Passwordless::Session.last.authenticatable).to eq(EarlyAccessUser.last)
-      end
-
-      it "calls the mailer with the new session" do
-        expect { form.submit }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-        created_session = Passwordless::Session.last
-        expect(EarlyAccessAuthMailer).to have_received(:access_granted).with(created_session)
       end
 
       it "returns a Result instance with the correct attributes" do
