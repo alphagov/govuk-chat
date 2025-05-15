@@ -22,17 +22,6 @@ Rails.application.routes.draw do
   scope :chat, format: false, defaults: { format: "html" }, constraints: html_constraint do
     get "", to: "homepage#index", as: :homepage
 
-    scope "try-chat" do
-      get "/you", to: "sign_up#user_description", as: :sign_up_user_description
-      post "/you", to: "sign_up#confirm_user_description"
-
-      get "/your-visit", to: "sign_up#reason_for_visit", as: :sign_up_reason_for_visit
-      post "/your-visit", to: "sign_up#confirm_reason_for_visit"
-
-      get "/find-out", to: "sign_up#found_chat", as: :sign_up_found_chat
-      post "/find-out", to: "sign_up#confirm_found_chat"
-    end
-
     scope :onboarding, constraints: html_json_constraint do
       get "", to: "onboarding#limitations", as: :onboarding_limitations
       post "", to: "onboarding#limitations_confirm", as: :onboarding_limitations_confirm
