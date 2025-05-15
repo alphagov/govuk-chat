@@ -18,6 +18,8 @@ paths:
     post:
       summary: Start conversation
       description: Create a conversation by posting an initial question
+      parameters:
+        - $ref: "#/components/parameters/DeviceIdHeader"
       requestBody:
         required: true
         content:
@@ -52,6 +54,7 @@ paths:
           schema:
             type: string
             format: uuid
+        - $ref: "#/components/parameters/DeviceIdHeader"
       responses:
         "200":
           description: |
@@ -82,6 +85,7 @@ paths:
           schema:
             type: string
             format: uuid
+        - $ref: "#/components/parameters/DeviceIdHeader"
       requestBody:
         required: true
         content:
@@ -123,6 +127,7 @@ paths:
           schema:
             type: string
             format: uuid
+        - $ref: "#/components/parameters/DeviceIdHeader"
       responses:
         "200":
           description: The answer is available and is returned
@@ -158,6 +163,7 @@ paths:
           schema:
             type: string
             format: uuid
+        - $ref: "#/components/parameters/DeviceIdHeader"
       requestBody:
         required: true
         content:
@@ -195,6 +201,17 @@ components:
         GOV.UK Signon issued bearer token which is used to authenticate the
         client application (e.g. GOV.UK App) and not an individual end user
       scheme: bearer
+  parameters:
+    DeviceIdHeader:
+      name: Govuk-Chat-Client-Device-Id
+      in: header
+      required: false
+      description: |
+        An identifier for an individual end-user client to be used to provide
+        individual end-user rate limiting to ensure that no one client can
+        consume all of an API users' limits.
+      schema:
+        type: string
   schemas:
     UserQuestion:
       type: object
