@@ -8,16 +8,6 @@ RSpec.describe "StaticController" do
         expect(response.headers["Vary"]).to eq("Cookie")
       end
     end
-
-    context "when a user is signed in" do
-      include_context "when signed in"
-
-      it "doesn't cache the response" do
-        get public_send(path_method)
-
-        expect(response.headers["Cache-Control"]).to match(/private/)
-      end
-    end
   end
 
   shared_examples "operates when public access is disabled" do |path_method|

@@ -36,16 +36,4 @@ module SystemSpecHelpers
     # URI.extract infers that the closing link markdown parenthesis ")" is part of the href
     URI.extract(email_body).map { |link| link.gsub(")", "") }
   end
-
-  def given_i_am_a_signed_in_early_access_user
-    @user ||= create(:early_access_user)
-    session = Passwordless::Session.create!(authenticatable: @user)
-    magic_link = magic_link_path(session.to_param, session.token, only_path: false)
-    visit(magic_link)
-  end
-  alias_method :and_i_am_a_signed_in_early_access_user, :given_i_am_a_signed_in_early_access_user
-
-  def ur_question_first_option_text(question_label)
-    Rails.configuration.pilot_user_research_questions.dig(question_label, :options, 0, :text)
-  end
 end

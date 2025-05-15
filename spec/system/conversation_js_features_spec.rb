@@ -1,6 +1,5 @@
 RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dismiss_cookie_banner, :js do
   scenario "questions with answers" do
-    given_i_am_a_signed_in_early_access_user
     and_i_have_confirmed_i_understand_chat_risks
     when_i_enter_a_first_question
     then_i_see_the_first_question_was_accepted
@@ -16,7 +15,6 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "client side validation" do
-    given_i_am_a_signed_in_early_access_user
     and_i_have_confirmed_i_understand_chat_risks
     when_i_enter_an_empty_question
     then_i_see_a_presence_validation_message
@@ -26,7 +24,6 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "server side validation" do
-    given_i_am_a_signed_in_early_access_user
     and_i_have_confirmed_i_understand_chat_risks
     when_i_enter_a_question_with_pii
     then_i_see_a_pii_validation_message
@@ -36,7 +33,6 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "reloading the page while an answer is pending" do
-    given_i_am_a_signed_in_early_access_user
     and_i_have_confirmed_i_understand_chat_risks
     when_i_enter_a_first_question
     then_i_see_the_first_question_was_accepted
@@ -47,7 +43,6 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "User gives feedback on an answer" do
-    given_i_am_a_signed_in_early_access_user
     and_i_have_confirmed_i_understand_chat_risks
     when_i_enter_a_first_question
     then_i_see_the_first_question_was_accepted
@@ -58,7 +53,6 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "character limits" do
-    given_i_am_a_signed_in_early_access_user
     and_i_have_confirmed_i_understand_chat_risks
     when_i_type_in_a_question_approaching_the_character_count_limit
     then_i_see_a_character_count_warning
@@ -68,7 +62,6 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "loading messages" do
-    given_i_am_a_signed_in_early_access_user
     and_i_have_confirmed_i_understand_chat_risks
     when_i_enter_a_first_question_with_a_slow_response
     then_i_see_a_question_loading_message
@@ -82,7 +75,6 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "showing clear chat link in navigation" do
-    given_i_am_a_signed_in_early_access_user
     and_i_have_confirmed_i_understand_chat_risks
     then_i_cant_see_the_clear_chat_link
 
@@ -92,49 +84,8 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
   end
 
   scenario "print link is added to navigation" do
-    given_i_am_a_signed_in_early_access_user
     and_i_have_confirmed_i_understand_chat_risks
     then_i_see_a_print_link_in_the_menu
-  end
-
-  scenario "reaching question limit" do
-    given_i_am_approaching_the_question_limit
-    and_i_have_an_active_conversation
-    and_i_am_a_signed_in_early_access_user
-
-    when_i_visit_the_conversation_page
-    and_i_have_confirmed_i_understand_chat_risks
-
-    when_i_enter_a_first_question
-    then_i_see_the_valid_question_was_accepted
-    and_the_first_answer_is_generated
-    and_i_see_my_question_remaining_count
-    and_i_see_an_approaching_question_limit_system_message
-
-    when_i_enter_a_second_question
-    then_i_see_the_second_question_was_accepted
-    and_the_second_answer_is_generated
-    and_i_see_my_question_remaining_count_is_decreased
-
-    when_i_reload_the_page
-    then_i_do_not_see_an_approaching_question_limit_system_message
-  end
-
-  scenario "reached question limit" do
-    given_i_have_one_question_remaining_in_my_limit
-    and_i_have_an_active_conversation
-    and_i_am_a_signed_in_early_access_user
-
-    when_i_visit_the_conversation_page
-    and_i_have_confirmed_i_understand_chat_risks
-
-    when_i_enter_a_first_question
-    then_i_see_the_valid_question_was_accepted
-    and_the_first_answer_is_generated
-    and_i_see_a_reached_question_limit_system_message
-
-    when_i_enter_a_second_question
-    then_i_see_a_message_limit_validation_error
   end
 
   def when_i_enter_a_first_question
@@ -146,8 +97,8 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
   def when_i_enter_a_first_question_with_a_slow_response
     @first_question = "How do I setup a workplace pension?"
-    conversation = build(:conversation, user: @user)
-    prepared_question = create(:question, message: @first_question, conversation:)
+    conversation = build(:conversation)
+    prepared_question = create(:question, message: @first_question, conversation: conversation)
 
     allow(Question).to receive(:new).and_return(prepared_question)
     # delay the server side response to provide time for a delayed loading state
@@ -336,54 +287,8 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     expect(page).to have_button("Print or save this chat")
   end
 
-  def given_i_am_approaching_the_question_limit
-    allow(Rails.configuration.conversations).to receive_messages(
-      max_questions_per_user: 50,
-      question_warning_threshold: 20,
-    )
-    @user = create(:early_access_user, questions_count: 29)
-  end
-
-  def given_i_have_one_question_remaining_in_my_limit
-    allow(Rails.configuration.conversations).to receive_messages(
-      max_questions_per_user: 50,
-      question_warning_threshold: 20,
-    )
-    @user = create(:early_access_user, questions_count: 49)
-  end
-
-  def and_i_see_my_question_remaining_count
-    expect(page).to have_content("20 messages left")
-  end
-
-  def and_i_see_my_question_remaining_count_is_decreased
-    expect(page).to have_content("19 messages left")
-  end
-
-  def and_i_see_an_approaching_question_limit_system_message
-    within(".js-new-conversation-messages-list:last-child") do
-      expect(page).to have_content("You’ve nearly reached the message limit for the GOV.UK Chat trial.")
-    end
-  end
-
-  def then_i_do_not_see_an_approaching_question_limit_system_message
-    expect(page).not_to have_content("You’ve nearly reached the message limit for the GOV.UK Chat trial.")
-  end
-
-  def and_i_see_a_reached_question_limit_system_message
-    within(".js-new-conversation-messages-list:last-child") do
-      expect(page).to have_content("You’ve reached the message limit for the GOV.UK Chat trial.")
-    end
-  end
-
-  def then_i_see_a_message_limit_validation_error
-    within(".app-c-question-form__error-list") do
-      expect(page).to have_content "You’ve reached the message limit for the GOV.UK Chat trial."
-    end
-  end
-
   def and_i_have_an_active_conversation
-    create(:conversation, user: @user)
+    create(:conversation)
   end
 
   def when_i_visit_the_conversation_page

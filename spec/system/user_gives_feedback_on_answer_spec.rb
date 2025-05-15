@@ -1,6 +1,5 @@
 RSpec.describe "User gives feedback on an answer" do
   scenario do
-    given_i_am_a_signed_in_early_access_user
     and_i_have_an_active_conversation_with_an_answered_question
     when_i_visit_the_conversation_page
     and_i_click_that_the_answer_was_useful
@@ -8,7 +7,7 @@ RSpec.describe "User gives feedback on an answer" do
   end
 
   def and_i_have_an_active_conversation_with_an_answered_question
-    @conversation = create(:conversation, user: @user)
+    @conversation = create(:conversation)
     set_rack_cookie(:conversation_id, @conversation.id)
     create(:question, :with_answer, conversation: @conversation)
   end

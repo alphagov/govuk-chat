@@ -28,16 +28,6 @@ RSpec.describe "components/_chat_header.html.erb" do
     end
   end
 
-  context "when signed_in is true" do
-    it "has a sign out link when signed_in is true" do
-      render("components/chat_header", signed_in: true)
-
-      expect(rendered).to have_selector(".govuk-header__navigation") do |navigation|
-        expect(navigation).to have_link("Sign out", href: sign_out_path)
-      end
-    end
-  end
-
   context "when conversation is true" do
     it "has a 'Start new chat' link that has a focusable only modifier" do
       render("components/chat_header", conversation: true)

@@ -1,6 +1,5 @@
 RSpec.describe "Chat Onboarding" do
   scenario "without JS" do
-    given_i_am_a_signed_in_early_access_user
     when_i_visit_the_onboarding_limitations_page
 
     when_i_click_that_i_understand
@@ -12,7 +11,6 @@ RSpec.describe "Chat Onboarding" do
   end
 
   scenario "with JS", :dismiss_cookie_banner, :js do
-    given_i_am_a_signed_in_early_access_user
     when_i_visit_the_onboarding_limitations_page
 
     when_i_click_that_i_understand
@@ -24,7 +22,6 @@ RSpec.describe "Chat Onboarding" do
   end
 
   scenario "tell me more without JS" do
-    given_i_am_a_signed_in_early_access_user
     when_i_visit_the_onboarding_limitations_page
     and_i_click_tell_me_more
     then_i_see_additional_information
@@ -38,7 +35,6 @@ RSpec.describe "Chat Onboarding" do
   end
 
   scenario "tell me more with JS", :dismiss_cookie_banner, :js do
-    given_i_am_a_signed_in_early_access_user
     when_i_visit_the_onboarding_limitations_page
     and_i_click_tell_me_more
     then_i_see_additional_information
