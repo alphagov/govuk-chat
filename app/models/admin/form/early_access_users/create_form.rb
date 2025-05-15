@@ -14,8 +14,7 @@ class Admin::Form::EarlyAccessUsers::CreateForm
 
     user = EarlyAccessUser.create!(email:, source: :admin_added)
 
-    session = Passwordless::Session.create!(authenticatable: user)
-    EarlyAccessAuthMailer.access_granted(session).deliver_now
+    Passwordless::Session.create!(authenticatable: user)
 
     WaitingListUser.where(email:).delete_all
 

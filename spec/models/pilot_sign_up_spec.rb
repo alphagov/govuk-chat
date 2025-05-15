@@ -23,8 +23,6 @@ RSpec.describe PilotSignUp do
     end
 
     context "when there are instant access places available" do
-      before { allow(EarlyAccessAuthMailer).to receive(:access_granted).and_call_original }
-
       it "locks the settings instance and decrements the instant access places by 1" do
         allow(Settings).to receive(:instance).and_return(settings)
         expect(settings).to receive(:with_lock).and_call_original
@@ -48,12 +46,6 @@ RSpec.describe PilotSignUp do
         expect(Passwordless::Session.last.authenticatable).to eq(EarlyAccessUser.last)
       end
 
-      it "calls the mailer with the new session" do
-        expect { described_class.call(**args) }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-        created_session = Passwordless::Session.last
-        expect(EarlyAccessAuthMailer).to have_received(:access_granted).with(created_session)
-      end
-
       it "returns a result object with the correct attributes" do
         result = described_class.call(**args)
         expect(result)
@@ -68,7 +60,6 @@ RSpec.describe PilotSignUp do
 
     context "when there are no instant access places available" do
       before do
-        allow(EarlyAccessAuthMailer).to receive(:waitlist).and_call_original
         Settings.instance.update!(instant_access_places: 0)
       end
 
@@ -84,11 +75,6 @@ RSpec.describe PilotSignUp do
               found_chat: "search_engine",
               source: "insufficient_instant_places",
             )
-        end
-
-        it "sends a waiting list email to the user" do
-          expect { described_class.call(**args) }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-          expect(EarlyAccessAuthMailer).to have_received(:waitlist).with(WaitingListUser.last)
         end
 
         it "returns a result object with the correct attributes" do
@@ -124,10 +110,6 @@ RSpec.describe PilotSignUp do
 
         it "doesn't create a waiting list user" do
           expect { described_class.call(**args) }.not_to change(WaitingListUser, :count)
-        end
-
-        it "doesn't send a waiting list email" do
-          expect { described_class.call(**args) }.not_to change(EarlyAccessAuthMailer.deliveries, :count)
         end
 
         it "returns a result object with the correct attributes" do

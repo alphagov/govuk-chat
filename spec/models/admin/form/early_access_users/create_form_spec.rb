@@ -58,17 +58,6 @@ RSpec.describe Admin::Form::EarlyAccessUsers::CreateForm do
       expect(Passwordless::Session.last.authenticatable).to eq(EarlyAccessUser.last)
     end
 
-    it "calls the mailer with the new session" do
-      allow(EarlyAccessAuthMailer).to receive(:access_granted).and_call_original
-
-      form = described_class.new(email: "foo@bar.com")
-
-      expect { form.submit }.to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-
-      created_session = Passwordless::Session.last
-      expect(EarlyAccessAuthMailer).to have_received(:access_granted).with(created_session)
-    end
-
     context "when a waiting list user exists for the email" do
       it "deletes the waiting list user" do
         user = create(:waiting_list_user, email: "foo@bar.com")
