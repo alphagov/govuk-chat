@@ -96,7 +96,7 @@
   position: relative;
 }
 
-.app-c-conversation-sources__summary::marker {
+.app-c-conversation-sources__summary::marker, .app-c-conversation-sources__summary::-webkit-details-marker {
   content: "";
 }
 
