@@ -38,7 +38,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::QuestionRouter do # rubocop:
   end
 
   let(:classification_response) do
-    { answer: "Hello!", confidence: 0.85 }
+    { answer: "Hello!", confidence: 0.85 }.to_json
   end
 
   let(:expected_message_history) do
@@ -113,7 +113,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::QuestionRouter do # rubocop:
           expected_message_history,
           tools:,
           function_name: "genuine_rag",
-          function_arguments: { answer: "Generic answer", confidence: 0.9 },
+          function_arguments: { answer: "Generic answer", confidence: 0.9 }.to_json,
         )
       end
 
@@ -144,10 +144,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::QuestionRouter do # rubocop:
           expected_message_history,
           tools:,
           function_name: "vague_acronym_grammar",
-          function_arguments: {
-            answer: "A long answer that is terminated mid senten",
-            confidence: 0.99,
-          },
+          function_arguments: '{"answer": "A long answer that is terminated mid senten',
           finish_reason: "length",
         )
       end
@@ -184,7 +181,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::QuestionRouter do # rubocop:
           expected_message_history,
           tools:,
           function_name: "multi_questions",
-          function_arguments: { answer: answer_message, confidence: 0.9 },
+          function_arguments: { answer: answer_message, confidence: 0.9 }.to_json,
         )
       end
 
@@ -211,7 +208,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::QuestionRouter do # rubocop:
           expected_message_history,
           tools:,
           function_name: "harmful_vulgar_controversy",
-          function_arguments: { answer: "Ignored", confidence: 0.9 },
+          function_arguments: { answer: "Ignored", confidence: 0.9 }.to_json,
         )
       end
 
