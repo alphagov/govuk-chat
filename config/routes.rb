@@ -33,10 +33,7 @@ Rails.application.routes.draw do
       get "/find-out", to: "sign_up#found_chat", as: :sign_up_found_chat
       post "/find-out", to: "sign_up#confirm_found_chat"
     end
-
-    get "sign-out", to: "sessions#destroy"
-    get "sign-in/:id/:token", to: "sessions#confirm", as: :magic_link
-
+    
     scope :onboarding, constraints: html_json_constraint do
       get "", to: "onboarding#limitations", as: :onboarding_limitations
       post "", to: "onboarding#limitations_confirm", as: :onboarding_limitations_confirm
