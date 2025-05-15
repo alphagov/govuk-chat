@@ -44,6 +44,8 @@ paths:
                 $ref: "#/components/schemas/ValidationError"
           headers:
             - $ref: "#/components/headers/WriteRateLimitHeaders"
+        "429":
+          $ref: "#/components/responses/TooManyWriteRequests"
 
   /conversation/{conversation_id}:
     get:
@@ -80,6 +82,8 @@ paths:
                 $ref: "#/components/schemas/GenericError"
           headers:
             - $ref: "#/components/headers/ReadRateLimitHeaders"
+        "429":
+          $ref: "#/components/responses/TooManyReadRequests"
 
     put:
       summary: Update a conversation with a new question
@@ -119,6 +123,8 @@ paths:
                 $ref: "#/components/schemas/ValidationError"
           headers:
             - $ref: "#/components/headers/WriteRateLimitHeaders"
+        "429":
+          $ref: "#/components/responses/TooManyWriteRequests"
 
   /conversation/{conversation_id}/questions/{question_id}/answer:
     get:
@@ -161,6 +167,8 @@ paths:
                 $ref: "#/components/schemas/GenericError"
           headers:
             - $ref: "#/components/headers/ReadRateLimitHeaders"
+        "429":
+          $ref: "#/components/responses/TooManyReadRequests"
 
   /conversation/{conversation_id}/answers/{answer_id}/feedback:
     post:
@@ -214,6 +222,8 @@ paths:
                 $ref: "#/components/schemas/GenericError"
           headers:
             - $ref: "#/components/headers/WriteRateLimitHeaders"
+        "429":
+          $ref: "#/components/responses/TooManyWriteRequests"
 
 security:
   - bearerAuth: []
@@ -225,6 +235,15 @@ components:
         GOV.UK Signon issued bearer token which is used to authenticate the
         client application (e.g. GOV.UK App) and not an individual end user
       scheme: bearer
+  responses:
+    TooManyReadRequests:
+      description: Too Many Requests to read endpoints.
+      headers:
+        - $ref: '#/components/headers/ReadRateLimitHeaders'
+    TooManyWriteRequests:
+      description: Too Many Requests to write endpoints.
+      headers:
+        - $ref: '#/components/headers/WriteRateLimitHeaders'
   parameters:
     DeviceIdHeader:
       name: Govuk-Chat-Client-Device-Id
