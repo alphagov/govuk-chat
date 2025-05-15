@@ -140,3 +140,17 @@
 .app-c-conversation-message__body--accuracy-warning {
   padding: 0;
 }
+
+.mobile-footer-icons__chat {
+  text-align: center;
+
+  .mobile-footer-icons__chat-icon {
+    margin-bottom: 0;
+  }
+
+  .mobile-footer-icons__chat-icon-text {
+    margin-top: 0.2rem;
+    font-size: 11px;
+    color: govuk-colour("blue");
+  }
+}
