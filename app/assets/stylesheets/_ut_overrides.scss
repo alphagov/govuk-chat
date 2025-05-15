@@ -112,6 +112,12 @@
   top: 9px;
 }
 
+.app-c-conversation-sources__details[open] {
+  .app-c-conversation-sources__summary::after {
+    @include prefixed-transform($rotate: 225deg, $translateY: 1px);
+  }
+}
+
 .app-c-conversation-sources-list {
   padding-left: 0;
 }
