@@ -67,7 +67,7 @@ module AnswerComposition
 
       if (url = link_for_token(token))
         link_element.tap do |el|
-          el.attr["href"] = url
+          el.attr["href"] = ensure_absolute_govuk_url(url)
 
           # If we have a link where the text is e.g. "link_1" then we should replace
           # it with "source". Showing "link_1" to the user makes it seem like something
