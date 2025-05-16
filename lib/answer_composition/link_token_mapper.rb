@@ -12,24 +12,23 @@ module AnswerComposition
       doc.css("a").each do |link|
         next unless link["href"]
 
-        href = begin
-          URI.join(ensure_absolute_govuk_url(exact_path), link["href"]).to_s
-        rescue URI::InvalidURIError
-          link["href"]
-        end
-
-        if mapping.key?(href)
-          link["href"] = mapping[href]
-        else
-          token = map_link_to_token(href)
-          link["href"] = token
-        end
+        link["href"] = map_link_to_token(link["href"], exact_path)
       end
 
       doc.to_html
     end
 
-    def map_link_to_token(link)
+    def map_link_to_token(link, base_path = nil)
+      link = begin
+        if base_path.present?
+          URI.join(ensure_absolute_url(base_path), link).to_s
+        else
+          ensure_absolute_url(link)
+        end
+      rescue URI::InvalidURIError
+        link
+      end
+
       return mapping[link] if mapping[link]
 
       token = "#{TOKEN_PREFIX}#{mapping.count + 1}"
@@ -85,7 +84,7 @@ module AnswerComposition
       end
     end
 
-    def ensure_absolute_govuk_url(url)
+    def ensure_absolute_url(url)
       # We frequently host GOV.UK chat in environments off www.gov.uk
       # and need links not to be relative so that they will work.
       relative_uri = URI(url)
