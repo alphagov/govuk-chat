@@ -80,7 +80,6 @@
     <script type="module" nonce="<%= request.content_security_policy_nonce %>">
       document.body.className += ' js-enabled govuk-frontend-supported';
     </script>
-    <%= render "govuk_publishing_components/components/cookie_banner", {} %>
     <%= render "govuk_publishing_components/components/skip_link", {
       href: "#content",
     } %>
