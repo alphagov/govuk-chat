@@ -53,7 +53,7 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
   describe "#map_link_to_token" do
     it "stores the link and returns the token" do
       mapper = described_class.new
-      link = "/tax-returns"
+      link = "#{Plek.website_root}/tax-returns"
       token = mapper.map_link_to_token(link)
 
       expect(token).to eq("link_1")
@@ -65,6 +65,13 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
       token = mapper.map_link_to_token("/tax-returns")
 
       expect(mapper.map_link_to_token("/tax-returns")).to eq(token)
+    end
+
+    it "converts relative links to absolute links" do
+      mapper = described_class.new
+      token = mapper.map_link_to_token("/tax-returns", "/exact-path")
+
+      expect(mapper.link_for_token(token)).to eq("#{Plek.website_root}/tax-returns")
     end
   end
 

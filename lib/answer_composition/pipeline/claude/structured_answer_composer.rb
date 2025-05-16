@@ -77,7 +77,7 @@ module AnswerComposition::Pipeline
           link_token_mapper.link_for_token(source_link_token)
         end
 
-        context.update_sources_from_exact_paths_used(source_urls)
+        context.update_sources_from_exact_urls_used(source_urls)
       end
 
       def build_metrics(start_time, response)
