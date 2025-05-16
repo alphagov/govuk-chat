@@ -127,7 +127,7 @@ RSpec.describe AnswerComposition::Pipeline::Context do
     end
   end
 
-  describe "#update_sources_from_exact_paths_used" do
+  describe "#update_sources_from_exact_urls_used" do
     let(:instance) { described_class.new(build(:question)) }
     let(:answer) { instance.answer }
 
@@ -135,7 +135,7 @@ RSpec.describe AnswerComposition::Pipeline::Context do
       source = build(:answer_source, exact_path: "/vat-rates#vat", used: false)
       answer.sources = [source]
 
-      instance.update_sources_from_exact_paths_used([source.exact_path])
+      instance.update_sources_from_exact_urls_used([source.exact_path])
 
       expect(answer.sources).to contain_exactly(source)
       expect(source.used).to be(true)
@@ -146,7 +146,7 @@ RSpec.describe AnswerComposition::Pipeline::Context do
       unused_source = build(:answer_source, exact_path: "/vat-rates#vat-basics", used: true)
       answer.sources = [used_source, unused_source]
 
-      instance.update_sources_from_exact_paths_used([used_source.exact_path])
+      instance.update_sources_from_exact_urls_used([used_source.url])
 
       expect(answer.sources).to contain_exactly(used_source, unused_source)
       expect(unused_source.used).to be(false)
@@ -157,7 +157,7 @@ RSpec.describe AnswerComposition::Pipeline::Context do
       second_source = build(:answer_source, exact_path: "/vat-rates#vat", used: false)
       answer.sources = [first_source, second_source]
 
-      instance.update_sources_from_exact_paths_used([])
+      instance.update_sources_from_exact_urls_used([])
 
       expect(answer.sources).to contain_exactly(first_source, second_source)
       expect(first_source.used).to be(true)
@@ -168,7 +168,7 @@ RSpec.describe AnswerComposition::Pipeline::Context do
       source = build(:answer_source, exact_path: "/vat-rates#vat", used: false)
       answer.sources = [source]
 
-      instance.update_sources_from_exact_paths_used(["/made-up-path"])
+      instance.update_sources_from_exact_urls_used(["/made-up-path"])
 
       expect(answer.sources).to contain_exactly(source)
       expect(source.used).to be(true)
@@ -179,10 +179,10 @@ RSpec.describe AnswerComposition::Pipeline::Context do
       second_used_source = build(:answer_source, exact_path: "/vat-rates#vat-basics", relevancy: 0)
       answer.sources = [second_used_source, first_used_source]
 
-      instance.update_sources_from_exact_paths_used(
+      instance.update_sources_from_exact_urls_used(
         [
-          first_used_source.exact_path,
-          second_used_source.exact_path,
+          first_used_source.url,
+          second_used_source.url,
         ],
       )
 
@@ -196,7 +196,7 @@ RSpec.describe AnswerComposition::Pipeline::Context do
       used_source = build(:answer_source, exact_path: "/vat-rates#vat-basics", relevancy: 1)
       answer.sources = [unused_source, used_source]
 
-      instance.update_sources_from_exact_paths_used([used_source.exact_path])
+      instance.update_sources_from_exact_urls_used([used_source.url])
 
       expect(answer.sources).to contain_exactly(used_source, unused_source)
       expect(used_source.relevancy).to eq(0)

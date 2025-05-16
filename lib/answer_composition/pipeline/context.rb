@@ -44,9 +44,9 @@ module AnswerComposition::Pipeline
       @search_results = search_results
     end
 
-    def update_sources_from_exact_paths_used(exact_paths)
-      used_sources = exact_paths.filter_map do |exact_path|
-        answer.sources.find { |source| source.exact_path == exact_path }
+    def update_sources_from_exact_urls_used(exact_urls)
+      used_sources = exact_urls.filter_map do |exact_url|
+        answer.sources.find { |source| source.url == exact_url }
       end
 
       if used_sources.empty?
