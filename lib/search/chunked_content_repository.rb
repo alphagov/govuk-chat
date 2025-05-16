@@ -1,6 +1,7 @@
 module Search
   class ChunkedContentRepository
     OPENAI_EMBEDDING_DIMENSIONS = 3072
+    TITAN_EMBEDDING_DIMENSIONS = 1024
     MAPPINGS = {
       content_id: { type: "keyword" },
       locale: { type: "keyword" },
@@ -17,6 +18,15 @@ module Search
       openai_embedding: {
         type: "knn_vector",
         dimension: OPENAI_EMBEDDING_DIMENSIONS,
+        method: {
+          name: "hnsw",
+          space_type: "cosinesimil",
+          engine: "nmslib",
+        },
+      },
+      titan_embedding: {
+        type: "knn_vector",
+        dimension: TITAN_EMBEDDING_DIMENSIONS,
         method: {
           name: "hnsw",
           space_type: "cosinesimil",
@@ -145,6 +155,8 @@ module Search
       field_name = case llm_provider.to_sym
                    when :openai
                      :openai_embedding
+                   when :titan
+                     :titan_embedding
                    else
                      raise "Unknown provider: #{llm_provider}"
                    end
@@ -161,7 +173,7 @@ module Search
               },
             },
           },
-          _source: { exclude: %w[openai_embedding] },
+          _source: { exclude: %w[openai_embedding titan_embedding] },
         },
       )
 
@@ -173,7 +185,7 @@ module Search
     end
 
     def chunk(id)
-      response = client.get(index:, id:, _source_excludes: %w[openai_embedding])
+      response = client.get(index:, id:, _source_excludes: %w[openai_embedding titan_embedding])
       Result.new(**response["_source"].symbolize_keys.merge(_id: id))
     rescue OpenSearch::Transport::Transport::Errors::NotFound
       raise NotFound, "_id: '#{id}' is not in the '#{index}' index"
