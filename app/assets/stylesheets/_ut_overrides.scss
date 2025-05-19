@@ -32,6 +32,10 @@
 .mobile-top-icons {
   display: flex;
   justify-content: space-between;
+
+  svg {
+    margin-left: .25rem;
+  }
 }
 
 .mobile-top-icons__time {
