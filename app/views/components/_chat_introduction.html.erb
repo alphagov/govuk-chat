@@ -5,7 +5,6 @@
   input_value ||= nil
   form_url = Rails.application.routes.url_helpers.homepage_path
   start_button_href ||= Rails.application.routes.url_helpers.onboarding_limitations_path
-  sign_out_path = Rails.application.routes.url_helpers.sign_out_path
 
   wrapper_classes = "app-c-chat-introduction"
   wrapper_classes += " app-c-chat-introduction--error" if input_error_items.any?
@@ -30,7 +29,6 @@
 
     <% info_text = "You are currently signed in with #{signed_in_user_email}." %>
     <%= content_tag(:p, info_text, {id: "info-text", class: info_text_classes}) %>
-    <%= content_tag(:p, link_to("Sign out of GOV.UK Chat.", sign_out_path, class: "govuk-link"), class: "govuk-body") %>
   <% elsif early_access %>
     <div class="govuk-!-width-three-quarters">
       <%= form_with url: form_url, class: "app-c-chat-introduction__form", authenticity_token: false do |f| %>

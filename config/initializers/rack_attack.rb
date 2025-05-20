@@ -6,34 +6,6 @@ Rails.application.config.middleware.insert_after ActionDispatch::Executor, Api::
 class Rack::Attack
   CONVERSATION_API_PATH_REGEX = /^\/api\/v\d+\/conversation/
 
-  throttle("sign-in or sign-ups by IP", limit: 10, period: 5.minutes) do |request|
-    homepage_path = Rails.application.routes.url_helpers.homepage_path
-    next cdn_client_ip(request) if request.path == homepage_path && request.post?
-  end
-
-  throttle("sign-up final step by IP", limit: 10, period: 5.minutes) do |request|
-    sign_up_path = Rails.application.routes.url_helpers.sign_up_found_chat_path
-    next cdn_client_ip(request) if request.path == sign_up_path && request.post?
-  end
-
-  throttle("sign-in token attempts", limit: 20, period: 5.minutes) do |request|
-    if rails_controller_action(request.url) == "sessions#confirm" && request.get?
-      cdn_client_ip(request)
-    end
-  end
-
-  throttle("early access user unsubscribe attempts", limit: 20, period: 5.minutes) do |request|
-    if rails_controller_action(request.url) == "unsubscribe#early_access_user" && request.get?
-      cdn_client_ip(request)
-    end
-  end
-
-  throttle("waiting list user unsubscribe attempts", limit: 20, period: 5.minutes) do |request|
-    if rails_controller_action(request.url) == "unsubscribe#waiting_list_user" && request.get?
-      cdn_client_ip(request)
-    end
-  end
-
   throttle(Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME, limit: 10_000, period: 1.minute) do |request|
     if request.path.match?(CONVERSATION_API_PATH_REGEX) && read_method?(request)
       normalise_auth_header(request.get_header("HTTP_AUTHORIZATION"))

@@ -33,7 +33,7 @@ private
   end
 
   def cache_if_not_logged_in
-    return if Rails.env.development? || current_early_access_user
+    return if Rails.env.development?
 
     expires_in(1.minute, public: true)
 
