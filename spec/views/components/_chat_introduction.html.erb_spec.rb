@@ -44,20 +44,4 @@ RSpec.describe "components/_chat_introduction.html.erb" do
         .to have_selector(".app-c-chat-introduction__form input[value='test@email.com']")
     end
   end
-
-  context "when signed_in_user is present" do
-    it "renders the chat introduction component correctly" do
-      render(
-        "components/chat_introduction",
-        signed_in_user_email: "user@example.com",
-        start_button_href: show_conversation_path,
-      )
-
-      expect(rendered)
-        .to have_selector("h1", text: "GOV.UK Chat")
-        .and have_text("You are currently signed in with user@example.com")
-        .and have_link("Return to chat", href: show_conversation_path)
-        .and have_link("Sign out of GOV.UK Chat", href: sign_out_path)
-    end
-  end
 end

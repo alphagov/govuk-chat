@@ -32,8 +32,8 @@ private
     authenticate_user!
   end
 
-  def cache_if_not_logged_in
-    return if Rails.env.development? || current_early_access_user
+  def cache_cookieless_requests
+    return if Rails.env.development?
 
     expires_in(1.minute, public: true)
 
