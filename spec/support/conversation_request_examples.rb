@@ -1,6 +1,5 @@
 module ConversationRequestExamples
   shared_examples "handles a request for a user who hasn't completed onboarding" do |routes:, with_json: true|
-    include_context "when signed in"
     let(:route_params) { [] }
 
     routes.each do |path, methods|
@@ -31,7 +30,6 @@ module ConversationRequestExamples
 
   shared_examples "requires a users conversation cookie to reference an active conversation" do |routes:, with_json: true|
     let(:route_params) { [] }
-    include_context "when signed in"
     include_context "with onboarding completed"
 
     shared_examples "redirects a HTML request" do |path, method|
@@ -74,7 +72,7 @@ module ConversationRequestExamples
 
           context "when the conversation has expired" do
             before do
-              conversation = create(:conversation, :expired, user:)
+              conversation = create(:conversation, :expired)
               cookies[:conversation_id] = conversation.id
             end
 
@@ -88,7 +86,6 @@ module ConversationRequestExamples
 
   shared_examples "requires a conversation created via the chat interface" do |routes:|
     let(:route_params) { [] }
-    include_context "when signed in"
     include_context "with onboarding completed"
 
     routes.each do |path, methods|

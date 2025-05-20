@@ -1,18 +1,4 @@
 RSpec.describe "OnboardingController" do
-  it_behaves_like "redirects unauthenticated requests when authentication is required",
-                  routes: {
-                    onboarding_limitations_path: %i[get],
-                    onboarding_limitations_confirm_path: %i[post],
-                    onboarding_privacy_path: %i[get],
-                    onboarding_privacy_confirm_path: %i[post],
-                  }
-  it_behaves_like "denies unauthenticated JSON requests when authentication is required",
-                  routes: {
-                    onboarding_limitations_path: %i[get],
-                    onboarding_limitations_confirm_path: %i[post],
-                    onboarding_privacy_path: %i[get],
-                    onboarding_privacy_confirm_path: %i[post],
-                  }
   it_behaves_like "handles a user accessing onboarding when onboarded",
                   routes: {
                     onboarding_limitations_path: %i[get],
@@ -26,8 +12,6 @@ RSpec.describe "OnboardingController" do
                   routes: { onboarding_privacy_path: %i[get], onboarding_privacy_confirm_path: %i[post] }
 
   describe "GET :limitations" do
-    include_context "when signed in"
-
     it "renders the limitations page" do
       get onboarding_limitations_path
 
@@ -80,8 +64,6 @@ RSpec.describe "OnboardingController" do
   end
 
   describe "POST :limitations_confirm" do
-    include_context "when signed in"
-
     it "redirects to the privacy page" do
       post onboarding_limitations_confirm_path
 
@@ -108,7 +90,6 @@ RSpec.describe "OnboardingController" do
   end
 
   describe "GET :privacy" do
-    include_context "when signed in"
     include_context "with onboarding limitations completed"
 
     it "renders the privacy page" do
@@ -135,7 +116,6 @@ RSpec.describe "OnboardingController" do
   end
 
   describe "POST :privacy_confirm" do
-    include_context "when signed in"
     include_context "with onboarding limitations completed"
 
     it "sets the session[:onboarding] to 'conversation'" do
@@ -148,12 +128,6 @@ RSpec.describe "OnboardingController" do
 
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(show_conversation_path(anchor: "start-chatting"))
-    end
-
-    it "updates the onboarding_completed attribute to true" do
-      post onboarding_privacy_confirm_path
-
-      expect(user.reload.onboarding_completed).to be(true)
     end
   end
 end
