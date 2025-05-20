@@ -38,7 +38,7 @@ class ConversationsController < BaseController
   end
 
   def update
-    @conversation ||= Conversation.new(user: current_early_access_user)
+    @conversation ||= Conversation.new
     @create_question = Form::CreateQuestion.new(user_question_params.merge(conversation: @conversation))
 
     if @create_question.valid?
@@ -113,7 +113,7 @@ private
 
     @conversation = Conversation.includes(:user)
                                 .active
-                                .find_by!(id: cookies[:conversation_id], user: current_early_access_user, source: :web)
+                                .find_by!(id: cookies[:conversation_id], source: :web)
     set_conversation_cookie(@conversation)
   rescue ActiveRecord::RecordNotFound
     cookies.delete(:conversation_id)
@@ -183,8 +183,7 @@ private
 
   def require_onboarding_completed
     return if session[:onboarding] == "conversation" ||
-      cookies[:conversation_id].present? ||
-      current_early_access_user&.onboarding_completed
+      cookies[:conversation_id].present?
 
     respond_to do |format|
       format.html { redirect_to onboarding_limitations_path }
