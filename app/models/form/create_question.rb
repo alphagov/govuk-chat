@@ -10,7 +10,6 @@ class Form::CreateQuestion
   USER_QUESTION_LENGTH_MAXIMUM = 300
   USER_QUESTION_LENGTH_ERROR_MESSAGE = "Question must be %{count} characters or less".freeze
   USER_QUESTION_PII_ERROR_MESSAGE = "Personal data has been detected in your question. Please remove it and try asking again.".freeze
-  QUESTION_LIMIT_REACHED_MESSAGE = "You’ve reached the message limit for the GOV.UK Chat trial. You have no messages left.".freeze
   UNANSWERED_QUESTION_ERROR_MESSAGE = "Previous question pending. Please wait for a response".freeze
 
   before_validation :sanitise_user_question
@@ -19,7 +18,6 @@ class Form::CreateQuestion
   validates :user_question, length: { maximum: USER_QUESTION_LENGTH_MAXIMUM, message: USER_QUESTION_LENGTH_ERROR_MESSAGE }
   validate :all_questions_answered?
   validate :no_pii_present?, if: -> { user_question.present? }
-  validate :within_question_limit?
 
   def submit
     validate!
@@ -31,14 +29,7 @@ class Form::CreateQuestion
       conversation:,
     )
 
-    user = conversation.user
-    user&.increment!(:questions_count)
-
-    if user&.shadow_banned?
-      ComposeAnswerJob.set(wait: rand(5..20).seconds).perform_later(question.id)
-    else
-      ComposeAnswerJob.perform_later(question.id)
-    end
+    ComposeAnswerJob.perform_later(question.id)
 
     question
   end
@@ -62,12 +53,5 @@ private
     if PiiValidator.invalid?(user_question)
       errors.add(:user_question, USER_QUESTION_PII_ERROR_MESSAGE)
     end
-  end
-
-  def within_question_limit?
-    return if conversation.user.nil?
-    return unless conversation.user.question_limit_reached?
-
-    errors.add(:base, QUESTION_LIMIT_REACHED_MESSAGE)
   end
 end

@@ -34,13 +34,6 @@ module AnswerComposition
     attr_reader :question
 
     def compose_answer
-      if question.conversation.user&.shadow_banned?
-        return question.build_answer(
-          message: Answer::CannedResponses::SHADOW_BANNED_MESSAGE,
-          status: "banned",
-        )
-      end
-
       case answer_strategy
       when "openai_structured_answer"
         PipelineRunner.call(question:, pipeline: [

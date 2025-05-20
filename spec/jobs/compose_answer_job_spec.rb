@@ -14,18 +14,6 @@ RSpec.describe ComposeAnswerJob do
         .and change(AnswerSource, :count).by(2)
     end
 
-    context "when the answer is an guardrails_jailbreak and a user is assoicated with the question" do
-      it "calls #handle_jailbreak_attempt on the user" do
-        user = create(:early_access_user)
-        conversation = create(:conversation, user:)
-        question = create(:question, conversation:)
-        allow(AnswerComposition::Composer).to receive(:call).and_return(build(:answer, :guardrails_jailbreak, question:))
-
-        expect { described_class.new.perform(question.id) }
-          .to change { user.reload.bannable_action_count }.by(1)
-      end
-    end
-
     context "when the question has already been answered" do
       let(:question) { create(:question, :with_answer) }
 
