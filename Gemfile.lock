@@ -791,19 +791,19 @@ GEM
     rubocop-capybara (2.22.1)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
-    rubocop-govuk (5.1.8)
+    rubocop-govuk (5.1.9)
       rubocop (= 1.75.6)
       rubocop-ast (= 1.44.1)
       rubocop-capybara (= 2.22.1)
-      rubocop-rails (= 2.31.0)
+      rubocop-rails (= 2.32.0)
       rubocop-rake (= 0.7.1)
       rubocop-rspec (= 3.6.0)
-    rubocop-rails (2.31.0)
+    rubocop-rails (2.32.0)
       activesupport (>= 4.2.0)
       lint_roller (~> 1.1)
       rack (>= 1.1)
       rubocop (>= 1.75.0, < 2.0)
-      rubocop-ast (>= 1.38.0, < 2.0)
+      rubocop-ast (>= 1.44.0, < 2.0)
     rubocop-rake (0.7.1)
       lint_roller (~> 1.1)
       rubocop (>= 1.72.1)
@@ -1247,8 +1247,8 @@ CHECKSUMS
   rubocop (1.75.6) sha256=1c6c6621b2e76f89999b2f0c0adcced88a273a71e6b8667320b5f509422de262
   rubocop-ast (1.44.1) sha256=e3cc04203b2ef04f6d6cf5f85fe6d643f442b18cc3b23e3ada0ce5b6521b8e92
   rubocop-capybara (2.22.1) sha256=ced88caef23efea53f46e098ff352f8fc1068c649606ca75cb74650970f51c0c
-  rubocop-govuk (5.1.8) sha256=c1266ae0a1da89f0d4959d08f7b768ed219c8e2bdc9705c0aef078c5c805803d
-  rubocop-rails (2.31.0) sha256=79476e1075299c3e60fc50549c7c32614f9ebaae719b899ed75785c6786c52bd
+  rubocop-govuk (5.1.9) sha256=21904e9a108db0bc47c28f43e9d7f3ed41b8b015e908d8a76db37aae7999a81b
+  rubocop-rails (2.32.0) sha256=9fcc623c8722fe71e835e99c4a18b740b5b0d3fb69915d7f0777f00794b30490
   rubocop-rake (0.7.1) sha256=3797f2b6810c3e9df7376c26d5f44f3475eda59eb1adc38e6f62ecf027cbae4d
   rubocop-rspec (3.6.0) sha256=c0e4205871776727e54dee9cc91af5fd74578001551ba40e1fe1a1ab4b404479
   ruby-openai (8.1.0) sha256=6f69e7f501b3b039fe21807286230dfd51a91143e160ffb45464af30a20a5e14
