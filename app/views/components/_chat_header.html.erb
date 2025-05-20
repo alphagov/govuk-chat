@@ -26,7 +26,13 @@
           </span>
         </div>
         <div>
-          <span class="app-c-header__product-name">Chat</span>
+          <span class="app-c-header__product-name">
+            <% if conversation %>
+              Chat
+            <% else %>
+              Research with GDS
+            <% end %>
+          </span>
         </div>
       </div>
 
