@@ -136,6 +136,12 @@ GEM
       json_schema (~> 0.14, >= 0.14.3)
       openapi_parser (~> 2.0)
       rack (>= 1.5, < 3.2)
+    commonmarker (2.3.0)
+      rb_sys (~> 0.9)
+    commonmarker (2.3.0-aarch64-linux)
+    commonmarker (2.3.0-arm64-darwin)
+    commonmarker (2.3.0-x86_64-darwin)
+    commonmarker (2.3.0-x86_64-linux)
     concurrent-ruby (1.3.5)
     connection_pool (2.5.3)
     crack (1.0.0)
@@ -423,6 +429,8 @@ GEM
     omniauth-oauth2 (1.8.0)
       oauth2 (>= 1.4, < 3)
       omniauth (~> 2.0)
+    openapi3_parser (0.10.1)
+      commonmarker (>= 1.0)
     openapi_parser (2.2.6)
     opensearch-ruby (3.4.0)
       faraday (>= 1.0, < 3)
@@ -955,6 +963,7 @@ DEPENDENCIES
   kramdown
   mail-notify
   nokogiri
+  openapi3_parser
   opensearch-ruby
   passwordless
   pg
@@ -1010,6 +1019,11 @@ CHECKSUMS
   climate_control (1.2.0) sha256=36b21896193fa8c8536fa1cd843a07cf8ddbd03aaba43665e26c53ec1bd70aa5
   coderay (1.1.3) sha256=dc530018a4684512f8f38143cd2a096c9f02a1fc2459edcfe534787a7fc77d4b
   committee (5.5.4) sha256=0607a25ad2363213a1f9a4bc3face9b9a936c1e5bc82167bd9f19448dc06f5d8
+  commonmarker (2.3.0) sha256=74fb85e4ae59a9fc166dd1813ad791805d09dec1a4e79c81a7be0a6a8dc5dc63
+  commonmarker (2.3.0-aarch64-linux) sha256=63e6c599ed2b1a01c012e5524ed25f60ab1132c6b582bcef0aa542770d3087ee
+  commonmarker (2.3.0-arm64-darwin) sha256=fb5a6416395cbac63bb7741887c74e17141be75f407a292ab98cd6c8ab4894a2
+  commonmarker (2.3.0-x86_64-darwin) sha256=65919fe63bc1e01319d958351ae611cc913bd2a8aa3f1a4f3fb3d12e82fbc568
+  commonmarker (2.3.0-x86_64-linux) sha256=a6f2b523be0c3e4752aaf55cc5026239080b81f91bd2f72226b6e71919d204d0
   concurrent-ruby (1.3.5) sha256=813b3e37aca6df2a21a3b9f1d497f8cbab24a2b94cab325bffe65ee0f6cbebc6
   connection_pool (2.5.3) sha256=cfd74a82b9b094d1ce30c4f1a346da23ee19dc8a062a16a85f58eab1ced4305b
   crack (1.0.0) sha256=c83aefdb428cdc7b66c7f287e488c796f055c0839e6e545fec2c7047743c4a49
@@ -1124,6 +1138,7 @@ CHECKSUMS
   oauth2 (2.0.9) sha256=b21f9defcf52dc1610e0dfab4c868342173dcd707fd15c777d9f4f04e153f7fb
   omniauth (2.1.3) sha256=8d24e2e55c41926c96e4a93fd566bc026dfd6f2c850408748e89945a565956c2
   omniauth-oauth2 (1.8.0) sha256=b2f8e9559cc7e2d4efba57607691d6d2b634b879fc5b5b6ccfefa3da85089e78
+  openapi3_parser (0.10.1) sha256=e373bfcec1f183252a51fbe28787b52c4052e045697bae1778258bb9b3296a19
   openapi_parser (2.2.6) sha256=10ca80caa40997f6a6dc4412c0c0f6890b835c276e7ece4f0e4f25a45c19c584
   opensearch-ruby (3.4.0) sha256=0a8621686bed3c59b4c23e08cbaef873685a3fe4568e9d2703155ca92b8ca05d
   opentelemetry-api (1.5.0) sha256=8dcc33e7aba70b1da630065ce0db3d6f50cb8ebd2017383209739439025ea997
