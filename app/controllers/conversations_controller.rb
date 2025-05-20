@@ -8,7 +8,6 @@ class ConversationsController < BaseController
     @conversation ||= Conversation.new
     prepare_for_show_view(@conversation)
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
-    @remaining_questions_copy = helpers.remaining_questions_copy(@conversation.user)
 
     respond_to do |format|
       format.html { render :show }
@@ -111,8 +110,7 @@ private
   def find_conversation
     return if cookies[:conversation_id].blank?
 
-    @conversation = Conversation.includes(:user)
-                                .active
+    @conversation = Conversation.active
                                 .find_by!(id: cookies[:conversation_id], source: :web)
     set_conversation_cookie(@conversation)
   rescue ActiveRecord::RecordNotFound
@@ -140,7 +138,7 @@ private
       ),
       answer_url: answer_question_path(question),
       error_messages: [],
-      remaining_questions_copy: helpers.remaining_questions_copy(question.conversation.user),
+      remaining_questions_copy: nil,
     }
   end
 
