@@ -319,7 +319,6 @@ RSpec.describe "ConversationsController" do
           "question_html" => /app-c-conversation-message/,
           "answer_url" => answer_question_path(question),
           "error_messages" => [],
-          "remaining_questions_copy" => nil,
         })
       end
 

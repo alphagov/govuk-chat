@@ -17,14 +17,10 @@
   has_error ||= error_items.any?
   error_id = "#{input_id}-error"
 
-  remaining_questions_hint_id = "js-remaining-questions-hint-#{SecureRandom.hex(4)}"
-  remaining_questions_copy ||= ""
-
   aria_described_by = []
   aria_described_by << secondary_label_id
   aria_described_by << hint_id
   aria_described_by << error_id if has_error
-  aria_described_by << remaining_questions_hint_id if remaining_questions_copy.present?
   aria_described_by = aria_described_by.join(" ")
 
   data_attributes = {
@@ -55,15 +51,6 @@
         </li>
       <% end %>
     <% end %>
-
-    <div class="js-remaining-questions-hint-wrapper <%= remaining_questions_copy.blank? ? "govuk-visually-hidden" : "" %>">
-      <%= render "govuk_publishing_components/components/hint", {
-        id: remaining_questions_hint_id,
-        classes: "js-remaining-questions-hint",
-        text: remaining_questions_copy,
-        margin_bottom: 2,
-      } %>
-    </div>
 
     <%= content_tag :div, class: form_group_classes do %>
       <%= content_tag :div, class: "app-c-question-form__input-wrapper" do %>
