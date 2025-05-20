@@ -138,7 +138,6 @@ private
       ),
       answer_url: answer_question_path(question),
       error_messages: [],
-      remaining_questions_copy: nil,
     }
   end
 
