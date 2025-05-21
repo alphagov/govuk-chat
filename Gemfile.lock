@@ -281,7 +281,7 @@ GEM
     govuk_personalisation (1.1.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
-    govuk_publishing_components (56.3.2)
+    govuk_publishing_components (57.0.0)
       govuk_app_config
       govuk_personalisation (>= 0.7.0)
       kramdown
@@ -661,7 +661,7 @@ GEM
       bcrypt (>= 3.1.11)
       rails (>= 5.1.4)
     pg (1.5.9)
-    plek (5.2.1)
+    plek (5.2.2)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -713,7 +713,7 @@ GEM
       activesupport (= 8.0.2)
       bundler (>= 1.15.0)
       railties (= 8.0.2)
-    rails-dom-testing (2.2.0)
+    rails-dom-testing (2.3.0)
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
@@ -920,7 +920,7 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zeitwerk (2.7.2)
+    zeitwerk (2.7.3)
 
 PLATFORMS
   aarch64-linux
@@ -1074,7 +1074,7 @@ CHECKSUMS
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
-  govuk_publishing_components (56.3.2) sha256=f6b8ba851f8b599572506ceb016b2ffdc0fbd5127038717bca2b5ff3650128f2
+  govuk_publishing_components (57.0.0) sha256=e1b75d17fcc668c476456fff038bf3bdd2f543560ff504fc3fa2d3dfa51b9e39
   govuk_schemas (6.0.0) sha256=e53d5bb946a0bac29aa75635146fe29b8b28dfc186035b39603583b0dbd14a8b
   govuk_sidekiq (10.0.0) sha256=0d0485f6946f5e212eb5d6f5105c406a25f3cd059592a5b490b78f1d71818de8
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
@@ -1200,7 +1200,7 @@ CHECKSUMS
   parser (3.3.8.0) sha256=2476364142b307fa5a1b1ece44f260728be23858a9c71078e956131a75453c45
   passwordless (1.8.1) sha256=9508004b820361ee1d57c7a137b866acf082e691e8bcb9c805f481d7a79c59f0
   pg (1.5.9) sha256=761efbdf73b66516f0c26fcbe6515dc7500c3f0aa1a1b853feae245433c64fdc
-  plek (5.2.1) sha256=7d517824da095ab3e8070023cf57cc8504554ea8f897ee1d7e71a67df6295521
+  plek (5.2.2) sha256=f508a25c97cf174e492be6270ee9fc9698051ab79170461582302d7b8cb0e180
   pp (0.6.2) sha256=947ec3120c6f92195f8ee8aa25a7b2c5297bb106d83b41baa02983686577b6ff
   prettyprint (0.2.0) sha256=2bc9e15581a94742064a3cc8b0fb9d45aae3d03a1baa6ef80922627a0766f193
   prism (1.4.0) sha256=dc0e3e00e93160213dc2a65519d9002a4a1e7b962db57d444cf1a71565bb703e
@@ -1220,7 +1220,7 @@ CHECKSUMS
   rack-test (2.2.0) sha256=005a36692c306ac0b4a9350355ee080fd09ddef1148a5f8b2ac636c720f5c463
   rackup (2.2.1) sha256=f737191fd5c5b348b7f0a4412a3b86383f88c43e13b8217b63d4c8d90b9e798d
   rails (8.0.2) sha256=fdfaa5a83ec0388e02864e88d515959caedc88053b5f701c4deb1652d8f164c6
-  rails-dom-testing (2.2.0) sha256=e515712e48df1f687a1d7c380fd7b07b8558faa26464474da64183a7426fa93b
+  rails-dom-testing (2.3.0) sha256=8acc7953a7b911ca44588bf08737bc16719f431a1cc3091a292bca7317925c1d
   rails-html-sanitizer (1.6.2) sha256=35fce2ca8242da8775c83b6ba9c1bcaad6751d9eb73c1abaa8403475ab89a560
   railties (8.0.2) sha256=0d7c3f40c49ba74980f1bac1d4bb153a9331c5ee8a9631d89c7bf79db82e5cf9
   rainbow (3.1.1) sha256=039491aa3a89f42efa1d6dec2fc4e62ede96eb6acd95e52f1ad581182b79bc6a
@@ -1305,7 +1305,7 @@ CHECKSUMS
   websocket-driver (0.7.7) sha256=056d99f2cd545712cfb1291650fde7478e4f2661dc1db6a0fa3b966231a146b4
   websocket-extensions (0.1.5) sha256=1c6ba63092cda343eb53fc657110c71c754c56484aad42578495227d717a8241
   xpath (3.2.0) sha256=6dfda79d91bb3b949b947ecc5919f042ef2f399b904013eb3ef6d20dd3a4082e
-  zeitwerk (2.7.2) sha256=842e067cb11eb923d747249badfb5fcdc9652d6f20a1f06453317920fdcd4673
+  zeitwerk (2.7.3) sha256=b2e86b4a9b57d26ba68a15230dcc7fe6f040f06831ce64417b0621ad96ba3e85
 
 RUBY VERSION
    ruby 3.4.3p32
