@@ -21,6 +21,7 @@ Rails.application.routes.draw do
 
   scope :chat, format: false, defaults: { format: "html" }, constraints: html_constraint do
     get "", to: "homepage#index", as: :homepage
+    get "/test", to: "conversations#clear_confirm"
     post "", to: "homepage#sign_in_or_up"
 
     scope "try-chat" do
