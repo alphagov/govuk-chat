@@ -50,16 +50,4 @@ RSpec.describe "components/_question_form.html.erb" do
       .and have_selector(".app-c-question-form__error-message", text: /Error 1/)
       .and have_selector(".app-c-question-form__input[aria-describedby~=id-error]")
   end
-
-  it "renders the remaining questions hint" do
-    render("components/question_form", {
-      url: "/conversation",
-      name: "name",
-      remaining_questions_copy: "6 messages left",
-    })
-
-    expect(rendered)
-      .to have_selector(".js-remaining-questions-hint", text: "6 messages left")
-      .and have_selector(".app-c-question-form__input[aria-describedby*=js-remaining-questions-hint]")
-  end
 end

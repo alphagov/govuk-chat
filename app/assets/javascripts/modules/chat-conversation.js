@@ -80,11 +80,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
           const responseJson = await response.json()
           this.messageLists.renderQuestion(responseJson.question_html)
 
-          this.formContainer.dispatchEvent(
-            new CustomEvent('question-accepted', {
-              detail: { remainingQuestionsCopy: responseJson.remaining_questions_copy }
-            })
-          )
+          this.formContainer.dispatchEvent(new Event('question-accepted'))
 
           this.module.dispatchEvent(new Event('conversation-active', { bubbles: true }))
 

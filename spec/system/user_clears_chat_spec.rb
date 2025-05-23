@@ -1,7 +1,7 @@
 RSpec.describe "User clears chat" do
   scenario do
-    given_i_am_a_signed_in_early_access_user
-    and_i_have_an_active_conversation_with_an_answered_question
+    given_i_have_an_active_conversation_with_an_answered_question
+    and_i_visit_the_conversation_page
     when_i_click_the_clear_chat_link
     and_i_cancel
     then_i_can_see_my_previous_questions_and_answer
@@ -10,11 +10,15 @@ RSpec.describe "User clears chat" do
     then_i_cannot_see_my_previous_questions_and_answer
   end
 
-  def and_i_have_an_active_conversation_with_an_answered_question
-    @conversation = create(:conversation, user: @user)
+  def given_i_have_an_active_conversation_with_an_answered_question
+    @conversation = create(:conversation)
     set_rack_cookie(:conversation_id, @conversation.id)
     answer = build(:answer, message: "Example answer")
     create(:question, answer:, conversation: @conversation, message: "Example question")
+  end
+
+  def and_i_visit_the_conversation_page
+    visit show_conversation_path
   end
 
   def when_i_click_the_clear_chat_link

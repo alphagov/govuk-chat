@@ -1,20 +1,6 @@
 RSpec.describe "ConversationsController" do
   delegate :helpers, to: ConversationsController
 
-  it_behaves_like "redirects unauthenticated requests when authentication is required",
-                  routes: { clear_conversation_path: %i[get post], show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "redirects unauthenticated requests when authentication is required",
-                  routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
-    let(:route_params) { [SecureRandom.uuid] }
-  end
-
-  it_behaves_like "denies unauthenticated JSON requests when authentication is required",
-                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "denies unauthenticated JSON requests when authentication is required",
-                  routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
-    let(:route_params) { [SecureRandom.uuid] }
-  end
-
   it_behaves_like "handles a request for a user who hasn't completed onboarding",
                   routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
   it_behaves_like "handles a request for a user who hasn't completed onboarding",
@@ -40,7 +26,6 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "GET :show" do
-    include_context "when signed in"
     include_context "with onboarding completed"
 
     context "when there is no conversation cookie" do
@@ -95,7 +80,7 @@ RSpec.describe "ConversationsController" do
     end
 
     context "when the conversation is active" do
-      let(:conversation) { create(:conversation, :not_expired, user:) }
+      let(:conversation) { create(:conversation, :not_expired) }
 
       before do
         cookies[:conversation_id] = conversation.id
@@ -117,41 +102,8 @@ RSpec.describe "ConversationsController" do
         )
       end
 
-      it "renders the remaining question count" do
-        allow(Rails.configuration.conversations).to receive_messages(
-          max_questions_per_user: 50,
-          question_warning_threshold: 20,
-        )
-        conversation.user.update!(questions_count: 45)
-
-        get show_conversation_path
-
-        expect(response.body).to have_selector(".js-remaining-questions-hint", text: "5 messages left")
-      end
-
-      it "renders a system message when approaching the question limit" do
-        allow(Rails.configuration.conversations).to receive_messages(
-          max_questions_per_user: 50,
-          question_warning_threshold: 20,
-        )
-        conversation.user.update!(questions_count: 30)
-
-        get show_conversation_path
-
-        expect(response.body).to have_content("You’ve nearly reached the message limit for the GOV.UK Chat trial").once
-      end
-
-      it "renders a system message when the question limit has been reached" do
-        allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(50)
-        conversation.user.update!(questions_count: 50)
-
-        get show_conversation_path
-
-        expect(response.body).to have_content("You’ve reached the message limit for the GOV.UK Chat trial").once
-      end
-
       context "and there is a question without an answer" do
-        let(:conversation) { create(:conversation, user:) }
+        let(:conversation) { create(:conversation) }
 
         it "renders the question and pending answer url correctly" do
           question = create(:question, conversation:)
@@ -165,7 +117,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there is a question with an answer that doesn't have feedback" do
-        let(:conversation) { create(:conversation, user:) }
+        let(:conversation) { create(:conversation) }
 
         it "renders the answer and an answer feedback form" do
           question = create(:question, :with_answer, conversation:)
@@ -183,7 +135,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there is a question with an answer that has feedback" do
-        let(:conversation) { create(:conversation, user:) }
+        let(:conversation) { create(:conversation) }
 
         it "doesn't render a feedback form" do
           question = create(:question, :with_answer, conversation:)
@@ -198,7 +150,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there is a question with an answer that has sources" do
-        let(:conversation) { create(:conversation, user:) }
+        let(:conversation) { create(:conversation) }
 
         it "renders the sources correctly for answers with the success status" do
           question = create(:question, conversation:)
@@ -241,7 +193,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there are more questions than the max number of questions" do
-        let(:conversation) { create(:conversation, user:) }
+        let(:conversation) { create(:conversation) }
 
         it "only renders the max number of question from rails config" do
           allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(1)
@@ -257,7 +209,7 @@ RSpec.describe "ConversationsController" do
 
       context "and the response format is JSON" do
         before do
-          conversation = create(:conversation, :not_expired, user:)
+          conversation = create(:conversation, :not_expired)
           cookies[:conversation_id] = conversation.id
         end
 
@@ -270,12 +222,7 @@ RSpec.describe "ConversationsController" do
       end
     end
 
-    context "when an early access users onboarding has been completed" do
-      before do
-        user = create(:early_access_user, onboarding_completed: true)
-        sign_in_early_access_user(user)
-      end
-
+    context "when a users onboarding has been completed" do
       it "renders the page successfully" do
         get show_conversation_path
         expect(response).to have_http_status(:success)
@@ -285,9 +232,8 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "POST :update" do
-    include_context "when signed in"
     include_context "with onboarding completed"
-    let(:conversation) { create(:conversation, :not_expired, user:) }
+    let(:conversation) { create(:conversation, :not_expired) }
 
     it "sets the converation_id cookie with valid params" do
       freeze_time do
@@ -321,7 +267,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and the params are invalid while the last question is not answered" do
-        let(:conversation) { create(:conversation, questions: [create(:question)], user:) }
+        let(:conversation) { create(:conversation, questions: [create(:question)]) }
 
         before do
           cookies[:conversation_id] = conversation.id
@@ -373,7 +319,6 @@ RSpec.describe "ConversationsController" do
           "question_html" => /app-c-conversation-message/,
           "answer_url" => answer_question_path(question),
           "error_messages" => [],
-          "remaining_questions_copy" => nil,
         })
       end
 
@@ -390,26 +335,12 @@ RSpec.describe "ConversationsController" do
           "error_messages" => [Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE],
         )
       end
-
-      it "includes the remaining questions copy" do
-        allow(Rails.configuration.conversations).to receive_messages(
-          max_questions_per_user: 50,
-          question_warning_threshold: 20,
-        )
-        conversation.user.update!(questions_count: 40)
-
-        post update_conversation_path,
-             params: { create_question: { user_question: "How much tax should I be paying?" }, format: :json }
-
-        expect(JSON.parse(response.body)).to include("remaining_questions_copy" => "9 messages left")
-      end
     end
   end
 
   describe "GET :answer" do
-    include_context "when signed in"
     include_context "with onboarding completed"
-    let(:conversation) { create(:conversation, user:) }
+    let(:conversation) { create(:conversation) }
 
     before do
       cookies[:conversation_id] = conversation.id
@@ -485,31 +416,6 @@ RSpec.describe "ConversationsController" do
         expect(JSON.parse(response.body)).to match({ "answer_html" => /app-c-conversation-message/ })
       end
 
-      it "includes a system message in answer_html when appraching the question limit" do
-        allow(Rails.configuration.conversations).to receive_messages(
-          max_questions_per_user: 50,
-          question_warning_threshold: 20,
-        )
-        user.update!(questions_count: 30)
-
-        question = create(:question, :with_answer, conversation:)
-
-        get answer_question_path(question), params: { format: :json }
-
-        expect(JSON.parse(response.body)).to match({ "answer_html" => /You’ve nearly reached the message limit/ })
-      end
-
-      it "includes a system message in answer_html when reached the question limit" do
-        allow(Rails.configuration.conversations).to receive(:max_questions_per_user).and_return(50)
-        user.update!(questions_count: 50)
-
-        question = create(:question, :with_answer, conversation:)
-
-        get answer_question_path(question), params: { format: :json }
-
-        expect(JSON.parse(response.body)).to match({ "answer_html" => /You’ve reached the message limit/ })
-      end
-
       it "responds with an accepted status code when the question has a pending answer" do
         question = create(:question, conversation:)
         get answer_question_path(question), params: { format: :json }
@@ -536,10 +442,9 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "POST :answer_feedback" do
-    include_context "when signed in"
     include_context "with onboarding completed"
 
-    let(:conversation) { create(:conversation, user:) }
+    let(:conversation) { create(:conversation) }
     let(:question) { create(:question, conversation:) }
 
     before do
@@ -622,11 +527,10 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "GET :clear" do
-    include_context "when signed in"
     include_context "with onboarding completed"
 
     context "when the conversation is active" do
-      let(:conversation) { create(:conversation, :not_expired, user:) }
+      let(:conversation) { create(:conversation, :not_expired) }
 
       before do
         cookies[:conversation_id] = conversation.id
@@ -643,11 +547,10 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "POST :clear" do
-    include_context "when signed in"
     include_context "with onboarding completed"
 
     context "when the conversation is active" do
-      let(:conversation) { create(:conversation, :not_expired, user:) }
+      let(:conversation) { create(:conversation, :not_expired) }
 
       before do
         cookies[:conversation_id] = conversation.id

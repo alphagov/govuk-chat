@@ -24,36 +24,4 @@ RSpec.describe UserInputHelper do
       expect(helper.escaped_simple_format(string, { class: "govuk-body" })).to eq(expected_result)
     end
   end
-
-  describe "remaining_questions_copy" do
-    it "is nil if the user is nil" do
-      expect(helper.remaining_questions_copy(nil)).to be_nil
-    end
-
-    it "is nil if the user can ask an unlimited number of questions" do
-      user = build(:early_access_user, individual_question_limit: 0)
-
-      expect(helper.remaining_questions_copy(user)).to be_nil
-    end
-
-    it "is nil if the user has not reached the warning threshold" do
-      allow(Rails.configuration.conversations).to receive_messages(
-        max_questions_per_user: 50,
-        question_warning_threshold: 20,
-      )
-      user = build(:early_access_user, questions_count: 5)
-
-      expect(helper.remaining_questions_copy(user)).to be_nil
-    end
-
-    it "returns the remaining question count if the user has reached the warning threshold" do
-      allow(Rails.configuration.conversations).to receive_messages(
-        max_questions_per_user: 50,
-        question_warning_threshold: 20,
-      )
-      user = build(:early_access_user, questions_count: 40)
-
-      expect(helper.remaining_questions_copy(user)).to eq("10 messages left")
-    end
-  end
 end
