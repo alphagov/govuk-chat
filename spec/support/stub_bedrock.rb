@@ -95,6 +95,14 @@ module StubBedrock
     end
   end
 
+  def stub_bedrock_embedding(llm_provider, text: "text")
+    raise "Unsupported LLM provider" unless llm_provider.to_sym == :titan
+
+    stub_bedrock_invoke_model(
+      bedrock_titan_embedding_response(mock_titan_embedding(text)),
+    )
+  end
+
   def bedrock_titan_embedding_response(embedding_array)
     {
       content_type: "application/json",
@@ -102,6 +110,13 @@ module StubBedrock
         embedding: embedding_array,
       }.to_json,
     }
+  end
+
+  def mock_titan_embedding(text, dimensions: Search::ChunkedContentRepository::TITAN_EMBEDDING_DIMENSIONS)
+    # This returns a mock vector embedding which is deterministic based on the
+    # text given
+    random_generator = Random.new(text.bytes.sum)
+    dimensions.times.map { random_generator.rand }
   end
 
   def bedrock_claude_text_response(response_text,

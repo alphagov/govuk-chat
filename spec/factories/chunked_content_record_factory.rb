@@ -16,6 +16,7 @@ FactoryBot.define do
     description { "Description" }
     plain_content { "Some content" }
     openai_embedding { [rand(-0.9...0.9)] * Search::ChunkedContentRepository::OPENAI_EMBEDDING_DIMENSIONS }
+    titan_embedding { [rand(-0.9...0.9)] * Search::ChunkedContentRepository::TITAN_EMBEDDING_DIMENSIONS }
 
     initialize_with { attributes }
   end
