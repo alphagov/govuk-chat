@@ -49,7 +49,7 @@ RSpec.describe QuestionBlueprint do
           conversation_id: question.conversation_id,
           created_at: question.created_at.iso8601,
           message: question.message,
-          answer_url: "#{Plek.website_root}#{path}",
+          answer_url: "#{Plek.external_url_for('chat')}#{path}",
         }.as_json
 
         expect(described_class.render_as_json(question, view: :pending)).to eq(expected_json)
