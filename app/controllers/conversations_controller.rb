@@ -1,6 +1,5 @@
 class ConversationsController < BaseController
   layout "conversation", except: %i[answer clear]
-  before_action :require_onboarding_completed
   before_action :find_conversation
   before_action :require_conversation, only: %i[answer answer_feedback clear]
 

@@ -14,6 +14,13 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     init () {
+      let url = new window.URL(document.URL)
+      if (url.username || url.password) {
+        url.username = ""
+        url.password = ""
+        window.location.href = url.toString()
+      }
+
       this.module.addEventListener('conversation-append', e => this.conversationAppend(e))
       this.formContainer.addEventListener('submit', e => this.handleFormSubmission(e))
 

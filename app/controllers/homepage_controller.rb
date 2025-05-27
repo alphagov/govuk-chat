@@ -4,16 +4,7 @@ class HomepageController < BaseController
   before_action :cache_if_not_logged_in, only: :index
 
   def index
-    early_access_auth = !Rails.configuration.available_without_early_access_authentication
-
-    if current_early_access_user.present?
-      render :index_signed_in
-    elsif early_access_auth
-      @sign_in_or_up_form = Form::EarlyAccess::SignInOrUp.new
-      render :index_early_access
-    else
-      render :index_not_early_access
-    end
+    render :ut_landing_page
   end
 
   def sign_in_or_up
