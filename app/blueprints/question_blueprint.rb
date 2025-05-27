@@ -15,7 +15,7 @@ class QuestionBlueprint < Blueprinter::Base
         question.conversation_id,
         question.id,
       )
-      "#{Plek.website_root}#{path}"
+      "#{Plek.external_url_for('chat')}#{path}"
     end
   end
 end
