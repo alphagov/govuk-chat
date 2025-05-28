@@ -7,7 +7,6 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :conversation_id
   attribute :answer_feedback_useful, :boolean
   attribute :question_routing_label
-  attribute :user_id
   attribute :signon_user_id
 
   validate :validate_dates
@@ -38,17 +37,10 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
       scope = conversation_scope(scope)
       scope = question_routing_label_scope(scope)
       scope = ordering_scope(scope)
-      scope = user_scope(scope)
       scope = signon_user_scope(scope)
       scope.page(page)
            .per(25)
     end
-  end
-
-  def user
-    return @user if defined?(@user)
-
-    @user = EarlyAccessUser.includes(:conversations).find_by_id(user_id)
   end
 
   def signon_user
@@ -73,7 +65,6 @@ private
     filters[:end_date_params] = end_date_params if end_date_params.values.any?(&:present?)
     filters[:sort] = sort if sort != self.class.default_sort
     filters[:answer_feedback_useful] = answer_feedback_useful unless answer_feedback_useful.nil?
-    filters[:user_id] = user_id if user_id.present?
     filters[:conversation_id] = conversation.id if conversation.present?
 
     filters
@@ -125,14 +116,8 @@ private
     scope.where(conversation_id: conversation.id)
   end
 
-  def user_scope(scope)
-    return scope if user_id.blank?
-
-    scope.joins(:conversation).where("conversations.early_access_user_id = ?", user_id)
-  end
-
   def signon_user_scope(scope)
-    return scope if signon_user_id.blank? || user_id.present?
+    return scope if signon_user_id.blank?
 
     scope.joins(:conversation).where(conversation: { signon_user_id: signon_user_id, source: :api })
   end

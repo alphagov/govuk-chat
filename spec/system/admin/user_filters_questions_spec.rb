@@ -45,23 +45,6 @@ RSpec.describe "Admin user filters questions" do
     then_i_see_the_pending_question
   end
 
-  scenario "filtered by a user" do
-    given_i_am_an_admin
-    and_there_are_early_access_users
-    and_there_are_questions_associated_with_users
-
-    when_i_visit_the_questions_section_filtered_by_a_user
-    then_i_see_that_users_details_in_the_sidebar
-    and_i_see_all_the_questions_for_that_user
-
-    when_i_search_for_a_question_from_the_user
-    then_i_see_the_filtered_questions_for_that_user
-
-    when_clear_the_search_filter
-    and_i_filter_by_the_users_first_conversation
-    then_i_see_the_question_from_the_first_conversation
-  end
-
   scenario "filtered by a signon user" do
     given_i_am_an_admin
     and_there_are_signon_users
@@ -73,11 +56,6 @@ RSpec.describe "Admin user filters questions" do
 
     when_i_search_for_a_question_from_the_signon_user
     then_i_see_the_filtered_questions_for_that_signon_user
-  end
-
-  def and_there_are_early_access_users
-    @user = create(:early_access_user)
-    @user2 = create(:early_access_user)
   end
 
   def and_there_are_signon_users
@@ -94,16 +72,6 @@ RSpec.describe "Admin user filters questions" do
     answer = create(:answer, question: @question2, question_routing_label: "non_english")
     create(:answer_feedback, answer: answer, useful: true)
     create(:answer, status: :clarification, question: @question3)
-  end
-
-  def and_there_are_questions_associated_with_users
-    conversation1 = build(:conversation, user: @user)
-    conversation2 = build(:conversation, user: @user)
-    create(:question, conversation: conversation1, message: "Hello world")
-    create(:question, conversation: conversation2, message: "Greetings world")
-
-    conversation3 = build(:conversation, user: @user2)
-    create(:question, conversation: conversation3, message: "Goodbye")
   end
 
   def and_there_are_questions_associated_with_signon_users
@@ -289,10 +257,6 @@ RSpec.describe "Admin user filters questions" do
   def when_i_view_the_questions_conversation
     click_on @question2.message
     click_on @question2.conversation.id
-  end
-
-  def when_i_visit_the_questions_section_filtered_by_a_user
-    visit admin_questions_path(user_id: @user.id)
   end
 
   def when_i_visit_the_questions_section_filtered_by_a_signon_user

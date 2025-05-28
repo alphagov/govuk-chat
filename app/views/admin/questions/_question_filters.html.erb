@@ -1,44 +1,17 @@
 <%
-  user = filter.user
   conversation = filter.conversation
   signon_user = filter.signon_user
 %>
 
 <%= form_with(url: admin_questions_path, method: :get) do %>
-  <% if params[:user_id].present? %>
-    <p class="govuk-body">
-      Filtering by user:
-      <% if user.present? %>
-        <%= link_to user.email, admin_early_access_user_path(user), class: "govuk-link" %>
-      <% else %>
-        <%= params[:user_id] %> (Deleted user)
-      <% end %>
-    </p>
-    <%= hidden_field_tag(:user_id, params[:user_id]) %>
-  <% elsif signon_user.present? %>
+  <% if signon_user.present? %>
     <p class="govuk-body">
       Filtering by API user: <%= signon_user.name %>
     </p>
     <%= hidden_field_tag(:signon_user_id, params[:signon_user_id]) %>
   <% end %>
 
-  <% if user.present? %>
-    <%= render "govuk_publishing_components/components/select", {
-      id: "conversation_id",
-      name: "conversation_id",
-      label: "Conversation",
-      heading_size: "s",
-      full_width: true,
-      options: [{ text: "", value: "" }] +
-        user.conversations.map.with_index(1) do |conversation, index|
-          {
-            text: index.ordinalize,
-            value: conversation.id,
-            selected: params[:conversation_id] == conversation.id,
-          }
-        end,
-    } %>
-  <% elsif conversation.present? %>
+  <% if conversation.present? %>
     <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">
       Filtering by conversation ID:
     </p>

@@ -5,7 +5,7 @@ class Admin::QuestionsController < Admin::BaseController
   end
 
   def show
-    @question = Question.includes(conversation: %i[user signon_user], answer: %i[feedback sources])
+    @question = Question.includes(conversation: :signon_user, answer: %i[feedback sources])
                          .find(params[:id])
     @answer = @question.answer
     @question_number = Question.where(conversation: @question.conversation)
@@ -26,7 +26,6 @@ private
       :question_routing_label,
       :page,
       :sort,
-      :user_id,
       :signon_user_id,
       :conversation_id,
     )
