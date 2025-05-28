@@ -22,19 +22,6 @@ common_chart_options = { refresh: 30 }
 } %>
 
 <div class="govuk-grid-row govuk-!-margin-bottom-8">
-  <div class="govuk-grid-column-one-half" id="early-access-users">
-    <h2 class="govuk-heading-l">Early access users</h2>
-    <%= column_chart admin_metrics_early_access_users_path(period: @period),
-                     **(common_chart_options.merge(stacked: true, legend: legend_position)) %>
-  </div>
-  <div class="govuk-grid-column-one-half" id="waiting-list-users">
-    <h2 class="govuk-heading-l">Waiting list users</h2>
-    <%= column_chart admin_metrics_waiting_list_users_path(period: @period),
-                     **(common_chart_options.merge(stacked: true, legend: legend_position)) %>
-  </div>
-</div>
-
-<div class="govuk-grid-row govuk-!-margin-bottom-8">
   <div class="govuk-grid-column-one-half" id="conversations">
     <h2 class="govuk-heading-l">New conversations</h2>
     <%= column_chart admin_metrics_conversations_path(period: @period), **common_chart_options %>

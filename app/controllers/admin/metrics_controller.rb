@@ -6,26 +6,6 @@ class Admin::MetricsController < Admin::BaseController
     policy.style_src(*policy.style_src, :unsafe_inline)
   end
 
-  def early_access_users
-    active_scope = EarlyAccessUser.where(created_at: start_time..).group(:source)
-    active_count = count_by_period(active_scope, :created_at)
-
-    deleted_scope = DeletedEarlyAccessUser.where(user_created_at: start_time..).group(:user_source)
-    deleted_count = count_by_period(deleted_scope, :user_created_at)
-
-    render json: combine_data(active_count, deleted_count).chart_json
-  end
-
-  def waiting_list_users
-    active_scope = WaitingListUser.where(created_at: start_time..).group(:source)
-    active_count = count_by_period(active_scope, :created_at)
-
-    deleted_scope = DeletedWaitingListUser.where(user_created_at: start_time..).group(:user_source)
-    deleted_count = count_by_period(deleted_scope, :user_created_at)
-
-    render json: combine_data(active_count, deleted_count).chart_json
-  end
-
   def conversations
     scope = Conversation.where(created_at: start_time..)
 
@@ -156,9 +136,5 @@ private
     # data (single group by hash of zero values, multiple group by empty hash)
     # so we reset any that
     count_data.values.all?(&:zero?) ? {} : count_data
-  end
-
-  def combine_data(hash_a, hash_b)
-    hash_a.merge(hash_b) { |_, a_value, b_value| a_value + b_value }
   end
 end

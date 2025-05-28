@@ -13,8 +13,6 @@ RSpec.describe "Admin user views metrics", :js do
   end
 
   def and_there_has_been_activity
-    create_list(:early_access_user, 2, created_at: 2.hours.ago)
-    create_list(:waiting_list_user, 2)
     create_list(:question, 2)
     create_list(:answer_feedback, 1, created_at: 1.hour.ago)
     create_list(:answer, 2, created_at: 6.hours.ago, status: :unanswerable_llm_cannot_answer)
@@ -43,8 +41,6 @@ RSpec.describe "Admin user views metrics", :js do
   def then_i_can_see_activity
     # We're relying on the rendering of a successful chart results in a canvas
     # element, unclear how to assert correct chart
-    expect(page).to have_selector("#early-access-users canvas")
-    expect(page).to have_selector("#waiting-list-users canvas")
     expect(page).to have_selector("#conversations canvas")
     expect(page).to have_selector("#questions canvas")
     expect(page).to have_selector("#answer-feedback canvas")
