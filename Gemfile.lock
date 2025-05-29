@@ -109,7 +109,7 @@ GEM
       erubi (~> 1.4)
       parser (>= 2.4)
       smart_properties
-    bigdecimal (3.1.9)
+    bigdecimal (3.2.0)
     blueprinter (1.1.2)
     bootsnap (1.18.6)
       msgpack (~> 1.2)
@@ -791,7 +791,7 @@ GEM
     rubocop-capybara (2.22.1)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
-    rubocop-govuk (5.1.10)
+    rubocop-govuk (5.1.11)
       rubocop (= 1.75.7)
       rubocop-ast (= 1.44.1)
       rubocop-capybara (= 2.22.1)
@@ -1007,7 +1007,7 @@ CHECKSUMS
   bcrypt (3.1.20) sha256=8410f8c7b3ed54a3c00cd2456bf13917d695117f033218e2483b2e40b0784099
   benchmark (0.4.0) sha256=0f12f8c495545e3710c3e4f0480f63f06b4c842cc94cec7f33a956f5180e874a
   better_html (2.1.1) sha256=046c3551d1488a3f2939a7cac6fabf2bde08c32e135c91fcd683380118e5af55
-  bigdecimal (3.1.9) sha256=2ffc742031521ad69c2dfc815a98e426a230a3d22aeac1995826a75dabfad8cc
+  bigdecimal (3.2.0) sha256=f220c34e07d98b04e02eb23193bee436fab9afcd551f43dce8837a1b4aa80762
   blueprinter (1.1.2) sha256=e09945686d13539f9e911403b4f13cf4dcb83c951abd188bfca8754afbfb2249
   bootsnap (1.18.6) sha256=0ae2393c1e911e38be0f24e9173e7be570c3650128251bf06240046f84a07d00
   brakeman (7.0.2) sha256=b602d91bcec6c5ce4d4bc9e081e01f621c304b7a69f227d1e58784135f333786
@@ -1247,7 +1247,7 @@ CHECKSUMS
   rubocop (1.75.7) sha256=23566ebb25263f26020687f8abb8aec049f3e29b6a00bdf0aa9d1db16b558be9
   rubocop-ast (1.44.1) sha256=e3cc04203b2ef04f6d6cf5f85fe6d643f442b18cc3b23e3ada0ce5b6521b8e92
   rubocop-capybara (2.22.1) sha256=ced88caef23efea53f46e098ff352f8fc1068c649606ca75cb74650970f51c0c
-  rubocop-govuk (5.1.10) sha256=fbc5cfa71bf3358f2f0fc1d9cc611a574095389d691ba7613ba0611e44f497d0
+  rubocop-govuk (5.1.11) sha256=65762b3f5f27a52c17291864cc9f7693380924bcca4b1b8882e9283c48bb5769
   rubocop-rails (2.32.0) sha256=9fcc623c8722fe71e835e99c4a18b740b5b0d3fb69915d7f0777f00794b30490
   rubocop-rake (0.7.1) sha256=3797f2b6810c3e9df7376c26d5f44f3475eda59eb1adc38e6f62ecf027cbae4d
   rubocop-rspec (3.6.0) sha256=c0e4205871776727e54dee9cc91af5fd74578001551ba40e1fe1a1ab4b404479
