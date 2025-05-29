@@ -60,8 +60,6 @@ Rails.application.routes.draw do
     scope :metrics do
       get "", to: "metrics#index", as: :metrics
       scope defaults: { format: "json" }, constraints: html_json_constraint do
-        get "early-access-users", to: "metrics#early_access_users", as: :metrics_early_access_users
-        get "waiting-list-users", to: "metrics#waiting_list_users", as: :metrics_waiting_list_users
         get "conversations", to: "metrics#conversations", as: :metrics_conversations
         get "questions", to: "metrics#questions", as: :metrics_questions
         get "answer-feedback", to: "metrics#answer_feedback", as: :metrics_answer_feedback
