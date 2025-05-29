@@ -281,7 +281,7 @@ GEM
     govuk_personalisation (1.1.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
-    govuk_publishing_components (57.0.0)
+    govuk_publishing_components (57.1.0)
       govuk_app_config
       govuk_personalisation (>= 0.7.0)
       kramdown
@@ -533,7 +533,7 @@ GEM
     opentelemetry-instrumentation-concurrent_ruby (0.22.0)
       opentelemetry-api (~> 1.0)
       opentelemetry-instrumentation-base (~> 0.23.0)
-    opentelemetry-instrumentation-dalli (0.27.2)
+    opentelemetry-instrumentation-dalli (0.27.3)
       opentelemetry-api (~> 1.0)
       opentelemetry-instrumentation-base (~> 0.23.0)
     opentelemetry-instrumentation-delayed_job (0.23.0)
@@ -914,7 +914,7 @@ GEM
       hashdiff (>= 0.4.0, < 2.0.0)
     webrick (1.9.1)
     websocket (1.2.11)
-    websocket-driver (0.7.7)
+    websocket-driver (0.8.0)
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -1074,7 +1074,7 @@ CHECKSUMS
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
-  govuk_publishing_components (57.0.0) sha256=e1b75d17fcc668c476456fff038bf3bdd2f543560ff504fc3fa2d3dfa51b9e39
+  govuk_publishing_components (57.1.0) sha256=97f17a5bb5e3d666ae569caeb774eabb20cb7cfa1415a7ebf3a150949c4fb2a8
   govuk_schemas (6.0.0) sha256=e53d5bb946a0bac29aa75635146fe29b8b28dfc186035b39603583b0dbd14a8b
   govuk_sidekiq (10.0.0) sha256=0d0485f6946f5e212eb5d6f5105c406a25f3cd059592a5b490b78f1d71818de8
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
@@ -1161,7 +1161,7 @@ CHECKSUMS
   opentelemetry-instrumentation-base (0.23.0) sha256=b3e103ceea2ccf3e6269a394938a5bc239c80d113869fe2b2ac49ba27c3c1c50
   opentelemetry-instrumentation-bunny (0.22.0) sha256=8cb0c40937a30e53fd0df3af400fc49a829d2ec0eb14f3a2a28d052d8207eaf5
   opentelemetry-instrumentation-concurrent_ruby (0.22.0) sha256=fba61e55b4f66331a53ad82cb0a0c225a1ddea9a4f693fcf2e9fa7e7199c6897
-  opentelemetry-instrumentation-dalli (0.27.2) sha256=b785271137b417291f001afc25b60cf67e57c47a4991b4770656c429e9dd76ef
+  opentelemetry-instrumentation-dalli (0.27.3) sha256=815e5d9588d72103af18be3151a558cd237f31220b3cc11295cc2a80e740bf09
   opentelemetry-instrumentation-delayed_job (0.23.0) sha256=11aa70f920c5872b687f33d966898416f14d7c0c244ff7d6f3be1566d8a133fc
   opentelemetry-instrumentation-ethon (0.22.0) sha256=98746b7c2d46063b9811a79117684315531b23b298007d29d8cbed4a9f23d384
   opentelemetry-instrumentation-excon (0.23.0) sha256=3ae5c57a05457f3bfea796ef815d261df94ffc4a83e4b691128044185a8a3f07
@@ -1302,7 +1302,7 @@ CHECKSUMS
   webmock (3.25.1) sha256=ab9d5d9353bcbe6322c83e1c60a7103988efc7b67cd72ffb9012629c3d396323
   webrick (1.9.1) sha256=b42d3c94f166f3fb73d87e9b359def9b5836c426fc8beacf38f2184a21b2a989
   websocket (1.2.11) sha256=b7e7a74e2410b5e85c25858b26b3322f29161e300935f70a0e0d3c35e0462737
-  websocket-driver (0.7.7) sha256=056d99f2cd545712cfb1291650fde7478e4f2661dc1db6a0fa3b966231a146b4
+  websocket-driver (0.8.0) sha256=ed0dba4b943c22f17f9a734817e808bc84cdce6a7e22045f5315aa57676d4962
   websocket-extensions (0.1.5) sha256=1c6ba63092cda343eb53fc657110c71c754c56484aad42578495227d717a8241
   xpath (3.2.0) sha256=6dfda79d91bb3b949b947ecc5919f042ef2f399b904013eb3ef6d20dd3a4082e
   zeitwerk (2.7.3) sha256=b2e86b4a9b57d26ba68a15230dcc7fe6f040f06831ce64417b0621ad96ba3e85
