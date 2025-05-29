@@ -2,8 +2,7 @@ class BaseController < ApplicationController
   include Passwordless::ControllerHelpers
   before_action :ensure_signon_user_if_required
   before_action :check_chat_public_access
-  before_action :ensure_early_access_user_if_required
-  helper_method :current_early_access_user, :settings
+  helper_method :settings
 
 private
 
@@ -27,51 +26,14 @@ private
     Settings.instance
   end
 
-  def current_early_access_user
-    return unless settings.public_access_enabled
-
-    @current_early_access_user ||= authenticate_early_access_user
-  end
-
-  def sign_out_early_access_user
-    sign_out(EarlyAccessUser)
-    @current_early_access_user = nil
-  end
-
-  def authenticate_early_access_user
-    user = authenticate_by_session(EarlyAccessUser)
-
-    if user&.revoked?
-      sign_out_early_access_user
-      nil
-    else
-      user
-    end
-  end
-
-  def require_early_access_user!
-    return if current_early_access_user
-
-    respond_to do |format|
-      format.html { redirect_to homepage_path }
-      format.json { render json: { error: "User not authenticated" }, status: :bad_request }
-    end
-  end
-
-  def ensure_early_access_user_if_required
-    return if Rails.configuration.available_without_early_access_authentication
-
-    require_early_access_user!
-  end
-
   def ensure_signon_user_if_required
     return if Rails.configuration.available_without_signon_authentication
 
     authenticate_user!
   end
 
-  def cache_if_not_logged_in
-    return if Rails.env.development? || current_early_access_user
+  def cache_cookieless_requests
+    return if Rails.env.development?
 
     expires_in(1.minute, public: true)
 

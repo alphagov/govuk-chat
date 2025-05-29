@@ -9,12 +9,4 @@ module AnswersHelper
       end
     end
   end
-
-  def show_question_limit_system_message?(user)
-    return false if user.nil?
-    return false if user.unlimited_question_allowance?
-    return true if user.questions_remaining.zero?
-
-    user.questions_remaining == Rails.configuration.conversations.question_warning_threshold
-  end
 end

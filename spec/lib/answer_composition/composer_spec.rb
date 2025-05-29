@@ -20,24 +20,6 @@ RSpec.describe AnswerComposition::Composer do
       })
     end
 
-    context "when the user associated with the question has been shadow banned" do
-      it "returns an answer with the correct attributes" do
-        user = create(:early_access_user, :shadow_banned)
-        conversation = create(:conversation, user:)
-        question = create(:question, conversation:)
-
-        result = described_class.call(question)
-
-        expect(result)
-          .to be_an_instance_of(Answer)
-          .and have_attributes(
-            question:,
-            message: Answer::CannedResponses::SHADOW_BANNED_MESSAGE,
-            status: "banned",
-          )
-      end
-    end
-
     context "when the question is for the 'openai_structured_answer' strategy" do
       let(:question) { create :question, answer_strategy: :openai_structured_answer }
 

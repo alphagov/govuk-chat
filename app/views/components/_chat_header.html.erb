@@ -9,14 +9,6 @@
 
   navigation_items ||= []
 
-  if signed_in
-    navigation_items << {
-      text: "Sign out",
-      href: url_helpers.sign_out_path,
-      data: { after_print: true},
-    }
-  end
-
   clear_chat_link_class = %w[app-c-header__clear-chat js-header-clear-chat]
   clear_chat_link_class << "app-c-header__clear-chat--focusable-only" unless active_conversation
 %>

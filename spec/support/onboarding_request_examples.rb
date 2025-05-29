@@ -1,7 +1,5 @@
 module OnboardingRequestExamples
   shared_examples "handles a user accessing onboarding when onboarded" do |routes:|
-    include_context "when signed in"
-
     shared_examples "redirects a HTML request" do |method, path|
       it "redirects user to the conversation when conversation_id is present for #{method} #{path}" do
         process(method.to_sym, public_send(path.to_sym), params: { format: :html })
@@ -23,7 +21,7 @@ module OnboardingRequestExamples
       context "when conversation_id is set on cookie" do
         methods.each do |method|
           before do
-            conversation = create(:conversation, :not_expired, user:)
+            conversation = create(:conversation, :not_expired)
             cookies[:conversation_id] = conversation.id
           end
 
@@ -40,20 +38,10 @@ module OnboardingRequestExamples
           include_examples "denies a JSON request", method, path
         end
       end
-
-      context "when the early access users completed onboarding" do
-        before { user.update!(onboarding_completed: true) }
-
-        methods.each do |method|
-          include_examples "redirects a HTML request", method, path
-          include_examples "denies a JSON request", method, path
-        end
-      end
     end
   end
 
   shared_examples "handles a user accessing onboarding limitations once completed" do |routes:|
-    include_context "when signed in"
     include_context "with onboarding limitations completed"
 
     routes.each do |path, methods|
@@ -81,8 +69,6 @@ module OnboardingRequestExamples
   end
 
   shared_examples "handles a user accessing onboarding privacy when onboarding isn't started" do |routes:|
-    include_context "when signed in"
-
     routes.each do |path, methods|
       describe "prevents users from accessing #{path} when onboarding isn't started" do
         methods.each do |method|

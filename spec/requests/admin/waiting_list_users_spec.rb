@@ -383,17 +383,6 @@ RSpec.describe "Admin::WaitingListUsersController" do
       expect(Passwordless::Session.last.authenticatable).to eq(new_user)
     end
 
-    it "calls the mailer with the new session" do
-      user = create(:waiting_list_user)
-      allow(EarlyAccessAuthMailer).to receive(:access_granted).and_call_original
-
-      expect { post promote_admin_waiting_list_user_path(user) }
-        .to change(EarlyAccessAuthMailer.deliveries, :count).by(1)
-
-      created_session = Passwordless::Session.last
-      expect(EarlyAccessAuthMailer).to have_received(:access_granted).with(created_session)
-    end
-
     it "redirects to the early access user details" do
       user = create(:waiting_list_user)
 

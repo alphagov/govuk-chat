@@ -48,11 +48,6 @@ RSpec.describe "users rake tasks" do
         expect { Rake::Task[task_name].invoke }.to change(settings, :delayed_access_places).by(-expected_promotions)
           .and output.to_stdout
       end
-
-      it "sends an email to each user" do
-        expect { Rake::Task[task_name].invoke }.to change(EarlyAccessAuthMailer.deliveries, :count).by(expected_promotions)
-          .and output.to_stdout
-      end
     end
 
     context "when number of waiting list users is within limits" do

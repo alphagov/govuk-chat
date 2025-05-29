@@ -1,7 +1,6 @@
 RSpec.describe "Conversation with Claude with a structured answer", :chunked_content_index do
   scenario do
     given_i_am_using_the_claude_structured_answer_strategy
-    and_i_am_a_signed_in_early_access_user
     and_i_have_confirmed_i_understand_chat_risks
 
     when_i_visit_the_conversation_page
