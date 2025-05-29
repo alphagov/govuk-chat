@@ -104,6 +104,13 @@ module StubBedrock
     }
   end
 
+  def mock_titan_embedding(text, dimensions: Search::ChunkedContentRepository::TITAN_EMBEDDING_DIMENSIONS)
+    # This returns a mock vector embedding which is deterministic based on the
+    # text given
+    random_generator = Random.new(text.bytes.sum)
+    dimensions.times.map { random_generator.rand }
+  end
+
   def bedrock_claude_text_response(response_text,
                                    user_message: nil,
                                    input_tokens: 10,
