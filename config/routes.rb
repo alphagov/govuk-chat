@@ -74,6 +74,12 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :early_access_users, path: "/early-access-users" do
+      member do
+        get "/delete", to: "early_access_users#delete", as: :delete
+      end
+    end
+
     resources :waiting_list_users, path: "/waiting-list-users" do
       member do
         get "/delete", to: "waiting_list_users#delete", as: :delete
