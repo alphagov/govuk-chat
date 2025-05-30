@@ -44,12 +44,7 @@ private
   def access_scope(scope)
     return scope if access.blank?
 
-    case access
-    when "revoked"
-      scope.where.not(revoked_at: nil)
-    when "shadow_banned"
-      scope.where.not(shadow_banned_at: nil)
-    when "at_question_limit"
+    if access == "at_question_limit"
       scope.at_question_limit
     else
       scope.where(revoked_at: nil, shadow_banned_at: nil).within_question_limit

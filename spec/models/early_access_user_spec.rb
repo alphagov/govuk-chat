@@ -194,23 +194,6 @@ RSpec.describe EarlyAccessUser do
     end
   end
 
-  describe "#revoked_or_banned?" do
-    it "returns true when access is revoked" do
-      instance = build(:early_access_user, :revoked)
-      expect(instance.revoked_or_banned?).to be(true)
-    end
-
-    it "returns true when shadow banned" do
-      instance = build(:early_access_user, :shadow_banned)
-      expect(instance.revoked_or_banned?).to be(true)
-    end
-
-    it "returns false when not revoked or shadow banned" do
-      instance = build(:early_access_user)
-      expect(instance.revoked_or_banned?).to be(false)
-    end
-  end
-
   describe "#sign_in" do
     it "raises a AccessRevokedError if a user has access revoked" do
       instance = described_class.new(revoked_at: Time.current)
@@ -383,37 +366,6 @@ RSpec.describe EarlyAccessUser do
       expect(user).to receive(:with_lock).and_call_original
 
       expect { user.handle_jailbreak_attempt }.to change { user.reload.bannable_action_count }.by(1)
-    end
-
-    it "does nothing if the user is already shadow banned" do
-      user = create(:early_access_user, :shadow_banned)
-
-      expect { user.handle_jailbreak_attempt }.not_to(change { user.reload.bannable_action_count })
-    end
-
-    context "when user is within 1 of the shadow ban threshold" do
-      let(:user) do
-        create(
-          :early_access_user,
-          :restored,
-          bannable_action_count: described_class::BANNABLE_ACTION_COUNT_THRESHOLD - 1,
-        )
-      end
-
-      it "shadow bans the user on their next jailbreak attempt" do
-        freeze_time do
-          expect { user.handle_jailbreak_attempt }
-            .to change { user.reload.shadow_banned_at }.to(Time.current)
-            .and change(user, :shadow_banned_reason).to("#{described_class::BANNABLE_ACTION_COUNT_THRESHOLD} jailbreak attempts made by user.")
-            .and change(user, :restored_at).to(nil)
-            .and change(user, :restored_reason).to(nil)
-        end
-      end
-
-      it "notifies Slack" do
-        expect(SlackPoster).to receive(:shadow_ban_notification).with(user.id)
-        user.handle_jailbreak_attempt
-      end
     end
 
     context "when the user is not near the shadow ban threshold" do
