@@ -348,50 +348,6 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
       expect(response.body)
         .to have_link("Edit user", href: edit_admin_early_access_user_path(user))
         .and have_link("Delete user", href: delete_admin_early_access_user_path(user))
-        .and have_link("Revoke access", href: revoke_admin_early_access_user_path(user))
-        .and have_link("Shadow ban", href: shadow_ban_admin_early_access_user_path(user))
-    end
-
-    it "renders the revoked details" do
-      user = create(
-        :early_access_user,
-        revoked_at: Time.zone.parse("2024-1-2 09:10:11"),
-        revoked_reason: "Asking too many questions",
-      )
-
-      get admin_early_access_user_path(user)
-
-      expect(response.body)
-        .to have_content("9:10am on 2 January 2024")
-        .and have_content("Asking too many questions")
-    end
-
-    it "renders the shadow banned details" do
-      user = create(
-        :early_access_user,
-        :shadow_banned,
-        shadow_banned_at: Time.zone.parse("2024-1-2 09:10:11"),
-      )
-
-      get admin_early_access_user_path(user)
-
-      expect(response.body)
-        .to have_content("9:10am on 2 January 2024")
-        .and have_content(user.shadow_banned_reason)
-    end
-
-    it "renders the restored details" do
-      user = create(
-        :early_access_user,
-        :restored,
-        restored_at: Time.zone.parse("2024-1-2 09:10:11"),
-      )
-
-      get admin_early_access_user_path(user)
-
-      expect(response.body)
-        .to have_content("9:10am on 2 January 2024")
-        .and have_content(user.restored_reason)
     end
   end
 
@@ -488,7 +444,6 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
       expect(response).to have_http_status(:ok)
       expect(response.body)
         .to have_content("Are you sure you want to delete this user?")
-        .and have_content("Revoke access instead")
     end
   end
 

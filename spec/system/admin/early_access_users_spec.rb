@@ -23,30 +23,6 @@ RSpec.describe "Admin user early access users functionality" do
     then_i_see_the_user_is_deleted
   end
 
-  scenario "admin revokes and restores an early access user's access" do
-    given_i_am_an_admin
-    and_there_is_an_early_access_user
-    when_i_visit_the_early_access_users_page
-    and_i_revoke_the_users_access
-    then_i_see_the_user_is_revoked
-
-    when_i_restore_the_users_access
-    then_i_see_the_user_is_not_revoked
-    and_i_can_see_the_restore_reason
-  end
-
-  scenario "admin shadow bans and restores an early access user" do
-    given_i_am_an_admin
-    and_there_is_an_early_access_user
-    when_i_visit_the_early_access_users_page
-    and_i_shadow_ban_the_user
-    then_i_can_see_that_they_are_shadow_banned
-
-    when_i_restore_the_users_access
-    then_i_see_the_user_is_not_shadow_banned
-    and_i_can_see_the_restore_reason
-  end
-
   def when_i_visit_the_early_access_users_index_page
     visit admin_early_access_users_path
   end
@@ -96,54 +72,5 @@ RSpec.describe "Admin user early access users functionality" do
   def then_i_see_the_user_is_deleted
     expect(page).to have_content("User deleted")
     expect(page).not_to have_content(@user.email)
-  end
-
-  def and_i_revoke_the_users_access
-    click_on "Revoke access"
-
-    freeze_time do
-      @revoked_time = Time.current
-      fill_in "Reason for revoking access", with: "Asking too many questions"
-      click_button("Submit")
-    end
-  end
-
-  def then_i_see_the_user_is_revoked
-    expect(page)
-      .to have_content(/Revoked on.*#{@revoked_time.to_fs(:time_and_date)}/)
-      .and have_content("Asking too many questions")
-  end
-
-  def when_i_restore_the_users_access
-    click_on "Restore access"
-    @restore_reason = "User has apologised"
-    fill_in "Reason for restoring access", with: @restore_reason
-    click_on "Submit"
-  end
-
-  def then_i_see_the_user_is_not_revoked
-    expect(page).to have_content(/Revoked\?.*No/)
-  end
-
-  def and_i_can_see_the_restore_reason
-    expect(page).to have_content(@restore_reason)
-  end
-
-  def and_i_shadow_ban_the_user
-    click_on "Shadow ban"
-
-    freeze_time do
-      @shadow_banned_at = Time.current
-      fill_in "Reason for shadow ban", with: "Malicious behaviour"
-      click_button("Submit")
-    end
-  end
-
-  def then_i_can_see_that_they_are_shadow_banned
-    expect(page).to have_content(/Shadow banned on.*#{@shadow_banned_at.to_fs(:time_and_date)}/)
-  end
-
-  def then_i_see_the_user_is_not_shadow_banned
-    expect(page).to have_content(/Shadow banned\?.*No/)
   end
 end
