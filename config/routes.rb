@@ -77,12 +77,6 @@ Rails.application.routes.draw do
     resources :early_access_users, path: "/early-access-users" do
       member do
         get "/delete", to: "early_access_users#delete", as: :delete
-        get "/access/revoke", to: "early_access_users/access#revoke", as: :revoke
-        patch "/access/revoke", to: "early_access_users/access#revoke_confirm"
-        get "/access/shadow-ban", to: "early_access_users/access#shadow_ban", as: :shadow_ban
-        patch "/access/shadow-ban", to: "early_access_users/access#shadow_ban_confirm"
-        get "/access/restore", to: "early_access_users/access#restore", as: :restore
-        patch "/access/restore", to: "early_access_users/access#restore_confirm"
       end
     end
 
