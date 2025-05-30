@@ -218,19 +218,6 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([useless_question])
     end
 
-    it "filters the results by user" do
-      alice = create(:early_access_user, email: "alice@example.com")
-      bob = create(:early_access_user, email: "bob@example.com")
-      alice_question = create(:question, conversation: create(:conversation, user: alice))
-      bob_question = create(:question, conversation: create(:conversation, user: bob))
-
-      filter = described_class.new(user_id: alice.id)
-      expect(filter.results).to eq([alice_question])
-
-      filter = described_class.new(user_id: bob.id)
-      expect(filter.results).to eq([bob_question])
-    end
-
     it "filters the results by signon user" do
       alice = create(:signon_user, email: "alice@example.com")
       bob = create(:signon_user, email: "bob@example.com")
@@ -251,16 +238,6 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       filter = described_class.new(signon_user_id: signon_user.id)
 
       expect(filter.results).to eq([])
-    end
-
-    it "doesn't filter the results by signon user if signon_user_id and user_id are passed in" do
-      alice = create(:signon_user, email: "alice@example.com")
-      bob = create(:early_access_user, email: "bob@example.com")
-      create(:question, conversation: create(:conversation, signon_user: alice))
-      bob_question = create(:question, conversation: create(:conversation, user: bob))
-
-      filter = described_class.new(signon_user_id: alice.id, user_id: bob.id)
-      expect(filter.results).to eq([bob_question])
     end
 
     it "filters the results by question routing label" do
@@ -290,25 +267,6 @@ RSpec.describe Admin::Filters::QuestionsFilter do
 
         expect(filter.results).to eq([question1])
       end
-    end
-  end
-
-  describe "#user" do
-    it "returns the user if user_id is passed in" do
-      user = create(:early_access_user)
-      filter = described_class.new(user_id: user.id)
-
-      expect(filter.user).to eq(user)
-    end
-
-    it "returns nil if user_id is not passed in" do
-      filter = described_class.new
-      expect(filter.user).to be_nil
-    end
-
-    it "returns nil if user_id is passed in but the user does not exist" do
-      filter = described_class.new(user_id: "invalid_id")
-      expect(filter.user).to be_nil
     end
   end
 
@@ -354,8 +312,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
 
   describe "#previous_page_params" do
     it "retains all other query params when constructing the params" do
-      user = create(:early_access_user)
-      conversation = create(:conversation, user:)
+      conversation = create(:conversation)
       26.times do
         question = create(:question, conversation:)
         create(:answer, :with_feedback, question:)
@@ -371,7 +328,6 @@ RSpec.describe Admin::Filters::QuestionsFilter do
         start_date_params:,
         end_date_params:,
         answer_feedback_useful: "true",
-        user_id: user.id,
         conversation_id: conversation.id,
       )
 
@@ -383,7 +339,6 @@ RSpec.describe Admin::Filters::QuestionsFilter do
             answer_feedback_useful: true,
             start_date_params:,
             end_date_params:,
-            user_id: user.id,
             conversation_id: conversation.id,
           },
         )
@@ -392,8 +347,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
 
   describe "#next_page_params" do
     it "retains all other query params when constructing the params" do
-      user = create(:early_access_user)
-      conversation = create(:conversation, user:)
+      conversation = create(:conversation)
       26.times do
         question = create(:question, conversation:)
         create(:answer, :with_feedback, question:)
@@ -408,7 +362,6 @@ RSpec.describe Admin::Filters::QuestionsFilter do
         start_date_params:,
         end_date_params:,
         answer_feedback_useful: "true",
-        user_id: user.id,
         conversation_id: conversation.id,
       )
 
@@ -421,7 +374,6 @@ RSpec.describe Admin::Filters::QuestionsFilter do
             page: 2,
             start_date_params:,
             end_date_params:,
-            user_id: user.id,
             conversation_id: conversation.id,
           },
         )

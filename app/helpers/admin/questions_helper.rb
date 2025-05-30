@@ -61,29 +61,6 @@ module Admin
         },
       ].compact
 
-      user = conversation.user
-      if user.present?
-        rows << {
-          field: "Early access user",
-          value: safe_join([
-            link_to(user.email, admin_early_access_user_path(user), class: "govuk-link"),
-            " (",
-            link_to("View all questions", admin_questions_path(user_id: user.id), class: "govuk-link"),
-            ")",
-          ]),
-        }
-      elsif conversation.early_access_user_id
-        rows << {
-          field: "Early access user",
-          value: safe_join([
-            "Deleted user",
-            " (",
-            link_to("View all questions", admin_questions_path(user_id: conversation.early_access_user_id), class: "govuk-link"),
-            ")",
-          ]),
-        }
-      end
-
       signon_user = conversation.signon_user
       if signon_user.present? && conversation.source_api?
         rows << {

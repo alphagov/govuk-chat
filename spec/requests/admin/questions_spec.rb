@@ -79,31 +79,6 @@ RSpec.describe "Admin::QuestionsController" do
         expect_unprocessible_entity_with_date_errors
       end
 
-      it "renders the user's details when filtering by a non-deleted user" do
-        user = create(:early_access_user)
-        get admin_questions_path(user_id: user.id)
-
-        expect(response.body.squish).to have_content("Filtering by user: #{user.email}")
-      end
-
-      it "renders the user's ID when filtering by a deleted user" do
-        user = create(:early_access_user)
-        user.destroy!
-        get admin_questions_path(user_id: user.id)
-
-        expect(response.body.squish).to have_content("Filtering by user: #{user.id} (Deleted user)")
-      end
-
-      it "renders a conversation_id select filter when filtering by a user" do
-        user = create(:early_access_user)
-        create(:conversation, user:)
-        create(:conversation, user:)
-
-        get admin_questions_path(user_id: user.id)
-
-        expect(response.body).to have_select("conversation_id", options: ["", "1st", "2nd"])
-      end
-
       it "renders a conversation_id when filtering by a conversation_id" do
         conversation = create(:conversation)
         get admin_questions_path(conversation_id: conversation.id)
@@ -118,21 +93,6 @@ RSpec.describe "Admin::QuestionsController" do
 
         expect(response.body.squish)
           .to have_content("Filtering by API user: #{signon_user.name}")
-      end
-
-      context "and filter params are present for user and signon user" do
-        it "doesn't render the signon user's details" do
-          signon_user = create(:signon_user)
-          create(:conversation, signon_user:)
-
-          get admin_questions_path(
-            signon_user_id: signon_user.id,
-            user_id: SecureRandom.uuid,
-          )
-
-          expect(response.body.squish)
-            .not_to have_content("Filtering by API user: #{signon_user.name}")
-        end
       end
     end
 

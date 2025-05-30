@@ -48,7 +48,6 @@ RSpec.describe Admin::QuestionsHelper do
       result = helper.question_show_summary_list_rows(question, nil, 1, 1)
       expected_keys = [
         "Conversation id",
-        "Early access user",
         "Question number",
         "Question id",
         "Question created at",
@@ -72,7 +71,6 @@ RSpec.describe Admin::QuestionsHelper do
         "Question created at",
         "Question",
         "Show search results",
-        "Early access user",
         "Source",
         "Rephrased question",
         "Status",
@@ -141,32 +139,6 @@ RSpec.describe Admin::QuestionsHelper do
 
       row = result.find { |r| r[:field] == "Question routing label" }
       expect(row[:value]).to eq("Advice, opinions, predictions")
-    end
-
-    it "returns a row with a link to the user's details" do
-      result = helper.question_show_summary_list_rows(question, nil, 1, 1)
-
-      row = result.find { |r| r[:field] == "Early access user" }
-      value = row[:value]
-
-      expect(value)
-        .to have_link(conversation.user.email, href: admin_early_access_user_path(conversation.user))
-        .and have_link("View all questions", href: admin_questions_path(user_id: conversation.user.id))
-    end
-
-    it "returns a row with a link to the deleted user's details" do
-      user_id = conversation.user.id
-      conversation.user.destroy!
-      conversation.reload
-
-      result = helper.question_show_summary_list_rows(question, nil, 1, 1)
-
-      row = result.find { |r| r[:field] == "Early access user" }
-      value = row[:value]
-
-      expect(value).to include("Deleted user")
-
-      expect(value).to have_link("View all questions", href: admin_questions_path(user_id:))
     end
 
     it "doesn't return a 'Early access user' field when the conversation is not associated with one" do
