@@ -22,8 +22,6 @@ RSpec.describe Guardrails::JailbreakChecker do
     }
 
     allow(Guardrails::OpenAI::JailbreakChecker).to receive(:call).and_return(result)
-    stub_openai_jailbreak_guardrails(input)
-
     described_class.call(input)
     expect(Guardrails::OpenAI::JailbreakChecker).to have_received(:call).with(input)
   end
@@ -44,8 +42,6 @@ RSpec.describe Guardrails::JailbreakChecker do
     }
 
     allow(Guardrails::Claude::JailbreakChecker).to receive(:call).and_return(result)
-    stub_openai_jailbreak_guardrails(input)
-
     described_class.call(input, :claude)
     expect(Guardrails::Claude::JailbreakChecker).to have_received(:call).with(input)
   end
