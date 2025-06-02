@@ -30,10 +30,6 @@ module Guardrails
       guardrails_llm_prompts.fetch(:pass_value)
     end
 
-    def self.fail_value
-      guardrails_llm_prompts.fetch(:fail_value)
-    end
-
     def self.guardrails_llm_prompts
       Rails.configuration.govuk_chat_private.llm_prompts.common.jailbreak_guardrails
     end
@@ -55,17 +51,10 @@ module Guardrails
         raise "Unexpected provider #{llm_provider}"
       end
 
-      case result[:llm_guardrail_result]
-      when fail_value
-        create_result(result, triggered: true)
-      when pass_value
+      if result[:llm_guardrail_result] == pass_value
         create_result(result, triggered: false)
       else
-        raise ResponseError.new(
-          "Error parsing jailbreak guardrails response",
-          llm_guardrail_result: result[:llm_guardrail_result],
-          **result_attributes(result),
-        )
+        create_result(result, triggered: true)
       end
     end
 
@@ -73,7 +62,7 @@ module Guardrails
 
     attr_reader :input, :llm_provider
 
-    delegate :guardrails_llm_prompts, :pass_value, :fail_value, to: :class
+    delegate :guardrails_llm_prompts, :pass_value, to: :class
 
     def create_result(result, triggered:)
       Result.new(

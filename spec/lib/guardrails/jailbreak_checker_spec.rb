@@ -1,10 +1,9 @@
 RSpec.describe Guardrails::JailbreakChecker do
   let(:input) { "User question" }
   let(:pass_value) { "PassValue" }
-  let(:fail_value) { "FailValue" }
 
   before do
-    allow(described_class).to receive_messages(pass_value:, fail_value:)
+    allow(described_class).to receive_messages(pass_value:)
   end
 
   it "calls the OpenAI jailbreak checker by default" do
@@ -67,18 +66,13 @@ RSpec.describe Guardrails::JailbreakChecker do
   end
 
   it "returns a result object with triggered true when guardrails fail" do
+    allow(Guardrails::OpenAI::JailbreakChecker).to receive(:call).with(input).and_call_original
     stub_openai_jailbreak_guardrails(input, triggered: true)
-    expect(described_class.call(input)).to have_attributes(triggered: true)
-  end
-
-  it "returns a result object with triggered false when guardrails pass" do
-    stub_openai_jailbreak_guardrails(input, triggered: false)
-    expect(described_class.call(input)).to have_attributes(triggered: false)
-  end
-
-  context "when the LLM returns a different response" do
-    before do
-      allow(Guardrails::OpenAI::JailbreakChecker).to receive(:call).and_return({
+    second_input = "Second user question"
+    allow(Guardrails::OpenAI::JailbreakChecker)
+      .to receive(:call)
+      .with(second_input)
+      .and_return({
         llm_response: {
           "message" => { "content" => "unexpected" },
           "finish_reason" => "stop",
@@ -90,41 +84,15 @@ RSpec.describe Guardrails::JailbreakChecker do
         llm_cached_tokens: nil,
       })
 
-      stub_openai_jailbreak_guardrails(input)
-    end
+    first_result = described_class.call(input)
+    second_result = described_class.call(second_input)
 
-    it "raises a response error when the LLM returns a different response" do
-      expected_error = an_instance_of(described_class::ResponseError).and(
-        having_attributes(
-          message: "Error parsing jailbreak guardrails response",
-          llm_guardrail_result: "unexpected",
-          llm_response: hash_including("message", "finish_reason", "index"),
-          llm_prompt_tokens: be_a(Integer),
-          llm_completion_tokens: be_a(Integer),
-          llm_cached_tokens: be_a(Integer).or(be_nil),
-        ),
-      )
+    expect(first_result).to have_attributes(triggered: true)
+    expect(second_result).to have_attributes(triggered: true)
+  end
 
-      expect { described_class.call(input) }
-        .to raise_error(expected_error)
-    end
-
-    it "raises an error that can be represented as JSON" do
-      error = nil
-      begin
-        described_class.call(input)
-      rescue described_class::ResponseError => e
-        error = e
-      end
-
-      expect(error.as_json).to match({
-        message: "Error parsing jailbreak guardrails response",
-        llm_guardrail_result: "unexpected",
-        llm_response: hash_including("message", "finish_reason", "index"),
-        llm_prompt_tokens: be_a(Integer),
-        llm_completion_tokens: be_a(Integer),
-        llm_cached_tokens: be_a(Integer).or(be_nil),
-      })
-    end
+  it "returns a result object with triggered false when guardrails pass" do
+    stub_openai_jailbreak_guardrails(input, triggered: false)
+    expect(described_class.call(input)).to have_attributes(triggered: false)
   end
 end
