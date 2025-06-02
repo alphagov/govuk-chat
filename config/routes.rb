@@ -86,14 +86,6 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :waiting_list_users, path: "/waiting-list-users" do
-      member do
-        get "/delete", to: "waiting_list_users#delete", as: :delete
-        get "/promote", to: "waiting_list_users#promote", as: :promote
-        post "/promote", to: "waiting_list_users#promote_confirm"
-      end
-    end
-
     scope :settings do
       get "", to: "settings#show", as: :settings
 
