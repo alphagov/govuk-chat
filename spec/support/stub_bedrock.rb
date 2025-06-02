@@ -52,10 +52,7 @@ module StubBedrock
 
   def bedrock_claude_jailbreak_guardrails_response(triggered: false)
     common_prompts = Rails.configuration.govuk_chat_private.llm_prompts.common
-    allow(common_prompts).to receive(:jailbreak_guardrails).and_return(
-      pass_value: "PassValue",
-      fail_value: "FailValue",
-    )
+    allow(common_prompts).to receive(:jailbreak_guardrails).and_return(pass_value: "PassValue")
 
     lambda do |context|
       response_text = if triggered
