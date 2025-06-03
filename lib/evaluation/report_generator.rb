@@ -34,16 +34,12 @@ module Evaluation
       )
     end
 
-    def absolute_govuk_url(path)
-      Plek.website_root + path
-    end
-
     def build_retrieved_context(source)
       data = {
         title: source.title,
         used: source.used,
-        exact_path: absolute_govuk_url(source.exact_path),
-        base_path: absolute_govuk_url(source.base_path),
+        exact_path: source.exact_path,
+        base_path: source.base_path,
         content_chunk_id: source.content_chunk_id,
         content_chunk_available: false,
       }

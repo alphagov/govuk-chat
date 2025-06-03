@@ -115,8 +115,8 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
       expect(context).to eq({
         title: "Late payments",
         used: true,
-        exact_path: "https://www.test.gov.uk/vat-payments/late-payments",
-        base_path: "https://www.test.gov.uk/vat-payments",
+        exact_path: "/vat-payments/late-payments",
+        base_path: "/vat-payments",
         content_chunk_id: "id2",
         content_chunk_available: true,
         heading_hierarchy: ["VAT", "Late payments"],
