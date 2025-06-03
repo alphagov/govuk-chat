@@ -15,14 +15,6 @@ RSpec.describe "Admin user early access users functionality" do
     then_i_see_the_question_limit_updated
   end
 
-  scenario "admin deletes an early access user" do
-    given_i_am_an_admin
-    and_there_is_an_early_access_user
-    when_i_visit_the_early_access_users_page
-    and_i_delete_the_user
-    then_i_see_the_user_is_deleted
-  end
-
   def when_i_visit_the_early_access_users_index_page
     visit admin_early_access_users_path
   end
@@ -61,16 +53,5 @@ RSpec.describe "Admin user early access users functionality" do
     expect(page)
       .to have_content("Question limit")
       .and have_content("500")
-  end
-
-  def and_i_delete_the_user
-    visit admin_early_access_user_path(@user)
-    click_link "Delete user"
-    click_button "Yes, delete this user"
-  end
-
-  def then_i_see_the_user_is_deleted
-    expect(page).to have_content("User deleted")
-    expect(page).not_to have_content(@user.email)
   end
 end
