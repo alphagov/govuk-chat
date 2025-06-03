@@ -49,25 +49,6 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
       expect(response.body).to have_selector(".govuk-table__cell", exact_text: "5")
     end
 
-    it "links to a user's questions with a total if they have a fixed question limit" do
-      user = create(:early_access_user, email: "alice@example.com", questions_count: 5, individual_question_limit: 70)
-
-      get admin_early_access_users_path
-
-      expect(response.body).to have_link("5", href: admin_questions_path(user_id: user.id))
-      expect(response.body).to have_selector(".govuk-table__cell", exact_text: "5 / 70")
-    end
-
-    it "links to a user's questions with a total if they have a default question limit" do
-      user = create(:early_access_user, email: "alice@example.com", questions_count: 5)
-      default_question_limit = Rails.configuration.conversations.max_questions_per_user
-
-      get admin_early_access_users_path
-
-      expect(response.body).to have_link("5", href: admin_questions_path(user_id: user.id))
-      expect(response.body).to have_selector(".govuk-table__cell", exact_text: "5 / #{default_question_limit}")
-    end
-
     context "when there are multiple pages of users" do
       before do
         create_list(:early_access_user, 26)
@@ -282,7 +263,6 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         revoked_at: nil,
         individual_question_limit: 0,
         questions_count: 7,
-        bannable_action_count: 5,
       )
 
       get admin_early_access_user_path(user)
@@ -302,10 +282,8 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
         .and have_content(ur_question_text[:user_description])
         .and have_content(ur_question_text[:reason_for_visit])
         .and have_content(ur_question_text[:found_chat])
-        .and have_content("Unlimited")
         .and have_content("12")
         .and have_link("7", href: admin_questions_path(user_id: user.id))
-        .and have_content("5")
     end
 
     it "renders the links to manage the user" do
@@ -343,62 +321,6 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to have_content("Enter an email address")
-    end
-  end
-
-  describe "GET :edit" do
-    it "renders the form" do
-      get edit_admin_early_access_user_path(create(:early_access_user))
-
-      expect(response).to have_http_status(:ok)
-      expect(response.body)
-        .to have_content("Edit early access user")
-        .and have_content("Question limit")
-    end
-
-    it "renders the input field with the default value if is is null" do
-      user = create(:early_access_user, individual_question_limit: nil)
-      get edit_admin_early_access_user_path(user)
-
-      default_limit = Rails.configuration.conversations.max_questions_per_user
-
-      expect(response.body)
-        .to have_selector("input[id=update_early_access_user_form_question_limit][value=#{default_limit}]")
-    end
-  end
-
-  describe "PATCH :update" do
-    it "updates the user and redirects" do
-      user = create(:early_access_user, individual_question_limit: 2)
-
-      patch admin_early_access_user_path(user),
-            params: {
-              update_early_access_user_form: {
-                question_limit: 3,
-                bannable_action_count: 1,
-              },
-            }
-
-      expect(user.reload).to have_attributes(
-        individual_question_limit: 3,
-        bannable_action_count: 1,
-      )
-
-      expect(response).to redirect_to(admin_early_access_user_path(user))
-    end
-
-    it "renders the form with errors" do
-      user = create(:early_access_user)
-
-      patch admin_early_access_user_path(user),
-            params: {
-              update_early_access_user_form: {
-                question_limit: "invalid",
-              },
-            }
-
-      expect(response).to have_http_status(:unprocessable_entity)
-      expect(response.body).to have_content("Question limit must be a number or blank")
     end
   end
 end

@@ -3,11 +3,6 @@ content_for(:title, "Edit early access user")
 content_for(:active_navigation_item, admin_early_access_users_path)
 %>
 
-<% question_limit_hint = capture do %>
-  Leave blank to reset to the default limit of <%= Rails.configuration.conversations.max_questions_per_user %>.
-  <br>Set to 0 to remove the limit.
-<% end %>
-
 <% content_for :breadcrumbs do %>
   <%= render "govuk_publishing_components/components/breadcrumbs", {
     collapse_on_mobile: true,
@@ -32,37 +27,3 @@ content_for(:active_navigation_item, admin_early_access_users_path)
   anchor_mappings: {
     bannable_action_count: "#update_early_access_user_form_bannable_action_count",
   } %>
-
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <%= form_with url: admin_early_access_user_path(@user), method: :patch do |f| %>
-      <%= render "govuk_publishing_components/components/input", {
-        label: {
-          text: "Question limit",
-        },
-        hint: question_limit_hint,
-        name: "update_early_access_user_form[question_limit]",
-        id: "update_early_access_user_form_question_limit",
-        value: @form.question_limit || Rails.configuration.conversations.max_questions_per_user,
-        error_items: error_items(@form, :question_limit),
-      } %>
-
-      <%= render "govuk_publishing_components/components/input", {
-        label: {
-          text: "Bannable action count",
-        },
-        name: "update_early_access_user_form[bannable_action_count]",
-        id: "update_early_access_user_form_bannable_action_count",
-        value: @form.bannable_action_count,
-        hint: "Edit this number to adjust how close a user is to being shadow banned on their next offence. " \
-              "Once this number is #{EarlyAccessUser::BANNABLE_ACTION_COUNT_THRESHOLD} or greater then a user " \
-              "will be shadow banned on their next question that is a bannable offence.",
-        error_items: error_items(@form, :bannable_action_count),
-      } %>
-
-      <%= render "govuk_publishing_components/components/button", {
-        text: "Submit",
-      } %>
-    <% end %>
-  </div>
-</div>

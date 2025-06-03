@@ -61,14 +61,6 @@ content_for(:active_navigation_item, admin_early_access_users_path)
       value: @user.questions_count.zero? ? "0" : link_to(@user.questions_count, admin_questions_path(user_id: @user.id), class: "govuk-link"),
     },
     {
-      field: "Question limit",
-      value: @user.unlimited_question_allowance? ? "Unlimited" : @user.question_limit,
-    },
-    {
-      field: "Bannable action count",
-      value: @user.bannable_action_count,
-    },
-    {
       field: "Previous sign up denied",
       value: @user.previous_sign_up_denied? ? "Yes" : "No",
     },

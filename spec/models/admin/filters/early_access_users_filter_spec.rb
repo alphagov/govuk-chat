@@ -81,21 +81,6 @@ RSpec.describe Admin::Filters::EarlyAccessUsersFilter do
       expect(filter.results).to eq([admin_added_user])
     end
 
-    it "filters by access status" do
-      active_user = create(:early_access_user, revoked_at: nil, shadow_banned_at: nil)
-      user_at_question_limit = create(:early_access_user, individual_question_limit: 1, questions_count: 1)
-
-      filter = described_class.new(access: "")
-      expect(filter.results)
-        .to contain_exactly(active_user, user_at_question_limit)
-
-      filter = described_class.new(access: "at_question_limit")
-      expect(filter.results).to eq([user_at_question_limit])
-
-      filter = described_class.new(access: "no_restrictions")
-      expect(filter.results).to eq([active_user])
-    end
-
     it "filters by previous sign up denied status" do
       user_previously_denied_sign_up = create(:early_access_user, previous_sign_up_denied: true)
       user_not_previously_denied_sign_up = create(:early_access_user, previous_sign_up_denied: false)

@@ -1,6 +1,6 @@
 class Admin::EarlyAccessUsersController < Admin::BaseController
   def index
-    filter_params = params.permit(:email, :page, :sort, :source, :access, :previous_sign_up_denied)
+    filter_params = params.permit(:email, :page, :sort, :source, :previous_sign_up_denied)
     @filter = Admin::Filters::EarlyAccessUsersFilter.new(filter_params)
   end
 
@@ -25,35 +25,9 @@ class Admin::EarlyAccessUsersController < Admin::BaseController
     end
   end
 
-  def edit
-    @user = EarlyAccessUser.find(params[:id])
-    @form = Admin::Form::EarlyAccessUsers::UpdateForm.new(
-      user: @user,
-      question_limit: @user.individual_question_limit,
-      bannable_action_count: @user.bannable_action_count,
-    )
-  end
-
-  def update
-    @user = EarlyAccessUser.find(params[:id])
-    @form = Admin::Form::EarlyAccessUsers::UpdateForm.new(update_params.merge(user: @user))
-
-    if @form.valid?
-      @form.submit
-
-      redirect_to admin_early_access_user_path(@user), notice: "User updated"
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
 private
 
   def create_params
     params.require(:create_early_access_user_form).permit(:email)
-  end
-
-  def update_params
-    params.require(:update_early_access_user_form).permit(:question_limit, :bannable_action_count)
   end
 end
