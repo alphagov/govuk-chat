@@ -23,15 +23,20 @@ RSpec.describe "rake bigquery tasks" do
 
     before do
       Rake::Task[task_name].reenable
-      stub_request(:get, /api.smartsurvey.io/)
-        .to_return_json(status: 200, body: { responses: 1 })
     end
 
     it "prints what it has exported" do
-      previous_export = create(:bigquery_export)
+      previous_export = create(:bigquery_export, exported_until: 2.hours.ago)
+      create(:answer, created_at: 1.hour.ago)
+      create(:answer_feedback, created_at: 1.hour.ago)
+
+      expected_counts = {
+        "questions" => 1,
+        "answer_feedback" => 1,
+      }
 
       tables_output = Bigquery::TABLES_TO_EXPORT.map do |table|
-        count = table.name =~ /(smart_survey_responses|aggregates)$/ ? 1 : 0
+        count = expected_counts[table.name]
         "Table #{table.name} (#{count})\n"
       end
 

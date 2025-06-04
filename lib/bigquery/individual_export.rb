@@ -18,18 +18,10 @@ module Bigquery
     def self.call(...) = new.call(...)
 
     def call(table_name, export_from: nil, export_until: nil)
-      export_data = case table_name
-                    when "smart_survey_responses"
-                      [smart_survey_json]
-                    when /_aggregates$/
-                      model = model_for_table_name(table_name)
-                      [model.aggregate_export_data(export_until)]
-                    else
-                      model = model_for_table_name(table_name)
-                      records_to_export = model.exportable(export_from, export_until)
-                                                .map(&:serialize_for_export)
-                      self.class.remove_nil_values(records_to_export)
-                    end
+      model = model_for_table_name(table_name)
+      records_to_export = model.exportable(export_from, export_until)
+                                .map(&:serialize_for_export)
+      export_data = self.class.remove_nil_values(records_to_export)
 
       save_export_data_to_tempfile(export_data)
     end
@@ -37,8 +29,7 @@ module Bigquery
   private
 
     def model_for_table_name(table_name)
-      without_aggregate = table_name.delete_suffix("_aggregates")
-      without_aggregate.singularize.camelize.constantize
+      table_name.singularize.camelize.constantize
     end
 
     def save_export_data_to_tempfile(export_data)
@@ -49,32 +40,6 @@ module Bigquery
       tempfile.rewind
 
       Result.new(tempfile:, count: export_data.count)
-    end
-
-    def smart_survey_json
-      response_count = smart_survey_response.body["responses"]
-
-      {
-        "exported_until" => Time.current.as_json,
-        "completed_surveys" => response_count,
-      }
-    end
-
-    def smart_survey_response
-      smary_survey_config = Rails.application.config.smart_survey
-
-      conn = Faraday.new(
-        url: "https://api.smartsurvey.io/v1/surveys/#{smary_survey_config.survey_id}",
-        headers: {
-          "Accept" => "application/json",
-        },
-      ) do |faraday|
-        faraday.response :json
-        faraday.response :raise_error
-      end
-
-      conn.set_basic_auth(smary_survey_config.api_key, smary_survey_config.api_key_secret)
-      conn.get
     end
   end
 end

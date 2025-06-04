@@ -74,12 +74,6 @@ module GovukChat
     config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]
     config.openai_request_timeout = 45
 
-    config.smart_survey = Hashie::Mash.new(
-      survey_id: "1561650",
-      api_key: ENV["SMART_SURVEY_API_KEY"],
-      api_key_secret: ENV["SMART_SURVEY_API_KEY_SECRET"],
-    )
-
     config.answer_statuses = Hashie::Mash.new(YAML.load_file("#{__dir__}/answer_statuses.yml"))
     config.question_routing_labels = Hashie::Mash.new(YAML.load_file("#{__dir__}/question_routing_labels.yml"))
     config.search = Hashie::Mash.new(YAML.load_file("#{__dir__}/search.yml"))
