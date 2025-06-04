@@ -99,9 +99,6 @@ Rails.application.routes.draw do
           as: :settings_edit_waiting_list_promotions_per_run
       patch "/waiting-list-promotions-per-run", to: "settings/waiting_list_promotions_per_run#update"
 
-      get "/sign-up-enabled", to: "settings/sign_up_enabled#edit", as: :settings_edit_sign_up_enabled
-      patch "/sign-up-enabled", to: "settings/sign_up_enabled#update"
-
       get "/public-access", to: "settings/public_access#edit", as: :settings_edit_public_access
       patch "/public-access", to: "settings/public_access#update"
 

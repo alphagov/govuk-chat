@@ -5,7 +5,6 @@ RSpec.describe "Admin user updates settings" do
 
     when_i_visit_the_settings_page
     and_i_should_see_the_public_access_enabled_setting_is_enabled
-    and_i_should_see_the_sign_up_enabled_setting_is_disabled
     then_i_should_see_there_are_ten_instant_access_places
     and_i_should_see_there_are_ten_delayed_access_places
     and_i_should_see_the_waiting_list_promotions_per_run_setting_is_twenty_five
@@ -14,10 +13,6 @@ RSpec.describe "Admin user updates settings" do
     when_i_click_the_edit_link_for_public_access
     and_i_disable_public_access
     then_i_see_that_public_access_is_disabled
-
-    when_i_click_the_edit_link_for_sign_up_enabled
-    and_i_choose_to_enable_signups
-    then_i_see_that_signups_are_enabled
 
     when_i_click_the_edit_link_for_instant_access_places
     and_i_add_five_instant_access_places
@@ -44,7 +39,6 @@ RSpec.describe "Admin user updates settings" do
       :settings,
       public_access_enabled: true,
       downtime_type: "temporary",
-      sign_up_enabled: false,
       instant_access_places: 10,
       delayed_access_places: 10,
       waiting_list_promotions_per_run: 25,
@@ -59,12 +53,6 @@ RSpec.describe "Admin user updates settings" do
   def and_i_should_see_the_public_access_enabled_setting_is_enabled
     within("#public-access") do
       expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled Yes")
-    end
-  end
-
-  def and_i_should_see_the_sign_up_enabled_setting_is_disabled
-    within("#sign-up-enabled") do
-      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled No")
     end
   end
 
@@ -98,22 +86,6 @@ RSpec.describe "Admin user updates settings" do
   def then_i_see_that_public_access_is_disabled
     within("#public-access") do
       expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled No - permanently offline")
-    end
-  end
-
-  def when_i_click_the_edit_link_for_sign_up_enabled
-    within("#sign-up-enabled") { click_on "Edit Enabled" }
-  end
-
-  def and_i_choose_to_enable_signups
-    choose "Yes"
-    fill_in "Comment (optional)", with: "Reason for enabling sign-ups"
-    click_on "Submit"
-  end
-
-  def then_i_see_that_signups_are_enabled
-    within("#sign-up-enabled") do
-      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled Yes")
     end
   end
 
@@ -181,8 +153,6 @@ RSpec.describe "Admin user updates settings" do
     expect(page)
       .to have_content("Public access enabled set to false, downtime type permanent")
       .and have_content("Reason for disabling public access")
-      .and have_content("Sign up enabled set to true")
-      .and have_content("Reason for enabling sign-ups")
       .and have_content("Added 5 instant access places")
       .and have_content("Reason for adding instant access places")
       .and have_content("Added 5 delayed access places")
