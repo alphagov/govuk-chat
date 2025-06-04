@@ -28,19 +28,11 @@ content_for(:active_navigation_item, admin_early_access_users_path)
 
     <p class="govuk-body">Their conversations will not be deleted.</p>
 
-    <p class="govuk-body">You may want to revoke this user's access instead. Revoking accesss will prevent them from signing up again with the same email address.</p>
-
     <%= form_with url: admin_early_access_user_path(@user), method: :delete, class: "govuk-!-display-inline-block" do |f| %>
       <%= render "govuk_publishing_components/components/button", {
         text: "Yes, delete this user",
         destructive: true,
       } %>
     <% end %>
-
-    <%= render "govuk_publishing_components/components/button", {
-      text: "Revoke access instead",
-      href: revoke_admin_early_access_user_path(@user),
-      destructive: true,
-    } %>
   </div>
 </div>

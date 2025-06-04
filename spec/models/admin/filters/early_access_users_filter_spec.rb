@@ -83,19 +83,11 @@ RSpec.describe Admin::Filters::EarlyAccessUsersFilter do
 
     it "filters by access status" do
       active_user = create(:early_access_user, revoked_at: nil, shadow_banned_at: nil)
-      revoked_user = create(:early_access_user, :revoked)
-      shadow_banned_user = create(:early_access_user, :shadow_banned)
       user_at_question_limit = create(:early_access_user, individual_question_limit: 1, questions_count: 1)
 
       filter = described_class.new(access: "")
       expect(filter.results)
-        .to contain_exactly(active_user, revoked_user, shadow_banned_user, user_at_question_limit)
-
-      filter = described_class.new(access: "revoked")
-      expect(filter.results).to eq([revoked_user])
-
-      filter = described_class.new(access: "shadow_banned")
-      expect(filter.results).to eq([shadow_banned_user])
+        .to contain_exactly(active_user, user_at_question_limit)
 
       filter = described_class.new(access: "at_question_limit")
       expect(filter.results).to eq([user_at_question_limit])

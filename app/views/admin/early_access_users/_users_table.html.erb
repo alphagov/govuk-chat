@@ -27,10 +27,21 @@
     rows: users.map do |user|
       [
         {
-          text: early_access_user_index_email_field(user),
+          text: link_to(user.email, admin_early_access_user_path(user), class: "govuk-link"),
         },
         {
-          text: early_access_user_index_questions_field(user),
+          text: (
+          if user.questions_count.zero?
+            "0"
+          else
+            link = link_to(user.questions_count, admin_questions_path(user_id: user.id), class: "govuk-link")
+            if user.unlimited_question_allowance?
+              link
+            else
+              safe_join([ link, " / ", user.question_limit ])
+            end
+          end
+          ),
         },
         {
           text: user.last_login_at ? user.last_login_at.to_fs(:time_and_date) : "Never",

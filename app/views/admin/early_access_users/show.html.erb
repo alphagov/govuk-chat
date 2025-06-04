@@ -73,60 +73,6 @@ content_for(:active_navigation_item, admin_early_access_users_path)
       value: @user.previous_sign_up_denied? ? "Yes" : "No",
     },
   ]
-
-  if @user.revoked?
-    summary_items << [
-      {
-        field: "Revoked on",
-        value: @user.revoked_at.to_fs(:time_and_date),
-      },
-      {
-        field: "Revoked reason",
-        value: escaped_simple_format(@user.revoked_reason, class: "govuk-!-margin-top-0"),
-      },
-    ]
-  else
-    summary_items << {
-      field: "Revoked?",
-      value:  "No",
-    }
-  end
-
-  if @user.shadow_banned?
-    summary_items << [
-      {
-        field: "Shadow banned on",
-        value: @user.shadow_banned_at.to_fs(:time_and_date),
-      },
-      {
-        field: "Shadow banned reason",
-        value: escaped_simple_format(@user.shadow_banned_reason, class: "govuk-!-margin-top-0"),
-      },
-    ]
-  else
-    summary_items << {
-      field: "Shadow banned?",
-      value:  "No",
-    }
-  end
-
-  if @user.restored?
-    summary_items << [
-      {
-        field: "Restored on",
-        value: @user.restored_at.to_fs(:time_and_date),
-      },
-      {
-        field: "Restored reason",
-        value: escaped_simple_format(@user.restored_reason, class: "govuk-!-margin-top-0"),
-      },
-    ]
-  else
-    summary_items << {
-      field: "Restored?",
-      value:  "No",
-    }
-  end
 %>
 
 <div class="govuk-!-margin-bottom-6">
@@ -146,27 +92,4 @@ content_for(:active_navigation_item, admin_early_access_users_path)
     href: delete_admin_early_access_user_path(@user),
     destructive: true,
   } %>
-
-  <% unless @user.revoked_or_banned? %>
-    <%= render "govuk_publishing_components/components/button", {
-      text: "Shadow ban",
-      href: shadow_ban_admin_early_access_user_path(@user),
-      destructive: true,
-    } %>
-  <% end %>
-
-  <% unless @user.revoked? %>
-    <%= render "govuk_publishing_components/components/button", {
-      text: "Revoke access",
-      href: revoke_admin_early_access_user_path(@user),
-      destructive: true,
-    } %>
-  <% end %>
-
-  <% if @user.revoked_or_banned? %>
-    <%= render "govuk_publishing_components/components/button", {
-      text: "Restore access",
-      href: restore_admin_early_access_user_path(@user),
-    } %>
-  <% end %>
 </div>
