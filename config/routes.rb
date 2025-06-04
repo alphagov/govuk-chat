@@ -83,11 +83,6 @@ Rails.application.routes.draw do
     scope :settings do
       get "", to: "settings#show", as: :settings
 
-      get "/max-waiting-list-places",
-          to: "settings/max_waiting_list_places#edit",
-          as: :settings_edit_max_waiting_list_places
-      patch "/max-waiting-list-places", to: "settings/max_waiting_list_places#update"
-
       get "/public-access", to: "settings/public_access#edit", as: :settings_edit_public_access
       patch "/public-access", to: "settings/public_access#update"
 

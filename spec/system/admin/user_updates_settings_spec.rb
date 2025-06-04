@@ -5,15 +5,10 @@ RSpec.describe "Admin user updates settings" do
 
     when_i_visit_the_settings_page
     and_i_should_see_the_public_access_enabled_setting_is_enabled
-    and_i_should_see_the_max_waiting_list_places_setting_is_ten
 
     when_i_click_the_edit_link_for_public_access
     and_i_disable_public_access
     then_i_see_that_public_access_is_disabled
-
-    when_i_click_the_edit_link_for_max_waiting_list_places
-    and_i_set_the_max_waiting_list_places_to_fifteen
-    and_i_should_see_the_max_waiting_list_places_setting_is_fifteen
 
     when_i_click_on_the_audits_link
     then_i_can_see_the_audits_for_my_changes
@@ -24,7 +19,6 @@ RSpec.describe "Admin user updates settings" do
       :settings,
       public_access_enabled: true,
       downtime_type: "temporary",
-      max_waiting_list_places: 10,
     )
   end
 
@@ -36,10 +30,6 @@ RSpec.describe "Admin user updates settings" do
     within("#public-access") do
       expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled Yes")
     end
-  end
-
-  def and_i_should_see_the_max_waiting_list_places_setting_is_ten
-    expect(page).to have_content("Maximum places 10")
   end
 
   def when_i_click_the_edit_link_for_public_access
@@ -59,20 +49,6 @@ RSpec.describe "Admin user updates settings" do
     end
   end
 
-  def when_i_click_the_edit_link_for_max_waiting_list_places
-    click_on "Edit Maximum places"
-  end
-
-  def and_i_set_the_max_waiting_list_places_to_fifteen
-    fill_in "Maximum waiting list places", with: 15
-    fill_in "Comment (optional)", with: "Reason for updating maximum waiting list places"
-    click_on "Submit"
-  end
-
-  def and_i_should_see_the_max_waiting_list_places_setting_is_fifteen
-    expect(page).to have_content("Maximum places 15")
-  end
-
   def when_i_click_on_the_audits_link
     click_on "Audits"
   end
@@ -81,7 +57,5 @@ RSpec.describe "Admin user updates settings" do
     expect(page)
       .to have_content("Public access enabled set to false, downtime type permanent")
       .and have_content("Reason for disabling public access")
-      .and have_content("Updated maximum waiting list places to 15")
-      .and have_content("Reason for updating maximum waiting list places")
   end
 end
