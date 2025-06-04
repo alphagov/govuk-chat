@@ -16,7 +16,7 @@ class Api::V0::ConversationsController < ApplicationController
   end
 
   def show
-    answered_questions = @conversation.questions.joins(:answer)
+    answered_questions = @conversation.questions_for_showing_conversation(only_answered: true)
     pending_question = @conversation.questions.unanswered.last
 
     render(
