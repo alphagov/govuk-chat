@@ -83,9 +83,6 @@ Rails.application.routes.draw do
     scope :settings do
       get "", to: "settings#show", as: :settings
 
-      get "/delayed-access-places", to: "settings/delayed_access_places#edit", as: :settings_edit_delayed_access_places
-      patch "/delayed-access-places", to: "settings/delayed_access_places#update"
-
       get "/max-waiting-list-places",
           to: "settings/max_waiting_list_places#edit",
           as: :settings_edit_max_waiting_list_places
