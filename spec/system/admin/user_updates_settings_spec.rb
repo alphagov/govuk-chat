@@ -5,7 +5,6 @@ RSpec.describe "Admin user updates settings" do
 
     when_i_visit_the_settings_page
     and_i_should_see_the_public_access_enabled_setting_is_enabled
-    then_i_should_see_there_are_ten_instant_access_places
     and_i_should_see_there_are_ten_delayed_access_places
     and_i_should_see_the_waiting_list_promotions_per_run_setting_is_twenty_five
     and_i_should_see_the_max_waiting_list_places_setting_is_ten
@@ -13,10 +12,6 @@ RSpec.describe "Admin user updates settings" do
     when_i_click_the_edit_link_for_public_access
     and_i_disable_public_access
     then_i_see_that_public_access_is_disabled
-
-    when_i_click_the_edit_link_for_instant_access_places
-    and_i_add_five_instant_access_places
-    then_i_see_there_are_fifteen_instant_access_places
 
     when_i_click_the_edit_link_for_delayed_access_places
     and_i_add_five_delayed_access_places
@@ -39,7 +34,6 @@ RSpec.describe "Admin user updates settings" do
       :settings,
       public_access_enabled: true,
       downtime_type: "temporary",
-      instant_access_places: 10,
       delayed_access_places: 10,
       waiting_list_promotions_per_run: 25,
       max_waiting_list_places: 10,
@@ -54,10 +48,6 @@ RSpec.describe "Admin user updates settings" do
     within("#public-access") do
       expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled Yes")
     end
-  end
-
-  def then_i_should_see_there_are_ten_instant_access_places
-    expect(page).to have_content("Available instant access places 10")
   end
 
   def and_i_should_see_there_are_ten_delayed_access_places
@@ -89,28 +79,14 @@ RSpec.describe "Admin user updates settings" do
     end
   end
 
-  def when_i_click_the_edit_link_for_instant_access_places
-    click_on "Edit Available instant access places"
-  end
-
-  def and_i_add_five_instant_access_places
-    fill_in "Additional places", with: 5
-    fill_in "Comment (optional)", with: "Reason for adding instant access places"
-    click_on "Submit"
+  def when_i_click_the_edit_link_for_delayed_access_places
+    click_on "Edit Available delayed access places"
   end
 
   def and_i_add_five_delayed_access_places
     fill_in "Additional places", with: 5
     fill_in "Comment (optional)", with: "Reason for adding delayed access places"
     click_on "Submit"
-  end
-
-  def then_i_see_there_are_fifteen_instant_access_places
-    expect(page).to have_content("Available instant access places 15")
-  end
-
-  def when_i_click_the_edit_link_for_delayed_access_places
-    click_on "Edit Available delayed access places"
   end
 
   def then_i_see_there_are_fifteen_delayed_access_places
@@ -153,8 +129,6 @@ RSpec.describe "Admin user updates settings" do
     expect(page)
       .to have_content("Public access enabled set to false, downtime type permanent")
       .and have_content("Reason for disabling public access")
-      .and have_content("Added 5 instant access places")
-      .and have_content("Reason for adding instant access places")
       .and have_content("Added 5 delayed access places")
       .and have_content("Reason for adding delayed access places")
       .and have_content("Updated waiting list promotions per run to 50")

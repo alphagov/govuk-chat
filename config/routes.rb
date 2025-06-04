@@ -83,9 +83,6 @@ Rails.application.routes.draw do
     scope :settings do
       get "", to: "settings#show", as: :settings
 
-      get "/instant-access-places", to: "settings/instant_access_places#edit", as: :settings_edit_instant_access_places
-      patch "/instant-access-places", to: "settings/instant_access_places#update"
-
       get "/delayed-access-places", to: "settings/delayed_access_places#edit", as: :settings_edit_delayed_access_places
       patch "/delayed-access-places", to: "settings/delayed_access_places#update"
 

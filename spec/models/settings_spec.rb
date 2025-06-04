@@ -47,7 +47,7 @@ RSpec.describe Settings do
       expect { call_locked_audit_update }
         .to change(SettingsAudit, :count).by(1)
         .and change { settings.reload.public_access_enabled }.to(true)
-        .and change { settings.downtime_type }.to(nil)
+        .and change(settings, :downtime_type).to(nil)
       expect(SettingsAudit.includes(:user).last).to have_attributes(
         user: audit_user,
         action: audit_action,
