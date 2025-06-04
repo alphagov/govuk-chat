@@ -263,7 +263,7 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.17.6)
+    govuk_app_config (9.17.7)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.31)
       opentelemetry-instrumentation-all (>= 0.39.1, < 0.77.0)
@@ -610,7 +610,7 @@ GEM
       opentelemetry-instrumentation-active_support (~> 0.8.0)
       opentelemetry-instrumentation-base (~> 0.23.0)
       opentelemetry-instrumentation-concurrent_ruby (~> 0.22.0)
-    opentelemetry-instrumentation-rake (0.3.0)
+    opentelemetry-instrumentation-rake (0.3.1)
       opentelemetry-api (~> 1.0)
       opentelemetry-instrumentation-base (~> 0.23.0)
     opentelemetry-instrumentation-rdkafka (0.7.0)
@@ -1070,7 +1070,7 @@ CHECKSUMS
   google-protobuf (4.31.1-x86_64-linux-gnu) sha256=7def6dbf996dab289dd541a3ee8b201e2c3e35911c274325ad9b483ebffb6dcd
   googleapis-common-protos-types (1.20.0) sha256=5e374b06bcfc7e13556e7c0d87b99f1fa3d42de6396a1de3d8fc13aefb4dd07f
   googleauth (1.14.0) sha256=62e7de11791890c3d3dc70582dfd9ab5516530e4e4f56d96451fd62c76475149
-  govuk_app_config (9.17.6) sha256=0ac075d7184df49fa2a9b7d19b1dc955fbeeb8e7e1781369e6a50bbe4ea476b8
+  govuk_app_config (9.17.7) sha256=1b4b0d9e5f494c1818cabba17d01416990f261d9b602832865e3c7b9f08690af
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
@@ -1182,7 +1182,7 @@ CHECKSUMS
   opentelemetry-instrumentation-racecar (0.4.0) sha256=283e00fa350eb8677fd1e6e6768bbce060e48fb89a635782c12691d889f42dc2
   opentelemetry-instrumentation-rack (0.26.0) sha256=8a55910b358e08acab0899fc99227058b72fca76a27e382e6b34b365abb87bad
   opentelemetry-instrumentation-rails (0.36.0) sha256=f21e26fad6660d64a9711b9317f059c21376cc9a1facdeb3956c9f20098eb717
-  opentelemetry-instrumentation-rake (0.3.0) sha256=1b8c2db79b1c896ed0755144146c10ae75b8d49b5484772aa079bd15321d421e
+  opentelemetry-instrumentation-rake (0.3.1) sha256=dd12d24373a6f293de51ecff8986f2e341a24ad28b2dbabac21f2ccfbb43dcd9
   opentelemetry-instrumentation-rdkafka (0.7.0) sha256=c1fec9f85234498bd4895d9453ea382f0a8e80b314ae722bd021926e87710dc2
   opentelemetry-instrumentation-redis (0.26.1) sha256=315efba5560c943dfe8ea41b16ab162418fc7423c45bb36c4bcc91a310467ba0
   opentelemetry-instrumentation-resque (0.6.0) sha256=b61d5c3fb3d3e96a1dc34cb242addfdd8cf8f6471a9518d3ffa57d26b99e917f
