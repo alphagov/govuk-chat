@@ -152,8 +152,6 @@ class EarlyAccessUser < ApplicationRecord
       end
 
       save!
-
-      SlackPoster.shadow_ban_notification(id) if shadow_banned?
     end
   end
 
