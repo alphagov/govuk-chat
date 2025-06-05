@@ -1,5 +1,4 @@
 class BaseController < ApplicationController
-  include Passwordless::ControllerHelpers
   before_action :ensure_signon_user_if_required
   before_action :check_chat_public_access
   helper_method :settings
