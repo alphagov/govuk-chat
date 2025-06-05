@@ -26,30 +26,6 @@
   } %>
 
   <%= render "govuk_publishing_components/components/select", {
-    id: "access",
-    name: "access",
-    label: "Access",
-    heading_size: "s",
-    full_width: true,
-    options: [
-      {
-        text: "",
-        value: "",
-      },
-      {
-        text: "At question limit",
-        value: "at_question_limit",
-        selected: params[:access] == "at_question_limit",
-      },
-      {
-        text: "No restrictions",
-        value: "no_restrictions",
-        selected: params[:access] == "no_restrictions",
-      },
-    ],
-  } %>
-
-  <%= render "govuk_publishing_components/components/select", {
     id: "previous_sign_up_denied",
     name: "previous_sign_up_denied",
     label: "Previous sign up denied",

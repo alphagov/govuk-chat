@@ -7,14 +7,6 @@ RSpec.describe "Admin user early access users functionality" do
     then_i_see_the_user_details
   end
 
-  scenario "admin updates an early access user" do
-    given_i_am_an_admin
-    and_there_is_an_early_access_user
-    when_i_visit_the_early_access_users_page
-    and_i_update_the_user_question_limit
-    then_i_see_the_question_limit_updated
-  end
-
   def when_i_visit_the_early_access_users_index_page
     visit admin_early_access_users_path
   end
@@ -37,21 +29,5 @@ RSpec.describe "Admin user early access users functionality" do
 
   def and_there_is_an_early_access_user
     @user = create(:early_access_user)
-  end
-
-  def when_i_visit_the_early_access_users_page
-    visit admin_early_access_user_path(@user)
-  end
-
-  def and_i_update_the_user_question_limit
-    click_link "Edit user"
-    fill_in "Question limit", with: 500
-    click_button "Submit"
-  end
-
-  def then_i_see_the_question_limit_updated
-    expect(page)
-      .to have_content("Question limit")
-      .and have_content("500")
   end
 end
