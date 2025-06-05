@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_06_133220) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_04_123754) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -175,15 +175,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_133220) do
 
   create_table "settings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "singleton_guard", default: 0
-    t.integer "instant_access_places", default: 0
-    t.integer "delayed_access_places", default: 0
-    t.boolean "sign_up_enabled", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "public_access_enabled", default: true
     t.enum "downtime_type", default: "temporary", enum_type: "settings_downtime_type"
-    t.integer "max_waiting_list_places", default: 1000, null: false
-    t.integer "waiting_list_promotions_per_run", default: 25, null: false
     t.index ["singleton_guard"], name: "index_settings_on_singleton_guard", unique: true
   end
 

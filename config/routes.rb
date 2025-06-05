@@ -80,25 +80,6 @@ Rails.application.routes.draw do
     scope :settings do
       get "", to: "settings#show", as: :settings
 
-      get "/instant-access-places", to: "settings/instant_access_places#edit", as: :settings_edit_instant_access_places
-      patch "/instant-access-places", to: "settings/instant_access_places#update"
-
-      get "/delayed-access-places", to: "settings/delayed_access_places#edit", as: :settings_edit_delayed_access_places
-      patch "/delayed-access-places", to: "settings/delayed_access_places#update"
-
-      get "/max-waiting-list-places",
-          to: "settings/max_waiting_list_places#edit",
-          as: :settings_edit_max_waiting_list_places
-      patch "/max-waiting-list-places", to: "settings/max_waiting_list_places#update"
-
-      get "/waiting-list-promotions-per-run",
-          to: "settings/waiting_list_promotions_per_run#edit",
-          as: :settings_edit_waiting_list_promotions_per_run
-      patch "/waiting-list-promotions-per-run", to: "settings/waiting_list_promotions_per_run#update"
-
-      get "/sign-up-enabled", to: "settings/sign_up_enabled#edit", as: :settings_edit_sign_up_enabled
-      patch "/sign-up-enabled", to: "settings/sign_up_enabled#update"
-
       get "/public-access", to: "settings/public_access#edit", as: :settings_edit_public_access
       patch "/public-access", to: "settings/public_access#update"
 
