@@ -12,11 +12,8 @@ class EarlyAccessUser < ApplicationRecord
   }.freeze
 
   has_many :conversations
-  passwordless_with :email
 
   enum :source, SOURCE_ENUM, prefix: true
-
-  passwordless_with :email
 
   scope :at_question_limit, lambda {
     default_limit = Rails.configuration.conversations.max_questions_per_user
@@ -101,20 +98,6 @@ class EarlyAccessUser < ApplicationRecord
 
   def revoked_or_banned?
     revoked? || shadow_banned?
-  end
-
-  def sign_in(session)
-    raise AccessRevokedError if revoked?
-
-    touch(:last_login_at)
-    increment!(:login_count)
-
-    # delete any other sessions for this user to ensure no concurrent sessions,
-    # both active and ones not yet to be claimed
-    Passwordless::Session.available
-      .where(authenticatable: self)
-      .where.not(id: session.id)
-      .delete_all
   end
 
   def question_limit

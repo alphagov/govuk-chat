@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_04_123754) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_05_160109) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -146,20 +146,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_04_123754) do
     t.string "restored_reason"
     t.boolean "previous_sign_up_denied", default: false, null: false
     t.index ["email"], name: "index_early_access_users_on_email", unique: true
-  end
-
-  create_table "passwordless_sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "authenticatable_type"
-    t.uuid "authenticatable_id"
-    t.datetime "timeout_at", null: false
-    t.datetime "expires_at", null: false
-    t.datetime "claimed_at"
-    t.string "token_digest", null: false
-    t.uuid "identifier", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["authenticatable_type", "authenticatable_id"], name: "authenticatable"
-    t.index ["identifier"], name: "index_passwordless_sessions_on_identifier", unique: true
   end
 
   create_table "questions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
