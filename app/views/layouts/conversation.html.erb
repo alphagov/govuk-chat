@@ -59,14 +59,6 @@
         <div class="app-conversation-layout__width-restrictor js-conversation-form-width-restrictor">
           <%= yield(:form) %>
         </div>
-        <div class="mobile-footer-icons">
-          <%= inline_svg_tag "mobile_icons/ios/home-icon.svg", class: "mobile-footer-icons__home", aria_hidden: true %>
-          <div class="mobile-footer-icons__chat">
-            <%= inline_svg_tag "mobile_icons/ios/chat-icon.svg", class: "mobile-footer-icons__chat-icon", aria_hidden: true %>
-            <p class="govuk-body mobile-footer-icons__chat-icon-text">Chat</p>
-          </div>
-          <%= inline_svg_tag "mobile_icons/ios/settings-icon.svg", class: "mobile-footer-icons__settings", aria_hidden: true %>
-        </div>
       </div>
 
     <% end %>

@@ -1,7 +1,14 @@
 <div class="app-c-conversation-sources">
+  <div class="app-c-conversation-message__body app-c-conversation-message__body--accuracy-warning">
+    <div class="accuracy-warning">
+      <%= inline_svg_tag "mobile_icons/ios/accuracy-warning-icon.svg", class: "accuracy-warning-icon", aria_hidden: true %>
+      <p class="govuk-body govuk-!-margin-bottom-0 govuk-!-font-weight-bold">Chat can make mistakes. Check GOV.UK pages directly for important information.</p>
+    </div>
+  </div>
+
   <details class="app-c-conversation-sources__details">
     <summary class="app-c-conversation-sources__summary govuk-body">
-      <strong>GOV.UK pages used in this answer</strong>
+      <p class="govuk-body">GOV.UK pages used in this answer</p>
     </summary>
 
     <ul class="app-c-conversation-sources-list gem-c-list govuk-list govuk-list--bullet" data-module="ga4-link-tracker">

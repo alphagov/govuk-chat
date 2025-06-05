@@ -2,7 +2,7 @@
 
 .govuk-header {
   background-color: govuk-colour("blue");
-  min-height: 7rem;
+  min-height: 6rem;
   position: relative;
 }
 
@@ -23,6 +23,29 @@
   position: absolute;
   bottom: 0;
   margin-bottom: 1rem;
+}
+
+.app-c-header__app-nav-container {
+  width: 100%;
+  font-weight: normal;
+  @include govuk-font-size(19, $line-height: false, $important: false);
+
+  .govuk-link, .govuk-link:visited {
+    color: govuk-colour("white");
+    display: flex;
+    align-items: center;
+  }
+
+  svg {
+    margin-right: .5rem;
+  }
+}
+
+.app-c-header__app-nav-list {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0;
+  margin-top: govuk-spacing(6);
 }
 
 .app-c-header__container {
@@ -49,7 +72,7 @@
 
 .app-c-question-form__input {
   border: 1px solid govuk-colour("mid-grey");
-  border-radius: 10px;
+  border-radius: 30px;
   height: 100%;
 }
 
@@ -159,6 +182,7 @@
 
 .app-c-conversation-message__body--accuracy-warning {
   padding: 0;
+  margin-bottom: 1.5rem;
 }
 
 .mobile-footer-icons__chat {
