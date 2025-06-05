@@ -75,9 +75,6 @@ Rails.application.routes.draw do
     end
 
     resources :early_access_users, path: "/early-access-users" do
-      member do
-        get "/delete", to: "early_access_users#delete", as: :delete
-      end
     end
 
     scope :settings do

@@ -315,7 +315,6 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
 
       expect(response.body)
         .to have_link("Edit user", href: edit_admin_early_access_user_path(user))
-        .and have_link("Delete user", href: delete_admin_early_access_user_path(user))
     end
   end
 
@@ -400,54 +399,6 @@ RSpec.describe "Admin::EarlyAccessUsersController" do
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to have_content("Question limit must be a number or blank")
-    end
-  end
-
-  describe "GET :delete" do
-    it "renders the delete confirmation page" do
-      user = create(:early_access_user)
-
-      get delete_admin_early_access_user_path(user)
-
-      expect(response).to have_http_status(:ok)
-      expect(response.body)
-        .to have_content("Are you sure you want to delete this user?")
-    end
-  end
-
-  describe "DELETE :destroy" do
-    it "deletes the user and redirects" do
-      user = create(:early_access_user)
-
-      expect { delete admin_early_access_user_path(user) }
-        .to change(EarlyAccessUser, :count).by(-1)
-
-      expect(EarlyAccessUser.find_by_id(user.id)).to be_nil
-
-      expect(response).to redirect_to(admin_early_access_users_path)
-    end
-
-    it "creates a DeletedEarlyAccessUser with 'admin' as deletion_type and records the admin id" do
-      user = create(:early_access_user)
-      admin_user = create(:signon_user, :admin)
-      login_as(admin_user)
-
-      expect { delete admin_early_access_user_path(user) }
-      .to change { DeletedEarlyAccessUser.where(deletion_type: :admin).count }.by(1)
-
-      expect(DeletedEarlyAccessUser.last.deleted_by_signon_user_id).to eq admin_user.id
-    end
-
-    it "keeps the user's conversations" do
-      user = create(:early_access_user)
-      conversation = create(:conversation, :with_history, user:)
-      questions = conversation.questions
-
-      delete admin_early_access_user_path(user)
-
-      existing_record = Conversation.find_by_id(conversation.id)
-      expect(existing_record).not_to be_nil
-      expect(existing_record.questions.count).to eq(questions.count)
     end
   end
 end
