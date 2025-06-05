@@ -74,9 +74,6 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :early_access_users, path: "/early-access-users" do
-    end
-
     scope :settings do
       get "", to: "settings#show", as: :settings
 

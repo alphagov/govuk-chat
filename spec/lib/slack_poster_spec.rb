@@ -30,17 +30,6 @@ RSpec.describe SlackPoster do
       end
     end
 
-    describe ".shadow_ban_notification" do
-      it "posts a message to the Slack channel" do
-        user = create(:early_access_user)
-
-        expect(slack_poster).to receive(:send_message).with(
-          "A new user has been shadow banned. <http://chat.dev.gov.uk/admin/early-access-users/#{user.id}|View user>",
-        )
-        described_class.shadow_ban_notification(user.id)
-      end
-    end
-
     describe ".waiting_list_full" do
       it "posts a message to the Slack channel" do
         expect(slack_poster).to receive(:send_message).with(
