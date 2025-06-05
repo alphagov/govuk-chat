@@ -31,19 +31,6 @@ Rails.application.configure do
   # Change to :null_store to avoid any caching.
   config.cache_store = :memory_store
 
-  config.action_mailer.default_url_options = { host: Plek.find("govuk-chat") }
-
-  # Make template changes take effect immediately.
-  config.action_mailer.perform_caching = false
-
-  ## use these 2 lines to output to the console
-  config.action_mailer.delivery_method = :test
-  config.action_mailer.logger = Logger.new($stdout)
-
-  ## use these 2 lines to send for real via Notify
-  # config.action_mailer.delivery_method = :notify
-  # config.action_mailer.notify_settings = { api_key: ENV["GOVUK_NOTIFY_API_KEY"] }
-
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
