@@ -68,7 +68,7 @@ Rails.application.configure do
 
   # Disable caching for Action Mailer templates even if Action Controller
   # caching is enabled.
-  config.action_mailer.perform_caching = false
+  # config.action_mailer.perform_caching = false
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
@@ -92,11 +92,4 @@ Rails.application.configure do
 
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-
-  config.action_mailer.default_url_options = { host: Plek.website_root }
-  config.action_mailer.delivery_method = :notify
-  config.action_mailer.notify_settings = {
-    api_key: ENV["GOVUK_NOTIFY_API_KEY"],
-  }
-  config.action_mailer.perform_deliveries = ENV["DISABLE_MAIL_DELIVERY"].blank?
 end

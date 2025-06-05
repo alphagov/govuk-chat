@@ -33,7 +33,6 @@ RSpec.configure do |config|
   config.include AuthenticationHelpers, type: ->(spec) { spec.in?(%i[request system]) }
   config.include Capybara::RSpecMatchers, type: :request
   config.include FactoryBot::Syntax::Methods
-  config.include MailerExamples
   config.include StubOpenAIChat
   config.include StubBedrock
   config.include StubOpenAIEmbedding
