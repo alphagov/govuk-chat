@@ -16,7 +16,7 @@ class Api::V0::ConversationsController < ApplicationController
   end
 
   def show
-    answered_questions = @conversation.questions.joins(:answer)
+    answered_questions = @conversation.questions_for_showing_conversation(only_answered: true)
     pending_question = @conversation.questions.unanswered.last
 
     render(
@@ -69,7 +69,7 @@ private
 
   def find_conversation
     @conversation = Conversation
-                    .includes(questions: { answer: %i[sources feedback] })
+                    .active
                     .where(signon_user_id: current_user.id, source: :api)
                     .find(params[:conversation_id])
   end

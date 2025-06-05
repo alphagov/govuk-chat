@@ -13,10 +13,11 @@ class Conversation < ApplicationRecord
        },
        prefix: true
 
-  def questions_for_showing_conversation
-    Question.where(conversation: self)
-            .includes(answer: %i[feedback sources])
-            .active
-            .last(Rails.configuration.conversations.max_question_count)
+  def questions_for_showing_conversation(only_answered: false)
+    scope = Question.where(conversation: self)
+                  .includes(answer: %i[feedback sources])
+                  .active
+    scope = scope.joins(:answer) if only_answered
+    scope.last(Rails.configuration.conversations.max_question_count)
   end
 end

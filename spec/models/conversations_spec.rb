@@ -33,13 +33,28 @@ RSpec.describe Conversation do
   describe ".questions_for_showing_conversation" do
     let(:conversation) { create(:conversation) }
 
+    before do
+      allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(2)
+    end
+
     it "returns the last N active questions based on the configuration value" do
       create(:question, conversation:)
       expected = 2.times.map do |_|
         create(:question, conversation:)
       end
-      allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(2)
       expect(conversation.reload.questions_for_showing_conversation).to eq(expected)
+    end
+
+    context "when only_answered is true" do
+      it "returns the last N active answered questions based on the configuration value" do
+        create(:question, :with_answer, conversation:)
+        expected = 2.times.map do |_|
+          create(:question, :with_answer, conversation:)
+        end
+        create(:question, conversation:)
+
+        expect(conversation.reload.questions_for_showing_conversation(only_answered: true)).to eq(expected)
+      end
     end
   end
 end

@@ -164,6 +164,12 @@ RSpec.describe "Api::V0::ConversationsController" do
       expect(response).to have_http_status(:not_found)
     end
 
+    it "returns a 404 if the conversation has expired" do
+      conversation = create(:conversation, :api, :expired, signon_user: api_user)
+      get api_v0_show_conversation_path(conversation)
+      expect(response).to have_http_status(:not_found)
+    end
+
     it "returns a 404 if the conversation is not associated with the user" do
       different_user = create(:signon_user, :conversation_api)
       conversation = create(:conversation, signon_user: different_user)
@@ -234,6 +240,16 @@ RSpec.describe "Api::V0::ConversationsController" do
   end
 
   describe "PUT :update" do
+    let(:conversation) do
+      create(
+        :conversation,
+        :api,
+        signon_user:
+        api_user,
+        questions: [create(:question, :with_answer)],
+      )
+    end
+
     context "when the params are valid" do
       let(:user_question) { "What is the capital of France?" }
       let(:params) { { user_question: } }
