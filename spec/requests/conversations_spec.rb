@@ -572,6 +572,6 @@ RSpec.describe "ConversationsController" do
   def expect_conversation_id_set_on_cookie(conversation)
     cookie = cookies.get_cookie("conversation_id")
     expect(cookie.value).to eq(conversation.id)
-    expect(cookie.expires).to eq(30.days.from_now)
+    expect(cookie.expires).to eq(90.days.from_now)
   end
 end

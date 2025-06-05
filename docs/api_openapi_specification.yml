@@ -102,7 +102,7 @@ paths:
           description: |
             Returns a list of AnsweredQuestions with potentially one PendingQuestion.
             Is limited to returning 500 questions for a conversation and only
-            questions asked within last 30 days.
+            questions asked within last 90 days.
           content:
             application/json:
               schema:
