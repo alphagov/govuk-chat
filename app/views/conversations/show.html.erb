@@ -15,10 +15,8 @@ if @create_question.errors.any?
 end
 
 message_history = []
-message_history << render("onboarding/limitations_messages")
-message_history << render("onboarding/tell_me_more_messages") if @more_information
-message_history << render("onboarding/privacy_messages")
-message_history << render("get_started_messages")
+message_history << render("app_intro_messages")
+
 @questions.each do |question|
   message_history << render("question", question:)
   if question.answer
