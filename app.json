@@ -31,9 +31,6 @@
     "AVAILABLE_WITHOUT_EARLY_ACCESS_AUTHENTICATION": {
       "value": "true"
     },
-    "DISABLE_MAIL_DELIVERY": {
-      "value": "true"
-    },
     "OPENAI_ACCESS_TOKEN": {
       "required": true
     },
