@@ -102,50 +102,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_10_103300) do
     t.index ["signon_user_id"], name: "index_conversations_on_signon_user_id"
   end
 
-  create_table "deleted_early_access_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "login_count", default: 0
-    t.enum "deletion_type", null: false, enum_type: "deleted_early_access_user_deletion_type"
-    t.enum "user_source", null: false, enum_type: "early_access_user_source"
-    t.datetime "user_created_at", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "deleted_by_signon_user_id"
-  end
-
-  create_table "deleted_waiting_list_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.enum "deletion_type", null: false, enum_type: "deleted_waiting_list_user_deletion_type"
-    t.enum "user_source", null: false, enum_type: "waiting_list_users_source"
-    t.datetime "user_created_at", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "deleted_by_signon_user_id"
-  end
-
-  create_table "early_access_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.citext "email", null: false
-    t.datetime "last_login_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "revoked_at"
-    t.enum "source", null: false, enum_type: "early_access_user_source"
-    t.enum "user_description", enum_type: "ur_question_user_description"
-    t.enum "reason_for_visit", enum_type: "ur_question_reason_for_visit"
-    t.integer "questions_count", default: 0
-    t.string "revoked_reason"
-    t.boolean "onboarding_completed", default: false, null: false
-    t.integer "individual_question_limit"
-    t.string "unsubscribe_token", default: -> { "gen_random_uuid()" }, null: false
-    t.integer "login_count", default: 0
-    t.enum "found_chat", enum_type: "ur_question_found_chat"
-    t.datetime "shadow_banned_at"
-    t.string "shadow_banned_reason"
-    t.integer "bannable_action_count", default: 0, null: false
-    t.datetime "restored_at"
-    t.string "restored_reason"
-    t.boolean "previous_sign_up_denied", default: false, null: false
-    t.index ["email"], name: "index_early_access_users_on_email", unique: true
-  end
-
   create_table "questions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "conversation_id", null: false
     t.string "message", null: false
@@ -189,19 +145,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_10_103300) do
     t.boolean "disabled", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "waiting_list_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.citext "email", null: false
-    t.enum "user_description", enum_type: "ur_question_user_description"
-    t.enum "reason_for_visit", enum_type: "ur_question_reason_for_visit"
-    t.enum "source", null: false, enum_type: "waiting_list_users_source"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "unsubscribe_token", default: -> { "gen_random_uuid()" }, null: false
-    t.enum "found_chat", enum_type: "ur_question_found_chat"
-    t.boolean "previous_sign_up_denied", default: false, null: false
-    t.index ["email"], name: "index_waiting_list_users_on_email", unique: true
   end
 
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade
