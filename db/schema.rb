@@ -96,11 +96,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_10_103300) do
   create_table "conversations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "early_access_user_id"
     t.uuid "signon_user_id"
     t.enum "source", default: "web", null: false, enum_type: "conversation_source"
     t.index ["created_at"], name: "index_conversations_on_created_at"
-    t.index ["early_access_user_id"], name: "index_conversations_on_early_access_user_id"
     t.index ["signon_user_id"], name: "index_conversations_on_signon_user_id"
   end
 
