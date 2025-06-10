@@ -41,7 +41,7 @@ RSpec.describe Admin::QuestionsHelper do
   end
 
   describe "#question_show_summary_list_rows" do
-    let(:conversation) { create(:conversation, user: create(:early_access_user)) }
+    let(:conversation) { create(:conversation) }
     let(:question) { create(:question, conversation:) }
 
     it "returns the correct rows when question is unanswered" do
@@ -139,13 +139,6 @@ RSpec.describe Admin::QuestionsHelper do
 
       row = result.find { |r| r[:field] == "Question routing label" }
       expect(row[:value]).to eq("Advice, opinions, predictions")
-    end
-
-    it "doesn't return a 'Early access user' field when the conversation is not associated with one" do
-      conversation.update!(user: nil)
-
-      result = helper.question_show_summary_list_rows(question, nil, 1, 1)
-      expect(returned_keys(result)).not_to include("Early access user")
     end
 
     it "returns a row with a link to filter the questions table by the signon user" do

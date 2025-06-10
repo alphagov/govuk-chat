@@ -20,16 +20,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_10_103300) do
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "answer_status", ["answered", "banned", "clarification", "error_answer_guardrails", "error_answer_service_error", "error_context_length_exceeded", "error_jailbreak_guardrails", "error_non_specific", "error_question_routing_guardrails", "error_timeout", "guardrails_answer", "guardrails_forbidden_terms", "guardrails_jailbreak", "guardrails_question_routing", "unanswerable_llm_cannot_answer", "unanswerable_no_govuk_content", "unanswerable_question_routing"]
   create_enum "conversation_source", ["web", "api"]
-  create_enum "deleted_early_access_user_deletion_type", ["unsubscribe", "admin"]
-  create_enum "deleted_waiting_list_user_deletion_type", ["unsubscribe", "admin", "promotion"]
-  create_enum "early_access_user_source", ["admin_added", "instant_signup", "admin_promoted", "delayed_signup"]
   create_enum "guardrails_status", ["pass", "fail", "error"]
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar"]
   create_enum "settings_downtime_type", ["temporary", "permanent"]
-  create_enum "ur_question_found_chat", ["govuk_website", "govuk_blog", "social_media", "news", "personal_contact", "professional_contact", "official_government_announcement", "search_engine", "other"]
-  create_enum "ur_question_reason_for_visit", ["find_specific_answer", "complete_task", "understand_process", "research_topic", "other"]
-  create_enum "ur_question_user_description", ["business_owner_or_self_employed", "starting_business_or_becoming_self_employed", "business_advisor", "business_administrator", "none"]
-  create_enum "waiting_list_users_source", ["admin_added", "insufficient_instant_places"]
 
   create_table "answer_feedback", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
@@ -96,56 +89,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_10_103300) do
   create_table "conversations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "early_access_user_id"
     t.uuid "signon_user_id"
     t.enum "source", default: "web", null: false, enum_type: "conversation_source"
     t.index ["created_at"], name: "index_conversations_on_created_at"
-    t.index ["early_access_user_id"], name: "index_conversations_on_early_access_user_id"
     t.index ["signon_user_id"], name: "index_conversations_on_signon_user_id"
-  end
-
-  create_table "deleted_early_access_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "login_count", default: 0
-    t.enum "deletion_type", null: false, enum_type: "deleted_early_access_user_deletion_type"
-    t.enum "user_source", null: false, enum_type: "early_access_user_source"
-    t.datetime "user_created_at", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "deleted_by_signon_user_id"
-  end
-
-  create_table "deleted_waiting_list_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.enum "deletion_type", null: false, enum_type: "deleted_waiting_list_user_deletion_type"
-    t.enum "user_source", null: false, enum_type: "waiting_list_users_source"
-    t.datetime "user_created_at", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "deleted_by_signon_user_id"
-  end
-
-  create_table "early_access_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.citext "email", null: false
-    t.datetime "last_login_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "revoked_at"
-    t.enum "source", null: false, enum_type: "early_access_user_source"
-    t.enum "user_description", enum_type: "ur_question_user_description"
-    t.enum "reason_for_visit", enum_type: "ur_question_reason_for_visit"
-    t.integer "questions_count", default: 0
-    t.string "revoked_reason"
-    t.boolean "onboarding_completed", default: false, null: false
-    t.integer "individual_question_limit"
-    t.string "unsubscribe_token", default: -> { "gen_random_uuid()" }, null: false
-    t.integer "login_count", default: 0
-    t.enum "found_chat", enum_type: "ur_question_found_chat"
-    t.datetime "shadow_banned_at"
-    t.string "shadow_banned_reason"
-    t.integer "bannable_action_count", default: 0, null: false
-    t.datetime "restored_at"
-    t.string "restored_reason"
-    t.boolean "previous_sign_up_denied", default: false, null: false
-    t.index ["email"], name: "index_early_access_users_on_email", unique: true
   end
 
   create_table "questions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -191,19 +138,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_10_103300) do
     t.boolean "disabled", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "waiting_list_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.citext "email", null: false
-    t.enum "user_description", enum_type: "ur_question_user_description"
-    t.enum "reason_for_visit", enum_type: "ur_question_reason_for_visit"
-    t.enum "source", null: false, enum_type: "waiting_list_users_source"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "unsubscribe_token", default: -> { "gen_random_uuid()" }, null: false
-    t.enum "found_chat", enum_type: "ur_question_found_chat"
-    t.boolean "previous_sign_up_denied", default: false, null: false
-    t.index ["email"], name: "index_waiting_list_users_on_email", unique: true
   end
 
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade

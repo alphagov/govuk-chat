@@ -54,7 +54,6 @@ class Question < ApplicationRecord
   def serialize_for_export
     as_json.merge(
       "answer" => answer&.serialize_for_export,
-      "early_access_user_id" => conversation.early_access_user_id,
     )
   end
 end
