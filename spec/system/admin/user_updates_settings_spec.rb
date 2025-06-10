@@ -11,6 +11,10 @@ RSpec.describe "Admin user updates settings" do
     and_i_disable_public_access
     then_i_see_that_public_access_is_disabled
 
+    when_i_click_the_edit_link_for_api_access
+    and_i_disable_api_access
+    then_i_see_that_api_access_is_disabled
+
     when_i_click_on_the_audits_link
     then_i_can_see_the_audits_for_my_changes
   end
@@ -43,6 +47,10 @@ RSpec.describe "Admin user updates settings" do
     within("#public-access") { click_on "Edit Enabled" }
   end
 
+  def when_i_click_the_edit_link_for_api_access
+    within("#api-access") { click_on "Edit Enabled" }
+  end
+
   def and_i_disable_public_access
     choose "No"
     choose "Permanent"
@@ -50,9 +58,21 @@ RSpec.describe "Admin user updates settings" do
     click_on "Submit"
   end
 
+  def and_i_disable_api_access
+    choose "No"
+    fill_in "Comment (optional)", with: "Reason for disabling API access"
+    click_on "Submit"
+  end
+
   def then_i_see_that_public_access_is_disabled
     within("#public-access") do
       expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled No - permanently offline")
+    end
+  end
+
+  def then_i_see_that_api_access_is_disabled
+    within("#api-access") do
+      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled No")
     end
   end
 
@@ -64,5 +84,6 @@ RSpec.describe "Admin user updates settings" do
     expect(page)
       .to have_content("Public access enabled set to false, downtime type permanent")
       .and have_content("Reason for disabling public access")
+      .and have_content("API access enabled set to false")
   end
 end
