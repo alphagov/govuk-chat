@@ -94,6 +94,7 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
         {
           question: "How do I pay VAT?",
           answer: hash_including("message" => "First answer from OpenAI"),
+          answer_strategy: "openai_structured_answer",
           retrieved_context: [
             hash_including(title: "Late payments", used: true),
             hash_including(title: "Pay your VAT bill online", used: true),
@@ -103,6 +104,7 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
         {
           question: "Do I need a visa?",
           answer: hash_including("message" => "Second answer from OpenAI"),
+          answer_strategy: "openai_structured_answer",
           retrieved_context: [hash_including(title: "Check if you need a visa", used: true)],
         },
       ])

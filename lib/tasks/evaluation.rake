@@ -19,8 +19,12 @@ namespace :evaluation do
       raise msg
     end
 
-    ENV["GOVUK_WEBSITE_ROOT"] ||= "https://www.gov.uk"
+    answer_strategy = Rails.configuration.answer_strategy
+    embedding_provider = Rails.configuration.embedding_provider
 
+    puts "Generating report with answer strategy: #{answer_strategy} and embedding provider: #{embedding_provider}"
+
+    ENV["GOVUK_WEBSITE_ROOT"] ||= "https://www.gov.uk"
     results = Evaluation::ReportGenerator.call(input_path) do |total, current, evaluation_question|
       puts "(#{current} / #{total}): #{evaluation_question}"
     end
