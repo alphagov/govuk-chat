@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_05_160109) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_10_103300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -165,6 +165,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_05_160109) do
     t.datetime "updated_at", null: false
     t.boolean "public_access_enabled", default: true
     t.enum "downtime_type", default: "temporary", enum_type: "settings_downtime_type"
+    t.boolean "api_access_enabled", default: true
     t.index ["singleton_guard"], name: "index_settings_on_singleton_guard", unique: true
   end
 
