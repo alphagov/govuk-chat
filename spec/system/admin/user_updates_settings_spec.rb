@@ -5,6 +5,7 @@ RSpec.describe "Admin user updates settings" do
 
     when_i_visit_the_settings_page
     and_i_should_see_the_public_access_enabled_setting_is_enabled
+    and_i_should_see_the_api_access_enabled_setting_is_enabled
 
     when_i_click_the_edit_link_for_public_access
     and_i_disable_public_access
@@ -28,6 +29,12 @@ RSpec.describe "Admin user updates settings" do
 
   def and_i_should_see_the_public_access_enabled_setting_is_enabled
     within("#public-access") do
+      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled Yes")
+    end
+  end
+
+  def and_i_should_see_the_api_access_enabled_setting_is_enabled
+    within("#api-access") do
       expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled Yes")
     end
   end
