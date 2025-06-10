@@ -1,0 +1,46 @@
+<%
+content_for(:title, "Edit API access")
+content_for(:title_context, "Settings")
+content_for(:active_navigation_item, admin_settings_path)
+content_for(:back_link, render("govuk_publishing_components/components/back_link", href: admin_settings_path))
+%>
+
+<%= render "shared/error_summary",
+  model: @form,
+  anchor_mappings: {
+    author_comment: "#api_access_form_author_comment",
+  } %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <%= form_with url: admin_settings_edit_api_access_path, method: :patch do |f| %>
+      <%= render "govuk_publishing_components/components/radio", {
+        heading: "API access enabled",
+        heading_size: "l",
+        heading_level: 2,
+        margin_bottom: 8,
+        name: "api_access_form[enabled]",
+        hint: 'Be very cautious, setting this option to "No" will completely disable the GOV.UK Chat API for all users.',
+        items: [
+          {
+            value: "true",
+            text: "Yes",
+            checked: @form.enabled,
+
+          },
+          {
+            value: "false",
+            text: "No",
+            checked: !@form.enabled,
+          },
+        ],
+      } %>
+
+      <%= render "admin/settings/shared/author_comment", form: @form, setting: "api_access" %>
+
+      <%= render "govuk_publishing_components/components/button", {
+        text: "Submit",
+      } %>
+    <% end %>
+  </div>
+</div>

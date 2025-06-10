@@ -80,6 +80,9 @@ Rails.application.routes.draw do
       get "/public-access", to: "settings/public_access#edit", as: :settings_edit_public_access
       patch "/public-access", to: "settings/public_access#update"
 
+      get "/api-access", to: "settings/api_access#edit", as: :settings_edit_api_access
+      patch "/api-access", to: "settings/api_access#update"
+
       get "/audits", to: "settings#audits", as: :settings_audits
     end
   end
