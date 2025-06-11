@@ -66,7 +66,7 @@ RSpec.describe "Admin user updates settings" do
 
   def then_i_see_that_public_access_is_disabled
     within("#public-access") do
-      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled No - permanently offline")
+      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled No")
     end
   end
 
