@@ -1,74 +1,27 @@
 <%
-  early_access ||= false
-  signed_in_user_email ||= nil
-  input_error_items ||= []
-  input_value ||= nil
-  form_url = Rails.application.routes.url_helpers.homepage_path
   start_button_href ||= Rails.application.routes.url_helpers.onboarding_limitations_path
-
-  wrapper_classes = "app-c-chat-introduction"
-  wrapper_classes += " app-c-chat-introduction--error" if input_error_items.any?
   info_text_classes = "app-c-chat-introduction__info_text govuk-body"
-
-  title = signed_in_user_email ? "GOV.UK Chat" : "Try GOV.UK Chat"
 %>
 
-<%= content_tag :div, class: wrapper_classes do %>
+<%= content_tag :div, class: "app-c-chat-introduction" do %>
   <%= render "components/chat_introduction_title", {
-    title:,
+    title: "Try GOV.UK Chat",
     standfirst_paragraphs: ["An experimental new way to find answers to your business questions, powered by AI"],
   } %>
 
-  <% if signed_in_user_email %>
-    <%= render "components/blue_button", {
-      text: "Return to chat",
-      href: start_button_href,
-      start: true,
-      aria_describedby: "info-text",
-    } %>
+  <%= render "components/blue_button", {
+    text: "Try GOV.UK Chat",
+    href: start_button_href,
+    start: true,
+    aria_describedby: "info-text",
+    data_attributes: {
+      "module": "ga4-link-tracker",
+      "ga4-link": '{ "event_name": "navigation", "type": "start button", "index_link": 1, "index_total": 1, "section": "Landing page" }',
+    },
+  } %>
 
-    <% info_text = "You are currently signed in with #{signed_in_user_email}." %>
-    <%= content_tag(:p, info_text, {id: "info-text", class: info_text_classes}) %>
-  <% elsif early_access %>
-    <div class="govuk-!-width-three-quarters">
-      <%= form_with url: form_url, class: "app-c-chat-introduction__form", authenticity_token: false do |f| %>
-        <%= render "govuk_publishing_components/components/input", {
-          label: {
-            text: "Enter your email to sign up or get a new link for GOV.UK Chat",
-          },
-          name: "sign_in_or_up_form[email]",
-          id: "sign_in_or_up_form_email",
-          value: input_value,
-          heading_level: 2,
-          heading_size: "m",
-          error_items: input_error_items,
-          describedby: "info-text",
-        } %>
-
-        <%= render "components/blue_button", {
-          text: "Get started",
-          start: true,
-        } %>
-      <% end %>
-
-      <% info_text = "By continuing, you consent to your email being used to provide access to the tool." %>
-      <%= content_tag(:p, info_text, { id: "info-text", class: info_text_classes }) %>
-    </div>
-  <% else %>
-    <%= render "components/blue_button", {
-      text: "Try GOV.UK Chat",
-      href: start_button_href,
-      start: true,
-      aria_describedby: "info-text",
-      data_attributes: {
-        "module": "ga4-link-tracker",
-        "ga4-link": '{ "event_name": "navigation", "type": "start button", "index_link": 1, "index_total": 1, "section": "Landing page" }',
-      },
-    } %>
-
-    <% info_text = "Your chat history will be available for #{Rails.configuration.conversations.max_question_age_days} days" %>
-    <div class="govuk-!-width-three-quarters">
-      <%= content_tag(:p, info_text, { id: "info-text", class: info_text_classes}) %>
-    </div>
-  <% end %>
+  <% info_text = "Your chat history will be available for #{Rails.configuration.conversations.max_question_age_days} days" %>
+  <div class="govuk-!-width-three-quarters">
+    <%= content_tag(:p, info_text, { id: "info-text", class: info_text_classes}) %>
+  </div>
 <% end %>
