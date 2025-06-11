@@ -37,7 +37,7 @@ class ConversationsController < BaseController
   end
 
   def update
-    @conversation ||= Conversation.new
+    @conversation ||= Conversation.new(signon_user: current_user, source: :web)
     @create_question = Form::CreateQuestion.new(user_question_params.merge(conversation: @conversation))
 
     if @create_question.valid?
@@ -111,7 +111,8 @@ private
     return if cookies[:conversation_id].blank?
 
     @conversation = Conversation.active
-                                .find_by!(id: cookies[:conversation_id], source: :web)
+                                .where(signon_user: current_user, source: :web)
+                                .find_by!(id: cookies[:conversation_id])
     set_conversation_cookie(@conversation)
   rescue ActiveRecord::RecordNotFound
     cookies.delete(:conversation_id)
