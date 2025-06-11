@@ -21,7 +21,15 @@ RSpec.describe "Admin::Settings::PublicAccessController" do
 
       expect(response).to redirect_to(admin_settings_path)
       expect(flash[:notice]).to eq("Public access updated")
-      expect(settings.reload).to have_attributes(public_access_enabled: true, downtime_type: "permanent")
+      expect(settings.reload).to have_attributes(public_access_enabled: true, downtime_type: "temporary")
+    end
+
+    it "re-renders the edit page when given invalid params" do
+      patch admin_settings_edit_public_access_path,
+            params: { public_access_form: { enabled: "true", author_comment: "a" * 256 } }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to have_selector(".govuk-error-summary")
     end
   end
 end

@@ -81,7 +81,7 @@ RSpec.describe "Admin user updates settings" do
 
   def then_i_can_see_the_audits_for_my_changes
     expect(page)
-      .to have_content("Public access enabled set to false, downtime type permanent")
+      .to have_content("Public access enabled set to false")
       .and have_content("Reason for disabling public access")
       .and have_content("API access enabled set to false")
   end

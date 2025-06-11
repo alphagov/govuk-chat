@@ -3,14 +3,11 @@ class Admin::Settings::PublicAccessController < Admin::BaseController
     settings = Settings.instance
     @form = Admin::Form::Settings::PublicAccessForm.new(
       enabled: settings.public_access_enabled,
-      downtime_type: settings.downtime_type,
     )
   end
 
   def update
-    @form = Admin::Form::Settings::PublicAccessForm.new(
-      update_params.merge(downtime_type: :permanent),
-    )
+    @form = Admin::Form::Settings::PublicAccessForm.new(update_params)
 
     if @form.valid?
       @form.submit
