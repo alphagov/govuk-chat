@@ -62,9 +62,9 @@ module Admin
       ].compact
 
       signon_user = conversation.signon_user
-      if signon_user.present? && conversation.source_api?
+      if signon_user.present?
         rows << {
-          field: "API user",
+          field: "Signon user",
           value: safe_join([
             signon_user.name,
             " (",

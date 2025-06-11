@@ -143,10 +143,10 @@ RSpec.describe Admin::QuestionsHelper do
 
     it "returns a row with a link to filter the questions table by the signon user" do
       signon_user = create(:signon_user)
-      conversation.update!(signon_user:, source: :api)
+      conversation.update!(signon_user:)
       result = helper.question_show_summary_list_rows(question, nil, 1, 1)
 
-      row = result.find { |r| r[:field] == "API user" }
+      row = result.find { |r| r[:field] == "Signon user" }
       expect(row[:value])
         .to include(conversation.signon_user.name)
         .and have_link(
