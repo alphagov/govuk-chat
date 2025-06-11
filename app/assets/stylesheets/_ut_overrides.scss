@@ -130,6 +130,7 @@
 
 .app-c-conversation-sources__summary::marker, .app-c-conversation-sources__summary::-webkit-details-marker {
   content: "";
+  color: transparent;
 }
 
 .app-c-conversation-sources__summary::after {
