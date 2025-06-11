@@ -70,7 +70,7 @@ RSpec.describe "StaticController" do
       include_examples "caches the page", :support_path
     end
 
-    context "when public access is disabled and downtime_type is temporary" do
+    context "when public access is disabled" do
       before { Settings.instance.update!(public_access_enabled: false, downtime_type: :temporary) }
 
       it "returns a :service_unavailable status code" do
@@ -81,20 +81,6 @@ RSpec.describe "StaticController" do
       it "renders the unavailable template" do
         get support_path
         expect(response.body).to include("GOV.UK Chat is not currently available")
-      end
-    end
-
-    context "when public access is disabled and downtime_type is permanent" do
-      before { Settings.instance.update!(public_access_enabled: false, downtime_type: :permanent) }
-
-      it "returns a :gone status code" do
-        get support_path
-        expect(response).to have_http_status(:gone)
-      end
-
-      it "renders the shutdown template" do
-        get support_path
-        expect(response.body).to include("The GOV.UK Chat trial has closed")
       end
     end
   end
