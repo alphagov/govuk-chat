@@ -12,13 +12,7 @@ private
     request.session_options[:skip] = true
     response.headers["No-Fallback"] = "true"
 
-    status = settings.downtime_type_temporary? ? :service_unavailable : :gone
-
-    if status == :service_unavailable
-      render "downtime/unavailable", status:, layout: "application"
-    elsif status == :gone
-      render "downtime/shutdown", status:, layout: "application"
-    end
+    render "downtime/unavailable", status: :service_unavailable, layout: "application"
   end
 
   def settings

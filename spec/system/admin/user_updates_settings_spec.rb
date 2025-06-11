@@ -20,11 +20,7 @@ RSpec.describe "Admin user updates settings" do
   end
 
   def and_a_settings_instance_exists
-    create(
-      :settings,
-      public_access_enabled: true,
-      downtime_type: "temporary",
-    )
+    create(:settings, public_access_enabled: true)
   end
 
   def when_i_visit_the_settings_page
@@ -53,7 +49,6 @@ RSpec.describe "Admin user updates settings" do
 
   def and_i_disable_public_access
     choose "No"
-    choose "Permanent"
     fill_in "Comment (optional)", with: "Reason for disabling public access"
     click_on "Submit"
   end
@@ -66,7 +61,7 @@ RSpec.describe "Admin user updates settings" do
 
   def then_i_see_that_public_access_is_disabled
     within("#public-access") do
-      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled No - permanently offline")
+      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled No")
     end
   end
 
@@ -82,7 +77,7 @@ RSpec.describe "Admin user updates settings" do
 
   def then_i_can_see_the_audits_for_my_changes
     expect(page)
-      .to have_content("Public access enabled set to false, downtime type permanent")
+      .to have_content("Public access enabled set to false")
       .and have_content("Reason for disabling public access")
       .and have_content("API access enabled set to false")
   end

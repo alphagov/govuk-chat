@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_10_103300) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_11_101238) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -22,7 +22,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_10_103300) do
   create_enum "conversation_source", ["web", "api"]
   create_enum "guardrails_status", ["pass", "fail", "error"]
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar"]
-  create_enum "settings_downtime_type", ["temporary", "permanent"]
 
   create_table "answer_feedback", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
@@ -111,7 +110,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_10_103300) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "public_access_enabled", default: true
-    t.enum "downtime_type", default: "temporary", enum_type: "settings_downtime_type"
     t.boolean "api_access_enabled", default: true
     t.index ["singleton_guard"], name: "index_settings_on_singleton_guard", unique: true
   end

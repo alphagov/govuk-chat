@@ -3,7 +3,6 @@ class Admin::Settings::PublicAccessController < Admin::BaseController
     settings = Settings.instance
     @form = Admin::Form::Settings::PublicAccessForm.new(
       enabled: settings.public_access_enabled,
-      downtime_type: settings.downtime_type,
     )
   end
 
@@ -23,7 +22,7 @@ private
   def update_params
     params
       .require(:public_access_form)
-      .permit(:enabled, :downtime_type, :author_comment)
+      .permit(:enabled, :author_comment)
       .merge(user: current_user)
   end
 end

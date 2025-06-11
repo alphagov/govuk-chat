@@ -19,13 +19,6 @@ content_for(:active_navigation_item, admin_settings_path)
 } %>
 
 <div class="govuk-!-margin-bottom-8">
-  <%
-    downtime_message = if @settings.downtime_type_temporary?
-                         "temporarily offline"
-                       else
-                         "permanently offline"
-                       end
-  %>
   <div>
     <%= render "govuk_publishing_components/components/summary_list", {
       title: "Public access",
@@ -35,7 +28,7 @@ content_for(:active_navigation_item, admin_settings_path)
       items: [
         {
           field: "Enabled",
-          value: @settings.public_access_enabled ? "Yes" : "No - #{downtime_message}",
+          value: @settings.public_access_enabled ? "Yes" : "No",
           edit: {
             href: admin_settings_edit_public_access_path,
             link_text: "Edit",
