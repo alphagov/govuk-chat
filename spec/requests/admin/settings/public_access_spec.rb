@@ -10,8 +10,8 @@ RSpec.describe "Admin::Settings::PublicAccessController" do
   end
 
   describe "PATCH :update" do
-    it "updates the public_access_enabled then redirects to the settings page with valid params" do
-      settings = create(:settings, public_access_enabled: false, downtime_type: :temporary)
+    it "updates the public_access_enabled then redirects to the settings page" do
+      settings = create(:settings, public_access_enabled: false)
 
       expect {
         patch admin_settings_edit_public_access_path,
@@ -21,7 +21,7 @@ RSpec.describe "Admin::Settings::PublicAccessController" do
 
       expect(response).to redirect_to(admin_settings_path)
       expect(flash[:notice]).to eq("Public access updated")
-      expect(settings.reload).to have_attributes(public_access_enabled: true, downtime_type: "temporary")
+      expect(settings.reload).to have_attributes(public_access_enabled: true)
     end
 
     it "re-renders the edit page when given invalid params" do

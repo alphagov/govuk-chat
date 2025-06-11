@@ -20,11 +20,7 @@ RSpec.describe "Admin user updates settings" do
   end
 
   def and_a_settings_instance_exists
-    create(
-      :settings,
-      public_access_enabled: true,
-      downtime_type: "temporary",
-    )
+    create(:settings, public_access_enabled: true)
   end
 
   def when_i_visit_the_settings_page

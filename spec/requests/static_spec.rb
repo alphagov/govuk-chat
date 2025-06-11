@@ -71,7 +71,7 @@ RSpec.describe "StaticController" do
     end
 
     context "when public access is disabled" do
-      before { Settings.instance.update!(public_access_enabled: false, downtime_type: :temporary) }
+      before { Settings.instance.update!(public_access_enabled: false) }
 
       it "returns a :service_unavailable status code" do
         get support_path

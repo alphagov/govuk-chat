@@ -31,7 +31,6 @@ RSpec.describe Settings do
         audit_comment,
       ) do
         settings.public_access_enabled = true
-        settings.downtime_type = nil
       end
     end
     let(:settings) { create(:settings, public_access_enabled: false) }
@@ -40,14 +39,12 @@ RSpec.describe Settings do
       expect(settings).to receive(:with_lock).and_call_original
       call_locked_audit_update
       expect(settings.reload.public_access_enabled).to be(true)
-      expect(settings.downtime_type).to be_nil
     end
 
     it "persists a settings audit based on the arguments passed in" do
       expect { call_locked_audit_update }
         .to change(SettingsAudit, :count).by(1)
         .and change { settings.reload.public_access_enabled }.to(true)
-        .and change(settings, :downtime_type).to(nil)
       expect(SettingsAudit.includes(:user).last).to have_attributes(
         user: audit_user,
         action: audit_action,
