@@ -8,7 +8,9 @@ class Admin::Settings::PublicAccessController < Admin::BaseController
   end
 
   def update
-    @form = Admin::Form::Settings::PublicAccessForm.new(update_params)
+    @form = Admin::Form::Settings::PublicAccessForm.new(
+      update_params.merge(downtime_type: :permanent),
+    )
 
     if @form.valid?
       @form.submit
@@ -23,7 +25,7 @@ private
   def update_params
     params
       .require(:public_access_form)
-      .permit(:enabled, :downtime_type, :author_comment)
+      .permit(:enabled, :author_comment)
       .merge(user: current_user)
   end
 end

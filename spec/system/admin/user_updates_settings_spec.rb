@@ -53,7 +53,6 @@ RSpec.describe "Admin user updates settings" do
 
   def and_i_disable_public_access
     choose "No"
-    choose "Permanent"
     fill_in "Comment (optional)", with: "Reason for disabling public access"
     click_on "Submit"
   end
