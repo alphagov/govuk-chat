@@ -1,6 +1,6 @@
 RSpec.describe "User clears chat" do
   scenario do
-    given_i_am_signed_in
+    given_i_am_a_web_chat_user
     and_i_have_an_active_conversation_with_an_answered_question
     and_i_visit_the_conversation_page
     when_i_click_the_clear_chat_link

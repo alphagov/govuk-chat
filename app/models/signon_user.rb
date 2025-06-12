@@ -5,6 +5,7 @@ class SignonUser < ApplicationRecord
     ADMIN_AREA = "admin-area".freeze
     CONVERSATION_API = "conversation-api".freeze
     DEVELOPER_TOOLS = "developer-tools".freeze
+    WEB_CHAT = "web-chat".freeze
   end
 
   has_many :conversations

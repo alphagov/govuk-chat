@@ -1,6 +1,6 @@
 RSpec.describe "User gives feedback on an answer" do
   scenario do
-    given_i_am_signed_in
+    given_i_am_a_web_chat_user
     and_i_have_an_active_conversation_with_an_answered_question
     when_i_visit_the_conversation_page
     and_i_click_that_the_answer_was_useful

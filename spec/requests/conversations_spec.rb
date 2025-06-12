@@ -1,6 +1,6 @@
 RSpec.describe "ConversationsController" do
   delegate :helpers, to: ConversationsController
-  let(:signon_user) { create(:signon_user) }
+  let(:signon_user) { create(:signon_user, :web_chat) }
 
   before { login_as(signon_user) }
 
