@@ -1,31 +1,31 @@
-RSpec.describe "Admin::Settings::PublicAccessController" do
+RSpec.describe "Admin::Settings::WebAccessController" do
   describe "GET :edit" do
     it "renders the edit page successfully" do
-      get admin_settings_edit_public_access_path
+      get admin_settings_edit_web_access_path
 
       expect(response).to have_http_status(:ok)
       expect(response.body)
-        .to have_selector(".govuk-heading-xl", text: "Edit public access")
+        .to have_selector(".govuk-heading-xl", text: "Edit web access")
     end
   end
 
   describe "PATCH :update" do
-    it "updates the public_access_enabled then redirects to the settings page" do
-      settings = create(:settings, public_access_enabled: false)
+    it "updates the web_access_enabled then redirects to the settings page" do
+      settings = create(:settings, web_access_enabled: false)
 
       expect {
-        patch admin_settings_edit_public_access_path,
+        patch admin_settings_edit_web_access_path,
               params: { web_access_form: { enabled: "true" } }
       }
         .to change(SettingsAudit, :count).by(1)
 
       expect(response).to redirect_to(admin_settings_path)
-      expect(flash[:notice]).to eq("Public access updated")
-      expect(settings.reload).to have_attributes(public_access_enabled: true)
+      expect(flash[:notice]).to eq("Web access updated")
+      expect(settings.reload).to have_attributes(web_access_enabled: true)
     end
 
     it "re-renders the edit page when given invalid params" do
-      patch admin_settings_edit_public_access_path,
+      patch admin_settings_edit_web_access_path,
             params: { web_access_form: { enabled: "true", author_comment: "a" * 256 } }
 
       expect(response).to have_http_status(:unprocessable_entity)

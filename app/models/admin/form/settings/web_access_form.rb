@@ -4,16 +4,16 @@ class Admin::Form::Settings::WebAccessForm < Admin::Form::Settings::BaseForm
   def submit
     validate!
 
-    return if settings.public_access_enabled == enabled
+    return if settings.web_access_enabled == enabled
 
     settings.locked_audited_update(user, action, author_comment) do
-      settings.public_access_enabled = enabled
+      settings.web_access_enabled = enabled
     end
   end
 
 private
 
   def action
-    "Public access enabled set to #{enabled}"
+    "Web access enabled set to #{enabled}"
   end
 end

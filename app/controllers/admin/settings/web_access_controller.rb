@@ -1,8 +1,8 @@
-class Admin::Settings::PublicAccessController < Admin::BaseController
+class Admin::Settings::WebAccessController < Admin::BaseController
   def edit
     settings = Settings.instance
     @form = Admin::Form::Settings::WebAccessForm.new(
-      enabled: settings.public_access_enabled,
+      enabled: settings.web_access_enabled,
     )
   end
 
@@ -11,7 +11,7 @@ class Admin::Settings::PublicAccessController < Admin::BaseController
 
     if @form.valid?
       @form.submit
-      redirect_to admin_settings_path, notice: "Public access updated"
+      redirect_to admin_settings_path, notice: "Web access updated"
     else
       render :edit, status: :unprocessable_entity
     end

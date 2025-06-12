@@ -6,13 +6,13 @@ RSpec.describe "Admin::HomepageController" do
       expect(response.body).to have_content("Browse questions")
     end
 
-    context "when public access is disabled" do
-      before { Settings.instance.update(public_access_enabled: false) }
+    context "when web access is disabled" do
+      before { Settings.instance.update(web_access_enabled: false) }
 
       it "renders a notice" do
         get admin_homepage_path
         expect(response.body)
-          .to have_selector(".gem-c-notice", text: /Public access to chat is disabled/)
+          .to have_selector(".gem-c-notice", text: /Web access to chat is disabled/)
       end
     end
 
