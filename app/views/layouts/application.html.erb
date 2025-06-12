@@ -12,7 +12,7 @@
   browser_title = (content_for?(:browser_title) ? yield(:browser_title) : yield(:title)).presence
   page_title = (content_for?(:page_title) ? yield(:page_title) : yield(:title)).presence
 
-  public_access_enabled = settings.public_access_enabled? rescue true
+  web_access_enabled = settings.web_access_enabled? rescue true
 
   header_navigation_items = [
     {
@@ -22,7 +22,7 @@
     ({
       href: support_url,
       text: "Help and support",
-    } if public_access_enabled),
+    } if web_access_enabled),
   ].compact
 
   footer_link_items = [
@@ -33,7 +33,7 @@
     ({
       href: support_url,
       text: "Help and support",
-    } if public_access_enabled),
+    } if web_access_enabled),
     {
       href: privacy_url,
       text: "Privacy",

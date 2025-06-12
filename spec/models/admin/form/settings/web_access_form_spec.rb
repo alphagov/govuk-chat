@@ -1,4 +1,4 @@
-RSpec.describe Admin::Form::Settings::PublicAccessForm do
+RSpec.describe Admin::Form::Settings::WebAccessForm do
   describe "valid?" do
     it "returns false when invalid" do
       form = described_class.new(author_comment: "a" * 256)
@@ -12,23 +12,23 @@ RSpec.describe Admin::Form::Settings::PublicAccessForm do
       expect { form.submit }.to raise_error(ActiveModel::ValidationError)
     end
 
-    it "updates the settings public_access_enabled" do
-      settings = create(:settings, public_access_enabled: true)
+    it "updates the settings web_access_enabled" do
+      settings = create(:settings, web_access_enabled: true)
       form = described_class.new(enabled: false)
       expect { form.submit }
-        .to change { settings.reload.public_access_enabled }.to(false)
+        .to change { settings.reload.web_access_enabled }.to(false)
     end
 
-    it "doesn't persist an audit if public_access_enabled isn't changed" do
-      create(:settings, public_access_enabled: false)
+    it "doesn't persist an audit if web_access_enabled isn't changed" do
+      create(:settings, web_access_enabled: false)
       form = described_class.new(enabled: false)
       expect { form.submit }.not_to change(SettingsAudit, :count)
     end
 
-    it "mentions public access in the action when disabling public access" do
-      create(:settings, public_access_enabled: true)
+    it "mentions web access in the action when disabling web access" do
+      create(:settings, web_access_enabled: true)
       described_class.new(enabled: false).submit
-      expect(SettingsAudit.last.action).to eq("Public access enabled set to false")
+      expect(SettingsAudit.last.action).to eq("Web access enabled set to false")
     end
   end
 end

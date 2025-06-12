@@ -8,9 +8,9 @@ RSpec.describe "StaticController" do
     end
   end
 
-  shared_examples "operates when public access is disabled" do |path_method|
-    context "when public access is disabled" do
-      before { Settings.instance.update!(public_access_enabled: false) }
+  shared_examples "operates when web access is disabled" do |path_method|
+    context "when web access is disabled" do
+      before { Settings.instance.update!(web_access_enabled: false) }
 
       it "returns a success despite the status" do
         get public_send(path_method)
@@ -28,8 +28,8 @@ RSpec.describe "StaticController" do
         .and have_link("Back to start page", href: homepage_path)
     end
 
-    context "when public access is enabled" do
-      before { Settings.instance.update!(public_access_enabled: true) }
+    context "when web access is enabled" do
+      before { Settings.instance.update!(web_access_enabled: true) }
 
       it "renders the support link correctly" do
         get about_path
@@ -38,8 +38,8 @@ RSpec.describe "StaticController" do
       end
     end
 
-    context "when public access is disabled" do
-      before { Settings.instance.update!(public_access_enabled: false) }
+    context "when web access is disabled" do
+      before { Settings.instance.update!(web_access_enabled: false) }
 
       it "renders the support link correctly" do
         get about_path
@@ -52,12 +52,12 @@ RSpec.describe "StaticController" do
     end
 
     include_examples "caches the page", :about_path
-    include_examples "operates when public access is disabled", :about_path
+    include_examples "operates when web access is disabled", :about_path
   end
 
   describe "GET :support" do
-    context "when public access is enabled" do
-      before { Settings.instance.update!(public_access_enabled: true) }
+    context "when web access is enabled" do
+      before { Settings.instance.update!(web_access_enabled: true) }
 
       it "renders the view correctly" do
         get support_path
@@ -70,8 +70,8 @@ RSpec.describe "StaticController" do
       include_examples "caches the page", :support_path
     end
 
-    context "when public access is disabled" do
-      before { Settings.instance.update!(public_access_enabled: false) }
+    context "when web access is disabled" do
+      before { Settings.instance.update!(web_access_enabled: false) }
 
       it "returns a :service_unavailable status code" do
         get support_path
@@ -95,6 +95,6 @@ RSpec.describe "StaticController" do
     end
 
     include_examples "caches the page", :accessibility_path
-    include_examples "operates when public access is disabled", :accessibility_path
+    include_examples "operates when web access is disabled", :accessibility_path
   end
 end

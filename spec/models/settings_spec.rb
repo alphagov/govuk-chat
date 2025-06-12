@@ -22,7 +22,7 @@ RSpec.describe Settings do
 
   describe "#locked_audited_update" do
     let(:audit_user) { build(:signon_user) }
-    let(:audit_action) { "Public access enabled set to true." }
+    let(:audit_action) { "Web access enabled set to true." }
     let(:audit_comment) { "We're going live." }
     let(:call_locked_audit_update) do
       settings.locked_audited_update(
@@ -30,21 +30,21 @@ RSpec.describe Settings do
         audit_action,
         audit_comment,
       ) do
-        settings.public_access_enabled = true
+        settings.web_access_enabled = true
       end
     end
-    let(:settings) { create(:settings, public_access_enabled: false) }
+    let(:settings) { create(:settings, web_access_enabled: false) }
 
     it "locks the settings instance to cope with concurrent edits" do
       expect(settings).to receive(:with_lock).and_call_original
       call_locked_audit_update
-      expect(settings.reload.public_access_enabled).to be(true)
+      expect(settings.reload.web_access_enabled).to be(true)
     end
 
     it "persists a settings audit based on the arguments passed in" do
       expect { call_locked_audit_update }
         .to change(SettingsAudit, :count).by(1)
-        .and change { settings.reload.public_access_enabled }.to(true)
+        .and change { settings.reload.web_access_enabled }.to(true)
       expect(SettingsAudit.includes(:user).last).to have_attributes(
         user: audit_user,
         action: audit_action,

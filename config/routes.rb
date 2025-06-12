@@ -77,8 +77,8 @@ Rails.application.routes.draw do
     scope :settings do
       get "", to: "settings#show", as: :settings
 
-      get "/public-access", to: "settings/public_access#edit", as: :settings_edit_public_access
-      patch "/public-access", to: "settings/public_access#update"
+      get "/web-access", to: "settings/web_access#edit", as: :settings_edit_web_access
+      patch "/web-access", to: "settings/web_access#update"
 
       get "/api-access", to: "settings/api_access#edit", as: :settings_edit_api_access
       patch "/api-access", to: "settings/api_access#update"
