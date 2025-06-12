@@ -1,4 +1,9 @@
 module SystemSpecHelpers
+  def given_i_am_signed_in
+    @signon_user = create(:signon_user)
+    login_as(@signon_user)
+  end
+
   def given_i_am_using_the_claude_structured_answer_strategy
     allow(Rails.configuration)
       .to receive(:answer_strategy)

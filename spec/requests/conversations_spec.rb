@@ -1,5 +1,8 @@
 RSpec.describe "ConversationsController" do
   delegate :helpers, to: ConversationsController
+  let(:signon_user) { create(:signon_user) }
+
+  before { login_as(signon_user) }
 
   it_behaves_like "handles a request for a user who hasn't completed onboarding",
                   routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
@@ -80,7 +83,7 @@ RSpec.describe "ConversationsController" do
     end
 
     context "when the conversation is active" do
-      let(:conversation) { create(:conversation, :not_expired) }
+      let(:conversation) { create(:conversation, :not_expired, signon_user:) }
 
       before do
         cookies[:conversation_id] = conversation.id
@@ -103,7 +106,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there is a question without an answer" do
-        let(:conversation) { create(:conversation) }
+        let(:conversation) { create(:conversation, signon_user:) }
 
         it "renders the question and pending answer url correctly" do
           question = create(:question, conversation:)
@@ -117,7 +120,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there is a question with an answer that doesn't have feedback" do
-        let(:conversation) { create(:conversation) }
+        let(:conversation) { create(:conversation, signon_user:) }
 
         it "renders the answer and an answer feedback form" do
           question = create(:question, :with_answer, conversation:)
@@ -135,7 +138,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there is a question with an answer that has feedback" do
-        let(:conversation) { create(:conversation) }
+        let(:conversation) { create(:conversation, signon_user:) }
 
         it "doesn't render a feedback form" do
           question = create(:question, :with_answer, conversation:)
@@ -150,7 +153,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there is a question with an answer that has sources" do
-        let(:conversation) { create(:conversation) }
+        let(:conversation) { create(:conversation, signon_user:) }
 
         it "renders the sources correctly for answers with the success status" do
           question = create(:question, conversation:)
@@ -193,7 +196,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and there are more questions than the max number of questions" do
-        let(:conversation) { create(:conversation) }
+        let(:conversation) { create(:conversation, signon_user:) }
 
         it "only renders the max number of question from rails config" do
           allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(1)
@@ -209,7 +212,7 @@ RSpec.describe "ConversationsController" do
 
       context "and the response format is JSON" do
         before do
-          conversation = create(:conversation, :not_expired)
+          conversation = create(:conversation, :not_expired, signon_user:)
           cookies[:conversation_id] = conversation.id
         end
 
@@ -233,7 +236,6 @@ RSpec.describe "ConversationsController" do
 
   describe "POST :update" do
     include_context "with onboarding completed"
-    let(:conversation) { create(:conversation, :not_expired) }
 
     it "sets the converation_id cookie with valid params" do
       freeze_time do
@@ -253,6 +255,13 @@ RSpec.describe "ConversationsController" do
           .to have_selector("h1", text: "GOV.UK Chat is generating an answer")
       end
 
+      it "associates the signon user with the conversation" do
+        post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
+
+        conversation = Conversation.includes(:signon_user).last
+        expect(conversation.signon_user).to eq(signon_user)
+      end
+
       context "and the params are invalid while the last question is answered" do
         it "renders the conversation with an error" do
           post update_conversation_path, params: { create_question: { user_question: "" } }
@@ -267,7 +276,7 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and the params are invalid while the last question is not answered" do
-        let(:conversation) { create(:conversation, questions: [create(:question)]) }
+        let(:conversation) { create(:conversation, signon_user:, questions: [create(:question)]) }
 
         before do
           cookies[:conversation_id] = conversation.id
@@ -284,6 +293,8 @@ RSpec.describe "ConversationsController" do
       end
 
       context "and the converation_id cookie is present" do
+        let(:conversation) { create(:conversation, :not_expired, signon_user:) }
+
         before do
           cookies[:conversation_id] = conversation.id
         end
@@ -304,6 +315,8 @@ RSpec.describe "ConversationsController" do
     end
 
     context "when the request format is JSON" do
+      let(:conversation) { create(:conversation, :not_expired, signon_user:) }
+
       before do
         cookies[:conversation_id] = conversation.id
       end
@@ -340,7 +353,7 @@ RSpec.describe "ConversationsController" do
 
   describe "GET :answer" do
     include_context "with onboarding completed"
-    let(:conversation) { create(:conversation) }
+    let(:conversation) { create(:conversation, signon_user:) }
 
     before do
       cookies[:conversation_id] = conversation.id
@@ -444,7 +457,7 @@ RSpec.describe "ConversationsController" do
   describe "POST :answer_feedback" do
     include_context "with onboarding completed"
 
-    let(:conversation) { create(:conversation) }
+    let(:conversation) { create(:conversation, signon_user:) }
     let(:question) { create(:question, conversation:) }
 
     before do
@@ -530,7 +543,7 @@ RSpec.describe "ConversationsController" do
     include_context "with onboarding completed"
 
     context "when the conversation is active" do
-      let(:conversation) { create(:conversation, :not_expired) }
+      let(:conversation) { create(:conversation, :not_expired, signon_user:) }
 
       before do
         cookies[:conversation_id] = conversation.id
@@ -550,7 +563,7 @@ RSpec.describe "ConversationsController" do
     include_context "with onboarding completed"
 
     context "when the conversation is active" do
-      let(:conversation) { create(:conversation, :not_expired) }
+      let(:conversation) { create(:conversation, :not_expired, signon_user:) }
 
       before do
         cookies[:conversation_id] = conversation.id
