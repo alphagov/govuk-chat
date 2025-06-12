@@ -18,12 +18,12 @@ end
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <% if !settings.web_access_enabled %>
+    <% if !settings.api_access_enabled %>
       <%= render "govuk_publishing_components/components/notice", {
-        title: "Web access to chat is disabled",
+        title: "API access to chat is disabled",
       } do %>
         <%= render "govuk_publishing_components/components/warning_text", {
-          text: "All users attempting to use chat will receive an error response",
+          text: "All users attempting to use chat via the API will receive an error response",
         } %>
         <p class="govuk-body">
           This can be changed in <%= link_to("settings", admin_settings_path, class: "govuk-link") %>.
