@@ -10,5 +10,9 @@ FactoryBot.define do
     trait :conversation_api do
       permissions { %w[conversation-api] }
     end
+
+    trait :web_chat do
+      permissions { %w[web-chat] }
+    end
   end
 end
