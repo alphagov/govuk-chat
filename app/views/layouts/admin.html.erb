@@ -11,7 +11,13 @@
       ["Metrics", admin_metrics_path],
       ["Questions", admin_questions_path],
       ["Search", admin_search_path],
-      ["Settings", admin_settings_path],
+    ]
+
+    if current_user.has_permission?("admin-area-settings")
+      navigation_items << ["Settings", admin_settings_path]
+    end
+
+    navigation_items += [
       [Current.signon_user.name, href: Plek.external_url_for("signon")],
       ["Log out", gds_sign_out_path],
     ]

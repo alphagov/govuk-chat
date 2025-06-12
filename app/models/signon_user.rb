@@ -9,5 +9,9 @@ class SignonUser < ApplicationRecord
     WEB_CHAT = "web-chat".freeze
   end
 
+  def has_permission?(permission)
+    permissions.include?(permission)
+  end
+
   has_many :conversations
 end
