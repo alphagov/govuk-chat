@@ -1,12 +1,12 @@
 class BaseController < ApplicationController
   before_action :ensure_signon_user_if_required
-  before_action :check_chat_public_access
+  before_action :check_chat_web_access
   helper_method :settings
 
 private
 
-  def check_chat_public_access
-    return if settings.public_access_enabled
+  def check_chat_web_access
+    return if settings.web_access_enabled
 
     expires_in(1.minute, public: true) unless Rails.env.development?
     request.session_options[:skip] = true

@@ -1,6 +1,6 @@
-RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" do
-  context "when public_access_enabled is false" do
-    before { create(:settings, public_access_enabled: false) }
+RSpec.describe "toggling downtime with Settings.instance.web_access_enabled" do
+  context "when web_access_enabled is false" do
+    before { create(:settings, web_access_enabled: false) }
 
     it "renders service unavailable content, with a service_unavailable status" do
       get homepage_path
@@ -14,11 +14,11 @@ RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" 
     end
 
     it "skips regenerating a session so the resource can be cached" do
-      # re-enable public_access_enabled so we can make a request to create a session cookie
-      Settings.instance.update!(public_access_enabled: true)
+      # re-enable web_access_enabled so we can make a request to create a session cookie
+      Settings.instance.update!(web_access_enabled: true)
       get show_conversation_path
       expect(response.cookies.keys).to include("_govuk_chat_session")
-      Settings.instance.update!(public_access_enabled: false)
+      Settings.instance.update!(web_access_enabled: false)
 
       get homepage_path
       expect(response.cookies).to be_empty
@@ -40,8 +40,8 @@ RSpec.describe "toggling downtime with Settings.instance.public_access_enabled" 
     end
   end
 
-  context "when public_access_enabled is true" do
-    before { create(:settings, public_access_enabled: true) }
+  context "when web_access_enabled is true" do
+    before { create(:settings, web_access_enabled: true) }
 
     it "doesn't impact routes" do
       get homepage_path

@@ -10,7 +10,7 @@ RSpec.describe "StaticController" do
 
   shared_examples "operates when public access is disabled" do |path_method|
     context "when public access is disabled" do
-      before { Settings.instance.update!(public_access_enabled: false) }
+      before { Settings.instance.update!(web_access_enabled: false) }
 
       it "returns a success despite the status" do
         get public_send(path_method)
@@ -29,7 +29,7 @@ RSpec.describe "StaticController" do
     end
 
     context "when public access is enabled" do
-      before { Settings.instance.update!(public_access_enabled: true) }
+      before { Settings.instance.update!(web_access_enabled: true) }
 
       it "renders the support link correctly" do
         get about_path
@@ -39,7 +39,7 @@ RSpec.describe "StaticController" do
     end
 
     context "when public access is disabled" do
-      before { Settings.instance.update!(public_access_enabled: false) }
+      before { Settings.instance.update!(web_access_enabled: false) }
 
       it "renders the support link correctly" do
         get about_path
@@ -57,7 +57,7 @@ RSpec.describe "StaticController" do
 
   describe "GET :support" do
     context "when public access is enabled" do
-      before { Settings.instance.update!(public_access_enabled: true) }
+      before { Settings.instance.update!(web_access_enabled: true) }
 
       it "renders the view correctly" do
         get support_path
@@ -71,7 +71,7 @@ RSpec.describe "StaticController" do
     end
 
     context "when public access is disabled" do
-      before { Settings.instance.update!(public_access_enabled: false) }
+      before { Settings.instance.update!(web_access_enabled: false) }
 
       it "returns a :service_unavailable status code" do
         get support_path
