@@ -1,4 +1,4 @@
-class Admin::Form::Settings::PublicAccessForm < Admin::Form::Settings::BaseForm
+class Admin::Form::Settings::WebAccessForm < Admin::Form::Settings::BaseForm
   attribute :enabled, :boolean
 
   def submit

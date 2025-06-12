@@ -15,7 +15,7 @@ RSpec.describe "Admin::Settings::PublicAccessController" do
 
       expect {
         patch admin_settings_edit_public_access_path,
-              params: { public_access_form: { enabled: "true" } }
+              params: { web_access_form: { enabled: "true" } }
       }
         .to change(SettingsAudit, :count).by(1)
 
@@ -26,7 +26,7 @@ RSpec.describe "Admin::Settings::PublicAccessController" do
 
     it "re-renders the edit page when given invalid params" do
       patch admin_settings_edit_public_access_path,
-            params: { public_access_form: { enabled: "true", author_comment: "a" * 256 } }
+            params: { web_access_form: { enabled: "true", author_comment: "a" * 256 } }
 
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to have_selector(".govuk-error-summary")

@@ -1,4 +1,4 @@
-RSpec.describe Admin::Form::Settings::PublicAccessForm do
+RSpec.describe Admin::Form::Settings::WebAccessForm do
   describe "valid?" do
     it "returns false when invalid" do
       form = described_class.new(author_comment: "a" * 256)
