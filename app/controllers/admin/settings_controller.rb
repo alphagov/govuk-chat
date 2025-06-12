@@ -1,4 +1,6 @@
 class Admin::SettingsController < Admin::BaseController
+  before_action :authorise_admin_settings
+
   def show
     @settings = Settings.instance
   end

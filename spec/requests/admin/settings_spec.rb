@@ -1,4 +1,10 @@
 RSpec.describe "Admin::SettingsController" do
+  it_behaves_like "limits access to users with the admin-area-settings permission",
+                  routes: {
+                    admin_settings_path: [:get],
+                    admin_settings_audits_path: [:get],
+                  }
+
   describe "GET :show" do
     it "creates the settings singleton and renders the page successfully on first visit" do
       expect { get admin_settings_path }.to change(Settings, :count).by(1)
