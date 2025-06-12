@@ -91,4 +91,22 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser do
       expect(client.api_requests.size).to eq(1)
     end
   end
+
+  it "uses an overridden AWS region if set" do
+    ClimateControl.modify(CLAUDE_AWS_REGION: "my-region") do
+      bedrock_client = Aws::BedrockRuntime::Client.new(stub_responses: true)
+
+      allow(Aws::BedrockRuntime::Client).to(
+        receive(:new).with(region: "my-region").and_return(bedrock_client),
+      )
+
+      bedrock_client.stub_responses(
+        :converse,
+        bedrock_claude_text_response("test", user_message: Regexp.new(question.message)),
+      )
+
+      described_class.call(question.message, question_records)
+      expect(bedrock_client.api_requests.size).to eq(1)
+    end
+  end
 end

@@ -9,7 +9,7 @@ module Guardrails::Claude
     def call
       response = bedrock_client.converse(
         system: [{ text: system_prompt }],
-        model_id: BedrockModels::CLAUDE_3_7_SONNET,
+        model_id: BedrockModels::CLAUDE_SONNET,
         messages:,
         inference_config:,
       )
@@ -36,7 +36,9 @@ module Guardrails::Claude
     end
 
     def bedrock_client
-      @bedrock_client ||= Aws::BedrockRuntime::Client.new
+      @bedrock_client ||= Aws::BedrockRuntime::Client.new(
+        region: ENV.fetch("CLAUDE_AWS_REGION", "eu-west-1"),
+      )
     end
 
     def inference_config
