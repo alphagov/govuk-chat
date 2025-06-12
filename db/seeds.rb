@@ -3,5 +3,5 @@ SignonUser.find_or_create_by!(
   email: "chat.user@dev.gov.uk",
 ).update!(
   uid: SecureRandom.uuid,
-  permissions: %w[developer-tools admin-area conversation-api web-chat],
+  permissions: %w[developer-tools admin-area admin-area-settings conversation-api web-chat],
 )
