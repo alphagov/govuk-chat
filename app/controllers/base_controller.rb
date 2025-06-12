@@ -1,5 +1,6 @@
 class BaseController < ApplicationController
   before_action :ensure_signon_user_if_required
+  before_action :authorise_web_user
   before_action :check_chat_web_access
   helper_method :settings
 
@@ -23,6 +24,10 @@ private
     return if Rails.configuration.available_without_signon_authentication
 
     authenticate_user!
+  end
+
+  def authorise_web_user
+    authorise_user!(SignonUser::Permissions::WEB_CHAT)
   end
 
   def cache_cookieless_requests

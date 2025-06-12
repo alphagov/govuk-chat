@@ -1,6 +1,6 @@
 module SystemSpecHelpers
-  def given_i_am_signed_in
-    @signon_user = create(:signon_user)
+  def given_i_am_a_web_chat_user
+    @signon_user = create(:signon_user, :web_chat)
     login_as(@signon_user)
   end
 

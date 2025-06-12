@@ -12,6 +12,7 @@ RSpec.describe "ApplicationController" do
 
     context "when the available_without_signon_authentication configuration returns true" do
       it "doesn't attempt to authenticate with signon and returns a 200" do
+        login_as(create(:signon_user, :web_chat))
         ClimateControl.modify GDS_SSO_MOCK_INVALID: "true" do
           allow(Rails.configuration).to receive(:available_without_signon_authentication).and_return(true)
           get homepage_path
