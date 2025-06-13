@@ -83,12 +83,19 @@ namespace :evaluation do
   end
 
   desc "Produce the output of a RAG response for a user input"
-  task :generate_rag_structured_answer_response, %i[provider] => :environment do |_, args|
+  task :generate_rag_structured_answer_response, %i[llm_provider embedding_provider] => :environment do |_, args|
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
-    raise "Requires a provider" if args[:provider].blank?
+    raise "Requires an llm provider" if args[:llm_provider].blank?
+
+    if args[:embedding_provider]
+      Rails.configuration.embedding_provider = args[:embedding_provider]
+    else
+      warn "No embedding_provider argument provided, using #{Rails.configuration.embedding_provider}"
+    end
 
     question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
-    answer = case args[:provider]
+
+    answer = case args[:llm_provider]
              when "openai"
                AnswerComposition::PipelineRunner.call(question:, pipeline: [
                  AnswerComposition::Pipeline::SearchResultFetcher,
@@ -100,7 +107,7 @@ namespace :evaluation do
                  AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
                ])
              else
-               raise "Unexpected provider #{args[:provider]}"
+               raise "Unexpected llm provider #{args[:llm_provider]}"
              end
 
     raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/

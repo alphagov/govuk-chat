@@ -240,10 +240,44 @@ RSpec.describe "rake evaluation tasks" do
     let(:task_name) { "evaluation:generate_rag_structured_answer_response" }
     let(:input) { "Question" }
 
-    before { Rake::Task[task_name].reenable }
+    around do |example|
+      config_embedding_provider = Rails.configuration.embedding_provider
+      Rails.configuration.embedding_provider = "openai"
+      Rake::Task[task_name].reenable
+      example.run
+    ensure
+      Rails.configuration.embedding_provider = config_embedding_provider
+    end
 
-    it_behaves_like "a task requiring input and provider"
-    it_behaves_like "a task requiring a known provider"
+    it "requires an INPUT env var" do
+      expect { Rake::Task[task_name].invoke("openai") }
+        .to raise_error("Requires an INPUT env var")
+    end
+
+    it "requires an llm_provider" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke }
+          .to raise_error("Requires an llm provider")
+      end
+    end
+
+    it "raises if given an unknown llm provider" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke("super-ai") }
+          .to raise_error("Unexpected llm provider super-ai")
+          .and output.to_stderr
+      end
+    end
+
+    it "warns when embedding_provider is omitted" do
+      ClimateControl.modify(INPUT: input) do
+        allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(build(:answer))
+        expect {
+          Rake::Task[task_name].invoke("openai")
+        }.to output(/No embedding_provider argument provided, using openai/).to_stderr
+        .and output.to_stdout
+      end
+    end
 
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input) do
@@ -251,6 +285,7 @@ RSpec.describe "rake evaluation tasks" do
         allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
         expect { Rake::Task[task_name].invoke("openai") }
           .to output("#{answer.to_json}\n").to_stdout
+          .and output.to_stderr
       end
     end
 
@@ -262,6 +297,7 @@ RSpec.describe "rake evaluation tasks" do
 
           expect { Rake::Task[task_name].invoke("openai") }
             .to output.to_stdout
+            .and output.to_stderr
 
           expect(AnswerComposition::PipelineRunner)
             .to have_received(:call)
@@ -281,6 +317,7 @@ RSpec.describe "rake evaluation tasks" do
 
           expect { Rake::Task[task_name].invoke("claude") }
             .to output.to_stdout
+            .and output.to_stderr
 
           expect(AnswerComposition::PipelineRunner)
             .to have_received(:call)
@@ -288,6 +325,30 @@ RSpec.describe "rake evaluation tasks" do
               AnswerComposition::Pipeline::SearchResultFetcher,
               AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
             ])
+        end
+      end
+    end
+
+    context "when embedding provider argument is provided" do
+      it "errors on unknown embedding provider" do
+        ClimateControl.modify(INPUT: input) do
+          expect {
+            Rake::Task[task_name].invoke("openai", "nope")
+          }.to raise_error("Unknown provider: nope")
+        end
+      end
+
+      it "overrides the default embedding provider" do
+        ClimateControl.modify(INPUT: input) do
+          Rails.configuration.embedding_provider = "openai"
+
+          allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(build(:answer))
+
+          expect {
+            Rake::Task[task_name].invoke("openai", "titan")
+          }.to change { Rails.configuration.embedding_provider }
+            .from("openai").to("titan")
+            .and output.to_stdout
         end
       end
     end
