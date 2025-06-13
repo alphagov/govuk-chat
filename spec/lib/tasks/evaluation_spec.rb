@@ -377,15 +377,22 @@ RSpec.describe "rake evaluation tasks" do
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input, EMBEDDING_PROVIDER: "openai") do
         search_results = [
-          build(
-            :chunked_content_search_result,
-            exact_path: "/path1",
-            plain_content: "Content 1",
+          Search::ResultsForQuestion::WeightedResult.new(
+            result: build(
+              :chunked_content_search_result,
+              exact_path: "/path1",
+              plain_content: "Content 1",
+            ),
+            weighted_score: 1.0,
           ),
-          build(
-            :chunked_content_search_result,
-            exact_path: "/path2",
-            plain_content: "Content 2",
+
+          Search::ResultsForQuestion::WeightedResult.new(
+            result: build(
+              :chunked_content_search_result,
+              exact_path: "/path2",
+              plain_content: "Content 2",
+            ),
+            weighted_score: 0.9,
           ),
         ]
         result_set = Search::ResultsForQuestion::ResultSet.new(
@@ -396,8 +403,8 @@ RSpec.describe "rake evaluation tasks" do
         allow(Search::ResultsForQuestion).to receive(:call).with(input).and_return(result_set)
 
         expected_output = [
-          { exact_path: "/path1", plain_content: "Content 1" },
-          { exact_path: "/path2", plain_content: "Content 2" },
+          { exact_path: "/path1", plain_content: "Content 1", weighted_score: 1.0 },
+          { exact_path: "/path2", plain_content: "Content 2", weighted_score: 0.9 },
         ].to_json
 
         expect { Rake::Task[task_name].invoke }
