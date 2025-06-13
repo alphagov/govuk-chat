@@ -70,6 +70,24 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :c
       })
     end
 
+    it "uses an overridden AWS region if set" do
+      ClimateControl.modify(CLAUDE_AWS_REGION: "my-region") do
+        bedrock_client = Aws::BedrockRuntime::Client.new(stub_responses: true)
+
+        allow(Aws::BedrockRuntime::Client).to(
+          receive(:new).with(region: "my-region").and_return(bedrock_client),
+        )
+
+        bedrock_client.stub_responses(
+          :converse,
+          bedrock_claude_structured_answer_response(question.message, "answer"),
+        )
+
+        described_class.call(context)
+        expect(bedrock_client.api_requests.size).to eq(1)
+      end
+    end
+
     it "sets the 'used' boolean to false for unused sources" do
       context.search_results = [search_result, unused_search_result]
       response = bedrock_claude_tool_response(

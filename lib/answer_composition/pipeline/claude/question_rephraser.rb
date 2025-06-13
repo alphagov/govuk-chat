@@ -11,7 +11,7 @@ module AnswerComposition::Pipeline
       def call
         response = bedrock_client.converse(
           system: [{ text: config[:system_prompt] }],
-          model_id: BedrockModels::CLAUDE_3_7_SONNET, # TODO: change this to a more basic model
+          model_id: BedrockModels::CLAUDE_SONNET, # TODO: change this to a more basic model
           messages:,
           inference_config:,
         )
@@ -28,7 +28,9 @@ module AnswerComposition::Pipeline
       attr_reader :question_message, :message_records
 
       def bedrock_client
-        @bedrock_client ||= Aws::BedrockRuntime::Client.new
+        @bedrock_client ||= Aws::BedrockRuntime::Client.new(
+          region: ENV.fetch("CLAUDE_AWS_REGION", "eu-west-1"),
+        )
       end
 
       def build_metrics(response)

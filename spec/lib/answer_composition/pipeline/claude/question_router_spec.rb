@@ -108,6 +108,28 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter do
       })
     end
 
+    it "uses an overridden AWS region if set" do
+      ClimateControl.modify(CLAUDE_AWS_REGION: "my-region") do
+        bedrock_client = Aws::BedrockRuntime::Client.new(stub_responses: true)
+
+        allow(Aws::BedrockRuntime::Client).to(
+          receive(:new).with(region: "my-region").and_return(bedrock_client),
+        )
+
+        bedrock_client.stub_responses(
+          :converse,
+          bedrock_claude_tool_response(
+            classification_response,
+            tool_name: "greetings",
+            requested_tools: tools,
+          ),
+        )
+
+        described_class.call(context)
+        expect(bedrock_client.api_requests.size).to eq(1)
+      end
+    end
+
     context "when the question routing label is genuine_rag" do
       before do
         response = bedrock_claude_tool_response(

@@ -8,13 +8,15 @@ module Guardrails
       def initialize(input, prompt)
         @input = input
         @prompt = prompt
-        @bedrock_client = Aws::BedrockRuntime::Client.new
+        @bedrock_client = Aws::BedrockRuntime::Client.new(
+          region: ENV.fetch("CLAUDE_AWS_REGION", "eu-west-1"),
+        )
       end
 
       def call
         claude_response = bedrock_client.converse(
           system: [{ text: prompt.system_prompt }],
-          model_id: BedrockModels::CLAUDE_3_7_SONNET,
+          model_id: BedrockModels::CLAUDE_SONNET,
           messages: [{ role: "user", content: [{ text: prompt.user_prompt(input) }] }],
           inference_config: {
             max_tokens: MAX_TOKENS,
