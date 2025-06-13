@@ -1,6 +1,6 @@
 RSpec.describe "Admin user updates settings" do
   scenario do
-    given_i_am_an_admin
+    given_i_am_an_admin_with_the_settings_permission
     and_a_settings_instance_exists
 
     when_i_visit_the_settings_page

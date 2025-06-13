@@ -25,9 +25,16 @@ end
         <%= render "govuk_publishing_components/components/warning_text", {
           text: "All users attempting to use chat via the API will receive an error response",
         } %>
-        <p class="govuk-body">
-          This can be changed in <%= link_to("settings", admin_settings_path, class: "govuk-link") %>.
-        </p>
+
+        <% if current_user.has_permission?("admin-area-settings") %>
+          <p class="govuk-body">
+            This can be changed in <%= link_to("settings", admin_settings_path, class: "govuk-link") %>.
+          </p>
+        <% else %>
+          <p class="govuk-body">
+            Please contact a developer to enable API access.
+          </p>
+        <% end %>
       <% end %>
     <% end %>
   </div>

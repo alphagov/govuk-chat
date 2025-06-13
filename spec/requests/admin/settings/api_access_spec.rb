@@ -1,4 +1,9 @@
 RSpec.describe "Admin::Settings::ApiAccessController" do
+  it_behaves_like "limits access to users with the admin-area-settings permission",
+                  routes: {
+                    admin_settings_edit_api_access_path: %i[get patch],
+                  }
+
   describe "GET :edit" do
     it "renders the edit page successfully" do
       get admin_settings_edit_api_access_path

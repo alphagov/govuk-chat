@@ -1,4 +1,6 @@
 class Admin::Settings::WebAccessController < Admin::BaseController
+  before_action :authorise_admin_settings
+
   def edit
     settings = Settings.instance
     @form = Admin::Form::Settings::WebAccessForm.new(

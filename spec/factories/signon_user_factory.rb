@@ -7,6 +7,10 @@ FactoryBot.define do
       permissions { %w[admin-area] }
     end
 
+    trait :admin_area_settings do
+      permissions { %w[admin-area admin-area-settings] }
+    end
+
     trait :conversation_api do
       permissions { %w[conversation-api] }
     end
