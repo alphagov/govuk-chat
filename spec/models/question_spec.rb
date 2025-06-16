@@ -160,11 +160,12 @@ RSpec.describe Question do
     end
 
     context "when the question does not have an answer" do
-      it "returns a serialized question with its answer" do
+      it "returns a serialized question without its answer" do
         question = create(:question)
 
-        expect(question.serialize_for_export)
-          .to include(question.as_json)
+        export = question.serialize_for_export
+        expect(export).to include(question.as_json)
+        expect(export["answer"]).to be_nil
       end
     end
   end
