@@ -148,13 +148,14 @@ RSpec.describe Question do
 
   describe "#serialize_for_export" do
     context "when the question has an answer" do
-      it "returns a serialized question with its answer" do
+      it "returns a serialized question" do
         question = create(:question, :with_answer)
         question.conversation = create(:conversation)
 
         expect(question.serialize_for_export)
           .to include(question.as_json)
           .and include("answer" => question.answer.serialize_for_export)
+          .and include("source" => "web")
       end
     end
 

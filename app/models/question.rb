@@ -54,6 +54,7 @@ class Question < ApplicationRecord
   def serialize_for_export
     as_json.merge(
       "answer" => answer&.serialize_for_export,
+      "source" => conversation.source,
     )
   end
 end
