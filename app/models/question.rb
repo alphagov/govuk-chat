@@ -55,6 +55,7 @@ class Question < ApplicationRecord
     as_json.merge(
       "answer" => answer&.serialize_for_export,
       "source" => conversation.source,
+      "signon_user_id" => conversation.signon_user_id,
     )
   end
 end

@@ -149,13 +149,15 @@ RSpec.describe Question do
   describe "#serialize_for_export" do
     context "when the question has an answer" do
       it "returns a serialized question" do
-        question = create(:question, :with_answer)
-        question.conversation = create(:conversation)
+        signon_user = build(:signon_user)
+        conversation = build(:conversation, signon_user:)
+        question = create(:question, :with_answer, conversation:)
 
         expect(question.serialize_for_export)
           .to include(question.as_json)
           .and include("answer" => question.answer.serialize_for_export)
           .and include("source" => "web")
+          .and include("signon_user_id" => signon_user.id)
       end
     end
 
@@ -166,6 +168,14 @@ RSpec.describe Question do
         export = question.serialize_for_export
         expect(export).to include(question.as_json)
         expect(export["answer"]).to be_nil
+      end
+    end
+
+    context "when the question does not have a signon_user" do
+      it "returns a serialized question without its signon user" do
+        question = create(:question)
+
+        expect(question.serialize_for_export["signon_user_id"]).to be_nil
       end
     end
   end
