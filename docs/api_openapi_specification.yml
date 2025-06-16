@@ -599,6 +599,8 @@ components:
         message:
           description: |
             The LLM generated answer returned in markdown format.
+
+            Soft line breaks should not be treated as hard line breaks.
           type: string
         useful:
           description: |
