@@ -19,4 +19,8 @@ class Conversation < ApplicationRecord
     scope = scope.joins(:answer) if only_answered
     scope.last(Rails.configuration.conversations.max_question_count)
   end
+
+  def answered_questions_count
+    Question.where(conversation: self).active.joins(:answer).count
+  end
 end

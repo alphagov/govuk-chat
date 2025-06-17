@@ -18,10 +18,14 @@ class Api::V0::ConversationsController < Api::BaseController
     answered_questions = @conversation.questions_for_showing_conversation(only_answered: true)
     pending_question = @conversation.questions.unanswered.last
 
-    render(
-      json: ConversationBlueprint.render(@conversation, answered_questions:, pending_question:),
-      status: :ok,
+    json = ConversationBlueprint.render(
+      @conversation,
+      answered_questions:,
+      pending_question:,
+      answered_questions_count: @conversation.answered_questions_count,
     )
+
+    render(json:, status: :ok)
   end
 
   def update

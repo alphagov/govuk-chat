@@ -153,6 +153,7 @@ RSpec.describe "Api::V0::ConversationsController" do
       expected_response = ConversationBlueprint.render_as_json(
         conversation,
         pending_question:,
+        answered_questions_count: 0,
       )
       expect(JSON.parse(response.body)).to eq(expected_response)
       expect(response).to have_http_status(:ok)

@@ -40,12 +40,14 @@ RSpec.describe ConversationBlueprint do
             QuestionBlueprint.render_as_hash(question, view: :answered)
           end,
           pending_question: QuestionBlueprint.render_as_hash(pending_question, view: :pending),
+          answered_questions_count: 2,
         }.as_json
 
         output_json = described_class.render_as_json(
           conversation,
           answered_questions: answered_questions,
           pending_question: pending_question,
+          answered_questions_count: conversation.answered_questions_count,
         )
 
         expect(output_json).to eq(expected_json)
@@ -63,12 +65,14 @@ RSpec.describe ConversationBlueprint do
           answered_questions: [
             QuestionBlueprint.render_as_hash(eager_loaded_answered, view: :answered),
           ],
+          answered_questions_count: 1,
         }.as_json
 
         output_json = described_class.render_as_json(
           conversation,
           answered_questions: [eager_loaded_answered],
           pending_question: nil,
+          answered_questions_count: conversation.answered_questions_count,
         )
 
         expect(output_json).to eq(expected_json)

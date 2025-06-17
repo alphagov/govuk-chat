@@ -57,4 +57,40 @@ RSpec.describe Conversation do
       end
     end
   end
+
+  describe "#answered_questions_count" do
+    it "includes only the questions belonging to the conversation" do
+      conversation = create(:conversation)
+      create(:question, :with_answer, conversation:)
+      create(:question, :with_answer, conversation:)
+
+      another_conversation = create(:conversation)
+      create(:question, :with_answer, conversation: another_conversation)
+
+      expect(conversation.answered_questions_count).to eq(2)
+    end
+
+    it "includes only the active questions" do
+      conversation = create(:conversation)
+      create(:question, :with_answer, conversation:)
+
+      expired_timestamp = (Rails.configuration.conversations.max_question_age_days + 1).days.ago
+      create(
+        :question,
+        :with_answer,
+        conversation:,
+        created_at: expired_timestamp,
+      )
+
+      expect(conversation.answered_questions_count).to eq(1)
+    end
+
+    it "includes only questions with answers" do
+      conversation = create(:conversation)
+      create(:question, conversation:)
+      create(:question, :with_answer, conversation:)
+
+      expect(conversation.answered_questions_count).to eq(1)
+    end
+  end
 end
