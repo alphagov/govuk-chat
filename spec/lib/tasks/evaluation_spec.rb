@@ -382,6 +382,7 @@ RSpec.describe "rake evaluation tasks" do
               :chunked_content_search_result,
               exact_path: "/path1",
               plain_content: "Content 1",
+              score: 1.5,
             ),
             weighted_score: 1.0,
           ),
@@ -391,6 +392,7 @@ RSpec.describe "rake evaluation tasks" do
               :chunked_content_search_result,
               exact_path: "/path2",
               plain_content: "Content 2",
+              score: 0.9,
             ),
             weighted_score: 0.9,
           ),
@@ -403,8 +405,18 @@ RSpec.describe "rake evaluation tasks" do
         allow(Search::ResultsForQuestion).to receive(:call).with(input).and_return(result_set)
 
         expected_output = [
-          { exact_path: "/path1", plain_content: "Content 1", weighted_score: 1.0 },
-          { exact_path: "/path2", plain_content: "Content 2", weighted_score: 0.9 },
+          {
+            exact_path: "/path1",
+            plain_content: "Content 1",
+            weighted_score: 1.0,
+            original_score: 1.5,
+          },
+          {
+            exact_path: "/path2",
+            plain_content: "Content 2",
+            weighted_score: 0.9,
+            original_score: 0.9,
+          },
         ].to_json
 
         expect { Rake::Task[task_name].invoke }

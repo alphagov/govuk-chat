@@ -147,6 +147,7 @@ namespace :evaluation do
         exact_path: result.exact_path,
         plain_content: result.plain_content,
         weighted_score: result.weighted_score,
+        original_score: result.score,
       }
     end
 
