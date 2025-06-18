@@ -280,7 +280,7 @@ GEM
     govuk_personalisation (1.1.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
-    govuk_publishing_components (57.2.0)
+    govuk_publishing_components (57.3.0)
       govuk_app_config
       govuk_personalisation (>= 0.7.0)
       kramdown
@@ -642,7 +642,7 @@ GEM
     opentelemetry-semantic_conventions (1.11.0)
       opentelemetry-api (~> 1.0)
     os (1.1.4)
-    ostruct (0.6.1)
+    ostruct (0.6.2)
     parallel (1.27.0)
     parser (3.3.8.0)
       ast (~> 2.4.1)
@@ -722,7 +722,7 @@ GEM
       ffi (~> 1.0)
     rb_sys (0.9.106)
     rbtree (0.4.6)
-    rdoc (6.14.0)
+    rdoc (6.14.1)
       erb
       psych (>= 4.0.0)
     redis-client (0.24.0)
@@ -1055,7 +1055,7 @@ CHECKSUMS
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
-  govuk_publishing_components (57.2.0) sha256=f228004fbdb58b4234a25dbe0ba0b635e260e0702d14f82d51aad43552e21b39
+  govuk_publishing_components (57.3.0) sha256=73176acd635ac0f5d2baca0ad0cda06718b309f1efc6f6cce9a1d6c08e89b000
   govuk_schemas (6.0.0) sha256=e53d5bb946a0bac29aa75635146fe29b8b28dfc186035b39603583b0dbd14a8b
   govuk_sidekiq (10.0.0) sha256=0d0485f6946f5e212eb5d6f5105c406a25f3cd059592a5b490b78f1d71818de8
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
@@ -1174,7 +1174,7 @@ CHECKSUMS
   opentelemetry-sdk (1.8.0) sha256=fad979b4a6c7ad5b2f9f2bfde77ab5c0c6a9b81d5a6458becf5957e3fa371df7
   opentelemetry-semantic_conventions (1.11.0) sha256=89f209f588d48a8e38ca2205c24c6b4a35f3d2622c2f1854bd476c56290afdcb
   os (1.1.4) sha256=57816d6a334e7bd6aed048f4b0308226c5fb027433b67d90a9ab435f35108d3f
-  ostruct (0.6.1) sha256=09a3fb7ecc1fa4039f25418cc05ae9c82bd520472c5c6a6f515f03e4988cb817
+  ostruct (0.6.2) sha256=6d7302a299e400a2c248d6ce0dad18fc3a5714e8096facc25ffd0c54ee57cfc0
   parallel (1.27.0) sha256=4ac151e1806b755fb4e2dc2332cbf0e54f2e24ba821ff2d3dcf86bf6dc4ae130
   parser (3.3.8.0) sha256=2476364142b307fa5a1b1ece44f260728be23858a9c71078e956131a75453c45
   pg (1.5.9) sha256=761efbdf73b66516f0c26fcbe6515dc7500c3f0aa1a1b853feae245433c64fdc
@@ -1207,7 +1207,7 @@ CHECKSUMS
   rb-inotify (0.11.1) sha256=a0a700441239b0ff18eb65e3866236cd78613d6b9f78fea1f9ac47a85e47be6e
   rb_sys (0.9.106) sha256=b64d5e4bb33aefa0acec5d829162f211a8f9e5bfe08780ed298c637c7229527c
   rbtree (0.4.6) sha256=14eea4469b24fd2472542e5f3eb105d6344c8ccf36f0b56d55fdcfeb4e0f10fc
-  rdoc (6.14.0) sha256=2c46de58d7129b8743fcf6d76e3db971bdc914150e15ac06b386549bd82ed7db
+  rdoc (6.14.1) sha256=905efa796cd296ef252af4fb31fe41c073dee894de6aad715821f335c632516b
   redis-client (0.24.0) sha256=ee65ee39cb2c38608b734566167fd912384f3c1241f59075e22858f23a085dbb
   regexp_parser (2.10.0) sha256=cb6f0ddde88772cd64bff1dbbf68df66d376043fe2e66a9ef77fcb1b0c548c61
   reline (0.6.1) sha256=1afcc9d7cb1029cdbe780d72f2f09251ce46d3780050f3ec39c3ccc6b60675fb
