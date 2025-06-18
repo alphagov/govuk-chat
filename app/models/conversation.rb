@@ -12,11 +12,15 @@ class Conversation < ApplicationRecord
        },
        prefix: true
 
-  def questions_for_showing_conversation(only_answered: false)
+  def questions_for_showing_conversation(only_answered: false, before_timestamp_ms: nil)
     scope = Question.where(conversation: self)
                   .includes(answer: %i[feedback sources])
                   .active
     scope = scope.joins(:answer) if only_answered
+    if before_timestamp_ms.present?
+      time = Time.zone.at(before_timestamp_ms / 1000.0)
+      scope = scope.where("questions.created_at < ?", time)
+    end
     scope.last(Rails.configuration.conversations.max_question_count)
   end
 

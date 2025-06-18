@@ -39,7 +39,7 @@ RSpec.describe Conversation do
 
     it "returns the last N active questions based on the configuration value" do
       create(:question, conversation:)
-      expected = 2.times.map do |_|
+      expected = 2.times.map do
         create(:question, conversation:)
       end
       expect(conversation.reload.questions_for_showing_conversation).to eq(expected)
@@ -48,12 +48,29 @@ RSpec.describe Conversation do
     context "when only_answered is true" do
       it "returns the last N active answered questions based on the configuration value" do
         create(:question, :with_answer, conversation:)
-        expected = 2.times.map do |_|
+        expected = 2.times.map do
           create(:question, :with_answer, conversation:)
         end
         create(:question, conversation:)
 
         expect(conversation.reload.questions_for_showing_conversation(only_answered: true)).to eq(expected)
+      end
+    end
+
+    context "when before_timestamp is provided" do
+      it "returns questions created before the given timestamp" do
+        create(:question, conversation:, created_at: 2.hours.ago)
+        expected = [
+          create(:question, conversation:, created_at: 7.hours.ago),
+          create(:question, conversation:, created_at: 6.hours.ago),
+        ]
+        create(:question, conversation:, created_at: 3.hours.ago)
+        create(:question, conversation:, created_at: 4.hours.ago)
+
+        questions = conversation.reload.questions_for_showing_conversation(
+          before_timestamp_ms: 5.hours.ago.to_f * 1000,
+        )
+        expect(questions).to eq(expected)
       end
     end
   end
