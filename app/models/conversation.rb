@@ -16,6 +16,7 @@ class Conversation < ApplicationRecord
     scope = Question.where(conversation: self)
                   .includes(answer: %i[feedback sources])
                   .active
+                  .order(created_at: :asc)
     scope = scope.joins(:answer) if only_answered
     if before_timestamp_ms.present?
       time = Time.zone.at(before_timestamp_ms / 1000.0)
