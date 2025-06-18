@@ -761,7 +761,7 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.2)
-    rubocop (1.76.1)
+    rubocop (1.76.2)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -769,7 +769,7 @@ GEM
       parser (>= 3.3.0.2)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 2.9.3, < 3.0)
-      rubocop-ast (>= 1.45.0, < 2.0)
+      rubocop-ast (>= 1.45.1, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 4.0)
     rubocop-ast (1.45.1)
@@ -778,8 +778,8 @@ GEM
     rubocop-capybara (2.22.1)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
-    rubocop-govuk (5.1.14)
-      rubocop (= 1.76.1)
+    rubocop-govuk (5.1.15)
+      rubocop (= 1.76.2)
       rubocop-ast (= 1.45.1)
       rubocop-capybara (= 2.22.1)
       rubocop-rails (= 2.32.0)
@@ -1222,10 +1222,10 @@ CHECKSUMS
   rspec-mocks (3.13.2) sha256=2327335def0e1665325a9b617e3af9ae20272741d80ac550336309a7c59abdef
   rspec-rails (8.0.0) sha256=977a508cd94d152db2068c6585470db5d0cd47eef56d5410b9531034fb9d97bf
   rspec-support (3.13.2) sha256=cea3a2463fd9b84b9dcc9685efd80ea701aa8f7b3decb3b3ce795ed67737dbec
-  rubocop (1.76.1) sha256=e15a2d750794cf2157d2de8b1b403dfa71b8dc3957a22ae6043b1bdf21e7e0e7
+  rubocop (1.76.2) sha256=ae44f172ba0bbe3d623c927111798f85a7879bcc88e544d08f51f62c19f45633
   rubocop-ast (1.45.1) sha256=94042e49adc17f187ba037b33f941ba7398fede77cdf4bffafba95190a473a3e
   rubocop-capybara (2.22.1) sha256=ced88caef23efea53f46e098ff352f8fc1068c649606ca75cb74650970f51c0c
-  rubocop-govuk (5.1.14) sha256=9050400fcc0d4834c8fe38a515b7c0045e4afe10d250d2ab1fc240e7c247d5d3
+  rubocop-govuk (5.1.15) sha256=09feb85d2e16f5ac1ab873d69f4d775d1c7365879cad6de785956828fa593161
   rubocop-rails (2.32.0) sha256=9fcc623c8722fe71e835e99c4a18b740b5b0d3fb69915d7f0777f00794b30490
   rubocop-rake (0.7.1) sha256=3797f2b6810c3e9df7376c26d5f44f3475eda59eb1adc38e6f62ecf027cbae4d
   rubocop-rspec (3.6.0) sha256=c0e4205871776727e54dee9cc91af5fd74578001551ba40e1fe1a1ab4b404479
