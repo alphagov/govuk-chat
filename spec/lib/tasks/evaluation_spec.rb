@@ -5,10 +5,10 @@ RSpec.describe "rake evaluation tasks" do
         .to raise_error("Requires an INPUT env var")
     end
 
-    it "requires an llm provider" do
+    it "requires a provider" do
       ClimateControl.modify(INPUT: input) do
         expect { Rake::Task[task_name].invoke }
-          .to raise_error("Requires an llm provider")
+          .to raise_error("Requires a provider")
       end
     end
   end
@@ -17,7 +17,7 @@ RSpec.describe "rake evaluation tasks" do
     it "raises an error when given an unknown provider" do
       ClimateControl.modify(INPUT: input) do
         expect { Rake::Task[task_name].invoke("super-duper-ai") }
-          .to raise_error("Unexpected llm provider super-duper-ai")
+          .to raise_error("Unexpected provider super-duper-ai")
       end
     end
   end
