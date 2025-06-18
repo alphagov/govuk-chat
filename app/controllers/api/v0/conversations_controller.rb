@@ -15,7 +15,10 @@ class Api::V0::ConversationsController < Api::BaseController
   end
 
   def show
-    answered_questions = @conversation.questions_for_showing_conversation(only_answered: true)
+    answered_questions = @conversation.questions_for_showing_conversation(
+      only_answered: true,
+      before_timestamp_ms: params[:before_timestamp_ms].presence&.to_i,
+    )
     pending_question = @conversation.questions.unanswered.last
 
     json = ConversationBlueprint.render(

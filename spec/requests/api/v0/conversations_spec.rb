@@ -179,6 +179,28 @@ RSpec.describe "Api::V0::ConversationsController" do
 
       expect(response).to have_http_status(:not_found)
     end
+
+    it "returns the questions before a given timestamp" do
+      create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+      recent_questions = [
+        create(:question, :with_answer, conversation:, created_at: 6.minutes.ago),
+        create(:question, :with_answer, conversation:, created_at: 5.minutes.ago),
+      ]
+      create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+
+      expected_questions = Question.where(id: recent_questions.map(&:id))
+                                   .includes(answer: %i[sources feedback])
+      expected_response = ConversationBlueprint.render_as_json(
+        conversation,
+        answered_questions: expected_questions,
+        answered_questions_count: 4,
+      )
+      get api_v0_show_conversation_path(
+        conversation,
+        before_timestamp_ms: (3.minutes.ago.to_f * 1000).to_i,
+      )
+      expect(JSON.parse(response.body)).to eq(expected_response)
+    end
   end
 
   describe "POST :create" do
