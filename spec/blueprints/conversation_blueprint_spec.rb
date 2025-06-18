@@ -78,5 +78,25 @@ RSpec.describe ConversationBlueprint do
         expect(output_json).to eq(expected_json)
       end
     end
+
+    context "with an earlier questions URL" do
+      it "includes the earlier questions URL when provided" do
+        earlier_questions_url = "https://example.com"
+
+        expected_json = {
+          id: conversation.id,
+          created_at: conversation.created_at.iso8601,
+          answered_questions: [],
+          earlier_questions_url: earlier_questions_url,
+        }.as_json
+
+        output_json = described_class.render_as_json(
+          conversation,
+          earlier_questions_url: earlier_questions_url,
+        )
+
+        expect(output_json).to eq(expected_json)
+      end
+    end
   end
 end

@@ -19,13 +19,22 @@ class Api::V0::ConversationsController < Api::BaseController
       only_answered: true,
       before_timestamp_ms: params[:before_timestamp_ms].presence&.to_i,
     )
+
     pending_question = @conversation.questions.unanswered.last
+
+    earlier_questions_url = if answered_questions.any? && Question.any_older_questions_in_conversation?(answered_questions.first)
+                              api_v0_show_conversation_path(
+                                @conversation,
+                                before_timestamp_ms: (answered_questions.first.created_at.to_f * 1000).to_i,
+                              )
+                            end
 
     json = ConversationBlueprint.render(
       @conversation,
       answered_questions:,
       pending_question:,
       answered_questions_count: @conversation.answered_questions_count,
+      earlier_questions_url:,
     )
 
     render(json:, status: :ok)

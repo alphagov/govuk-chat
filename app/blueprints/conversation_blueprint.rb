@@ -9,6 +9,13 @@ class ConversationBlueprint < Blueprinter::Base
     options[:answered_questions_count]
   end
 
+  field(
+    :earlier_questions_url,
+    if: ->(_field_name, _conversation, options) { options[:earlier_questions_url].present? },
+  ) do |_conversation, options|
+    options[:earlier_questions_url]
+  end
+
   association(
     :answered_questions,
     blueprint: QuestionBlueprint,
