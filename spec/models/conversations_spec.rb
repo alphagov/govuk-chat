@@ -34,7 +34,9 @@ RSpec.describe Conversation do
     let(:conversation) { create(:conversation) }
 
     before do
-      allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(2)
+      allow(Rails.configuration.conversations).to(
+        receive(:api_conversation_questions_per_page).and_return(2),
+      )
     end
 
     it "returns the last N active questions based on the configuration value" do

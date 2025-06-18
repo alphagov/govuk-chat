@@ -21,7 +21,7 @@ class Conversation < ApplicationRecord
       time = Time.zone.at(before_timestamp_ms / 1000.0)
       scope = scope.where("questions.created_at < ?", time)
     end
-    scope.last(Rails.configuration.conversations.max_question_count)
+    scope.last(Rails.configuration.conversations.api_conversation_questions_per_page)
   end
 
   def answered_questions_count
