@@ -245,6 +245,20 @@ RSpec.describe "rake evaluation tasks" do
     it_behaves_like "a task requiring input and provider"
     it_behaves_like "a task requiring a known provider"
 
+    it "requires an llm_provider" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke }
+          .to raise_error("Requires an llm_provider")
+      end
+    end
+    
+    it "raises if given an unknown llm provider" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke("super-ai") }
+          .to raise_error("Unexpected llm_provider super-ai")
+      end
+    end
+
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input) do
         answer = build(:answer)

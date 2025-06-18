@@ -85,7 +85,7 @@ namespace :evaluation do
   desc "Produce the output of a RAG response for a user input"
   task :generate_rag_structured_answer_response, %i[llm_provider embedding_provider] => :environment do |_, args|
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
-    raise "Requires an llm provider" if args[:llm_provider].blank?
+    raise "Requires an llm_provider" if args[:llm_provider].blank?
 
     embedding = args.fetch(:embedding_provider, Rails.configuration.embedding_provider)
     warn "No embedding_provider argument provided, using #{embedding}" unless args[:embedding_provider]
@@ -100,7 +100,7 @@ namespace :evaluation do
     when "titan"
       pipeline << AnswerComposition::Pipeline::Titan::EmbeddingFetcher
     else
-      raise "Unexpected embedding provider #{embedding}"
+      raise "Unexpected embedding_provider #{embedding}"
     end
 
     case args[:llm_provider]
@@ -109,7 +109,7 @@ namespace :evaluation do
     when "claude"
       pipeline << AnswerComposition::Pipeline::Claude::StructuredAnswerComposer
     else
-      raise "Unexpected provider #{args[:llm_provider]}"
+      raise "Unexpected llm_provider #{args[:llm_provider]}"
     end
 
     answer = AnswerComposition::PipelineRunner.call(question:, pipeline:)
