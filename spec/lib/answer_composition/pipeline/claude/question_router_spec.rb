@@ -185,7 +185,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credent
           tools:,
           tool_name: "vague_acronym_grammar",
           tool_input: classification_response,
-          stop_reason: "max_tokens",
+          stop_reason: :max_tokens,
         )
       end
 

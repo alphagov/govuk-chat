@@ -109,6 +109,15 @@ module StubClaudeMessages
     )
   end
 
+  def stub_claude_output_guardrails(to_check, response = "False | None")
+    stub_claude_messages_response(
+      array_including({ "role" => "user", "content" => a_string_including(to_check) }),
+      content: [claude_messages_text_block(response)],
+      usage: { cache_read_input_tokens: 20 },
+      chat_options: { temperature: nil, max_tokens: Guardrails::Claude::MultipleChecker::MAX_TOKENS },
+    )
+  end
+
   def claude_messages_tool_use_block(input:, name:, id: "tool-use-id")
     Anthropic::Models::ToolUseBlock.new(
       id:,
