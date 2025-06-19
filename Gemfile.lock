@@ -1,6 +1,7 @@
 GIT
   remote: https://github.com/alphagov/govuk_chat_private.git
-  revision: 8ba0f72c62192a053b2f37af8c40fe8257daa7c1
+  revision: d9e2012e27013e2b3896051bcb20eecf96d57a57
+  branch: add-context-prompt-to-claude-structured-answer
   specs:
     govuk_chat_private (0.0.1)
       activesupport (>= 8)
