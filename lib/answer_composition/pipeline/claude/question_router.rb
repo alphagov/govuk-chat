@@ -9,21 +9,20 @@ module AnswerComposition::Pipeline
 
       def call
         start_time = Clock.monotonic_time
-
         answer = context.answer
-        answer.assign_llm_response("question_routing", bedrock_response.to_h)
+        answer.assign_llm_response("question_routing", claude_response.to_h)
 
         if genuine_rag?
           answer.assign_attributes(
             question_routing_label:,
-            question_routing_confidence_score: llm_classification_data["confidence"],
+            question_routing_confidence_score: llm_classification_data[:confidence],
           )
         else
           answer.assign_attributes(
             message: use_llm_answer? ? llm_answer : Answer::CannedResponses.response_for_question_routing_label(question_routing_label),
             status: answer_status,
             question_routing_label:,
-            question_routing_confidence_score: llm_classification_data["confidence"],
+            question_routing_confidence_score: llm_classification_data[:confidence],
           )
 
           context.abort_pipeline unless use_llm_answer?
@@ -47,7 +46,7 @@ module AnswerComposition::Pipeline
       end
 
       def token_limit_reached?
-        bedrock_response["stop_reason"] == "max_tokens"
+        claude_response[:stop_reason] == :max_tokens
       end
 
       def answer_status
@@ -55,7 +54,7 @@ module AnswerComposition::Pipeline
       end
 
       def llm_answer
-        llm_classification_data["answer"]
+        llm_classification_data[:answer]
       end
 
       def genuine_rag?
@@ -63,32 +62,33 @@ module AnswerComposition::Pipeline
       end
 
       def question_routing_label
-        llm_classification_function["name"]
+        llm_classification_function[:name]
       end
 
       def llm_classification_function
-        @llm_classification_function ||= bedrock_response.dig(
-          "output", "message", "content", 0, "tool_use"
-        )
+        @llm_classification_function ||= claude_response[:content][0]
       end
 
       def llm_classification_data
-        llm_classification_function["input"]
+        llm_classification_function[:input]
       end
 
-      def bedrock_client
-        @bedrock_client ||= Aws::BedrockRuntime::Client.new(
-          region: ENV.fetch("CLAUDE_AWS_REGION", "eu-west-1"),
+      def anthropic_bedrock_client
+        @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(
+          aws_region: ENV["CLAUDE_AWS_REGION"],
         )
       end
 
-      def bedrock_response
-        @bedrock_response ||= bedrock_client.converse(
-          system: [{ text: prompt_config[:system_prompt] }],
-          model_id: BedrockModels::CLAUDE_SONNET,
+      def claude_response
+        @claude_response ||= anthropic_bedrock_client.messages.create(
+          system: [
+            { type: "text", text: prompt_config[:system_prompt], cache_control: { type: "ephemeral" } },
+          ],
+          model: BedrockModels::CLAUDE_SONNET,
           messages:,
-          inference_config:,
-          tool_config:,
+          tools:,
+          tool_choice: { type: "any", disable_parallel_tool_use: true },
+          **inference_config,
         )
       end
 
@@ -101,7 +101,7 @@ module AnswerComposition::Pipeline
 
       def messages
         [
-          { role: "user", content: [{ text: context.question_message }] },
+          { role: "user", content: context.question_message },
         ]
       end
 
@@ -129,16 +129,12 @@ module AnswerComposition::Pipeline
           end
 
           {
-            tool_spec: {
-              name: classification[:name],
-              description: build_description(classification),
-              input_schema: {
-                json: {
-                  type: "object",
-                  properties:,
-                  required:,
-                },
-              },
+            name: classification[:name],
+            description: build_description(classification),
+            input_schema: {
+              type: "object",
+              properties:,
+              required:,
             },
           }
         end
@@ -165,8 +161,9 @@ module AnswerComposition::Pipeline
       def build_metrics(start_time)
         {
           duration: Clock.monotonic_time - start_time,
-          llm_prompt_tokens: bedrock_response.dig("usage", "input_tokens"),
-          llm_completion_tokens: bedrock_response.dig("usage", "output_tokens"),
+          llm_prompt_tokens: claude_response[:usage][:input_tokens],
+          llm_completion_tokens: claude_response[:usage][:output_tokens],
+          llm_cached_tokens: claude_response[:usage][:cache_read_input_tokens],
         }
       end
     end

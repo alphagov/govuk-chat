@@ -62,6 +62,39 @@ module StubClaudeMessages
     )
   end
 
+  def stub_claude_question_routing(question_or_history,
+                                   tools: an_instance_of(Array),
+                                   tool_name: "genuine_rag",
+                                   tool_input: { "answer": "This is RAG.", confidence: 1.0 },
+                                   stop_reason: :tool_use,
+                                   chat_options: {})
+    chat_options = {
+      tools:,
+      tool_choice: { type: "any", disable_parallel_tool_use: true },
+      max_tokens: 160,
+    }.merge(chat_options)
+
+    stub_claude_messages_response(
+      question_or_history,
+      content: [claude_messages_tool_use_block(
+        input: tool_input,
+        name: tool_name,
+      )],
+      stop_reason:,
+      usage: { cache_read_input_tokens: 20 },
+      chat_options:,
+    )
+  end
+
+  def claude_messages_tool_use_block(input:, name:, id: "tool-use-id")
+    Anthropic::Models::ToolUseBlock.new(
+      id:,
+      name:,
+      input:,
+      type: :tool_use,
+    )
+  end
+
   def claude_messages_text_block(text)
     Anthropic::Models::TextBlock.new(
       type: :text,
@@ -69,7 +102,7 @@ module StubClaudeMessages
     )
   end
 
-  def claude_messages_usage_block(input_tokens: 10, output_tokens: 20, cache_read_input_tokens: 20)
+  def claude_messages_usage_block(input_tokens: 10, output_tokens: 20, cache_read_input_tokens: nil)
     Anthropic::Models::Usage.new(
       input_tokens:,
       output_tokens:,

@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter do
+RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credentials_stubbed do
   let(:classification_attributes) do
     {
       name: "greetings",
@@ -22,18 +22,14 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter do
 
     [
       {
-        tool_spec: {
-          name: "greetings",
-          description: "A classification description",
-          input_schema: {
-            json: {
-              type: "object",
-              properties: properties.merge({
-                confidence: confidence_property,
-              }),
-              required: %w[confidence] + properties.keys.map(&:to_s),
-            },
-          },
+        name: "greetings",
+        description: "A classification description",
+        input_schema: {
+          type: "object",
+          properties: properties.merge({
+            confidence: confidence_property,
+          }),
+          required: %w[confidence] + properties.keys.map(&:to_s),
         },
       },
     ]
@@ -67,36 +63,61 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter do
     let(:context) { build(:answer_pipeline_context, question:) }
 
     it "calls Bedrock with with the right prompt and tool config" do
-      client = stub_bedrock_converse(
-        bedrock_claude_tool_response(
-          classification_response,
-          tool_name: "greetings",
-          requested_tools: tools,
-        ),
+      request = stub_claude_question_routing(
+        question.message,
+        tools:,
+        tool_name: "greetings",
+        tool_input: classification_response,
       )
 
       described_class.call(context)
-      expect(client.api_requests.size).to eq(1)
+      expect(request).to have_been_made
     end
 
     it "assigns the llm response to the answer" do
-      response = bedrock_claude_tool_response(
-        classification_response,
+      stub_claude_question_routing(
+        question.message,
+        tools:,
         tool_name: "greetings",
+        tool_input: classification_response,
       )
-      stub_bedrock_converse(response)
 
       described_class.call(context)
 
-      expect(context.answer.llm_responses["question_routing"]).to match(response)
+      expect(context.answer.llm_responses["question_routing"])
+        .to match(
+          id: "msg-id",
+          content: [
+            have_attributes(
+              id: "tool-use-id",
+              input: {
+                answer: "Hello!",
+                confidence: 0.85,
+              },
+              name: "greetings",
+              type: :tool_use,
+            ),
+          ],
+          model: BedrockModels::CLAUDE_SONNET,
+          role: :assistant,
+          stop_reason: :tool_use,
+          type: :message,
+          usage: have_attributes(
+            cache_read_input_tokens: 20,
+            input_tokens: 10,
+            output_tokens: 20,
+          ),
+        )
     end
 
     it "assigns metrics to the context's answer" do
-      response = bedrock_claude_tool_response(
-        classification_response,
+      stub_claude_question_routing(
+        question.message,
+        tools:,
         tool_name: "greetings",
+        tool_input: classification_response,
       )
-      stub_bedrock_converse(response)
+
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
       described_class.call(context)
@@ -105,38 +126,35 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter do
         duration: 1.5,
         llm_prompt_tokens: 10,
         llm_completion_tokens: 20,
+        llm_cached_tokens: 20,
       })
     end
 
     it "uses an overridden AWS region if set" do
       ClimateControl.modify(CLAUDE_AWS_REGION: "my-region") do
-        bedrock_client = Aws::BedrockRuntime::Client.new(stub_responses: true)
-
-        allow(Aws::BedrockRuntime::Client).to(
-          receive(:new).with(region: "my-region").and_return(bedrock_client),
-        )
-
-        bedrock_client.stub_responses(
-          :converse,
-          bedrock_claude_tool_response(
-            classification_response,
-            tool_name: "greetings",
-            requested_tools: tools,
-          ),
+        allow(Anthropic::BedrockClient).to receive(:new).and_call_original
+        anthropic_request = stub_claude_question_routing(
+          question.message,
+          tools:,
+          tool_name: "greetings",
+          tool_input: classification_response,
         )
 
         described_class.call(context)
-        expect(bedrock_client.api_requests.size).to eq(1)
+
+        expect(Anthropic::BedrockClient).to have_received(:new).with(hash_including(aws_region: "my-region"))
+        expect(anthropic_request).to have_been_made
       end
     end
 
     context "when the question routing label is genuine_rag" do
       before do
-        response = bedrock_claude_tool_response(
-          classification_response,
+        stub_claude_question_routing(
+          question.message,
+          tools:,
           tool_name: "genuine_rag",
+          tool_input: classification_response,
         )
-        stub_bedrock_converse(response)
       end
 
       it "assigns the question routing label and confidence" do
@@ -162,18 +180,18 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter do
 
     context "when the tokens returned by Bedrock exceeds the limit" do
       before do
-        response = bedrock_claude_tool_response(
-          classification_response,
+        stub_claude_question_routing(
+          question.message,
+          tools:,
           tool_name: "vague_acronym_grammar",
+          tool_input: classification_response,
           stop_reason: "max_tokens",
         )
-        stub_bedrock_converse(response)
       end
 
       it "assigns a canned response message" do
         canned_response = "Canned response"
 
-        # This method returns a random value
         allow(Answer::CannedResponses)
           .to receive(:response_for_question_routing_label)
           .with("vague_acronym_grammar")
@@ -198,11 +216,12 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter do
       let(:answer_message) { "This content was not found on GOV.UK" }
 
       before do
-        response = bedrock_claude_tool_response(
-          { "answer" => answer_message, "confidence" => 0.9 },
+        stub_claude_question_routing(
+          question.message,
+          tools:,
           tool_name: "multi_questions",
+          tool_input: { "answer" => answer_message, "confidence" => 0.9 },
         )
-        stub_bedrock_converse(response)
       end
 
       it "assigns the answer message, status and question routing metadata" do
@@ -224,17 +243,17 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter do
 
     context "when the question routing label is one where we ignore the answer" do
       before do
-        response = bedrock_claude_tool_response(
-          { "answer" => "Ignored", "confidence" => 0.9 },
+        stub_claude_question_routing(
+          question.message,
+          tools:,
           tool_name: "harmful_vulgar_controversy",
+          tool_input: { "answer" => "Ignored", "confidence" => 0.9 },
         )
-        stub_bedrock_converse(response)
       end
 
       it "assigns a canned response message with a status and question routing metadata" do
         canned_response = "Canned response"
 
-        # This method returns a random value
         allow(Answer::CannedResponses)
           .to receive(:response_for_question_routing_label)
           .with("harmful_vulgar_controversy")
