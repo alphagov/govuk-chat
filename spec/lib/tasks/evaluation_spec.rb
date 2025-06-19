@@ -300,6 +300,7 @@ RSpec.describe "rake evaluation tasks" do
             .to have_received(:call)
             .with(question: instance_of(Question), pipeline: [
               AnswerComposition::Pipeline::SearchResultFetcher,
+              AnswerComposition::Pipeline::OpenAI::EmbeddingFetcher,
               AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
             ])
         end
