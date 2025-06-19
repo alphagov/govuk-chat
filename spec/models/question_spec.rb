@@ -103,6 +103,26 @@ RSpec.describe Question do
     end
   end
 
+  describe ".any_older_questions_in_conversation?" do
+    let(:conversation) { create(:conversation) }
+
+    it "returns true if there are older questions in the same conversation" do
+      question = create(:question, conversation:, created_at: 2.days.ago)
+      create(:question, conversation:, created_at: 3.days.ago)
+      create(:question, conversation: build(:conversation), created_at: 4.days.ago)
+
+      expect(described_class.any_older_questions_in_conversation?(question)).to be(true)
+    end
+
+    it "returns false if there are no older questions in the same conversation" do
+      create(:question, conversation:, created_at: 2.days.ago)
+      question = create(:question, conversation:, created_at: 3.days.ago)
+      create(:question, conversation: build(:conversation), created_at: 4.days.ago)
+
+      expect(described_class.any_older_questions_in_conversation?(question)).to be(false)
+    end
+  end
+
   describe "#answer_status" do
     it "returns the status of the answer" do
       question = create(:question, :with_answer)

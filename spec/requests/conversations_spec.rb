@@ -199,7 +199,7 @@ RSpec.describe "ConversationsController" do
         let(:conversation) { create(:conversation, signon_user:) }
 
         it "only renders the max number of question from rails config" do
-          allow(Rails.configuration.conversations).to receive(:max_question_count).and_return(1)
+          allow(Rails.configuration.conversations).to receive(:api_conversation_questions_per_page).and_return(1)
           older_question = create(:question, :with_answer, conversation:)
           question = create(:question, :with_answer, conversation:)
 

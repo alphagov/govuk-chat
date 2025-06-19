@@ -58,4 +58,12 @@ class Question < ApplicationRecord
       "signon_user_id" => conversation.signon_user_id,
     )
   end
+
+  def self.any_older_questions_in_conversation?(question)
+    where(
+      "conversation_id = ? AND created_at < ?",
+      question.conversation_id,
+      question.created_at,
+    ).limit(1).exists?
+  end
 end

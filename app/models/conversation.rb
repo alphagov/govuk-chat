@@ -12,11 +12,20 @@ class Conversation < ApplicationRecord
        },
        prefix: true
 
-  def questions_for_showing_conversation(only_answered: false)
+  def questions_for_showing_conversation(only_answered: false, before_timestamp_ms: nil)
     scope = Question.where(conversation: self)
                   .includes(answer: %i[feedback sources])
                   .active
+                  .order(created_at: :asc)
     scope = scope.joins(:answer) if only_answered
-    scope.last(Rails.configuration.conversations.max_question_count)
+    if before_timestamp_ms.present?
+      time = Time.zone.at(before_timestamp_ms / 1000.0)
+      scope = scope.where("questions.created_at < ?", time)
+    end
+    scope.last(Rails.configuration.conversations.api_conversation_questions_per_page)
+  end
+
+  def answered_questions_count
+    Question.where(conversation: self).active.joins(:answer).count
   end
 end

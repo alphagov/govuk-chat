@@ -153,6 +153,7 @@ RSpec.describe "Api::V0::ConversationsController" do
       expected_response = ConversationBlueprint.render_as_json(
         conversation,
         pending_question:,
+        answered_questions_count: 0,
       )
       expect(JSON.parse(response.body)).to eq(expected_response)
       expect(response).to have_http_status(:ok)
@@ -177,6 +178,74 @@ RSpec.describe "Api::V0::ConversationsController" do
       get api_v0_show_conversation_path(conversation)
 
       expect(response).to have_http_status(:not_found)
+    end
+
+    it "returns the questions before a given timestamp" do
+      create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+      recent_questions = [
+        create(:question, :with_answer, conversation:, created_at: 6.minutes.ago),
+        create(:question, :with_answer, conversation:, created_at: 5.minutes.ago),
+      ]
+      create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+
+      expected_questions = Question.where(id: recent_questions.map(&:id))
+                                   .includes(answer: %i[sources feedback])
+      expected_response = ConversationBlueprint.render_as_json(
+        conversation,
+        answered_questions: expected_questions,
+        answered_questions_count: 4,
+      )
+      get api_v0_show_conversation_path(
+        conversation,
+        before_timestamp_ms: (3.minutes.ago.to_f * 1000).to_i,
+      )
+      expect(JSON.parse(response.body)).to eq(expected_response)
+    end
+
+    context "with an earlier questions URL" do
+      it "returns a URL to the earlier questions on the first page" do
+        allow(Rails.configuration.conversations).to(
+          receive(:api_conversation_questions_per_page).and_return(2),
+        )
+
+        create(:question, :with_answer, conversation:, created_at: 6.minutes.ago)
+        oldest_question_in_page = create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+        create(:question, :with_answer, conversation:, created_at: 4.minutes.ago)
+
+        get api_v0_show_conversation_path(conversation)
+
+        expect(JSON.parse(response.body)["earlier_questions_url"]).to eq(
+          api_v0_show_conversation_path(
+            conversation,
+            before_timestamp_ms: (oldest_question_in_page.created_at.to_f * 1000).to_i,
+          ),
+        )
+      end
+
+      it "returns a URL to the earlier questions on an older page" do
+        allow(Rails.configuration.conversations).to(
+          receive(:api_conversation_questions_per_page).and_return(2),
+        )
+
+        oldest_on_next_page = create(:question, :with_answer, conversation:, created_at: 6.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+        create(:question, :with_answer, conversation:, created_at: 4.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 10.minutes.ago)
+
+        get api_v0_show_conversation_path(
+          conversation,
+          before_timestamp_ms: (3.minutes.ago.to_f * 1000).to_i,
+        )
+
+        expect(JSON.parse(response.body)["earlier_questions_url"]).to eq(
+          api_v0_show_conversation_path(
+            conversation,
+            before_timestamp_ms: (oldest_on_next_page.created_at.to_f * 1000).to_i,
+          ),
+        )
+      end
     end
   end
 
