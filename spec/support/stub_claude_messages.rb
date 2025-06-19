@@ -55,6 +55,13 @@ module StubClaudeMessages
     )
   end
 
+  def stub_claude_question_rephrasing(original_question, rephrased_question)
+    stub_claude_messages_response(
+      array_including({ "role" => "user", "content" => a_string_including(original_question) }),
+      content: [claude_messages_text_block(rephrased_question)],
+    )
+  end
+
   def claude_messages_text_block(text)
     Anthropic::Models::TextBlock.new(
       type: :text,
