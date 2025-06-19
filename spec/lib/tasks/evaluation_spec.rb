@@ -242,13 +242,18 @@ RSpec.describe "rake evaluation tasks" do
 
     before { Rake::Task[task_name].reenable }
 
+    it "requires an INPUT env var" do
+      expect { Rake::Task[task_name].invoke("openai") }
+        .to raise_error("Requires an INPUT env var")
+    end
+
     it "requires an llm_provider" do
       ClimateControl.modify(INPUT: input) do
         expect { Rake::Task[task_name].invoke }
           .to raise_error("Requires an llm provider")
       end
     end
-    
+
     it "raises if given an unknown llm provider" do
       ClimateControl.modify(INPUT: input) do
         expect { Rake::Task[task_name].invoke("super-ai") }
