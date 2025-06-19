@@ -35,6 +35,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include StubOpenAIChat
   config.include StubBedrock
+  config.include StubAnthropic
   config.include StubOpenAIEmbedding
   config.include SidekiqHelpers
   config.include SystemSpecHelpers, type: :system
@@ -87,5 +88,15 @@ RSpec.configure do |config|
     else
       example.call
     end
+  end
+
+  config.around(:each, :aws_credentials_stubbed) do |example|
+    old_config = Aws.config.dup
+    Aws.config.update( # rubocop:disable Rails/SaveBang
+      credentials: Aws::Credentials.new("fake_access_key", "fake_secret_key"),
+      region: ENV.fetch("CLAUDE_AWS_REGION", "eu-west-1"),
+    )
+    example.run
+    Aws.config.replace(old_config)
   end
 end

@@ -120,14 +120,16 @@ RSpec.describe AnswerComposition::PipelineRunner do
       end
     end
 
-    context "when the step raises an Aws::Errors::ServiceError" do
-      let(:pipeline_step) do
-        client = stub_bedrock_converse("ServerError")
-        ->(_context) { client.converse(model_id: "just-generating-an-error") }
+    context "when the step raises an Anthropic::Errors::APIError" do
+      let(:error) do
+        Anthropic::Errors::APIError.new(
+          url: "https://bedrock-runtime.eu-west-1.amazonaws.com/model/#{BedrockModels::CLAUDE_SONNET}:0/invoke",
+        )
       end
+      let(:pipeline_step) { ->(_context) { raise error } }
 
       it "notifies sentry" do
-        expect(GovukError).to receive(:notify).with(kind_of(Aws::Errors::ServiceError))
+        expect(GovukError).to receive(:notify).with(kind_of(Anthropic::Errors::APIError))
         described_class.call(question:, pipeline: [pipeline_step])
       end
 
@@ -140,7 +142,7 @@ RSpec.describe AnswerComposition::PipelineRunner do
             question:,
             status: "error_answer_service_error",
             message: Answer::CannedResponses::ANSWER_SERVICE_ERROR_RESPONSE,
-            error_message: "stubbed-response-error-message",
+            error_message: "Anthropic::Errors::APIError",
           )
       end
     end

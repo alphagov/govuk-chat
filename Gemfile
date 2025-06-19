@@ -6,6 +6,7 @@ ruby "~> #{File.read(File.join(__dir__, '.ruby-version')).strip}"
 
 gem "rails", "8.0.2"
 
+gem "anthropic"
 gem "aws-sdk-bedrockruntime"
 gem "blueprinter"
 gem "bootsnap"
@@ -20,7 +21,7 @@ gem "gds-api-adapters"
 gem "gds-sso"
 gem "google-cloud-bigquery", require: false
 gem "govuk_app_config"
-gem "govuk_chat_private", github: "alphagov/govuk_chat_private"
+gem "govuk_chat_private", github: "alphagov/govuk_chat_private", branch: "add-context-prompt-to-claude-structured-answer"
 gem "govuk_message_queue_consumer"
 gem "govuk_publishing_components"
 gem "govuk_sidekiq"
