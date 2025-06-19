@@ -242,8 +242,24 @@ RSpec.describe "rake evaluation tasks" do
 
     before { Rake::Task[task_name].reenable }
 
-    it_behaves_like "a task requiring input and provider"
-    it_behaves_like "a task requiring a known provider"
+    it "requires an INPUT env var" do
+      expect { Rake::Task[task_name].invoke("openai") }
+        .to raise_error("Requires an INPUT env var")
+    end
+
+    it "requires an llm_provider" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke }
+          .to raise_error("Requires an llm provider")
+      end
+    end
+
+    it "raises if given an unknown llm provider" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke("super-ai") }
+          .to raise_error("Unexpected llm provider super-ai")
+      end
+    end
 
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input) do
@@ -267,6 +283,7 @@ RSpec.describe "rake evaluation tasks" do
             .to have_received(:call)
             .with(question: instance_of(Question), pipeline: [
               AnswerComposition::Pipeline::SearchResultFetcher,
+              AnswerComposition::Pipeline::OpenAI::EmbeddingFetcher,
               AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer,
             ])
         end
@@ -286,6 +303,7 @@ RSpec.describe "rake evaluation tasks" do
             .to have_received(:call)
             .with(question: instance_of(Question), pipeline: [
               AnswerComposition::Pipeline::SearchResultFetcher,
+              AnswerComposition::Pipeline::OpenAI::EmbeddingFetcher,
               AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
             ])
         end

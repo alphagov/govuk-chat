@@ -83,25 +83,36 @@ namespace :evaluation do
   end
 
   desc "Produce the output of a RAG response for a user input"
-  task :generate_rag_structured_answer_response, %i[provider] => :environment do |_, args|
+  task :generate_rag_structured_answer_response, %i[llm_provider embedding_provider] => :environment do |_, args|
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
-    raise "Requires a provider" if args[:provider].blank?
+    raise "Requires an llm provider" if args[:llm_provider].blank?
+
+    embedding = args.fetch(:embedding_provider, Rails.configuration.embedding_provider)
+    warn "No embedding_provider argument provided, using #{embedding}" unless args[:embedding_provider]
 
     question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
-    answer = case args[:provider]
-             when "openai"
-               AnswerComposition::PipelineRunner.call(question:, pipeline: [
-                 AnswerComposition::Pipeline::SearchResultFetcher,
-                 AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer,
-               ])
-             when "claude"
-               AnswerComposition::PipelineRunner.call(question:, pipeline: [
-                 AnswerComposition::Pipeline::SearchResultFetcher,
-                 AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
-               ])
-             else
-               raise "Unexpected provider #{args[:provider]}"
-             end
+
+    pipeline = [AnswerComposition::Pipeline::SearchResultFetcher]
+
+    case embedding
+    when "openai"
+      pipeline << AnswerComposition::Pipeline::OpenAI::EmbeddingFetcher
+    when "titan"
+      pipeline << AnswerComposition::Pipeline::Titan::EmbeddingFetcher
+    else
+      raise "Unexpected embedding_provider #{embedding}"
+    end
+
+    case args[:llm_provider]
+    when "openai"
+      pipeline << AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer
+    when "claude"
+      pipeline << AnswerComposition::Pipeline::Claude::StructuredAnswerComposer
+    else
+      raise "Unexpected llm provider #{args[:llm_provider]}"
+    end
+
+    answer = AnswerComposition::PipelineRunner.call(question:, pipeline:)
 
     raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/
 
