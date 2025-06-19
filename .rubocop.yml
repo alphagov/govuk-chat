@@ -25,3 +25,4 @@ Rails/SaveBang:
   AllowedReceivers:
     - config
     - indices
+    - messages
