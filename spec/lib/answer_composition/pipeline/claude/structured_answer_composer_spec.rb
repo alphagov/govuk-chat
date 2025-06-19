@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :chunked_content_index do
+RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :aws_credentials_stubbed, :chunked_content_index do
   describe ".call" do
     let(:question) { build :question }
     let(:context) { build(:answer_pipeline_context, question:) }
@@ -20,16 +20,11 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :c
       )
     end
 
-    before do
-      context.search_results = [search_result]
-    end
+    before { context.search_results = [search_result] }
 
-    it "uses Bedrock converse endpoint to assign the correct values to the context's answer" do
+    it "uses Claude via Anthropic to assign the correct values to the context's answer" do
       answer = "VAT (Value Added Tax) is a tax applied to most goods and services in the UK."
-
-      stub_bedrock_converse(
-        bedrock_claude_structured_answer_response(question.message, answer),
-      )
+      stub_claude_structured_answer(question.message, answer)
 
       described_class.call(context)
 
@@ -38,77 +33,79 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :c
     end
 
     it "stores the LLM response" do
-      response = bedrock_claude_tool_response(
-        { "answer" => "answer", "answered" => true, "sources_used" => %w[link_1] },
-        tool_name: "output_schema",
-      )
-
-      stub_bedrock_converse(response)
+      stub_claude_structured_answer(question.message, "answer")
 
       described_class.call(context)
-      expect(context.answer.llm_responses["structured_answer"]).to match(response)
+
+      expected_llm_response = {
+        id: "msg-id",
+        content: [
+          Anthropic::Models::ToolUseBlock.new(
+            id: "tool-use-id",
+            input: {
+              answer: "answer",
+              answered: true,
+              sources_used: %w[link_1],
+            },
+            name: "output_schema",
+            type: :tool_use,
+          ),
+        ],
+        model: BedrockModels::CLAUDE_SONNET,
+        role: :assistant,
+        stop_reason: :tool_use,
+        type: :message,
+        usage: Anthropic::Models::Usage.new(
+          cache_read_input_tokens: 20,
+          input_tokens: 10,
+          output_tokens: 20,
+        ),
+      }
+
+      expect(context.answer.llm_responses["structured_answer"]).to eq(expected_llm_response)
     end
 
     it "assigns metrics to the answer" do
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
-
-      stub_bedrock_converse(
-        bedrock_claude_tool_response(
-          { "answer" => "answer", "answered" => true, "sources_used" => %w[link_1] },
-          tool_name: "output_schema",
-          input_tokens: 15,
-          output_tokens: 25,
-        ),
-      )
+      stub_claude_structured_answer(question.message, "answer")
 
       described_class.call(context)
 
-      expect(context.answer.metrics["structured_answer"]).to eq({
+      expect(context.answer.metrics["structured_answer"]).to eq(
         duration: 1.5,
-        llm_prompt_tokens: 15,
-        llm_completion_tokens: 25,
-      })
+        llm_prompt_tokens: 10,
+        llm_completion_tokens: 20,
+        llm_cached_tokens: 20,
+      )
     end
 
     it "uses an overridden AWS region if set" do
       ClimateControl.modify(CLAUDE_AWS_REGION: "my-region") do
-        bedrock_client = Aws::BedrockRuntime::Client.new(stub_responses: true)
-
-        allow(Aws::BedrockRuntime::Client).to(
-          receive(:new).with(region: "my-region").and_return(bedrock_client),
-        )
-
-        bedrock_client.stub_responses(
-          :converse,
-          bedrock_claude_structured_answer_response(question.message, "answer"),
-        )
+        allow(Anthropic::BedrockClient).to receive(:new).and_call_original
+        anthropic_request = stub_claude_structured_answer(question.message, "answer")
 
         described_class.call(context)
-        expect(bedrock_client.api_requests.size).to eq(1)
+
+        expect(Anthropic::BedrockClient).to have_received(:new).with(hash_including(aws_region: "my-region"))
+        expect(anthropic_request).to have_been_made
       end
     end
 
     it "sets the 'used' boolean to false for unused sources" do
       context.search_results = [search_result, unused_search_result]
-      response = bedrock_claude_tool_response(
-        { "answer" => "answer", "answered" => true, "sources_used" => %w[link_1] },
-        tool_name: "output_schema",
-      )
-
-      stub_bedrock_converse(response)
+      stub_claude_structured_answer(question.message, "answer")
 
       described_class.call(context)
+
       expect(context.answer.sources.map(&:used)).to eq([true, false])
     end
 
-    context "when answered is 'false'" do
-      it "aborts the pipeline and sets the answers status and message to the correct values" do
-        stub_bedrock_converse(
-          bedrock_claude_structured_answer_response(
-            question.message,
-            "Sorry i cannot answer that question.",
-            answered: false,
-          ),
+    context "when answered is false" do
+      it "aborts the pipeline and sets the answer's status and message correctly" do
+        stub_claude_structured_answer(
+          question.message,
+          "Sorry I cannot answer that question.",
+          answered: false,
         )
 
         expect { described_class.call(context) }.to throw_symbol(:abort)
@@ -116,24 +113,22 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :c
           .and change { context.answer.message }.to(Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE)
       end
 
-      it "assigns metrics to the answer" do
+      it "assigns metrics to the answer even when not answered" do
         allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
-
-        stub_bedrock_converse(
-          bedrock_claude_tool_response(
-            { "answer" => "answer", "answered" => false, "sources_used" => [] },
-            tool_name: "output_schema",
-            input_tokens: 15,
-            output_tokens: 25,
-          ),
+        stub_claude_structured_answer(
+          question.message,
+          "Sorry I cannot answer that question.",
+          answered: false,
         )
 
         expect { described_class.call(context) }.to throw_symbol(:abort)
-        expect(context.answer.metrics["structured_answer"]).to eq({
+
+        expect(context.answer.metrics["structured_answer"]).to eq(
           duration: 1.5,
-          llm_prompt_tokens: 15,
-          llm_completion_tokens: 25,
-        })
+          llm_prompt_tokens: 10,
+          llm_completion_tokens: 20,
+          llm_cached_tokens: 20,
+        )
       end
     end
   end

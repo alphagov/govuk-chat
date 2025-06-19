@@ -86,6 +86,29 @@ module StubClaudeMessages
     )
   end
 
+  def stub_claude_structured_answer(question_or_history, answer, answered: true)
+    tools = Rails.configuration
+                 .govuk_chat_private
+                 .llm_prompts
+                 .claude[:structured_answer][:anthropic_sdk_tool_spec]
+
+    chat_options = {
+      tools: [tools],
+      tool_choice: { type: "tool", name: "output_schema" },
+    }
+
+    stub_claude_messages_response(
+      question_or_history,
+      content: [claude_messages_tool_use_block(
+        input: { answer:, answered:, sources_used: %w[link_1] },
+        name: "output_schema",
+      )],
+      stop_reason: :tool_use,
+      usage: { cache_read_input_tokens: 20 },
+      chat_options:,
+    )
+  end
+
   def claude_messages_tool_use_block(input:, name:, id: "tool-use-id")
     Anthropic::Models::ToolUseBlock.new(
       id:,
