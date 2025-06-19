@@ -23,4 +23,5 @@ inherit_mode:
 # domain specific receivers we can reduce the need to disable this cop inline.
 Rails/SaveBang:
   AllowedReceivers:
+    - config
     - indices
