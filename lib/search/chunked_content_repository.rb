@@ -51,7 +51,7 @@ module Search
 
     def create_index(index_name: default_index_name, create_alias: true)
       aliases = create_alias ? { index.to_sym => {} } : {}
-      client.indices.create( # rubocop:disable Rails/SaveBang
+      client.indices.create(
         index: index_name,
         body: {
           settings: {

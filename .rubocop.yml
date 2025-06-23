@@ -18,3 +18,9 @@ inherit_mode:
 #
 # See https://github.com/alphagov/rubocop-govuk/blob/main/CONTRIBUTING.md
 # **************************************************************
+
+# This cop is easily triggered on non-Active Record APIs, by excluding certain
+# domain specific receivers we can reduce the need to disable this cop inline.
+Rails/SaveBang:
+  AllowedReceivers:
+    - indices
