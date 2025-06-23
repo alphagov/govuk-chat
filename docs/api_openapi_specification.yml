@@ -234,6 +234,82 @@ paths:
             Govuk-Client-Device-Id-Write-RateLimit-Reset:
               $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitReset'
 
+  /conversation/{conversation_id}/questions:
+    get:
+      summary: Retrieve a conversation's answered questions
+      description: |
+        Accesses the answered questions of a conversation should a conversation with
+        the id be available.
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: "#/components/parameters/DeviceIdHeader"
+      responses:
+        "200":
+          description: |
+            Returns an array of AnsweredQuestions. Is limited to returning 500
+            questions for a conversation and only questions asked within last
+            90 days.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AnsweredQuestion"
+          headers:
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-Client-Device-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitLimit'
+            Govuk-Client-Device-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitRemaining'
+            Govuk-Client-Device-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
+        "404":
+          description: |
+            Either a conversation never existed with this id or has now expired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericError"
+          headers:
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-Client-Device-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitLimit'
+            Govuk-Client-Device-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitRemaining'
+            Govuk-Client-Device-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
+        "429":
+          description: |
+            Too many requests to read endpoints from an Api User or Device ID
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-Client-Device-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitLimit'
+            Govuk-Client-Device-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitRemaining'
+            Govuk-Client-Device-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
+
   /conversation/{conversation_id}/questions/{question_id}/answer:
     get:
       summary: Look up the answer to a question

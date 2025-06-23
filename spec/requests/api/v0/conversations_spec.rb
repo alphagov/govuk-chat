@@ -181,6 +181,55 @@ RSpec.describe "Api::V0::ConversationsController" do
     end
   end
 
+  describe "GET :questions" do
+    it "returns an empty array if there are no answered questions" do
+      create(:question, conversation:)
+      get api_v0_conversation_questions_path(conversation)
+
+      expect(JSON.parse(response.body)).to eq([])
+    end
+
+    it "returns only the answered questions" do
+      create(:question, conversation:)
+      questions = [
+        create(:question, :with_answer, conversation:),
+        create(:question, :with_answer, conversation:),
+      ]
+
+      expected_questions = Question.where(id: questions.map(&:id))
+                           .includes(answer: %i[sources feedback])
+
+      expected_response = expected_questions.map do |q|
+        QuestionBlueprint.render_as_json(q, view: :answered)
+      end
+
+      get api_v0_conversation_questions_path(conversation)
+
+      expect(JSON.parse(response.body)).to eq(expected_response)
+    end
+
+    it "returns a 404 if the conversation cannot be found" do
+      get api_v0_conversation_questions_path(conversation)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "returns a 404 if the conversation has expired" do
+      create(:conversation, :api, :expired, signon_user: api_user)
+      get api_v0_show_conversation_path(SecureRandom.uuid)
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "returns a 404 if the conversation is not associated with the user" do
+      different_user = create(:signon_user, :conversation_api)
+      conversation = create(:conversation, signon_user: different_user)
+
+      get api_v0_show_conversation_path(conversation)
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "POST :create" do
     context "when the question is valid" do
       let(:payload) { { user_question: "What is the capital of France?" } }

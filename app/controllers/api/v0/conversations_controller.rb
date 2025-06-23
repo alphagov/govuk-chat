@@ -1,6 +1,6 @@
 class Api::V0::ConversationsController < Api::BaseController
   before_action { authorise_user!(SignonUser::Permissions::CONVERSATION_API) }
-  before_action :find_conversation, only: %i[show update answer answer_feedback]
+  before_action :find_conversation, only: %i[show update answer answer_feedback questions]
 
   def create
     conversation = Conversation.new(signon_user: current_user, source: :api)
@@ -76,6 +76,15 @@ class Api::V0::ConversationsController < Api::BaseController
         errors: feedback_form.errors.messages,
       ), status: :unprocessable_entity
     end
+  end
+
+  def questions
+    questions = @conversation.questions_for_showing_conversation(only_answered: true)
+
+    render(
+      json: QuestionBlueprint.render(questions, view: :answered),
+      status: :ok,
+    )
   end
 
 private
