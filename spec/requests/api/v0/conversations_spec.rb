@@ -153,6 +153,7 @@ RSpec.describe "Api::V0::ConversationsController" do
       expected_response = ConversationBlueprint.render_as_json(
         conversation,
         pending_question:,
+        answer_url: answer_path(pending_question),
       )
       expect(JSON.parse(response.body)).to eq(expected_response)
       expect(response).to have_http_status(:ok)
@@ -196,7 +197,11 @@ RSpec.describe "Api::V0::ConversationsController" do
         post api_v0_create_conversation_path, params: payload, as: :json
 
         question = Question.last
-        expected_payload = QuestionBlueprint.render_as_json(question, view: :pending)
+        expected_payload = QuestionBlueprint.render_as_json(
+          question,
+          view: :pending,
+          answer_url: answer_path(question),
+        )
 
         expect(JSON.parse(response.body)).to eq(expected_payload)
       end
@@ -270,9 +275,11 @@ RSpec.describe "Api::V0::ConversationsController" do
       it "returns the expected JSON" do
         put api_v0_update_conversation_path(conversation), params:, as: :json
 
+        question = conversation.questions.strict_loading(false).last
         expected_response = QuestionBlueprint.render_as_json(
           conversation.questions.strict_loading(false).last,
           view: :pending,
+          answer_url: answer_path(question),
         )
         expect(JSON.parse(response.body)).to eq(expected_response)
       end
@@ -388,5 +395,12 @@ RSpec.describe "Api::V0::ConversationsController" do
           )
       end
     end
+  end
+
+  def answer_path(question)
+    Rails.application.routes.url_helpers.api_v0_answer_question_path(
+      question.conversation_id,
+      question.id,
+    )
   end
 end

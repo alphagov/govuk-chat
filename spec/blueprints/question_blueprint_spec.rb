@@ -52,7 +52,8 @@ RSpec.describe QuestionBlueprint do
           answer_url:,
         }.as_json
 
-        expect(described_class.render_as_json(question, view: :pending)).to eq(expected_json)
+        expect(described_class.render_as_json(question, view: :pending, answer_url:))
+          .to eq(expected_json)
       end
     end
   end
