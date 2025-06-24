@@ -19,13 +19,24 @@ class Api::V0::ConversationsController < Api::BaseController
   end
 
   def show
-    answered_questions = @conversation.questions_for_showing_conversation(only_answered: true)
+    answered_questions = @conversation.questions_for_showing_conversation(
+      only_answered: true,
+      limit: Rails.configuration.conversations.api_questions_per_page,
+    )
     pending_question = @conversation.questions.unanswered.last
     answer_url = pending_question ? answer_path(pending_question) : nil
+
+    earlier_questions_url = if @conversation.active_answered_questions_before?(answered_questions.first&.created_at)
+                              api_v0_conversation_questions_path(
+                                @conversation, before: answered_questions.first.id
+                              )
+                            end
+
     options = {
       answered_questions:,
       pending_question:,
       answer_url:,
+      earlier_questions_url:,
     }
 
     render(

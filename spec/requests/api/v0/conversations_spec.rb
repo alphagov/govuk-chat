@@ -159,6 +159,23 @@ RSpec.describe "Api::V0::ConversationsController" do
       expect(response).to have_http_status(:ok)
     end
 
+    it "returns a URL to earlier questions if present" do
+      allow(Rails.configuration.conversations).to receive(:api_questions_per_page).and_return(2)
+
+      create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+      oldest_in_page = create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+      create(:question, :with_answer, conversation:, created_at: 3.minutes.ago)
+
+      get api_v0_show_conversation_path(conversation)
+
+      earlier_questions_url = api_v0_conversation_questions_path(
+        conversation, before: oldest_in_page.id
+      )
+
+      expect(JSON.parse(response.body)["earlier_questions_url"]).to eq(earlier_questions_url)
+      expect(response).to have_http_status(:ok)
+    end
+
     it "returns a 404 if the conversation cannot be found" do
       get api_v0_show_conversation_path(SecureRandom.uuid)
 

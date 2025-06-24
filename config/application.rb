@@ -57,6 +57,7 @@ module GovukChat
       max_question_count: 500,
       max_questions_per_user: 70,
       question_warning_threshold: 20,
+      api_questions_per_page: 50,
     )
 
     config.openai_access_token = ENV["OPENAI_ACCESS_TOKEN"]

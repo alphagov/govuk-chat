@@ -15,6 +15,7 @@ class Question < ApplicationRecord
   has_one :answer, strict_loading: false
 
   scope :unanswered, -> { where.missing(:answer) }
+  scope :answered, -> { where.associated(:answer) }
 
   scope :group_by_aggregate_status, lambda {
     left_outer_joins(:answer)

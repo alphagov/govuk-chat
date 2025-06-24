@@ -98,6 +98,17 @@ RSpec.describe Conversation do
       end
     end
 
+    context "when a limit is provided" do
+      it "returns the last N questions based on the limit" do
+        create(:question, :with_answer, conversation:)
+        create(:question, :with_answer, conversation:)
+
+        questions = conversation.reload.questions_for_showing_conversation(limit: 1)
+
+        expect(questions.size).to eq(1)
+      end
+    end
+
     context "when both before_id and after_id are provided" do
       it "returns all questions created between the two records" do
         after_question = create(:question, conversation:, created_at: 10.hours.ago)
@@ -113,6 +124,33 @@ RSpec.describe Conversation do
         )
         expect(questions).to eq(expected)
       end
+    end
+  end
+
+  describe "#active_answered_questions_before?" do
+    let(:conversation) { create(:conversation) }
+
+    it "returns true if there are older questions" do
+      question = create(:question, :with_answer, conversation:, created_at: 2.days.ago)
+      create(:question, :with_answer,  conversation:, created_at: 3.days.ago)
+      create(:question, :with_answer,  conversation:, created_at: 1.day.ago)
+
+      expect(conversation.active_answered_questions_before?(question.created_at)).to be(true)
+    end
+
+    it "returns false if there are no older questions" do
+      create(:question, :with_answer, conversation:, created_at: 2.days.ago)
+      question = create(:question, :with_answer, conversation:, created_at: 3.days.ago)
+
+      expect(conversation.active_answered_questions_before?(question.created_at)).to be(false)
+    end
+
+    it "only includes active questions with answers" do
+      create(:question, conversation:, created_at: 2.days.ago)
+      create(:question, :with_answer, conversation:, created_at: 5.years.ago)
+      question = create(:question, :with_answer, created_at: 1.day.ago)
+
+      expect(conversation.active_answered_questions_before?(question.created_at)).to be(false)
     end
   end
 end

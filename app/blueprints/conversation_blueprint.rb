@@ -19,4 +19,11 @@ class ConversationBlueprint < Blueprinter::Base
   ) do |_conversation, options|
     options[:pending_question]
   end
+
+  field(
+    :earlier_questions_url,
+    if: ->(_field_name, _conversation, options) { options[:earlier_questions_url].present? },
+  ) do |_conversation, options|
+    options[:earlier_questions_url]
+  end
 end

@@ -101,7 +101,7 @@ paths:
         "200":
           description: |
             Returns a list of AnsweredQuestions with potentially one PendingQuestion.
-            Is limited to returning 500 questions for a conversation and only
+            Is limited to returning 50 questions for a conversation and only
             questions asked within last 90 days.
           content:
             application/json:
@@ -624,6 +624,12 @@ components:
         created_at:
           type: string
           format: date-time
+        earlier_questions_url:
+          description: |
+            A relative URL that can be used to retrieve earlier questions in the conversation.
+            Will be null if there are no earlier questions.
+          type: string
+          format: url
     AnsweredQuestion:
       type: object
       required:
