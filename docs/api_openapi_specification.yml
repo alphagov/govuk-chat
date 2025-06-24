@@ -247,6 +247,18 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: before
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
         - $ref: "#/components/parameters/DeviceIdHeader"
       responses:
         "200":
@@ -275,7 +287,9 @@ paths:
               $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
         "404":
           description: |
-            Either a conversation never existed with this id or has now expired
+            Either a conversation never existed with this id or has now expired.
+            Will also be rendered if the `before` or `after` parameters reference
+            records that do not exist.
           content:
             application/json:
               schema:

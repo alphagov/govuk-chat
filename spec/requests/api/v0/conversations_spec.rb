@@ -208,6 +208,78 @@ RSpec.describe "Api::V0::ConversationsController" do
       expect(JSON.parse(response.body)).to eq(expected_response)
     end
 
+    it "returns the questions before a given question ID" do
+      before_question = create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+      recent_questions = [
+        create(:question, :with_answer, conversation:, created_at: 6.minutes.ago),
+        create(:question, :with_answer, conversation:, created_at: 5.minutes.ago),
+      ]
+      create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+
+      expected_questions = Question.where(id: recent_questions.map(&:id))
+                                   .includes(answer: %i[sources feedback])
+      expected_response = expected_questions.map do |q|
+        QuestionBlueprint.render_as_json(q, view: :answered)
+      end
+
+      get api_v0_conversation_questions_path(conversation, before: before_question.id)
+
+      expect(JSON.parse(response.body)).to eq(expected_response)
+    end
+
+    it "returns the questions after a given question ID" do
+      after_question = create(:question, :with_answer, conversation:, created_at: 10.minutes.ago)
+      later_questions = [
+        create(:question, :with_answer, conversation:, created_at: 9.minutes.ago),
+        create(:question, :with_answer, conversation:, created_at: 8.minutes.ago),
+      ]
+      create(:question, :with_answer, conversation:, created_at: 20.minutes.ago)
+
+      expected_questions = Question.where(id: later_questions.map(&:id))
+                                   .includes(answer: %i[sources feedback])
+      expected_response = expected_questions.map do |q|
+        QuestionBlueprint.render_as_json(q, view: :answered)
+      end
+
+      get api_v0_conversation_questions_path(conversation, after: after_question.id)
+
+      expect(JSON.parse(response.body)).to eq(expected_response)
+    end
+
+    it "returns the questions between the before and after IDs" do
+      create(:question, :with_answer, conversation:, created_at: 10.minutes.ago)
+      after_question = create(:question, :with_answer, conversation:, created_at: 9.minutes.ago)
+      expected_question = create(:question, :with_answer, conversation:, created_at: 8.minutes.ago)
+      before_question = create(:question, :with_answer, conversation:, created_at: 7.minutes.ago)
+      create(:question, :with_answer, conversation:, created_at: 6.minutes.ago)
+
+      expected_question = Question.where(id: expected_question.id)
+                                 .includes(answer: %i[sources feedback])
+      expected_response = QuestionBlueprint.render_as_json(expected_question, view: :answered)
+
+      get api_v0_conversation_questions_path(
+        conversation,
+        before: before_question.id,
+        after: after_question.id,
+      )
+
+      expect(JSON.parse(response.body)).to eq(expected_response)
+    end
+
+    it "returns a 404 if the before_id record cannot be found" do
+      create(:question, :with_answer, conversation:)
+      get api_v0_conversation_questions_path(conversation, before: SecureRandom.uuid)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "returns a 404 if the after_id record cannot be found" do
+      create(:question, :with_answer, conversation:)
+      get api_v0_conversation_questions_path(conversation, after: SecureRandom.uuid)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it "returns a 404 if the conversation cannot be found" do
       get api_v0_conversation_questions_path(conversation)
 

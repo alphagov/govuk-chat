@@ -79,7 +79,11 @@ class Api::V0::ConversationsController < Api::BaseController
   end
 
   def questions
-    questions = @conversation.questions_for_showing_conversation(only_answered: true)
+    questions = @conversation.questions_for_showing_conversation(
+      only_answered: true,
+      before_id: params[:before].presence,
+      after_id: params[:after].presence,
+    )
 
     render(
       json: QuestionBlueprint.render(questions, view: :answered),
