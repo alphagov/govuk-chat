@@ -8,7 +8,11 @@ class Api::V0::ConversationsController < Api::BaseController
 
     if form.valid?
       question = form.submit
-      render json: QuestionBlueprint.render(question, view: :pending), status: :created
+      render json: QuestionBlueprint.render(
+        question,
+        view: :pending,
+        answer_url: answer_path(question),
+      ), status: :created
     else
       render json: ValidationErrorBlueprint.render(errors: form.errors.messages), status: :unprocessable_entity
     end
@@ -17,9 +21,15 @@ class Api::V0::ConversationsController < Api::BaseController
   def show
     answered_questions = @conversation.questions_for_showing_conversation(only_answered: true)
     pending_question = @conversation.questions.unanswered.last
+    answer_url = pending_question ? answer_path(pending_question) : nil
+    options = {
+      answered_questions:,
+      pending_question:,
+      answer_url:,
+    }
 
     render(
-      json: ConversationBlueprint.render(@conversation, answered_questions:, pending_question:),
+      json: ConversationBlueprint.render(@conversation, options),
       status: :ok,
     )
   end
@@ -30,7 +40,11 @@ class Api::V0::ConversationsController < Api::BaseController
     if form.valid?
       question = form.submit
 
-      render json: QuestionBlueprint.render(question, view: :pending), status: :created
+      render json: QuestionBlueprint.render(
+        question,
+        view: :pending,
+        answer_url: answer_path(question),
+      ), status: :created
     else
       render json: ValidationErrorBlueprint.render(
         errors: form.errors.messages,
@@ -79,5 +93,12 @@ private
 
   def question_params
     params.permit(:user_question)
+  end
+
+  def answer_path(question)
+    api_v0_answer_question_path(
+      question.conversation_id,
+      question.id,
+    )
   end
 end

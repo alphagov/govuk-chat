@@ -10,12 +10,8 @@ class QuestionBlueprint < Blueprinter::Base
   end
 
   view :pending do
-    field :answer_url do |question|
-      path = Rails.application.routes.url_helpers.api_v0_answer_question_path(
-        question.conversation_id,
-        question.id,
-      )
-      "#{Plek.external_url_for('chat')}#{path}"
+    field :answer_url do |_question, options|
+      options[:answer_url]
     end
   end
 end

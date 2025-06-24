@@ -39,7 +39,7 @@ RSpec.describe QuestionBlueprint do
       it "includes the answer URL" do
         question = create(:question)
 
-        path = Rails.application.routes.url_helpers.api_v0_answer_question_path(
+        answer_url = Rails.application.routes.url_helpers.api_v0_answer_question_path(
           question.conversation_id,
           question.id,
         )
@@ -49,10 +49,11 @@ RSpec.describe QuestionBlueprint do
           conversation_id: question.conversation_id,
           created_at: question.created_at.iso8601,
           message: question.message,
-          answer_url: "#{Plek.external_url_for('chat')}#{path}",
+          answer_url:,
         }.as_json
 
-        expect(described_class.render_as_json(question, view: :pending)).to eq(expected_json)
+        expect(described_class.render_as_json(question, view: :pending, answer_url:))
+          .to eq(expected_json)
       end
     end
   end

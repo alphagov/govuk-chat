@@ -577,7 +577,7 @@ components:
           type: string
         answer_url:
           description: |
-            A URL that can be polled to check whether the answer is available
+            A relative URL that can be polled to check whether the answer is available
           type: string
           format: uri
         created_at:
