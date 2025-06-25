@@ -3,6 +3,7 @@ module StubClaudeMessages
 
   def stub_claude_messages_response(question_or_history,
                                     content:,
+                                    system: nil,
                                     stop_reason: :end_turn,
                                     usage: {},
                                     chat_options: {})
@@ -14,10 +15,21 @@ module StubClaudeMessages
 
     chat_options = { temperature: 0.0, max_tokens: 4096 }.merge(chat_options).compact
 
-    request_body = hash_including(
+    matchers = {
       messages: history,
       **chat_options,
-    )
+    }
+
+    if system.is_a?(String) || system.is_a?(Regexp)
+      matchers[:system] = array_including(
+        a_hash_including(
+          "type" => "text",
+          "text" => system,
+        ),
+      )
+    elsif system.present?
+      matchers[:system] = system
+    end
 
     response = Anthropic::Models::Message.new(
       id: "msg-id",
@@ -30,7 +42,7 @@ module StubClaudeMessages
     )
 
     stub_request(:post, CLAUDE_ENDPOINT_REGEX)
-      .with(body: request_body)
+      .with(body: hash_including(matchers))
       .to_return_json(
         status: 200,
         body: response,
@@ -74,12 +86,15 @@ module StubClaudeMessages
       max_tokens: 160,
     }.merge(chat_options)
 
+    system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))
+
     stub_claude_messages_response(
       question_or_history,
       content: [claude_messages_tool_use_block(
         input: tool_input,
         name: tool_name,
       )],
+      system:,
       stop_reason:,
       usage: { cache_read_input_tokens: 20 },
       chat_options:,
@@ -92,10 +107,25 @@ module StubClaudeMessages
                  .llm_prompts
                  .claude[:structured_answer][:anthropic_sdk_tool_spec]
 
+    allow(Rails.configuration.govuk_chat_private.llm_prompts.claude)
+      .to receive(:structured_answer)
+      .and_return(
+        {
+          cached_system_prompt: "Static portion",
+          context_system_prompt: "Dynamic portion",
+          anthropic_sdk_tool_spec: tools,
+        },
+      )
+
     chat_options = {
       tools: [tools],
       tool_choice: { type: "tool", name: "output_schema" },
     }
+
+    system = array_including(
+      { "type" => "text", "text" => "Static portion", "cache_control" => { "type" => "ephemeral" } },
+      { "type" => "text", "text" => "Dynamic portion" },
+    )
 
     stub_claude_messages_response(
       question_or_history,
@@ -103,6 +133,7 @@ module StubClaudeMessages
         input: { answer:, answered:, sources_used: %w[link_1] },
         name: "output_schema",
       )],
+      system:,
       stop_reason: :tool_use,
       usage: { cache_read_input_tokens: 20 },
       chat_options:,
@@ -110,9 +141,12 @@ module StubClaudeMessages
   end
 
   def stub_claude_output_guardrails(to_check, response = "False | None")
+    system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))
+
     stub_claude_messages_response(
       array_including({ "role" => "user", "content" => a_string_including(to_check) }),
       content: [claude_messages_text_block(response)],
+      system:,
       usage: { cache_read_input_tokens: 20 },
       chat_options: { temperature: nil, max_tokens: Guardrails::Claude::MultipleChecker::MAX_TOKENS },
     )
