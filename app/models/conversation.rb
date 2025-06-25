@@ -34,4 +34,8 @@ class Conversation < ApplicationRecord
   def active_answered_questions_before?(timestamp)
     questions.active.answered.where("questions.created_at < ?", timestamp).exists?
   end
+
+  def active_answered_questions_after?(timestamp)
+    questions.active.answered.where("questions.created_at > ?", timestamp).exists?
+  end
 end

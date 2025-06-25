@@ -153,4 +153,31 @@ RSpec.describe Conversation do
       expect(conversation.active_answered_questions_before?(question.created_at)).to be(false)
     end
   end
+
+  describe "#active_answered_questions_after?" do
+    let(:conversation) { create(:conversation) }
+
+    it "returns true if there are newer questions" do
+      question = create(:question, :with_answer, conversation:, created_at: 2.days.ago)
+      create(:question, :with_answer, conversation:,  created_at: 3.days.ago)
+      create(:question, :with_answer, conversation:,  created_at: 1.day.ago)
+
+      expect(conversation.active_answered_questions_after?(question.created_at)).to be(true)
+    end
+
+    it "returns false if there are no newer questions" do
+      create(:question, :with_answer, conversation:, created_at: 4.days.ago)
+      question = create(:question, :with_answer, conversation:, created_at: 3.days.ago)
+
+      expect(conversation.active_answered_questions_after?(question.created_at)).to be(false)
+    end
+
+    it "only includes active questions with answers" do
+      question = create(:question, :with_answer, conversation:, created_at: 5.years.ago)
+      create(:question, :with_answer, conversation:, created_at: 4.years.ago)
+      create(:question, created_at: 1.day.ago)
+
+      expect(conversation.active_answered_questions_after?(question.created_at)).to be(false)
+    end
+  end
 end

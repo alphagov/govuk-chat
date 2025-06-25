@@ -19,14 +19,15 @@ class Api::V0::ConversationsController < Api::BaseController
   end
 
   def show
+    limit = Rails.configuration.conversations.api_questions_per_page
     answered_questions = @conversation.questions_for_showing_conversation(
       only_answered: true,
-      limit: Rails.configuration.conversations.api_questions_per_page,
+      limit:,
     )
     pending_question = @conversation.questions.unanswered.last
     answer_url = pending_question ? answer_path(pending_question) : nil
 
-    earlier_questions_url = if @conversation.active_answered_questions_before?(answered_questions.first&.created_at)
+    earlier_questions_url = if answered_questions.size == limit && @conversation.active_answered_questions_before?(answered_questions.first&.created_at)
                               api_v0_conversation_questions_path(
                                 @conversation, before: answered_questions.first.id
                               )
@@ -97,8 +98,24 @@ class Api::V0::ConversationsController < Api::BaseController
       limit: Rails.configuration.conversations.api_questions_per_page,
     )
 
+    earlier_url = if @conversation.active_answered_questions_before?(questions.first&.created_at)
+                    api_v0_conversation_questions_path(
+                      @conversation,
+                      before: questions.first.id,
+                    )
+                  end
+
+    later_url = if @conversation.active_answered_questions_after?(questions.last&.created_at)
+                  api_v0_conversation_questions_path(
+                    @conversation,
+                    after: questions.last.id,
+                  )
+                end
+
     json = ConversationQuestions.new(
       questions: QuestionBlueprint.render_as_hash(questions, view: :answered),
+      earlier_questions_url: earlier_url,
+      later_questions_url: later_url,
     ).to_json
 
     render(json:, status: :ok)

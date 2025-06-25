@@ -637,6 +637,18 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AnsweredQuestion"
+        earlier_questions_url:
+          description: |
+            A relative URL that can be used to retrieve earlier questions in the conversation.
+            Will be null if there are no earlier questions.
+          type: string
+          format: url
+        later_questions_url:
+          description: |
+            A relative URL that can be used to retrieve later questions in the conversation.
+            Will be null if there are no later questions.
+          type: string
+          format: url
     AnsweredQuestion:
       type: object
       required:

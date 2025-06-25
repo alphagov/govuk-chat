@@ -251,6 +251,7 @@ RSpec.describe "Api::V0::ConversationsController" do
                                    .includes(answer: %i[sources feedback])
       expected_response = ConversationQuestions.new(
         questions: expected_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+        later_questions_url: api_v0_conversation_questions_path(conversation, after: recent_questions.last.id),
       ).to_json
 
       get api_v0_conversation_questions_path(conversation, before: before_question.id)
@@ -270,6 +271,7 @@ RSpec.describe "Api::V0::ConversationsController" do
                                    .includes(answer: %i[sources feedback])
       expected_response = ConversationQuestions.new(
         questions: expected_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+        earlier_questions_url: api_v0_conversation_questions_path(conversation, before: later_questions.first.id),
       ).to_json
 
       get api_v0_conversation_questions_path(conversation, after: after_question.id)
@@ -288,6 +290,8 @@ RSpec.describe "Api::V0::ConversationsController" do
                                  .includes(answer: %i[sources feedback])
       expected_response = ConversationQuestions.new(
         questions: loaded_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+        earlier_questions_url: api_v0_conversation_questions_path(conversation, before: expected_question.id),
+        later_questions_url: api_v0_conversation_questions_path(conversation, after: expected_question.id),
       ).to_json
 
       get api_v0_conversation_questions_path(
@@ -297,6 +301,74 @@ RSpec.describe "Api::V0::ConversationsController" do
       )
 
       expect(response.body).to eq(expected_response)
+    end
+
+    context "with earlier questions" do
+      before do
+        allow(Rails.configuration.conversations).to(
+          receive(:api_questions_per_page).and_return(2),
+        )
+      end
+
+      it "returns the URL to the earlier questions" do
+        create(:question, :with_answer, conversation:, created_at: 6.minutes.ago)
+        oldest_question_in_page = create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+        create(:question, :with_answer, conversation:, created_at: 4.minutes.ago)
+
+        get api_v0_conversation_questions_path(conversation)
+
+        expect(JSON.parse(response.body)["earlier_questions_url"]).to eq(
+          api_v0_conversation_questions_path(
+            conversation,
+            before: oldest_question_in_page.id,
+          ),
+        )
+      end
+
+      it "has a nil value for earlier_questions_url if there are no earlier questions" do
+        create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+
+        get api_v0_conversation_questions_path(conversation)
+
+        expect(JSON.parse(response.body)["earlier_questions_url"]).to be_nil
+      end
+    end
+
+    context "with later questions" do
+      before do
+        allow(Rails.configuration.conversations).to(
+          receive(:conversation_questions_per_page).and_return(2),
+        )
+      end
+
+      it "returns the URL to the later questions" do
+        create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+        pagination_question = create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+        after_question = create(:question, :with_answer, conversation:, created_at: 3.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 4.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 5.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 6.minutes.ago)
+
+        get api_v0_conversation_questions_path(conversation, before: pagination_question.id)
+
+        expect(JSON.parse(response.body)["later_questions_url"]).to eq(
+          api_v0_conversation_questions_path(
+            conversation,
+            after: after_question.id,
+          ),
+        )
+      end
+
+      it "has a nil value for later_questions_url if there are no later questions" do
+        create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+
+        get api_v0_conversation_questions_path(conversation)
+
+        expect(JSON.parse(response.body)["later_questions_url"]).to be_nil
+      end
     end
 
     it "returns a 404 if the before_id record cannot be found" do
