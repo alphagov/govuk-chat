@@ -225,6 +225,16 @@ RSpec.describe "Api::V0::ConversationsController" do
       expect(JSON.parse(response.body)).to eq(expected_response)
     end
 
+    it "limits the number of questions returned" do
+      allow(Rails.configuration.conversations).to receive(:api_questions_per_page).and_return(2)
+      create(:question, :with_answer, conversation:)
+      create(:question, :with_answer, conversation:)
+      create(:question, :with_answer, conversation:)
+
+      get api_v0_conversation_questions_path(conversation)
+      expect(JSON.parse(response.body).size).to eq(2)
+    end
+
     it "returns the questions before a given question ID" do
       before_question = create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
       recent_questions = [

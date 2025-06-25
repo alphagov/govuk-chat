@@ -94,6 +94,7 @@ class Api::V0::ConversationsController < Api::BaseController
       only_answered: true,
       before_id: params[:before].presence,
       after_id: params[:after].presence,
+      limit: Rails.configuration.conversations.api_questions_per_page,
     )
 
     render(

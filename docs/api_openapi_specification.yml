@@ -263,7 +263,7 @@ paths:
       responses:
         "200":
           description: |
-            Returns an array of AnsweredQuestions. Is limited to returning 500
+            Returns an array of AnsweredQuestions. Is limited to returning 50
             questions for a conversation and only questions asked within last
             90 days.
           content:
