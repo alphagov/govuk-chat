@@ -201,9 +201,13 @@ RSpec.describe "Api::V0::ConversationsController" do
   describe "GET :questions" do
     it "returns an empty array if there are no answered questions" do
       create(:question, conversation:)
+      expected_response = ConversationQuestions.new(
+        questions: [],
+      ).to_json
+
       get api_v0_conversation_questions_path(conversation)
 
-      expect(JSON.parse(response.body)).to eq([])
+      expect(response.body).to eq(expected_response)
     end
 
     it "returns only the answered questions" do
@@ -216,13 +220,13 @@ RSpec.describe "Api::V0::ConversationsController" do
       expected_questions = Question.where(id: questions.map(&:id))
                            .includes(answer: %i[sources feedback])
 
-      expected_response = expected_questions.map do |q|
-        QuestionBlueprint.render_as_json(q, view: :answered)
-      end
+      expected_response = ConversationQuestions.new(
+        questions: expected_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+      ).to_json
 
       get api_v0_conversation_questions_path(conversation)
 
-      expect(JSON.parse(response.body)).to eq(expected_response)
+      expect(response.body).to eq(expected_response)
     end
 
     it "limits the number of questions returned" do
@@ -232,7 +236,7 @@ RSpec.describe "Api::V0::ConversationsController" do
       create(:question, :with_answer, conversation:)
 
       get api_v0_conversation_questions_path(conversation)
-      expect(JSON.parse(response.body).size).to eq(2)
+      expect(JSON.parse(response.body)["questions"].size).to eq(2)
     end
 
     it "returns the questions before a given question ID" do
@@ -245,13 +249,13 @@ RSpec.describe "Api::V0::ConversationsController" do
 
       expected_questions = Question.where(id: recent_questions.map(&:id))
                                    .includes(answer: %i[sources feedback])
-      expected_response = expected_questions.map do |q|
-        QuestionBlueprint.render_as_json(q, view: :answered)
-      end
+      expected_response = ConversationQuestions.new(
+        questions: expected_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+      ).to_json
 
       get api_v0_conversation_questions_path(conversation, before: before_question.id)
 
-      expect(JSON.parse(response.body)).to eq(expected_response)
+      expect(response.body).to eq(expected_response)
     end
 
     it "returns the questions after a given question ID" do
@@ -264,13 +268,13 @@ RSpec.describe "Api::V0::ConversationsController" do
 
       expected_questions = Question.where(id: later_questions.map(&:id))
                                    .includes(answer: %i[sources feedback])
-      expected_response = expected_questions.map do |q|
-        QuestionBlueprint.render_as_json(q, view: :answered)
-      end
+      expected_response = ConversationQuestions.new(
+        questions: expected_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+      ).to_json
 
       get api_v0_conversation_questions_path(conversation, after: after_question.id)
 
-      expect(JSON.parse(response.body)).to eq(expected_response)
+      expect(response.body).to eq(expected_response)
     end
 
     it "returns the questions between the before and after IDs" do
@@ -280,9 +284,11 @@ RSpec.describe "Api::V0::ConversationsController" do
       before_question = create(:question, :with_answer, conversation:, created_at: 7.minutes.ago)
       create(:question, :with_answer, conversation:, created_at: 6.minutes.ago)
 
-      expected_question = Question.where(id: expected_question.id)
+      loaded_questions = Question.where(id: expected_question.id)
                                  .includes(answer: %i[sources feedback])
-      expected_response = QuestionBlueprint.render_as_json(expected_question, view: :answered)
+      expected_response = ConversationQuestions.new(
+        questions: loaded_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+      ).to_json
 
       get api_v0_conversation_questions_path(
         conversation,
@@ -290,7 +296,7 @@ RSpec.describe "Api::V0::ConversationsController" do
         after: after_question.id,
       )
 
-      expect(JSON.parse(response.body)).to eq(expected_response)
+      expect(response.body).to eq(expected_response)
     end
 
     it "returns a 404 if the before_id record cannot be found" do

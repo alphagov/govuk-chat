@@ -269,9 +269,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/AnsweredQuestion"
+                $ref: "#/components/schemas/ConversationQuestions"
           headers:
             Govuk-Api-User-Read-RateLimit-Limit:
               $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
@@ -630,6 +628,15 @@ components:
             Will be null if there are no earlier questions.
           type: string
           format: url
+    ConversationQuestions:
+      type: object
+      required:
+        - questions
+      properties:
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnsweredQuestion"
     AnsweredQuestion:
       type: object
       required:

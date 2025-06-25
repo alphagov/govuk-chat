@@ -97,10 +97,11 @@ class Api::V0::ConversationsController < Api::BaseController
       limit: Rails.configuration.conversations.api_questions_per_page,
     )
 
-    render(
-      json: QuestionBlueprint.render(questions, view: :answered),
-      status: :ok,
-    )
+    json = ConversationQuestions.new(
+      questions: QuestionBlueprint.render_as_hash(questions, view: :answered),
+    ).to_json
+
+    render(json:, status: :ok)
   end
 
 private
