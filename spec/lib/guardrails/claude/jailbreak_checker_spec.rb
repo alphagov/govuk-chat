@@ -22,25 +22,10 @@ RSpec.describe Guardrails::Claude::JailbreakChecker, :aws_credentials_stubbed do
       stub_claude_jailbreak_guardrails(input, triggered: false)
 
       result = described_class.call(input)
-
-      expect(result[:llm_response]).to match(
-        id: "msg-id",
-        content: [
-          have_attributes(
-            text: "PassValue",
-            type: :text,
-          ),
-        ],
-        model: BedrockModels::CLAUDE_SONNET,
-        role: :assistant,
-        stop_reason: :end_turn,
-        type: :message,
-        usage: have_attributes(
-          cache_read_input_tokens: nil,
-          input_tokens: 10,
-          output_tokens: 20,
-        ),
-      )
+      expected_response = claude_messages_response(
+        content: [claude_messages_text_block("PassValue")],
+      ).to_h
+      expect(result[:llm_response]).to match(expected_response)
     end
 
     it "uses an overridden AWS region if set" do

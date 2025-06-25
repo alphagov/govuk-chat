@@ -31,14 +31,10 @@ module StubClaudeMessages
       matchers[:system] = system
     end
 
-    response = Anthropic::Models::Message.new(
-      id: "msg-id",
-      model: BedrockModels::CLAUDE_SONNET,
-      role: :assistant,
+    response = claude_messages_response(
       content:,
+      usage:,
       stop_reason:,
-      usage: claude_messages_usage_block(**usage),
-      type: :message,
     )
 
     stub_request(:post, CLAUDE_ENDPOINT_REGEX)
@@ -173,6 +169,18 @@ module StubClaudeMessages
       input_tokens:,
       output_tokens:,
       cache_read_input_tokens:,
+    )
+  end
+
+  def claude_messages_response(content:, usage: {}, stop_reason: :end_turn)
+    Anthropic::Models::Message.new(
+      id: "msg-id",
+      model: BedrockModels::CLAUDE_SONNET,
+      role: :assistant,
+      content:,
+      stop_reason:,
+      usage: claude_messages_usage_block(**usage),
+      type: :message,
     )
   end
 end

@@ -84,30 +84,17 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credent
 
       described_class.call(context)
 
+      expected_content = claude_messages_tool_use_block(
+        input: classification_response.symbolize_keys,
+        name: "greetings",
+      )
+      expected_llm_response = claude_messages_response(
+        content: [expected_content],
+        usage: { cache_read_input_tokens: 20 },
+        stop_reason: :tool_use,
+      ).to_h
       expect(context.answer.llm_responses["question_routing"])
-        .to match(
-          id: "msg-id",
-          content: [
-            have_attributes(
-              id: "tool-use-id",
-              input: {
-                answer: "Hello!",
-                confidence: 0.85,
-              },
-              name: "greetings",
-              type: :tool_use,
-            ),
-          ],
-          model: BedrockModels::CLAUDE_SONNET,
-          role: :assistant,
-          stop_reason: :tool_use,
-          type: :message,
-          usage: have_attributes(
-            cache_read_input_tokens: 20,
-            input_tokens: 10,
-            output_tokens: 20,
-          ),
-        )
+        .to match(expected_llm_response)
     end
 
     it "assigns metrics to the context's answer" do

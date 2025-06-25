@@ -33,35 +33,20 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
     end
 
     it "stores the LLM response" do
-      stub_claude_structured_answer(question.message, "answer")
+      answer = "answer"
+      stub_claude_structured_answer(question.message, answer)
 
       described_class.call(context)
 
-      expected_llm_response = {
-        id: "msg-id",
-        content: [
-          Anthropic::Models::ToolUseBlock.new(
-            id: "tool-use-id",
-            input: {
-              answer: "answer",
-              answered: true,
-              sources_used: %w[link_1],
-            },
-            name: "output_schema",
-            type: :tool_use,
-          ),
-        ],
-        model: BedrockModels::CLAUDE_SONNET,
-        role: :assistant,
+      expected_content = claude_messages_tool_use_block(
+        input: { answer:, answered: true, sources_used: %w[link_1] },
+        name: "output_schema",
+      )
+      expected_llm_response = claude_messages_response(
+        content: [expected_content],
+        usage: { cache_read_input_tokens: 20 },
         stop_reason: :tool_use,
-        type: :message,
-        usage: Anthropic::Models::Usage.new(
-          cache_read_input_tokens: 20,
-          input_tokens: 10,
-          output_tokens: 20,
-        ),
-      }
-
+      ).to_h
       expect(context.answer.llm_responses["structured_answer"]).to eq(expected_llm_response)
     end
 
