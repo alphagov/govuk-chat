@@ -35,6 +35,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include StubOpenAIChat
   config.include StubBedrock
+  config.include StubClaudeMessages
   config.include StubOpenAIEmbedding
   config.include SidekiqHelpers
   config.include SystemSpecHelpers, type: :system
@@ -87,5 +88,17 @@ RSpec.configure do |config|
     else
       example.call
     end
+  end
+
+  # Use the :aws_credentials_stubbed tag to stub AWS credentials in tests,
+  # to avoid additional credential or token requests.
+  config.around(:each, :aws_credentials_stubbed) do |example|
+    old_config = Aws.config.dup
+    Aws.config.update(
+      credentials: Aws::Credentials.new("fake_access_key", "fake_secret_key"),
+      region: "eu-west-1",
+    )
+    example.run
+    Aws.config.replace(old_config)
   end
 end

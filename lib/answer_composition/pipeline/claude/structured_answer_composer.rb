@@ -10,18 +10,21 @@ module AnswerComposition::Pipeline
 
       def call
         start_time = Clock.monotonic_time
-
-        response = bedrock_client.converse(
-          system: [{ text: system_prompt }],
-          model_id: BedrockModels::CLAUDE_SONNET,
+        response = anthropic_bedrock_client.messages.create(
+          system: [
+            { type: "text", text: cached_system_prompt, cache_control: { type: "ephemeral" } },
+            { type: "text", text: context_system_prompt },
+          ],
+          model: BedrockModels::CLAUDE_SONNET,
           messages:,
-          inference_config:,
-          tool_config:,
+          tools: tools,
+          tool_choice: { type: "tool", name: "output_schema" },
+          **inference_config,
         )
 
-        tool_output = response.dig("output", "message", "content", 0, "tool_use", "input")
+        tool_output = response[:content][0][:input]
 
-        unless tool_output["answered"]
+        unless tool_output[:answered]
           return context.abort_pipeline!(
             message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
             status: "unanswerable_llm_cannot_answer",
@@ -29,10 +32,10 @@ module AnswerComposition::Pipeline
           )
         end
 
-        set_context_sources(tool_output["sources_used"])
+        set_context_sources(tool_output[:sources_used])
 
         context.answer.assign_llm_response("structured_answer", response.to_h)
-        message = link_token_mapper.replace_tokens_with_links(tool_output["answer"])
+        message = link_token_mapper.replace_tokens_with_links(tool_output[:answer])
         context.answer.assign_attributes(message:, status: "answered")
         context.answer.assign_metrics("structured_answer", build_metrics(start_time, response))
       end
@@ -45,7 +48,7 @@ module AnswerComposition::Pipeline
         [
           {
             role: "user",
-            content: [{ text: context.question_message }],
+            content: context.question_message,
           },
         ]
       end
@@ -57,20 +60,24 @@ module AnswerComposition::Pipeline
         }
       end
 
-      def system_prompt
+      def cached_system_prompt
+        prompt_config[:cached_system_prompt]
+      end
+
+      def context_system_prompt
         sprintf(
-          prompt_config[:system_prompt],
+          prompt_config[:context_system_prompt],
           context: context.search_results_prompt_formatted(link_token_mapper),
         )
       end
 
       def prompt_config
-        Claude.prompt_config[:structured_answer]
+        Claude.prompt_config.structured_answer
       end
 
-      def bedrock_client
-        @bedrock_client ||= Aws::BedrockRuntime::Client.new(
-          region: ENV.fetch("CLAUDE_AWS_REGION", "eu-west-1"),
+      def anthropic_bedrock_client
+        @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(
+          aws_region: ENV["CLAUDE_AWS_REGION"],
         )
       end
 
@@ -85,8 +92,9 @@ module AnswerComposition::Pipeline
       def build_metrics(start_time, response)
         {
           duration: Clock.monotonic_time - start_time,
-          llm_prompt_tokens: response.dig("usage", "input_tokens"),
-          llm_completion_tokens: response.dig("usage", "output_tokens"),
+          llm_prompt_tokens: response[:usage][:input_tokens],
+          llm_completion_tokens: response[:usage][:output_tokens],
+          llm_cached_tokens: response[:usage][:cache_read_input_tokens],
         }
       end
 
@@ -94,15 +102,13 @@ module AnswerComposition::Pipeline
         {
           tools: tools,
           tool_choice: {
-            tool: {
-              name: "output_schema",
-            },
+            tool: { name: "output_schema" },
           },
         }
       end
 
       def tools
-        [{ tool_spec: prompt_config[:tool_spec] }]
+        [prompt_config[:anthropic_sdk_tool_spec]]
       end
     end
   end
