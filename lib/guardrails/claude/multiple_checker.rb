@@ -8,35 +8,37 @@ module Guardrails
       def initialize(input, prompt)
         @input = input
         @prompt = prompt
-        @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(
-          aws_region: ENV["CLAUDE_AWS_REGION"],
+        @bedrock_client = Aws::BedrockRuntime::Client.new(
+          region: ENV.fetch("CLAUDE_AWS_REGION", "eu-west-1"),
         )
       end
 
       def call
-        claude_response = anthropic_bedrock_client.messages.create(
-          system: [{ type: "text", text: prompt.system_prompt, cache_control: { type: "ephemeral" } }],
-          model: BedrockModels::CLAUDE_SONNET,
-          messages: [{ role: "user", content: prompt.user_prompt(input) }],
-          max_tokens: MAX_TOKENS,
+        claude_response = bedrock_client.converse(
+          system: [{ text: prompt.system_prompt }],
+          model_id: BedrockModels::CLAUDE_SONNET,
+          messages: [{ role: "user", content: [{ text: prompt.user_prompt(input) }] }],
+          inference_config: {
+            max_tokens: MAX_TOKENS,
+          },
         )
 
-        llm_response = claude_response.to_h
-        llm_guardrail_result = llm_response[:content][0][:text]
-        llm_token_usage = claude_response[:usage]
+        llm_response = claude_response.output
+        llm_guardrail_result = llm_response.dig("message", "content", 0, "text")
+        llm_token_usage = claude_response.usage
 
         {
           llm_response:,
           llm_guardrail_result:,
-          llm_prompt_tokens: llm_token_usage[:input_tokens],
-          llm_completion_tokens: llm_token_usage[:output_tokens],
-          llm_cached_tokens: llm_token_usage[:cache_read_input_tokens],
+          llm_prompt_tokens: llm_token_usage["input_tokens"],
+          llm_completion_tokens: llm_token_usage["output_tokens"],
+          llm_cached_tokens: nil,
         }
       end
 
     private
 
-      attr_reader :input, :anthropic_bedrock_client, :prompt
+      attr_reader :input, :bedrock_client, :prompt
     end
   end
 end

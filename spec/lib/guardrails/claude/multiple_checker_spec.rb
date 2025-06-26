@@ -1,4 +1,4 @@
-RSpec.describe Guardrails::Claude::MultipleChecker, :aws_credentials_stubbed do
+RSpec.describe Guardrails::Claude::MultipleChecker do
   let(:input) { "This is a test input." }
   let(:formatted_date) { Date.current.strftime("%A %d %B %Y") }
 
@@ -39,53 +39,71 @@ RSpec.describe Guardrails::Claude::MultipleChecker, :aws_credentials_stubbed do
           system_prompt: "1. This is a costs guardrail\n2. This is a personal guardrail\n3. This is a unique answer guardrail #{formatted_date}",
           guardrails: guardrail_objects,
         )
-
         allow(prompt).to receive(:user_prompt).with(input).and_return(input)
       end
 
-      it "calls Claude to check for guardrail violations with correct user input" do
-        anthropic_request = stub_claude_output_guardrails(input, 'True | "1, 2"')
+      it "calls Claude to check for guardrail violations with the correct system prompt and the input in the user prompt" do
+        guardrail_result = 'True | "1, 2"'
+
+        client = stub_bedrock_converse(
+          bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
+        )
 
         described_class.call(input, prompt)
-
-        expect(anthropic_request).to have_been_made
+        expect(client.api_requests.size).to eq(1)
       end
 
-      it "returns a true result with matched guardrails" do
-        stub_claude_output_guardrails(input, 'True | "1, 2"')
+      it "returns a true result with human readable guardrails" do
+        guardrail_result = 'True | "1, 2"'
+
+        stub_bedrock_converse(
+          bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
+        )
 
         result = described_class.call(input, prompt)
-
-        expect(result[:llm_guardrail_result]).to eq('True | "1, 2"')
+        expect(result[:llm_guardrail_result]).to eq(guardrail_result)
       end
 
-      it "returns a false result with no matched guardrails" do
-        stub_claude_output_guardrails(input, "False | None")
+      it "returns a false result with empty guardrails" do
+        guardrail_result = "False | None"
+
+        stub_bedrock_converse(
+          bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
+        )
 
         result = described_class.call(input, prompt)
-
-        expect(result[:llm_guardrail_result]).to eq("False | None")
+        expect(result[:llm_guardrail_result]).to eq(guardrail_result)
       end
 
       it "returns the LLM token usage" do
-        stub_claude_output_guardrails(input, "False | None")
+        guardrail_result = "False | None"
 
+        stub_bedrock_converse(
+          bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
+        )
         result = described_class.call(input, prompt)
 
         expect(result[:llm_prompt_tokens]).to eq(10)
         expect(result[:llm_completion_tokens]).to eq(20)
-        expect(result[:llm_cached_tokens]).to eq(20)
+        expect(result[:llm_cached_tokens]).to be_nil
       end
 
       it "uses an overridden AWS region if set" do
         ClimateControl.modify(CLAUDE_AWS_REGION: "my-region") do
-          allow(Anthropic::BedrockClient).to receive(:new).and_call_original
-          anthropic_request = stub_claude_output_guardrails(input, "False | None")
+          guardrail_result = 'True | "1, 2"'
+          bedrock_client = Aws::BedrockRuntime::Client.new(stub_responses: true)
+
+          allow(Aws::BedrockRuntime::Client).to(
+            receive(:new).with(region: "my-region").and_return(bedrock_client),
+          )
+
+          bedrock_client.stub_responses(
+            :converse,
+            bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
+          )
 
           described_class.call(input, prompt)
-
-          expect(Anthropic::BedrockClient).to have_received(:new).with(hash_including(aws_region: "my-region"))
-          expect(anthropic_request).to have_been_made
+          expect(bedrock_client.api_requests.size).to eq(1)
         end
       end
     end
@@ -94,11 +112,14 @@ RSpec.describe Guardrails::Claude::MultipleChecker, :aws_credentials_stubbed do
       let(:llm_prompt_name) { "non_existent_llm_prompt_name" }
 
       it "raises an error" do
-        stub_claude_output_guardrails(input, "False | None")
+        guardrail_result = "False | None"
 
-        expect {
-          Guardrails::MultipleChecker::Prompt.new(llm_prompt_name, :claude)
-        }.to raise_error("No LLM prompts found for #{llm_prompt_name}")
+        stub_bedrock_converse(
+          bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
+        )
+
+        expect { Guardrails::MultipleChecker::Prompt.new(llm_prompt_name, :claude) }
+        .to raise_error("No LLM prompts found for #{llm_prompt_name}")
       end
     end
   end

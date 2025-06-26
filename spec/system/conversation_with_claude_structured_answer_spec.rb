@@ -1,4 +1,4 @@
-RSpec.describe "Conversation with Claude with a structured answer", :aws_credentials_stubbed, :chunked_content_index do
+RSpec.describe "Conversation with Claude with a structured answer", :chunked_content_index do
   scenario do
     given_i_am_using_the_claude_structured_answer_strategy
     and_i_have_confirmed_i_understand_chat_risks
@@ -40,18 +40,17 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
     allow(Search::TextToEmbedding)
       .to receive(:call)
       .and_return(openai_embedding)
-
     populate_chunked_content_index([
       build(:chunked_content_record, openai_embedding:, exact_path: "/pay-more-tax#yes-really"),
     ])
 
     @first_answer = "Lots of tax."
-
-    stub_claude_jailbreak_guardrails(@first_question, triggered: false)
-    stub_claude_question_routing(@first_question)
-    stub_claude_structured_answer(@first_question, @first_answer)
-    stub_claude_output_guardrails(@first_answer, "False | None")
-
+    stub_bedrock_converse(
+      bedrock_claude_jailbreak_guardrails_response(triggered: false),
+      bedrock_claude_question_routing_response(@first_question),
+      bedrock_claude_structured_answer_response(@first_question, @first_answer),
+      bedrock_claude_guardrail_response(triggered: false),
+    )
     execute_queued_sidekiq_jobs
   end
 
@@ -76,13 +75,13 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
   def when_the_second_answer_is_generated
     rephrased_question = "Rephrased #{@second_question}"
     @second_answer = "Even more tax."
-
-    stub_claude_jailbreak_guardrails(@second_question, triggered: false)
-    stub_claude_question_rephrasing(@second_question, rephrased_question)
-    stub_claude_question_routing(rephrased_question)
-    stub_claude_structured_answer(rephrased_question, @second_answer)
-    stub_claude_output_guardrails(@second_answer, "False | None")
-
+    stub_bedrock_converse(
+      bedrock_claude_jailbreak_guardrails_response(triggered: false),
+      bedrock_claude_text_response(rephrased_question, user_message: Regexp.new(@second_question)),
+      bedrock_claude_question_routing_response(rephrased_question),
+      bedrock_claude_structured_answer_response(rephrased_question, @second_answer),
+      bedrock_claude_guardrail_response(triggered: false),
+    )
     execute_queued_sidekiq_jobs
   end
 

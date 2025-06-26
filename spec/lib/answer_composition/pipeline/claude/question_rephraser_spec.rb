@@ -1,16 +1,19 @@
-RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser, :aws_credentials_stubbed do
+RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser do
   let(:conversation) { create :conversation, :with_history }
   let(:question) { conversation.questions.strict_loading(false).last }
   let(:context) { build(:answer_pipeline_context, question:) }
   let(:question_records) { conversation.questions.joins(:answer).order(created_at: :asc) }
-  let(:rephrased) { "How do I pay my corporation tax" }
 
   context "when there is a valid response from Claude" do
+    let(:rephrased) { "How do I pay my corporation tax" }
+
     it "includes the current question in the user prompt" do
-      anthropic_request = stub_claude_question_rephrasing(question.message, rephrased)
+      client = stub_bedrock_converse(
+        bedrock_claude_text_response(rephrased, user_message: Regexp.new(question.message)),
+      )
       described_class.call(question.message, question_records)
 
-      expect(anthropic_request).to have_been_made
+      expect(client.api_requests.size).to eq(1)
     end
 
     it "includes the message_history in the user prompt" do
@@ -33,23 +36,22 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser, :aws_cred
         """
       HISTORY
 
-      anthropic_request = stub_claude_question_rephrasing(
-        Regexp.new(message_history),
-        rephrased,
+      client = stub_bedrock_converse(
+        bedrock_claude_text_response(rephrased, user_message: Regexp.new(message_history)),
       )
-
       described_class.call(question.message, question_records)
 
-      expect(anthropic_request).to have_been_made
+      expect(client.api_requests.size).to eq(1)
     end
 
     it "returns a result object" do
-      stub_claude_question_rephrasing(question.message, rephrased)
+      stub_bedrock_converse(bedrock_claude_text_response(rephrased))
       result = described_class.call(question.message, question_records)
 
       llm_response = result.llm_response
-      expect(llm_response[:stop_reason]).to eq(:end_turn)
-      expect(llm_response[:content][0][:text]).to eq(rephrased)
+      expect(llm_response[:stop_reason]).to eq("end_turn")
+      expect(llm_response.dig(:output, :message, :content, 0, :text)).to eq(rephrased)
+
       expect(result.rephrased_question).to eq(rephrased)
       expect(result.metrics).to eq({
         llm_prompt_tokens: 10,
@@ -78,26 +80,33 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser, :aws_cred
         """
       HISTORY
 
-      anthropic_request = stub_claude_question_rephrasing(
-        Regexp.new(message_history),
-        "A second rephrased question",
+      client = stub_bedrock_converse(
+        bedrock_claude_text_response(
+          "A second rephrased question", user_message: Regexp.new(message_history)
+        ),
       )
 
       described_class.call(question.message, conversation.questions.joins(:answer))
 
-      expect(anthropic_request).to have_been_made
+      expect(client.api_requests.size).to eq(1)
     end
   end
 
   it "uses an overridden AWS region if set" do
     ClimateControl.modify(CLAUDE_AWS_REGION: "my-region") do
-      allow(Anthropic::BedrockClient).to receive(:new).and_call_original
-      anthropic_request = stub_claude_question_rephrasing(question.message, rephrased)
+      bedrock_client = Aws::BedrockRuntime::Client.new(stub_responses: true)
+
+      allow(Aws::BedrockRuntime::Client).to(
+        receive(:new).with(region: "my-region").and_return(bedrock_client),
+      )
+
+      bedrock_client.stub_responses(
+        :converse,
+        bedrock_claude_text_response("test", user_message: Regexp.new(question.message)),
+      )
 
       described_class.call(question.message, question_records)
-
-      expect(Anthropic::BedrockClient).to have_received(:new).with(hash_including(aws_region: "my-region"))
-      expect(anthropic_request).to have_been_made
+      expect(bedrock_client.api_requests.size).to eq(1)
     end
   end
 end

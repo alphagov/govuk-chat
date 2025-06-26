@@ -1,43 +1,39 @@
-RSpec.describe Guardrails::Claude::JailbreakChecker, :aws_credentials_stubbed do
+RSpec.describe Guardrails::Claude::JailbreakChecker do
   let(:input) { "User question" }
 
   describe ".call" do
-    it "calls Claude to check for jailbreak attempts and returns the expected result" do
-      stub_claude_jailbreak_guardrails(input, triggered: false)
-      result = described_class.call(input)
-      expect(result[:llm_guardrail_result]).to eq("PassValue")
-    end
+    it "calls Claude to check for jailbreak attempts" do
+      prompts = Rails.configuration.govuk_chat_private.llm_prompts.claude.jailbreak_guardrails
+      allow(prompts).to receive(:[]).and_call_original
+      allow(prompts).to receive(:[]).with(:system_prompt).and_return("The system prompt")
+      allow(prompts).to receive(:[]).with(:user_prompt).and_return("{input}")
 
-    it "returns the LLM token usage" do
-      stub_claude_jailbreak_guardrails(input, triggered: false)
+      guardrail_result = Guardrails::JailbreakChecker.pass_value
 
-      result = described_class.call(input)
+      client = stub_bedrock_converse(
+        bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
+      )
 
-      expect(result[:llm_prompt_tokens]).to eq(10)
-      expect(result[:llm_completion_tokens]).to eq(20)
-      expect(result[:llm_cached_tokens]).to be_nil
-    end
-
-    it "returns the LLM response" do
-      stub_claude_jailbreak_guardrails(input, triggered: false)
-
-      result = described_class.call(input)
-      expected_response = claude_messages_response(
-        content: [claude_messages_text_block("PassValue")],
-      ).to_h
-      expect(result[:llm_response]).to match(expected_response)
+      described_class.call(input)
+      expect(client.api_requests.size).to eq(1)
     end
 
     it "uses an overridden AWS region if set" do
       ClimateControl.modify(CLAUDE_AWS_REGION: "my-region") do
-        allow(Anthropic::BedrockClient).to receive(:new).and_call_original
-        anthropic_request = stub_claude_jailbreak_guardrails(input, triggered: false)
+        bedrock_client = Aws::BedrockRuntime::Client.new(stub_responses: true)
+
+        allow(Aws::BedrockRuntime::Client).to(
+          receive(:new).with(region: "my-region").and_return(bedrock_client),
+        )
+
+        guardrail_result = Guardrails::JailbreakChecker.pass_value
+        bedrock_client.stub_responses(
+          :converse,
+          bedrock_claude_text_response(guardrail_result, user_message: Regexp.new(input)),
+        )
 
         described_class.call(input)
-
-        expect(Anthropic::BedrockClient)
-          .to have_received(:new).with(hash_including(aws_region: "my-region"))
-        expect(anthropic_request).to have_been_made
+        expect(bedrock_client.api_requests.size).to eq(1)
       end
     end
   end

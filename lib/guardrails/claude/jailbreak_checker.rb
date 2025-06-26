@@ -7,18 +7,18 @@ module Guardrails::Claude
     end
 
     def call
-      response = anthropic_bedrock_client.messages.create(
-        system: [{ type: "text", text: system_prompt }],
-        model: BedrockModels::CLAUDE_SONNET,
+      response = bedrock_client.converse(
+        system: [{ text: system_prompt }],
+        model_id: BedrockModels::CLAUDE_SONNET,
         messages:,
-        **inference_config,
+        inference_config:,
       )
 
       {
-        llm_response: response.to_h,
-        llm_guardrail_result: response[:content][0][:text],
-        llm_prompt_tokens: response[:usage][:input_tokens],
-        llm_completion_tokens: response[:usage][:output_tokens],
+        llm_response: response.output,
+        llm_guardrail_result: response.dig("output", "message", "content", 0, "text"),
+        llm_prompt_tokens: response.usage["input_tokens"],
+        llm_completion_tokens: response.usage["output_tokens"],
         llm_cached_tokens: nil,
       }
     end
@@ -35,9 +35,9 @@ module Guardrails::Claude
       Rails.configuration.govuk_chat_private.llm_prompts.claude.jailbreak_guardrails
     end
 
-    def anthropic_bedrock_client
-      @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(
-        aws_region: ENV["CLAUDE_AWS_REGION"],
+    def bedrock_client
+      @bedrock_client ||= Aws::BedrockRuntime::Client.new(
+        region: ENV.fetch("CLAUDE_AWS_REGION", "eu-west-1"),
       )
     end
 
@@ -49,7 +49,7 @@ module Guardrails::Claude
     end
 
     def messages
-      [{ role: "user", content: user_prompt }]
+      [{ role: "user", content: [{ text: user_prompt }] }]
     end
 
     def user_prompt

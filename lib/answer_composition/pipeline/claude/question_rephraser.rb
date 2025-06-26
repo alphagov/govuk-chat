@@ -9,16 +9,16 @@ module AnswerComposition::Pipeline
       end
 
       def call
-        response = anthropic_bedrock_client.messages.create(
-          system: [{ type: "text", text: config[:system_prompt] }],
-          model: BedrockModels::CLAUDE_SONNET,
+        response = bedrock_client.converse(
+          system: [{ text: config[:system_prompt] }],
+          model_id: BedrockModels::CLAUDE_SONNET, # TODO: change this to a more basic model
           messages:,
-          **inference_config,
+          inference_config:,
         )
 
         AnswerComposition::Pipeline::QuestionRephraser::Result.new(
           llm_response: response.to_h,
-          rephrased_question: response[:content][0][:text],
+          rephrased_question: response.dig("output", "message", "content", 0, "text"),
           metrics: build_metrics(response),
         )
       end
@@ -27,16 +27,16 @@ module AnswerComposition::Pipeline
 
       attr_reader :question_message, :message_records
 
-      def anthropic_bedrock_client
-        @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(
-          aws_region: ENV["CLAUDE_AWS_REGION"],
+      def bedrock_client
+        @bedrock_client ||= Aws::BedrockRuntime::Client.new(
+          region: ENV.fetch("CLAUDE_AWS_REGION", "eu-west-1"),
         )
       end
 
       def build_metrics(response)
         {
-          llm_prompt_tokens: response[:usage][:input_tokens],
-          llm_completion_tokens: response[:usage][:output_tokens],
+          llm_prompt_tokens: response.dig("usage", "input_tokens"),
+          llm_completion_tokens: response.dig("usage", "output_tokens"),
         }
       end
 
@@ -58,7 +58,7 @@ module AnswerComposition::Pipeline
       end
 
       def messages
-        [{ role: "user", content: user_prompt }]
+        [{ role: "user", content: [{ text: user_prompt }] }]
       end
 
       def message_history
