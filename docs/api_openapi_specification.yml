@@ -10,7 +10,7 @@ info:
     Worth noting that onboarding aspects of conversation (Informing user of
     limitations and accepting) are not included as within GOV.UK Chat these
     are a UI construct and not a part of core domain constructs.
-  version: "0.1.0"
+  version: "0.2.0"
 servers:
   - url: https://chat.publishing.service.gov.uk/api/v0
 paths:
