@@ -83,7 +83,7 @@ module GovukChat
 
     config.bigquery_dataset_id = ENV["BIGQUERY_DATASET"]
 
-    config.answer_strategy = ENV.fetch("ANSWER_STRATEGY", "openai_structured_answer")
+    config.answer_strategy = "claude_structured_answer"
     config.embedding_provider = ENV.fetch("EMBEDDING_PROVIDER", "openai")
   end
 end
