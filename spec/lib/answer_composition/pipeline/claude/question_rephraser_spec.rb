@@ -54,6 +54,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser, :aws_cred
       expect(result.metrics).to eq({
         llm_prompt_tokens: 10,
         llm_completion_tokens: 20,
+        llm_cached_tokens: nil,
       })
     end
   end
