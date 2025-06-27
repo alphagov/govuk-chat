@@ -97,7 +97,7 @@ RSpec.describe "Api::V0::ConversationsController" do
                     end
                   end
 
-  it_behaves_like "throttles traffic for a single device",
+  it_behaves_like "throttles traffic for a single user ID",
                   routes: {
                     api_v0_show_conversation_path: %i[get],
                     api_v0_answer_question_path: %i[get],

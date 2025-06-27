@@ -113,33 +113,33 @@ module RackAttackExamples
     end
   end
 
-  RSpec.shared_examples "throttles traffic for a single device" do |routes:, period:|
+  RSpec.shared_examples "throttles traffic for a single user ID" do |routes:, period:|
     include_context "with rack attack helpers"
     let(:route_params) { {} }
-    let(:headers) { { "HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID" => "test-device-123" } }
+    let(:headers) { { "HTTP_GOVUK_CHAT_CLIENT_USER_ID" => "test-user-123" } }
 
     before do
-      read_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_CLIENT_DEVICE_READ_THROTTLE_NAME]
+      read_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_CLIENT_USER_READ_THROTTLE_NAME]
       allow(read_throttle).to receive(:limit).and_return(1)
 
-      write_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_CLIENT_DEVICE_WRITE_THROTTLE_NAME]
+      write_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_CLIENT_USER_WRITE_THROTTLE_NAME]
       allow(write_throttle).to receive(:limit).and_return(1)
     end
 
     routes.each do |path, methods|
       methods.each do |method|
-        context "when a user's device uses its allowance", :rack_attack do
+        context "when a user ID uses its allowance", :rack_attack do
           before { process_request(method, path, headers) }
 
-          it "rejects the next request to #{method} #{path} with the same device ID" do
+          it "rejects the next request to #{method} #{path} with the same user ID" do
             expect_throttled_response(method, path, headers)
           end
 
-          it "doesn't reject a request to #{method} #{path} with a different device ID" do
+          it "doesn't reject a request to #{method} #{path} with a different user ID" do
             expect_not_throttled_response(
               method,
               path,
-              { "HTTP_GOVUK_CHAT_CLIENT_DEVICE_ID" => "test-device-456" },
+              { "HTTP_GOVUK_CHAT_CLIENT_USER_ID" => "test-user-456" },
             )
           end
 
@@ -155,9 +155,9 @@ module RackAttackExamples
 
               expect(response.headers.keys)
                 .to include(
-                  a_string_matching(/govuk-client-device-id-(read|write)-ratelimit-limit/),
-                  a_string_matching(/govuk-client-device-id-(read|write)-ratelimit-remaining/),
-                  a_string_matching(/govuk-client-device-id-(read|write)-ratelimit-reset/),
+                  a_string_matching(/govuk-client-user-id-(read|write)-ratelimit-limit/),
+                  a_string_matching(/govuk-client-user-id-(read|write)-ratelimit-remaining/),
+                  a_string_matching(/govuk-client-user-id-(read|write)-ratelimit-reset/),
                 )
             end
           end

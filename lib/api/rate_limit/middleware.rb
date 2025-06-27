@@ -2,8 +2,8 @@ class Api::RateLimit::Middleware
   THROTTLE_TO_PREFIX_MAPPING = {
     Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME => "Govuk-Api-User-Read",
     Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME => "Govuk-Api-User-Write",
-    Api::RateLimit::GOVUK_CLIENT_DEVICE_READ_THROTTLE_NAME => "Govuk-Client-Device-Id-Read",
-    Api::RateLimit::GOVUK_CLIENT_DEVICE_WRITE_THROTTLE_NAME => "Govuk-Client-Device-Id-Write",
+    Api::RateLimit::GOVUK_CLIENT_USER_READ_THROTTLE_NAME => "Govuk-Client-User-Id-Read",
+    Api::RateLimit::GOVUK_CLIENT_USER_WRITE_THROTTLE_NAME => "Govuk-Client-User-Id-Write",
   }.freeze
 
   delegate :logger, to: Rails

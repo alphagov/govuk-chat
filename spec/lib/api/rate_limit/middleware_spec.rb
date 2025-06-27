@@ -14,7 +14,7 @@ RSpec.describe Api::RateLimit::Middleware do
             period: 60,
             epoch_time: current_time,
           },
-          Api::RateLimit::GOVUK_CLIENT_DEVICE_READ_THROTTLE_NAME => {
+          Api::RateLimit::GOVUK_CLIENT_USER_READ_THROTTLE_NAME => {
             limit: 5,
             count: 5,
             period: 60,
@@ -32,9 +32,9 @@ RSpec.describe Api::RateLimit::Middleware do
         expect(headers["Govuk-Api-User-Read-RateLimit-Remaining"]).to eq("7")
         expect(headers["Govuk-Api-User-Read-RateLimit-Reset"]).to eq("60s")
 
-        expect(headers["Govuk-Client-Device-Id-Read-RateLimit-Limit"]).to eq("5")
-        expect(headers["Govuk-Client-Device-Id-Read-RateLimit-Remaining"]).to eq("0")
-        expect(headers["Govuk-Client-Device-Id-Read-RateLimit-Reset"]).to eq("50s")
+        expect(headers["Govuk-Client-User-Id-Read-RateLimit-Limit"]).to eq("5")
+        expect(headers["Govuk-Client-User-Id-Read-RateLimit-Remaining"]).to eq("0")
+        expect(headers["Govuk-Client-User-Id-Read-RateLimit-Reset"]).to eq("50s")
       end
     end
 
@@ -79,9 +79,9 @@ RSpec.describe Api::RateLimit::Middleware do
           "Govuk-Api-User-Read-RateLimit-Limit",
           "Govuk-Api-User-Read-RateLimit-Remaining",
           "Govuk-Api-User-Read-RateLimit-Reset",
-          "Govuk-Client-Device-Id-Read-RateLimit-Limit",
-          "Govuk-Client-Device-Id-Read-RateLimit-Remaining",
-          "Govuk-Client-Device-Id-Read-RateLimit-Reset",
+          "Govuk-Client-User-Id-Read-RateLimit-Limit",
+          "Govuk-Client-User-Id-Read-RateLimit-Remaining",
+          "Govuk-Client-User-Id-Read-RateLimit-Reset",
         )
       end
     end
