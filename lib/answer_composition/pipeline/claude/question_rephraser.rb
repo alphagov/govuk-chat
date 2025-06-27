@@ -9,9 +9,9 @@ module AnswerComposition::Pipeline
       end
 
       def call
-        response = anthropic_bedrock_client.messages.create(
+        response = anthropic_client.messages.create(
           system: [{ type: "text", text: config[:system_prompt] }],
-          model: BedrockModels::CLAUDE_SONNET,
+          model: "claude-sonnet-4@20250514",
           messages:,
           **inference_config,
         )
@@ -27,9 +27,10 @@ module AnswerComposition::Pipeline
 
       attr_reader :question_message, :message_records
 
-      def anthropic_bedrock_client
-        @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(
-          aws_region: ENV["CLAUDE_AWS_REGION"],
+      def anthropic_client
+        @anthropic_client ||= Anthropic::VertexClient.new(
+          region: "europe-west1",
+          project_id: "gov-uk-chat-integration",
         )
       end
 

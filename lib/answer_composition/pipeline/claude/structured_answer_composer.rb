@@ -10,12 +10,12 @@ module AnswerComposition::Pipeline
 
       def call
         start_time = Clock.monotonic_time
-        response = anthropic_bedrock_client.messages.create(
+        response = anthropic_client.messages.create(
           system: [
             { type: "text", text: cached_system_prompt, cache_control: { type: "ephemeral" } },
             { type: "text", text: context_system_prompt },
           ],
-          model: BedrockModels::CLAUDE_SONNET,
+          model: "claude-sonnet-4@20250514",
           messages:,
           tools: tools,
           tool_choice: { type: "tool", name: "output_schema" },
@@ -75,9 +75,10 @@ module AnswerComposition::Pipeline
         Claude.prompt_config.structured_answer
       end
 
-      def anthropic_bedrock_client
-        @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(
-          aws_region: ENV["CLAUDE_AWS_REGION"],
+      def anthropic_client
+        @anthropic_client ||= Anthropic::VertexClient.new(
+          region: "europe-west1",
+          project_id: "gov-uk-chat-integration",
         )
       end
 

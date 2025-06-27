@@ -73,18 +73,19 @@ module AnswerComposition::Pipeline
         llm_classification_function[:input]
       end
 
-      def anthropic_bedrock_client
-        @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(
-          aws_region: ENV["CLAUDE_AWS_REGION"],
+      def anthropic_client
+        @anthropic_client ||= Anthropic::VertexClient.new(
+          region: "europe-west1",
+          project_id: "gov-uk-chat-integration",
         )
       end
 
       def claude_response
-        @claude_response ||= anthropic_bedrock_client.messages.create(
+        @claude_response ||= anthropic_client.messages.create(
           system: [
             { type: "text", text: prompt_config[:system_prompt], cache_control: { type: "ephemeral" } },
           ],
-          model: BedrockModels::CLAUDE_SONNET,
+          model: "claude-sonnet-4@20250514",
           messages:,
           tools:,
           tool_choice: { type: "any", disable_parallel_tool_use: true },

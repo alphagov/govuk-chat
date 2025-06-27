@@ -7,9 +7,9 @@ module Guardrails::Claude
     end
 
     def call
-      response = anthropic_bedrock_client.messages.create(
+      response = anthropic_client.messages.create(
         system: [{ type: "text", text: system_prompt }],
-        model: BedrockModels::CLAUDE_SONNET,
+        model: "claude-sonnet-4@20250514",
         messages:,
         **inference_config,
       )
@@ -35,9 +35,10 @@ module Guardrails::Claude
       Rails.configuration.govuk_chat_private.llm_prompts.claude.jailbreak_guardrails
     end
 
-    def anthropic_bedrock_client
-      @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(
-        aws_region: ENV["CLAUDE_AWS_REGION"],
+    def anthropic_client
+      @anthropic_client ||= Anthropic::VertexClient.new(
+        region: "europe-west1",
+        project_id: "gov-uk-chat-integration",
       )
     end
 
