@@ -12,7 +12,7 @@ module AnswerComposition::Pipeline
         start_time = Clock.monotonic_time
         response = anthropic_bedrock_client.messages.create(
           system: [
-            { type: "text", text: cached_system_prompt, cache_control: { type: "ephemeral" } },
+            { type: "text", text: cached_system_prompt },
             { type: "text", text: context_system_prompt },
           ],
           model: BedrockModels::CLAUDE_SONNET,

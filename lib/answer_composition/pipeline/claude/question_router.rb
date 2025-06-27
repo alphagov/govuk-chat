@@ -82,7 +82,7 @@ module AnswerComposition::Pipeline
       def claude_response
         @claude_response ||= anthropic_bedrock_client.messages.create(
           system: [
-            { type: "text", text: prompt_config[:system_prompt], cache_control: { type: "ephemeral" } },
+            { type: "text", text: prompt_config[:system_prompt] },
           ],
           model: BedrockModels::CLAUDE_SONNET,
           messages:,
