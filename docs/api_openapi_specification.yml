@@ -10,7 +10,7 @@ info:
     Worth noting that onboarding aspects of conversation (Informing user of
     limitations and accepting) are not included as within GOV.UK Chat these
     are a UI construct and not a part of core domain constructs.
-  version: "0.1.0"
+  version: "0.2.0"
 servers:
   - url: https://chat.publishing.service.gov.uk/api/v0
 paths:
@@ -101,7 +101,7 @@ paths:
         "200":
           description: |
             Returns a list of AnsweredQuestions with potentially one PendingQuestion.
-            Is limited to returning 500 questions for a conversation and only
+            Is limited to returning 50 questions for a conversation and only
             questions asked within last 90 days.
           content:
             application/json:
@@ -233,6 +233,94 @@ paths:
               $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitRemaining'
             Govuk-Client-Device-Id-Write-RateLimit-Reset:
               $ref: '#/components/headers/GovukClientDeviceIdWriteRateLimitReset'
+
+  /conversation/{conversation_id}/questions:
+    get:
+      summary: Retrieve a conversation's answered questions
+      description: |
+        Accesses the answered questions of a conversation should a conversation with
+        the id be available.
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: before
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - $ref: "#/components/parameters/DeviceIdHeader"
+      responses:
+        "200":
+          description: |
+            Returns an array of AnsweredQuestions. Is limited to returning 50
+            questions for a conversation and only questions asked within last
+            90 days.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationQuestions"
+          headers:
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-Client-Device-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitLimit'
+            Govuk-Client-Device-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitRemaining'
+            Govuk-Client-Device-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
+        "404":
+          description: |
+            Either a conversation never existed with this id or has now expired.
+            Will also be rendered if the `before` or `after` parameters reference
+            records that do not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericError"
+          headers:
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-Client-Device-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitLimit'
+            Govuk-Client-Device-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitRemaining'
+            Govuk-Client-Device-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
+        "429":
+          description: |
+            Too many requests to read endpoints from an Api User or Device ID
+          headers:
+            Govuk-Api-User-Write-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-Client-Device-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitLimit'
+            Govuk-Client-Device-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitRemaining'
+            Govuk-Client-Device-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukClientDeviceIdReadRateLimitReset'
 
   /conversation/{conversation_id}/questions/{question_id}/answer:
     get:
@@ -534,6 +622,33 @@ components:
         created_at:
           type: string
           format: date-time
+        earlier_questions_url:
+          description: |
+            A relative URL that can be used to retrieve earlier questions in the conversation.
+            Will be null if there are no earlier questions.
+          type: string
+          format: url
+    ConversationQuestions:
+      type: object
+      required:
+        - questions
+      properties:
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnsweredQuestion"
+        earlier_questions_url:
+          description: |
+            A relative URL that can be used to retrieve earlier questions in the conversation.
+            Will be null if there are no earlier questions.
+          type: string
+          format: url
+        later_questions_url:
+          description: |
+            A relative URL that can be used to retrieve later questions in the conversation.
+            Will be null if there are no later questions.
+          type: string
+          format: url
     AnsweredQuestion:
       type: object
       required:

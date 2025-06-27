@@ -8,6 +8,15 @@ RSpec.describe Question do
     end
   end
 
+  describe ".answered" do
+    it "returns all questions with an answer" do
+      create(:question)
+      question = create(:question, :with_answer)
+
+      expect(described_class.answered).to eq [question]
+    end
+  end
+
   describe ".group_by_aggregate_status" do
     it "groups unanswered questions into a 'pending' group" do
       create(:question)

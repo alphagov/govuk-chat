@@ -12,11 +12,30 @@ class Conversation < ApplicationRecord
        },
        prefix: true
 
-  def questions_for_showing_conversation(only_answered: false)
+  def questions_for_showing_conversation(only_answered: false, before_id: nil, after_id: nil, limit: nil)
     scope = Question.where(conversation: self)
                   .includes(answer: %i[feedback sources])
                   .active
     scope = scope.joins(:answer) if only_answered
-    scope.last(Rails.configuration.conversations.max_question_count)
+
+    if before_id.present?
+      before_timestamp = scope.where(id: before_id).pick(:created_at) || raise(ActiveRecord::RecordNotFound)
+      scope = scope.where("questions.created_at < ?", before_timestamp)
+    end
+
+    if after_id.present?
+      after_timestamp = scope.where(id: after_id).pick(:created_at) || raise(ActiveRecord::RecordNotFound)
+      scope = scope.where("questions.created_at > ?", after_timestamp)
+    end
+
+    scope.last(limit || Rails.configuration.conversations.max_question_count)
+  end
+
+  def active_answered_questions_before?(timestamp)
+    questions.active.answered.where("questions.created_at < ?", timestamp).exists?
+  end
+
+  def active_answered_questions_after?(timestamp)
+    questions.active.answered.where("questions.created_at > ?", timestamp).exists?
   end
 end

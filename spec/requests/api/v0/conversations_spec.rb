@@ -159,6 +159,23 @@ RSpec.describe "Api::V0::ConversationsController" do
       expect(response).to have_http_status(:ok)
     end
 
+    it "returns a URL to earlier questions if present" do
+      allow(Rails.configuration.conversations).to receive(:api_questions_per_page).and_return(2)
+
+      create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+      oldest_in_page = create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+      create(:question, :with_answer, conversation:, created_at: 3.minutes.ago)
+
+      get api_v0_show_conversation_path(conversation)
+
+      earlier_questions_url = api_v0_conversation_questions_path(
+        conversation, before: oldest_in_page.id
+      )
+
+      expect(JSON.parse(response.body)["earlier_questions_url"]).to eq(earlier_questions_url)
+      expect(response).to have_http_status(:ok)
+    end
+
     it "returns a 404 if the conversation cannot be found" do
       get api_v0_show_conversation_path(SecureRandom.uuid)
 
@@ -168,6 +185,215 @@ RSpec.describe "Api::V0::ConversationsController" do
     it "returns a 404 if the conversation has expired" do
       conversation = create(:conversation, :api, :expired, signon_user: api_user)
       get api_v0_show_conversation_path(conversation)
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "returns a 404 if the conversation is not associated with the user" do
+      different_user = create(:signon_user, :conversation_api)
+      conversation = create(:conversation, signon_user: different_user)
+
+      get api_v0_show_conversation_path(conversation)
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe "GET :questions" do
+    it "returns an empty array if there are no answered questions" do
+      create(:question, conversation:)
+      expected_response = ConversationQuestions.new(
+        questions: [],
+      ).to_json
+
+      get api_v0_conversation_questions_path(conversation)
+
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "returns only the answered questions" do
+      create(:question, conversation:)
+      questions = [
+        create(:question, :with_answer, conversation:),
+        create(:question, :with_answer, conversation:),
+      ]
+
+      expected_questions = Question.where(id: questions.map(&:id))
+                           .includes(answer: %i[sources feedback])
+
+      expected_response = ConversationQuestions.new(
+        questions: expected_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+      ).to_json
+
+      get api_v0_conversation_questions_path(conversation)
+
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "limits the number of questions returned" do
+      allow(Rails.configuration.conversations).to receive(:api_questions_per_page).and_return(2)
+      create(:question, :with_answer, conversation:)
+      create(:question, :with_answer, conversation:)
+      create(:question, :with_answer, conversation:)
+
+      get api_v0_conversation_questions_path(conversation)
+      expect(JSON.parse(response.body)["questions"].size).to eq(2)
+    end
+
+    it "returns the questions before a given question ID" do
+      before_question = create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+      recent_questions = [
+        create(:question, :with_answer, conversation:, created_at: 6.minutes.ago),
+        create(:question, :with_answer, conversation:, created_at: 5.minutes.ago),
+      ]
+      create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+
+      expected_questions = Question.where(id: recent_questions.map(&:id))
+                                   .includes(answer: %i[sources feedback])
+      expected_response = ConversationQuestions.new(
+        questions: expected_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+        later_questions_url: api_v0_conversation_questions_path(conversation, after: recent_questions.last.id),
+      ).to_json
+
+      get api_v0_conversation_questions_path(conversation, before: before_question.id)
+
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "returns the questions after a given question ID" do
+      after_question = create(:question, :with_answer, conversation:, created_at: 10.minutes.ago)
+      later_questions = [
+        create(:question, :with_answer, conversation:, created_at: 9.minutes.ago),
+        create(:question, :with_answer, conversation:, created_at: 8.minutes.ago),
+      ]
+      create(:question, :with_answer, conversation:, created_at: 20.minutes.ago)
+
+      expected_questions = Question.where(id: later_questions.map(&:id))
+                                   .includes(answer: %i[sources feedback])
+      expected_response = ConversationQuestions.new(
+        questions: expected_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+        earlier_questions_url: api_v0_conversation_questions_path(conversation, before: later_questions.first.id),
+      ).to_json
+
+      get api_v0_conversation_questions_path(conversation, after: after_question.id)
+
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "returns the questions between the before and after IDs" do
+      create(:question, :with_answer, conversation:, created_at: 10.minutes.ago)
+      after_question = create(:question, :with_answer, conversation:, created_at: 9.minutes.ago)
+      expected_question = create(:question, :with_answer, conversation:, created_at: 8.minutes.ago)
+      before_question = create(:question, :with_answer, conversation:, created_at: 7.minutes.ago)
+      create(:question, :with_answer, conversation:, created_at: 6.minutes.ago)
+
+      loaded_questions = Question.where(id: expected_question.id)
+                                 .includes(answer: %i[sources feedback])
+      expected_response = ConversationQuestions.new(
+        questions: loaded_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+        earlier_questions_url: api_v0_conversation_questions_path(conversation, before: expected_question.id),
+        later_questions_url: api_v0_conversation_questions_path(conversation, after: expected_question.id),
+      ).to_json
+
+      get api_v0_conversation_questions_path(
+        conversation,
+        before: before_question.id,
+        after: after_question.id,
+      )
+
+      expect(response.body).to eq(expected_response)
+    end
+
+    context "with earlier questions" do
+      before do
+        allow(Rails.configuration.conversations).to(
+          receive(:api_questions_per_page).and_return(2),
+        )
+      end
+
+      it "returns the URL to the earlier questions" do
+        create(:question, :with_answer, conversation:, created_at: 6.minutes.ago)
+        oldest_question_in_page = create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+        create(:question, :with_answer, conversation:, created_at: 4.minutes.ago)
+
+        get api_v0_conversation_questions_path(conversation)
+
+        expect(JSON.parse(response.body)["earlier_questions_url"]).to eq(
+          api_v0_conversation_questions_path(
+            conversation,
+            before: oldest_question_in_page.id,
+          ),
+        )
+      end
+
+      it "has a nil value for earlier_questions_url if there are no earlier questions" do
+        create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+
+        get api_v0_conversation_questions_path(conversation)
+
+        expect(JSON.parse(response.body)["earlier_questions_url"]).to be_nil
+      end
+    end
+
+    context "with later questions" do
+      before do
+        allow(Rails.configuration.conversations).to(
+          receive(:conversation_questions_per_page).and_return(2),
+        )
+      end
+
+      it "returns the URL to the later questions" do
+        create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+        pagination_question = create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+        after_question = create(:question, :with_answer, conversation:, created_at: 3.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 4.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 5.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 6.minutes.ago)
+
+        get api_v0_conversation_questions_path(conversation, before: pagination_question.id)
+
+        expect(JSON.parse(response.body)["later_questions_url"]).to eq(
+          api_v0_conversation_questions_path(
+            conversation,
+            after: after_question.id,
+          ),
+        )
+      end
+
+      it "has a nil value for later_questions_url if there are no later questions" do
+        create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
+        create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
+
+        get api_v0_conversation_questions_path(conversation)
+
+        expect(JSON.parse(response.body)["later_questions_url"]).to be_nil
+      end
+    end
+
+    it "returns a 404 if the before_id record cannot be found" do
+      create(:question, :with_answer, conversation:)
+      get api_v0_conversation_questions_path(conversation, before: SecureRandom.uuid)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "returns a 404 if the after_id record cannot be found" do
+      create(:question, :with_answer, conversation:)
+      get api_v0_conversation_questions_path(conversation, after: SecureRandom.uuid)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "returns a 404 if the conversation cannot be found" do
+      get api_v0_conversation_questions_path(conversation)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "returns a 404 if the conversation has expired" do
+      create(:conversation, :api, :expired, signon_user: api_user)
+      get api_v0_show_conversation_path(SecureRandom.uuid)
       expect(response).to have_http_status(:not_found)
     end
 

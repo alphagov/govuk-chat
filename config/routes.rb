@@ -92,6 +92,7 @@ Rails.application.routes.draw do
       post "/conversation", to: "conversations#create", as: :create_conversation
       get "/conversation/:conversation_id", to: "conversations#show", as: :show_conversation
       put "/conversation/:conversation_id", to: "conversations#update", as: :update_conversation
+      get "/conversation/:conversation_id/questions", to: "conversations#questions", as: :conversation_questions
       get "/conversation/:conversation_id/questions/:question_id/answer", to: "conversations#answer", as: :answer_question
       post "/conversation/:conversation_id/answers/:answer_id/feedback", to: "conversations#answer_feedback", as: :answer_feedback
     end
