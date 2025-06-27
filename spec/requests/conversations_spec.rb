@@ -4,16 +4,6 @@ RSpec.describe "ConversationsController" do
 
   before { login_as(signon_user) }
 
-  it_behaves_like "handles a request for a user who hasn't completed onboarding",
-                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "handles a request for a user who hasn't completed onboarding",
-                  routes: { clear_conversation_path: %i[get post] },
-                  with_json: false
-  it_behaves_like "handles a request for a user who hasn't completed onboarding",
-                  routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
-    let(:route_params) { [SecureRandom.uuid] }
-  end
-
   it_behaves_like "requires a users conversation cookie to reference an active conversation",
                   routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
   it_behaves_like "requires a users conversation cookie to reference an active conversation",
@@ -29,20 +19,9 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "GET :show" do
-    include_context "with onboarding completed"
-
     context "when there is no conversation cookie" do
-      context "and session[:onboarding] is 'conversation'" do
-        include_context "with onboarding completed"
-
-        it "does not redirect to the onboarding flow" do
-          get show_conversation_path
-          expect(response).to have_http_status(:success)
-        end
-      end
-
       context "and the response type is HTML" do
-        it "renders an onboarding message with a feedback survey link" do
+        it "renders a welcome message" do
           get show_conversation_path
 
           expect(response).to have_http_status(:success)
@@ -224,19 +203,9 @@ RSpec.describe "ConversationsController" do
         end
       end
     end
-
-    context "when a users onboarding has been completed" do
-      it "renders the page successfully" do
-        get show_conversation_path
-        expect(response).to have_http_status(:success)
-        expect(response.body).to render_create_question_form
-      end
-    end
   end
 
   describe "POST :update" do
-    include_context "with onboarding completed"
-
     it "sets the converation_id cookie with valid params" do
       freeze_time do
         post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
@@ -352,7 +321,6 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "GET :answer" do
-    include_context "with onboarding completed"
     let(:conversation) { create(:conversation, signon_user:) }
 
     before do
@@ -455,8 +423,6 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "POST :answer_feedback" do
-    include_context "with onboarding completed"
-
     let(:conversation) { create(:conversation, signon_user:) }
     let(:question) { create(:question, conversation:) }
 
@@ -540,8 +506,6 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "GET :clear" do
-    include_context "with onboarding completed"
-
     context "when the conversation is active" do
       let(:conversation) { create(:conversation, :not_expired, signon_user:) }
 
@@ -560,8 +524,6 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "POST :clear" do
-    include_context "with onboarding completed"
-
     context "when the conversation is active" do
       let(:conversation) { create(:conversation, :not_expired, signon_user:) }
 

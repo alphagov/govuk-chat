@@ -1,36 +1,6 @@
 module ConversationRequestExamples
-  shared_examples "handles a request for a user who hasn't completed onboarding" do |routes:, with_json: true|
-    let(:route_params) { [] }
-
-    routes.each do |path, methods|
-      describe "requires onboarding to have been completed for #{path} route" do
-        methods.each do |method|
-          context "when it is a HTML request" do
-            it "redirects users who aren't onboarded for #{method} #{path}" do
-              process(method.to_sym, public_send(path.to_sym, *route_params), params: { format: :html })
-
-              expect(response).to have_http_status(:redirect)
-              expect(response).to redirect_to(onboarding_limitations_path)
-            end
-          end
-
-          next unless with_json
-
-          context "when it is a JSON request" do
-            it "responds with a bad request for users who aren't onboarded for #{method} #{path}" do
-              process(method.to_sym, public_send(path.to_sym, *route_params), params: { format: :json })
-
-              expect(response).to have_http_status(:bad_request)
-            end
-          end
-        end
-      end
-    end
-  end
-
   shared_examples "requires a users conversation cookie to reference an active conversation" do |routes:, with_json: true|
     let(:route_params) { [] }
-    include_context "with onboarding completed"
 
     shared_examples "redirects a HTML request" do |path, method|
       it "deletes the cookie and redirects to onboarding_limitations for #{method} #{path}" do
@@ -86,7 +56,6 @@ module ConversationRequestExamples
 
   shared_examples "requires a conversation created via the chat interface" do |routes:|
     let(:route_params) { [] }
-    include_context "with onboarding completed"
 
     routes.each do |path, methods|
       describe "requests without a conversation for #{path}" do

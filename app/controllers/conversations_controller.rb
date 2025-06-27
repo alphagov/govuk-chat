@@ -1,6 +1,5 @@
 class ConversationsController < BaseController
   layout "conversation", except: %i[answer clear]
-  before_action :require_onboarding_completed
   before_action :find_conversation
   before_action :require_conversation, only: %i[answer answer_feedback clear]
 
@@ -177,15 +176,5 @@ private
     @more_information = session[:more_information].present?
     @conversation_data_attributes = { module: "chat-conversation" }
     @active_conversation = conversation.persisted?
-  end
-
-  def require_onboarding_completed
-    return if session[:onboarding] == "conversation" ||
-      cookies[:conversation_id].present?
-
-    respond_to do |format|
-      format.html { redirect_to onboarding_limitations_path }
-      format.json { render json: { error: "Onboarding incomplete" }, status: :bad_request }
-    end
   end
 end
