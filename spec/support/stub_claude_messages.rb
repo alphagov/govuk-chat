@@ -101,7 +101,7 @@ module StubClaudeMessages
     tools = Rails.configuration
                  .govuk_chat_private
                  .llm_prompts
-                 .claude[:structured_answer][:anthropic_sdk_tool_spec]
+                 .claude[:structured_answer][:tool_spec]
 
     allow(Rails.configuration.govuk_chat_private.llm_prompts.claude)
       .to receive(:structured_answer)
@@ -109,7 +109,7 @@ module StubClaudeMessages
         {
           cached_system_prompt: "Static portion",
           context_system_prompt: "Dynamic portion",
-          anthropic_sdk_tool_spec: tools,
+          tool_spec: tools,
         },
       )
 
