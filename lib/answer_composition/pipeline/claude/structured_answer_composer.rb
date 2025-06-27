@@ -108,7 +108,7 @@ module AnswerComposition::Pipeline
       end
 
       def tools
-        [prompt_config[:anthropic_sdk_tool_spec]]
+        [prompt_config[:tool_spec]]
       end
     end
   end
