@@ -8,7 +8,7 @@ RSpec.describe AnswerBlueprint do
         created_at: answer.created_at.iso8601,
         message: answer.message,
       }.as_json
-      output_json = described_class.render_as_json(Answer.includes(%i[sources feedback]).find(answer.id))
+      output_json = described_class.render_as_json(answer)
 
       expect(output_json).to eq(expected_json)
     end
@@ -27,14 +27,14 @@ RSpec.describe AnswerBlueprint do
           },
         ],
       }.as_json
-      output_json = described_class.render_as_json(Answer.includes(%i[sources feedback]).find(answer.id))
+      output_json = described_class.render_as_json(answer)
 
       expect(output_json).to eq(expected_json)
     end
 
     it "does not include unused sources in the JSON" do
       create(:answer_source, answer:, used: false)
-      output_json = described_class.render_as_json(Answer.includes(%i[sources feedback]).find(answer.id))
+      output_json = described_class.render_as_json(answer)
       expect(output_json.keys).not_to include("sources")
     end
 
@@ -47,7 +47,7 @@ RSpec.describe AnswerBlueprint do
           message: answer.message,
           useful: true,
         }.as_json
-        output_json = described_class.render_as_json(Answer.includes(%i[sources feedback]).find(answer.id))
+        output_json = described_class.render_as_json(answer.reload)
 
         expect(output_json).to eq(expected_json)
       end

@@ -16,18 +16,17 @@ RSpec.describe QuestionBlueprint do
     describe "view :answered" do
       it "includes the answer" do
         question = create(:question, :with_answer)
-        answer = Answer.includes(%i[sources feedback]).find(question.answer.id)
 
         expected_json = {
           id: question.id,
           conversation_id: question.conversation_id,
           created_at: question.created_at.iso8601,
           message: question.message,
-          answer: AnswerBlueprint.render_as_hash(answer),
+          answer: AnswerBlueprint.render_as_hash(question.answer),
         }.as_json
 
         output_json = described_class.render_as_json(
-          Question.includes(answer: %i[sources feedback]).find(question.id),
+          question,
           view: :answered,
         )
 

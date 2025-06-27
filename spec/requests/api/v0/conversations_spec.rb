@@ -217,11 +217,8 @@ RSpec.describe "Api::V0::ConversationsController" do
         create(:question, :with_answer, conversation:),
       ]
 
-      expected_questions = Question.where(id: questions.map(&:id))
-                           .includes(answer: %i[sources feedback])
-
       expected_response = ConversationQuestions.new(
-        questions: expected_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+        questions: questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
       ).to_json
 
       get api_v0_conversation_questions_path(conversation)
@@ -247,10 +244,8 @@ RSpec.describe "Api::V0::ConversationsController" do
       ]
       create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
 
-      expected_questions = Question.where(id: recent_questions.map(&:id))
-                                   .includes(answer: %i[sources feedback])
       expected_response = ConversationQuestions.new(
-        questions: expected_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+        questions: recent_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
         later_questions_url: api_v0_conversation_questions_path(conversation, after: recent_questions.last.id),
       ).to_json
 
@@ -267,10 +262,8 @@ RSpec.describe "Api::V0::ConversationsController" do
       ]
       create(:question, :with_answer, conversation:, created_at: 20.minutes.ago)
 
-      expected_questions = Question.where(id: later_questions.map(&:id))
-                                   .includes(answer: %i[sources feedback])
       expected_response = ConversationQuestions.new(
-        questions: expected_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+        questions: later_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
         earlier_questions_url: api_v0_conversation_questions_path(conversation, before: later_questions.first.id),
       ).to_json
 
@@ -286,10 +279,8 @@ RSpec.describe "Api::V0::ConversationsController" do
       before_question = create(:question, :with_answer, conversation:, created_at: 7.minutes.ago)
       create(:question, :with_answer, conversation:, created_at: 6.minutes.ago)
 
-      loaded_questions = Question.where(id: expected_question.id)
-                                 .includes(answer: %i[sources feedback])
       expected_response = ConversationQuestions.new(
-        questions: loaded_questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
+        questions: [QuestionBlueprint.render_as_hash(expected_question, view: :answered)],
         earlier_questions_url: api_v0_conversation_questions_path(conversation, before: expected_question.id),
         later_questions_url: api_v0_conversation_questions_path(conversation, after: expected_question.id),
       ).to_json
@@ -545,8 +536,7 @@ RSpec.describe "Api::V0::ConversationsController" do
       it "returns the expected JSON" do
         get api_v0_answer_question_path(conversation, question), as: :json
 
-        eager_loaded_answer = Answer.includes(:sources, :feedback).find(answer.id)
-        expected_response = AnswerBlueprint.render_as_json(eager_loaded_answer)
+        expected_response = AnswerBlueprint.render_as_json(answer)
         expect(JSON.parse(response.body)).to eq(expected_response)
       end
 
