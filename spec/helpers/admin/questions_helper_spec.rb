@@ -132,6 +132,16 @@ RSpec.describe Admin::QuestionsHelper do
       expect(returned_keys(result)).to include("Feedback created at", "Feedback")
     end
 
+    it "returns the end_user_id when present" do
+      answer = answer_from_db(create(:answer))
+      conversation.update!(end_user_id: "12345")
+      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
+
+      expect(returned_keys(result)).to include("End user ID")
+      row = result.find { |r| r[:field] == "End user ID" }
+      expect(row[:value]).to include(admin_questions_path(end_user_id: "12345"))
+    end
+
     it "returns a row with a human readable question routing label" do
       answer = create(:answer, question_routing_label: "advice_opinions_predictions")
       answer = answer_from_db(answer)
