@@ -116,13 +116,13 @@ module RackAttackExamples
   RSpec.shared_examples "throttles traffic for a single user ID" do |routes:, period:|
     include_context "with rack attack helpers"
     let(:route_params) { {} }
-    let(:headers) { { "HTTP_GOVUK_CHAT_CLIENT_USER_ID" => "test-user-123" } }
+    let(:headers) { { "HTTP_GOVUK_CHAT_END_USER_ID" => "test-user-123" } }
 
     before do
-      read_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_CLIENT_USER_READ_THROTTLE_NAME]
+      read_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_END_USER_READ_THROTTLE_NAME]
       allow(read_throttle).to receive(:limit).and_return(1)
 
-      write_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_CLIENT_USER_WRITE_THROTTLE_NAME]
+      write_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_END_USER_WRITE_THROTTLE_NAME]
       allow(write_throttle).to receive(:limit).and_return(1)
     end
 
@@ -139,7 +139,7 @@ module RackAttackExamples
             expect_not_throttled_response(
               method,
               path,
-              { "HTTP_GOVUK_CHAT_CLIENT_USER_ID" => "test-user-456" },
+              { "HTTP_GOVUK_CHAT_END_USER_ID" => "test-user-456" },
             )
           end
 
@@ -155,9 +155,9 @@ module RackAttackExamples
 
               expect(response.headers.keys)
                 .to include(
-                  a_string_matching(/govuk-client-user-id-(read|write)-ratelimit-limit/),
-                  a_string_matching(/govuk-client-user-id-(read|write)-ratelimit-remaining/),
-                  a_string_matching(/govuk-client-user-id-(read|write)-ratelimit-reset/),
+                  a_string_matching(/govuk-end-user-id-(read|write)-ratelimit-limit/),
+                  a_string_matching(/govuk-end-user-id-(read|write)-ratelimit-remaining/),
+                  a_string_matching(/govuk-end-user-id-(read|write)-ratelimit-reset/),
                 )
             end
           end
