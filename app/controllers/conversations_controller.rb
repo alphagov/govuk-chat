@@ -115,18 +115,11 @@ private
     set_conversation_cookie(@conversation)
   rescue ActiveRecord::RecordNotFound
     cookies.delete(:conversation_id)
-    conversation_not_found
   end
 
   def require_conversation
-    conversation_not_found unless @conversation
-  end
-
-  def conversation_not_found
-    respond_to do |format|
-      format.html { redirect_to onboarding_limitations_path }
-      format.json { render json: { error: "Conversation not found" }, status: :not_found }
-    end
+    # Raising an error for Rails responses prevents cookie changes being persisted
+    raise ActionController::RoutingError, "Conversation not found" unless @conversation
   end
 
   def question_success_json(question)

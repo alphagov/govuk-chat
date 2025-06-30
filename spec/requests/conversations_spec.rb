@@ -5,9 +5,7 @@ RSpec.describe "ConversationsController" do
   before { login_as(signon_user) }
 
   it_behaves_like "requires a users conversation cookie to reference an active conversation",
-                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "requires a users conversation cookie to reference an active conversation",
-                  routes: { clear_conversation_path: %i[get post] },
+                  routes: { clear_conversation_path: %i[get] },
                   with_json: false
   it_behaves_like "requires a users conversation cookie to reference an active conversation",
                   routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
