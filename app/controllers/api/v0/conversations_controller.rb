@@ -3,7 +3,11 @@ class Api::V0::ConversationsController < Api::BaseController
   before_action :find_conversation, only: %i[show update answer answer_feedback questions]
 
   def create
-    conversation = Conversation.new(signon_user: current_user, source: :api)
+    conversation = Conversation.new(
+      signon_user: current_user,
+      source: :api,
+      end_user_id: request.headers.fetch("HTTP_GOVUK_CHAT_END_USER_ID", "").strip.presence,
+    )
     form = Form::CreateQuestion.new(question_params.merge(conversation:))
 
     if form.valid?

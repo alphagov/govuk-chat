@@ -436,6 +436,24 @@ RSpec.describe "Api::V0::ConversationsController" do
         conversation = Conversation.last
         expect(conversation.source).to eq("api")
       end
+
+      context "when setting the end_user_id from the header" do
+        it "sets the attribute to the value in the header" do
+          headers = { "HTTP_GOVUK_CHAT_END_USER_ID" => "test-user-123" }
+          post(api_v0_create_conversation_path, params: payload, headers:, as: :json)
+
+          conversation = Conversation.last
+          expect(conversation.end_user_id).to eq("test-user-123")
+        end
+
+        it "omits empty values" do
+          headers = { "HTTP_GOVUK_CHAT_END_USER_ID" => "    " }
+          post(api_v0_create_conversation_path, params: payload, headers:, as: :json)
+
+          conversation = Conversation.last
+          expect(conversation.end_user_id).to be_nil
+        end
+      end
     end
 
     context "when the question is invalid" do
