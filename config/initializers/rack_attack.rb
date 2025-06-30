@@ -18,15 +18,15 @@ class Rack::Attack
     end
   end
 
-  throttle(Api::RateLimit::GOVUK_CLIENT_USER_READ_THROTTLE_NAME, limit: 120, period: 1.minute) do |request|
+  throttle(Api::RateLimit::GOVUK_END_USER_READ_THROTTLE_NAME, limit: 120, period: 1.minute) do |request|
     if request.path.match?(CONVERSATION_API_PATH_REGEX) && read_method?(request)
-      request.get_header("HTTP_GOVUK_CHAT_CLIENT_USER_ID").presence
+      request.get_header("HTTP_GOVUK_CHAT_END_USER_ID").presence
     end
   end
 
-  throttle(Api::RateLimit::GOVUK_CLIENT_USER_WRITE_THROTTLE_NAME, limit: 20, period: 1.minute) do |request|
+  throttle(Api::RateLimit::GOVUK_END_USER_WRITE_THROTTLE_NAME, limit: 20, period: 1.minute) do |request|
     if request.path.match?(CONVERSATION_API_PATH_REGEX) && !read_method?(request)
-      request.get_header("HTTP_GOVUK_CHAT_CLIENT_USER_ID").presence
+      request.get_header("HTTP_GOVUK_CHAT_END_USER_ID").presence
     end
   end
 
