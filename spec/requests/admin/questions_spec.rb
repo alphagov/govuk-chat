@@ -94,6 +94,14 @@ RSpec.describe "Admin::QuestionsController" do
         expect(response.body.squish)
           .to have_content("Filtering by API user: #{signon_user.name}")
       end
+
+      it "renders the end user details when filtering by end_user_id" do
+        create(:conversation, end_user_id: "alice")
+        get admin_questions_path(end_user_id: "alice")
+
+        expect(response.body.squish)
+          .to have_content('Filtering by end user: "alice"')
+      end
     end
 
     context "when the sort param is not the default value" do

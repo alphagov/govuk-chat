@@ -240,6 +240,25 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([])
     end
 
+    it "filters the results by end_user_id" do
+      alice_question = create(:question, conversation: create(:conversation, :api, end_user_id: "alice"))
+      bob_question = create(:question, conversation: create(:conversation, :api, end_user_id: "bob"))
+
+      filter = described_class.new(end_user_id: "alice")
+      expect(filter.results).to eq([alice_question])
+
+      filter = described_class.new(end_user_id: "bob")
+      expect(filter.results).to eq([bob_question])
+    end
+
+    it "filters out results assoicated with an end_user_id that weren't created via the API" do
+      create(:question, conversation: create(:conversation, end_user_id: "alice"))
+
+      filter = described_class.new(end_user_id: "alice")
+
+      expect(filter.results).to eq([])
+    end
+
     it "filters the results by question routing label" do
       create(:question, answer: build(:answer, question_routing_label: "genuine_rag"))
       non_english_question = create(:question, answer: build(:answer, question_routing_label: "non_english"))
