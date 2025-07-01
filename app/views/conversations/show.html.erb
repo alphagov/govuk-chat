@@ -1,4 +1,5 @@
 <%
+@conversation_data_attributes = { module: "chat-conversation" }
 if @questions.last && !@questions.last.answer
   @conversation_data_attributes[:"pending-answer-url"] = answer_question_path(@questions.last)
 end

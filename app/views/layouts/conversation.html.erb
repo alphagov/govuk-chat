@@ -29,13 +29,13 @@
 <% end %>
 
 <% content_for :content do %>
-  <main class="app-conversation-layout__main" id="content" role="main" data-module="conversation-onboarding-flow">
-    <%= tag.div(class: "app-conversation-layout__wrapper js-conversation-message-region", data: @conversation_data_attributes) do %>
+  <%= tag.main(class: "app-conversation-layout__main", id: "content", role: "main", data: @conversation_data_attributes) do %>
+    <div class="app-conversation-layout__wrapper js-conversation-message-region">
       <div class="app-conversation-layout__message-container" aria-labelledby="chat-history" role="region">
         <div class="app-conversation-layout__width-restrictor">
           <%= yield(:alerts) if content_for?(:alerts) %>
 
-          <h1 class="govuk-visually-hidden js-title"><%= page_title %></h1>
+          <h1 class="govuk-visually-hidden"><%= page_title %></h1>
 
           <div class="js-conversation-message-lists" data-progressive-disclosure-delay="<%= Rails.configuration.conversation_js_progressive_disclosure_delay || 2000 %>">
             <h2 id="chat-history" class="govuk-visually-hidden">Chat history</h2>
@@ -61,8 +61,8 @@
         </div>
       </div>
 
-    <% end %>
-  </main>
+    </div>
+  <% end %>
 <% end %>
 
 <%= render template: "layouts/application", locals: { conversation_layout: true, active_conversation: @active_conversation } %>

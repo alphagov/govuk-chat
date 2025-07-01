@@ -17,7 +17,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.module.addEventListener('conversation-append', e => this.conversationAppend(e))
       this.formContainer.addEventListener('submit', e => this.handleFormSubmission(e))
 
-      // existing new messages indicates we are in onboarding
+      // new messages indicates we are onboarding a user
       if (this.messageLists.hasNewMessages()) {
         this.conversationFormRegion.classList.add('govuk-visually-hidden')
         this.messageLists.progressivelyDiscloseMessages().then(() => {

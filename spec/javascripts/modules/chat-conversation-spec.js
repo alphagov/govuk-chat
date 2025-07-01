@@ -54,7 +54,7 @@ describe('ChatConversation module', () => {
       expect(handleFormSubmissionSpy).toHaveBeenCalled()
     })
 
-    describe('when initialised with existing new messages to indicate an onboarding status', () => {
+    describe('when initialised with existing new messages', () => {
       beforeEach(() => {
         const newMessagesList = moduleElement.querySelector('.js-new-conversation-messages-list')
         newMessagesList.innerHTML = `

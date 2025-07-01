@@ -147,7 +147,6 @@ private
   def prepare_for_show_view(conversation)
     @title = "Your conversation"
     @questions = conversation.questions_for_showing_conversation
-    @conversation_data_attributes = { module: "chat-conversation" }
     @active_conversation = conversation.persisted?
   end
 end

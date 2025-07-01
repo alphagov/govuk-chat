@@ -14,5 +14,3 @@
 //= require components/question-form
 //= require modules/chat-conversation
 //= require modules/conversation-message-lists
-//= require modules/conversation-onboarding-flow
-//= require modules/onboarding
