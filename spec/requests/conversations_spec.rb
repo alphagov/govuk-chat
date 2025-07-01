@@ -19,12 +19,14 @@ RSpec.describe "ConversationsController" do
   describe "GET :show" do
     context "when there is no conversation cookie" do
       context "and the response type is HTML" do
-        it "renders a welcome message" do
+        it "renders a welcome message as a new message" do
           get show_conversation_path
 
           expect(response).to have_http_status(:success)
-          expect(response.body)
-            .to have_content(/Thanks! To get started, ask me a question./)
+          expect(response.body).to have_selector(
+            ".js-new-conversation-messages-list",
+            text: "Hi 👋 I’m GOV.UK’s AI Chat.",
+          )
         end
 
         it "renders the question form" do
@@ -52,7 +54,7 @@ RSpec.describe "ConversationsController" do
           expect(JSON.parse(response.body)).to match({
             "title" => "Your conversation",
             "conversation_data" => { "module" => "chat-conversation" },
-            "conversation_append_html" => /<p>Thanks! To get started, ask me a question.<\/p>/,
+            "conversation_append_html" => /<p>Hi 👋 I’m GOV.UK’s AI Chat.<\/p>/,
             "form_html" => /<div class="app-c-question-form/,
           })
         end
@@ -71,6 +73,16 @@ RSpec.describe "ConversationsController" do
           get show_conversation_path
           expect_conversation_id_set_on_cookie(conversation)
         end
+      end
+
+      it "renders a welcome message in the message history" do
+        get show_conversation_path
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to have_selector(
+          ".js-conversation-message-history-list",
+          text: "Hi 👋 I’m GOV.UK’s AI Chat",
+        )
       end
 
       it "renders a 'Start new chat' without the focusable only modifier link" do

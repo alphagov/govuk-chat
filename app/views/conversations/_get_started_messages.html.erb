@@ -1,10 +1,19 @@
-<%= render "components/conversation_message", {
-  id: "start-chatting",
-  message: "Okay",
-  is_question: true,
-} %>
+<% messages = [] %>
 
-<%= render "components/conversation_message", {
-  message: "Thanks! To get started, ask me a question.",
-  skip_sanitize: true,
-} %>
+<% messages << capture do %>
+Hi 👋 I'm GOV.UK's AI Chat.
+<% end %>
+
+<% messages << capture do %>
+When you ask a question, I'll find the most relevant information from GOV.UK and use it to create an answer.
+<% end %>
+
+<% messages << capture do %>
+Ask a question to get started.
+<% end %>
+
+<% messages.each do |message| %>
+  <%= render "components/conversation_message", {
+    message:,
+  } %>
+<% end %>

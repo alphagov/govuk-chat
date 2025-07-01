@@ -14,19 +14,21 @@ if @create_question.errors.any?
   }))
 end
 
-message_history = []
-message_history << render("onboarding/limitations_messages")
-message_history << render("onboarding/tell_me_more_messages") if @more_information
-message_history << render("onboarding/privacy_messages")
-message_history << render("get_started_messages")
-@questions.each do |question|
-  message_history << render("question", question:)
-  if question.answer
-    message_history << render("answer", answer: question.answer, question_limit_warning: question == @questions.last)
+if @active_conversation
+  message_history = []
+  message_history << render("get_started_messages")
+  @questions.each do |question|
+    message_history << render("question", question:)
+    if question.answer
+      message_history << render("answer", answer: question.answer, question_limit_warning: question == @questions.last)
+    end
   end
+
+  content_for(:message_history, safe_join(message_history))
+else
+  content_for(:new_messages, render("get_started_messages"))
 end
 
-content_for(:message_history, safe_join(message_history))
 content_for(
   :form,
   render("form", { create_question: @create_question }),
