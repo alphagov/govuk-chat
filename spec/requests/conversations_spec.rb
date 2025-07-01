@@ -18,46 +18,30 @@ RSpec.describe "ConversationsController" do
 
   describe "GET :show" do
     context "when there is no conversation cookie" do
-      context "and the response type is HTML" do
-        it "renders a welcome message as a new message" do
-          get show_conversation_path
+      it "renders a welcome message as a new message" do
+        get show_conversation_path
 
-          expect(response).to have_http_status(:success)
-          expect(response.body).to have_selector(
-            ".js-new-conversation-messages-list",
-            text: "Hi 👋 I’m GOV.UK’s AI Chat.",
-          )
-        end
-
-        it "renders the question form" do
-          get show_conversation_path
-
-          expect(response).to have_http_status(:success)
-          expect(response.body).to render_create_question_form
-        end
-
-        it "renders a focusable only 'Start new chat' link" do
-          get show_conversation_path
-
-          expect(response.body).to have_selector(
-            "a.app-c-header__clear-chat.app-c-header__clear-chat--focusable-only",
-            text: "Start new chat",
-          )
-        end
+        expect(response).to have_http_status(:success)
+        expect(response.body).to have_selector(
+          ".js-new-conversation-messages-list",
+          text: "Hi 👋 I’m GOV.UK’s AI Chat.",
+        )
       end
 
-      context "and the response type is JSON" do
-        it "returns a success response with the correct JSON" do
-          get show_conversation_path, params: { format: :json }
+      it "renders the question form" do
+        get show_conversation_path
 
-          expect(response).to have_http_status(:success)
-          expect(JSON.parse(response.body)).to match({
-            "title" => "Your conversation",
-            "conversation_data" => { "module" => "chat-conversation" },
-            "conversation_append_html" => /<p>Hi 👋 I’m GOV.UK’s AI Chat.<\/p>/,
-            "form_html" => /<div class="app-c-question-form/,
-          })
-        end
+        expect(response).to have_http_status(:success)
+        expect(response.body).to render_create_question_form
+      end
+
+      it "renders a focusable only 'Start new chat' link" do
+        get show_conversation_path
+
+        expect(response.body).to have_selector(
+          "a.app-c-header__clear-chat.app-c-header__clear-chat--focusable-only",
+          text: "Start new chat",
+        )
       end
     end
 
@@ -196,20 +180,6 @@ RSpec.describe "ConversationsController" do
 
           expect(response.body).to include(question.message)
           expect(response.body).not_to include(older_question.message)
-        end
-      end
-
-      context "and the response format is JSON" do
-        before do
-          conversation = create(:conversation, :not_expired, signon_user:)
-          cookies[:conversation_id] = conversation.id
-        end
-
-        it "returns a bad request response" do
-          get show_conversation_path, params: { format: :json }
-
-          expect(response).to have_http_status(:bad_request)
-          expect(JSON.parse(response.body)).to match({})
         end
       end
     end

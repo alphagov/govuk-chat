@@ -23,7 +23,7 @@ Rails.application.routes.draw do
     get "", to: "homepage#index", as: :homepage
 
     scope :conversation do
-      get "", to: "conversations#show", as: :show_conversation, constraints: html_json_constraint
+      get "", to: "conversations#show", as: :show_conversation
       post "", to: "conversations#update", as: :update_conversation, constraints: html_json_constraint
 
       get "/questions/:question_id/answer", to: "conversations#answer",

@@ -7,25 +7,6 @@ class ConversationsController < BaseController
     @conversation ||= Conversation.new
     prepare_for_show_view(@conversation)
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
-
-    respond_to do |format|
-      format.html { render :show }
-      format.json do
-        if cookies[:conversation_id].blank?
-          render json: {
-            title: @title,
-            conversation_data: @conversation_data_attributes,
-            conversation_append_html: render_to_string(partial: "get_started_messages",
-                                                       formats: :html),
-            form_html: render_to_string(partial: "form",
-                                        formats: :html,
-                                        locals: { create_question: @create_question }),
-          }
-        else
-          render json: {}, status: :bad_request
-        end
-      end
-    end
   end
 
   def clear; end
