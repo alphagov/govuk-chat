@@ -57,6 +57,7 @@ class Question < ApplicationRecord
       "answer" => answer&.serialize_for_export,
       "source" => conversation.source,
       "signon_user_id" => conversation.signon_user_id,
+      "end_user_id" => conversation.hashed_end_user_id,
     )
   end
 end

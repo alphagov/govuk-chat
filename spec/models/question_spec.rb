@@ -159,7 +159,7 @@ RSpec.describe Question do
     context "when the question has an answer" do
       it "returns a serialized question" do
         signon_user = build(:signon_user)
-        conversation = build(:conversation, signon_user:)
+        conversation = build(:conversation, signon_user:, end_user_id: "123")
         question = create(:question, :with_answer, conversation:)
 
         expect(question.serialize_for_export)
@@ -167,6 +167,7 @@ RSpec.describe Question do
           .and include("answer" => question.answer.serialize_for_export)
           .and include("source" => "web")
           .and include("signon_user_id" => signon_user.id)
+          .and include("end_user_id" => conversation.hashed_end_user_id)
       end
     end
 

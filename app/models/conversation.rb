@@ -38,4 +38,14 @@ class Conversation < ApplicationRecord
   def active_answered_questions_after?(timestamp)
     questions.active.answered.where("questions.created_at > ?", timestamp).exists?
   end
+
+  def hashed_end_user_id
+    return nil if end_user_id.blank?
+
+    OpenSSL::HMAC.hexdigest(
+      "SHA256",
+      Rails.application.secret_key_base,
+      end_user_id,
+    )
+  end
 end
