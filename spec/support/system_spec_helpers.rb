@@ -10,14 +10,6 @@ module SystemSpecHelpers
       .and_return("claude_structured_answer")
   end
 
-  def given_i_have_confirmed_i_understand_chat_risks
-    visit onboarding_limitations_path
-
-    click_button "I understand"
-    click_button "Okay, start chatting"
-  end
-  alias_method :and_i_have_confirmed_i_understand_chat_risks, :given_i_have_confirmed_i_understand_chat_risks
-
   def dismiss_cookie_banner
     visit homepage_path
 

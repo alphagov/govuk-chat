@@ -1,6 +1,5 @@
 RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_content_index do
   scenario do
-    given_i_have_confirmed_i_understand_chat_risks
     when_i_visit_the_conversation_page
     and_i_enter_a_question
     then_i_see_the_answer_is_pending
