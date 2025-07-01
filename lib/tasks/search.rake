@@ -60,7 +60,10 @@ namespace :search do
       end
     end
 
-    embeddings = Search::TextToEmbedding.call(chunks.map(&:plain_content), llm_provider: :openai)
+    embeddings = Search::TextToEmbedding.call(
+      chunks.map(&:plain_content),
+      llm_provider: :titan,
+    )
     repository = Search::ChunkedContentRepository.new
     indexed = 0
 
@@ -72,7 +75,9 @@ namespace :search do
     puts "#{deleted} conflicting chunks deleted"
 
     chunks.each.with_index do |chunk, index|
-      document = chunk.to_opensearch_hash.merge(openai_embedding: embeddings[index])
+      document = chunk.to_opensearch_hash.merge(
+        titan_embedding: embeddings[index],
+      )
       repository.index_document(chunk.id, document)
       indexed += 1
     end
