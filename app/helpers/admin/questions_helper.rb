@@ -31,6 +31,19 @@ module Admin
             class: "govuk-link",
           ),
         },
+        (
+          if conversation.end_user_id.present?
+            {
+              field: "End user ID",
+              value: link_to(
+                conversation.end_user_id,
+                admin_questions_path(end_user_id: conversation.end_user_id),
+                title: "View whole conversation",
+                class: "govuk-link",
+              ),
+            }
+          end
+        ),
         {
           field: "Question number",
           value: "#{question_number} of #{total_questions}",

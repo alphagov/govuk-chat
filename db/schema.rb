@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_12_095735) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_27_132815) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -90,6 +90,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_095735) do
     t.datetime "updated_at", null: false
     t.uuid "signon_user_id"
     t.enum "source", default: "web", null: false, enum_type: "conversation_source"
+    t.string "end_user_id"
     t.index ["created_at"], name: "index_conversations_on_created_at"
     t.index ["signon_user_id"], name: "index_conversations_on_signon_user_id"
   end

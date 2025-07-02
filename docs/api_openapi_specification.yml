@@ -535,6 +535,10 @@ components:
         An identifier for an individual end-user client to be used to provide
         individual end-user rate limiting to ensure that no one client can
         consume all of an API users' limits.
+
+        This header is also used to look up conversations belonging to that
+        end user. Note that no backend validation is done on the value of this
+        header, it's up to the client to ensure that the value is unique.
       schema:
         type: string
   headers:

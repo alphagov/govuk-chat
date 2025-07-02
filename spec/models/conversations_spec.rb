@@ -180,4 +180,22 @@ RSpec.describe Conversation do
       expect(conversation.active_answered_questions_after?(question.created_at)).to be(false)
     end
   end
+
+  describe "#hashed_end_user_id" do
+    it "returns nil if end_user_id is blank" do
+      conversation = create(:conversation, end_user_id: nil)
+      expect(conversation.hashed_end_user_id).to be_nil
+    end
+
+    it "returns the hashed end_user_id" do
+      conversation = create(:conversation, end_user_id: "12345")
+      hashed_id = OpenSSL::HMAC.hexdigest(
+        "SHA256",
+        Rails.application.secret_key_base,
+        "12345",
+      )
+
+      expect(conversation.hashed_end_user_id).to eq(hashed_id)
+    end
+  end
 end

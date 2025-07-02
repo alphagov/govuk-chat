@@ -8,6 +8,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :answer_feedback_useful, :boolean
   attribute :question_routing_label
   attribute :signon_user_id
+  attribute :end_user_id
 
   validate :validate_dates
 
@@ -38,6 +39,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
       scope = question_routing_label_scope(scope)
       scope = ordering_scope(scope)
       scope = signon_user_scope(scope)
+      scope = end_user_id_scope(scope)
       scope.page(page)
            .per(25)
     end
@@ -120,6 +122,12 @@ private
     return scope if signon_user_id.blank?
 
     scope.joins(:conversation).where(conversation: { signon_user_id: signon_user_id, source: :api })
+  end
+
+  def end_user_id_scope(scope)
+    return scope if end_user_id.blank?
+
+    scope.joins(:conversation).where(conversation: { end_user_id: end_user_id, source: :api })
   end
 
   def question_routing_label_scope(scope)

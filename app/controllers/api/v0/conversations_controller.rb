@@ -3,7 +3,11 @@ class Api::V0::ConversationsController < Api::BaseController
   before_action :find_conversation, only: %i[show update answer answer_feedback questions]
 
   def create
-    conversation = Conversation.new(signon_user: current_user, source: :api)
+    conversation = Conversation.new(
+      signon_user: current_user,
+      source: :api,
+      end_user_id: end_user_id_header,
+    )
     form = Form::CreateQuestion.new(question_params.merge(conversation:))
 
     if form.valid?
@@ -124,9 +128,11 @@ class Api::V0::ConversationsController < Api::BaseController
 private
 
   def find_conversation
+    where = { signon_user_id: current_user.id, source: :api, end_user_id: end_user_id_header }
+
     @conversation = Conversation
                     .active
-                    .where(signon_user_id: current_user.id, source: :api)
+                    .where(where)
                     .find(params[:conversation_id])
   end
 
@@ -143,5 +149,9 @@ private
       question.conversation_id,
       question.id,
     )
+  end
+
+  def end_user_id_header
+    request.headers.fetch("HTTP_GOVUK_CHAT_END_USER_ID", "").strip.presence
   end
 end

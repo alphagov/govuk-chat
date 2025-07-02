@@ -11,6 +11,13 @@
     <%= hidden_field_tag(:signon_user_id, params[:signon_user_id]) %>
   <% end %>
 
+  <% if filter.end_user_id.present? %>
+    <p class="govuk-body">
+    Filtering by end user: "<%= filter.end_user_id %>"
+    </p>
+    <%= hidden_field_tag(:end_user_id, params[:end_user_id]) %>
+  <% end %>
+
   <% if conversation.present? %>
     <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">
       Filtering by conversation ID:

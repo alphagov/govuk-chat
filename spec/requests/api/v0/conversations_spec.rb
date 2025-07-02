@@ -7,77 +7,50 @@ RSpec.describe "Api::V0::ConversationsController" do
     login_as(api_user)
   end
 
-  shared_examples "limits access based on permissions and conversation source" do |routes:|
-    routes.each do |route|
-      method = route[:method]
-      path = route[:path]
-      route_params = route[:route_params] || []
-      params = route[:params] || {}
+  shared_examples "limits access based on Signon permissions" do
+    let(:method) { :get }
+    let(:params) { {} }
 
-      describe "responds with forbidden if user doesn't have conversation-api permission" do
-        before { login_as(create(:signon_user)) }
+    describe "responds with forbidden if user doesn't have conversation-api permission" do
+      before { login_as(create(:signon_user)) }
 
-        it "returns 403 for #{method} #{path}" do
-          process(
-            method.to_sym,
-            public_send(path.to_sym, *route_params),
-            params: params,
-            as: :json,
-          )
-
-          expect(response).to have_http_status(:forbidden)
-        end
-      end
-
-      next if path == :api_v0_create_conversation_path
-
-      describe "ensures the conversation was created by the API" do
-        it "returns 404 when conversation source is not :api for #{method} #{path}" do
-          conversation.update!(source: :web)
-
-          process(
-            method.to_sym,
-            public_send(path.to_sym, *route_params),
-            params: params,
-            as: :json,
-          )
-
-          expect(response).to have_http_status(:not_found)
-        end
+      it "returns 403" do
+        process(method, url, params:, as: :json)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
 
-  it_behaves_like "limits access based on permissions and conversation source",
-                  routes: [
-                    {
-                      path: :api_v0_create_conversation_path,
-                      method: :post,
-                      params: { user_question: "question" },
-                    },
-                    {
-                      path: :api_v0_show_conversation_path,
-                      method: :get,
-                      route_params: [SecureRandom.uuid],
-                    },
-                    {
-                      path: :api_v0_update_conversation_path,
-                      method: :put,
-                      route_params: [SecureRandom.uuid],
-                      params: { user_question: "question" },
-                    },
-                    {
-                      path: :api_v0_answer_question_path,
-                      method: :get,
-                      route_params: [SecureRandom.uuid, SecureRandom.uuid],
-                    },
-                    {
-                      path: :api_v0_answer_feedback_path,
-                      method: :post,
-                      route_params: [SecureRandom.uuid, SecureRandom.uuid],
-                      params: { useful: true },
-                    },
-                  ]
+  shared_examples "limits access based on Signon and end user permissions" do
+    let(:method) { :get }
+    let(:params) { {} }
+
+    include_examples "limits access based on Signon permissions"
+
+    describe "ensures the conversation belongs to the end user" do
+      it "returns a 404 if the conversation was created by another end user" do
+        conversation.update!(end_user_id: "user-123")
+
+        process(method, url, params:, as: :json)
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
+
+  shared_examples "limits access based on conversation source" do
+    let(:method) { :get }
+    let(:params) { {} }
+
+    describe "ensures the conversation was created by the API" do
+      it "returns 404 when conversation source is not :api" do
+        conversation.update!(source: :web)
+
+        process(method, url, params:, as: :json)
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
 
   it_behaves_like "throttles traffic for an access token",
                   routes: {
@@ -146,6 +119,14 @@ RSpec.describe "Api::V0::ConversationsController" do
   end
 
   describe "GET :show" do
+    it_behaves_like "limits access based on Signon and end user permissions" do
+      let(:url) { api_v0_show_conversation_path(conversation) }
+    end
+
+    it_behaves_like "limits access based on conversation source" do
+      let(:url) { api_v0_show_conversation_path(conversation) }
+    end
+
     it "returns the expected JSON" do
       pending_question = create(:question, conversation:)
       get api_v0_show_conversation_path(conversation)
@@ -199,6 +180,14 @@ RSpec.describe "Api::V0::ConversationsController" do
   end
 
   describe "GET :questions" do
+    it_behaves_like "limits access based on Signon and end user permissions" do
+      let(:url) { api_v0_conversation_questions_path(conversation) }
+    end
+
+    it_behaves_like "limits access based on conversation source" do
+      let(:url) { api_v0_conversation_questions_path(conversation) }
+    end
+
     it "returns an empty array if there are no answered questions" do
       create(:question, conversation:)
       expected_response = ConversationQuestions.new(
@@ -399,6 +388,12 @@ RSpec.describe "Api::V0::ConversationsController" do
   end
 
   describe "POST :create" do
+    it_behaves_like "limits access based on Signon permissions" do
+      let(:method) { :post }
+      let(:url) { api_v0_create_conversation_path }
+      let(:params) { { user_question: "question" } }
+    end
+
     context "when the question is valid" do
       let(:payload) { { user_question: "What is the capital of France?" } }
 
@@ -436,6 +431,24 @@ RSpec.describe "Api::V0::ConversationsController" do
         conversation = Conversation.last
         expect(conversation.source).to eq("api")
       end
+
+      context "when setting the end_user_id from the header" do
+        it "sets the attribute to the value in the header" do
+          headers = { "HTTP_GOVUK_CHAT_END_USER_ID" => "test-user-123" }
+          post(api_v0_create_conversation_path, params: payload, headers:, as: :json)
+
+          conversation = Conversation.last
+          expect(conversation.end_user_id).to eq("test-user-123")
+        end
+
+        it "omits empty values" do
+          headers = { "HTTP_GOVUK_CHAT_END_USER_ID" => "    " }
+          post(api_v0_create_conversation_path, params: payload, headers:, as: :json)
+
+          conversation = Conversation.last
+          expect(conversation.end_user_id).to be_nil
+        end
+      end
     end
 
     context "when the question is invalid" do
@@ -470,6 +483,18 @@ RSpec.describe "Api::V0::ConversationsController" do
         api_user,
         questions: [create(:question, :with_answer)],
       )
+    end
+
+    it_behaves_like "limits access based on Signon and end user permissions" do
+      let(:method) { :put }
+      let(:url) { api_v0_update_conversation_path(conversation) }
+      let(:params) { { user_question: "question" } }
+    end
+
+    it_behaves_like "limits access based on conversation source" do
+      let(:method) { :put }
+      let(:url) { api_v0_update_conversation_path(conversation) }
+      let(:params) { { user_question: "question" } }
     end
 
     context "when the params are valid" do
@@ -525,6 +550,14 @@ RSpec.describe "Api::V0::ConversationsController" do
   end
 
   describe "GET :answer" do
+    it_behaves_like "limits access based on Signon and end user permissions" do
+      let(:url) { api_v0_answer_question_path(conversation, question) }
+    end
+
+    it_behaves_like "limits access based on conversation source" do
+      let(:url) { api_v0_answer_question_path(conversation, question) }
+    end
+
     context "when an answer has been generated for the question" do
       let!(:answer) { create(:answer, question:) }
 
@@ -565,6 +598,18 @@ RSpec.describe "Api::V0::ConversationsController" do
 
   describe "POST :answer_feedback" do
     let!(:answer) { create(:answer, question:) }
+
+    it_behaves_like "limits access based on Signon and end user permissions" do
+      let(:method) { :post }
+      let(:url) { api_v0_answer_feedback_path(conversation, answer) }
+      let(:params) { { useful: true } }
+    end
+
+    it_behaves_like "limits access based on conversation source" do
+      let(:method) { :post }
+      let(:url) { api_v0_answer_feedback_path(conversation, answer) }
+      let(:params) { { useful: true } }
+    end
 
     context "when the answer has no feedback" do
       it "returns a created status" do
