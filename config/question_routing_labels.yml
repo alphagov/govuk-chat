@@ -73,9 +73,9 @@ non_english:
   canned_responses:
     - Sorry, I cannot answer that. Please translate your question into English and try again.
 
-personal_info:
-  label: "Personal information"
-  use_answer: false
+requires_account_data:
+  label: "Requires account data"
+  use_answer: true
   answer_status: unanswerable_question_routing
   canned_responses:
     - I do not have access to any personal or confidential information. You can try searching for the [service you need on GOV.UK](https://www.gov.uk/search/services). Or ask me another question, if you need more help.
