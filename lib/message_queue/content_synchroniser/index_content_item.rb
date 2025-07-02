@@ -38,13 +38,21 @@ class MessageQueue::ContentSynchroniser
     end
 
     def index_chunks(indexable_chunks)
-      embeddings = Search::TextToEmbedding.call(indexable_chunks.map(&:plain_content), llm_provider: :openai)
+      openai_embeddings = Search::TextToEmbedding.call(
+        indexable_chunks.map(&:plain_content), llm_provider: :openai
+      )
+      titan_embeddings = Search::TextToEmbedding.call(
+        indexable_chunks.map(&:plain_content), llm_provider: :titan
+      )
 
       created = 0
       updated = 0
 
       indexable_chunks.each.with_index do |chunk, index|
-        document = chunk.to_opensearch_hash.merge(openai_embedding: embeddings[index])
+        document = chunk.to_opensearch_hash.merge(
+          openai_embedding: openai_embeddings[index],
+          titan_embedding: titan_embeddings[index],
+        )
         result = chunked_content_repository.index_document(chunk.id, document)
 
         case result
