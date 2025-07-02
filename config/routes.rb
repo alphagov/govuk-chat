@@ -22,15 +22,8 @@ Rails.application.routes.draw do
   scope :chat, format: false, defaults: { format: "html" }, constraints: html_constraint do
     get "", to: "homepage#index", as: :homepage
 
-    scope :onboarding, constraints: html_json_constraint do
-      get "", to: "onboarding#limitations", as: :onboarding_limitations
-      post "", to: "onboarding#limitations_confirm", as: :onboarding_limitations_confirm
-      get "privacy", to: "onboarding#privacy", as: :onboarding_privacy
-      post "privacy", to: "onboarding#privacy_confirm", as: :onboarding_privacy_confirm
-    end
-
     scope :conversation do
-      get "", to: "conversations#show", as: :show_conversation, constraints: html_json_constraint
+      get "", to: "conversations#show", as: :show_conversation
       post "", to: "conversations#update", as: :update_conversation, constraints: html_json_constraint
 
       get "/questions/:question_id/answer", to: "conversations#answer",

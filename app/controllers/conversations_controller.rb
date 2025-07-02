@@ -1,6 +1,5 @@
 class ConversationsController < BaseController
   layout "conversation", except: %i[answer clear]
-  before_action :require_onboarding_completed
   before_action :find_conversation
   before_action :require_conversation, only: %i[answer answer_feedback clear]
 
@@ -8,25 +7,6 @@ class ConversationsController < BaseController
     @conversation ||= Conversation.new
     prepare_for_show_view(@conversation)
     @create_question = Form::CreateQuestion.new(conversation: @conversation)
-
-    respond_to do |format|
-      format.html { render :show }
-      format.json do
-        if cookies[:conversation_id].blank?
-          render json: {
-            title: @title,
-            conversation_data: @conversation_data_attributes,
-            conversation_append_html: render_to_string(partial: "get_started_messages",
-                                                       formats: :html),
-            form_html: render_to_string(partial: "form",
-                                        formats: :html,
-                                        locals: { create_question: @create_question }),
-          }
-        else
-          render json: {}, status: :bad_request
-        end
-      end
-    end
   end
 
   def clear; end
@@ -116,18 +96,11 @@ private
     set_conversation_cookie(@conversation)
   rescue ActiveRecord::RecordNotFound
     cookies.delete(:conversation_id)
-    conversation_not_found
   end
 
   def require_conversation
-    conversation_not_found unless @conversation
-  end
-
-  def conversation_not_found
-    respond_to do |format|
-      format.html { redirect_to onboarding_limitations_path }
-      format.json { render json: { error: "Conversation not found" }, status: :not_found }
-    end
+    # Raising an error for Rails responses prevents cookie changes being persisted
+    raise ActionController::RoutingError, "Conversation not found" unless @conversation
   end
 
   def question_success_json(question)
@@ -174,18 +147,6 @@ private
   def prepare_for_show_view(conversation)
     @title = "Your conversation"
     @questions = conversation.questions_for_showing_conversation
-    @more_information = session[:more_information].present?
-    @conversation_data_attributes = { module: "chat-conversation" }
     @active_conversation = conversation.persisted?
-  end
-
-  def require_onboarding_completed
-    return if session[:onboarding] == "conversation" ||
-      cookies[:conversation_id].present?
-
-    respond_to do |format|
-      format.html { redirect_to onboarding_limitations_path }
-      format.json { render json: { error: "Onboarding incomplete" }, status: :bad_request }
-    end
   end
 end

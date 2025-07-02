@@ -1,7 +1,0 @@
-<%
-content_for(:title, @title)
-message_history = render("limitations_messages") + (@more_information ? render("tell_me_more_messages") : "")
-content_for(:message_history, message_history)
-content_for(:new_messages, render("privacy_messages"))
-content_for(:form, render("privacy_form"))
-%>

@@ -4,20 +4,8 @@ RSpec.describe "ConversationsController" do
 
   before { login_as(signon_user) }
 
-  it_behaves_like "handles a request for a user who hasn't completed onboarding",
-                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "handles a request for a user who hasn't completed onboarding",
-                  routes: { clear_conversation_path: %i[get post] },
-                  with_json: false
-  it_behaves_like "handles a request for a user who hasn't completed onboarding",
-                  routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
-    let(:route_params) { [SecureRandom.uuid] }
-  end
-
   it_behaves_like "requires a users conversation cookie to reference an active conversation",
-                  routes: { show_conversation_path: %i[get], update_conversation_path: %i[post] }
-  it_behaves_like "requires a users conversation cookie to reference an active conversation",
-                  routes: { clear_conversation_path: %i[get post] },
+                  routes: { clear_conversation_path: %i[get] },
                   with_json: false
   it_behaves_like "requires a users conversation cookie to reference an active conversation",
                   routes: { answer_question_path: %i[get], answer_feedback_path: %i[post] } do
@@ -29,56 +17,31 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "GET :show" do
-    include_context "with onboarding completed"
-
     context "when there is no conversation cookie" do
-      context "and session[:onboarding] is 'conversation'" do
-        include_context "with onboarding completed"
+      it "renders a welcome message as a new message" do
+        get show_conversation_path
 
-        it "does not redirect to the onboarding flow" do
-          get show_conversation_path
-          expect(response).to have_http_status(:success)
-        end
+        expect(response).to have_http_status(:success)
+        expect(response.body).to have_selector(
+          ".js-new-conversation-messages-list",
+          text: "Hi 👋 I’m GOV.UK’s AI Chat.",
+        )
       end
 
-      context "and the response type is HTML" do
-        it "renders an onboarding message with a feedback survey link" do
-          get show_conversation_path
+      it "renders the question form" do
+        get show_conversation_path
 
-          expect(response).to have_http_status(:success)
-          expect(response.body)
-            .to have_content(/Thanks! To get started, ask me a question./)
-        end
-
-        it "renders the question form" do
-          get show_conversation_path
-
-          expect(response).to have_http_status(:success)
-          expect(response.body).to render_create_question_form
-        end
-
-        it "renders a focusable only 'Start new chat' link" do
-          get show_conversation_path
-
-          expect(response.body).to have_selector(
-            "a.app-c-header__clear-chat.app-c-header__clear-chat--focusable-only",
-            text: "Start new chat",
-          )
-        end
+        expect(response).to have_http_status(:success)
+        expect(response.body).to render_create_question_form
       end
 
-      context "and the response type is JSON" do
-        it "returns a success response with the correct JSON" do
-          get show_conversation_path, params: { format: :json }
+      it "renders a focusable only 'Start new chat' link" do
+        get show_conversation_path
 
-          expect(response).to have_http_status(:success)
-          expect(JSON.parse(response.body)).to match({
-            "title" => "Your conversation",
-            "conversation_data" => { "module" => "chat-conversation" },
-            "conversation_append_html" => /<p>Thanks! To get started, ask me a question.<\/p>/,
-            "form_html" => /<div class="app-c-question-form/,
-          })
-        end
+        expect(response.body).to have_selector(
+          "a.app-c-header__clear-chat.app-c-header__clear-chat--focusable-only",
+          text: "Start new chat",
+        )
       end
     end
 
@@ -94,6 +57,16 @@ RSpec.describe "ConversationsController" do
           get show_conversation_path
           expect_conversation_id_set_on_cookie(conversation)
         end
+      end
+
+      it "renders a welcome message in the message history" do
+        get show_conversation_path
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to have_selector(
+          ".js-conversation-message-history-list",
+          text: "Hi 👋 I’m GOV.UK’s AI Chat",
+        )
       end
 
       it "renders a 'Start new chat' without the focusable only modifier link" do
@@ -209,34 +182,10 @@ RSpec.describe "ConversationsController" do
           expect(response.body).not_to include(older_question.message)
         end
       end
-
-      context "and the response format is JSON" do
-        before do
-          conversation = create(:conversation, :not_expired, signon_user:)
-          cookies[:conversation_id] = conversation.id
-        end
-
-        it "returns a bad request response" do
-          get show_conversation_path, params: { format: :json }
-
-          expect(response).to have_http_status(:bad_request)
-          expect(JSON.parse(response.body)).to match({})
-        end
-      end
-    end
-
-    context "when a users onboarding has been completed" do
-      it "renders the page successfully" do
-        get show_conversation_path
-        expect(response).to have_http_status(:success)
-        expect(response.body).to render_create_question_form
-      end
     end
   end
 
   describe "POST :update" do
-    include_context "with onboarding completed"
-
     it "sets the converation_id cookie with valid params" do
       freeze_time do
         post update_conversation_path, params: { create_question: { user_question: "How much tax should I be paying?" } }
@@ -352,7 +301,6 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "GET :answer" do
-    include_context "with onboarding completed"
     let(:conversation) { create(:conversation, signon_user:) }
 
     before do
@@ -455,8 +403,6 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "POST :answer_feedback" do
-    include_context "with onboarding completed"
-
     let(:conversation) { create(:conversation, signon_user:) }
     let(:question) { create(:question, conversation:) }
 
@@ -540,8 +486,6 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "GET :clear" do
-    include_context "with onboarding completed"
-
     context "when the conversation is active" do
       let(:conversation) { create(:conversation, :not_expired, signon_user:) }
 
@@ -560,8 +504,6 @@ RSpec.describe "ConversationsController" do
   end
 
   describe "POST :clear" do
-    include_context "with onboarding completed"
-
     context "when the conversation is active" do
       let(:conversation) { create(:conversation, :not_expired, signon_user:) }
 
