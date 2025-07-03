@@ -282,7 +282,7 @@ GEM
     govuk_personalisation (1.1.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
-    govuk_publishing_components (58.1.0)
+    govuk_publishing_components (58.1.1)
       govuk_app_config
       govuk_personalisation (>= 0.7.0)
       kramdown
@@ -553,7 +553,7 @@ GEM
     opentelemetry-instrumentation-gruf (0.3.0)
       opentelemetry-api (>= 1.0.0)
       opentelemetry-instrumentation-base (~> 0.23.0)
-    opentelemetry-instrumentation-http (0.25.0)
+    opentelemetry-instrumentation-http (0.25.1)
       opentelemetry-api (~> 1.0)
       opentelemetry-instrumentation-base (~> 0.23.0)
     opentelemetry-instrumentation-http_client (0.23.0)
@@ -1059,7 +1059,7 @@ CHECKSUMS
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
-  govuk_publishing_components (58.1.0) sha256=d1aa2e37c57f884f3796e09a515f8a95ae4bb8f988281ac117ba038469569f35
+  govuk_publishing_components (58.1.1) sha256=a50681c23590e56afd6cabf4a7015d9251bf70700d84624b95e6f5220293978e
   govuk_schemas (6.0.0) sha256=e53d5bb946a0bac29aa75635146fe29b8b28dfc186035b39603583b0dbd14a8b
   govuk_sidekiq (10.0.0) sha256=0d0485f6946f5e212eb5d6f5105c406a25f3cd059592a5b490b78f1d71818de8
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
@@ -1153,7 +1153,7 @@ CHECKSUMS
   opentelemetry-instrumentation-graphql (0.29.0) sha256=b4f8e9f3f1a06268fb53f0077a67e1437f07d1946fb1d9e1d5ce8861228089e2
   opentelemetry-instrumentation-grpc (0.2.1) sha256=4d1a4ee8b5e41636da942954b90b8d974922c6a17cf896708c3d539b815ab992
   opentelemetry-instrumentation-gruf (0.3.0) sha256=9c45dd36ccee3bbc0f43ab1bf6c3ddee4eaa4b16ab4033658dbc7ec10f9cdee7
-  opentelemetry-instrumentation-http (0.25.0) sha256=81b2584c56112b67a01cd7595c4fdd413553423f2312640fb4311c97b94d3f5d
+  opentelemetry-instrumentation-http (0.25.1) sha256=70424c12fa60f850f0a8218d3ce425ed9bd7d548cd43b5572876b3301f85bb3f
   opentelemetry-instrumentation-http_client (0.23.0) sha256=90cf55b55d95c207e6bc9c5d78662aed4f727d0fd722e638ffcd8225da2f9cdc
   opentelemetry-instrumentation-koala (0.21.0) sha256=3c43dc8de4c111463c897602696c548c2d70cc51ccf30b19ec9452184b4ac8ba
   opentelemetry-instrumentation-lmdb (0.23.0) sha256=617ecfffc389dca3af5afbce58d0e8380b95e158896d00d22cec39b5b75544d7
