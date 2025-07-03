@@ -3,7 +3,10 @@ RSpec.describe MessageQueue::MessageProcessor do
 
   describe "#process" do
     context "when given a payload we can index", :chunked_content_index do
-      before { stub_any_openai_embedding }
+      before do
+        stub_any_openai_embedding
+        stub_bedrock_titan_embedding
+      end
 
       let(:base_path) { "/news" }
       let(:payload_version) { 20 }

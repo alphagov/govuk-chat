@@ -13,6 +13,7 @@ RSpec.describe MessageQueue::ContentSynchroniser::IndexContentItem, :chunked_con
 
     before do
       stub_any_openai_embedding
+      stub_bedrock_titan_embedding
       allow(Chunking::ContentItemToChunks).to receive(:call).with(content_item).and_return(chunks)
     end
 
@@ -32,6 +33,16 @@ RSpec.describe MessageQueue::ContentSynchroniser::IndexContentItem, :chunked_con
         .by(chunks.length)
 
       expect(Search::TextToEmbedding::OpenAI).to have_received(:call)
+    end
+
+    it "applies Titan embedding to the data going into the search index" do
+      allow(Search::TextToEmbedding::Titan).to receive(:call).and_call_original
+
+      expect { described_class.call(content_item, repository) }
+        .to change { repository.count(exists: { field: :titan_embedding }) }
+        .by(chunks.length)
+
+      expect(Search::TextToEmbedding::Titan).to have_received(:call)
     end
 
     it "returns a Result object" do

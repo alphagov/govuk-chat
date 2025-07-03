@@ -6,6 +6,12 @@ module StubBedrock
     bedrock_client
   end
 
+  def stub_bedrock_titan_embedding(text = "text")
+    stub_bedrock_invoke_model(
+      bedrock_titan_embedding_response(mock_titan_embedding(text)),
+    )
+  end
+
   def bedrock_titan_embedding_response(embedding_array)
     {
       content_type: "application/json",
