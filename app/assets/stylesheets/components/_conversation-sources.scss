@@ -4,70 +4,104 @@
   padding-top: govuk-spacing(4);
 }
 
-.app-c-conversation-sources-list {
-   // there currently isn't a `govuk-spacing` mixin that produces 35px
-  padding-left: 35px;
-
-  .app-c-conversation-sources-list__item {
-    @include govuk-responsive-margin(3, "bottom");
-  }
-}
-
-.app-c-warning-text {
+.app-c-conversation-sources__accuracy-warning {
   display: flex;
-  margin-bottom: govuk-spacing(2);
-  padding: govuk-spacing(2) 0;
+  margin-bottom: govuk-spacing(5);
+}
+
+.app-c-conversation-sources__accuracy-warning-icon {
+    margin-right: govuk-spacing(2);
+  }
+
+  .app-c-conversation-sources__accuracy-warning-text {
+    @include govuk-font(19, $weight: "bold");
+    width: 100%;
+  }
+
+.app-c-conversation-sources__details {
+  padding-left: govuk-spacing(6);
   position: relative;
-  @include govuk-font($size: 19);
+}
 
-  @include govuk-media-query($from: tablet) {
-    align-items: center;
+.app-c-conversation-sources__details[open] {
+  .app-c-conversation-sources__details-summary::after {
+    @include prefixed-transform($rotate: 225deg, $translateY: 1px);
   }
 }
 
-.app-c-warning-text__icon {
-  @include govuk-typography-weight-bold;
-  box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  left: 0;
-  min-width: 25px;
-  min-height: 25px;
-  border: none;
-  border-radius: 50%;
-  color: govuk-colour("white");
-  background: govuk-colour("black");
-  font-size: 18px;
-  line-height: 20px;
-  text-align: center;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  forced-color-adjust: none;
+.app-c-conversation-sources__details-summary {
+  margin-bottom: govuk-spacing(4);
 
-  @include govuk-media-query($until: tablet) {
-    // min-height - line-height
-    margin-top: - calc((25px - 20px) / 2);
+  &::marker, &::-webkit-details-marker {
+    content: "";
+    color: transparent;
   }
 
-  @media screen and (forced-colors: active) {
-    border-color: windowText;
-    color: windowText;
-    background: transparent;
+  &::after {
+    @include chevron(govuk-colour("blue"), false);
+    position: absolute;
+    right: 2px;
+    top: 9px;
+    margin-right: 0;
+  }
+
+  &:hover {
+    cursor: pointer;
+
+    .app-c-conversation-sources__details-summary-text {  
+      color: govuk-colour("dark-blue");
+      text-decoration-thickness: max(3px, .1875rem, .12em);
+      -webkit-text-decoration-skip-ink: none;
+      text-decoration-skip-ink: none;
+      -webkit-text-decoration-skip: none;
+      text-decoration-skip: none;
+    }
+
+    &::after {
+      border-bottom: 2px solid govuk-colour("dark-blue");
+      border-right: 2px solid govuk-colour("dark-blue");
+    }
+  }
+
+  &:focus {
+    outline: 3px solid rgba(0, 0, 0, 0);
+    background-color: $govuk-focus-colour;
+    box-shadow: 0 -2px $govuk-focus-colour, 0 4px govuk-colour("black");
+    
+    .app-c-conversation-sources__details-summary-text {
+      color: govuk-colour("black");
+      text-decoration: none;
+    }
+
+    &::after {
+      border-bottom: 2px solid govuk-colour("black");
+      border-right: 2px solid govuk-colour("black");
+    }
   }
 }
 
-.app-c-warning-text__text {
-  display: block;
-  // there currently isn't a `govuk-spacing` mixin that produces 35px
-  padding-left: 35px;
-  @include govuk-text-colour;
+.app-c-conversation-sources__details-summary-text {
+  @include govuk-font(19, $weight: "regular");
+  display: inline-block;
+  width: 90%;
+  color: govuk-colour("blue");
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, .0625rem);
+  text-underline-offset: .1578em;
+
+  @include govuk-media-query($until: 380px) {
+    width: 85%;
+  }
 }
 
-@include govuk-media-query($until: tablet) {
-  .app-c-warning-text__opens-in-new-tab {
-    display: inline-block;
+.app-c-conversation-sources__list {
+  width: 90%;
+
+  @include govuk-media-query($until: 380px) {
+    width: 85%;
   }
+}
+
+.app-c-conversation-sources__list-item {
+  padding-bottom: govuk-spacing(3);
 }
