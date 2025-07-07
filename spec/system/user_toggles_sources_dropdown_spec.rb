@@ -31,7 +31,7 @@ RSpec.describe "User toggles the sources dropdown" do
 
   def and_i_click_on_the_sources_dropdown
     # click_on seems to work for links and buttons but not the details element, hence the alternative approach below
-    page.find(".app-c-conversation-sources__details").click
+    page.find("details", text: "GOV.UK pages used in this answer (links open in a new tab)").click
   end
 
   def then_the_sources_dropdown_expands
@@ -39,15 +39,16 @@ RSpec.describe "User toggles the sources dropdown" do
   end
 
   def and_i_see_the_source_links
-    expect(page.find(".app-c-conversation-sources__list").visible?).to be true
+    expect(page).to have_link(nil, href: "https://www.test.gov.uk/income-tax")
+    expect(page).to have_link(nil, href: "https://www.test.gov.uk/vat-tax")
   end
 
   def and_i_have_expanded_the_sources_dropdown
-    page.find(".app-c-conversation-sources__details").click
+    page.find("details", text: "GOV.UK pages used in this answer (links open in a new tab)").click
   end
 
   def when_i_click_on_the_sources_dropdown_again
-    page.find(".app-c-conversation-sources__details").click
+    page.find("details", text: "GOV.UK pages used in this answer (links open in a new tab)").click
   end
 
   def then_the_sources_dropdown_collapses
@@ -56,6 +57,7 @@ RSpec.describe "User toggles the sources dropdown" do
   end
 
   def and_i_cannot_see_the_source_links
-    expect(page.find(".app-c-conversation-sources__list", visible: :all).visible?).to be false
+    expect(page).not_to have_link(nil, href: "https://www.test.gov.uk/income-tax")
+    expect(page).not_to have_link(nil, href: "https://www.test.gov.uk/vat-tax")
   end
 end
