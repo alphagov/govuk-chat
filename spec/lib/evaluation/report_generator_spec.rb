@@ -11,7 +11,7 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
     [
       build(
         :answer,
-        message: "First answer from OpenAI",
+        message: "First answer",
         sources: [
           build(
             :answer_source,
@@ -36,7 +36,7 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
       ),
       build(
         :answer,
-        message: "Second answer from OpenAI",
+        message: "Second answer",
         sources: [
           build(:answer_source, title: "Check if you need a visa", content_chunk_id: "id3", content_chunk_digest: "digest3"),
         ],
@@ -93,8 +93,8 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
       expect(items).to match([
         {
           question: "How do I pay VAT?",
-          answer: hash_including("message" => "First answer from OpenAI"),
-          answer_strategy: "openai_structured_answer",
+          answer: hash_including("message" => "First answer"),
+          answer_strategy: Rails.configuration.answer_strategy,
           retrieved_context: [
             hash_including(title: "Late payments", used: true),
             hash_including(title: "Pay your VAT bill online", used: true),
@@ -103,8 +103,8 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
         },
         {
           question: "Do I need a visa?",
-          answer: hash_including("message" => "Second answer from OpenAI"),
-          answer_strategy: "openai_structured_answer",
+          answer: hash_including("message" => "Second answer"),
+          answer_strategy: Rails.configuration.answer_strategy,
           retrieved_context: [hash_including(title: "Check if you need a visa", used: true)],
         },
       ])

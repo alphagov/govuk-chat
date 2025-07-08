@@ -10,6 +10,12 @@ module SystemSpecHelpers
       .and_return("claude_structured_answer")
   end
 
+  def given_i_am_using_the_openai_structured_answer_strategy
+    allow(Rails.configuration)
+      .to receive(:answer_strategy)
+      .and_return("openai_structured_answer")
+  end
+
   def dismiss_cookie_banner
     visit homepage_path
 
