@@ -97,7 +97,7 @@ module StubClaudeMessages
     )
   end
 
-  def stub_claude_structured_answer(question_or_history, answer, answered: true)
+  def stub_claude_structured_answer(question_or_history, answer, answered: true, sources_used: %w[link_1])
     tools = Rails.configuration
                  .govuk_chat_private
                  .llm_prompts
@@ -126,7 +126,7 @@ module StubClaudeMessages
     stub_claude_messages_response(
       question_or_history,
       content: [claude_messages_tool_use_block(
-        input: { answer:, answered:, sources_used: %w[link_1] },
+        input: { answer:, answered:, sources_used: },
         name: "output_schema",
       )],
       system:,

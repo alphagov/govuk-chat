@@ -1,4 +1,5 @@
-RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dismiss_cookie_banner, :js do
+RSpec.describe "Conversation JavaScript features",
+               :aws_credentials_stubbed, :chunked_content_index, :dismiss_cookie_banner, :js do
   scenario "questions with answers" do
     given_i_am_a_web_chat_user
     and_i_visit_the_conversation_page
@@ -162,12 +163,10 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
   def when_the_first_answer_is_generated
     @first_answer = "You can use a simple service on GOV.UK"
-    answer = {
-      "answer" => @first_answer,
-      "answered" => true,
-      "sources_used" => ["/pensions-service"],
-    }.to_json
-    stubs_for_mock_answer(@first_question, answer)
+    stubs_for_mock_answer(@first_question,
+                          @first_answer,
+                          answered: true,
+                          sources_used: %w[/pensions-service])
 
     execute_queued_sidekiq_jobs
   end
@@ -191,13 +190,12 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
 
   def when_the_second_answer_is_generated
     @second_answer = "The simple workplace pension service"
-    answer = {
-      "answer" => @second_answer,
-      "answered" => true,
-      "sources_used" => ["/pensions-service"],
-    }.to_json
 
-    stubs_for_mock_answer(@second_question, answer, rephrase_question: true)
+    stubs_for_mock_answer(@second_question,
+                          @second_answer,
+                          rephrase_question: true,
+                          answered: true,
+                          sources_used: %w[/pensions-service])
 
     execute_queued_sidekiq_jobs
   end
@@ -255,13 +253,17 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
     expect(page).to have_content("You have 10 characters too many")
   end
 
-  def stubs_for_mock_answer(question, answer, rephrase_question: false)
-    stub_openai_jailbreak_guardrails(question)
+  def stubs_for_mock_answer(question,
+                            answer,
+                            rephrase_question: false,
+                            answered: true,
+                            sources_used: [])
+    stub_claude_jailbreak_guardrails(question, triggered: false)
 
     if rephrase_question
       rephrased_question = "Rephrased #{question}"
 
-      stub_openai_question_rephrasing(question, rephrased_question)
+      stub_claude_question_rephrasing(question, rephrased_question)
 
       question = rephrased_question
     end
@@ -272,11 +274,10 @@ RSpec.describe "Conversation JavaScript features", :chunked_content_index, :dism
       build(:chunked_content_record, openai_embedding: mock_openai_embedding(question)),
     ])
 
-    stub_openai_chat_question_routing(question)
-    stub_openai_chat_completion_structured_response(question, answer)
+    stub_claude_question_routing(question)
+    stub_claude_structured_answer(question, answer, answered:, sources_used:)
 
-    parsed_answer = JSON.parse(answer)["answer"]
-    stub_openai_output_guardrail(parsed_answer)
+    stub_claude_output_guardrails(answer)
   end
 
   def then_i_cant_see_the_clear_chat_link
