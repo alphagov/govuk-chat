@@ -10,13 +10,13 @@
 }
 
 .app-c-conversation-sources__accuracy-warning-icon {
-    margin-right: govuk-spacing(2);
-  }
+  margin-right: govuk-spacing(2);
+}
 
-  .app-c-conversation-sources__accuracy-warning-text {
-    @include govuk-font(19, $weight: "bold");
-    width: 100%;
-  }
+.app-c-conversation-sources__accuracy-warning-text {
+  width: 100%;
+  @include govuk-font(19, $weight: "bold");
+}
 
 .app-c-conversation-sources__details {
   padding-left: govuk-spacing(6);
@@ -81,13 +81,13 @@
 }
 
 .app-c-conversation-sources__details-summary-text {
-  @include govuk-font(19, $weight: "regular");
   display: inline-block;
   width: 90%;
   color: govuk-colour("blue");
   text-decoration: underline;
   text-decoration-thickness: max(1px, .0625rem);
   text-underline-offset: .1578em;
+  @include govuk-font(19, $weight: "regular");
 
   @include govuk-media-query($until: 380px) {
     width: 85%;
