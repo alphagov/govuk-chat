@@ -13,22 +13,13 @@
 
 <%= content_tag :li, id:, class: "app-c-conversation-message js-conversation-message", data: data_attributes do %>
   <%= content_tag :div, class: message_classes do %>
-    <div class="app-c-conversation-message__identifier">
-      <% if !is_question %>
-        <%=
-          inline_svg_tag "components/conversation_message/govuk-chat-icon.svg",
-          class: "app-c-conversation-message__identifier-icon",
-          aria_hidden: true
-        %>
+    <span class="govuk-visually-hidden">
+      <% if is_question %>
+        You:
+      <% else %>
+        GOV.UK Chat:
       <% end %>
-      <span class="govuk-visually-hidden">
-        <% if is_question %>
-          You:
-        <% else %>
-          GOV.UK Chat:
-        <% end %>
-      </span>
-    </div>
+    </span>
 
     <% if is_question %>
       <div class="app-c-conversation-message__body app-c-conversation-message__body--user-message">
