@@ -242,7 +242,6 @@
 
 .app-c-header__clear-chat {
   display: block;
-  bottom: govuk-spacing(2);
   color: govuk-colour("white");
   right: 0;
   @include govuk-font(16, $weight: "bold", $tabular: false, $line-height: false);
