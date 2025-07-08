@@ -17,11 +17,11 @@
   }
 
   .govuk-header__navigation-list {
+    padding-bottom: 0;
+
     @include govuk-media-query($until: tablet) {
       margin-top: govuk-spacing(4);
     }
-
-    padding-bottom: 0;
   }
 
   .govuk-header__navigation-item {
