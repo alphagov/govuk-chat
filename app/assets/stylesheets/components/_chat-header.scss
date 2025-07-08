@@ -93,20 +93,28 @@
       @include chevron(govuk-colour("white"), false);
     }
 
-    &:focus {
-      background-color: govuk-colour("black");
-      color: govuk-colour("white");
-      box-shadow: none;
+    &:focus-visible {
+      &::before {
+        @include chevron(govuk-colour("black"), false);
+      }
     }
+  }
 
+  .govuk-js-header-toggle, .app-c-header__link, .app-c-header__clear-chat {
     &:focus-visible {
       background-color: $govuk-focus-colour;
       color: govuk-colour("black");
       outline: none;
+
+      &, &:hover {
+        border-bottom: 3px solid transparent;
+      }
     }
 
-    &:focus-visible::before {
-      @include chevron(govuk-colour("black"), false);
+    &:focus:not(:focus-visible) {
+      background: none;
+      box-shadow: none;
+      color: govuk-colour("white");
     }
 
     &:hover {
@@ -118,7 +126,7 @@
   .app-c-header__menu-button--expanded {
     border-bottom: 3px solid govuk-colour("white");
 
-    &::before, &:focus-visible::before {
+    &::before, &:focus::before, &:focus-visible::before {
       @include prefixed-transform($rotate: 225deg, $translateY: 1px);
     }
   }
@@ -224,6 +232,12 @@
   &:focus:hover {
     text-decoration: none;
   }
+}
+
+.app-c-header__button--print:focus {
+  outline: 3px solid rgba(0, 0, 0, 0);
+  background-color: $govuk-focus-colour;
+  box-shadow: 0 -2px $govuk-focus-colour, 0 4px
 }
 
 .app-c-header__clear-chat {
