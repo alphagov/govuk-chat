@@ -105,3 +105,10 @@ vague_acronym_grammar:
   answer_status: clarification
   canned_responses:
     - "I cannot answer that. Please try asking something else."
+
+unclear_intent:
+  label: "Unclear intent"
+  use_answer: true
+  answer_status: clarification
+  canned_responses:
+    - "I cannot answer that. Please try asking something else."
