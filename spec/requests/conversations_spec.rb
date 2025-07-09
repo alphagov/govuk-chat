@@ -138,8 +138,9 @@ RSpec.describe "ConversationsController" do
 
           expect(response).to have_http_status(:success)
           expect(response.body)
-            .to have_link(first_source.title, href: first_source.url)
-            .and have_link(second_source.title, href: second_source.url)
+            # The following links will not be visible due to collapsed state of details element, but should be present in the DOM
+            .to have_link(first_source.title, href: first_source.url, visible: :hidden)
+            .and have_link(second_source.title, href: second_source.url, visible: :hidden)
         end
 
         it "doesn't render unused sources" do
@@ -152,7 +153,7 @@ RSpec.describe "ConversationsController" do
 
           expect(response).to have_http_status(:success)
           expect(response.body)
-            .to have_link(first_source.title, href: first_source.url)
+            .to have_link(first_source.title, href: first_source.url, visible: :hidden)
             .and have_no_link(second_source.title)
         end
 

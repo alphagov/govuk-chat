@@ -2,6 +2,17 @@ name: Conversation sources
 description: Displays message sources
 accessibility_criteria: |
   * All text must have a contrast ratio higher than 4.5:1 against the background colour to meet [WCAG AA](https://www.w3.org/TR/WCAG20/#visual-audio-contrast-contrast)
+
+  The component must:
+
+  * accept focus
+  * be focusable with a keyboard
+  * be usable with a keyboard
+  * be usable with touch
+  * indicate when it has focus
+  * toggle the visibility of the details element’s content when interacted with
+  * indicate the expanded state when details’ content is visible
+  * indicate the collapsed state when details’ content is hidden
 shared_accessibility_criteria:
   - link
 examples:

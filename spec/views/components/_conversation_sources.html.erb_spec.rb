@@ -15,9 +15,12 @@ RSpec.describe "components/_conversation_sources.html.erb" do
 
     expect(rendered)
       .to have_selector(".app-c-conversation-sources")
-      .and have_selector(".app-c-warning-text")
-      .and have_selector(".app-c-warning-text__opens-in-new-tab", text: "(links open in a new tab)")
-      .and have_link("Example 1", href: "http://example.com")
-      .and have_link("Example 2", href: "http://example.gov.uk")
+      .and have_selector(".app-c-conversation-sources__accuracy-warning")
+      .and have_selector(".app-c-conversation-sources__details")
+      .and have_selector(".app-c-conversation-sources__details-summary", text: "(links open in a new tab)")
+      # The following won't be visible as the details element will be initially collapsed, but they should be present
+      # in the DOM
+      .and have_link("Example 1", href: "http://example.com", visible: :hidden)
+      .and have_link("Example 2", href: "http://example.gov.uk", visible: :hidden)
   end
 end
