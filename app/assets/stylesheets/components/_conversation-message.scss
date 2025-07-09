@@ -14,14 +14,13 @@ $message-container-spacing-mobile: 40px;
 }
 
 .app-c-conversation-message__message--user-message {
-  $message-icon-container-size: 30px;
   justify-content: flex-end;
   margin: govuk-spacing(4) 0 govuk-spacing(4) auto;
-  max-width: calc(100% - ($message-container-spacing-mobile + $message-icon-container-size));
+  max-width: calc(100% - ($message-container-spacing-mobile));
 
   @include govuk-media-query($from: tablet) {
     margin: govuk-spacing(6) 0 govuk-spacing(6) auto;
-    max-width: calc(100% - ($message-container-spacing-tablet + $message-icon-container-size));
+    max-width: calc(100% - ($message-container-spacing-tablet));
   }
 }
 
@@ -98,10 +97,6 @@ $message-container-spacing-mobile: 40px;
     left: 0;
     position: absolute;
   }
-}
-
-.app-c-conversation-message__identifier {
-  margin-right: govuk-spacing(2);
 }
 
 .app-c-conversation-message__body--govuk-message {
