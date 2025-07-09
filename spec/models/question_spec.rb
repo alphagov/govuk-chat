@@ -32,13 +32,12 @@ RSpec.describe Question do
       create(:answer, status: :guardrails_answer)
       create(:answer, status: :error_non_specific)
       create(:answer, status: :error_answer_service_error)
-      create(:answer, status: :error_context_length_exceeded)
 
       expect(described_class.group_by_aggregate_status.count).to eq({
         "answered" => 1,
         "unanswerable" => 1,
         "guardrails" => 1,
-        "error" => 3,
+        "error" => 2,
       })
     end
   end

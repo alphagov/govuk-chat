@@ -4,17 +4,12 @@ class OpenAIClient
   class RequestError < Faraday::Error; end
   class ClientError < RequestError; end
   class ServerError < RequestError; end
-  class ContextLengthExceededError < ClientError; end
 
   class ErrorMiddleware < Faraday::Middleware
     def call(env)
       @app.call(env)
     rescue Faraday::ClientError => e
-      if error_code(e.response) == "context_length_exceeded"
-        raise ContextLengthExceededError.new(e, e.response)
-      else
-        raise ClientError.new(e, e.response)
-      end
+      raise ClientError.new(e, e.response)
     rescue Faraday::ServerError => e
       raise ServerError.new(e, e.response)
     rescue Faraday::Error => e

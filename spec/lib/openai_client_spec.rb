@@ -44,15 +44,6 @@ RSpec.describe OpenAIClient do # rubocop:disable RSpec/SpecFilePathFormat
         .to raise_error(OpenAIClient::RequestError)
     end
 
-    it "raises an OpenAIClient::ContextLengthExceededError when user input exceeds allowed tokens" do
-      stub_openai_chat_completion_error(status: 400,
-                                        type: "invalid_request_error",
-                                        code: "context_length_exceeded")
-
-      expect { described_class.build.chat(parameters: chat_parameters) }
-        .to raise_error(OpenAIClient::ContextLengthExceededError)
-    end
-
     it "sets OpenAI chat completion rate limit Prometheus gauges" do
       allow(PrometheusMetrics).to receive(:gauge)
       stub_request(:post, /openai\.com/)
