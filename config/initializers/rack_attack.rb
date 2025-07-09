@@ -1,20 +1,22 @@
 require "api/rate_limit"
 require "api/rate_limit/middleware"
+require "api/auth_middleware"
 
 Rails.application.config.middleware.insert_after ActionDispatch::Executor, Api::RateLimit::Middleware
+Rails.application.config.middleware.insert_before Rack::Attack, Api::AuthMiddleware
 
 class Rack::Attack
   CONVERSATION_API_PATH_REGEX = /^\/api\/v\d+\/conversation/
 
   throttle(Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME, limit: 10_000, period: 1.minute) do |request|
     if request.path.match?(CONVERSATION_API_PATH_REGEX) && read_method?(request)
-      normalise_auth_header(request.get_header("HTTP_AUTHORIZATION"))
+      signon_uid(request)
     end
   end
 
   throttle(Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME, limit: 500, period: 1.minute) do |request|
     if request.path.match?(CONVERSATION_API_PATH_REGEX) && !read_method?(request)
-      normalise_auth_header(request.get_header("HTTP_AUTHORIZATION"))
+      signon_uid(request)
     end
   end
 
@@ -34,10 +36,12 @@ class Rack::Attack
     request.get? || request.head? || request.options?
   end
 
-  def self.normalise_auth_header(auth_header)
-    return if auth_header.blank?
+  def self.signon_uid(request)
+    user = request.env.fetch("warden").user
+    raise "No warden user available" unless user
+    raise "Missing uid for user #{user.id}" unless user.uid
 
-    auth_header.strip.gsub(/^bearer/i, "Bearer")
+    "signon:#{user.uid}"
   end
 
   self.throttled_responder = lambda do |request|
