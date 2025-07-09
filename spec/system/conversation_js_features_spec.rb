@@ -1,10 +1,10 @@
-RSpec.describe "Conversation JavaScript features",
-               :aws_credentials_stubbed, :chunked_content_index, :dismiss_cookie_banner, :js do
+RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :chunked_content_index, :js do
   scenario "questions with answers" do
     given_i_am_a_web_chat_user
-    and_i_visit_the_conversation_page
+    and_i_have_dismissed_the_cookie_banner
 
-    when_i_enter_a_first_question
+    when_i_visit_the_conversation_page
+    and_i_enter_a_first_question
     then_i_see_the_first_question_was_accepted
 
     when_the_first_answer_is_generated
@@ -19,9 +19,10 @@ RSpec.describe "Conversation JavaScript features",
 
   scenario "client side validation" do
     given_i_am_a_web_chat_user
-    and_i_visit_the_conversation_page
+    and_i_have_dismissed_the_cookie_banner
 
-    when_i_enter_an_empty_question
+    when_i_visit_the_conversation_page
+    and_i_enter_an_empty_question
     then_i_see_a_presence_validation_message
 
     when_i_enter_a_valid_question
@@ -30,9 +31,10 @@ RSpec.describe "Conversation JavaScript features",
 
   scenario "server side validation" do
     given_i_am_a_web_chat_user
-    and_i_visit_the_conversation_page
+    and_i_have_dismissed_the_cookie_banner
 
-    when_i_enter_a_question_with_pii
+    when_i_visit_the_conversation_page
+    and_i_enter_a_question_with_pii
     then_i_see_a_pii_validation_message
 
     when_i_enter_a_valid_question
@@ -41,9 +43,10 @@ RSpec.describe "Conversation JavaScript features",
 
   scenario "reloading the page while an answer is pending" do
     given_i_am_a_web_chat_user
-    and_i_visit_the_conversation_page
+    and_i_have_dismissed_the_cookie_banner
 
-    when_i_enter_a_first_question
+    when_i_visit_the_conversation_page
+    and_i_enter_a_first_question
     then_i_see_the_first_question_was_accepted
 
     when_i_reload_the_page
@@ -53,9 +56,10 @@ RSpec.describe "Conversation JavaScript features",
 
   scenario "User gives feedback on an answer" do
     given_i_am_a_web_chat_user
-    and_i_visit_the_conversation_page
+    and_i_have_dismissed_the_cookie_banner
 
-    when_i_enter_a_first_question
+    when_i_visit_the_conversation_page
+    and_i_enter_a_first_question
     then_i_see_the_first_question_was_accepted
 
     when_the_first_answer_is_generated
@@ -65,9 +69,10 @@ RSpec.describe "Conversation JavaScript features",
 
   scenario "character limits" do
     given_i_am_a_web_chat_user
-    and_i_visit_the_conversation_page
+    and_i_have_dismissed_the_cookie_banner
 
-    when_i_type_in_a_question_approaching_the_character_count_limit
+    when_i_visit_the_conversation_page
+    and_i_type_in_a_question_approaching_the_character_count_limit
     then_i_see_a_character_count_warning
 
     when_i_type_in_a_question_exceeding_the_character_count_limit
@@ -76,9 +81,10 @@ RSpec.describe "Conversation JavaScript features",
 
   scenario "loading messages" do
     given_i_am_a_web_chat_user
-    and_i_visit_the_conversation_page
+    and_i_have_dismissed_the_cookie_banner
 
-    when_i_enter_a_first_question_with_a_slow_response
+    when_i_visit_the_conversation_page
+    and_i_enter_a_first_question_with_a_slow_response
     then_i_see_a_question_loading_message
 
     when_i_see_the_first_question_was_accepted
@@ -91,7 +97,9 @@ RSpec.describe "Conversation JavaScript features",
 
   scenario "showing clear chat link in navigation" do
     given_i_am_a_web_chat_user
-    and_i_visit_the_conversation_page
+    and_i_have_dismissed_the_cookie_banner
+
+    when_i_visit_the_conversation_page
     then_i_cant_see_the_clear_chat_link
 
     when_i_enter_a_first_question
@@ -99,7 +107,7 @@ RSpec.describe "Conversation JavaScript features",
     and_i_can_see_the_clear_chat_link
   end
 
-  def and_i_visit_the_conversation_page
+  def when_i_visit_the_conversation_page
     visit show_conversation_path
   end
 
@@ -109,8 +117,9 @@ RSpec.describe "Conversation JavaScript features",
     click_on "Send"
   end
   alias_method :when_i_enter_a_valid_question, :when_i_enter_a_first_question
+  alias_method :and_i_enter_a_first_question, :when_i_enter_a_first_question
 
-  def when_i_enter_a_first_question_with_a_slow_response
+  def and_i_enter_a_first_question_with_a_slow_response
     @first_question = "How do I setup a workplace pension?"
     conversation = build(:conversation, signon_user: @signon_user)
     prepared_question = create(:question, message: @first_question, conversation:)
@@ -199,7 +208,7 @@ RSpec.describe "Conversation JavaScript features",
     expect(page).to have_content(@second_answer)
   end
 
-  def when_i_enter_an_empty_question
+  def and_i_enter_an_empty_question
     fill_in "create_question[user_question]", with: ""
     click_on "Send"
   end
@@ -208,7 +217,7 @@ RSpec.describe "Conversation JavaScript features",
     expect(page).to have_content(Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
   end
 
-  def when_i_enter_a_question_with_pii
+  def and_i_enter_a_question_with_pii
     fill_in "create_question[user_question]", with: "My phone number is 07123456789"
     click_on "Send"
   end
@@ -229,7 +238,7 @@ RSpec.describe "Conversation JavaScript features",
     expect(page).to have_content("Thanks for your feedback.")
   end
 
-  def when_i_type_in_a_question_approaching_the_character_count_limit
+  def and_i_type_in_a_question_approaching_the_character_count_limit
     character_count = Form::CreateQuestion::USER_QUESTION_LENGTH_MAXIMUM - 50
     fill_in "create_question[user_question]", with: "A" * character_count
   end

@@ -65,12 +65,6 @@ RSpec.configure do |config|
     ClimateControl.modify(GOVUK_WEBSITE_ROOT: "https://www.test.gov.uk") { example.run }
   end
 
-  config.before(:each, :dismiss_cookie_banner, type: :system) do
-    # The cookie banner for the session as it can break tests due to
-    # them running in a small viewport.
-    dismiss_cookie_banner
-  end
-
   config.around(:each, :rack_attack) do |example|
     old_store = Rack::Attack.cache.store
     Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
