@@ -30,21 +30,6 @@ class Rack::Attack
     end
   end
 
-  def self.rails_controller_action(url)
-    route = Rails.application.routes.recognize_path(url)
-
-    "#{route[:controller]}##{route[:action]}"
-  rescue StandardError
-    nil
-  end
-
-  def self.cdn_client_ip(request)
-    # We use a header set by the CDN to specify which IP address to use a
-    # discriminiator. We can't use request.ip as that uses the IP address of
-    # the CDN - so risks blocking the CDN rather than the end user.
-    request.get_header("HTTP_TRUE_CLIENT_IP")
-  end
-
   def self.read_method?(request)
     request.get? || request.head? || request.options?
   end

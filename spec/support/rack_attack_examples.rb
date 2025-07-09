@@ -15,40 +15,6 @@ module RackAttackExamples
     end
   end
 
-  RSpec.shared_examples "throttles traffic from a single IP address" do |routes:, limit:, period:|
-    include_context "with rack attack helpers"
-    let(:route_params) { {} }
-
-    routes.each do |path, methods|
-      methods.each do |method|
-        context "when a single IP address uses its allowance of traffic to #{method} #{path}", :rack_attack do
-          let(:headers) { { "HTTP_TRUE_CLIENT_IP" => "1.2.3.4" } }
-
-          before do
-            limit.times do |i|
-              process_request(method, path, headers)
-              raise "Returning too_many_requests on request #{i + 1}" if response.status == 429
-            end
-          end
-
-          it "rejects the next request from that IP address" do
-            expect_throttled_response(method, path, headers)
-          end
-
-          it "doesn't reject a request from a different IP address" do
-            expect_not_throttled_response(method, path, { "HTTP_TRUE_CLIENT_IP" => "4.5.6.7" })
-          end
-
-          it "doesn't reject a request after the time period" do
-            travel_to(Time.current + period + 1.second) do
-              expect_not_throttled_response(method, path, headers)
-            end
-          end
-        end
-      end
-    end
-  end
-
   shared_examples "throttles traffic for an access token" do |routes:, period:|
     include_context "with rack attack helpers"
     let(:route_params) { {} }
