@@ -23,7 +23,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_145727) do
   create_enum "guardrails_status", ["pass", "fail", "error"]
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar", "unclear_intent", "requires_account_data"]
 
-
   create_table "answer_feedback", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
     t.boolean "useful", null: false
