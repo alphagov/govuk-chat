@@ -286,7 +286,7 @@ RSpec.describe "Conversation JavaScript features",
       # to capybara so have to assert on CSS selector
       expect(page).to have_selector(
         "a.app-c-header__clear-chat.app-c-header__clear-chat--focusable-only",
-        text: "Start new chat",
+        text: "Clear chat",
       )
     end
   end
@@ -295,7 +295,7 @@ RSpec.describe "Conversation JavaScript features",
     within(".app-c-header") do
       expect(page).to have_selector(
         "a.app-c-header__clear-chat:not(.app-c-header__clear-chat--focusable-only)",
-        text: "Start new chat",
+        text: "Clear chat",
       )
     end
   end
