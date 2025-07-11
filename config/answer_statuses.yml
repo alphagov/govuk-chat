@@ -63,11 +63,6 @@ error_answer_service_error:
   label_colour: "red"
   description: "received error from LLM"
   label_and_description: "Error - received error from LLM"
-error_context_length_exceeded:
-  label: "Error"
-  label_colour: "red"
-  description: "too many tokens sent to LLM"
-  label_and_description: "Error - too many tokens sent to LLM"
 error_jailbreak_guardrails:
   label: "Error"
   label_colour: "red"

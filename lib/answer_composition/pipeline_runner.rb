@@ -16,13 +16,6 @@ module AnswerComposition
       end
 
       context.answer
-    rescue OpenAIClient::ContextLengthExceededError => e
-      GovukError.notify(e)
-      context.abort_pipeline(
-        message: Answer::CannedResponses::CONTEXT_LENGTH_EXCEEDED_RESPONSE,
-        status: "error_context_length_exceeded",
-        error_message: error_message(e),
-      )
     rescue OpenAIClient::RequestError => e
       GovukError.notify(e)
       context.abort_pipeline(

@@ -2,9 +2,6 @@ class Answer < ApplicationRecord
   module CannedResponses
     NO_CONTENT_FOUND_RESPONSE = "Sorry, I can’t find anything on GOV.UK to help me answer your question. " \
       "Please try asking a different question.".freeze
-    CONTEXT_LENGTH_EXCEEDED_RESPONSE = "Sorry, your last question was too complex for me to answer. " \
-      "Could you make your question more specific? You can also try splitting it into multiple " \
-      "smaller questions and asking them separately.".freeze
     ANSWER_SERVICE_ERROR_RESPONSE = <<~MESSAGE.freeze
       Sorry, something went wrong while trying to answer your question. Try again later.
 
@@ -63,7 +60,6 @@ class Answer < ApplicationRecord
          clarification: "clarification",
          error_answer_guardrails: "error_answer_guardrails",
          error_answer_service_error: "error_answer_service_error",
-         error_context_length_exceeded: "error_context_length_exceeded",
          error_jailbreak_guardrails: "error_jailbreak_guardrails",
          error_non_specific: "error_non_specific",
          error_question_routing_guardrails: "error_question_routing_guardrails",

@@ -47,28 +47,6 @@ RSpec.describe AnswerComposition::PipelineRunner do
       end
     end
 
-    context "when the step raises an OpenAIClient::ContextLengthExceededError" do
-      let(:error) { OpenAIClient::ContextLengthExceededError.new("error message") }
-      let(:pipeline_step) { ->(_context) { raise error } }
-
-      it "notifies sentry" do
-        expect(GovukError).to receive(:notify).with(error)
-        described_class.call(question:, pipeline: [pipeline_step])
-      end
-
-      it "returns the context's answer with the correct message, status and error_message" do
-        result = described_class.call(question:, pipeline: [pipeline_step])
-        expect(result)
-          .to be_a(Answer)
-          .and have_attributes(
-            question:,
-            status: "error_context_length_exceeded",
-            message: Answer::CannedResponses::CONTEXT_LENGTH_EXCEEDED_RESPONSE,
-            error_message: "class: OpenAIClient::ContextLengthExceededError message: error message",
-          )
-      end
-    end
-
     context "when the step raises an OpenAIClient::RequestError" do
       let(:error) do
         OpenAIClient::RequestError.new(
