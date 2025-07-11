@@ -1,5 +1,7 @@
-PATH
-  remote: ../govuk_chat_private
+GIT
+  remote: https://github.com/alphagov/govuk_chat_private.git
+  revision: 988c1f91cc861e9846a61274d44de4dfb7c4cee8
+  branch: eval-changes-question-handling
   specs:
     govuk_chat_private (0.0.1)
       activesupport (>= 8)
