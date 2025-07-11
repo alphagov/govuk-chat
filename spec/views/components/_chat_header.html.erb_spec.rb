@@ -18,13 +18,11 @@ RSpec.describe "components/_chat_header.html.erb" do
     render "components/chat_header", {
       navigation_items: [
         { text: "About", href: about_path },
-        { text: "Help and support", href: support_path },
       ],
     }
 
     expect(rendered).to have_selector(".govuk-header__navigation") do |navigation|
       expect(navigation).to have_link("About", href: about_path)
-      expect(navigation).to have_link("Help and support", href: support_path)
     end
   end
 
