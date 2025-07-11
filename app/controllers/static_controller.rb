@@ -1,6 +1,4 @@
 class StaticController < BaseController
-  skip_before_action :check_chat_web_access, except: %i[support]
+  skip_before_action :check_chat_web_access
   before_action :cache_cookieless_requests
-
-  def support; end
 end
