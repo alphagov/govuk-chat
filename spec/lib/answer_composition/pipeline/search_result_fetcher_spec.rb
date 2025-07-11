@@ -46,7 +46,7 @@ RSpec.describe AnswerComposition::Pipeline::SearchResultFetcher, :chunked_conten
     it "aborts the pipeline and updates the answer's status and message attributes" do
       expect { described_class.call(context) }.to throw_symbol(:abort)
         .and change { context.answer.status }.to("unanswerable_no_govuk_content")
-        .and change { context.answer.message }.to(Answer::CannedResponses::NO_CONTENT_FOUND_REPONSE)
+        .and change { context.answer.message }.to(Answer::CannedResponses::NO_CONTENT_FOUND_RESPONSE)
     end
 
     it "assigns metrics to the answer" do

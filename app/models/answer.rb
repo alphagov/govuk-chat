@@ -1,6 +1,6 @@
 class Answer < ApplicationRecord
   module CannedResponses
-    NO_CONTENT_FOUND_REPONSE = "Sorry, I can’t find anything on GOV.UK to help me answer your question. " \
+    NO_CONTENT_FOUND_RESPONSE = "Sorry, I can’t find anything on GOV.UK to help me answer your question. " \
       "Please try asking a different question.".freeze
     CONTEXT_LENGTH_EXCEEDED_RESPONSE = "Sorry, your last question was too complex for me to answer. " \
       "Could you make your question more specific? You can also try splitting it into multiple " \
