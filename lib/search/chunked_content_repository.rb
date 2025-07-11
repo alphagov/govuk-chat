@@ -112,6 +112,19 @@ module Search
       result["result"].to_sym
     end
 
+    def update_document(id, attributes)
+      result = client.update(
+        index:,
+        id:,
+        body: {
+          doc: attributes,
+        },
+        refresh: default_refresh_writes,
+      )
+
+      result["result"].to_sym
+    end
+
     def id_digest_hash(base_path, batch_size: 100)
       search_body = {
         query: { term: { base_path: } },

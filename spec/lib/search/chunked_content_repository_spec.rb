@@ -178,6 +178,30 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
     end
   end
 
+  describe "#update_document" do
+    it "saves the given attributes" do
+      populate_chunked_content_index(
+        "id1" => build(
+          :chunked_content_record,
+          base_path: "/a",
+          document_type: "news_story",
+          parent_document_type: nil,
+        ),
+      )
+
+      repository.update_document(
+        "id1",
+        { base_path: "/b", parent_document_type: "news_article" },
+      )
+
+      chunk = repository.chunk("id1")
+
+      expect(chunk.base_path).to eq("/b")
+      expect(chunk.document_type).to eq("news_story")
+      expect(chunk.parent_document_type).to eq("news_article")
+    end
+  end
+
   describe "#id_digest_hash" do
     before do
       populate_chunked_content_index(
