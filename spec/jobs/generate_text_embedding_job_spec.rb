@@ -29,7 +29,10 @@ RSpec.describe GenerateTextEmbeddingJob, :chunked_content_index do
       described_class.new.perform("id1")
 
       updated_document = chunked_content_search_client.get(index: chunked_content_index, id: "id1")
-      expect(updated_document["_source"]["titan_embedding"]).to eq(mock_titan_embedding("Content"))
+      expect(updated_document["_source"]).to include({
+        "titan_embedding" => mock_titan_embedding("Content"),
+        "plain_content" => "Content",
+      })
     end
 
     it "logs an error if the indexing fails" do
@@ -41,7 +44,7 @@ RSpec.describe GenerateTextEmbeddingJob, :chunked_content_index do
 
       stub_bedrock_titan_embedding("Content")
 
-      allow(repository).to receive(:index_document).and_return(:failed)
+      allow(repository).to receive(:update_document).and_return(:failed)
 
       expect(Rails.logger).to receive(:info).with("Failed to index document id1: unexpected result failed.")
 
