@@ -2,6 +2,7 @@ FactoryBot.define do
   factory :signon_user do
     sequence(:email) { |n| "signon.user#{n}@dev.gov.uk" }
     sequence(:name) { |n| "Signon User #{n}" }
+    uid { SecureRandom.uuid }
 
     trait :admin do
       permissions { %w[admin-area] }
