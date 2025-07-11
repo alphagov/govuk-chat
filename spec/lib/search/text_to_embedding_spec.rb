@@ -2,11 +2,6 @@ RSpec.describe Search::TextToEmbedding do
   describe ".call" do
     let(:text) { "The text" }
 
-    it "calls the OpenAI embedding provider" do
-      expect(Search::TextToEmbedding::OpenAI).to receive(:call).with(text)
-      described_class.call(text, llm_provider: :openai)
-    end
-
     it "calls the Titan embedding provider" do
       expect(Search::TextToEmbedding::Titan).to receive(:call).with(text)
       described_class.call(text, llm_provider: :titan)

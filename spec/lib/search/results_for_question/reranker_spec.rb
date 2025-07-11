@@ -58,7 +58,7 @@ RSpec.describe Search::ResultsForQuestion::Reranker do
   end
 
   def build_chunked_content_result(attributes)
-    defaults = build(:chunked_content_record).except(:openai_embedding, :titan_embedding)
+    defaults = build(:chunked_content_record).except(:titan_embedding)
     Search::ChunkedContentRepository::Result.new(**defaults.merge(attributes))
   end
 end

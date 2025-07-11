@@ -268,10 +268,10 @@ RSpec.describe "Conversation JavaScript features",
       question = rephrased_question
     end
 
-    stub_openai_embedding(question)
+    stub_bedrock_titan_embedding(question)
 
     populate_chunked_content_index([
-      build(:chunked_content_record, openai_embedding: mock_openai_embedding(question)),
+      build(:chunked_content_record, titan_embedding: mock_titan_embedding(question)),
     ])
 
     stub_claude_question_routing(question)

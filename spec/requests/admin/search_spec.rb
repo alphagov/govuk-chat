@@ -18,19 +18,19 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
 
     context "with search_text in params" do
       let(:search_text) { "how do I pay tax" }
-      let(:openai_embedding) { mock_openai_embedding(search_text) }
+      let(:titan_embedding) { mock_titan_embedding(search_text) }
       # adjust the vector values to produce a vector that will be similar
-      let(:close_embedding) { openai_embedding.map { |n| n * 1.05 } }
+      let(:close_embedding) { titan_embedding.map { |n| n * 1.05 } }
       let(:chunk_to_find) do
         build(:chunked_content_record,
               title: "Looking for this one",
               document_type: "guide",
               heading_hierarchy: ["Main header", "Sub header"],
-              openai_embedding:)
+              titan_embedding:)
       end
 
       before do
-        stub_openai_embedding(search_text)
+        stub_bedrock_titan_embedding(search_text)
       end
 
       it "renders a search box populated with search text" do
@@ -49,7 +49,7 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
             "anything" => build(:chunked_content_record,
                                 title: "Shouldn't find this",
                                 document_type: "answer",
-                                openai_embedding: close_embedding),
+                                titan_embedding: close_embedding),
           })
         end
 
@@ -67,7 +67,7 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
         it "includes score calculation and back links in links to results" do
           get admin_search_path, params: { search_text: }
 
-          results = Search::ChunkedContentRepository.new.search_by_embedding(openai_embedding, max_chunks: 2, llm_provider: :openai)
+          results = Search::ChunkedContentRepository.new.search_by_embedding(titan_embedding, max_chunks: 2, llm_provider: :titan)
           result = results.detect { |r| r.digest == chunk_to_find[:digest] }
           document_type_weight = Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS[chunk_to_find[:document_type]]
           weighted_score = result.score * document_type_weight

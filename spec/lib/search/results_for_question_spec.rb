@@ -1,6 +1,6 @@
 RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
   describe "#self.call" do
-    let(:openai_embedding) { mock_openai_embedding(question_message) }
+    let(:titan_embedding) { mock_titan_embedding(question_message) }
     let(:question_message) { "How much tax should i pay?" }
     let(:min_score) { 0.5 }
     let(:max_results) { 20 }
@@ -8,28 +8,28 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
     before do
       allow(Search::TextToEmbedding)
         .to receive(:call)
-        .with(question_message, llm_provider: "openai")
-        .and_return(openai_embedding)
+        .with(question_message, llm_provider: "titan")
+        .and_return(titan_embedding)
 
       allow(Rails.configuration.search.thresholds).to receive_messages(minimum_score: min_score, max_results:)
       stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS",
                  { "guide" => 1.0, "notice" => 0.4, "about" => 0.3 })
 
       populate_chunked_content_index([
-        build(:chunked_content_record, title: "find this", document_type: "guide", openai_embedding:),
-        build(:chunked_content_record, title: "not found 1", document_type: "notice", openai_embedding:),
-        build(:chunked_content_record, title: "not found 2", document_type: "about", openai_embedding:),
+        build(:chunked_content_record, title: "find this", document_type: "guide", titan_embedding:),
+        build(:chunked_content_record, title: "not found 1", document_type: "notice", titan_embedding:),
+        build(:chunked_content_record, title: "not found 2", document_type: "about", titan_embedding:),
       ])
 
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5, 101.6, 103.6, 103.7, 104.7)
     end
 
     it "retrieves an embedding for the question_message and searches the chunked content repository" do
-      allow(Rails.configuration).to receive(:embedding_provider).and_return("openai")
+      allow(Rails.configuration).to receive(:embedding_provider).and_return("titan")
 
       result = described_class.call(question_message)
       expect(result).to be_a(Search::ResultsForQuestion::ResultSet)
-      expect(Search::TextToEmbedding).to have_received(:call).with(question_message, llm_provider: "openai")
+      expect(Search::TextToEmbedding).to have_received(:call).with(question_message, llm_provider: "titan")
     end
 
     it "has the results over the configured threshold after reranking" do
@@ -49,7 +49,7 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
 
     it "populates the metrics attribute" do
       result = described_class.call(question_message)
-      expect(result.metrics).to eq({ embedding_duration: 1.5, search_duration: 2.0, reranking_duration: 1.0, embedding_provider: "openai" })
+      expect(result.metrics).to eq({ embedding_duration: 1.5, search_duration: 2.0, reranking_duration: 1.0, embedding_provider: "titan" })
     end
 
     context "when then are more results than the configured max_results" do
