@@ -4,7 +4,6 @@ RSpec.describe MessageQueue::MessageProcessor do
   describe "#process" do
     context "when given a payload we can index", :chunked_content_index do
       before do
-        stub_any_openai_embedding
         stub_bedrock_titan_embedding
       end
 

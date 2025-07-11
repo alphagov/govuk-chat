@@ -35,12 +35,12 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
   end
 
   def when_the_first_answer_is_generated
-    openai_embedding = mock_openai_embedding(@first_question)
+    titan_embedding = mock_titan_embedding(@first_question)
     allow(Search::TextToEmbedding)
       .to receive(:call)
-      .and_return(openai_embedding)
+      .and_return(titan_embedding)
     populate_chunked_content_index([
-      build(:chunked_content_record, openai_embedding:, exact_path: "/pay-more-tax#yes-really"),
+      build(:chunked_content_record, titan_embedding:, exact_path: "/pay-more-tax#yes-really"),
     ])
 
     stub_openai_jailbreak_guardrails(@first_question)

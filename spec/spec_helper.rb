@@ -36,7 +36,6 @@ RSpec.configure do |config|
   config.include StubOpenAIChat
   config.include StubBedrock
   config.include StubClaudeMessages
-  config.include StubOpenAIEmbedding
   config.include SidekiqHelpers
   config.include SystemSpecHelpers, type: :system
 

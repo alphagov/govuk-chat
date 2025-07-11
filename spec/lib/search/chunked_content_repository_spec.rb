@@ -206,11 +206,10 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
   end
 
   describe "#search_by_embedding" do
-    let(:openai_embedding) { mock_openai_embedding("How do i pay my tax?") }
     let(:titan_embedding) { mock_titan_embedding("How do i get universal credit?") }
     let(:chunked_content_records) do
       [
-        build(:chunked_content_record, openai_embedding:, titan_embedding:),
+        build(:chunked_content_record, titan_embedding:),
         build(:chunked_content_record),
         build(:chunked_content_record),
       ]
@@ -220,20 +219,6 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
       populate_chunked_content_index(chunked_content_records)
     end
 
-    it "returns an array of Result objects for OpenAI embedding" do
-      result = repository.search_by_embedding(
-        openai_embedding,
-        max_chunks: 10,
-        llm_provider: :openai,
-      )
-      expected_attributes = chunked_content_records.first
-                                                   .except(:openai_embedding, :titan_embedding)
-                                                   .merge(score: a_value_between(0.9, 1))
-
-      expect(result).to all be_a(Search::ChunkedContentRepository::Result)
-      expect(result.first).to have_attributes(**expected_attributes)
-    end
-
     it "returns an array of Result objects for Titan embedding" do
       result = repository.search_by_embedding(
         titan_embedding,
@@ -241,7 +226,7 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
         llm_provider: :titan,
       )
       expected_attributes = chunked_content_records.first
-                                                   .except(:titan_embedding, :openai_embedding)
+                                                   .except(:titan_embedding)
                                                    .merge(score: a_value_between(0.9, 1))
 
       expect(result).to all be_a(Search::ChunkedContentRepository::Result)
@@ -251,7 +236,7 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
     it "raises an error if the llm provider is not recognised" do
       expect {
         repository.search_by_embedding(
-          openai_embedding,
+          titan_embedding,
           max_chunks: 10,
           llm_provider: :unknown,
         )
@@ -260,13 +245,13 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
 
     context "when there are more than the maxiumum chunks" do
       let(:max_chunks) { 10 }
-      let(:chunked_content_records) { build_list(:chunked_content_record, 11, openai_embedding:) }
+      let(:chunked_content_records) { build_list(:chunked_content_record, 11, titan_embedding:) }
 
       it "only returns the first max_chunks" do
         result = repository.search_by_embedding(
-          openai_embedding,
+          titan_embedding,
           max_chunks:,
-          llm_provider: :openai,
+          llm_provider: :titan,
         )
         expect(result.count).to eq max_chunks
       end
@@ -284,7 +269,7 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
     it "returns the correct chunk as a ChunkedContentRepository::Result" do
       chunk_result = repository.chunk(chunk_id)
       expect(chunk_result).to be_a(Search::ChunkedContentRepository::Result)
-        .and have_attributes(content_chunk.except(:openai_embedding, :titan_embedding))
+        .and have_attributes(content_chunk.except(:titan_embedding))
         .and have_attributes(_id: chunk_id)
     end
 

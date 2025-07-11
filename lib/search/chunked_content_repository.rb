@@ -1,6 +1,5 @@
 module Search
   class ChunkedContentRepository
-    OPENAI_EMBEDDING_DIMENSIONS = 3072
     TITAN_EMBEDDING_DIMENSIONS = 1024
     MAPPINGS = {
       content_id: { type: "keyword" },
@@ -15,15 +14,6 @@ module Search
       heading_hierarchy: { type: "text" },
       html_content: { type: "text" },
       plain_content: { type: "text" },
-      openai_embedding: {
-        type: "knn_vector",
-        dimension: OPENAI_EMBEDDING_DIMENSIONS,
-        method: {
-          name: "hnsw",
-          space_type: "cosinesimil",
-          engine: "nmslib",
-        },
-      },
       titan_embedding: {
         type: "knn_vector",
         dimension: TITAN_EMBEDDING_DIMENSIONS,
@@ -153,8 +143,6 @@ module Search
 
     def search_by_embedding(embedding, max_chunks:, llm_provider:)
       field_name = case llm_provider.to_sym
-                   when :openai
-                     :openai_embedding
                    when :titan
                      :titan_embedding
                    else
@@ -173,7 +161,7 @@ module Search
               },
             },
           },
-          _source: { exclude: %w[openai_embedding titan_embedding] },
+          _source: { exclude: %w[titan_embedding] },
         },
       )
 
@@ -185,7 +173,7 @@ module Search
     end
 
     def chunk(id)
-      response = client.get(index:, id:, _source_excludes: %w[openai_embedding titan_embedding])
+      response = client.get(index:, id:, _source_excludes: %w[titan_embedding])
       Result.new(**response["_source"].symbolize_keys.merge(_id: id))
     rescue OpenSearch::Transport::Transport::Errors::NotFound
       raise NotFound, "_id: '#{id}' is not in the '#{index}' index"

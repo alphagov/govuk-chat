@@ -13,11 +13,11 @@ RSpec.describe "Admin user searches and views chunks", :chunked_content_index do
   end
 
   def and_there_is_a_pax_my_tax_chunk_to_find
-    openai_embedding = mock_openai_embedding("how to pay tax")
-    stub_openai_embedding("how to pay tax")
+    titan_embedding = mock_titan_embedding("how to pay tax")
+    stub_bedrock_titan_embedding("how to pay tax")
     chunk = build(:chunked_content_record,
                   title: "How to pay your tax",
-                  openai_embedding:)
+                  titan_embedding:)
     populate_chunked_content_index([chunk])
   end
 
