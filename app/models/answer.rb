@@ -6,8 +6,7 @@ class Answer < ApplicationRecord
 
       We saved your conversation. Check [GOV.UK guidance for businesses](https://www.gov.uk/browse/business) if you need information now.
     MESSAGE
-    TIMED_OUT_RESPONSE = "Sorry, something went wrong and I could not find an answer in time. " \
-      "Please try again.".freeze
+    TIMED_OUT_RESPONSE = "Something went wrong and I could not find an answer in time. Please try again.".freeze
     UNSUCCESSFUL_REQUEST_MESSAGE = <<~MESSAGE.freeze
       Sorry, something went wrong while trying to answer your question. Try again later.
 
