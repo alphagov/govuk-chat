@@ -1,7 +1,6 @@
 class Answer < ApplicationRecord
   module CannedResponses
-    NO_CONTENT_FOUND_RESPONSE = "Sorry, I can’t find anything on GOV.UK to help me answer your question. " \
-      "Please try asking a different question.".freeze
+    NO_CONTENT_FOUND_RESPONSE = "I’m having difficulty finding an answer on GOV.UK. If you rephrase your question, I’ll search again. Or you can ask about something else.".freeze
     ANSWER_SERVICE_ERROR_RESPONSE = <<~MESSAGE.freeze
       Sorry, something went wrong while trying to answer your question. Try again later.
 
