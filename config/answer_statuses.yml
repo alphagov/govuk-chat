@@ -48,11 +48,6 @@ guardrails_question_routing:
   label_colour: "yellow"
   description: "question routing guardrails triggered"
   label_and_description: "Guardrails - question routing guardrails triggered"
-banned:
-  label: "Banned"
-  label_colour: "purple"
-  description: "user cannot generate answers due to shadow banning"
-  label_and_description: "Banned - user cannot generate answers due to shadow banning"
 error_answer_guardrails:
   label: "Error"
   label_colour: "red"
