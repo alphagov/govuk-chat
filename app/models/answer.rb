@@ -26,7 +26,7 @@ class Answer < ApplicationRecord
 
       Please try asking something else.
     MESSAGE
-    LLM_CANNOT_ANSWER_MESSAGE = "Sorry, I cannot find anything on GOV.UK to help me answer your question. Please try asking a different question.".freeze
+    LLM_CANNOT_ANSWER_MESSAGE = "I’m having difficulty finding an answer on GOV.UK. If you rephrase your question, I’ll search again. Or you can ask about something else.".freeze
     FORBIDDEN_TERMS_MESSAGE = ANSWER_GUARDRAILS_FAILED_MESSAGE
 
     def self.response_for_question_routing_label(label)
