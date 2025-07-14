@@ -46,7 +46,6 @@ class Answer < ApplicationRecord
   enum :status,
        {
          answered: "answered",
-         banned: "banned",
          clarification: "clarification",
          error_answer_guardrails: "error_answer_guardrails",
          error_answer_service_error: "error_answer_service_error",
