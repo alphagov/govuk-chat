@@ -3,11 +3,7 @@ class Answer < ApplicationRecord
     NO_CONTENT_FOUND_RESPONSE = "I’m having difficulty finding an answer on GOV.UK. If you rephrase your question, I’ll search again. Or you can ask about something else.".freeze
     ANSWER_SERVICE_ERROR_RESPONSE = "Something went wrong while trying to answer your question. Please try again.".freeze
     TIMED_OUT_RESPONSE = "Something went wrong and I could not find an answer in time. Please try again.".freeze
-    UNSUCCESSFUL_REQUEST_MESSAGE = <<~MESSAGE.freeze
-      Sorry, something went wrong while trying to answer your question. Try again later.
-
-      We saved your conversation. Check [GOV.UK guidance for businesses](https://www.gov.uk/browse/business) if you need information now.
-    MESSAGE
+    UNSUCCESSFUL_REQUEST_MESSAGE = "Something went wrong while trying to answer your question. Please try again.".freeze
     ANSWER_GUARDRAILS_FAILED_MESSAGE = <<~MESSAGE.freeze
       I generated an answer to your question, but it does not meet the GOV.UK Chat content guidelines. This might be because it contains unclear or misleading information, or offers advice about money or your personal circumstances.
 
