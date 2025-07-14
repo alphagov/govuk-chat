@@ -55,6 +55,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser, :aws_cred
         llm_prompt_tokens: 10,
         llm_completion_tokens: 20,
         llm_cached_tokens: nil,
+        model: BedrockModels::CLAUDE_SONNET,
       })
     end
   end
