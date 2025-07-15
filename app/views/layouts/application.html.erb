@@ -18,21 +18,6 @@
       text: "About",
     },
   ].compact
-
-  footer_link_items = [
-    {
-      href: about_url,
-      text: "About GOV.UK Chat",
-    },
-    {
-      href: privacy_url,
-      text: "Privacy",
-    },
-    {
-      href: accessibility_url,
-      text: "Accessibility",
-    },
-  ].compact
 %>
 <!DOCTYPE html>
 <%= tag.html(class: html_classes, lang: "en") do %>
@@ -108,7 +93,7 @@
         </div>
       <% end %>
 
-      <%= render "govuk_publishing_components/components/layout_footer", { meta: { items: footer_link_items } } %>
+      <%= render "govuk_publishing_components/components/layout_footer" %>
     <% end %>
 
     <%= javascript_include_tag "application", type: "module", nonce: true %>
