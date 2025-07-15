@@ -20,6 +20,7 @@ module Guardrails::Claude
         llm_prompt_tokens: response[:usage][:input_tokens],
         llm_completion_tokens: response[:usage][:output_tokens],
         llm_cached_tokens: nil,
+        model: response[:model],
       }
     end
 

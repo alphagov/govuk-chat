@@ -1,17 +1,31 @@
 module Guardrails
   class JailbreakChecker
-    Result = Data.define(:triggered, :llm_response, :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens)
+    Result = Data.define(
+      :triggered,
+      :llm_response,
+      :llm_prompt_tokens,
+      :llm_completion_tokens,
+      :llm_cached_tokens,
+      :model,
+    )
 
     class ResponseError < StandardError
-      attr_reader :llm_guardrail_result, :llm_response, :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens
+      attr_reader :llm_guardrail_result, :llm_response, :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens, :model
 
-      def initialize(message, llm_guardrail_result:, llm_response:, llm_prompt_tokens:, llm_completion_tokens:, llm_cached_tokens:)
+      def initialize(message,
+                     llm_guardrail_result:,
+                     llm_response:,
+                     llm_prompt_tokens:,
+                     llm_completion_tokens:,
+                     llm_cached_tokens:,
+                     model:)
         super(message)
         @llm_guardrail_result = llm_guardrail_result
         @llm_response = llm_response
         @llm_prompt_tokens = llm_prompt_tokens
         @llm_completion_tokens = llm_completion_tokens
         @llm_cached_tokens = llm_cached_tokens
+        @model = model
       end
 
       def as_json
@@ -77,6 +91,7 @@ module Guardrails
         llm_prompt_tokens: result[:llm_prompt_tokens],
         llm_completion_tokens: result[:llm_completion_tokens],
         llm_cached_tokens: result[:llm_cached_tokens],
+        model: result[:model],
       }
     end
   end

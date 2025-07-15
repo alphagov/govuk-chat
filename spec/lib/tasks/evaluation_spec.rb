@@ -181,6 +181,7 @@ RSpec.describe "rake evaluation tasks" do
             llm_prompt_tokens: 100,
             llm_completion_tokens: 100,
             llm_cached_tokens: 0,
+            model: Guardrails::OpenAI::JailbreakChecker::OPENAI_MODEL,
           )
           allow(Guardrails::JailbreakChecker).to receive(:call).with(input, :openai).and_return(result)
           expected = { success: result }.to_json
@@ -200,6 +201,7 @@ RSpec.describe "rake evaluation tasks" do
             llm_prompt_tokens: 100,
             llm_completion_tokens: 100,
             llm_cached_tokens: 0,
+            model: Guardrails::OpenAI::JailbreakChecker::OPENAI_MODEL,
           )
           allow(Guardrails::JailbreakChecker).to receive(:call).with(input, :openai).and_raise(error)
 

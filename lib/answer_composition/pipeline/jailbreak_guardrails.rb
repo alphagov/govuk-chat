@@ -39,6 +39,7 @@ module AnswerComposition
           llm_prompt_tokens: response_or_error.llm_prompt_tokens,
           llm_completion_tokens: response_or_error.llm_completion_tokens,
           llm_cached_tokens: response_or_error.llm_cached_tokens,
+          model: response_or_error.model,
         }
       end
     end
