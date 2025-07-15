@@ -1,6 +1,6 @@
 class Api::V0::ConversationsController < Api::BaseController
   before_action { authorise_user!(SignonUser::Permissions::CONVERSATION_API) }
-  before_action :find_conversation, only: %i[show update answer answer_feedback questions]
+  before_action :find_conversation, only: %i[show update answer questions]
 
   def create
     conversation = Conversation.new(
@@ -79,21 +79,6 @@ class Api::V0::ConversationsController < Api::BaseController
     end
   end
 
-  def answer_feedback
-    answer = @conversation.answers.includes(:feedback).find(params[:answer_id])
-    feedback_form = Form::CreateAnswerFeedback.new(answer_feedback_params.merge(answer:))
-
-    if feedback_form.valid?
-      feedback_form.submit
-
-      render json: {}, status: :created
-    else
-      render json: ValidationErrorBlueprint.render(
-        errors: feedback_form.errors.messages,
-      ), status: :unprocessable_entity
-    end
-  end
-
   def questions
     questions = @conversation.questions_for_showing_conversation(
       only_answered: true,
@@ -134,10 +119,6 @@ private
                     .active
                     .where(where)
                     .find(params[:conversation_id])
-  end
-
-  def answer_feedback_params
-    params.permit(:useful)
   end
 
   def question_params

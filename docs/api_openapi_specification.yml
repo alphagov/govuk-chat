@@ -10,7 +10,7 @@ info:
     Worth noting that onboarding aspects of conversation (Informing user of
     limitations and accepting) are not included as within GOV.UK Chat these
     are a UI construct and not a part of core domain constructs.
-  version: "0.3.0"
+  version: "0.4.0"
 servers:
   - url: https://chat.publishing.service.gov.uk/api/v0
 paths:
@@ -413,109 +413,6 @@ paths:
             Govuk-End-User-Id-Read-RateLimit-Reset:
               $ref: '#/components/headers/GovukEndUserIdReadRateLimitReset'
 
-  /conversation/{conversation_id}/answers/{answer_id}/feedback:
-    post:
-      summary: Provide user feedback on an individual answer
-      description: |
-        A user can provide feedback on an answer defining it as useful or not,
-        once a user has set this it cannot be changed or removed
-      parameters:
-        - name: conversation_id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: answer_id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - $ref: "#/components/parameters/EndUserIdHeader"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - useful
-              properties:
-                useful:
-                  type: boolean
-      responses:
-        "201":
-          description: Feedback successfully submitted
-          headers:
-            Govuk-Api-User-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
-            Govuk-Api-User-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
-            Govuk-Api-User-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
-            Govuk-End-User-Id-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitLimit'
-            Govuk-End-User-Id-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitRemaining'
-            Govuk-End-User-Id-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitReset'
-        "422":
-          description: Validation error processing the feedback
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ValidationError"
-          headers:
-            Govuk-Api-User-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
-            Govuk-Api-User-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
-            Govuk-Api-User-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
-            Govuk-End-User-Id-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitLimit'
-            Govuk-End-User-Id-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitRemaining'
-            Govuk-End-User-Id-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitReset'
-        "404":
-          description: Conversation or answer does not exist
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GenericError"
-          headers:
-            Govuk-Api-User-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
-            Govuk-Api-User-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
-            Govuk-Api-User-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
-            Govuk-End-User-Id-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitLimit'
-            Govuk-End-User-Id-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitRemaining'
-            Govuk-End-User-Id-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitReset'
-        "429":
-          description: |
-            Too many requests to write endpoints from an API User or End User ID
-          headers:
-            Govuk-Api-User-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
-            Govuk-Api-User-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
-            Govuk-Api-User-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
-            Govuk-End-User-Id-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitLimit'
-            Govuk-End-User-Id-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitRemaining'
-            Govuk-End-User-Id-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitReset'
-
-
 security:
   - bearerAuth: []
 components:
@@ -721,10 +618,6 @@ components:
 
             Soft line breaks should not be treated as hard line breaks.
           type: string
-        useful:
-          description: |
-            Whether a user has flagged this answer as useful or not
-          type: boolean
         sources:
           type: array
           items:
