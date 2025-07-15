@@ -31,6 +31,7 @@ module Guardrails
           llm_prompt_tokens: llm_token_usage[:input_tokens],
           llm_completion_tokens: llm_token_usage[:output_tokens],
           llm_cached_tokens: llm_token_usage[:cache_read_input_tokens],
+          model: claude_response[:model],
         }
       end
 

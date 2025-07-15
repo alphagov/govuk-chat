@@ -18,6 +18,12 @@ RSpec.describe Guardrails::Claude::JailbreakChecker, :aws_credentials_stubbed do
       expect(result[:llm_cached_tokens]).to be_nil
     end
 
+    it "returns the model used" do
+      stub_claude_jailbreak_guardrails(input, triggered: false)
+      result = described_class.call(input)
+      expect(result[:model]).to eq(BedrockModels::CLAUDE_SONNET)
+    end
+
     it "returns the LLM response" do
       stub_claude_jailbreak_guardrails(input, triggered: false)
 

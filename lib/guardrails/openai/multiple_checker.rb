@@ -21,6 +21,7 @@ module Guardrails
           llm_prompt_tokens: llm_token_usage["prompt_tokens"],
           llm_completion_tokens: llm_token_usage["completion_tokens"],
           llm_cached_tokens: llm_token_usage.dig("prompt_tokens_details", "cached_tokens"),
+          model: openai_response["model"],
         }
       end
 

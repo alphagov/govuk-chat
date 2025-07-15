@@ -75,6 +75,15 @@ RSpec.describe Guardrails::Claude::MultipleChecker, :aws_credentials_stubbed do
         expect(result[:llm_prompt_tokens]).to eq(10)
         expect(result[:llm_completion_tokens]).to eq(20)
         expect(result[:llm_cached_tokens]).to eq(20)
+        expect(result[:model]).to eq(BedrockModels::CLAUDE_SONNET)
+      end
+
+      it "returns the model used" do
+        stub_claude_output_guardrails(input, "False | None")
+
+        result = described_class.call(input, prompt)
+
+        expect(result[:model]).to eq(BedrockModels::CLAUDE_SONNET)
       end
 
       it "uses an overridden AWS region if set" do

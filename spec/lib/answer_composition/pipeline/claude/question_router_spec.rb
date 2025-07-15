@@ -114,6 +114,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credent
         llm_prompt_tokens: 10,
         llm_completion_tokens: 20,
         llm_cached_tokens: 20,
+        model: BedrockModels::CLAUDE_SONNET,
       })
     end
 

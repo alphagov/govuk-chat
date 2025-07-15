@@ -21,5 +21,27 @@ RSpec.describe Guardrails::OpenAI::JailbreakChecker do # rubocop:disable RSpec/S
       described_class.call(input)
       expect(openai_request).to have_been_made
     end
+
+    it "returns the LLM token usage" do
+      stub_openai_chat_completion(
+        input,
+        answer: Guardrails::JailbreakChecker.pass_value,
+        chat_options: { model: described_class::OPENAI_MODEL },
+      )
+
+      result = described_class.call(input)
+
+      expect(result[:llm_prompt_tokens]).to eq(13)
+      expect(result[:llm_completion_tokens]).to eq(7)
+      expect(result[:llm_cached_tokens]).to eq(10)
+    end
+
+    it "returns the model used" do
+      stub_openai_chat_completion(input)
+
+      result = described_class.call(input)
+
+      expect(result[:model]).to eq("gpt-4o-mini-2024-07-18")
+    end
   end
 end

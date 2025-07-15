@@ -17,6 +17,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
   let(:llm_prompt_tokens) { 10 }
   let(:llm_completion_tokens) { 5 }
   let(:llm_cached_tokens) { 0 }
+  let(:model) { Guardrails::OpenAI::JailbreakChecker::OPENAI_MODEL }
 
   context "when the guardrails are not triggered" do
     before do
@@ -28,6 +29,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
                       llm_prompt_tokens:,
                       llm_completion_tokens:,
                       llm_cached_tokens:,
+                      model:,
                     ))
     end
 
@@ -64,6 +66,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
         llm_prompt_tokens: 10,
         llm_completion_tokens: 5,
         llm_cached_tokens: 0,
+        model:,
       })
     end
   end
@@ -78,6 +81,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
                       llm_prompt_tokens:,
                       llm_completion_tokens:,
                       llm_cached_tokens:,
+                      model:,
                     ))
     end
 
@@ -108,6 +112,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
         llm_prompt_tokens: 10,
         llm_completion_tokens: 5,
         llm_cached_tokens: 0,
+        model:,
       })
     end
   end
@@ -121,6 +126,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
         llm_prompt_tokens:,
         llm_completion_tokens:,
         llm_cached_tokens:,
+        model:,
       )
       allow(Guardrails::JailbreakChecker).to receive(:call).and_raise(error)
     end
@@ -149,6 +155,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
         llm_prompt_tokens: 10,
         llm_completion_tokens: 5,
         llm_cached_tokens: 0,
+        model:,
       })
     end
   end
