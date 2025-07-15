@@ -102,6 +102,13 @@ RSpec.describe Guardrails::OpenAI::MultipleChecker do
         expect(result[:llm_cached_tokens]).to eq(10)
       end
 
+      it "returns the model used" do
+        stub_openai_output_guardrail(input)
+        result = described_class.call(input, prompt)
+
+        expect(result[:model]).to eq("gpt-4o-mini-2024-07-18")
+      end
+
       context "when :question_routing_guardrails is passed in as the llm_prompt_name" do
         let(:llm_prompt_name) { :question_routing_guardrails }
         let(:guardrail_definitions) do

@@ -1,7 +1,7 @@
 module Guardrails
   class MultipleChecker
     Result = Data.define(:triggered, :guardrails, :llm_response, :llm_guardrail_result,
-                         :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens) do
+                         :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens, :model) do
       def triggered_guardrails
         return [] unless guardrails
 
@@ -10,14 +10,15 @@ module Guardrails
     end
 
     class ResponseError < StandardError
-      attr_reader :llm_response, :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens
+      attr_reader :llm_response, :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens, :model
 
-      def initialize(message, llm_response, llm_prompt_tokens, llm_completion_tokens, llm_cached_tokens)
+      def initialize(message, llm_response, llm_prompt_tokens, llm_completion_tokens, llm_cached_tokens, model)
         super(message)
         @llm_response = llm_response
         @llm_prompt_tokens = llm_prompt_tokens
         @llm_completion_tokens = llm_completion_tokens
         @llm_cached_tokens = llm_cached_tokens
+        @model = model
       end
     end
 
@@ -92,10 +93,15 @@ module Guardrails
 
   private
 
-    def parse_response(llm_response:, llm_guardrail_result:, llm_prompt_tokens:, llm_completion_tokens:, llm_cached_tokens:)
+    def parse_response(llm_response:, llm_guardrail_result:, llm_prompt_tokens:, llm_completion_tokens:, llm_cached_tokens:, model:)
       unless response_pattern =~ llm_guardrail_result
         raise ResponseError.new(
-          "Error parsing guardrail response", llm_guardrail_result, llm_prompt_tokens, llm_completion_tokens, llm_cached_tokens
+          "Error parsing guardrail response",
+          llm_guardrail_result,
+          llm_prompt_tokens,
+          llm_completion_tokens,
+          llm_cached_tokens,
+          model,
         )
       end
 
@@ -111,6 +117,7 @@ module Guardrails
         llm_prompt_tokens: llm_prompt_tokens,
         llm_completion_tokens: llm_completion_tokens,
         llm_cached_tokens: llm_cached_tokens,
+        model:,
       )
     end
 

@@ -18,6 +18,7 @@ RSpec.describe Guardrails::MultipleChecker do
         llm_prompt_tokens: 13,
         llm_completion_tokens: 7,
         llm_cached_tokens: 10,
+        model: "gpt-4o-mini-2024-07-18",
       }
     end
     let(:guardrail_result) { build(:guardrails_multiple_checker_result, :pass) }
