@@ -6,23 +6,21 @@
   is_loading ||= false
   feedback_url ||= false
   skip_sanitize ||= false
+  show_identifier ||= false
   message_classes = %w[app-c-conversation-message__message]
   message_classes << (is_question ? "app-c-conversation-message__message--user-message"
   : "app-c-conversation-message__message--govuk-message")
+  message_identifier_classes = %w[app-c-conversation-message__identifier]
+  message_identifier_classes << (show_identifier ? "" : "govuk-visually-hidden")
 %>
 
 <%= content_tag :li, id:, class: "app-c-conversation-message js-conversation-message", data: data_attributes do %>
   <%= content_tag :div, class: message_classes do %>
-    <span class="govuk-visually-hidden">
-      <% if is_question %>
-        You:
-      <% else %>
-        GOV.UK Chat:
-      <% end %>
-    </span>
-
     <% if is_question %>
       <div class="app-c-conversation-message__body app-c-conversation-message__body--user-message">
+        <%= content_tag :span, class: message_identifier_classes do %>
+          You
+        <% end %>
         <% if is_loading %>
           <p class="app-c-conversation-message__loading-text govuk-body">
             Loading your question<span class="app-c-conversation-message__loading-ellipsis" aria-hidden="true">...</span>
@@ -36,6 +34,9 @@
 
     <% else %>
       <div class="app-c-conversation-message__body app-c-conversation-message__body--govuk-message">
+        <%= content_tag :span, class: message_identifier_classes do %>
+          GOV.UK Chat
+        <% end %>
         <% if is_loading %>
           <p class="app-c-conversation-message__loading-text govuk-body">
             Generating your answer<span class="app-c-conversation-message__loading-ellipsis" aria-hidden="true">...</span>

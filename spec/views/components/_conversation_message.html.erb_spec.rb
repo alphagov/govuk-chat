@@ -26,7 +26,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
 
       expect(rendered).to have_selector("li.app-c-conversation-message#question-1") do |rendered_question|
         expect(rendered_question)
-          .to have_selector(".app-c-conversation-message__message .govuk-visually-hidden", text: "You:")
+          .to have_selector(".app-c-conversation-message__message .govuk-visually-hidden", text: "You")
           .and have_selector(".app-c-conversation-message__body.app-c-conversation-message__body--user-message", text: "message 2")
       end
     end
@@ -57,7 +57,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
 
       expect(rendered).to have_selector("li.app-c-conversation-message#answer-2") do |rendered_answer|
         expect(rendered_answer)
-          .to have_selector(".app-c-conversation-message__message .govuk-visually-hidden", text: "GOV.UK Chat:")
+          .to have_selector(".app-c-conversation-message__message .govuk-visually-hidden", text: "GOV.UK Chat")
           .and have_selector(".app-c-conversation-message__answer .govuk-govspeak", text: "message 3")
           .and have_selector(".govuk-details", count: 0)
       end
@@ -120,6 +120,35 @@ RSpec.describe "components/_conversation_message.html.erb" do
       })
 
       expect(rendered).to have_selector(".app-c-answer-feedback__form[action='http://example.com']")
+    end
+  end
+
+  context "when show_identifier is true" do
+    it "renders the message component with a visible message identifier" do
+      render("components/conversation_message", {
+        id: "answer-5",
+        message: "message 5",
+        show_identifier: true,
+      })
+
+      expect(rendered).to have_selector("li.app-c-conversation-message#answer-5") do |rendered_question|
+        expect(rendered_question)
+          .to have_selector(".app-c-conversation-message__identifier", visible: :visible, text: "GOV.UK Chat")
+      end
+    end
+  end
+
+  context "when show_identifier is false/not passed" do
+    it "renders the message component with a hidden message identifier" do
+      render("components/conversation_message", {
+        id: "answer-6",
+        message: "message 6",
+      })
+
+      expect(rendered).to have_selector("li.app-c-conversation-message#answer-6") do |rendered_question|
+        expect(rendered_question)
+          .to have_selector(".app-c-conversation-message__message .govuk-visually-hidden", text: "GOV.UK Chat")
+      end
     end
   end
 end
