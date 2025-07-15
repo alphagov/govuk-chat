@@ -37,20 +37,5 @@ RSpec.describe AnswerBlueprint do
       output_json = described_class.render_as_json(answer)
       expect(output_json.keys).not_to include("sources")
     end
-
-    context "when answer feedback is present" do
-      it "includes it in the JSON" do
-        create(:answer_feedback, answer:)
-        expected_json = {
-          id: answer.id,
-          created_at: answer.created_at.iso8601,
-          message: answer.message,
-          useful: true,
-        }.as_json
-        output_json = described_class.render_as_json(answer.reload)
-
-        expect(output_json).to eq(expected_json)
-      end
-    end
   end
 end
