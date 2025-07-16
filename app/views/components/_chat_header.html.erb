@@ -3,9 +3,10 @@
   signed_in ||= false
   conversation ||= false
   active_conversation ||= false
+  add_print_utility ||= false
 
   data_attributes = { module: "chat-header" }
-  data_attributes[:add_print_utility] = true if conversation
+  data_attributes[:add_print_utility] = true if conversation and add_print_utility
 
   navigation_items ||= []
 
