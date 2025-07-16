@@ -45,8 +45,8 @@ RSpec.describe "components/_chat_header.html.erb" do
       )
     end
 
-    it "has a data-add-print-utility attribute" do
-      render("components/chat_header", conversation: true)
+    it "has a data-add-print-utility attribute when add_print_utility is true" do
+      render("components/chat_header", conversation: true, add_print_utility: true)
 
       expect(rendered).to have_selector("[data-add-print-utility]")
     end
