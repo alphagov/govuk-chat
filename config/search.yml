@@ -1,7 +1,7 @@
 thresholds:
-  retrieved_from_index: 30
-  minimum_score: 0.8
-  max_results: 10
+  retrieved_from_index: 80
+  minimum_score: 0.75
+  max_results: 20
 document_type_weightings:
   about: 1.1
   answer: 2.0
