@@ -18,13 +18,16 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         this.addPrintButton()
       }
 
-      this.menuButton.addEventListener('click', e => this.handleClick(e))
-      document.addEventListener('conversation-active', () => this.handleConversationActive())
+      if (this.menuButton) {
+        this.menuButton.addEventListener('click', e => this.handleClick(e))
 
-      // set the initial state of the navigation menu
-      this.menuButton.hidden = false
-      this.menuButton.ariaExpanded = false
-      this.navList.hidden = true
+        // set the initial state of the navigation menu
+        this.menuButton.hidden = false
+        this.menuButton.ariaExpanded = false
+        this.navList.hidden = true
+      }
+
+      document.addEventListener('conversation-active', () => this.handleConversationActive())
     }
 
     handleClick () {
