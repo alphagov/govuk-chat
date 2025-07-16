@@ -132,7 +132,7 @@
   }
 
   .app-c-header__container {
-    padding-top: govuk-spacing(2);
+    padding: govuk-spacing(2) 0;
   }
 }
 
@@ -272,7 +272,7 @@
 
   @include govuk-media-query($from: tablet) {
     position: absolute;
-    right: calc(govuk-spacing(2) + 80px); // `.govuk-header__menu-button` menu button width and 10px padding
+    right: 0;
   }
 }
 

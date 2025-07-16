@@ -99,7 +99,7 @@ RSpec.describe "Conversation JavaScript features",
     and_i_can_see_the_clear_chat_link
   end
 
-  scenario "print link is added to navigation" do
+  scenario "print link is added to navigation", skip: "the print button will be temporarily hidden so this test is redundant for the time being" do
     given_i_am_a_web_chat_user
     and_i_visit_the_conversation_page
     then_i_see_a_print_link_in_the_menu
