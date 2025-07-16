@@ -24,7 +24,7 @@ RSpec.describe "ConversationsController" do
         expect(response).to have_http_status(:success)
         expect(response.body).to have_selector(
           ".js-new-conversation-messages-list",
-          text: "Hi 👋 I’m GOV.UK’s AI Chat.",
+          text: "Hi 👋 I’m GOV.UK Chat.",
         )
       end
 
@@ -65,7 +65,7 @@ RSpec.describe "ConversationsController" do
         expect(response).to have_http_status(:success)
         expect(response.body).to have_selector(
           ".js-conversation-message-history-list",
-          text: "Hi 👋 I’m GOV.UK’s AI Chat",
+          text: "Hi 👋 I’m GOV.UK Chat",
         )
       end
 
