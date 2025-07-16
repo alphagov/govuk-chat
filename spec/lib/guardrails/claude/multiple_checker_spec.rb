@@ -72,7 +72,7 @@ RSpec.describe Guardrails::Claude::MultipleChecker, :aws_credentials_stubbed do
 
         result = described_class.call(input, prompt)
 
-        expect(result[:llm_prompt_tokens]).to eq(10)
+        expect(result[:llm_prompt_tokens]).to eq(30)
         expect(result[:llm_completion_tokens]).to eq(20)
         expect(result[:llm_cached_tokens]).to eq(20)
         expect(result[:model]).to eq(BedrockModels::CLAUDE_SONNET)

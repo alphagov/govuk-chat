@@ -92,7 +92,7 @@ module AnswerComposition::Pipeline
       def build_metrics(start_time, response)
         {
           duration: Clock.monotonic_time - start_time,
-          llm_prompt_tokens: response[:usage][:input_tokens],
+          llm_prompt_tokens: BedrockModels.total_prompt_tokens(response[:usage]),
           llm_completion_tokens: response[:usage][:output_tokens],
           llm_cached_tokens: response[:usage][:cache_read_input_tokens],
           model: response[:model],
