@@ -13,13 +13,6 @@
   page_title = (content_for?(:page_title) ? yield(:page_title) : yield(:title)).presence
 
   web_access_enabled = settings.web_access_enabled? rescue true
-
-  header_navigation_items = [
-    {
-      href: about_url,
-      text: "About",
-    },
-  ].compact
 %>
 <!DOCTYPE html>
 <%= tag.html(class: html_classes, lang: "en") do %>
@@ -57,7 +50,6 @@
     <%= render "components/chat_header", {
       conversation: conversation_layout,
       active_conversation:,
-      navigation_items: header_navigation_items,
     } %>
 
     <% if conversation_layout %>

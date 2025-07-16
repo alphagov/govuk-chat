@@ -50,5 +50,11 @@ RSpec.describe "components/_chat_header.html.erb" do
 
       expect(rendered).to have_selector("[data-add-print-utility]")
     end
+
+    it "does not render the menu button if passed no navigation_items" do
+      render("components/chat_header", conversation: true)
+
+      expect(rendered).not_to have_selector(".govuk-header__menu-button.govuk-js-header-toggle.gem-c-header__menu-button")
+    end
   end
 end
