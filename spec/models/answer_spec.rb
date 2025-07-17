@@ -211,6 +211,19 @@ RSpec.describe Answer do
     expect(label_config.keys).to match_array(enum_values)
   end
 
+  it "ensures the question routing labels enum values and prompt config are in sync" do
+    claude_question_routing_prompt_config = Rails.configuration.govuk_chat_private.llm_prompts.claude.question_routing
+    openai_question_routing_prompt_config = Rails.configuration.govuk_chat_private.llm_prompts.openai.question_routing
+
+    [claude_question_routing_prompt_config, openai_question_routing_prompt_config].each do |prompt_config|
+      classification_names = prompt_config[:classifications].map { |classification| classification[:name] }
+      enum_values = described_class.question_routing_labels.values
+      shared_values = classification_names & enum_values
+
+      expect(shared_values).to match_array(enum_values)
+    end
+  end
+
   describe "use_in_rephrasing?" do
     it "returns true for answers with statuses not in the STATUSES_EXCLUDED_FROM_REPHRASING constant" do
       statuses = described_class.statuses.keys - described_class::STATUSES_EXCLUDED_FROM_REPHRASING
