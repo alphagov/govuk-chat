@@ -44,4 +44,49 @@ RSpec.describe "Conversation API flow" do
       expect(response).to have_http_status(:ok)
     end
   end
+
+  describe "API user paginates through a long conversation" do
+    let(:conversation) { create(:conversation, :api, signon_user: api_user) }
+
+    before do
+      allow(Rails.configuration.conversations).to receive(:api_questions_per_page).and_return(2)
+      5.times { create(:question, :with_answer, conversation:) }
+    end
+
+    it "allows user to paginate through the conversation" do
+      # when_i_request_the_first_page_of_questions
+      get api_v0_conversation_questions_path(conversation), as: :json
+
+      # then_i_receive_the_first_page_of_questions
+      expect(response).to have_http_status(:ok)
+
+      # when_i_request_the_second_page_of_questions
+      earlier_questions_url = JSON.parse(response.body)["earlier_questions_url"]
+      get earlier_questions_url
+
+      # then_i_receive_the_second_page_of_questions
+      expect(response).to have_http_status(:ok)
+
+      # when_i_request_the_third_page_of_questions
+      earlier_questions_url = JSON.parse(response.body)["earlier_questions_url"]
+      get earlier_questions_url
+
+      # then_i_receive_the_even_earlier_page_of_questions
+      expect(response).to have_http_status(:ok)
+
+      # when_i_request_the_second_page_of_questions
+      later_questions_url = JSON.parse(response.body)["later_questions_url"]
+      get later_questions_url
+
+      # then_i_receive_the_later_page_of_questions
+      expect(response).to have_http_status(:ok)
+
+      # when_i_request_the_first_page_of_questions
+      later_questions_url = JSON.parse(response.body)["later_questions_url"]
+      get later_questions_url
+
+      # then_i_receive_the_first_page_of_questions
+      expect(response).to have_http_status(:ok)
+    end
+  end
 end
