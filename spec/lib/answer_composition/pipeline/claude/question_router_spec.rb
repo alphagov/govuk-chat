@@ -111,7 +111,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credent
 
       expect(context.answer.metrics["question_routing"]).to eq({
         duration: 1.5,
-        llm_prompt_tokens: 10,
+        llm_prompt_tokens: 30,
         llm_completion_tokens: 20,
         llm_cached_tokens: 20,
         model: BedrockModels::CLAUDE_SONNET,
