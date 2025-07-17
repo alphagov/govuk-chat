@@ -301,7 +301,7 @@ RSpec.describe "Conversation JavaScript features",
   end
 
   def then_i_see_a_print_link_in_the_menu
-    within(".app-c-header") do
+    within(".app-c-header", wait: 5) do
       click_button "Menu"
     end
 
