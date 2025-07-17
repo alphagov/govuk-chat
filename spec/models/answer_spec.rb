@@ -218,9 +218,10 @@ RSpec.describe Answer do
     [claude_question_routing_prompt_config, openai_question_routing_prompt_config].each do |prompt_config|
       classification_names = prompt_config[:classifications].map { |classification| classification[:name] }
       enum_values = described_class.question_routing_labels.values
-      shared_values = classification_names & enum_values
 
-      expect(shared_values).to match_array(enum_values)
+      classification_names.each do |classification_name|
+        expect(enum_values).to include(classification_name)
+      end
     end
   end
 

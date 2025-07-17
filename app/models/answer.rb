@@ -76,8 +76,10 @@ class Answer < ApplicationRecord
          negative_acknowledgement: "negative_acknowledgement",
          non_english: "non_english",
          personal_info: "personal_info",
+         requires_account_data: "requires_account_data",
          positive_acknowledgement: "positive_acknowledgement",
          vague_acronym_grammar: "vague_acronym_grammar",
+         unclear_intent: "unclear_intent",
        },
        prefix: true
 

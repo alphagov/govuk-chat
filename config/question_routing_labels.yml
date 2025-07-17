@@ -80,6 +80,14 @@ personal_info:
   canned_responses:
     - I do not have access to any personal or confidential information. You can try searching for the [service you need on GOV.UK](https://www.gov.uk/search/services). Or ask me another question, if you need more help.
 
+requires_account_data:
+  label: "Requires account data"
+  use_answer: true
+  answer_status: unanswerable_question_routing
+  canned_responses:
+    - I do not have access to any personal or confidential information. You can try searching for the [service you need on GOV.UK](https://www.gov.uk/search/services). Or ask me another question, if you need more help.
+
+
 positive_acknowledgement:
   label: "Positive acknowledgement"
   use_answer: false
@@ -93,6 +101,13 @@ positive_acknowledgement:
 
 vague_acronym_grammar:
   label: "Vague, acronym, grammar"
+  use_answer: true
+  answer_status: clarification
+  canned_responses:
+    - "I cannot answer that. Please try asking something else."
+
+unclear_intent:
+  label: "Unclear intent"
   use_answer: true
   answer_status: clarification
   canned_responses:

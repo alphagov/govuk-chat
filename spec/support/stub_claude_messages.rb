@@ -79,7 +79,7 @@ module StubClaudeMessages
     chat_options = {
       tools:,
       tool_choice: { type: "any", disable_parallel_tool_use: true },
-      max_tokens: 160,
+      max_tokens: 500,
     }.merge(chat_options)
 
     system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))

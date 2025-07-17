@@ -94,7 +94,7 @@ module AnswerComposition::Pipeline
 
       def inference_config
         {
-          max_tokens: 160, # A small limit here removes the risk of the LLM returning the whole prompt verbatim
+          max_tokens: 500, # A small limit here removes the risk of the LLM returning the whole prompt verbatim
           temperature: 0.0,
         }
       end
