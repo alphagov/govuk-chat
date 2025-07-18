@@ -33,7 +33,7 @@
   color: $govuk-error-colour
 }
 
-.app-c-question-form__input-wrapper {
+.app-c-question-form__textarea-wrapper {
   flex-grow: 1;
   margin-right: govuk-spacing(1);
 
@@ -43,13 +43,18 @@
   }
 }
 
-.app-c-question-form__input {
+.app-c-question-form__textarea {
   border: 2px solid govuk-colour("black");
   border-radius: 0;
   box-sizing: border-box;
-  padding: govuk-spacing(2);
+  padding: govuk-spacing(2) 0 govuk-spacing(2) govuk-spacing(2);
   width: 100%;
   margin: 0;
+  resize: none;
+  grid-area: 1 / 1 / 2 / 2;
+  @include govuk-media-query($until: tablet) {
+    padding: govuk-spacing(2) govuk-spacing(1) govuk-spacing(2) govuk-spacing(2);
+  }
   @include govuk-font($size: 19);
 
   &:focus {
@@ -59,12 +64,30 @@
   }
 
   &.govuk-textarea--error, // A class injected by the GOV.UK Frontend character-count component
-  &.app-c-question-form__input--error {
+  &.app-c-question-form__textarea--error {
     border-color: govuk-colour("red");
 
     &:focus {
       border-color: govuk-colour("black");
     }
+  }
+}
+
+.app-c-question-form__textarea-character-count-wrapper {
+  display: grid;
+
+  &::after {
+    content: attr(data-replicated-value) ""; // Note the weird space! Needed to preventy jumpy behavior
+    white-space: pre-wrap;  // This is how textarea text behaves
+    visibility: hidden; // Hidden from view, clicks, and screen readers
+    grid-area: 1 / 1 / 2 / 2;
+    max-height: 25dvh; // Set a max-height to prevent the textarea from growing too much
+
+    // Add identical border styling and (almost identical) padding so this grows aligned with the 
+    // textarea expansion
+    border: 2px solid govuk-colour("black");
+    padding: govuk-spacing(2);
+    @include govuk-font($size: 19);
   }
 }
 
