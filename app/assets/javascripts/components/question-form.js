@@ -10,7 +10,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     constructor (module) {
       this.module = module
       this.form = module.querySelector('.js-question-form')
-      this.input = module.querySelector('.js-question-form-input')
+      this.textarea = module.querySelector('.js-question-form-textarea')
+      this.textareaWrapper = module.querySelector('.js-question-form-textarea-wrapper')
       this.button = module.querySelector('.js-question-form-button')
       this.buttonResponseStatus = module.querySelector('.js-question-form-button__response-status')
       this.errorsWrapper = module.querySelector('.js-question-form-errors-wrapper')
@@ -30,6 +31,9 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.module.dispatchEvent(new Event('init'))
 
       new window.GOVUKFrontend.CharacterCount(this.module) // eslint-disable-line no-new
+
+      this.enableTextareaResizing(this.textareaWrapper)
+      this.submitTextAreaOnEnter(this.textarea)
     }
 
     handleSubmit (event) {
@@ -41,14 +45,14 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
       const errors = []
 
-      if (this.input.value.trim() === '') {
+      if (this.textarea.value.trim() === '') {
         errors.push(this.module.dataset.presenceErrorMessage)
       }
 
       this.replaceErrors(errors)
 
       const maxlength = parseInt(this.module.dataset.maxlength, 10)
-      const exceedsMaxLength = this.input.value.length > maxlength
+      const exceedsMaxLength = this.textarea.value.length > maxlength
 
       if (errors.length || exceedsMaxLength) {
         event.preventDefault()
@@ -63,7 +67,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     handleQuestionAccepted () {
       this.disableControls()
-      this.resetInput()
+      this.resetTextarea()
       this.handleButtonResponseStatus(this.buttonResponseStatus.dataset.loadingAnswerText)
     }
 
@@ -77,17 +81,17 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     handleAnswerReceived () {
-      this.resetInput()
+      this.resetTextarea()
       this.enableControls()
     }
 
     disableControls () {
-      this.input.readOnly = true
+      this.textarea.readOnly = true
       this.toggleDisabledSettings(true)
     }
 
     enableControls () {
-      this.input.readOnly = false
+      this.textarea.readOnly = false
       this.toggleDisabledSettings(false)
     }
 
@@ -106,11 +110,11 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       }
     }
 
-    resetInput () {
-      this.input.value = ''
+    resetTextarea () {
+      this.textarea.value = ''
 
       // Trigger keyup event so the character-count component resets and clears the count hint
-      this.input.dispatchEvent(new Event('keyup'))
+      this.textarea.dispatchEvent(new Event('keyup'))
     }
 
     replaceErrors (errors) {
@@ -129,30 +133,36 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.toggleErrorStyles(errors.length)
 
       if (errors.length) {
-        this.attachInputDescriptions(this.errorsWrapper.id)
-        this.input.focus()
+        this.attachTextareaDescriptions(this.errorsWrapper.id)
+        this.textarea.focus()
       } else {
-        this.resetInputDescriptions()
+        this.resetTextareaDescriptions()
       }
     }
 
-    attachInputDescriptions () {
+    attachTextareaDescriptions () {
       const ids = [this.module.dataset.hintId, ...arguments].join(' ')
-      this.input.setAttribute('aria-describedby', ids)
+      this.textarea.setAttribute('aria-describedby', ids)
     }
 
-    resetInputDescriptions () {
-      this.input.setAttribute('aria-describedby', this.module.dataset.hintId)
+    resetTextareaDescriptions () {
+      this.textarea.setAttribute('aria-describedby', this.module.dataset.hintId)
     }
 
     toggleErrorStyles (hasErrors) {
       if (hasErrors) {
-        this.input.classList.add('app-c-question-form__input--error')
+        this.textarea.classList.add('app-c-question-form__textarea--error')
         this.formGroup.classList.add('app-c-question-form__form-group--error')
       } else {
-        this.input.classList.remove('app-c-question-form__input--error')
+        this.textarea.classList.remove('app-c-question-form__textarea--error')
         this.formGroup.classList.remove('app-c-question-form__form-group--error')
       }
+    }
+
+    enableTextareaResizing (textareaWrapper) {
+      this.textarea.addEventListener('input', () => {
+        textareaWrapper.dataset.replicatedValue = this.textarea.value
+      })
     }
   }
 
