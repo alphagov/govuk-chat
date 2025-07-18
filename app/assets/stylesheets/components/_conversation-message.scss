@@ -9,6 +9,12 @@ $message-container-spacing-mobile: 40px;
   }
 }
 
+.app-c-conversation-message__identifier:not(.govuk-visually-hidden) {
+  display: inline-block;
+  margin-bottom: govuk-spacing(2);
+  @include govuk-font($size: 19, $weight: bold);
+}
+
 .app-c-conversation-message__message {
   display: flex;
 }

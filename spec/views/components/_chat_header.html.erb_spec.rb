@@ -18,23 +18,21 @@ RSpec.describe "components/_chat_header.html.erb" do
     render "components/chat_header", {
       navigation_items: [
         { text: "About", href: about_path },
-        { text: "Help and support", href: support_path },
       ],
     }
 
     expect(rendered).to have_selector(".govuk-header__navigation") do |navigation|
       expect(navigation).to have_link("About", href: about_path)
-      expect(navigation).to have_link("Help and support", href: support_path)
     end
   end
 
   context "when conversation is true" do
-    it "has a 'Start new chat' link that has a focusable only modifier" do
+    it "has a 'Clear chat' link that has a focusable only modifier" do
       render("components/chat_header", conversation: true)
 
       expect(rendered).to have_selector(
         "a.app-c-header__clear-chat.app-c-header__clear-chat--focusable-only[href='#{clear_conversation_path}']",
-        text: "Start new chat",
+        text: "Clear chat",
       )
     end
 
@@ -43,14 +41,20 @@ RSpec.describe "components/_chat_header.html.erb" do
 
       expect(rendered).to have_selector(
         "a.app-c-header__clear-chat:not(.app-c-header__clear-chat--focusable-only)[href='#{clear_conversation_path}']",
-        text: "Start new chat",
+        text: "Clear chat",
       )
     end
 
-    it "has a data-add-print-utility attribute" do
-      render("components/chat_header", conversation: true)
+    it "has a data-add-print-utility attribute when add_print_utility is true" do
+      render("components/chat_header", conversation: true, add_print_utility: true)
 
       expect(rendered).to have_selector("[data-add-print-utility]")
+    end
+
+    it "does not render the menu button if passed no navigation_items" do
+      render("components/chat_header", conversation: true)
+
+      expect(rendered).not_to have_selector(".govuk-header__menu-button.govuk-js-header-toggle.gem-c-header__menu-button")
     end
   end
 end

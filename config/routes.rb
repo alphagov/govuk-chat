@@ -39,7 +39,6 @@ Rails.application.routes.draw do
     end
 
     get "/about", to: "static#about"
-    get "/support", to: "static#support"
     get "/privacy", to: redirect("#{Plek.website_root}/government/publications/govuk-chat-privacy-notice/govuk-chat-privacy-notice", status: 302)
     get "/accessibility", to: "static#accessibility"
   end
