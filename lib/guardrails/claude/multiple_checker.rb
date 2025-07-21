@@ -28,7 +28,7 @@ module Guardrails
         {
           llm_response:,
           llm_guardrail_result:,
-          llm_prompt_tokens: BedrockModels.total_prompt_tokens(claude_response[:usage]),
+          llm_prompt_tokens: BedrockModels.claude_total_prompt_tokens(claude_response[:usage]),
           llm_completion_tokens: llm_token_usage[:output_tokens],
           llm_cached_tokens: llm_token_usage[:cache_read_input_tokens],
           model: claude_response[:model],
