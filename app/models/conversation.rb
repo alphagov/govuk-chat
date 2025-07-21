@@ -28,7 +28,13 @@ class Conversation < ApplicationRecord
       scope = scope.where("questions.created_at > ?", after_timestamp)
     end
 
-    scope.last(limit || Rails.configuration.conversations.max_question_count)
+    scope = scope.limit(limit || Rails.configuration.conversations.max_question_count)
+
+    if before_id.blank? && after_id.present?
+      scope.order(created_at: :asc)
+    else
+      scope.order(created_at: :desc).reverse
+    end
   end
 
   def active_answered_questions_before?(timestamp)
