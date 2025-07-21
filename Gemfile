@@ -18,7 +18,7 @@ gem "dartsass-rails"
 gem "faraday"
 gem "faraday-typhoeus"
 gem "gds-api-adapters"
-gem "gds-sso"
+gem "gds-sso", github: "alphagov/gds-sso", branch: "chat-api-changes"
 gem "google-cloud-bigquery", require: false
 gem "govuk_app_config"
 gem "govuk_chat_private", github: "alphagov/govuk_chat_private"

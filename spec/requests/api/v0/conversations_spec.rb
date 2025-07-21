@@ -3,9 +3,7 @@ RSpec.describe "Api::V0::ConversationsController" do
   let(:conversation) { create(:conversation, :api, signon_user: api_user) }
   let(:question) { create(:question, conversation:) }
 
-  before do
-    login_as(api_user)
-  end
+  before { login_as(api_user) }
 
   shared_examples "limits access based on Signon permissions" do
     let(:method) { :get }
@@ -52,7 +50,7 @@ RSpec.describe "Api::V0::ConversationsController" do
     end
   end
 
-  it_behaves_like "throttles traffic for an access token",
+  it_behaves_like "throttles traffic for a signon user",
                   routes: {
                     api_v0_show_conversation_path: %i[get],
                     api_v0_answer_question_path: %i[get],

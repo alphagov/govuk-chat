@@ -1,4 +1,19 @@
 GIT
+  remote: https://github.com/alphagov/gds-sso.git
+  revision: 07c86686038e5c90828594b0d162eaa8561cd437
+  branch: chat-api-changes
+  specs:
+    gds-sso (20.0.0)
+      oauth2 (~> 2.0)
+      omniauth (~> 2.1)
+      omniauth-oauth2 (~> 1.8)
+      plek (>= 5)
+      rack
+      rails (>= 7)
+      warden (~> 1.2)
+      warden-oauth2 (~> 0.0.1)
+
+GIT
   remote: https://github.com/alphagov/govuk_chat_private.git
   revision: 719b81edece559e36a786df4dabbbf46f9d0acf2
   specs:
@@ -200,14 +215,6 @@ GEM
       plek (>= 1.9.0)
       rack (>= 2.2.0)
       rest-client (~> 2.0)
-    gds-sso (20.0.0)
-      oauth2 (~> 2.0)
-      omniauth (~> 2.1)
-      omniauth-oauth2 (~> 1.8)
-      plek (>= 5)
-      rails (>= 7)
-      warden (~> 1.2)
-      warden-oauth2 (~> 0.0.1)
     globalid (1.2.1)
       activesupport (>= 6.1)
     google-apis-bigquery_v2 (0.87.0)
@@ -330,7 +337,7 @@ GEM
       addressable (~> 2.8)
       bigdecimal (~> 3.1)
     json_schema (0.21.0)
-    jwt (2.10.1)
+    jwt (2.10.2)
       base64
     kaminari (1.2.2)
       activesupport (>= 4.1.0)
@@ -376,7 +383,7 @@ GEM
     minitest (5.25.5)
     msgpack (1.8.0)
     multi_json (1.15.0)
-    multi_xml (0.7.1)
+    multi_xml (0.7.2)
       bigdecimal (~> 3.1)
     multipart-post (2.4.1)
     mutex_m (0.3.0)
@@ -407,13 +414,14 @@ GEM
     nokogiri (1.18.8-x86_64-linux-gnu)
       racc (~> 1.4)
     null_logger (0.0.1)
-    oauth2 (2.0.9)
-      faraday (>= 0.17.3, < 3.0)
-      jwt (>= 1.0, < 3.0)
+    oauth2 (2.0.12)
+      faraday (>= 0.17.3, < 4.0)
+      jwt (>= 1.0, < 4.0)
+      logger (~> 1.2)
       multi_xml (~> 0.5)
       rack (>= 1.2, < 4)
-      snaky_hash (~> 2.0)
-      version_gem (~> 1.1)
+      snaky_hash (~> 2.0, >= 2.0.3)
+      version_gem (>= 1.1.8, < 3)
     omniauth (2.1.3)
       hashie (>= 3.4.6)
       rack (>= 2.2.3)
@@ -852,9 +860,9 @@ GEM
     simplecov-html (0.13.1)
     simplecov_json_formatter (0.1.4)
     smart_properties (1.17.0)
-    snaky_hash (2.0.1)
-      hashie
-      version_gem (~> 1.1, >= 1.1.1)
+    snaky_hash (2.0.3)
+      hashie (>= 0.1.0, < 6)
+      version_gem (>= 1.1.8, < 3)
     sorted_set (1.0.3)
       rbtree
       set (~> 1.0)
@@ -890,7 +898,7 @@ GEM
     unicode-emoji (4.0.4)
     uri (1.0.3)
     useragent (0.16.11)
-    version_gem (1.1.6)
+    version_gem (1.1.8)
     warden (1.2.9)
       rack (>= 2.0.9)
     warden-oauth2 (0.0.1)
@@ -935,7 +943,7 @@ DEPENDENCIES
   faraday
   faraday-typhoeus
   gds-api-adapters
-  gds-sso
+  gds-sso!
   google-cloud-bigquery
   govuk_app_config
   govuk_chat_private!
@@ -1038,7 +1046,7 @@ CHECKSUMS
   faraday-typhoeus (1.1.0) sha256=24c6147c213818dde3ebc50ae47ab92f9a7e554903aa362707126f749c6890e7
   ffi (1.17.0) sha256=51630e43425078311c056ca75f961bb3bda1641ab36e44ad4c455e0b0e4a231c
   gds-api-adapters (99.2.0) sha256=6be4a9cf638a8eefac26fcba4027e92f0b0b2a7b5efac0e4fce0a66a263eb2ae
-  gds-sso (20.0.0) sha256=dd4cacdabb3c675ede88e05f8efbea4f443a20748c1379ccffd53127d2bcb080
+  gds-sso (20.0.0)
   globalid (1.2.1) sha256=70bf76711871f843dbba72beb8613229a49429d1866828476f9c9d6ccc327ce9
   google-apis-bigquery_v2 (0.87.0) sha256=4265bd7558bd1f5de78e2d55d12a92dc8c1569d069d66ef562cc2ad5e287a5a7
   google-apis-core (0.16.0) sha256=046a2c30a5ec123b2a6bc5e64348be781ce5fcd18dd4e85982e7a6a8da9d0dcc
@@ -1077,7 +1085,7 @@ CHECKSUMS
   json (2.12.2) sha256=ba94a48ad265605c8fa9a50a5892f3ba6a02661aa010f638211f3cb36f44abf4
   json-schema (5.1.1) sha256=b3829ad9bcdfc5010d8a160c4c2bebb8fed8d05d22de65648f6ba646b071f9bf
   json_schema (0.21.0) sha256=d6e1eaf004a5185b7679eee34286a79d48e467d794ff68981d72ad23d3b2ec5b
-  jwt (2.10.1) sha256=e6424ae1d813f63e761a04d6284e10e7ec531d6f701917fadcd0d9b2deaf1cc5
+  jwt (2.10.2) sha256=31e1ee46f7359883d5e622446969fe9c118c3da87a0b1dca765ce269c3a0c4f4
   kaminari (1.2.2) sha256=c4076ff9adccc6109408333f87b5c4abbda5e39dc464bd4c66d06d9f73442a3e
   kaminari-actionview (1.2.2) sha256=1330f6fc8b59a4a4ef6a549ff8a224797289ebf7a3a503e8c1652535287cc909
   kaminari-activerecord (1.2.2) sha256=0dd3a67bab356a356f36b3b7236bcb81cef313095365befe8e98057dd2472430
@@ -1101,7 +1109,7 @@ CHECKSUMS
   minitest (5.25.5) sha256=391b6c6cb43a4802bfb7c93af1ebe2ac66a210293f4a3fb7db36f2fc7dc2c756
   msgpack (1.8.0) sha256=e64ce0212000d016809f5048b48eb3a65ffb169db22238fb4b72472fecb2d732
   multi_json (1.15.0) sha256=1fd04138b6e4a90017e8d1b804c039031399866ff3fbabb7822aea367c78615d
-  multi_xml (0.7.1) sha256=4fce100c68af588ff91b8ba90a0bb3f0466f06c909f21a32f4962059140ba61b
+  multi_xml (0.7.2) sha256=307a96dc48613badb7b2fc174fd4e62d7c7b619bc36ea33bfd0c49f64f5787ce
   multipart-post (2.4.1) sha256=9872d03a8e552020ca096adadbf5e3cb1cd1cdd6acd3c161136b8a5737cdb4a8
   mutex_m (0.3.0) sha256=cfcb04ac16b69c4813777022fdceda24e9f798e48092a2b817eb4c0a782b0751
   net-http (0.6.0) sha256=9621b20c137898af9d890556848c93603716cab516dc2c89b01a38b894e259fb
@@ -1118,7 +1126,7 @@ CHECKSUMS
   nokogiri (1.18.8-x86_64-darwin) sha256=024cdfe7d9ae3466bba6c06f348fb2a8395d9426b66a3c82f1961b907945cc0c
   nokogiri (1.18.8-x86_64-linux-gnu) sha256=4a747875db873d18a2985ee2c320a6070c4a414ad629da625fbc58d1a20e5ecc
   null_logger (0.0.1) sha256=5039c505a2e00f50111f266db62b8c9c5b57e9c8f28380944d79a55ec8a9f5a1
-  oauth2 (2.0.9) sha256=b21f9defcf52dc1610e0dfab4c868342173dcd707fd15c777d9f4f04e153f7fb
+  oauth2 (2.0.12) sha256=f7edb8549c7912724d07087d808c3fa6756298fd64d55d4968324df69c64ab3f
   omniauth (2.1.3) sha256=8d24e2e55c41926c96e4a93fd566bc026dfd6f2c850408748e89945a565956c2
   omniauth-oauth2 (1.8.0) sha256=b2f8e9559cc7e2d4efba57607691d6d2b634b879fc5b5b6ccfefa3da85089e78
   openapi3_parser (0.10.1) sha256=e373bfcec1f183252a51fbe28787b52c4052e045697bae1778258bb9b3296a19
@@ -1254,7 +1262,7 @@ CHECKSUMS
   simplecov-html (0.13.1) sha256=5dab0b7ee612e60e9887ad57693832fdf4695b4c0c859eaea5f95c18791ef10b
   simplecov_json_formatter (0.1.4) sha256=529418fbe8de1713ac2b2d612aa3daa56d316975d307244399fa4838c601b428
   smart_properties (1.17.0) sha256=f9323f8122e932341756ddec8e0ac9ec6e238408a7661508be99439ca6d6384b
-  snaky_hash (2.0.1) sha256=1ac87ec157fcfe7a460e821e0cd48ae1e6f5e3e082ab520f03f31a9259dbdc31
+  snaky_hash (2.0.3) sha256=25a3d299566e8153fb02fa23fd9a9358845950f7a523ddbbe1fa1e0d79a6d456
   sorted_set (1.0.3) sha256=4f2b8bee6e8c59cbd296228c0f1f81679357177a8b6859dcc2a99e86cce6372f
   sprockets (4.2.2) sha256=761e5a49f1c288704763f73139763564c845a8f856d52fba013458f8af1b59b1
   sprockets-rails (3.5.2) sha256=a9e88e6ce9f8c912d349aa5401509165ec42326baf9e942a85de4b76dbc4119e
@@ -1277,7 +1285,7 @@ CHECKSUMS
   unicode-emoji (4.0.4) sha256=2c2c4ef7f353e5809497126285a50b23056cc6e61b64433764a35eff6c36532a
   uri (1.0.3) sha256=e9f2244608eea2f7bc357d954c65c910ce0399ca5e18a7a29207ac22d8767011
   useragent (0.16.11) sha256=700e6413ad4bb954bb63547fa098dddf7b0ebe75b40cc6f93b8d54255b173844
-  version_gem (1.1.6) sha256=b989cf19880ee18907083ba9bb6fdbe40826bd698fbd7cdfab7345a2550bf203
+  version_gem (1.1.8) sha256=a964767ecbe36551b9ff2e59099548c27569f2f7f94bdb09f609d76393a8e008
   warden (1.2.9) sha256=46684f885d35a69dbb883deabf85a222c8e427a957804719e143005df7a1efd0
   warden-oauth2 (0.0.1) sha256=9f8dfd89d23ef8936734ca897acd7dde86802c8139d6299774d6e6bf292921fd
   webmock (3.25.1) sha256=ab9d5d9353bcbe6322c83e1c60a7103988efc7b67cd72ffb9012629c3d396323
