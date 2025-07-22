@@ -5,6 +5,7 @@ FactoryBot.define do
     status { :answered }
     sources { [] }
     feedback { nil }
+    analysis { nil }
 
     trait :with_sources do
       sources do
@@ -17,6 +18,10 @@ FactoryBot.define do
 
     trait :with_feedback do
       feedback { build(:answer_feedback) }
+    end
+
+    trait :with_analysis do
+      analysis { build(:answer_analysis) }
     end
   end
 end
