@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_14_145727) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_22_124155) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -47,6 +47,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_145727) do
     t.index ["answer_id", "relevancy"], name: "index_answer_sources_on_answer_id_and_relevancy", unique: true
     t.index ["answer_id"], name: "index_answer_sources_on_answer_id"
     t.index ["created_at"], name: "index_answer_sources_on_created_at"
+  end
+
+  create_table "answer_topics", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "primary", null: false
+    t.string "secondary"
+    t.jsonb "metrics"
+    t.jsonb "llm_response"
+    t.uuid "answer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_answer_topics_on_answer_id"
   end
 
   create_table "answers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -141,6 +152,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_145727) do
 
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade
   add_foreign_key "answer_sources", "answers", on_delete: :cascade
+  add_foreign_key "answer_topics", "answers", on_delete: :cascade
   add_foreign_key "answers", "questions", on_delete: :cascade
   add_foreign_key "conversations", "signon_users", on_delete: :restrict
   add_foreign_key "questions", "conversations"
