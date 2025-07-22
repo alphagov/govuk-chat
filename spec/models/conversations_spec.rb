@@ -96,6 +96,22 @@ RSpec.describe Conversation do
           conversation.questions_for_showing_conversation(after_id: 9999)
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
+
+      context "and there are more questions than the limit" do
+        it "returns the first N questions created after the given question's id" do
+          create(:question, conversation:, created_at: 1.minute.ago)
+          expected = [
+            create(:question, conversation:, created_at: 2.hours.ago),
+            create(:question, conversation:, created_at: 1.hour.ago),
+          ]
+          after_question = create(:question, conversation:, created_at: 3.hours.ago)
+
+          questions = conversation.reload.questions_for_showing_conversation(
+            after_id: after_question.id,
+          )
+          expect(questions).to eq(expected)
+        end
+      end
     end
 
     context "when a limit is provided" do
