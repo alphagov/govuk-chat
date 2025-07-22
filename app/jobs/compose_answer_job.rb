@@ -13,5 +13,9 @@ class ComposeAnswerJob < ApplicationJob
     rescue ActiveRecord::RecordNotUnique
       logger.warn("Already an answer created for #{question_id}")
     end
+
+    if answer.persisted?
+      AnswerInsights::TopicTagger.call(Answer.includes(%i[analysis question]).find(answer.id))
+    end
   end
 end

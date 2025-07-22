@@ -148,6 +148,37 @@ module StubClaudeMessages
     )
   end
 
+  def stub_claude_messages_topic_tagger(message)
+    topics_config = Rails.configuration.govuk_chat_private.llm_prompts.claude.topic_tagger
+    system_prompt = sprintf(
+      topics_config["system_prompt"],
+      topics: topics_config["topics"].map { |topic, description| "#{topic} - #{description}" }.join("\n"),
+    )
+    system = array_including(
+      { "type" => "text", "text" => system_prompt, "cache_control" => { "type" => "ephemeral" } },
+    )
+    tools = [topics_config["tool_spec"]]
+    content = [
+      claude_messages_tool_use_block(
+        input: { primary_topic: "business", secondary_topic: "benefits", confidence: "high", reasoning: "reason" },
+        name: tools.first["name"],
+      ),
+    ]
+    chat_options = {
+      tools:,
+      tool_choice: { type: "tool", name: "topic_tagger" },
+    }
+
+    stub_claude_messages_response(
+      message,
+      content:,
+      system:,
+      usage: { cache_read_input_tokens: 20 },
+      stop_reason: :tool_use,
+      chat_options:,
+    )
+  end
+
   def claude_messages_tool_use_block(input:, name:, id: "tool-use-id")
     Anthropic::Models::ToolUseBlock.new(
       id:,
