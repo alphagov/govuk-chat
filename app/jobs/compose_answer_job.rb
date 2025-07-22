@@ -13,5 +13,7 @@ class ComposeAnswerJob < ApplicationJob
     rescue ActiveRecord::RecordNotUnique
       logger.warn("Already an answer created for #{question_id}")
     end
+
+    AnswerTopicsJob.perform_later(answer.id) if answer.persisted?
   end
 end
