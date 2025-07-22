@@ -10,7 +10,7 @@ advice_opinions_predictions:
   use_answer: true
   answer_status: unanswerable_question_routing
   canned_responses:
-    - "I cannot answer that. Please try asking something else."
+    - "Something went wrong while trying to answer your question. Please ask again."
 
 character_fun:
   label: "Character fun"
@@ -53,7 +53,7 @@ multi_questions:
   use_answer: true
   answer_status: clarification
   canned_responses:
-    - "I cannot answer that. Please try asking something else."
+    - "Something went wrong while trying to answer your question. Please ask again."
 
 negative_acknowledgement:
   label: "Negative acknowledgement"
@@ -104,11 +104,11 @@ vague_acronym_grammar:
   use_answer: true
   answer_status: clarification
   canned_responses:
-    - "I cannot answer that. Please try asking something else."
+    - "Something went wrong while trying to answer your question. Please ask again."
 
 unclear_intent:
   label: "Unclear intent"
   use_answer: true
   answer_status: clarification
   canned_responses:
-    - "I cannot answer that. Please try asking something else."
+    - "Something went wrong while trying to answer your question. Please ask again"
