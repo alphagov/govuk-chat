@@ -1,3 +1,11 @@
+system_prompt: |
+  You are a helpful assistant that takes an LLM generated answer and decides which topic(s) it belongs to.
+  You will use the provided tool to pick primary topic and one optional secondary topic.
+  Here is the list of topics you can choose from:
+  %{topics}
+
+  The message you are classifying is in the assistant message.
+
 topics:
   abroad: "Services for UK citizens abroad including passports, travel support, and overseas tax."
   benefits: "Financial support including Universal Credit, Child Benefit, disability benefits, carers' allowances, and more."
@@ -16,3 +24,67 @@ topics:
   tax: "Tax services including Income Tax, Self Assessment, VAT, National Insurance, and HMRC interactions."
   visas-immigration: "Immigration services including visas, settlement, asylum, reunification, and work permits."
   working: "Employment services including job seeking, pay, pensions, contracts, and union rights."
+tool_spec:
+  name: "topic_tagger"
+  description: "Tags a question with primary and optional secondary GOV.UK topics, including confidence and reasoning."
+  input_schema:
+    type: "object"
+    properties:
+      primary_topic:
+        type: "string"
+        title: "Primary topic"
+        description: "The most relevant GOV.UK topic for the answer."
+        enum:
+          - abroad
+          - benefits
+          - births-deaths-marriages
+          - business
+          - childcare-parenting
+          - citizenship
+          - disabilities
+          - driving
+          - education
+          - employing-people
+          - environment-countryside
+          - housing-local-services
+          - justice
+          - other
+          - tax
+          - visas-immigration
+          - working
+      secondary_topic:
+        type: ["string", "null"]
+        title: "Secondary topic"
+        description: "If the question relates to more than one topic, record the secondary topic."
+        enum:
+          - abroad
+          - benefits
+          - births-deaths-marriages
+          - business
+          - childcare-parenting
+          - citizenship
+          - disabilities
+          - driving
+          - education
+          - employing-people
+          - environment-countryside
+          - housing-local-services
+          - justice
+          - other
+          - tax
+          - visas-immigration
+          - working
+      confidence:
+        type: "string"
+        title: "Confidence"
+        enum: ["high", "medium", "low"]
+        description: "Your confidence in the topic classification."
+      reasoning:
+        type: "string"
+        title: "Reasoning"
+        description: "Brief explanation of why this topic was chosen."
+    required:
+      - primary_topic
+      - secondary_topic
+      - confidence
+      - reasoning

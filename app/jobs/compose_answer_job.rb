@@ -10,6 +10,7 @@ class ComposeAnswerJob < ApplicationJob
 
     begin
       answer.save!
+      AnswerTopic::Tagger.call(Answer.includes(%i[topic question]).find(answer.id))
     rescue ActiveRecord::RecordNotUnique
       logger.warn("Already an answer created for #{question_id}")
     end

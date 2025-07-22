@@ -5,6 +5,7 @@ RSpec.describe ComposeAnswerJob do
 
   before do
     allow(AnswerComposition::Composer).to receive(:call).and_return(returned_answer)
+    allow(AnswerTopic::Tagger).to receive(:call)
   end
 
   describe "#perform" do
@@ -12,6 +13,11 @@ RSpec.describe ComposeAnswerJob do
       expect { described_class.new.perform(question.id) }
         .to change(Answer, :count).by(1)
         .and change(AnswerSource, :count).by(2)
+    end
+
+    it "calls the AnswerTopic::Tagger with the answer" do
+      expect(AnswerTopic::Tagger).to receive(:call).with(returned_answer)
+      described_class.new.perform(question.id)
     end
 
     context "when the question has already been answered" do
