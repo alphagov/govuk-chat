@@ -29,7 +29,7 @@ class AnswerInsights::TopicTagger
     answer.create_analysis(
       primary_topic: response[:content][0][:input][:primary_topic],
       secondary_topic: response[:content][0][:input][:secondary_topic],
-      metrics: build_metrics(response, start_time),
+      metrics: { topic_tagger: build_metrics(response, start_time) },
       llm_responses: { topic_tagger: response.to_h },
     )
   end

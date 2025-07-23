@@ -67,7 +67,7 @@ RSpec.describe "Conversation API flow" do
         status: :answered,
       )
     end
-    allow(AnswerTopic::Tagger).to receive(:call)
+    allow(AnswerInsights::TopicTagger).to receive(:call)
 
     post api_v0_create_conversation_path,
          params: { user_question: "What is the capital of France?" },
