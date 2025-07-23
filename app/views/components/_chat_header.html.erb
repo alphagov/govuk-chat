@@ -5,9 +5,6 @@
   active_conversation ||= false
 
   data_attributes = { module: "chat-header" }
-  data_attributes[:add_print_utility] = true if conversation
-
-  navigation_items ||= []
 
   clear_chat_link_class = %w[app-c-header__clear-chat js-header-clear-chat]
   clear_chat_link_class << "app-c-header__clear-chat--focusable-only" unless active_conversation
@@ -50,7 +47,7 @@
                            ga4_link: {
                              "event_name": "navigation",
                              "type": "header menu bar",
-                             "section": "About",
+                             "section": "Clear chat",
                            },
                            ga4_track_links_only: "",
                            ga4_set_indexes: "",
@@ -58,23 +55,6 @@
           <% end %>
         </div>
       </div>
-
-      <%= content_tag(
-        :div,
-        class: "app-c-header__nav-container js-header-nav-container govuk-grid-column-full",
-        data: {
-          module: "ga4-link-tracker",
-          ga4_link: {
-            "event_name": "navigation",
-            "type": "header menu bar",
-            "section": "About",
-          },
-          ga4_track_links_only: "",
-          ga4_set_indexes: "",
-        },
-      ) do %>
-        <%= render "govuk_publishing_components/components/layout_header/navigation_items", navigation_items: navigation_items %>
-      <% end %>
     </div>
   </div>
 <% end %>
