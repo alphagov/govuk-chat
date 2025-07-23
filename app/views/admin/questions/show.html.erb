@@ -34,14 +34,29 @@ content_for(:active_navigation_item, admin_questions_path)
             <%= render("components/code_snippet", content: JSON.pretty_generate(response)) %>
           </p>
         <% end %>
+        <% if @answer.topic&.llm_response.present? %>
+          <h3 class="govuk-heading-m">Topics</h3>
+          <p class="govuk-body">
+            <%= render("components/code_snippet", content: JSON.pretty_generate(@answer.topic.llm_response)) %>
+          </p>
+        <% end %>
       <% end %>
     <% end %>
 
     <% if @answer&.metrics&.present? %>
+      <%
+        combined_metrics = if @answer.topic&.metrics.present?
+                             metrics = @answer.metrics
+                             metrics["topic"] = @answer.topic.metrics
+                             metrics
+                           else
+                             @answer.metrics
+                           end
+      %>
       <%= render "govuk_publishing_components/components/details", {
         title: "Metrics",
       } do %>
-        <% @answer.metrics.sort.each do |namespace, metrics| %>
+        <% combined_metrics.sort.each do |namespace, metrics| %>
           <%= render "govuk_publishing_components/components/summary_list", {
             title: namespace,
             items: metrics.map do |metric, value|
