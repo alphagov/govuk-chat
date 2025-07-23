@@ -499,7 +499,7 @@ RSpec.describe "ConversationsController" do
 
         expect(response).to have_http_status(:ok)
         expect(response.body)
-          .to have_selector("h1", text: "Do you want to clear your chat?")
+          .to have_selector("h1", text: "Do you want to clear your chat history?")
       end
     end
   end
