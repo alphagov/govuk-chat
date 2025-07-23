@@ -24,7 +24,7 @@ RSpec.describe "ConversationsController" do
         expect(response).to have_http_status(:success)
         expect(response.body).to have_selector(
           ".js-new-conversation-messages-list",
-          text: "Hi 👋 I’m GOV.UK’s AI Chat.",
+          text: "Hi 👋 I’m GOV.UK Chat.",
         )
       end
 
@@ -35,12 +35,12 @@ RSpec.describe "ConversationsController" do
         expect(response.body).to render_create_question_form
       end
 
-      it "renders a focusable only 'Start new chat' link" do
+      it "renders a focusable only 'Clear chat' link" do
         get show_conversation_path
 
         expect(response.body).to have_selector(
           "a.app-c-header__clear-chat.app-c-header__clear-chat--focusable-only",
-          text: "Start new chat",
+          text: "Clear chat",
         )
       end
     end
@@ -65,16 +65,16 @@ RSpec.describe "ConversationsController" do
         expect(response).to have_http_status(:success)
         expect(response.body).to have_selector(
           ".js-conversation-message-history-list",
-          text: "Hi 👋 I’m GOV.UK’s AI Chat",
+          text: "Hi 👋 I’m GOV.UK Chat",
         )
       end
 
-      it "renders a 'Start new chat' without the focusable only modifier link" do
+      it "renders a 'Clear chat' without the focusable only modifier link" do
         get show_conversation_path
 
         expect(response.body).to have_selector(
           "a.app-c-header__clear-chat:not(.app-c-header__clear-chat--focusable-only)",
-          text: "Start new chat",
+          text: "Clear chat",
         )
       end
 
@@ -499,7 +499,7 @@ RSpec.describe "ConversationsController" do
 
         expect(response).to have_http_status(:ok)
         expect(response.body)
-          .to have_selector("h1", text: "Do you want to start a new chat?")
+          .to have_selector("h1", text: "Do you want to clear your chat history?")
       end
     end
   end

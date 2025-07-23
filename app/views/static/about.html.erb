@@ -1,7 +1,6 @@
 <%
   content_for(:title, "About GOV.UK Chat")
   content_for(:back_link, render("govuk_publishing_components/components/back_link", text: "Back to start page", href: homepage_path))
-  support_href = settings.web_access_enabled? ? support_path : "https://surveys.publishing.service.gov.uk/s/govuk-chat-support/"
 %>
 
 <div class="govuk-grid-row">
@@ -90,11 +89,6 @@
                   target: "_blank",
                   rel: "noopener") %>
       for updates.
-    </p>
-
-    <p class="govuk-body">
-      If you have a question or problem,
-      <%= link_to("get help and support with GOV.UK Chat", support_href, class: "govuk-link") %>.
     </p>
   </div>
 </div>

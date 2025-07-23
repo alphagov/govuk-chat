@@ -29,11 +29,6 @@ RSpec.describe "toggling downtime with Settings.instance.web_access_enabled" do
       expect(response.headers["No-Fallback"]).to eq("true")
     end
 
-    it "doesn't render the help and support link in the header of footer" do
-      get homepage_path
-      expect(response.body).not_to include("Help and support")
-    end
-
     it "doesn't clobber error pages" do
       get "/404"
       expect(response).to have_http_status(:not_found)

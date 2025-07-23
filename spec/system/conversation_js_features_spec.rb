@@ -99,12 +99,6 @@ RSpec.describe "Conversation JavaScript features",
     and_i_can_see_the_clear_chat_link
   end
 
-  scenario "print link is added to navigation" do
-    given_i_am_a_web_chat_user
-    and_i_visit_the_conversation_page
-    then_i_see_a_print_link_in_the_menu
-  end
-
   def and_i_visit_the_conversation_page
     visit show_conversation_path
   end
@@ -286,7 +280,7 @@ RSpec.describe "Conversation JavaScript features",
       # to capybara so have to assert on CSS selector
       expect(page).to have_selector(
         "a.app-c-header__clear-chat.app-c-header__clear-chat--focusable-only",
-        text: "Start new chat",
+        text: "Clear chat",
       )
     end
   end
@@ -295,17 +289,9 @@ RSpec.describe "Conversation JavaScript features",
     within(".app-c-header") do
       expect(page).to have_selector(
         "a.app-c-header__clear-chat:not(.app-c-header__clear-chat--focusable-only)",
-        text: "Start new chat",
+        text: "Clear chat",
       )
     end
-  end
-
-  def then_i_see_a_print_link_in_the_menu
-    within(".app-c-header") do
-      click_button "Menu"
-    end
-
-    expect(page).to have_button("Print or save this chat")
   end
 
   def when_i_visit_the_conversation_page

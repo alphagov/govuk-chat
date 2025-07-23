@@ -1,19 +1,24 @@
 <% messages = [] %>
 
 <% messages << capture do %>
-Hi 👋 I'm GOV.UK's AI Chat.
+Hi 👋 I'm GOV.UK Chat.
 <% end %>
 
 <% messages << capture do %>
-When you ask a question, I'll find the most relevant information from GOV.UK and use it to create an answer.
+I’m an experimental AI tool.
+
+When you ask a question, I’ll find the most relevant information from GOV.UK and use it to create an answer.
 <% end %>
 
 <% messages << capture do %>
 Ask a question to get started.
 <% end %>
 
-<% messages.each do |message| %>
+<% messages.each_with_index do |message, index| %>
+  <% show_identifier = index == 0 ? true : false %>
+
   <%= render "components/conversation_message", {
     message:,
+    show_identifier:,
   } %>
 <% end %>

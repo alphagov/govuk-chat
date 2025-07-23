@@ -1,17 +1,13 @@
-<% content_for(:title, "Do you want to start a new chat?") %>
+<% content_for(:title, "Do you want to clear your chat history?") %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <p class="govuk-body">Starting a new chat will clear your last conversation.</p>
-    <p class="govuk-body">
-      To save it, return to your last chat and select the <%= tag.span("Print or save this chat", class: "govuk-!-font-weight-bold") %>
-      option from the menu.
-    </p>
+    <p class="govuk-body">This will delete your chat history.</p>
 
     <%= form_with url: clear_path do |f| %>
       <div class="govuk-button-group">
         <%= render "components/blue_button", {
-          text: "Start a new chat (clears last chat)",
+          text: "Yes, clear chat",
           data_attributes: {
             "module": "ga4-event-tracker",
             "ga4-event": { "event_name": "navigation", "type": "chat button", "index": "1", "index_total": "1", "section": "Clear chat" },
@@ -19,7 +15,7 @@
         } %>
         <%= render "govuk_publishing_components/components/button", {
           secondary_solid: true,
-          text: "Return to last chat",
+          text: "No, not now",
           href: show_conversation_path,
           data_attributes: {
             "module": "ga4-link-tracker",
