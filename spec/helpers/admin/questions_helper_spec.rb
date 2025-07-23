@@ -61,7 +61,7 @@ RSpec.describe Admin::QuestionsHelper do
     end
 
     it "returns the correct rows when the question has an answer" do
-      answer = create(:answer, sources: [])
+      answer = create(:answer, :with_topic, sources: [])
       answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
       expected_keys = [
@@ -84,6 +84,8 @@ RSpec.describe Admin::QuestionsHelper do
         "Question routing guardrails triggered",
         "Answer guardrails status",
         "Answer guardrails triggered",
+        "Primary topic",
+        "Secondary topic",
       ]
 
       expect(returned_keys(result)).to eq(expected_keys)
@@ -185,6 +187,24 @@ RSpec.describe Admin::QuestionsHelper do
       result = helper.question_show_summary_list_rows(question, nil, 1, 1)
       expect(returned_keys(result)).not_to include("API user")
     end
+
+    it "returns a row with the primary topic of the answer when present" do
+      answer = create(:answer, :with_analysis)
+      answer = answer_from_db(answer)
+      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
+
+      row = result.find { |r| r[:field] == "Primary topic" }
+      expect(row[:value]).to eq(answer.analysis.primary_topic.humanize)
+    end
+
+    it "returns a row with the secondary topic of the answer when present" do
+      answer = create(:answer, :with_analysis)
+      answer = answer_from_db(answer)
+      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
+
+      row = result.find { |r| r[:field] == "Secondary topic" }
+      expect(row[:value]).to eq(answer.analysis.secondary_topic.humanize)
+    end
   end
 
   describe "#decode_and_mark_unicode_tag_segments" do
@@ -223,6 +243,6 @@ RSpec.describe Admin::QuestionsHelper do
   end
 
   def answer_from_db(answer)
-    Answer.includes(:sources, :feedback).find(answer.id)
+    Answer.includes(:sources, :feedback, :analysis).find(answer.id)
   end
 end
