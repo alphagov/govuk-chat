@@ -181,7 +181,7 @@ GEM
       railties (>= 6.1.0)
     faker (3.5.1)
       i18n (>= 1.8.11, < 2)
-    faraday (2.13.2)
+    faraday (2.13.3)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
@@ -325,7 +325,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jmespath (1.6.2)
-    json (2.12.2)
+    json (2.13.0)
     json-schema (5.1.1)
       addressable (~> 2.8)
       bigdecimal (~> 3.1)
@@ -1032,7 +1032,7 @@ CHECKSUMS
   factory_bot (6.5.4) sha256=4707fb7d80a7c14d71feb069460587bfc342e4ff1ef28097e0ad69d5ddfce613
   factory_bot_rails (6.5.0) sha256=4a7b61635424a57cc60412a18b72b9dcfb02fabfce2c930447a01dce8b37c0a2
   faker (3.5.1) sha256=1ad1fbea279d882f486059c23fe3ddb816ccd1d7052c05a45014b4450d859bfc
-  faraday (2.13.2) sha256=5c19762e3bbe78e61d8007c5119f2968373c5296d6c6d6aa05b6f9cec34f2a1a
+  faraday (2.13.3) sha256=e9571e7a4ada595b385da5fc749edf7b11dc6aa9d98ab63286c3f28dc4ac01b7
   faraday-multipart (1.1.0) sha256=856b0f1c7316a4d6c052dd2eef5c42f887d56d93a171fe8880da1af064ca0751
   faraday-net_http (3.4.1) sha256=095757fae7872b94eac839c08a1a4b8d84fd91d6886cfbe75caa2143de64ab3b
   faraday-typhoeus (1.1.0) sha256=24c6147c213818dde3ebc50ae47ab92f9a7e554903aa362707126f749c6890e7
@@ -1074,7 +1074,7 @@ CHECKSUMS
   io-console (0.8.1) sha256=1e15440a6b2f67b6ea496df7c474ed62c860ad11237f29b3bd187f054b925fcb
   irb (1.15.2) sha256=222f32952e278da34b58ffe45e8634bf4afc2dc7aa9da23fed67e581aa50fdba
   jmespath (1.6.2) sha256=238d774a58723d6c090494c8879b5e9918c19485f7e840f2c1c7532cf84ebcb1
-  json (2.12.2) sha256=ba94a48ad265605c8fa9a50a5892f3ba6a02661aa010f638211f3cb36f44abf4
+  json (2.13.0) sha256=a4bdf1ce8db5617ec6c59e021db4a398e54b57b335e1fa417ac7badc3fb7c1a0
   json-schema (5.1.1) sha256=b3829ad9bcdfc5010d8a160c4c2bebb8fed8d05d22de65648f6ba646b071f9bf
   json_schema (0.21.0) sha256=d6e1eaf004a5185b7679eee34286a79d48e467d794ff68981d72ad23d3b2ec5b
   jwt (2.10.1) sha256=e6424ae1d813f63e761a04d6284e10e7ec531d6f701917fadcd0d9b2deaf1cc5
