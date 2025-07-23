@@ -12,9 +12,9 @@ RSpec.describe AnswerTopic::Tagger do
     context "when the answer strategy is :openai_structured_answer" do
       let(:answer) { create(:answer, question: create(:question, answer_strategy: :openai_structured_answer)) }
 
-      it "raises an error" do
-        expect { described_class.call(answer) }
-          .to raise_error(RuntimeError, "Invalid strategy: openai_structured_answer")
+      it "calls the OpenAI tagger" do
+        expect(AnswerTopic::OpenAI::Tagger).to receive(:call).with(answer)
+        described_class.call(answer)
       end
     end
 
