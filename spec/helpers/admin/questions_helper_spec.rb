@@ -61,7 +61,7 @@ RSpec.describe Admin::QuestionsHelper do
     end
 
     it "returns the correct rows when the question has an answer" do
-      answer = create(:answer, :with_topic, sources: [])
+      answer = create(:answer, :with_analysis, sources: [])
       answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
       expected_keys = [
