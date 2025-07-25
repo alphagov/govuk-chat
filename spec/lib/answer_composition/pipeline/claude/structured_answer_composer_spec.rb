@@ -94,9 +94,12 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
           answered: false,
         )
 
+        sources = ["- [#{Plek.website_root}#{result.base_path}](#{Plek.website_root}#{result.base_path})"]
+        full_message = Answer::CannedResponses.llm_cannot_answer_message(sources)
+
         expect { described_class.call(context) }.to throw_symbol(:abort)
           .and change { context.answer.status }.to("unanswerable_llm_cannot_answer")
-          .and change { context.answer.message }.to(Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE)
+          .and change { context.answer.message }.to(full_message)
       end
 
       it "assigns metrics to the answer even when not answered" do

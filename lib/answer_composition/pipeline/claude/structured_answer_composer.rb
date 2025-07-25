@@ -25,8 +25,16 @@ module AnswerComposition::Pipeline
         tool_output = response[:content][0][:input]
 
         unless tool_output[:answered]
+          top_sources = context.search_results
+                                .take(5)
+                                .uniq(&:base_path)
+                                .take(2)
+                                .map { |result| " - [#{Plek.website_root}#{result.base_path}](#{Plek.website_root}#{result.base_path})" }
+
+          full_message = Answer::CannedResponses.llm_cannot_answer_message(top_sources)
+
           return context.abort_pipeline!(
-            message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
+            message: full_message,
             status: "unanswerable_llm_cannot_answer",
             metrics: { "structured_answer" => build_metrics(start_time, response) },
           )
