@@ -65,10 +65,11 @@ RSpec.describe Bigquery::IndividualExport do
 
       it "returns a result with the count of the items from the timeframe" do
         create_list(:answer, 3, created_at: 2.hours.ago)
+        create(:answer, :with_sources, created_at: 2.hours.ago)
 
         result = described_class.call(table_name, export_from:, export_until:)
 
-        expect(result.count).to eq(3)
+        expect(result.count).to eq(4)
       end
 
       it "has a tempfile containing JSON of the models serialized for export with nil values removed" do
