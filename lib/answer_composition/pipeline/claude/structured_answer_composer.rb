@@ -25,13 +25,11 @@ module AnswerComposition::Pipeline
         tool_output = response[:content][0][:input]
 
         unless tool_output[:answered]
-          base_message = Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE
           top_sources = context.search_results
                                 .take(2)
                                 .map { |result| " - [#{Plek.website_root}#{result.exact_path}](#{Plek.website_root}#{result.exact_path})" }
-                                .join("\n\n")
 
-          full_message = "#{base_message}\n\nYou might find these pages helpful:\n\n#{top_sources}"
+          full_message = Answer::CannedResponses.llm_cannot_answer_message(top_sources)
 
           return context.abort_pipeline!(
             message: full_message,

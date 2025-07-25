@@ -94,8 +94,9 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
           answered: false,
         )
 
-        full_message = Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE +
-          "\n\nYou might find these pages helpful:\n\n - [#{Plek.website_root}#{search_result.exact_path}](#{Plek.website_root}#{search_result.exact_path})"
+        sources = ["- [#{Plek.website_root}#{search_result.exact_path}](#{Plek.website_root}#{search_result.exact_path})"]
+        full_message = Answer::CannedResponses.llm_cannot_answer_message(sources)
+
         expect { described_class.call(context) }.to throw_symbol(:abort)
           .and change { context.answer.status }.to("unanswerable_llm_cannot_answer")
           .and change { context.answer.message }.to(full_message)

@@ -17,8 +17,20 @@ class Answer < ApplicationRecord
 
       Please try asking something else.
     MESSAGE
-    LLM_CANNOT_ANSWER_MESSAGE = "I’m having difficulty finding an answer on GOV.UK. If you rephrase your question, I’ll search again. Or you can ask about something else.".freeze
     FORBIDDEN_TERMS_MESSAGE = ANSWER_GUARDRAILS_FAILED_MESSAGE
+    LLM_CANNOT_ANSWER_MESSAGE = "I’m having difficulty finding an answer on GOV.UK. If you rephrase your question, I’ll search again. Or you can ask about something else.".freeze
+
+    def self.llm_cannot_answer_message(sources)
+      <<~MESSAGE
+        I wasn’t able to find a direct answer to your question on GOV.UK.
+
+        You might find useful information by checking these official pages:
+
+        #{sources.join("\n\n")}
+
+        Alternatively, you can try rephrasing your question, and I’ll search again. Or you can ask me about something else.
+      MESSAGE
+    end
 
     def self.response_for_question_routing_label(label)
       canned_responses = Rails.configuration.question_routing_labels.dig(label, :canned_responses)
