@@ -26,8 +26,10 @@ module AnswerComposition::Pipeline
 
         unless tool_output[:answered]
           top_sources = context.search_results
+                                .take(5)
+                                .uniq(&:base_path)
                                 .take(2)
-                                .map { |result| " - [#{Plek.website_root}#{result.exact_path}](#{Plek.website_root}#{result.exact_path})" }
+                                .map { |result| " - [#{Plek.website_root}#{result.base_path}](#{Plek.website_root}#{result.base_path})" }
 
           full_message = Answer::CannedResponses.llm_cannot_answer_message(top_sources)
 
