@@ -25,9 +25,10 @@ RSpec.describe AnswerSource do
   end
 
   describe "#serialize for export" do
-    it "returns a source serialzed as json" do
-      source = create(:answer_feedback)
-      expect(source.serialize_for_export).to eq(source.as_json)
+    it "returns a source and it's full production url serialized as json" do
+      source = create(:answer_source)
+      expected_json = source.as_json.merge("url" => "https://www.gov.uk#{source.exact_path}")
+      expect(source.serialize_for_export).to eq(expected_json)
     end
   end
 end
