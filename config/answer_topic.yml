@@ -1,0 +1,154 @@
+system_prompt: |
+  You are a helpful assistant that takes an LLM generated answer and decides which topic(s) it belongs to.
+  You will use the provided tool to pick primary topic and one optional secondary topic.
+  Here is the list of topics you can choose from:
+  %{topics}
+
+  The message you are classifying is in the assistant message.
+
+topics:
+  abroad: "Services for UK citizens abroad including passports, travel support, and overseas tax."
+  benefits: "Financial support including Universal Credit, Child Benefit, disability benefits, carers' allowances, and more."
+  births-deaths-marriages: "Life events including birth certificates, marriage, divorce, wills, and inheritance services."
+  business: "Business setup, tax, company registration, licensing, intellectual property, and closing down."
+  childcare-parenting: "Family support including pregnancy, childcare, divorce, fostering, and financial help for families."
+  citizenship: "Nationality and civic services including citizenship, passports, voting, volunteering, and charities."
+  disabilities: "Support for disabled people including benefits, equipment, transport, rights, and Access to Work."
+  driving: "Driving services including licences, MOT, penalties, vehicle registration, and road safety."
+  education: "Learning services including schools, apprenticeships, universities, and student finance."
+  employing-people: "Employer responsibilities including contracts, health and safety, PAYE, pensions, and unions."
+  environment-countryside: "Environment and rural services including farming, flood management, and wildlife protection."
+  housing-local-services: "Housing and community services including council housing, renting, planning, and energy efficiency."
+  justice: "Legal and justice system services including courts, crime reporting, police, prisons, and legal aid."
+  other: "Use this if the topic does not fall into another defined category."
+  tax: "Tax services including Income Tax, Self Assessment, VAT, National Insurance, and HMRC interactions."
+  visas-immigration: "Immigration services including visas, settlement, asylum, reunification, and work permits."
+  working: "Employment services including job seeking, pay, pensions, contracts, and union rights."
+tool_spec:
+  name: "topic_tagger"
+  description: "Tags a question with primary and optional secondary GOV.UK topics, including confidence and reasoning."
+  input_schema:
+    type: "object"
+    properties:
+      primary_topic:
+        type: "string"
+        title: "Primary topic"
+        description: "The most relevant GOV.UK topic for the answer."
+        enum:
+          - abroad
+          - benefits
+          - births-deaths-marriages
+          - business
+          - childcare-parenting
+          - citizenship
+          - disabilities
+          - driving
+          - education
+          - employing-people
+          - environment-countryside
+          - housing-local-services
+          - justice
+          - other
+          - tax
+          - visas-immigration
+          - working
+      secondary_topic:
+        type: ["string", "null"]
+        title: "Secondary topic"
+        description: "If the question relates to more than one topic, record the secondary topic."
+        enum:
+          - abroad
+          - benefits
+          - births-deaths-marriages
+          - business
+          - childcare-parenting
+          - citizenship
+          - disabilities
+          - driving
+          - education
+          - employing-people
+          - environment-countryside
+          - housing-local-services
+          - justice
+          - other
+          - tax
+          - visas-immigration
+          - working
+      confidence:
+        type: "string"
+        title: "Confidence"
+        enum: ["high", "medium", "low"]
+        description: "Your confidence in the topic classification."
+      reasoning:
+        type: "string"
+        title: "Reasoning"
+        description: "Brief explanation of why this topic was chosen."
+    required:
+      - primary_topic
+      - secondary_topic
+      - confidence
+      - reasoning
+openai_output_schema:
+  type: object
+  properties:
+    primary_topic:
+      type: string
+      title: "Primary topic"
+      description: "The most relevant GOV.UK topic for the answer."
+      enum:
+        - abroad
+        - benefits
+        - births-deaths-marriages
+        - business
+        - childcare-parenting
+        - citizenship
+        - disabilities
+        - driving
+        - education
+        - employing-people
+        - environment-countryside
+        - housing-local-services
+        - justice
+        - other
+        - tax
+        - visas-immigration
+        - working
+    secondary_topic:
+      type: string
+      title: "Secondary topic"
+      description: "If the question relates to more than one topic, record the secondary topic."
+      enum:
+        - abroad
+        - benefits
+        - births-deaths-marriages
+        - business
+        - childcare-parenting
+        - citizenship
+        - disabilities
+        - driving
+        - education
+        - employing-people
+        - environment-countryside
+        - housing-local-services
+        - justice
+        - other
+        - tax
+        - visas-immigration
+        - working
+    confidence:
+      type: string
+      title: "Confidence"
+      description: "Your confidence in the topic classification."
+      enum:
+        - "high"
+        - "medium"
+        - "low"
+    reasoning:
+      type: string
+      title: "Reasoning"
+      description: "Brief explanation of why this topic was chosen."
+  required:
+    - primary_topic
+    - confidence
+    - reasoning
+  additionalProperties: false

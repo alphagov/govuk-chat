@@ -154,6 +154,38 @@ module StubOpenAIChat
     )
   end
 
+  def stub_openai_topic_tagger(message)
+    topics_config = Rails.application.config.answer_topic
+    messages = array_including({ "role" => "assistant", "content" => message })
+
+    chat_options = {
+      model: AnswerTopic::OpenAI::Tagger::MODEL,
+      tools: [
+        {
+          type: "function",
+          function: {
+            name: "topic_tagger",
+            description: "Tags a question with primary and optional secondary GOV.UK topics, including confidence and reasoning.",
+            parameters: topics_config.openai_output_schema,
+          },
+        },
+      ],
+      tool_choice: "required",
+      parallel_tool_calls: false,
+    }
+
+    topics = {
+      "primary_topic" => "business",
+      "secondary_topic" => "benefits",
+      "confidence" => "high",
+      "reasoning" => "They're correct.",
+    }.to_json
+
+    tool_calls = [openai_chat_completion_tool_call("topic_tagger", topics)]
+
+    stub_openai_chat_completion(messages, chat_options:, tool_calls:)
+  end
+
   def openai_chat_completion_response_body(answer: nil, tool_calls: nil, finish_reason: "stop")
     {
       id: "chatcmpl-abc123",

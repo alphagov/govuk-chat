@@ -54,6 +54,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
       }.to_json,
     )
     stub_openai_output_guardrail("Lots of tax.")
+    stub_openai_topic_tagger("Lots of tax.")
 
     execute_queued_sidekiq_jobs
   end
@@ -73,6 +74,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
       }.to_json,
     )
     stub_openai_output_guardrail("Even more tax.")
+    stub_openai_topic_tagger("Even more tax.")
 
     execute_queued_sidekiq_jobs
   end

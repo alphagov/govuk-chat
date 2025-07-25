@@ -1,16 +1,16 @@
 module StubClaudeMessages
   CLAUDE_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*anthropic\.claude.*?/invoke}
 
-  def stub_claude_messages_response(question_or_history,
+  def stub_claude_messages_response(question_or_messages,
                                     content:,
                                     system: nil,
                                     stop_reason: :end_turn,
                                     usage: {},
                                     chat_options: {})
-    history = if question_or_history.is_a?(String) || question_or_history.is_a?(Regexp)
-                array_including({ "role" => "user", "content" => question_or_history })
+    history = if question_or_messages.is_a?(String) || question_or_messages.is_a?(Regexp)
+                array_including({ "role" => "user", "content" => question_or_messages })
               else
-                question_or_history
+                question_or_messages
               end
 
     chat_options = { temperature: 0.0, max_tokens: 4096 }.merge(chat_options).compact
@@ -145,6 +145,38 @@ module StubClaudeMessages
       system:,
       usage: { cache_read_input_tokens: 20 },
       chat_options: { temperature: nil, max_tokens: Guardrails::Claude::MultipleChecker::MAX_TOKENS },
+    )
+  end
+
+  def stub_claude_messages_topic_tagger(message)
+    topics_config = Rails.application.config.answer_topic
+    system_prompt = sprintf(
+      topics_config.system_prompt,
+      topics: topics_config.topics.map { |topic, description| "#{topic} - #{description}" }.join("\n"),
+    )
+    system = array_including(
+      { "type" => "text", "text" => system_prompt, "cache_control" => { "type" => "ephemeral" } },
+    )
+    messages = array_including({ "role" => "assistant", "content" => message })
+    tools = [topics_config[:tool_spec]]
+    content = [
+      claude_messages_tool_use_block(
+        input: { primary_topic: "business", secondary_topic: "benefits", confidence: "high", reasoning: "reason" },
+        name: tools.first[:name],
+      ),
+    ]
+    chat_options = {
+      tools:,
+      tool_choice: { type: "tool", name: "topic_tagger" },
+    }
+
+    stub_claude_messages_response(
+      messages,
+      content:,
+      system:,
+      usage: { cache_read_input_tokens: 20 },
+      stop_reason: :tool_use,
+      chat_options:,
     )
   end
 
