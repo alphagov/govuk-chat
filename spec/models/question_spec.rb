@@ -167,6 +167,7 @@ RSpec.describe Question do
           .and include("source" => "web")
           .and include("signon_user_id" => signon_user.id)
           .and include("end_user_id" => conversation.hashed_end_user_id)
+          .and include("signon_user_email" => signon_user.email)
       end
     end
 

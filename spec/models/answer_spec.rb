@@ -169,6 +169,13 @@ RSpec.describe Answer do
         .to include(answer.as_json)
         .and include("sources" => answer.sources.map(&:serialize_for_export))
     end
+
+    it "gsubs links to production URLs" do
+      answer = create(:answer, message: "https://www.integration.publishing.service.gov.uk/some-path")
+      serialized_answer = answer.serialize_for_export
+
+      expect(serialized_answer["message"]).to eq("https://www.gov.uk/some-path")
+    end
   end
 
   describe "#assign_metrics" do

@@ -9,6 +9,8 @@ class AnswerSource < ApplicationRecord
   end
 
   def serialize_for_export
-    as_json
+    as_json.merge(
+      "url" => "https://www.gov.uk#{exact_path}",
+    )
   end
 end

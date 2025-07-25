@@ -24,6 +24,7 @@ class Question < ApplicationRecord
 
   scope :exportable, lambda { |start_date, end_date|
                        joins(:conversation, :answer)
+                       .includes(conversation: :signon_user)
                        .preload(:conversation, answer: %i[sources])
                        .where("answer.created_at": start_date...end_date)
                      }
@@ -57,6 +58,7 @@ class Question < ApplicationRecord
       "answer" => answer&.serialize_for_export,
       "source" => conversation.source,
       "signon_user_id" => conversation.signon_user_id,
+      "signon_user_email" => conversation.signon_user&.email,
       "end_user_id" => conversation.hashed_end_user_id,
     )
   end

@@ -140,7 +140,10 @@ class Answer < ApplicationRecord
   end
 
   def serialize_for_export
-    as_json.merge("sources" => sources.map(&:serialize_for_export))
+    message_with_prod_source_links = {
+      "message" => message.gsub("https://www.integration.publishing.service.gov.uk/", "https://www.gov.uk/"),
+    }
+    as_json.merge("sources" => sources.map(&:serialize_for_export)).merge(message_with_prod_source_links)
   end
 
   def assign_metrics(namespace, values)
