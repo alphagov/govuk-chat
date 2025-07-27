@@ -36,7 +36,12 @@ module Bigquery
       return Result.new(tempfile: nil, count: 0) unless export_data
 
       tempfile = Tempfile.new
-      export_data.each { |record| tempfile.puts(record.to_json) }
+      export_data.each do |record|
+        if record.dig("answer", "llm_responses", "answer_guardrails").is_a?(String)
+          record["answer"]["llm_responses"]["answer_guardrails"] = nil
+        end
+        tempfile.puts(record.to_json)
+      end
       tempfile.rewind
 
       Result.new(tempfile:, count: export_data.count)
