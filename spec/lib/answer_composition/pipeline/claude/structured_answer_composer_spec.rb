@@ -117,6 +117,28 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
           model: BedrockModels::CLAUDE_SONNET,
         )
       end
+
+      it "stores the LLM response even when not answered" do
+        stub_claude_structured_answer(
+          question.message,
+          "Sorry I cannot answer that question.",
+          answered: false,
+          sources_used: [],
+        )
+
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+
+        expected_content = claude_messages_tool_use_block(
+          input: { answer: "Sorry I cannot answer that question.", answered: false, sources_used: [] },
+          name: "output_schema",
+        )
+        expected_llm_response = claude_messages_response(
+          content: [expected_content],
+          usage: { cache_read_input_tokens: 20 },
+          stop_reason: :tool_use,
+        ).to_h
+        expect(context.answer.llm_responses["structured_answer"]).to eq(expected_llm_response)
+      end
     end
   end
 end
