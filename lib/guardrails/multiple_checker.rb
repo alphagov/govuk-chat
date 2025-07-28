@@ -10,11 +10,19 @@ module Guardrails
     end
 
     class ResponseError < StandardError
-      attr_reader :llm_response, :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens, :model
+      attr_reader :llm_response, :llm_guardrail_result, :llm_prompt_tokens,
+                  :llm_completion_tokens, :llm_cached_tokens, :model
 
-      def initialize(message, llm_response, llm_prompt_tokens, llm_completion_tokens, llm_cached_tokens, model)
+      def initialize(message,
+                     llm_response,
+                     llm_guardrail_result,
+                     llm_prompt_tokens,
+                     llm_completion_tokens,
+                     llm_cached_tokens,
+                     model)
         super(message)
         @llm_response = llm_response
+        @llm_guardrail_result = llm_guardrail_result
         @llm_prompt_tokens = llm_prompt_tokens
         @llm_completion_tokens = llm_completion_tokens
         @llm_cached_tokens = llm_cached_tokens
@@ -93,10 +101,16 @@ module Guardrails
 
   private
 
-    def parse_response(llm_response:, llm_guardrail_result:, llm_prompt_tokens:, llm_completion_tokens:, llm_cached_tokens:, model:)
+    def parse_response(llm_response:,
+                       llm_guardrail_result:,
+                       llm_prompt_tokens:,
+                       llm_completion_tokens:,
+                       llm_cached_tokens:,
+                       model:)
       unless response_pattern =~ llm_guardrail_result
         raise ResponseError.new(
           "Error parsing guardrail response",
+          llm_response,
           llm_guardrail_result,
           llm_prompt_tokens,
           llm_completion_tokens,

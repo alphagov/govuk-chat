@@ -41,6 +41,15 @@ module GuardrailsExamples
   shared_examples "an erroring guardrail pipeline step" do |guardrail_name, message|
     context "when a ResponseError occurs during the call" do
       let(:guardrail_response) { nil }
+      let(:llm_response) do
+        {
+          message: {
+            role: "assistant",
+            content: 'False | "1, 2"',
+          },
+          finish_reason: "stop",
+        }
+      end
 
       before do
         allow(Guardrails::MultipleChecker)
@@ -48,6 +57,7 @@ module GuardrailsExamples
           .and_raise(
             Guardrails::MultipleChecker::ResponseError.new(
               "An error occurred",
+              llm_response,
               'False | "1, 2"',
               13,
               7,
@@ -63,13 +73,12 @@ module GuardrailsExamples
           message:,
           status: "error_#{guardrail_name}",
           "#{guardrail_name}_status": "error",
-          llm_responses: a_hash_including(guardrail_name => 'False | "1, 2"'),
         )
       end
 
       it "assigns the llm response to the answer" do
         expect { described_class.new.call(context) }.to throw_symbol(:abort)
-        expect(context.answer.llm_responses[guardrail_name]).to eq('False | "1, 2"')
+        expect(context.answer.llm_responses[guardrail_name]).to eq(llm_response)
       end
 
       it "assigns metrics to the answer" do
