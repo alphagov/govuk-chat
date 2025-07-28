@@ -1,11 +1,7 @@
 module AuthenticationHelpers
   def login_as(user)
-    warden_double = instance_double(Warden::Proxy,
-                                    authenticated?: true,
-                                    authenticate!: true,
-                                    user:)
-    allow_any_instance_of(ApplicationController) # rubocop:disable RSpec/AnyInstance
-      .to receive(:warden)
-      .and_return(warden_double)
+    allow(GDS::SSO).to receive(:test_user).and_return(user)
+    Capybara.reset_sessions!
+    reset!
   end
 end

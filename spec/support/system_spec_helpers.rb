@@ -16,7 +16,7 @@ module SystemSpecHelpers
       .and_return("openai_structured_answer")
   end
 
-  def dismiss_cookie_banner
+  def given_i_have_dismissed_the_cookie_banner
     visit homepage_path
 
     within(".gem-c-cookie-banner") do
@@ -24,6 +24,7 @@ module SystemSpecHelpers
       click_button "Hide this message"
     end
   end
+  alias_method :and_i_have_dismissed_the_cookie_banner, :given_i_have_dismissed_the_cookie_banner
 
   def set_rack_cookie(name, value)
     cookie_string = Rack::Utils.set_cookie_header(name, value)
