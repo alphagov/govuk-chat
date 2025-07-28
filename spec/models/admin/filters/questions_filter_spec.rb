@@ -229,7 +229,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([alice_question])
 
       filter = described_class.new(signon_user_id: bob.id)
-      expect(filter.results).to eq([bob_question_created_via_api, bob_question_created_via_web])
+      expect(filter.results).to contain_exactly(bob_question_created_via_api, bob_question_created_via_web)
     end
 
     it "filters the results by end_user_id" do

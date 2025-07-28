@@ -122,12 +122,8 @@ RSpec.describe "Admin user filters questions" do
     end
   end
 
-  def then_i_see_that_users_details_in_the_sidebar
-    expect(page).to have_content("Filtering by user: #{@user.email}")
-  end
-
   def then_i_see_that_signon_users_details_in_the_sidebar
-    expect(page).to have_content("Filtering by API user: #{@signon_user.name}")
+    expect(page).to have_content("Filtering by Signon user: #{@signon_user.name}")
   end
 
   def and_i_see_all_the_questions_for_that_user
