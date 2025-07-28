@@ -22,6 +22,7 @@ module AnswerComposition::Pipeline
           **inference_config,
         )
 
+        context.answer.assign_llm_response("structured_answer", response.to_h)
         tool_output = response[:content][0][:input]
 
         unless tool_output[:answered]
@@ -33,8 +34,6 @@ module AnswerComposition::Pipeline
         end
 
         set_context_sources(tool_output[:sources_used])
-
-        context.answer.assign_llm_response("structured_answer", response.to_h)
         message = link_token_mapper.replace_tokens_with_links(tool_output[:answer])
         context.answer.assign_attributes(message:, status: "answered")
         context.answer.assign_metrics("structured_answer", build_metrics(start_time, response))
