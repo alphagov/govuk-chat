@@ -121,7 +121,7 @@ private
   def signon_user_scope(scope)
     return scope if signon_user_id.blank?
 
-    scope.joins(:conversation).where(conversation: { signon_user_id: signon_user_id, source: :api })
+    scope.joins(:conversation).where(conversation: { signon_user_id: signon_user_id })
   end
 
   def end_user_id_scope(scope)

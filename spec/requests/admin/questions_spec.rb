@@ -92,7 +92,7 @@ RSpec.describe "Admin::QuestionsController" do
         get admin_questions_path(signon_user_id: signon_user.id)
 
         expect(response.body.squish)
-          .to have_content("Filtering by API user: #{signon_user.name}")
+          .to have_content("Filtering by Signon user: #{signon_user.name}")
       end
 
       it "renders the end user details when filtering by end_user_id" do
