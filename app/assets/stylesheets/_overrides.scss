@@ -29,10 +29,6 @@
 }
 
 .app-landing-page-layout {
-  .govuk-header {
-    border-bottom: none; // This is to prevent whitespace from appearing between the header and the landing page animation boxes
-  }
-
   .gem-c-error-summary.govuk-error-summary {
     background-color: govuk-colour("white");
   }
