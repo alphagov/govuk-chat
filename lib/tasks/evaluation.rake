@@ -145,7 +145,6 @@ namespace :evaluation do
   desc "Query the index for results matching a user input"
   task search_results_for_question: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
-    raise "Requires an EMBEDDING_PROVIDER env var" if ENV["EMBEDDING_PROVIDER"].blank?
 
     search_results = Search::ResultsForQuestion.call(ENV["INPUT"]).results
 

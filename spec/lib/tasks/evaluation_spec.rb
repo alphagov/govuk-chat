@@ -431,14 +431,8 @@ RSpec.describe "rake evaluation tasks" do
       expect { Rake::Task[task_name].invoke }.to raise_error("Requires an INPUT env var")
     end
 
-    it "requires an EMBEDDING_PROVIDER env var" do
-      ClimateControl.modify(INPUT: input) do
-        expect { Rake::Task[task_name].invoke }.to raise_error("Requires an EMBEDDING_PROVIDER env var")
-      end
-    end
-
     it "outputs the response as JSON to stdout" do
-      ClimateControl.modify(INPUT: input, EMBEDDING_PROVIDER: "openai") do
+      ClimateControl.modify(INPUT: input) do
         search_results = [
           Search::ResultsForQuestion::WeightedResult.new(
             result: build(
