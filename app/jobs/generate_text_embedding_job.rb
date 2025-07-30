@@ -11,7 +11,7 @@ class GenerateTextEmbeddingJob < ApplicationJob
       return
     end
 
-    embedding = Search::TextToEmbedding.call(result.plain_content, llm_provider: :titan)
+    embedding = Search::TextToEmbedding.call(result.plain_content)
 
     result = repository.update_document(document_id, { titan_embedding: embedding })
 

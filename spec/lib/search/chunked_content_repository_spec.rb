@@ -243,11 +243,10 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
       populate_chunked_content_index(chunked_content_records)
     end
 
-    it "returns an array of Result objects for Titan embedding" do
+    it "returns an array of Result objects" do
       result = repository.search_by_embedding(
         titan_embedding,
         max_chunks: 10,
-        llm_provider: :titan,
       )
       expected_attributes = chunked_content_records.first
                                                    .except(:titan_embedding)
@@ -255,16 +254,6 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
 
       expect(result).to all be_a(Search::ChunkedContentRepository::Result)
       expect(result.first).to have_attributes(**expected_attributes)
-    end
-
-    it "raises an error if the llm provider is not recognised" do
-      expect {
-        repository.search_by_embedding(
-          titan_embedding,
-          max_chunks: 10,
-          llm_provider: :unknown,
-        )
-      }.to raise_error("Unknown provider: unknown")
     end
 
     context "when there are more than the maxiumum chunks" do
@@ -275,7 +264,6 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
         result = repository.search_by_embedding(
           titan_embedding,
           max_chunks:,
-          llm_provider: :titan,
         )
         expect(result.count).to eq max_chunks
       end

@@ -38,9 +38,7 @@ class MessageQueue::ContentSynchroniser
     end
 
     def index_chunks(indexable_chunks)
-      embeddings = Search::TextToEmbedding.call(
-        indexable_chunks.map(&:plain_content), llm_provider: :titan
-      )
+      embeddings = Search::TextToEmbedding.call(indexable_chunks.map(&:plain_content))
 
       created = 0
       updated = 0

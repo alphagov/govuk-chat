@@ -60,10 +60,7 @@ namespace :search do
       end
     end
 
-    embeddings = Search::TextToEmbedding.call(
-      chunks.map(&:plain_content),
-      llm_provider: :titan,
-    )
+    embeddings = Search::TextToEmbedding.call(chunks.map(&:plain_content))
     repository = Search::ChunkedContentRepository.new
     indexed = 0
 

@@ -154,21 +154,14 @@ module Search
       items
     end
 
-    def search_by_embedding(embedding, max_chunks:, llm_provider:)
-      field_name = case llm_provider.to_sym
-                   when :titan
-                     :titan_embedding
-                   else
-                     raise "Unknown provider: #{llm_provider}"
-                   end
-
+    def search_by_embedding(embedding, max_chunks:)
       response = client.search(
         index:,
         body: {
           size: max_chunks,
           query: {
             knn: {
-              "#{field_name}": {
+              titan_embedding: {
                 vector: embedding,
                 k: max_chunks,
               },

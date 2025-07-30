@@ -85,6 +85,5 @@ module GovukChat
     config.bigquery_dataset_id = ENV["BIGQUERY_DATASET"]
 
     config.answer_strategy = ENV.fetch("ANSWER_STRATEGY", "claude_structured_answer")
-    config.embedding_provider = ENV.fetch("EMBEDDING_PROVIDER", "titan")
   end
 end

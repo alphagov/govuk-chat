@@ -7,21 +7,18 @@ module Search
       max_results = Rails.configuration.search.thresholds.max_results
       max_chunks = Rails.configuration.search.thresholds.retrieved_from_index
 
-      provider = Rails.configuration.embedding_provider
-
       metrics = {}
       embedding_start_time = Clock.monotonic_time
-      embedding = Search::TextToEmbedding.call(question_message, llm_provider: provider)
+      embedding = Search::TextToEmbedding.call(question_message)
       metrics[:embedding_duration] = Clock.monotonic_time - embedding_start_time
 
       search_start_time = Clock.monotonic_time
       results = ChunkedContentRepository.new.search_by_embedding(
         embedding,
         max_chunks:,
-        llm_provider: provider,
       )
       metrics[:search_duration] = Clock.monotonic_time - search_start_time
-      metrics[:embedding_provider] = provider
+      metrics[:embedding_provider] = "titan"
 
       reranking_start_time = Clock.monotonic_time
       weighted_results = Search::ResultsForQuestion::Reranker.call(results)
