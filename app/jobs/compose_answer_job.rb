@@ -14,8 +14,6 @@ class ComposeAnswerJob < ApplicationJob
       logger.warn("Already an answer created for #{question_id}")
     end
 
-    if answer.persisted?
-      AnswerInsights::TopicTagger.call(Answer.includes(%i[analysis question]).find(answer.id))
-    end
+    AnswerInsightsJob.perform_later(answer.id) if answer.persisted?
   end
 end
