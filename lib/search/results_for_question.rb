@@ -11,7 +11,7 @@ module Search
 
       metrics = {}
       embedding_start_time = Clock.monotonic_time
-      embedding = Search::TextToEmbedding.call(question_message, llm_provider: provider)
+      embedding = Search::TextToEmbedding.call(question_message)
       metrics[:embedding_duration] = Clock.monotonic_time - embedding_start_time
 
       search_start_time = Clock.monotonic_time

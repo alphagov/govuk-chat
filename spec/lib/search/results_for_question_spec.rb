@@ -8,7 +8,7 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
     before do
       allow(Search::TextToEmbedding)
         .to receive(:call)
-        .with(question_message, llm_provider: "titan")
+        .with(question_message)
         .and_return(titan_embedding)
 
       allow(Rails.configuration.search.thresholds).to receive_messages(minimum_score: min_score, max_results:)
@@ -25,11 +25,9 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
     end
 
     it "retrieves an embedding for the question_message and searches the chunked content repository" do
-      allow(Rails.configuration).to receive(:embedding_provider).and_return("titan")
-
       result = described_class.call(question_message)
       expect(result).to be_a(Search::ResultsForQuestion::ResultSet)
-      expect(Search::TextToEmbedding).to have_received(:call).with(question_message, llm_provider: "titan")
+      expect(Search::TextToEmbedding).to have_received(:call).with(question_message)
     end
 
     it "has the results over the configured threshold after reranking" do
