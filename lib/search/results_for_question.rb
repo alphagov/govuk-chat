@@ -18,7 +18,7 @@ module Search
         max_chunks:,
       )
       metrics[:search_duration] = Clock.monotonic_time - search_start_time
-      metrics[:embedding_provider] = Rails.configuration.embedding_provider
+      metrics[:embedding_provider] = "titan"
 
       reranking_start_time = Clock.monotonic_time
       weighted_results = Search::ResultsForQuestion::Reranker.call(results)
