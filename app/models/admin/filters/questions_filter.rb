@@ -9,6 +9,8 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :question_routing_label
   attribute :signon_user_id
   attribute :end_user_id
+  attribute :primary_topic
+  attribute :secondary_topic
 
   validate :validate_dates
 
@@ -27,7 +29,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
 
   def results
     @results ||= begin
-      scope = Question.includes(answer: :feedback)
+      scope = Question.includes(answer: %i[feedback analysis])
                       .left_outer_joins(:answer)
       scope = search_scope(scope)
       scope = status_scope(scope)
@@ -40,6 +42,8 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
       scope = ordering_scope(scope)
       scope = signon_user_scope(scope)
       scope = end_user_id_scope(scope)
+      scope = primary_topic_scope(scope)
+      scope = secondary_topic_scope(scope)
       scope.page(page)
            .per(25)
     end
@@ -134,6 +138,20 @@ private
     return scope if question_routing_label.blank?
 
     scope.joins(:answer).where("answers.question_routing_label = ?", question_routing_label)
+  end
+
+  def primary_topic_scope(scope)
+    return scope if primary_topic.blank?
+
+    scope.joins(answer: :analysis)
+         .where(answer_analyses: { primary_topic: primary_topic })
+  end
+
+  def secondary_topic_scope(scope)
+    return scope if secondary_topic.blank?
+
+    scope.joins(answer: :analysis)
+         .where(answer_analyses: { secondary_topic: secondary_topic })
   end
 
   def validate_dates
