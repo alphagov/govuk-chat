@@ -20,9 +20,8 @@ namespace :evaluation do
     end
 
     answer_strategy = Rails.configuration.answer_strategy
-    embedding_provider = Rails.configuration.embedding_provider
 
-    puts "Generating report with answer strategy: #{answer_strategy} and embedding provider: #{embedding_provider}"
+    puts "Generating report with answer strategy: #{answer_strategy}"
 
     ENV["GOVUK_WEBSITE_ROOT"] ||= "https://www.gov.uk"
     results = Evaluation::ReportGenerator.call(input_path) do |total, current, evaluation_question|
@@ -83,15 +82,9 @@ namespace :evaluation do
   end
 
   desc "Produce the output of a RAG response for a user input"
-  task :generate_rag_structured_answer_response, %i[llm_provider embedding_provider] => :environment do |_, args|
+  task :generate_rag_structured_answer_response, %i[llm_provider] => :environment do |_, args|
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
     raise "Requires an llm provider" if args[:llm_provider].blank?
-
-    if args[:embedding_provider]
-      Rails.configuration.embedding_provider = args[:embedding_provider]
-    else
-      warn "No embedding_provider argument provided, using #{Rails.configuration.embedding_provider}"
-    end
 
     question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
 
@@ -145,7 +138,6 @@ namespace :evaluation do
   desc "Query the index for results matching a user input"
   task search_results_for_question: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
-    raise "Requires an EMBEDDING_PROVIDER env var" if ENV["EMBEDDING_PROVIDER"].blank?
 
     search_results = Search::ResultsForQuestion.call(ENV["INPUT"]).results
 
