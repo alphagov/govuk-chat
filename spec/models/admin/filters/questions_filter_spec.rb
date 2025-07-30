@@ -259,6 +259,32 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([non_english_question])
     end
 
+    it "filters the results by primary topic" do
+      business_answer = build(:answer, analysis: build(:answer_analysis, primary_topic: "business"))
+      business_question = create(:question, answer: business_answer)
+      tax_answer = build(:answer, analysis: build(:answer_analysis, primary_topic: "tax"))
+      tax_question = create(:question, answer: tax_answer)
+
+      filter = described_class.new(primary_topic: "business")
+      expect(filter.results).to eq([business_question])
+
+      filter = described_class.new(primary_topic: "tax")
+      expect(filter.results).to eq([tax_question])
+    end
+
+    it "filters the results by secondary topic" do
+      business_answer = build(:answer, analysis: build(:answer_analysis, secondary_topic: "business"))
+      business_question = create(:question, answer: business_answer)
+      tax_answer = build(:answer, analysis: build(:answer_analysis, secondary_topic: "tax"))
+      tax_question = create(:question, answer: tax_answer)
+
+      filter = described_class.new(secondary_topic: "business")
+      expect(filter.results).to eq([business_question])
+
+      filter = described_class.new(secondary_topic: "tax")
+      expect(filter.results).to eq([tax_question])
+    end
+
     it "paginates the results" do
       create_list(:question, 26)
 
