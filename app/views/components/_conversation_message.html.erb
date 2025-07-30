@@ -16,6 +16,11 @@
 
 <%= content_tag :li, id:, class: "app-c-conversation-message js-conversation-message", data: data_attributes do %>
   <%= content_tag :div, class: message_classes do %>
+    <% if is_loading and !is_question %>
+      <div class="app-c-conversation-message__loading-icon-container">
+        <div class="app-c-conversation-message__loading-icon"></div>
+      </div>
+    <% end %>
     <% if is_question %>
       <div class="app-c-conversation-message__body app-c-conversation-message__body--user-message">
         <%= content_tag :span, class: message_identifier_classes do %>
