@@ -45,9 +45,9 @@ RSpec.describe "rake evaluation tasks" do
         .to raise_error(/Usage: evaluation:generate_report/)
     end
 
-    it "outputs the answer_strategy and embedding_provider to stdout" do
+    it "outputs the answer_strategy to stdout" do
       expect { Rake::Task[task_name].invoke("input.yml") }
-        .to output(/Generating report with answer strategy: \S* and embedding provider: \S*/).to_stdout
+        .to output(/Generating report with answer strategy: \S*/).to_stdout
     end
 
     it "generates the results as JSONL and prints them" do
