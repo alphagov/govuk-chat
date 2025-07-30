@@ -166,8 +166,25 @@ RSpec.describe Answer do
       serialized_answer = answer.serialize_for_export
 
       expect(serialized_answer)
-        .to include(answer.as_json)
+        .to include(answer.as_json.except("llm_responses"))
+        .and include("llm_responses" => "null")
         .and include("sources" => answer.sources.map(&:serialize_for_export))
+    end
+
+    it "converts the llm_responses to unparsed JSON" do
+      answer = create(
+        :answer,
+        llm_responses: {
+          "question_routing" => { some: "hash" },
+          "structured_answer" => { another: "hash" },
+        },
+      )
+
+      expected_response = answer.as_json.merge(
+        "llm_responses" => answer.llm_responses.to_json,
+        "sources" => [],
+      )
+      expect(answer.serialize_for_export).to eq(expected_response)
     end
   end
 

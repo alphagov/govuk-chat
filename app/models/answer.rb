@@ -140,7 +140,10 @@ class Answer < ApplicationRecord
   end
 
   def serialize_for_export
-    as_json.merge("sources" => sources.map(&:serialize_for_export))
+    as_json(except: :llm_responses).merge(
+      "sources" => sources.map(&:serialize_for_export),
+      "llm_responses" => llm_responses.to_json,
+    )
   end
 
   def assign_metrics(namespace, values)

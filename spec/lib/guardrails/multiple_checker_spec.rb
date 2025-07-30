@@ -95,7 +95,8 @@ RSpec.describe Guardrails::MultipleChecker do
             .to raise_error(
               an_instance_of(::Guardrails::MultipleChecker::ResponseError)
                 .and(having_attributes(message: "Error parsing guardrail response",
-                                       llm_response: guardrail_result)),
+                                       llm_guardrail_result: guardrail_result,
+                                       llm_response: guardrail_response_hash[:llm_response])),
             )
         end
       end
@@ -110,7 +111,8 @@ RSpec.describe Guardrails::MultipleChecker do
             .to raise_error(
               an_instance_of(::Guardrails::MultipleChecker::ResponseError)
                 .and(having_attributes(message: "Error parsing guardrail response",
-                                       llm_response: guardrail_result)),
+                                       llm_guardrail_result: guardrail_result,
+                                       llm_response: guardrail_response_hash[:llm_response])),
             )
         end
       end
