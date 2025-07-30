@@ -30,10 +30,7 @@
     <link rel="apple-touch-icon" href="<%= asset_path "govuk-icon-180.png" %>">
 
     <meta name="theme-color" content="#0b0c0c">
-
-    <%# minimum-scale=1 is used here to prevent zooming out as zooming out can result odd UI behaviours caused by the landing page animation %>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content, minimum-scale=1">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
     <meta property="og:image" content="<%= asset_url("govuk-opengraph-image.png", host: Plek.website_root) %>">
   </head>
   <%= tag.body(class: body_classes) do %>

@@ -11,6 +11,10 @@ accessibility_criteria: |
 
   * be visually distinct from other paragraphs.
   * must have a text contrast ratio higher than 4.5:1 against the background colour to meet WCAG AA
+
+  Animating elements in the component must:
+  
+  * accommodate the `prefers-reduced-motion` media query
 examples:
   default:
     data:

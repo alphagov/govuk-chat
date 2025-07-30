@@ -11,9 +11,18 @@
 }
 
 .app-c-chat-introduction-title__svg {
-  @include govuk-media-query($until: 500px) {
-    height: 60px;
-    width: 60px;
+  display: block;
+
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
+}
+
+.app-c-chat-introduction-title__svg--static {
+  display: none;
+
+  @media (prefers-reduced-motion: reduce) {
+    display: block;
   }
 }
 
