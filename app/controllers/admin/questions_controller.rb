@@ -29,6 +29,8 @@ private
       :signon_user_id,
       :conversation_id,
       :end_user_id,
+      :primary_topic,
+      :secondary_topic,
     )
   end
 end

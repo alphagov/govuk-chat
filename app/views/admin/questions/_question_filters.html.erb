@@ -1,6 +1,11 @@
 <%
   conversation = filter.conversation
   signon_user = filter.signon_user
+  question_topics = Rails.configuration
+                         .govuk_chat_private
+                         .llm_prompts
+                         .claude
+                         .topic_tagger.dig("tool_spec", "input_schema", "$defs", "govuk_topic_tags", "enum")
 %>
 
 <%= form_with(url: admin_questions_path, method: :get) do %>
@@ -175,6 +180,36 @@
         text: Rails.configuration.question_routing_labels[label][:label],
         value: label,
         selected: params[:question_routing_label] == label,
+      }
+    end,
+  } %>
+
+  <%= render "govuk_publishing_components/components/select", {
+    id: "primary_topic",
+    name: "primary_topic",
+    label: "Primary topic",
+    heading_size: "s",
+    full_width: true,
+    options: [{text: "", value: ""}] + question_topics.map do |topic|
+      {
+       text: topic.humanize,
+       value: topic,
+       selected: params[:primary_topic] == topic,
+      }
+    end,
+  } %>
+
+  <%= render "govuk_publishing_components/components/select", {
+    id: "secondary_topic",
+    name: "secondary_topic",
+    label: "Secondary topic",
+    heading_size: "s",
+    full_width: true,
+    options: [{text: "", value: ""}] + question_topics.map do |topic|
+      {
+       text: topic.humanize,
+       value: topic,
+       selected: params[:secondary_topic] == topic,
       }
     end,
   } %>
