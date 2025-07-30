@@ -82,15 +82,9 @@ namespace :evaluation do
   end
 
   desc "Produce the output of a RAG response for a user input"
-  task :generate_rag_structured_answer_response, %i[llm_provider embedding_provider] => :environment do |_, args|
+  task :generate_rag_structured_answer_response, %i[llm_provider] => :environment do |_, args|
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
     raise "Requires an llm provider" if args[:llm_provider].blank?
-
-    if args[:embedding_provider]
-      Rails.configuration.embedding_provider = args[:embedding_provider]
-    else
-      warn "No embedding_provider argument provided, using #{Rails.configuration.embedding_provider}"
-    end
 
     question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
 
