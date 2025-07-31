@@ -20,5 +20,13 @@ RSpec.describe AnswerInsightsJob do
         expect(AnswerInsights::TopicTagger).not_to have_received(:call)
       end
     end
+
+    context "when the answer cannot have tagged topics" do
+      it "does not call the TopicTagger" do
+        answer = create(:answer, status: Answer::STATUSES_EXCLUDED_FROM_TOPIC_TAGGING.sample)
+        expect(AnswerInsights::TopicTagger).not_to receive(:call)
+        described_class.new.perform(answer.id)
+      end
+    end
   end
 end

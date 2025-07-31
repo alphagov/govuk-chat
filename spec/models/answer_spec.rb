@@ -336,4 +336,20 @@ RSpec.describe Answer do
       end
     end
   end
+
+  describe "#can_have_tagged_topics?" do
+    (described_class.statuses.keys - described_class::STATUSES_EXCLUDED_FROM_TOPIC_TAGGING).each do |status|
+      it "returns true for answers with the #{status} status" do
+        answer = build(:answer, status:)
+        expect(answer.can_have_tagged_topics?).to be(true)
+      end
+    end
+
+    described_class::STATUSES_EXCLUDED_FROM_TOPIC_TAGGING.each do |status|
+      it "returns false for answers with the #{status} status" do
+        answer = build(:answer, status:)
+        expect(answer.can_have_tagged_topics?).to be(false)
+      end
+    end
+  end
 end

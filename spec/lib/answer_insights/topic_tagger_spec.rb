@@ -56,6 +56,19 @@ RSpec.describe AnswerInsights::TopicTagger, :aws_credentials_stubbed do
       end
     end
 
+    context "when the answer is a status that cannot have tagged topics" do
+      it "logs a warning" do
+        answer = create(:answer, status: Answer::STATUSES_EXCLUDED_FROM_TOPIC_TAGGING.sample)
+        allow(Rails.logger).to receive(:warn)
+
+        described_class.call(answer)
+
+        expect(Rails.logger)
+          .to have_received(:warn)
+          .with("Topics cannot be generated for answer #{answer.id} with status #{answer.status}")
+      end
+    end
+
     context "when the answer already has a primary topic" do
       it "logs a warning" do
         create(:answer_analysis, answer:)

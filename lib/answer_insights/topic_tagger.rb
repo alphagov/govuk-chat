@@ -11,6 +11,10 @@ class AnswerInsights::TopicTagger
 
   def call
     start_time = Clock.monotonic_time
+
+    unless answer.can_have_tagged_topics?
+      return logger.warn("Topics cannot be generated for answer #{answer.id} with status #{answer.status}")
+    end
     if answer&.analysis&.primary_topic.present?
       return logger.warn("Topics already generated for answer #{answer.id}")
     end
