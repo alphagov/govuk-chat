@@ -55,5 +55,22 @@ RSpec.describe AnswerTopicsJob do
         expect { perform_enqueued_jobs }.to raise_error(Anthropic::Errors::APIError)
       end
     end
+
+    context "when the answer is not eligible for topic analysis" do
+      let(:answer) { create(:answer, status: Answer::STATUSES_EXCLUDED_FROM_TOPIC_ANALYSIS.sample) }
+
+      it "logs an info message" do
+        expect(described_class.logger)
+          .to receive(:info)
+          .with("Answer #{answer.id} is not eligible for topic analysis")
+
+        described_class.new.perform(answer.id)
+      end
+
+      it "does not call the TopicTagger" do
+        expect(AnswerAnalysisGeneration::TopicTagger).not_to receive(:call)
+        described_class.new.perform(answer.id)
+      end
+    end
   end
 end

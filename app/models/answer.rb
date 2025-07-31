@@ -39,6 +39,16 @@ class Answer < ApplicationRecord
     guardrails_question_routing
   ].freeze
 
+  STATUSES_EXCLUDED_FROM_TOPIC_ANALYSIS = %w[
+    error_answer_guardrails
+    error_answer_service_error
+    error_jailbreak_guardrails
+    error_non_specific
+    error_question_routing_guardrails
+    error_timeout
+    guardrails_jailbreak
+  ].freeze
+
   scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
 
   belongs_to :question
@@ -151,6 +161,10 @@ class Answer < ApplicationRecord
 
   def use_in_rephrasing?
     STATUSES_EXCLUDED_FROM_REPHRASING.exclude?(status)
+  end
+
+  def eligible_for_topic_analysis?
+    STATUSES_EXCLUDED_FROM_TOPIC_ANALYSIS.exclude?(status)
   end
 
   def set_sources_as_unused

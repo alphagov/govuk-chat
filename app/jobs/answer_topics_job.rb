@@ -8,6 +8,9 @@ class AnswerTopicsJob < ApplicationJob
 
     return logger.warn("No answer found for #{answer_id}") unless answer
     return logger.warn("Answer #{answer_id} has already been tagged with topics") if answer.analysis&.primary_topic.present?
+    unless answer.eligible_for_topic_analysis?
+      return logger.info("Answer #{answer_id} is not eligible for topic analysis")
+    end
 
     AnswerAnalysisGeneration::TopicTagger.call(answer)
   end

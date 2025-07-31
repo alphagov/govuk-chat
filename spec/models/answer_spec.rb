@@ -307,4 +307,20 @@ RSpec.describe Answer do
       end
     end
   end
+
+  describe "#eligible_for_topic_analysis?" do
+    (described_class.statuses.keys - described_class::STATUSES_EXCLUDED_FROM_TOPIC_ANALYSIS).each do |status|
+      it "returns true for answers with the #{status} status" do
+        answer = build(:answer, status:)
+        expect(answer.eligible_for_topic_analysis?).to be(true)
+      end
+    end
+
+    described_class::STATUSES_EXCLUDED_FROM_TOPIC_ANALYSIS.each do |status|
+      it "returns false for answers with the #{status} status" do
+        answer = build(:answer, status:)
+        expect(answer.eligible_for_topic_analysis?).to be(false)
+      end
+    end
+  end
 end
