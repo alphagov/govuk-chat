@@ -94,6 +94,11 @@ module RackAttackExamples
             )
           end
 
+          it "doesn't reject a request to #{method} #{path} with a different signon ID" do
+            login_as(create(:signon_user))
+            expect_not_throttled_response(method, path)
+          end
+
           it "doesn't reject a request to #{method} #{path} after the time period" do
             travel_to(Time.current + period + 1.second) do
               expect_not_throttled_response(method, path, headers)
