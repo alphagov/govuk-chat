@@ -164,6 +164,15 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         textareaWrapper.dataset.replicatedValue = this.textarea.value
       })
     }
+
+    submitTextAreaOnEnter (textarea) {
+      textarea.addEventListener('keypress', e => {
+        if (e.key === 'Enter') {
+          e.preventDefault()
+          window.GOVUK.triggerEvent(this.form, 'submit')
+        }
+      })
+    }
   }
 
   Modules.QuestionForm = QuestionForm
