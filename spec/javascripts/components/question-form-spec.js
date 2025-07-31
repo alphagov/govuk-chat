@@ -1,7 +1,7 @@
 describe('QuestionForm component', () => {
   'use strict'
 
-  let div, form, formGroup, input, button, buttonResponseStatus, presenceErrorMessage,
+  let div, form, formGroup, textarea, button, buttonResponseStatus, presenceErrorMessage,
     lengthErrorMessage, errorsWrapper, module
 
   beforeEach(function () {
@@ -16,7 +16,7 @@ describe('QuestionForm component', () => {
       <form class="js-question-form">
         <div class="js-question-form-group">
           <ul id="create_question_user_question-error" class="js-question-form-errors-wrapper" hidden="true"></ul>
-          <input type="text" class="js-question-form-input govuk-js-character-count" id="create_question_user_question" value="What is the VAT rate?">
+          <textarea class="js-question-form-textarea govuk-js-character-count" id="create_question_user_question">What is the VAT rate?</textarea>
           <div id="create_question_user_question-info" class="gem-c-hint govuk-hint govuk-visually-hidden">
             Please limit your question to 300 characters.
           </div>
@@ -29,7 +29,7 @@ describe('QuestionForm component', () => {
       <a href="/survey" class="js-survey-link">Survey</a>
     `
     form = div.querySelector('.js-question-form')
-    input = div.querySelector('.js-question-form-input')
+    textarea = div.querySelector('.js-question-form-textarea')
     button = div.querySelector('.js-question-form-button')
     button = div.querySelector('.js-question-form-button')
     buttonResponseStatus = div.querySelector('.js-question-form-button__response-status')
@@ -58,7 +58,7 @@ describe('QuestionForm component', () => {
     beforeEach(() => module.init())
 
     it('allows form submission when input is valid', () => {
-      input.value = 'valid input'
+      textarea.value = 'valid input'
       const submitSpy = jasmine.createSpy('submit event spy')
       form.addEventListener('submit', submitSpy)
 
@@ -68,7 +68,7 @@ describe('QuestionForm component', () => {
     })
 
     it('prevents form submission when the input is empty', () => {
-      input.value = ''
+      textarea.value = ''
       const submitSpy = jasmine.createSpy('submit event spy')
       form.addEventListener('submit', submitSpy)
       const event = new Event('submit')
@@ -82,7 +82,7 @@ describe('QuestionForm component', () => {
 
     it('prevents form submission when the input exceeds the max character count', () => {
       const maxlength = parseInt(div.dataset.maxlength, 10)
-      input.value = 'a'.repeat(maxlength + 1)
+      textarea.value = 'a'.repeat(maxlength + 1)
 
       const submitSpy = jasmine.createSpy('submit event spy')
       form.addEventListener('submit', submitSpy)
@@ -96,7 +96,7 @@ describe('QuestionForm component', () => {
     })
 
     it('shows an error when the user input is empty', () => {
-      input.value = ''
+      textarea.value = ''
       form.dispatchEvent(new Event('submit'))
       expect(errorsWrapper.hidden).toBe(false)
 
@@ -104,42 +104,42 @@ describe('QuestionForm component', () => {
         .toEqual(`<li class="app-c-question-form__error-message"><span class="govuk-visually-hidden">Error:</span>${presenceErrorMessage}</li>`)
     })
 
-    it('updates the input\'s aria-describedby attribute to also reference the error id when errors occur (e.g. input is empty)', () => {
-      input.value = ''
+    it('updates the textarea\'s aria-describedby attribute to also reference the error id when errors occur (e.g. input is empty)', () => {
+      textarea.value = ''
       form.dispatchEvent(new Event('submit'))
       expect(errorsWrapper.hidden).toBe(false)
-      expect(input.getAttribute('aria-describedby')).toBe('create_question_user_question-info create_question_user_question-error')
+      expect(textarea.getAttribute('aria-describedby')).toBe('create_question_user_question-info create_question_user_question-error')
     })
 
     it('adds the appropriate classes when there is a validation error', () => {
-      input.value = ''
+      textarea.value = ''
       form.dispatchEvent(new Event('submit'))
 
       expect(formGroup.classList).toContain('app-c-question-form__form-group--error')
-      expect(input.classList).toContain('app-c-question-form__input--error')
+      expect(textarea.classList).toContain('app-c-question-form__textarea--error')
     })
 
     it('removes any errors and error classes when input is valid', () => {
-      input.value = ''
+      textarea.value = ''
       form.dispatchEvent(new Event('submit'))
 
-      input.value = 'valid input'
+      textarea.value = 'valid input'
       form.dispatchEvent(new Event('submit'))
 
       expect(errorsWrapper.hidden).toBe(true)
       expect(errorsWrapper.innerHTML).toBe('')
       expect(formGroup.classList).not.toContain('app-c-question-form__form-group--error')
-      expect(input.classList).not.toContain('app-c-question-form__input--error')
+      expect(textarea.classList).not.toContain('app-c-question-form__textarea--error')
     })
 
-    it('resets the input\'s aria-describedby attribute to only reference the hint id when input is valid', () => {
-      input.value = ''
+    it('resets the textarea\'s aria-describedby attribute to only reference the hint id when input is valid', () => {
+      textarea.value = ''
       form.dispatchEvent(new Event('submit'))
 
-      input.value = 'valid input'
+      textarea.value = 'valid input'
       form.dispatchEvent(new Event('submit'))
 
-      expect(input.getAttribute('aria-describedby')).toBe('create_question_user_question-info')
+      expect(textarea.getAttribute('aria-describedby')).toBe('create_question_user_question-info')
     })
   })
 
@@ -149,17 +149,17 @@ describe('QuestionForm component', () => {
     it('disables the controls', () => {
       div.dispatchEvent(new Event('question-pending'))
 
-      expect(input.readOnly).toBe(true)
+      expect(textarea.readOnly).toBe(true)
       expect(button.hasAttribute('aria-disabled')).toBe(true)
       expect(button.classList).toContain('app-c-blue-button--disabled')
       expect(buttonResponseStatus.textContent).toContain('Loading your question')
     })
 
     it("doesn't update the input value", () => {
-      const value = input.value
+      const value = textarea.value
       div.dispatchEvent(new Event('question-pending'))
 
-      expect(input.value).toEqual(value)
+      expect(textarea.value).toEqual(value)
     })
   })
 
@@ -169,7 +169,7 @@ describe('QuestionForm component', () => {
     it('disables the controls', () => {
       div.dispatchEvent(new Event('question-accepted'))
 
-      expect(input.readOnly).toBe(true)
+      expect(textarea.readOnly).toBe(true)
       expect(button.hasAttribute('aria-disabled')).toBe(true)
       expect(button.classList).toContain('app-c-blue-button--disabled')
       expect(buttonResponseStatus.textContent).toContain('Generating your answer')
@@ -178,13 +178,13 @@ describe('QuestionForm component', () => {
     it('resets the input value', () => {
       div.dispatchEvent(new Event('question-accepted'))
 
-      expect(input.value).toEqual('')
+      expect(textarea.value).toEqual('')
     })
 
     it('hides the character count hint', () => {
       // Type in enough characters to make the hint show on screen
-      input.value = 'A'.repeat(280)
-      input.dispatchEvent(new Event('keyup'))
+      textarea.value = 'A'.repeat(280)
+      textarea.dispatchEvent(new Event('keyup'))
       expect(form.innerHTML).toContain('You have 20 characters remaining')
 
       div.dispatchEvent(new Event('question-accepted'))
@@ -206,24 +206,24 @@ describe('QuestionForm component', () => {
     })
 
     it('enables any disabled controls', () => {
-      input.readOnly = true
+      textarea.readOnly = true
       button.setAttribute('aria-disabled', true)
       button.classList.add('app-c-blue-button--disabled')
       buttonResponseStatus.textContent = 'Visually hidden text content'
 
       div.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
 
-      expect(input.readOnly).toBe(false)
+      expect(textarea.readOnly).toBe(false)
       expect(button.hasAttribute('aria-disabled')).toBe(false)
       expect(button.classList).not.toContain('app-c-blue-button--disabled')
       expect(buttonResponseStatus.textContent).toEqual('')
     })
 
     it("doesn't update the input value", () => {
-      const value = input.value
+      const value = textarea.value
       div.dispatchEvent(new CustomEvent('question-rejected', errorDetail))
 
-      expect(input.value).toEqual(value)
+      expect(textarea.value).toEqual(value)
     })
 
     it('displays error messages provided by the event', () => {
@@ -242,7 +242,7 @@ describe('QuestionForm component', () => {
       div.dispatchEvent(event)
 
       expect(formGroup.classList).toContain('app-c-question-form__form-group--error')
-      expect(input.classList).toContain('app-c-question-form__input--error')
+      expect(textarea.classList).toContain('app-c-question-form__textarea--error')
     })
 
     it('replaces any existing error messages', () => {
@@ -273,14 +273,14 @@ describe('QuestionForm component', () => {
     beforeEach(() => module.init())
 
     it('enables any disabled controls', () => {
-      input.readOnly = true
+      textarea.readOnly = true
       button.setAttribute('aria-disabled', true)
       button.classList.add('app-c-blue-button--disabled')
       buttonResponseStatus.textContent = 'Visually hidden text content'
 
       div.dispatchEvent(new Event('answer-received'))
 
-      expect(input.readOnly).toBe(false)
+      expect(textarea.readOnly).toBe(false)
       expect(button.hasAttribute('aria-disabled')).toBe(false)
       expect(button.classList).not.toContain('app-c-blue-button--disabled')
       expect(buttonResponseStatus.textContent).toEqual('')
@@ -289,13 +289,13 @@ describe('QuestionForm component', () => {
     it('resets the value of the input', () => {
       div.dispatchEvent(new Event('answer-received'))
 
-      expect(input.value).toEqual('')
+      expect(textarea.value).toEqual('')
     })
 
     it('hides the character count hint', () => {
       // Type in enough characters to make the hint show on screen
-      input.value = 'A'.repeat(280)
-      input.dispatchEvent(new Event('keyup'))
+      textarea.value = 'A'.repeat(280)
+      textarea.dispatchEvent(new Event('keyup'))
       expect(form.innerHTML).toContain('You have 20 characters remaining')
 
       div.dispatchEvent(new Event('answer-received'))
