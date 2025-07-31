@@ -12,6 +12,7 @@ class AnswerAnalysisGeneration::TopicTagger
   def call
     start_time = Clock.monotonic_time
 
+    raise "Answer #{answer.id} is not eligible for topic analysis" unless answer.eligible_for_topic_analysis?
     raise "Topics already generated for answer #{answer.id}" if answer.analysis&.primary_topic.present?
 
     response = anthropic_bedrock_client.messages.create(

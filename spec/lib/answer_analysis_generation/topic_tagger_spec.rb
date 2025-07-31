@@ -56,6 +56,15 @@ RSpec.describe AnswerAnalysisGeneration::TopicTagger, :aws_credentials_stubbed d
       end
     end
 
+    context "when the answer isn't eligible for topic analysis" do
+      it "raises an error" do
+        answer = create(:answer, status: Answer::STATUSES_EXCLUDED_FROM_TOPIC_ANALYSIS.sample)
+
+        expect { described_class.call(answer) }
+          .to raise_error("Answer #{answer.id} is not eligible for topic analysis")
+      end
+    end
+
     context "when the answer already has a primary topic" do
       it "raises an error" do
         create(:answer_analysis, answer:)
