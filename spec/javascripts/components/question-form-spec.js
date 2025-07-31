@@ -1,7 +1,7 @@
 describe('QuestionForm component', () => {
   'use strict'
 
-  let div, form, formGroup, textarea, button, buttonResponseStatus, presenceErrorMessage,
+  let div, form, formGroup, textareaWrapper, textarea, button, buttonResponseStatus, presenceErrorMessage,
     lengthErrorMessage, errorsWrapper, module
 
   beforeEach(function () {
@@ -16,9 +16,11 @@ describe('QuestionForm component', () => {
       <form class="js-question-form">
         <div class="js-question-form-group">
           <ul id="create_question_user_question-error" class="js-question-form-errors-wrapper" hidden="true"></ul>
-          <textarea class="js-question-form-textarea govuk-js-character-count" id="create_question_user_question">What is the VAT rate?</textarea>
-          <div id="create_question_user_question-info" class="gem-c-hint govuk-hint govuk-visually-hidden">
-            Please limit your question to 300 characters.
+          <div class="js-question-form-textarea-wrapper" data-replicated-value="What is the VAT rate?">
+            <textarea class="js-question-form-textarea govuk-js-character-count" id="create_question_user_question">What is the VAT rate?</textarea>
+            <div id="create_question_user_question-info" class="gem-c-hint govuk-hint govuk-visually-hidden">
+              Please limit your question to 300 characters.
+            </div>
           </div>
           <button class="js-question-form-button">
             Submit
@@ -30,6 +32,7 @@ describe('QuestionForm component', () => {
     `
     form = div.querySelector('.js-question-form')
     textarea = div.querySelector('.js-question-form-textarea')
+    textareaWrapper = div.querySelector('.js-question-form-textarea-wrapper')
     button = div.querySelector('.js-question-form-button')
     button = div.querySelector('.js-question-form-button')
     buttonResponseStatus = div.querySelector('.js-question-form-button__response-status')
@@ -51,6 +54,52 @@ describe('QuestionForm component', () => {
       module.init()
 
       expect(spy).toHaveBeenCalled()
+    })
+  })
+
+  describe('when the enter key is pressed', () => {
+    it('the form is submitted', () => {
+      module.init()
+
+      const submitSpy = jasmine.createSpy('submit event spy')
+      form.addEventListener('submit', submitSpy)
+
+      const enterKeydown = new KeyboardEvent('keydown', {
+        key: 'Enter'
+      })
+
+      textarea.dispatchEvent(enterKeydown)
+
+      expect(submitSpy).toHaveBeenCalled()
+    })
+  })
+
+  describe('when the enter key and shift key is pressed', () => {
+    it('the form is not submitted', () => {
+      module.init()
+
+      const submitSpy = jasmine.createSpy('submit event spy')
+      form.addEventListener('submit', submitSpy)
+
+      const enterAndShiftKeydown = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        shiftKey: true
+      })
+
+      textarea.dispatchEvent(enterAndShiftKeydown)
+
+      expect(submitSpy).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('when the textarea receives input', () => {
+    it('updates the wrapper data attribute', () => {
+      module.init()
+
+      textarea.value = 'valid input'
+      textarea.dispatchEvent(new Event('input'))
+
+      expect(textareaWrapper.dataset.replicatedValue).toEqual(textarea.value)
     })
   })
 
@@ -179,6 +228,12 @@ describe('QuestionForm component', () => {
       div.dispatchEvent(new Event('question-accepted'))
 
       expect(textarea.value).toEqual('')
+    })
+
+    it('resets the data-replicated-value attribute on the textarea wrapper', () => {
+      div.dispatchEvent(new Event('question-accepted'))
+
+      expect(textareaWrapper.dataset.replicatedValue).toEqual('')
     })
 
     it('hides the character count hint', () => {

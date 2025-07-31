@@ -33,7 +33,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       new window.GOVUKFrontend.CharacterCount(this.module) // eslint-disable-line no-new
 
       this.enableTextareaResizing(this.textareaWrapper)
-      this.submitTextAreaOnEnter(this.textarea)
+      this.handleTextareaKeypress(this.textarea)
     }
 
     handleSubmit (event) {
@@ -112,6 +112,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
     resetTextarea () {
       this.textarea.value = ''
+      this.textareaWrapper.dataset.replicatedValue = ''
 
       // Trigger keyup event so the character-count component resets and clears the count hint
       this.textarea.dispatchEvent(new Event('keyup'))
@@ -162,6 +163,18 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     enableTextareaResizing (textareaWrapper) {
       this.textarea.addEventListener('input', () => {
         textareaWrapper.dataset.replicatedValue = this.textarea.value
+      })
+    }
+
+    handleTextareaKeypress (textarea) {
+      textarea.addEventListener('keydown', e => {
+        // Submit form on enter; add newline on enter + shift key
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault()
+          // The following approach to form submission was chosen over this.form.requestSubmit()
+          // as requestSubmit() isn't supported in our grade C browsers
+          window.GOVUK.triggerEvent(this.form, 'submit')
+        }
       })
     }
   }
