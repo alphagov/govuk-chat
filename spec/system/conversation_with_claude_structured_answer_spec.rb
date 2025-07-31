@@ -50,6 +50,7 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
     stub_claude_question_routing(@first_question)
     stub_claude_structured_answer(@first_question, @first_answer)
     stub_claude_output_guardrails(@first_answer, "False | None")
+    stub_claude_messages_topic_tagger(@first_question)
 
     execute_queued_sidekiq_jobs
   end
@@ -81,6 +82,7 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
     stub_claude_question_routing(rephrased_question)
     stub_claude_structured_answer(rephrased_question, @second_answer)
     stub_claude_output_guardrails(@second_answer, "False | None")
+    stub_claude_messages_topic_tagger(rephrased_question)
 
     execute_queued_sidekiq_jobs
   end

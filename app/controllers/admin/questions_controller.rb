@@ -5,7 +5,7 @@ class Admin::QuestionsController < Admin::BaseController
   end
 
   def show
-    @question = Question.includes(conversation: :signon_user, answer: %i[feedback sources])
+    @question = Question.includes(conversation: :signon_user, answer: %i[feedback sources analysis])
                          .find(params[:id])
     @answer = @question.answer
     @question_number = Question.where(conversation: @question.conversation)
@@ -29,6 +29,8 @@ private
       :signon_user_id,
       :conversation_id,
       :end_user_id,
+      :primary_topic,
+      :secondary_topic,
     )
   end
 end

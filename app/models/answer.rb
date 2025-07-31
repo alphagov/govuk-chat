@@ -37,11 +37,22 @@ class Answer < ApplicationRecord
     guardrails_question_routing
   ].freeze
 
+  STATUSES_EXCLUDED_FROM_TOPIC_TAGGING = %w[
+    error_answer_guardrails
+    error_answer_service_error
+    error_jailbreak_guardrails
+    error_non_specific
+    error_question_routing_guardrails
+    error_timeout
+    guardrails_jailbreak
+  ].freeze
+
   scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
 
   belongs_to :question
   has_many :sources, -> { order(relevancy: :asc) }, class_name: "AnswerSource"
   has_one :feedback, class_name: "AnswerFeedback"
+  has_one :analysis, class_name: "AnswerAnalysis"
 
   enum :status,
        {
@@ -158,6 +169,10 @@ class Answer < ApplicationRecord
 
   def use_in_rephrasing?
     STATUSES_EXCLUDED_FROM_REPHRASING.exclude?(status)
+  end
+
+  def can_have_tagged_topics?
+    STATUSES_EXCLUDED_FROM_TOPIC_TAGGING.exclude?(status)
   end
 
   def set_sources_as_unused
