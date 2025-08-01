@@ -5,6 +5,37 @@ RSpec.describe "Api::V0::ConversationsController" do
 
   before { login_as(api_user) }
 
+  shared_examples "uses conversation API rate limits" do |routes|
+    let(:route_params) { {} }
+
+    before do
+      read_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME]
+      allow(read_throttle).to receive(:limit).and_return(1)
+      write_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME]
+      allow(write_throttle).to receive(:limit).and_return(1)
+    end
+
+    routes.each do |path, methods|
+      methods.each do |method|
+        it "rate limits #{method} requests to #{path}", :rack_attack do
+          process(method.to_sym, public_send(path, **route_params))
+          expect(response).not_to have_http_status(:too_many_requests)
+          expect(response.headers).to include(
+            a_string_matching(/govuk-api-user-(read|write)-ratelimit-limit/),
+            a_string_matching(/govuk-api-user-(read|write)-ratelimit-remaining/),
+            a_string_matching(/govuk-api-user-(read|write)-ratelimit-reset/),
+          )
+
+          process(method.to_sym, public_send(path, **route_params))
+          expect(response).to have_http_status(:too_many_requests)
+          expect(response.headers).to include(
+            a_string_matching(/govuk-api-user-(read|write)-ratelimit-remaining/) => "0",
+          )
+        end
+      end
+    end
+  end
+
   shared_examples "limits access based on Signon permissions" do
     let(:method) { :get }
     let(:params) { {} }
@@ -50,31 +81,13 @@ RSpec.describe "Api::V0::ConversationsController" do
     end
   end
 
-  it_behaves_like "throttles traffic for a signon user",
-                  routes: {
-                    api_v0_show_conversation_path: %i[get],
-                    api_v0_answer_question_path: %i[get],
-                    api_v0_create_conversation_path: %i[post],
-                    api_v0_update_conversation_path: %i[put],
-                  },
-                  period: 1.minute do
-                    let(:route_params) do
-                      {
-                        conversation_id: SecureRandom.uuid,
-                        question_id: SecureRandom.uuid,
-                        answer_id: SecureRandom.uuid,
-                      }
-                    end
-                  end
-
-  it_behaves_like "throttles traffic for a single user ID",
-                  routes: {
-                    api_v0_show_conversation_path: %i[get],
-                    api_v0_answer_question_path: %i[get],
-                    api_v0_create_conversation_path: %i[post],
-                    api_v0_update_conversation_path: %i[put],
-                  },
-                  period: 1.minute do
+  include_examples "uses conversation API rate limits",
+                   {
+                     api_v0_show_conversation_path: %i[get],
+                     api_v0_answer_question_path: %i[get],
+                     api_v0_create_conversation_path: %i[post],
+                     api_v0_update_conversation_path: %i[put],
+                   } do
     let(:route_params) do
       {
         conversation_id: SecureRandom.uuid,

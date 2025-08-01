@@ -1,24 +1,56 @@
 RSpec.describe "API middleware" do
-  context "when a request is made within /api/" do
-    it "is configured to require bearer token auth" do
+  shared_examples "rate limit applied" do |method, path, rate_limit_type, headers: {}|
+    it "throttles their next request" do
+      public_send(method, path, headers:)
+
+      expect(response).to have_http_status(:too_many_requests)
+      expect(response.headers).to include("govuk-#{rate_limit_type}-ratelimit-remaining" => "0")
+    end
+
+    it "allows a request from a different user" do
+      login_as(create(:signon_user))
+
+      public_send(method, path, headers:)
+
+      expect(response).not_to have_http_status(:too_many_requests)
+    end
+
+    it "doesn't reject a request after 1 minute" do
+      travel_to(Time.current + 1.minute + 1.second) do
+        public_send(method, path, headers:)
+
+        expect(response).not_to have_http_status(:too_many_requests)
+      end
+    end
+  end
+
+  describe "API scope" do
+    it "treats requests under /api/ as API requests" do
       ClimateControl.modify("GDS_SSO_MOCK_INVALID" => "true") do
         get "/api/404"
         expect_bearer_error_response(response)
       end
     end
-  end
 
-  context "when a malformed, yet normalisable, API path is requested" do
-    it "is recognised as an API request" do
+    it "treats requests outside /api/ as non-API requests" do
       ClimateControl.modify("GDS_SSO_MOCK_INVALID" => "true") do
-        get "///api//404/"
-        expect_bearer_error_response(response)
+        get "/other/404"
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context "when a malformed, yet normalisable, API path is requested" do
+      it "is recognised as an API request" do
+        ClimateControl.modify("GDS_SSO_MOCK_INVALID" => "true") do
+          get "///api//404/"
+          expect_bearer_error_response(response)
+        end
       end
     end
   end
 
-  describe "rate limits" do
-    context "when a read request is made within /api/v0/conversations" do
+  describe "rate limits", :rack_attack do
+    describe "/api/v0/conversations read rate limits" do
       it "treats get, head and options as read requests with rate limits" do
         %i[get head options].each do |method|
           public_send(method, "/api/v0/conversations/404")
@@ -41,9 +73,33 @@ RSpec.describe "API middleware" do
         expect(response).to have_http_status(:not_found)
         expect(response.headers).to include_rate_limit_headers("end-user-id-read")
       end
+
+      context "when an API user has exhausted their limit" do
+        before do
+          read_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME]
+          allow(read_throttle).to receive(:limit).and_return(1)
+
+          get "/api/v0/conversations/404"
+        end
+
+        include_examples "rate limit applied", :get, "/api/v0/conversations/404", "api-user-read"
+      end
+
+      context "when an end user has exhausted their limit" do
+        headers = { "HTTP_GOVUK_CHAT_END_USER_ID" => "test-user-123" }
+
+        before do
+          read_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_END_USER_READ_THROTTLE_NAME]
+          allow(read_throttle).to receive(:limit).and_return(1)
+
+          get "/api/v0/conversations/404", headers:
+        end
+
+        include_examples "rate limit applied", :get, "/api/v0/conversations/404", "end-user-id-read", headers:
+      end
     end
 
-    context "when a write request is made within /api/v0/conversations" do
+    describe "/api/v0/conversations write rate limits" do
       it "treats non read requests as write requests with rate limits" do
         %i[post put patch delete].each do |method|
           public_send(method, "/api/v0/conversations/404")
@@ -65,6 +121,30 @@ RSpec.describe "API middleware" do
 
         expect(response).to have_http_status(:not_found)
         expect(response.headers).to include_rate_limit_headers("end-user-id-write")
+      end
+
+      context "when an API user has exhausted their limit" do
+        before do
+          write_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME]
+          allow(write_throttle).to receive(:limit).and_return(1)
+
+          post "/api/v0/conversations/404"
+        end
+
+        include_examples "rate limit applied", :post, "/api/v0/conversations/404", "api-user-write"
+      end
+
+      context "when an end user has exhausted their limit" do
+        headers = { "HTTP_GOVUK_CHAT_END_USER_ID" => "test-user-123" }
+
+        before do
+          write_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_END_USER_READ_THROTTLE_NAME]
+          allow(write_throttle).to receive(:limit).and_return(1)
+
+          post "/api/v0/conversations/404", headers:
+        end
+
+        include_examples "rate limit applied", :post, "/api/v0/conversations/404", "end-user-id-write", headers:
       end
     end
   end
