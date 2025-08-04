@@ -88,15 +88,16 @@ GEM
       connection_pool
     ast (2.4.3)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1132.0)
-    aws-sdk-bedrockruntime (1.52.0)
-      aws-sdk-core (~> 3, >= 3.227.0)
+    aws-partitions (1.1139.0)
+    aws-sdk-bedrockruntime (1.53.0)
+      aws-sdk-core (~> 3, >= 3.228.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-core (3.227.0)
+    aws-sdk-core (3.228.0)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
       base64
+      bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
     aws-sigv4 (1.12.1)
@@ -991,9 +992,9 @@ CHECKSUMS
   anthropic (1.3.0) sha256=0ded7c4a227e6e72b21d499976717e0539b0b459e3d8348ccbbadb3461ed1909
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
-  aws-partitions (1.1132.0) sha256=fd06db674fbcd282ce6610cf693f0da551506e2b19bf708a04f29b5b51abce9f
-  aws-sdk-bedrockruntime (1.52.0) sha256=0596e13c52c2dc588360f7caba15f2872f034c17ee54be0ec01fcae38cdf6705
-  aws-sdk-core (3.227.0) sha256=99071fc5e3ca9347873fd114574319740c3041745df3c74e27875bd912dfc79e
+  aws-partitions (1.1139.0) sha256=6b2272dbcf5e5c0a5da26ad6dcaaab47edebb3e98d50dc450cc3533ce807f3f9
+  aws-sdk-bedrockruntime (1.53.0) sha256=88bd58a95ebb824e7b0601c0acc18cc9fb565e616e1db03650e69be8ac538a8a
+  aws-sdk-core (3.228.0) sha256=06ddac5e9e3596cba5e3f8994c3ab3bd6a36edabd07ecb9260e0e16631df7564
   aws-sigv4 (1.12.1) sha256=6973ff95cb0fd0dc58ba26e90e9510a2219525d07620c8babeb70ef831826c00
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
   benchmark (0.4.1) sha256=d4ef40037bba27f03b28013e219b950b82bace296549ec15a78016552f8d2cce
