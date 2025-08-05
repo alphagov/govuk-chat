@@ -1,4 +1,8 @@
 RSpec.describe Answer do
+  include_examples "llm calls recordable" do
+    let(:model) { build(:answer) }
+  end
+
   describe "CannedResponses" do
     describe ".response_for_question_routing_label" do
       it "raises an error if the label doesn't exist in the config" do
@@ -185,39 +189,6 @@ RSpec.describe Answer do
         "sources" => [],
       )
       expect(answer.serialize_for_export).to eq(expected_response)
-    end
-  end
-
-  describe "#assign_metrics" do
-    it "updates the given namespace with the values" do
-      answer = build(:answer)
-
-      answer.assign_metrics(
-        "answer_composition", { duration: 1.1, llm_tokens: { prompt: 1, completion: 2 } }
-      )
-
-      expect(answer.metrics).to eq(
-        "answer_composition" => {
-          duration: 1.1,
-          llm_tokens: { prompt: 1, completion: 2 },
-        },
-      )
-    end
-  end
-
-  describe "#assign_llm_response" do
-    it "updates the given namespace with the hash" do
-      answer = build(:answer)
-
-      answer.assign_llm_response(
-        "question_routing", { some: "hash" }
-      )
-
-      expect(answer.llm_responses).to eq(
-        "question_routing" => {
-          some: "hash",
-        },
-      )
     end
   end
 
