@@ -1,4 +1,6 @@
 class Answer < ApplicationRecord
+  include LlmCallsRecordable
+
   module CannedResponses
     NO_CONTENT_FOUND_RESPONSE = "I’m having difficulty finding an answer on GOV.UK. If you rephrase your question, I’ll search again. Or you can ask about something else.".freeze
     ANSWER_SERVICE_ERROR_RESPONSE = "Something went wrong while trying to answer your question. Please try again.".freeze
@@ -145,16 +147,6 @@ class Answer < ApplicationRecord
       "sources" => sources.map(&:serialize_for_export),
       "llm_responses" => llm_responses.to_json,
     )
-  end
-
-  def assign_metrics(namespace, values)
-    self.metrics ||= {}
-    self.metrics[namespace] = values
-  end
-
-  def assign_llm_response(namespace, hash)
-    self.llm_responses ||= {}
-    self.llm_responses[namespace] = hash
   end
 
   def use_in_rephrasing?
