@@ -17,6 +17,14 @@ class PrometheusMetrics
       name: "openai_requests_used_percentage",
       description: "The percentage of available requests for the OpenAI API that have been used",
     },
+    {
+      name: "rate_limit_api_user_read_percentage_used",
+      description: "The percentage of request quota used for the API user for read requests",
+    },
+    {
+      name: "rate_limit_api_user_write_percentage_used",
+      description: "The percentage of request quota used for the API user for write requests",
+    },
   ].freeze
 
   def self.register

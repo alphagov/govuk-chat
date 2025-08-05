@@ -31,10 +31,26 @@ class Api::RateLimit::Middleware
       period = throttle_info[:period]
       epoch_time = throttle_info[:epoch_time]
       expires_in = (period - (epoch_time % period)).to_i
+      percentage_used = ((count.to_f / limit) * 100).round(2)
+      user_name = env.fetch("warden").user.name
 
       headers["#{header_name_prefix}-RateLimit-Limit"] = limit.to_s
       headers["#{header_name_prefix}-RateLimit-Remaining"] = [limit - count, 0].max.to_s
       headers["#{header_name_prefix}-RateLimit-Reset"] = "#{expires_in}s"
+
+      if header_name_prefix == "Govuk-Api-User-Read"
+        PrometheusMetrics.gauge(
+          "rate_limit_api_user_read_percentage_used",
+          percentage_used,
+          { signon_user: user_name },
+        )
+      elsif header_name_prefix == "Govuk-Api-User-Write"
+        PrometheusMetrics.gauge(
+          "rate_limit_api_user_write_percentage_used",
+          percentage_used,
+          { signon_user: user_name },
+        )
+      end
     end
 
     [status, headers, body]
