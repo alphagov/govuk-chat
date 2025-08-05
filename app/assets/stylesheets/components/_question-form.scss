@@ -81,7 +81,10 @@
     white-space: pre-wrap;  // This is how textarea text behaves
     visibility: hidden; // Hidden from view, clicks, and screen readers
     grid-area: 1 / 1 / 2 / 2;
-    max-height: 25dvh; // Set a max-height to prevent the textarea from growing too much
+    max-height: 25vh; // Set a max-height to prevent the textarea from growing too much
+    @supports (max-height: 25dvh) {
+      max-height: 25dvh;
+    }
 
     // Add identical border styling and (almost identical) padding so this grows aligned with the 
     // textarea expansion
