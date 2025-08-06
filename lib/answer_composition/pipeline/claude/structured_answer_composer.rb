@@ -15,7 +15,7 @@ module AnswerComposition::Pipeline
             { type: "text", text: cached_system_prompt, cache_control: { type: "ephemeral" } },
             { type: "text", text: context_system_prompt },
           ],
-          model: BedrockModels::CLAUDE_SONNET,
+          model: BedrockModels.model_id(:claude_sonnet),
           messages:,
           tools: tools,
           tool_choice: { type: "tool", name: "output_schema" },

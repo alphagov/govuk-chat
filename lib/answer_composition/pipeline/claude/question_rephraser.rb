@@ -11,7 +11,7 @@ module AnswerComposition::Pipeline
       def call
         response = anthropic_bedrock_client.messages.create(
           system: [{ type: "text", text: config[:system_prompt] }],
-          model: BedrockModels::CLAUDE_SONNET,
+          model: BedrockModels.model_id(:claude_sonnet),
           messages:,
           **inference_config,
         )

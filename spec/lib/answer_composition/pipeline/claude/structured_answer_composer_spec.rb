@@ -61,7 +61,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
         llm_prompt_tokens: 30,
         llm_completion_tokens: 20,
         llm_cached_tokens: 20,
-        model: BedrockModels::CLAUDE_SONNET,
+        model: BedrockModels.model_id(:claude_sonnet),
       )
     end
 
@@ -114,7 +114,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
           llm_prompt_tokens: 30,
           llm_completion_tokens: 20,
           llm_cached_tokens: 20,
-          model: BedrockModels::CLAUDE_SONNET,
+          model: BedrockModels.model_id(:claude_sonnet),
         )
       end
 
