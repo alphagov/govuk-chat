@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     Healthcheck::OpenAI,
     Healthcheck::Opensearch,
     Healthcheck::Memcache,
+    Healthcheck::Bedrock,
   )
 
   html_constraint = { format: [Mime::Type.lookup("*/*"),
