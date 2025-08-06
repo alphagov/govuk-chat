@@ -14,5 +14,9 @@ module Healthcheck
       @message = e.message
       GovukHealthcheck::CRITICAL
     end
+
+    def enabled?
+      Rails.configuration.answer_strategy == "openai_structured_answer"
+    end
   end
 end
