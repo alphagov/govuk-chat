@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     GovukHealthcheck::SidekiqRedis,
     Healthcheck::OpenAI,
     Healthcheck::Opensearch,
+    Healthcheck::Memcache,
   )
 
   html_constraint = { format: [Mime::Type.lookup("*/*"),
