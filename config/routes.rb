@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     GovukHealthcheck::RailsCache,
     Healthcheck::OpenAI,
     Healthcheck::Opensearch,
+    Healthcheck::Bedrock,
   )
 
   html_constraint = { format: [Mime::Type.lookup("*/*"),
