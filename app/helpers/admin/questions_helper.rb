@@ -201,6 +201,20 @@ module Admin
         ]
       end
 
+      if answer&.analysis&.primary_topic.present?
+        rows << {
+          field: "Primary topic",
+          value: answer.analysis.primary_topic.capitalize,
+        }
+
+        if answer.analysis.secondary_topic.present?
+          rows << {
+            field: "Secondary topic",
+            value: answer.analysis.secondary_topic.capitalize,
+          }
+        end
+      end
+
       rows.flatten
     end
 
