@@ -10,6 +10,15 @@ info:
     Worth noting that onboarding aspects of conversation (Informing user of
     limitations and accepting) are not included as within GOV.UK Chat these
     are a UI construct and not a part of core domain constructs.
+
+      **Current Rate limits**
+    - API users (per sign-on):  
+      • Write: 100 requests/minute  
+      • Read: 1 200 requests/minute  
+    - End users (per client):  
+      • Write: 10 requests/minute  
+      • Read: 120 requests/minute
+
   version: "0.4.0"
 servers:
   - url: https://chat.publishing.service.gov.uk/api/v0
