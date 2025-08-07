@@ -1,5 +1,5 @@
 <%
-  input_id ||= "#{name.parameterize}-#{SecureRandom.hex(4)}"
+  textarea_id ||= "#{name.parameterize}-#{SecureRandom.hex(4)}"
   value ||= nil
 
   maxlength = Form::CreateQuestion::USER_QUESTION_LENGTH_MAXIMUM
@@ -8,14 +8,14 @@
   character_count_threshold = 80
 
   label_text = "Message"
-  secondary_label_id = "#{input_id}-secondary_label"
+  secondary_label_id = "#{textarea_id}-secondary_label"
 
   hint = "Please limit your question to #{maxlength} characters."
-  hint_id = "#{input_id}-info" # The character-count component relies on an element with this ID being present
+  hint_id = "#{textarea_id}-info" # The character-count component relies on an element with this ID being present
 
   error_items ||= []
   has_error ||= error_items.any?
-  error_id = "#{input_id}-error"
+  error_id = "#{textarea_id}-error"
 
   aria_described_by = []
   aria_described_by << secondary_label_id
@@ -34,8 +34,8 @@
   form_group_classes = " app-c-question-form__form-group js-question-form-group"
   form_group_classes << " app-c-question-form__form-group--error" if error_items.any?
 
-  input_classes = "app-c-question-form__input js-question-form-input govuk-js-character-count"
-  input_classes << " app-c-question-form__input--error" if error_items.any?
+  textarea_classes = "app-c-question-form__textarea js-question-form-textarea govuk-js-character-count"
+  textarea_classes << " app-c-question-form__textarea--error" if error_items.any?
 %>
 
 <%= tag.div class: "app-c-question-form js-question-form-container", data: data_attributes do %>
@@ -53,9 +53,9 @@
     <% end %>
 
     <%= content_tag :div, class: form_group_classes do %>
-      <%= content_tag :div, class: "app-c-question-form__input-wrapper" do %>
+      <%= content_tag :div, class: "app-c-question-form__textarea-wrapper" do %>
         <%= label_tag(
-          input_id,
+          textarea_id,
           label_text,
           class: "app-c-question-form__label govuk-visually-hidden",
         ) %>
@@ -65,16 +65,17 @@
         <%# Placeholder text is not an appropriate substitute for a persistent visible label. However, for this specific use case,
           DAC recommends maintaining this convention, as users are familiar with and intuitively know how to use it %>
 
-        <%= content_tag :div, class: "app-c-question-form__input-character-count-wrapper" do %>
-          <%= text_field_tag(
-            input_id,
+        <%= content_tag :div, class: "app-c-question-form__textarea-character-count-wrapper js-question-form-textarea-wrapper" do %>
+          <%= text_area_tag(
+            textarea_id,
             value,
-            class: input_classes,
+            class: textarea_classes,
             aria: {
               describedby: aria_described_by,
             },
             name: name,
             placeholder: label_text,
+            rows: 1,
           ) %>
         <% end %>
 

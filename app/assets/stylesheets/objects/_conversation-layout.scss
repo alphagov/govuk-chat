@@ -13,8 +13,10 @@ $slide-in-out-translation-px: 67px;
   display: flex;
   flex-direction: column;
   height: 100%;
-  height: 100dvh;
-
+  height: 100vh;
+  @supports (height: 100dvh) {
+    height: 100dvh;
+  }
   @media print {
     height: auto;
   }

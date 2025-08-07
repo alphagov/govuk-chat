@@ -16,7 +16,7 @@ describe('ChatConversation module', () => {
       <div class="js-conversation-form-region">
         <div class="js-question-form-container">
           <form action="/conversation" class="js-question-form">
-            <input type="text" name="question" value="How can I setup a new business?">
+            <textarea name="question">How can I setup a new business?</textarea>
             <button class="js-question-form-button">Send</button>
           </form>
         </div>
