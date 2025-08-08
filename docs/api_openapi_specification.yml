@@ -2,24 +2,28 @@ openapi: "3.0.4"
 info:
   title: GOV.UK Chat API
   description: |
-    Initial, proof of concept of documenting what an API for GOV.UK Chat
-    could be that reflects current system modelling.
-    It is intended to help shape chats with the app team about capabilities
-    of chat in app and inform design decisions.
+    HTTP API interface for interacting with GOV.UK Chat. This API is intended
+    to provide the conversation experience for end user interaction with
+    GOV.UK Chat.
 
-    Worth noting that onboarding aspects of conversation (Informing user of
-    limitations and accepting) are not included as within GOV.UK Chat these
-    are a UI construct and not a part of core domain constructs.
+    It represents an initial release of an API that closely models GOV.UK Chat's
+    private beta web experience.
 
-      **Current Rate limits**
-    - API users (per sign-on):  
-      • Write: 100 requests/minute  
-      • Read: 1 200 requests/minute  
-    - End users (per client):  
-      • Write: 10 requests/minute  
-      • Read: 120 requests/minute
+    ## Rate limits
 
-  version: "0.4.0"
+    Usage of this API is rate-limited on a requests per minute (RPM) basis.
+    There are rate limits applied to individual clients (Signon users). A
+    client may also send a header `Govuk-Chat-End-User-Id` for an
+    additional rate limit to be applied to an end user. There are distinct
+    rate limits for read requests (GET, HEAD) and write requests (POST, PATCH,
+    PUT, DELETE).
+
+    | User type | Write request limit | Read request limit |
+    |-----------|---------------------|--------------------|
+    | API User  | 100 RPM             | 1,200 RPM          |
+    | End User  | 10 RPM              | 120 RPM            |
+
+  version: "0.4.1"
 servers:
   - url: https://chat.publishing.service.gov.uk/api/v0
 paths:
