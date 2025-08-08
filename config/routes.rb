@@ -5,12 +5,13 @@ require "sidekiq/web"
 Rails.application.routes.draw do
   root to: redirect("/chat")
 
-  get "/healthcheck/live", to: proc { [200, {}, %w[OK]] }
-  get "/healthcheck/ready", to: GovukHealthcheck.rack_response(
+  get "/healthcheck/live", to: GovukHealthcheck.rack_response(
     GovukHealthcheck::ActiveRecord,
     GovukHealthcheck::SidekiqRedis,
     Healthcheck::OpenAI,
     Healthcheck::Opensearch,
+    Healthcheck::Memcache,
+    Healthcheck::Bedrock,
   )
 
   html_constraint = { format: [Mime::Type.lookup("*/*"),
