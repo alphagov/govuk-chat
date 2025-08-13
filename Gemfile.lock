@@ -194,7 +194,7 @@ GEM
       faraday (~> 2.0)
       typhoeus (~> 1.4)
     ffi (1.17.0)
-    gds-api-adapters (99.3.0)
+    gds-api-adapters (100.0.0)
       addressable
       link_header
       null_logger
@@ -372,7 +372,7 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2025.0805)
+    mime-types-data (3.2025.0812)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
     minitest (5.25.5)
@@ -1047,7 +1047,7 @@ CHECKSUMS
   faraday-net_http (3.4.1) sha256=095757fae7872b94eac839c08a1a4b8d84fd91d6886cfbe75caa2143de64ab3b
   faraday-typhoeus (1.1.0) sha256=24c6147c213818dde3ebc50ae47ab92f9a7e554903aa362707126f749c6890e7
   ffi (1.17.0) sha256=51630e43425078311c056ca75f961bb3bda1641ab36e44ad4c455e0b0e4a231c
-  gds-api-adapters (99.3.0) sha256=d242382a72166f8dff01436d6b260d8689d149ba8c653bce85c200141e5ec78d
+  gds-api-adapters (100.0.0) sha256=87c8d6c5b65652eb5b797c203a789af02dbc6d059ca345ec2fb57771c53758c7
   gds-sso (21.1.0) sha256=e752e740258e1bf7b741055870e3e1462934c279437bb4feae12243ad0fe2486
   globalid (1.2.1) sha256=70bf76711871f843dbba72beb8613229a49429d1866828476f9c9d6ccc327ce9
   google-apis-bigquery_v2 (0.87.0) sha256=4265bd7558bd1f5de78e2d55d12a92dc8c1569d069d66ef562cc2ad5e287a5a7
@@ -1105,7 +1105,7 @@ CHECKSUMS
   matrix (0.4.2) sha256=71083ccbd67a14a43bfa78d3e4dc0f4b503b9cc18e5b4b1d686dc0f9ef7c4cc0
   method_source (1.1.0) sha256=181301c9c45b731b4769bc81e8860e72f9161ad7d66dd99103c9ab84f560f5c5
   mime-types (3.7.0) sha256=dcebf61c246f08e15a4de34e386ebe8233791e868564a470c3fe77c00eed5e56
-  mime-types-data (3.2025.0805) sha256=9de2a6bafa27a8b90b09174fe43e24f31480971f8dd652f8c48be880d430df42
+  mime-types-data (3.2025.0812) sha256=3b94426896fa1390304fb8c6fe23b69c2c6f471aa2bb0b59bd2ddc532bea0538
   mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
   mini_portile2 (2.8.9) sha256=0cd7c7f824e010c072e33f68bc02d85a00aeb6fce05bb4819c03dfd3c140c289
   minitest (5.25.5) sha256=391b6c6cb43a4802bfb7c93af1ebe2ac66a210293f4a3fb7db36f2fc7dc2c756
