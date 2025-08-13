@@ -29,5 +29,16 @@ RSpec.describe SlackPoster do
         described_class.test_message("The message")
       end
     end
+
+    describe ".api_user_rate_limit_warning" do
+      it "posts a message to the Slack channel" do
+        expect(slack_poster).to receive(:send_message).with(
+          "API User 1 is reaching their API user rate limit: 80% of read requests used",
+        )
+        described_class.api_user_rate_limit_warning(
+          signon_name: "API User 1", percentage_used: 80, request_type: "read",
+        )
+      end
+    end
   end
 end

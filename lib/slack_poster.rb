@@ -3,6 +3,12 @@ class SlackPoster
     new.send_message("[TEST] #{message}")
   end
 
+  def self.api_user_rate_limit_warning(signon_name:, percentage_used:, request_type:)
+    new.send_message(
+      "#{signon_name} is reaching their API user rate limit: #{percentage_used}% of #{request_type} requests used",
+    )
+  end
+
   def send_message(message)
     return if webhook_url.nil?
 
