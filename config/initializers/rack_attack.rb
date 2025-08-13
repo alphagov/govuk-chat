@@ -8,13 +8,13 @@ Rails.application.config.middleware.insert_before Rack::Attack, Api::AuthMiddlew
 class Rack::Attack
   CONVERSATION_API_PATH_REGEX = /^\/api\/v\d+\/conversation/
 
-  throttle(Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME, limit: 1_200, period: 1.minute) do |request|
+  throttle(Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME, limit: 10_000_000, period: 1.minute) do |request|
     if request.path.match?(CONVERSATION_API_PATH_REGEX) && read_method?(request)
       signon_uid(request)
     end
   end
 
-  throttle(Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME, limit: 100, period: 1.minute) do |request|
+  throttle(Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME, limit: 10_000_000, period: 1.minute) do |request|
     if request.path.match?(CONVERSATION_API_PATH_REGEX) && !read_method?(request)
       signon_uid(request)
     end
