@@ -73,6 +73,19 @@ RSpec.describe Api::RateLimit::Middleware do
             30.0,
             { signon_user: "API User" },
           )
+          expect(NotifySlackApiUserRateLimitWarningJob).not_to receive(:perform_later)
+          middleware.call(env)
+        end
+      end
+
+      it "notifies Slack if the read requests exceed the threshold" do
+        env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME][:limit] = 50
+        env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME][:count] = 49
+
+        travel_to(Time.zone.local(2000, 1, 1)) do
+          expect(NotifySlackApiUserRateLimitWarningJob).to receive(:perform_later).with(
+            "API User", 98, "read"
+          )
           middleware.call(env)
         end
       end
@@ -84,6 +97,19 @@ RSpec.describe Api::RateLimit::Middleware do
             "rate_limit_api_user_write_percentage_used",
             16.67,
             { signon_user: "API User" },
+          )
+          expect(NotifySlackApiUserRateLimitWarningJob).not_to receive(:perform_later)
+          middleware.call(env)
+        end
+      end
+
+      it "notifies Slack if the write requests exceed the threshold" do
+        env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME][:limit] = 50
+        env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME][:count] = 49
+
+        travel_to(Time.zone.local(2000, 1, 1)) do
+          expect(NotifySlackApiUserRateLimitWarningJob).to receive(:perform_later).with(
+            "API User", 98, "write"
           )
           middleware.call(env)
         end

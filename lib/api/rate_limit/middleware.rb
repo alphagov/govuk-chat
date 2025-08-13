@@ -5,6 +5,7 @@ class Api::RateLimit::Middleware
     Api::RateLimit::GOVUK_END_USER_READ_THROTTLE_NAME => "Govuk-End-User-Id-Read",
     Api::RateLimit::GOVUK_END_USER_WRITE_THROTTLE_NAME => "Govuk-End-User-Id-Write",
   }.freeze
+  SLACK_NOTIFICATION_THRESHOLD_PERCENTAGE = 90
 
   delegate :logger, to: Rails
 
@@ -44,12 +45,24 @@ class Api::RateLimit::Middleware
           percentage_used,
           { signon_user: user_name },
         )
+
+        if percentage_used >= SLACK_NOTIFICATION_THRESHOLD_PERCENTAGE
+          NotifySlackApiUserRateLimitWarningJob.perform_later(
+            user_name, percentage_used, "read"
+          )
+        end
       elsif header_name_prefix == "Govuk-Api-User-Write"
         PrometheusMetrics.gauge(
           "rate_limit_api_user_write_percentage_used",
           percentage_used,
           { signon_user: user_name },
         )
+
+        if percentage_used >= SLACK_NOTIFICATION_THRESHOLD_PERCENTAGE
+          NotifySlackApiUserRateLimitWarningJob.perform_later(
+            user_name, percentage_used, "write"
+          )
+        end
       end
     end
 
