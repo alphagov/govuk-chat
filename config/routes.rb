@@ -9,8 +9,10 @@ Rails.application.routes.draw do
   get "/healthcheck/ready", to: GovukHealthcheck.rack_response(
     GovukHealthcheck::ActiveRecord,
     GovukHealthcheck::SidekiqRedis,
+    GovukHealthcheck::RailsCache,
     Healthcheck::OpenAI,
     Healthcheck::Opensearch,
+    Healthcheck::Bedrock,
   )
 
   html_constraint = { format: [Mime::Type.lookup("*/*"),

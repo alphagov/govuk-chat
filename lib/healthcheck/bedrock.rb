@@ -1,22 +1,21 @@
 module Healthcheck
-  class OpenAI
+  class Bedrock
     attr_reader :message
 
     def name
-      :openai
+      :bedrock
     end
 
     def status
-      client = OpenAIClient.build
-      client.models.list
+      client = Aws::BedrockRuntime::Client.new
+      client.invoke_model(
+        model_id: BedrockModels::TITAN_EMBED_V2,
+        body: { inputText: "test" }.to_json,
+      )
       GovukHealthcheck::OK
     rescue StandardError => e
       @message = e.message
       GovukHealthcheck::CRITICAL
-    end
-
-    def enabled?
-      Rails.configuration.answer_strategy == "openai_structured_answer"
     end
   end
 end
