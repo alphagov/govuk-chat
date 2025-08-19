@@ -33,6 +33,12 @@
       </div>
 
     <% else %>
+      <% if is_loading %>
+        <span class="app-c-conversation-message__loading-icon-container">
+          <%= inline_svg_tag "components/conversation_message/govuk-chat-message-loading-icon.svg", class: "app-c-conversation-message__loading-icon", aria_hidden: true %>
+        </span>
+      <% end %>
+
       <div class="app-c-conversation-message__body app-c-conversation-message__body--govuk-message">
         <%= content_tag :span, class: message_identifier_classes do %>
           GOV.UK Chat
