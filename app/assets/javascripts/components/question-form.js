@@ -129,7 +129,11 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         return li
       })
 
-      this.errorsWrapper.replaceChildren(...elements)
+      this.errorsWrapper.innerHTML = ''
+
+      elements.forEach(index => {
+        this.errorsWrapper.appendChild(index)
+      })
 
       this.toggleErrorStyles(errors.length)
 
