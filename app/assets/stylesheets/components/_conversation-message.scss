@@ -114,10 +114,45 @@ $message-container-spacing-mobile: 40px;
   outline-offset: -1px;
 }
 
+.app-c-conversation-message__body--loading-message {
+  padding-left: 0;
+}
+
 .app-c-conversation-message__body--user-message {
   background-color: govuk-tint(govuk-colour("light-blue"), 75%);
   outline: 1px solid govuk-tint(govuk-colour("light-blue"), 75%);
   outline-offset: -1px;
+}
+
+.app-c-conversation-message__loading-icon-container, .app-c-conversation-message__loading-icon {
+  width: govuk-spacing(6);
+  height: govuk-spacing(6);
+}
+
+.app-c-conversation-message__loading-icon-container {
+  margin: auto govuk-spacing(2) auto 0;
+
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
+}
+
+.app-c-conversation-message__loading-icon {
+	animation: loading-icon-pulse 3s ease infinite;
+
+  @keyframes loading-icon-pulse {
+    0% {
+      transform: scale(0.6)
+    }
+    
+    50% {
+      transform: scale(1)
+    }
+    
+    100% {
+      transform: scale(0.6)
+    }
+  }
 }
 
 .app-c-conversation-message__loading-text {

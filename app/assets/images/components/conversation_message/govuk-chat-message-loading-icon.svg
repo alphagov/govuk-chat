@@ -1,0 +1,40 @@
+<svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id='gradient1' gradientUnits='objectBoundingBox' x1='0' y1='0' x2='1' y2='1'>
+      <stop offset='0' stop-color='#00FFE0'>
+        <animate attributeName="stop-color"
+            values="#00FFE0;#0F385C;#1D70B8;#00FFE0;" dur="10s" repeatCount="indefinite">
+        </animate>
+      </stop>
+      <stop offset='.5' stop-color='#0F385C'>
+        <animate attributeName="stop-color"
+            values="#0F385C;#1D70B8;#00FFE0;#0F385C;" dur="10s" repeatCount="indefinite">
+        </animate>
+      </stop>
+      <stop offset='1' stop-color='#1D70B8'>
+        <animate attributeName="stop-color"
+            values="#1D70B8;#00FFE0;#0F385C;#1D70B8;" dur="10s" repeatCount="indefinite">
+        </animate>
+      </stop>
+      <animateTransform attributeName="gradientTransform" type="rotate" from="0 .5 .5" to="360 .5 .5"
+        dur="10s" repeatCount="indefinite" />
+    </linearGradient>
+    <linearGradient id='gradient2' gradientUnits='objectBoundingBox' x1='0' y1='1' x2='1' y2='1'>
+      <stop offset='0' stop-color='#00FFE0'>
+        <animate attributeName="stop-color"
+            values="#00FFE0;#0F385C;#1D70B8;#00FFE0;" dur="10s" repeatCount="indefinite">
+        </animate>
+      </stop>
+      <stop offset='1' stop-color='#0F385C' stop-opacity="0">
+        <animate attributeName="stop-color"
+            values="#0F385C;#1D70B8;#00FFE0;#0F385C;" dur="10s" repeatCount="indefinite">
+        </animate>
+      </stop>
+      <animateTransform attributeName="gradientTransform" type="rotate" values="360 .5 .5;0 .5 .5" class="ignore"
+        dur="10s" repeatCount="indefinite" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="50%" cy="50%" r="50%" fill="url(#gradient1)"/>
+  <circle cx="50%" cy="50%" r="50%" fill="url(#gradient2)"/>
+</svg>
