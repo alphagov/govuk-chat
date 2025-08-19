@@ -32,7 +32,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
     end
 
     context "and is_loading is true" do
-      it "renders the loading text" do
+      it "renders the loading icon and text" do
         render("components/conversation_message", {
           id: "loading-question",
           is_question: true,
@@ -41,7 +41,9 @@ RSpec.describe "components/_conversation_message.html.erb" do
 
         expect(rendered).to have_selector("li.app-c-conversation-message#loading-question") do |rendered_question|
           expect(rendered_question)
-            .to have_selector(".app-c-conversation-message__loading-text", text: "Loading your question")
+            .to have_selector(".app-c-conversation-message__loading-icon-container")
+            .and have_selector(".app-c-conversation-message__loading-icon")
+            .and have_selector(".app-c-conversation-message__loading-text", text: "Generating your answer")
             .and have_selector(".app-c-conversation-message__loading-ellipsis", text: "...")
         end
       end
