@@ -661,7 +661,7 @@ GEM
       prettyprint
     prettyprint (0.2.0)
     prism (1.4.0)
-    prometheus_exporter (2.2.0)
+    prometheus_exporter (2.3.0)
       webrick
     pry (0.15.2)
       coderay (~> 1.1)
@@ -1198,7 +1198,7 @@ CHECKSUMS
   pp (0.6.2) sha256=947ec3120c6f92195f8ee8aa25a7b2c5297bb106d83b41baa02983686577b6ff
   prettyprint (0.2.0) sha256=2bc9e15581a94742064a3cc8b0fb9d45aae3d03a1baa6ef80922627a0766f193
   prism (1.4.0) sha256=dc0e3e00e93160213dc2a65519d9002a4a1e7b962db57d444cf1a71565bb703e
-  prometheus_exporter (2.2.0) sha256=38a71af112da26b588f67948e5dcc32d539b26cfbf25115e92caca8db8437497
+  prometheus_exporter (2.3.0) sha256=bfe5dd9bce74e41e302c611a6d290fc86fba31441d6a88930fb80dd458fe2875
   pry (0.15.2) sha256=12d54b8640d3fa29c9211dd4ffb08f3fd8bf7a4fd9b5a73ce5b59c8709385b6b
   pry-byebug (3.11.0) sha256=0b0abb7d309bc7f00044d512a3c8567274f7012b944b38becc8440439a1cea72
   pry-rails (0.3.11) sha256=a69e28e24a34d75d1f60bcf241192a54253f8f7ef8a62cba1e75750a9653593d
