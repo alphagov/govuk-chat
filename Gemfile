@@ -4,7 +4,7 @@ source "https://rubygems.org"
 
 ruby "~> #{File.read(File.join(__dir__, '.ruby-version')).strip}"
 
-gem "rails", "8.0.2"
+gem "rails", "8.0.2.1"
 
 gem "anthropic"
 gem "aws-sdk-bedrock"
