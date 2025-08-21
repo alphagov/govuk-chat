@@ -58,7 +58,7 @@ module Admin
         },
         {
           field: "Question",
-          value: question.message,
+          value: escaped_simple_format(question.message),
         },
         (
           if question.unsanitised_message.present?
