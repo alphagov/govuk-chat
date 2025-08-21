@@ -6,11 +6,3 @@
     margin-bottom: govuk-spacing(4);
   }
 }
-
-.app-c-chat-introduction__info_text {
-  margin-top: govuk-spacing(8);
-
-  @include govuk-media-query($from: tablet) {
-    @include govuk-font-size(24, $line-height: false, $important: false);
-  }
-}
