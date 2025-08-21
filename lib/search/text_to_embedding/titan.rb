@@ -62,7 +62,7 @@ class Search::TextToEmbedding
 
     def generate_embedding(text)
       response = bedrock_client.invoke_model(
-        model_id: BedrockModels::TITAN_EMBED_V2,
+        model_id: BedrockModels.model_id(:titan_embed_v2),
         body: {
           inputText: text,
         }.to_json,

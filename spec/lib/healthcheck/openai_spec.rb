@@ -39,6 +39,28 @@ RSpec.describe Healthcheck::OpenAI do # rubocop:disable RSpec/SpecFilePathFormat
     end
   end
 
+  describe "#enabled?" do
+    context "when the answer strategy is 'openai_structured_answer'" do
+      before do
+        allow(Rails.configuration).to receive(:answer_strategy).and_return("openai_structured_answer")
+      end
+
+      it "returns true" do
+        expect(healthcheck.enabled?).to be true
+      end
+    end
+
+    context "when the answer strategy is not 'openai_structured_answer'" do
+      before do
+        allow(Rails.configuration).to receive(:answer_strategy).and_return("claude_structured_answer")
+      end
+
+      it "returns false" do
+        expect(healthcheck.enabled?).to be false
+      end
+    end
+  end
+
   def stub_openai_models_list
     stub_request(:get, "https://api.openai.com/v1/models")
       .to_return_json(

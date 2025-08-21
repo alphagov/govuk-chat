@@ -175,7 +175,7 @@ module StubClaudeMessages
   def claude_messages_response(content:, usage: {}, stop_reason: :end_turn)
     Anthropic::Models::Message.new(
       id: "msg-id",
-      model: BedrockModels::CLAUDE_SONNET,
+      model: BedrockModels.model_id(:claude_sonnet),
       role: :assistant,
       content:,
       stop_reason:,

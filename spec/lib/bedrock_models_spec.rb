@@ -23,4 +23,30 @@ RSpec.describe BedrockModels do
       expect(described_class.claude_total_prompt_tokens(usage)).to eq(0)
     end
   end
+
+  describe ".model_id" do
+    it "returns the correct model ID for a given model name" do
+      expect(described_class.model_id(:titan_embed_v2)).to eq("amazon.titan-embed-text-v2:0")
+    end
+
+    it "raises an error for an unknown model name" do
+      expect { described_class.model_id(:unknown_model) }.to raise_error(
+        "Unknown Bedrock model name: unknown_model",
+      )
+    end
+  end
+
+  describe ".expected_foundation_models" do
+    it "returns the expected foundation models without the 'eu.' prefix" do
+      allow(described_class).to receive(:MODEL_IDS).and_return({
+        claude_sonnet: "eu.anthropic.claude-sonnet-4-20250514-v1:0",
+        titan_embed_v2: "amazon.titan-embed-text-v2:0",
+      })
+
+      expect(described_class.expected_foundation_models).to contain_exactly(
+        "amazon.titan-embed-text-v2:0",
+        "anthropic.claude-sonnet-4-20250514-v1:0",
+      )
+    end
+  end
 end
