@@ -1,6 +1,5 @@
 <%
   start_button_href ||= Rails.application.routes.url_helpers.show_conversation_path
-  info_text_classes = "app-c-chat-introduction__info_text govuk-body"
 %>
 
 <%= content_tag :div, class: "app-c-chat-introduction" do %>
@@ -13,15 +12,9 @@
     text: "Ask a question",
     href: start_button_href,
     start: true,
-    aria_describedby: "info-text",
     data_attributes: {
       "module": "ga4-link-tracker",
       "ga4-link": '{ "event_name": "navigation", "type": "start button", "index_link": 1, "index_total": 1, "section": "Landing page" }',
     },
   } %>
-
-  <% info_text = "Your chat history will be available for #{Rails.configuration.conversations.max_question_age_days} days" %>
-  <div class="govuk-!-width-three-quarters">
-    <%= content_tag(:p, info_text, { id: "info-text", class: info_text_classes}) %>
-  </div>
 <% end %>
