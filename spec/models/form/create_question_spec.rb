@@ -88,6 +88,19 @@ RSpec.describe Form::CreateQuestion do
           .to change(form, :valid?).to(false)
       end
     end
+
+    describe "normalise newlines" do
+      it "removes carriage returns before running validations" do
+        user_question = "#{'s' * (described_class::USER_QUESTION_LENGTH_MAXIMUM - 1)}\r\n"
+        form = described_class.new(
+          conversation:,
+          user_question:,
+        )
+        form.validate
+
+        expect(form).to be_valid
+      end
+    end
   end
 
   describe "#submit" do

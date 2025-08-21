@@ -12,7 +12,7 @@ class Form::CreateQuestion
   USER_QUESTION_PII_ERROR_MESSAGE = "Personal data has been detected in your question. Please remove it and try asking again.".freeze
   UNANSWERED_QUESTION_ERROR_MESSAGE = "Previous question pending. Please wait for a response".freeze
 
-  before_validation :sanitise_user_question
+  before_validation :sanitise_user_question, :normalise_newlines
 
   validates :user_question, presence: { message: USER_QUESTION_PRESENCE_ERROR_MESSAGE }
   validates :user_question, length: { maximum: USER_QUESTION_LENGTH_MAXIMUM, message: USER_QUESTION_LENGTH_ERROR_MESSAGE }
@@ -41,6 +41,10 @@ private
 
     @unsanitised_user_question = user_question if user_question&.match?(UnicodeTags::MATCH_REGEX)
     @sanitised_user_question = user_question&.gsub(UnicodeTags::MATCH_REGEX, "")
+  end
+
+  def normalise_newlines
+    user_question&.gsub!("\r\n", "\n")
   end
 
   def all_questions_answered?
