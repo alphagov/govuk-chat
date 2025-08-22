@@ -1,4 +1,4 @@
-RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_content_index do
+RSpec.describe "Conversation with OpenAI with a structured answer", :aws_credentials_stubbed, :chunked_content_index do
   scenario do
     given_i_am_using_the_openai_structured_answer_strategy
 
@@ -54,6 +54,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
       }.to_json,
     )
     stub_openai_output_guardrail("Lots of tax.")
+    stub_claude_messages_topic_tagger(@first_question)
 
     execute_queued_sidekiq_jobs
   end
@@ -73,6 +74,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :chunked_con
       }.to_json,
     )
     stub_openai_output_guardrail("Even more tax.")
+    stub_claude_messages_topic_tagger(rephrased_question)
 
     execute_queued_sidekiq_jobs
   end

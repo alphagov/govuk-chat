@@ -28,7 +28,7 @@ content_for(:active_navigation_item, admin_questions_path)
       <%= render "govuk_publishing_components/components/details", {
         title: "LLM responses",
       } do %>
-        <% @answer.llm_responses.sort.each do |namespace, response| %>
+        <% answer_combined_llm_responses(@answer).each do |namespace, response| %>
           <h3 class="govuk-heading-m"><%= namespace %></h3>
           <p class="govuk-body">
             <%= render("components/code_snippet", content: JSON.pretty_generate(response)) %>
@@ -41,7 +41,7 @@ content_for(:active_navigation_item, admin_questions_path)
       <%= render "govuk_publishing_components/components/details", {
         title: "Metrics",
       } do %>
-        <% @answer.metrics.sort.each do |namespace, metrics| %>
+        <% answer_combined_metrics(@answer).sort.each do |namespace, metrics| %>
           <%= render "govuk_publishing_components/components/summary_list", {
             title: namespace,
             items: metrics.map do |metric, value|

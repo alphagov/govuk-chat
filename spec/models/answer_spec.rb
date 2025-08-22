@@ -1,4 +1,8 @@
 RSpec.describe Answer do
+  include_examples "llm calls recordable" do
+    let(:model) { build(:answer) }
+  end
+
   describe "CannedResponses" do
     describe ".response_for_question_routing_label" do
       it "raises an error if the label doesn't exist in the config" do
@@ -188,39 +192,6 @@ RSpec.describe Answer do
     end
   end
 
-  describe "#assign_metrics" do
-    it "updates the given namespace with the values" do
-      answer = build(:answer)
-
-      answer.assign_metrics(
-        "answer_composition", { duration: 1.1, llm_tokens: { prompt: 1, completion: 2 } }
-      )
-
-      expect(answer.metrics).to eq(
-        "answer_composition" => {
-          duration: 1.1,
-          llm_tokens: { prompt: 1, completion: 2 },
-        },
-      )
-    end
-  end
-
-  describe "#assign_llm_response" do
-    it "updates the given namespace with the hash" do
-      answer = build(:answer)
-
-      answer.assign_llm_response(
-        "question_routing", { some: "hash" }
-      )
-
-      expect(answer.llm_responses).to eq(
-        "question_routing" => {
-          some: "hash",
-        },
-      )
-    end
-  end
-
   it "ensures the question routing labels and the enum values are in sync" do
     label_config = Rails.configuration.question_routing_labels
     enum_values = described_class.question_routing_labels.values
@@ -333,6 +304,22 @@ RSpec.describe Answer do
             title: "Childcare providers",
           },
         )
+      end
+    end
+  end
+
+  describe "#eligible_for_topic_analysis?" do
+    (described_class.statuses.keys - described_class::STATUSES_EXCLUDED_FROM_TOPIC_ANALYSIS).each do |status|
+      it "returns true for answers with the #{status} status" do
+        answer = build(:answer, status:)
+        expect(answer.eligible_for_topic_analysis?).to be(true)
+      end
+    end
+
+    described_class::STATUSES_EXCLUDED_FROM_TOPIC_ANALYSIS.each do |status|
+      it "returns false for answers with the #{status} status" do
+        answer = build(:answer, status:)
+        expect(answer.eligible_for_topic_analysis?).to be(false)
       end
     end
   end

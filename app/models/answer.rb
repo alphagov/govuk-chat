@@ -1,4 +1,6 @@
 class Answer < ApplicationRecord
+  include LlmCallsRecordable
+
   module CannedResponses
     NO_CONTENT_FOUND_RESPONSE = "I’m having difficulty finding an answer on GOV.UK. If you rephrase your question, I’ll search again. Or you can ask about something else.".freeze
     ANSWER_SERVICE_ERROR_RESPONSE = "Something went wrong while trying to answer your question. Please try again.".freeze
@@ -37,11 +39,22 @@ class Answer < ApplicationRecord
     guardrails_question_routing
   ].freeze
 
+  STATUSES_EXCLUDED_FROM_TOPIC_ANALYSIS = %w[
+    error_answer_guardrails
+    error_answer_service_error
+    error_jailbreak_guardrails
+    error_non_specific
+    error_question_routing_guardrails
+    error_timeout
+    guardrails_jailbreak
+  ].freeze
+
   scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
 
   belongs_to :question
   has_many :sources, -> { order(relevancy: :asc) }, class_name: "AnswerSource"
   has_one :feedback, class_name: "AnswerFeedback"
+  has_one :analysis, class_name: "AnswerAnalysis"
 
   enum :status,
        {
@@ -146,18 +159,12 @@ class Answer < ApplicationRecord
     )
   end
 
-  def assign_metrics(namespace, values)
-    self.metrics ||= {}
-    self.metrics[namespace] = values
-  end
-
-  def assign_llm_response(namespace, hash)
-    self.llm_responses ||= {}
-    self.llm_responses[namespace] = hash
-  end
-
   def use_in_rephrasing?
     STATUSES_EXCLUDED_FROM_REPHRASING.exclude?(status)
+  end
+
+  def eligible_for_topic_analysis?
+    STATUSES_EXCLUDED_FROM_TOPIC_ANALYSIS.exclude?(status)
   end
 
   def set_sources_as_unused
