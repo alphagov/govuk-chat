@@ -7,7 +7,7 @@ RSpec.describe ValidationErrorBlueprint do
       }
 
       expect(described_class.render_as_json(errors:))
-        .to eq({ message: "Unprocessable entity", errors: }.as_json)
+        .to eq({ message: "Unprocessable content", errors: }.as_json)
     end
   end
 end

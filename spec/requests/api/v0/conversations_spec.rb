@@ -465,7 +465,7 @@ RSpec.describe "Api::V0::ConversationsController" do
     context "when the question is invalid" do
       let(:payload) { { user_question: "" } }
 
-      it "returns a 422 Unprocessable Entity status" do
+      it "returns a 422 unprocessable content status" do
         post api_v0_create_conversation_path, params: payload, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
@@ -477,7 +477,7 @@ RSpec.describe "Api::V0::ConversationsController" do
         expect(JSON.parse(response.body))
           .to eq(
             {
-              "message" => "Unprocessable entity",
+              "message" => "Unprocessable content",
               "errors" => { "user_question" => [Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE] },
             },
           )
@@ -552,7 +552,7 @@ RSpec.describe "Api::V0::ConversationsController" do
         expect(JSON.parse(response.body))
           .to eq(
             {
-              "message" => "Unprocessable entity",
+              "message" => "Unprocessable content",
               "errors" => { "user_question" => [Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE] },
             },
           )

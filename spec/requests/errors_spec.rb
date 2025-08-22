@@ -50,7 +50,7 @@ RSpec.describe "ErrorController" do
                     422,
                     :unprocessable_content,
                     "Sorry, there is a problem",
-                    json_message: "Unprocessable entity"
+                    json_message: "Unprocessable content"
   end
 
   describe "/429" do
