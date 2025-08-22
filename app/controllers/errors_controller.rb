@@ -35,13 +35,13 @@ class ErrorsController < BaseController
     end
   end
 
-  def unprocessable_entity
+  def unprocessable_content
     respond_to do |format|
       format.json do
-        render json: GenericErrorBlueprint.render(message: "Unprocessable entity"),
-               status: :unprocessable_entity
+        render json: GenericErrorBlueprint.render(message: "Unprocessable content"),
+               status: :unprocessable_content
       end
-      format.any { render status: :unprocessable_entity, formats: :html }
+      format.any { render status: :unprocessable_content, formats: :html }
     end
   end
 

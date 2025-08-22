@@ -274,7 +274,7 @@ describe('ChatConversation module', () => {
       })
     })
 
-    describe('when receiving an unproccessible entity response', () => {
+    describe('when receiving an unproccessible content response', () => {
       beforeEach(() => {
         const responseJson = {
           error_messages: ['form error']

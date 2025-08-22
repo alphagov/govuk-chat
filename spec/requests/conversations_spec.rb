@@ -216,7 +216,7 @@ RSpec.describe "ConversationsController" do
         it "renders the conversation with an error" do
           post update_conversation_path, params: { create_question: { user_question: "" } }
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(response.body)
             .to have_title(/^Error -/)
             .and have_selector(".govuk-error-summary a[href='#create_question_user_question']",
@@ -235,7 +235,7 @@ RSpec.describe "ConversationsController" do
         it "renders the conversation with a pending answer URL" do
           post update_conversation_path, params: { create_question: { user_question: "" } }
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           question = conversation.questions.last
           expect(response.body)
             .to have_selector("[data-pending-answer-url='#{answer_question_path(question)}']")
@@ -291,7 +291,7 @@ RSpec.describe "ConversationsController" do
           format: :json,
         }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)).to eq(
           "question_html" => nil,
           "answer_url" => nil,
@@ -466,21 +466,21 @@ RSpec.describe "ConversationsController" do
         expect(JSON.parse(response.body)).to eq({ "error_messages" => [] })
       end
 
-      it "returns an unprocessable_entity response with invalid params" do
+      it "returns an unprocessable_content response with invalid params" do
         answer = create(:answer, question:)
 
         expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: "" }, format: :json } }
           .not_to change(AnswerFeedback, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)).to eq({ "error_messages" => ["Useful must be true or false"] })
       end
 
-      it "returns a unprocessable_entity response when feedback is already present on the answer" do
+      it "returns a unprocessable_content response when feedback is already present on the answer" do
         answer = create(:answer, :with_feedback, question:)
 
         expect { post answer_feedback_path(answer), params: { create_answer_feedback: { useful: true }, format: :json } }
         .not_to change(AnswerFeedback, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)).to eq({ "error_messages" => ["Feedback already provided for this answer"] })
       end
     end
