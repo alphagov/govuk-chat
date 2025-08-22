@@ -468,7 +468,7 @@ RSpec.describe "Api::V0::ConversationsController" do
       it "returns a 422 Unprocessable Entity status" do
         post api_v0_create_conversation_path, params: payload, as: :json
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it "returns the correct JSON in the body" do
@@ -541,9 +541,9 @@ RSpec.describe "Api::V0::ConversationsController" do
     context "when the params are invalid" do
       let(:params) { { user_question: "" } }
 
-      it "returns an unprocessable_entity status" do
+      it "returns an unprocessable_content status" do
         put api_v0_update_conversation_path(conversation), params:, as: :json
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it "returns the correct expected JSON" do

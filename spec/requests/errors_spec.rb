@@ -48,7 +48,7 @@ RSpec.describe "ErrorController" do
   describe "/422" do
     it_behaves_like "an error response",
                     422,
-                    :unprocessable_entity,
+                    :unprocessable_content,
                     "Sorry, there is a problem",
                     json_message: "Unprocessable entity"
   end

@@ -61,7 +61,7 @@ RSpec.describe "Admin::QuestionsController" do
         expect(response).to have_http_status(:ok)
       end
 
-      it "returns unprocessable_entity and renders the page with errors when invalid parameters are received" do
+      it "returns unprocessable_content and renders the page with errors when invalid parameters are received" do
         start_date_params = { day: 1, month: 1, year: "invalid" }
         end_date_params = { day: 1, month: 1, year: "invalid" }
 
@@ -70,7 +70,7 @@ RSpec.describe "Admin::QuestionsController" do
         expect_unprocessible_entity_with_date_errors
       end
 
-      it "returns unprocessable_entity and renders the page with errors when partial date parameters are received" do
+      it "returns unprocessable_content and renders the page with errors when partial date parameters are received" do
         start_date_params = { day: 1, month: 1 }
         end_date_params = { day: 1, month: 1 }
 
@@ -286,7 +286,7 @@ RSpec.describe "Admin::QuestionsController" do
   end
 
   def expect_unprocessible_entity_with_date_errors
-    expect(response).to have_http_status(:unprocessable_entity)
+    expect(response).to have_http_status(:unprocessable_content)
     expect(response.body).to have_link("Enter a valid start date", href: "#start_date_params")
     expect(response.body).to have_link("Enter a valid end date", href: "#end_date_params")
   end

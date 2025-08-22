@@ -1,7 +1,7 @@
 class Admin::QuestionsController < Admin::BaseController
   def index
     @filter = Admin::Filters::QuestionsFilter.new(filter_params)
-    render :index, status: :unprocessable_entity if @filter.errors.present?
+    render :index, status: :unprocessable_content if @filter.errors.present?
   end
 
   def show
