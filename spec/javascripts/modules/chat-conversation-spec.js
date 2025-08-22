@@ -45,8 +45,10 @@ describe('ChatConversation module', () => {
       expect(handleFormSubmissionSpy).toHaveBeenCalled()
     })
 
-    describe('when initialised with existing new messages', () => {
+    describe('when initialised with existing new messages for the first time', () => {
       beforeEach(() => {
+        window.GOVUK.deleteCookie('govuk_chat_onboarding_complete')
+
         const newMessagesList = moduleElement.querySelector('.js-new-conversation-messages-list')
         newMessagesList.innerHTML = `
           <li class="js-conversation-message">Message 1</li>
@@ -79,6 +81,36 @@ describe('ChatConversation module', () => {
           expect(conversationFormRegion.classList).toContain('app-conversation-layout__form-region--slide-in')
           done()
         }, 0)
+      })
+    })
+
+    describe('when initialised with existing new messages after the govuk_onboarding_complete cookie has been set', () => {
+      beforeEach(() => {
+        window.GOVUK.cookie('govuk_chat_onboarding_complete', 'true')
+
+        const newMessagesList = moduleElement.querySelector('.js-new-conversation-messages-list')
+        newMessagesList.innerHTML = `
+          <li class="js-conversation-message">Message 1</li>
+          <li class="js-conversation-message">Message 2</li>
+        `
+      })
+
+      afterEach(() => {
+        window.GOVUK.deleteCookie('govuk_chat_onboarding_complete')
+      })
+
+      it('does not progressively disclose messages', () => {
+        const progressivelyDiscloseMessagesSpy = spyOn(module.messageLists, 'progressivelyDiscloseMessages').and.resolveTo()
+
+        module.init()
+
+        expect(progressivelyDiscloseMessagesSpy).not.toHaveBeenCalled()
+      })
+
+      it('does not hide the form component', () => {
+        module.init()
+
+        expect(conversationFormRegion.classList).not.toContain('govuk-visually-hidden')
       })
     })
 
