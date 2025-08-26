@@ -18,7 +18,7 @@ class Api::V0::ConversationsController < Api::BaseController
         answer_url: answer_path(question),
       ), status: :created
     else
-      render json: ValidationErrorBlueprint.render(errors: form.errors.messages), status: :unprocessable_entity
+      render json: ValidationErrorBlueprint.render(errors: form.errors.messages), status: :unprocessable_content
     end
   end
 
@@ -64,7 +64,7 @@ class Api::V0::ConversationsController < Api::BaseController
     else
       render json: ValidationErrorBlueprint.render(
         errors: form.errors.messages,
-      ), status: :unprocessable_entity
+      ), status: :unprocessable_content
     end
   end
 

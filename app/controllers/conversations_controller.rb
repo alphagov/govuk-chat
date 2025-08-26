@@ -33,9 +33,9 @@ class ConversationsController < BaseController
         format.html do
           prepare_for_show_view(@create_question.conversation)
 
-          render :show, status: :unprocessable_entity
+          render :show, status: :unprocessable_content
         end
-        format.json { render json: question_error_json(@create_question), status: :unprocessable_entity }
+        format.json { render json: question_error_json(@create_question), status: :unprocessable_content }
       end
     end
   end
@@ -76,7 +76,7 @@ class ConversationsController < BaseController
         format.json { render json: { error_messages: [] }, status: :created }
       else
         format.html { redirect_to show_conversation_path }
-        format.json { render json: { error_messages: feedback_form.errors.map(&:message) }, status: :unprocessable_entity }
+        format.json { render json: { error_messages: feedback_form.errors.map(&:message) }, status: :unprocessable_content }
       end
     end
   end

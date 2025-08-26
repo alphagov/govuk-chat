@@ -15,7 +15,7 @@ class Admin::Settings::ApiAccessController < Admin::BaseController
       @form.submit
       redirect_to admin_settings_path, notice: "API access updated"
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

@@ -24,7 +24,7 @@ RSpec.describe "Conversation API flow" do
       then_i_see_the_question_has_been_accepted
 
       when_i_attempt_to_submit_another_question_again
-      then_i_receive_an_unprocessable_entity_response
+      then_i_receive_an_unprocessable_content_response
 
       when_the_question_is_answered
       and_i_poll_for_an_answer
@@ -104,8 +104,8 @@ RSpec.describe "Conversation API flow" do
         as: :json
   end
 
-  def then_i_receive_an_unprocessable_entity_response
-    expect(response).to have_http_status(:unprocessable_entity)
+  def then_i_receive_an_unprocessable_content_response
+    expect(response).to have_http_status(:unprocessable_content)
   end
 
   def and_i_have_a_conversation_with_many_questions

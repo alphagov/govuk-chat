@@ -33,7 +33,7 @@ RSpec.describe "Admin::Settings::WebAccessController" do
       patch admin_settings_edit_web_access_path,
             params: { web_access_form: { enabled: "true", author_comment: "a" * 256 } }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to have_selector(".govuk-error-summary")
     end
   end
