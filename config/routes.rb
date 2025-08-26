@@ -83,6 +83,13 @@ Rails.application.routes.draw do
 
   namespace :api, format: false, defaults: { format: "json" } do
     namespace :v0 do
+      post "/conversation", to: "/api/v1/conversations#create", as: :create_conversation
+      get "/conversation/:conversation_id", to: "/api/v1/conversations#show", as: :show_conversation
+      put "/conversation/:conversation_id", to: "/api/v1/conversations#update", as: :update_conversation
+      get "/conversation/:conversation_id/questions", to: "/api/v1/conversations#questions", as: :conversation_questions
+      get "/conversation/:conversation_id/questions/:question_id/answer", to: "/api/v1/conversations#answer", as: :answer_question
+    end
+    namespace :v1 do
       post "/conversation", to: "conversations#create", as: :create_conversation
       get "/conversation/:conversation_id", to: "conversations#show", as: :show_conversation
       put "/conversation/:conversation_id", to: "conversations#update", as: :update_conversation

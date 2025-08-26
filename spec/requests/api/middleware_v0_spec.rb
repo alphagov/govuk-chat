@@ -1,4 +1,4 @@
-RSpec.describe "API middleware" do
+RSpec.describe "API middleware for API v0" do
   shared_examples "rate limit applied" do |method, path, rate_limit_type, headers: {}|
     it "throttles their next request" do
       public_send(method, path, headers:)
@@ -50,10 +50,10 @@ RSpec.describe "API middleware" do
   end
 
   describe "rate limits", :rack_attack do
-    describe "/api/v1/conversations read rate limits" do
+    describe "/api/v0/conversations read rate limits" do
       it "treats get, head and options as read requests with rate limits" do
         %i[get head options].each do |method|
-          public_send(method, "/api/v1/conversations/404")
+          public_send(method, "/api/v0/conversations/404")
 
           expect(response).to have_http_status(:not_found)
           expect(response.headers).to include_rate_limit_headers("api-user-read")
@@ -61,14 +61,14 @@ RSpec.describe "API middleware" do
       end
 
       it "doesn't return end user rate limits in the headers by default" do
-        get "/api/v1/conversations/404"
+        get "/api/v0/conversations/404"
 
         expect(response).to have_http_status(:not_found)
         expect(response.headers).not_to include_rate_limit_headers("end-user-id-read")
       end
 
       it "does return end user rate limits if an end user id is provided" do
-        get "/api/v1/conversations/404", headers: { "HTTP_GOVUK_CHAT_END_USER_ID" => "test-user-456" }
+        get "/api/v0/conversations/404", headers: { "HTTP_GOVUK_CHAT_END_USER_ID" => "test-user-456" }
 
         expect(response).to have_http_status(:not_found)
         expect(response.headers).to include_rate_limit_headers("end-user-id-read")
@@ -79,10 +79,10 @@ RSpec.describe "API middleware" do
           read_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME]
           allow(read_throttle).to receive(:limit).and_return(1)
 
-          get "/api/v1/conversations/404"
+          get "/api/v0/conversations/404"
         end
 
-        include_examples "rate limit applied", :get, "/api/v1/conversations/404", "api-user-read"
+        include_examples "rate limit applied", :get, "/api/v0/conversations/404", "api-user-read"
       end
 
       context "when an end user has exhausted their limit" do
@@ -92,17 +92,17 @@ RSpec.describe "API middleware" do
           read_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_END_USER_READ_THROTTLE_NAME]
           allow(read_throttle).to receive(:limit).and_return(1)
 
-          get "/api/v1/conversations/404", headers:
+          get "/api/v0/conversations/404", headers:
         end
 
-        include_examples "rate limit applied", :get, "/api/v1/conversations/404", "end-user-id-read", headers:
+        include_examples "rate limit applied", :get, "/api/v0/conversations/404", "end-user-id-read", headers:
       end
     end
 
-    describe "/api/v1/conversations write rate limits" do
+    describe "/api/v0/conversations write rate limits" do
       it "treats non read requests as write requests with rate limits" do
         %i[post put patch delete].each do |method|
-          public_send(method, "/api/v1/conversations/404")
+          public_send(method, "/api/v0/conversations/404")
 
           expect(response).to have_http_status(:not_found)
           expect(response.headers).to include_rate_limit_headers("api-user-write")
@@ -110,14 +110,14 @@ RSpec.describe "API middleware" do
       end
 
       it "doesn't return end user rate limits in the headers by default" do
-        post "/api/v1/conversations/404"
+        post "/api/v0/conversations/404"
 
         expect(response).to have_http_status(:not_found)
         expect(response.headers).not_to include_rate_limit_headers("end-user-id-write")
       end
 
       it "does return end user rate limits if an end user id is provided" do
-        post "/api/v1/conversations/404", headers: { "HTTP_GOVUK_CHAT_END_USER_ID" => "test-user-456" }
+        post "/api/v0/conversations/404", headers: { "HTTP_GOVUK_CHAT_END_USER_ID" => "test-user-456" }
 
         expect(response).to have_http_status(:not_found)
         expect(response.headers).to include_rate_limit_headers("end-user-id-write")
@@ -128,10 +128,10 @@ RSpec.describe "API middleware" do
           write_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME]
           allow(write_throttle).to receive(:limit).and_return(1)
 
-          post "/api/v1/conversations/404"
+          post "/api/v0/conversations/404"
         end
 
-        include_examples "rate limit applied", :post, "/api/v1/conversations/404", "api-user-write"
+        include_examples "rate limit applied", :post, "/api/v0/conversations/404", "api-user-write"
       end
 
       context "when an end user has exhausted their limit" do
@@ -141,10 +141,10 @@ RSpec.describe "API middleware" do
           write_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_END_USER_WRITE_THROTTLE_NAME]
           allow(write_throttle).to receive(:limit).and_return(1)
 
-          post "/api/v1/conversations/404", headers:
+          post "/api/v0/conversations/404", headers:
         end
 
-        include_examples "rate limit applied", :post, "/api/v1/conversations/404", "end-user-id-write", headers:
+        include_examples "rate limit applied", :post, "/api/v0/conversations/404", "end-user-id-write", headers:
       end
     end
   end
