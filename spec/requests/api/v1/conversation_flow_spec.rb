@@ -67,7 +67,7 @@ RSpec.describe "Conversation API flow" do
         status: :answered,
       )
     end
-    post api_v0_create_conversation_path,
+    post api_v1_create_conversation_path,
          params: { user_question: "What is the capital of France?" },
          as: :json
     @conversation_id = JSON.parse(response.body)["conversation_id"]
@@ -92,14 +92,14 @@ RSpec.describe "Conversation API flow" do
   alias_method :then_i_receive_a_successful_response, :then_i_receive_that_answer
 
   def when_i_add_another_question_to_the_conversation
-    put api_v0_update_conversation_path(@conversation_id),
+    put api_v1_update_conversation_path(@conversation_id),
         params: { user_question: "What is the capital of Spain?" },
         as: :json
     @answer_url = JSON.parse(response.body)["answer_url"]
   end
 
   def when_i_attempt_to_submit_another_question_again
-    put api_v0_update_conversation_path(@conversation_id),
+    put api_v1_update_conversation_path(@conversation_id),
         params: { user_question: "What is the capital of Spain?" },
         as: :json
   end
@@ -115,7 +115,7 @@ RSpec.describe "Conversation API flow" do
 
   def when_i_make_a_request_for_the_conversation
     allow(Rails.configuration.conversations).to receive(:api_questions_per_page).and_return(2)
-    get api_v0_show_conversation_path(@conversation)
+    get api_v1_show_conversation_path(@conversation)
   end
 
   def when_i_request_the_earlier_page_of_questions

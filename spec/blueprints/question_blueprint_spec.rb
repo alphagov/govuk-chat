@@ -38,7 +38,7 @@ RSpec.describe QuestionBlueprint do
       it "includes the answer URL" do
         question = create(:question)
 
-        answer_url = Rails.application.routes.url_helpers.api_v0_answer_question_path(
+        answer_url = Rails.application.routes.url_helpers.api_v1_answer_question_path(
           question.conversation_id,
           question.id,
         )

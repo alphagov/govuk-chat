@@ -1,4 +1,4 @@
-class Api::V0::ConversationsController < Api::BaseController
+class Api::V1::ConversationsController < Api::BaseController
   before_action { authorise_user!(SignonUser::Permissions::CONVERSATION_API) }
   before_action :find_conversation, only: %i[show update answer questions]
 
@@ -32,7 +32,7 @@ class Api::V0::ConversationsController < Api::BaseController
     answer_url = pending_question ? answer_path(pending_question) : nil
 
     earlier_questions_url = if answered_questions.size == limit && @conversation.active_answered_questions_before?(answered_questions.first&.created_at)
-                              api_v0_conversation_questions_path(
+                              api_v1_conversation_questions_path(
                                 @conversation, before: answered_questions.first.id
                               )
                             end
@@ -88,14 +88,14 @@ class Api::V0::ConversationsController < Api::BaseController
     )
 
     earlier_url = if @conversation.active_answered_questions_before?(questions.first&.created_at)
-                    api_v0_conversation_questions_path(
+                    api_v1_conversation_questions_path(
                       @conversation,
                       before: questions.first.id,
                     )
                   end
 
     later_url = if @conversation.active_answered_questions_after?(questions.last&.created_at)
-                  api_v0_conversation_questions_path(
+                  api_v1_conversation_questions_path(
                     @conversation,
                     after: questions.last.id,
                   )
@@ -126,7 +126,7 @@ private
   end
 
   def answer_path(question)
-    api_v0_answer_question_path(
+    api_v1_answer_question_path(
       question.conversation_id,
       question.id,
     )
