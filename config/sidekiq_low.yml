@@ -1,0 +1,6 @@
+---
+:verbose: false
+:concurrency: <%= ENV.fetch("SIDEKIQ_LOW_PRIORITY_CONCURRENCY", 5).to_i %>
+:max_retries: 0
+:queues:
+  - low_priority
