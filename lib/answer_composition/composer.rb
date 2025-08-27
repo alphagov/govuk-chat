@@ -55,6 +55,14 @@ module AnswerComposition
           Pipeline::Claude::StructuredAnswerComposer,
           Pipeline::AnswerGuardrails.new(llm_provider: :claude),
         ])
+      when "non_llm_answer"
+        # Temporary strategy for SREs to load test without incurring LLM costs
+        sleep 20
+        context = Pipeline::Context.new(question)
+        context.abort_pipeline(
+          message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
+          status: "answered",
+        )
       else
         raise "Answer strategy #{answer_strategy} not configured"
       end

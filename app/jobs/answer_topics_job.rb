@@ -11,13 +11,18 @@ class AnswerTopicsJob < ApplicationJob
       return logger.info("Answer #{answer_id} is not eligible for topic analysis")
     end
 
-    result = AnswerAnalysisGeneration::TopicTagger.call(answer.rephrased_question || answer.question.message)
-    analysis = answer.build_analysis(
-      primary_topic: result.primary_topic,
-      secondary_topic: result.secondary_topic,
-    )
-    analysis.assign_metrics("topic_tagger", result.metrics)
-    analysis.assign_llm_response("topic_tagger", result.llm_response)
-    analysis.save!
+    if Rails.configuration.answer_strategy == "non_llm_answer"
+      # Temporary strategy for SREs to load test without incurring LLM costs
+      sleep 10
+    else
+      result = AnswerAnalysisGeneration::TopicTagger.call(answer.rephrased_question || answer.question.message)
+      analysis = answer.build_analysis(
+        primary_topic: result.primary_topic,
+        secondary_topic: result.secondary_topic,
+      )
+      analysis.assign_metrics("topic_tagger", result.metrics)
+      analysis.assign_llm_response("topic_tagger", result.llm_response)
+      analysis.save!
+    end
   end
 end
