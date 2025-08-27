@@ -54,52 +54,32 @@ RSpec.describe Question do
   end
 
   describe ".exportable" do
-    context "when new answers have been created since the last export" do
-      let(:new_question) { create(:question, created_at: 2.days.ago) }
-
-      before do
-        old_question = create(:question, created_at: 4.days.ago - 20.seconds)
-        new_question.answer = create(:answer, created_at: 2.days.ago)
-        old_question.answer = create(:answer, created_at: 4.days.ago - 20.seconds)
+    it_behaves_like "exportable by start and end date" do
+      let(:create_record_lambda) do
+        lambda { |time|
+          create(
+            :question,
+            created_at: time,
+            answer: create(:answer, created_at: time),
+          )
+        }
       end
+    end
 
-      it "returns questions with answers created since the last export time" do
-        last_export = 4.days.ago
-        current_time = Time.current
+    it "includes the conversation a question belongs to" do
+      question = create(:question, created_at: 2.days.ago)
+      create(:answer, question:, created_at: 2.days.ago)
+      last_export = 4.days.ago
+      current_time = Time.current
 
-        exportable_questions = described_class.exportable(last_export, current_time)
+      exportable_questions = described_class.exportable(last_export, current_time)
 
-        expect(exportable_questions.size).to eq(1)
-        expect(exportable_questions).to include(new_question)
-      end
-
-      it "includes the conversation a question belongs to" do
-        last_export = 4.days.ago
-        current_time = Time.current
-
-        exportable_questions = described_class.exportable(last_export, current_time)
-
-        expect(exportable_questions.first.association(:conversation).loaded?).to be(true)
-      end
+      expect(exportable_questions.first.association(:conversation).loaded?).to be(true)
     end
 
     context "when new questions without answers have been created since the last export" do
       it "does not return any questions" do
         create(:question, created_at: 2.days.ago)
-
-        last_export = 4.days.ago
-        current_time = Time.current
-
-        exportable_questions = described_class.exportable(last_export, current_time)
-
-        expect(exportable_questions.size).to eq(0)
-      end
-    end
-
-    context "when no new answers were created since the last export" do
-      it "does not return any questions" do
-        old_question = create(:question, created_at: 4.days.ago - 20.seconds)
-        old_question.answer = create(:answer, created_at: 4.days.ago - 20.seconds)
 
         last_export = 4.days.ago
         current_time = Time.current
