@@ -1,5 +1,5 @@
 class ComposeAnswerJob < ApplicationJob
-  queue_as :default
+  queue_as :high_priority
 
   def perform(question_id)
     question = Question.includes(:answer, :conversation).find_by(id: question_id)
