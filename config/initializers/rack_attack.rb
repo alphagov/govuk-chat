@@ -2,7 +2,7 @@ require "api/rate_limit"
 require "api/rate_limit/middleware"
 require "api/auth_middleware"
 
-Rails.application.config.middleware.insert_after ActionDispatch::Executor, Api::RateLimit::Middleware
+# Rails.application.config.middleware.insert_after ActionDispatch::Executor, Api::RateLimit::Middleware
 Rails.application.config.middleware.insert_before Rack::Attack, Api::AuthMiddleware
 
 class Rack::Attack
