@@ -10,18 +10,23 @@ module AnswerAnalysis
       end
       return if quota_limit_reached?
 
-      result = AutoEvaluation::TopicTagger.call(answer.question_used)
+      if Rails.configuration.answer_strategy == "non_llm_answer"
+        # Temporary strategy for SREs to load test without incurring LLM costs
+        sleep 10
+      else
+        result = AutoEvaluation::TopicTagger.call(answer.question_used)
 
-      topics = answer.build_topics(
-        status: result.status,
-        primary_topic: result.primary_topic,
-        secondary_topic: result.secondary_topic,
-        error_message: result.error_message,
-      )
-      topics.assign_metrics("topic_tagger", result.metrics)
-      topics.assign_llm_response("topic_tagger", result.llm_response)
+        topics = answer.build_topics(
+          status: result.status,
+          primary_topic: result.primary_topic,
+          secondary_topic: result.secondary_topic,
+          error_message: result.error_message,
+        )
+        topics.assign_metrics("topic_tagger", result.metrics)
+        topics.assign_llm_response("topic_tagger", result.llm_response)
 
-      topics.save!
+        topics.save!
+      end
     end
   end
 end
