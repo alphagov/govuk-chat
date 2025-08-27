@@ -8,6 +8,8 @@ RSpec.describe ComposeAnswerJob do
     allow(AnswerTopicsJob).to receive(:perform_later)
   end
 
+  it_behaves_like "a job in queue", "answer"
+
   describe "#perform" do
     it "saves the answer and sources" do
       expect { described_class.new.perform(question.id) }

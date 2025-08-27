@@ -1,4 +1,5 @@
 web: bin/rails server -p 3000
 css: bin/rails dartsass:watch
-worker: bundle exec sidekiq -C ./config/sidekiq.yml
+answer-worker: bundle exec sidekiq -C ./config/sidekiq_answer.yml
+default-worker: bundle exec sidekiq -C ./config/sidekiq_default.yml
 queue_consumer: bundle exec rake message_queue:published_documents_consumer

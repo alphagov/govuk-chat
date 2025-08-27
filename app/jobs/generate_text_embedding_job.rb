@@ -1,6 +1,4 @@
 class GenerateTextEmbeddingJob < ApplicationJob
-  queue_as :default
-
   def perform(document_id)
     repository = Search::ChunkedContentRepository.new
 

@@ -4,6 +4,8 @@ RSpec.describe AnswerTopicsJob do
 
   before { allow(AnswerAnalysisGeneration::TopicTagger).to receive(:call) }
 
+  it_behaves_like "a job in queue", "default"
+
   describe "#perform" do
     it "calls the AnswerAnalysisGeneration::TopicTagger with the answer" do
       described_class.new.perform(answer.id)
