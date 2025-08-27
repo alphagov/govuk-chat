@@ -23,7 +23,7 @@ info:
     | API User  | 100 RPM             | 1,200 RPM          |
     | End User  | 10 RPM              | 120 RPM            |
 
-  version: "0.4.1"
+  version: "0.5.0"
 servers:
   - url: https://chat.publishing.service.gov.uk/api/v1
 paths:
