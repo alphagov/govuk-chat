@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_14_145727) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_30_115215) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -22,6 +22,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_145727) do
   create_enum "conversation_source", ["web", "api"]
   create_enum "guardrails_status", ["pass", "fail", "error"]
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar", "unclear_intent", "requires_account_data"]
+
+  create_table "answer_analyses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "primary_topic"
+    t.string "secondary_topic"
+    t.jsonb "metrics"
+    t.jsonb "llm_responses"
+    t.uuid "answer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_answer_analyses_on_answer_id", unique: true
+  end
 
   create_table "answer_feedback", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
@@ -139,6 +150,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_145727) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "answer_analyses", "answers", on_delete: :cascade
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade
   add_foreign_key "answer_sources", "answers", on_delete: :cascade
   add_foreign_key "answers", "questions", on_delete: :cascade

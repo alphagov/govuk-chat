@@ -66,7 +66,6 @@ module GovukChat
     config.answer_statuses = Hashie::Mash.new(YAML.load_file("#{__dir__}/answer_statuses.yml"))
     config.question_routing_labels = Hashie::Mash.new(YAML.load_file("#{__dir__}/question_routing_labels.yml"))
     config.search = Hashie::Mash.new(YAML.load_file("#{__dir__}/search.yml"))
-
     config.action_dispatch.rescue_responses.merge!(
       "Search::ChunkedContentRepository::NotFound" => :not_found,
       "ThrottledRequest" => :too_many_requests,
@@ -85,5 +84,11 @@ module GovukChat
     config.bigquery_dataset_id = ENV["BIGQUERY_DATASET"]
 
     config.answer_strategy = ENV.fetch("ANSWER_STRATEGY", "claude_structured_answer")
+
+    config.question_topics = GovukChatPrivate.config
+                                             .llm_prompts.claude
+                                             .topic_tagger
+                                             .dig("tool_spec", "input_schema", "$defs", "govuk_topic_tags", "enum")
+                                             .sort
   end
 end
