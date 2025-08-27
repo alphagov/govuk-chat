@@ -35,7 +35,7 @@ FileUtils.chdir APP_ROOT do
     # under normal circumstances
     if govuk_docker
       # avoid bin/dev in docker to avoid a single docker process managing multiple processes
-      exec "govuk-docker up govuk-chat-app govuk-chat-css govuk-chat-worker"
+      exec "govuk-docker up govuk-chat-app govuk-chat-css govuk-chat-answer-worker govuk-chat-default-worker"
     else
       exec "bin/dev -m all=1,queue_consumer=0"
     end
