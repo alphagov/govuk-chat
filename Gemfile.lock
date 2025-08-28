@@ -206,7 +206,7 @@ GEM
       plek (>= 1.9.0)
       rack (>= 2.2.0)
       rest-client (~> 2.0)
-    gds-sso (22.1.0)
+    gds-sso (22.1.1)
       oauth2 (~> 2.0)
       omniauth (~> 2.1)
       omniauth-oauth2 (~> 1.8)
@@ -1057,7 +1057,7 @@ CHECKSUMS
   faraday-typhoeus (1.1.0) sha256=24c6147c213818dde3ebc50ae47ab92f9a7e554903aa362707126f749c6890e7
   ffi (1.17.0) sha256=51630e43425078311c056ca75f961bb3bda1641ab36e44ad4c455e0b0e4a231c
   gds-api-adapters (101.0.0) sha256=3f08b0ad72b45cc138ee7f1ffb736c342e81150093f298b406e72f0d7833ddd8
-  gds-sso (22.1.0) sha256=a7d068e0487dbfbd0497a43f602e43a120e539338453393d7cf2dd2333255a37
+  gds-sso (22.1.1) sha256=87da38284fe2eb98cca4f02d5f23bc01bbad7eeabe10a3c60d915628968d9122
   globalid (1.2.1) sha256=70bf76711871f843dbba72beb8613229a49429d1866828476f9c9d6ccc327ce9
   google-apis-bigquery_v2 (0.92.0) sha256=44be0576b44685e771dc1462cad371cebed6b3b48b694327af0f391eb0d2e0a3
   google-apis-core (1.0.1) sha256=5cd0fc24e33efe5e8d095374c0fef3d246eded243b751c861e95e3d16ad0d861
