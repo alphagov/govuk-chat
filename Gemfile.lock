@@ -271,13 +271,13 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.19.3)
+    govuk_app_config (9.20.0)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.31)
       opentelemetry-instrumentation-all (>= 0.39.1, < 0.81.0)
       opentelemetry-sdk (~> 1.2)
       plek (>= 4, < 6)
-      prometheus_exporter (~> 2.0)
+      prometheus_exporter (~> 2.3)
       puma (>= 5.6, < 7.0)
       rack-proxy (~> 0.7)
       sentry-rails (~> 5.3)
@@ -1074,7 +1074,7 @@ CHECKSUMS
   google-protobuf (4.32.0-x86_64-linux-gnu) sha256=0813ffbb2cade07e757be35a32036455d52cb18856e34666b508c492925d747b
   googleapis-common-protos-types (1.20.0) sha256=5e374b06bcfc7e13556e7c0d87b99f1fa3d42de6396a1de3d8fc13aefb4dd07f
   googleauth (1.15.0) sha256=122ae61813805a1cfdf225638f33d354ca6078be17e9712669667226a7243bcf
-  govuk_app_config (9.19.3) sha256=d37431cd774a0c71e252dadf9215d9c629811a7db6f835a42ad4a51c85a75b9d
+  govuk_app_config (9.20.0) sha256=6c7612a2649349da5ea9b672f107bca7e51bdf3c05d4ccf7a258afd18eeabe3b
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
