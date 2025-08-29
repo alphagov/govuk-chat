@@ -17,31 +17,39 @@
 <%= content_tag :li, id:, class: "app-c-conversation-message js-conversation-message", data: data_attributes do %>
   <%= content_tag :div, class: message_classes do %>
     <% if is_question %>
-      <div class="app-c-conversation-message__body app-c-conversation-message__body--user-message">
-        <%= content_tag :span, class: message_identifier_classes do %>
-          You
-        <% end %>
-        <% if is_loading %>
+      <% if is_loading %>
+        <div class="app-c-conversation-message__body app-c-conversation-message__body--user-message">
           <p class="app-c-conversation-message__loading-text govuk-body">
             Loading your question<span class="app-c-conversation-message__loading-ellipsis" aria-hidden="true">...</span>
           </p>
-        <% else %>
+        </div>
+      <% else %>
+        <div class="app-c-conversation-message__body app-c-conversation-message__body--user-message">
+          <%= content_tag :span, class: message_identifier_classes do %>
+            You
+          <% end %>
           <%= render "govuk_publishing_components/components/govspeak" do %>
             <%= escaped_simple_format(message) %>
           <% end %>
-        <% end %>
-      </div>
-
+        </div>
+      <% end %>
     <% else %>
-      <div class="app-c-conversation-message__body app-c-conversation-message__body--govuk-message">
-        <%= content_tag :span, class: message_identifier_classes do %>
-          GOV.UK Chat
-        <% end %>
-        <% if is_loading %>
+      <% if is_loading %>
+        <span class="app-c-conversation-message__loading-icon-container">
+          <%= inline_svg_tag "components/conversation_message/govuk-chat-message-loading-icon.svg", class: "app-c-conversation-message__loading-icon", aria_hidden: true %>
+        </span>
+
+        <div class="app-c-conversation-message__body app-c-conversation-message__body--loading-message">
           <p class="app-c-conversation-message__loading-text govuk-body">
             Generating your answer<span class="app-c-conversation-message__loading-ellipsis" aria-hidden="true">...</span>
           </p>
-        <% else %>
+        </div>
+      <% else %>
+        <div class="app-c-conversation-message__body app-c-conversation-message__body--govuk-message">
+          <%= content_tag :span, class: message_identifier_classes do %>
+            GOV.UK Chat
+          <% end %>
+
           <%= content_tag(
             :div,
             class: "app-c-conversation-message__answer",
@@ -64,8 +72,8 @@
               sources: sources,
             } %>
           <% end %>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
 
