@@ -1,7 +1,8 @@
 RSpec.describe "Api::V1::ConversationsController" do
   let(:api_user) { create(:signon_user, :conversation_api) }
-  let(:conversation) { create(:conversation, :api, signon_user: api_user) }
+  let(:conversation) { create(:conversation, :api, signon_user: api_user, end_user_id: "user-123") }
   let(:question) { create(:question, conversation:) }
+  let(:headers) { { "HTTP_GOVUK_CHAT_END_USER_ID" => "user-123" } }
 
   before { login_as(api_user) }
 
@@ -44,7 +45,7 @@ RSpec.describe "Api::V1::ConversationsController" do
       before { login_as(create(:signon_user)) }
 
       it "returns 403" do
-        process(method, url, params:, as: :json)
+        process(method, url, params:, headers:, as: :json)
         expect(response).to have_http_status(:forbidden)
       end
     end
@@ -58,11 +59,16 @@ RSpec.describe "Api::V1::ConversationsController" do
 
     describe "ensures the conversation belongs to the end user" do
       it "returns a 404 if the conversation was created by another end user" do
-        conversation.update!(end_user_id: "user-123")
+        conversation.update!(end_user_id: "user-456")
 
-        process(method, url, params:, as: :json)
+        process(method, url, params:, headers:, as: :json)
         expect(response).to have_http_status(:not_found)
       end
+    end
+
+    it "responds with bad request if the end user ID header is missing" do
+      process(method, url, params:, headers: {}, as: :json)
+      expect(response).to have_http_status(:bad_request)
     end
   end
 
@@ -74,7 +80,7 @@ RSpec.describe "Api::V1::ConversationsController" do
       it "returns 404 when conversation source is not :api" do
         conversation.update!(source: :web)
 
-        process(method, url, params:, as: :json)
+        process(method, url, params:, headers:, as: :json)
 
         expect(response).to have_http_status(:not_found)
       end
@@ -103,7 +109,7 @@ RSpec.describe "Api::V1::ConversationsController" do
         create(:answer, question:)
         allow(AnswerBlueprint).to receive(:render).and_return({}.to_json)
 
-        get api_v1_answer_question_path(conversation, question)
+        get(api_v1_answer_question_path(conversation, question), headers:)
         expect(response).to have_http_status(:internal_server_error)
         expect(JSON.parse(response.body)).to eq({ "message" => "Internal server error" })
       end
@@ -113,6 +119,7 @@ RSpec.describe "Api::V1::ConversationsController" do
       it "returns a bad request status code" do
         post api_v1_create_conversation_path,
              params: { user_question: 1 },
+             headers:,
              as: :json
 
         expect(response).to have_http_status(:bad_request)
@@ -121,6 +128,7 @@ RSpec.describe "Api::V1::ConversationsController" do
       it "returns the correct JSON in the body" do
         post api_v1_create_conversation_path,
              params: { user_question: 1 },
+             headers:,
              as: :json
         expect(JSON.parse(response.body)).to match(
           { "message" => /user_question expected string, but received Integer/ },
@@ -140,7 +148,7 @@ RSpec.describe "Api::V1::ConversationsController" do
 
     it "returns the expected JSON" do
       pending_question = create(:question, conversation:)
-      get api_v1_show_conversation_path(conversation)
+      get(api_v1_show_conversation_path(conversation), headers:)
 
       expected_response = ConversationBlueprint.render_as_json(
         conversation,
@@ -158,7 +166,7 @@ RSpec.describe "Api::V1::ConversationsController" do
       oldest_in_page = create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
       create(:question, :with_answer, conversation:, created_at: 3.minutes.ago)
 
-      get api_v1_show_conversation_path(conversation)
+      get(api_v1_show_conversation_path(conversation), headers:)
 
       earlier_questions_url = api_v1_conversation_questions_path(
         conversation, before: oldest_in_page.id
@@ -169,14 +177,14 @@ RSpec.describe "Api::V1::ConversationsController" do
     end
 
     it "returns a 404 if the conversation cannot be found" do
-      get api_v1_show_conversation_path(SecureRandom.uuid)
+      get(api_v1_show_conversation_path(SecureRandom.uuid), headers:)
 
       expect(response).to have_http_status(:not_found)
     end
 
     it "returns a 404 if the conversation has expired" do
       conversation = create(:conversation, :api, :expired, signon_user: api_user)
-      get api_v1_show_conversation_path(conversation)
+      get(api_v1_show_conversation_path(conversation), headers:)
       expect(response).to have_http_status(:not_found)
     end
 
@@ -184,7 +192,7 @@ RSpec.describe "Api::V1::ConversationsController" do
       different_user = create(:signon_user, :conversation_api)
       conversation = create(:conversation, signon_user: different_user)
 
-      get api_v1_show_conversation_path(conversation)
+      get(api_v1_show_conversation_path(conversation), headers:)
 
       expect(response).to have_http_status(:not_found)
     end
@@ -205,7 +213,7 @@ RSpec.describe "Api::V1::ConversationsController" do
         questions: [],
       ).to_json
 
-      get api_v1_conversation_questions_path(conversation)
+      get(api_v1_conversation_questions_path(conversation), headers:)
 
       expect(response.body).to eq(expected_response)
     end
@@ -221,7 +229,7 @@ RSpec.describe "Api::V1::ConversationsController" do
         questions: questions.map { QuestionBlueprint.render_as_hash(_1, view: :answered) },
       ).to_json
 
-      get api_v1_conversation_questions_path(conversation)
+      get(api_v1_conversation_questions_path(conversation), headers:)
 
       expect(response.body).to eq(expected_response)
     end
@@ -232,7 +240,7 @@ RSpec.describe "Api::V1::ConversationsController" do
       create(:question, :with_answer, conversation:)
       create(:question, :with_answer, conversation:)
 
-      get api_v1_conversation_questions_path(conversation)
+      get(api_v1_conversation_questions_path(conversation), headers:)
       expect(JSON.parse(response.body)["questions"].size).to eq(2)
     end
 
@@ -249,7 +257,10 @@ RSpec.describe "Api::V1::ConversationsController" do
         later_questions_url: api_v1_conversation_questions_path(conversation, after: recent_questions.last.id),
       ).to_json
 
-      get api_v1_conversation_questions_path(conversation, before: before_question.id)
+      get(
+        api_v1_conversation_questions_path(conversation, before: before_question.id),
+        headers:,
+      )
 
       expect(response.body).to eq(expected_response)
     end
@@ -267,7 +278,10 @@ RSpec.describe "Api::V1::ConversationsController" do
         earlier_questions_url: api_v1_conversation_questions_path(conversation, before: later_questions.first.id),
       ).to_json
 
-      get api_v1_conversation_questions_path(conversation, after: after_question.id)
+      get(
+        api_v1_conversation_questions_path(conversation, after: after_question.id),
+        headers:,
+      )
 
       expect(response.body).to eq(expected_response)
     end
@@ -285,10 +299,13 @@ RSpec.describe "Api::V1::ConversationsController" do
         later_questions_url: api_v1_conversation_questions_path(conversation, after: expected_question.id),
       ).to_json
 
-      get api_v1_conversation_questions_path(
-        conversation,
-        before: before_question.id,
-        after: after_question.id,
+      get(
+        api_v1_conversation_questions_path(
+          conversation,
+          before: before_question.id,
+          after: after_question.id,
+        ),
+        headers:,
       )
 
       expect(response.body).to eq(expected_response)
@@ -307,7 +324,7 @@ RSpec.describe "Api::V1::ConversationsController" do
         create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
         create(:question, :with_answer, conversation:, created_at: 4.minutes.ago)
 
-        get api_v1_conversation_questions_path(conversation)
+        get(api_v1_conversation_questions_path(conversation), headers:)
 
         expect(JSON.parse(response.body)["earlier_questions_url"]).to eq(
           api_v1_conversation_questions_path(
@@ -321,7 +338,7 @@ RSpec.describe "Api::V1::ConversationsController" do
         create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
         create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
 
-        get api_v1_conversation_questions_path(conversation)
+        get(api_v1_conversation_questions_path(conversation), headers:)
 
         expect(JSON.parse(response.body)["earlier_questions_url"]).to be_nil
       end
@@ -342,7 +359,10 @@ RSpec.describe "Api::V1::ConversationsController" do
         create(:question, :with_answer, conversation:, created_at: 5.minutes.ago)
         create(:question, :with_answer, conversation:, created_at: 6.minutes.ago)
 
-        get api_v1_conversation_questions_path(conversation, before: pagination_question.id)
+        get(
+          api_v1_conversation_questions_path(conversation, before: pagination_question.id),
+          headers:,
+        )
 
         expect(JSON.parse(response.body)["later_questions_url"]).to eq(
           api_v1_conversation_questions_path(
@@ -356,7 +376,7 @@ RSpec.describe "Api::V1::ConversationsController" do
         create(:question, :with_answer, conversation:, created_at: 2.minutes.ago)
         create(:question, :with_answer, conversation:, created_at: 1.minute.ago)
 
-        get api_v1_conversation_questions_path(conversation)
+        get(api_v1_conversation_questions_path(conversation), headers:)
 
         expect(JSON.parse(response.body)["later_questions_url"]).to be_nil
       end
@@ -364,27 +384,33 @@ RSpec.describe "Api::V1::ConversationsController" do
 
     it "returns a 404 if the before_id record cannot be found" do
       create(:question, :with_answer, conversation:)
-      get api_v1_conversation_questions_path(conversation, before: SecureRandom.uuid)
+      get(
+        api_v1_conversation_questions_path(conversation, before: SecureRandom.uuid),
+        headers:,
+      )
 
       expect(response).to have_http_status(:not_found)
     end
 
     it "returns a 404 if the after_id record cannot be found" do
       create(:question, :with_answer, conversation:)
-      get api_v1_conversation_questions_path(conversation, after: SecureRandom.uuid)
+      get(
+        api_v1_conversation_questions_path(conversation, after: SecureRandom.uuid),
+        headers:,
+      )
 
       expect(response).to have_http_status(:not_found)
     end
 
     it "returns a 404 if the conversation cannot be found" do
-      get api_v1_conversation_questions_path(conversation)
+      get(api_v1_conversation_questions_path(conversation), headers:)
 
       expect(response).to have_http_status(:not_found)
     end
 
     it "returns a 404 if the conversation has expired" do
       create(:conversation, :api, :expired, signon_user: api_user)
-      get api_v1_show_conversation_path(SecureRandom.uuid)
+      get(api_v1_show_conversation_path(SecureRandom.uuid), headers:)
       expect(response).to have_http_status(:not_found)
     end
 
@@ -392,7 +418,7 @@ RSpec.describe "Api::V1::ConversationsController" do
       different_user = create(:signon_user, :conversation_api)
       conversation = create(:conversation, signon_user: different_user)
 
-      get api_v1_show_conversation_path(conversation)
+      get(api_v1_show_conversation_path(conversation), headers:)
 
       expect(response).to have_http_status(:not_found)
     end
@@ -410,14 +436,14 @@ RSpec.describe "Api::V1::ConversationsController" do
 
       it "creates a Conversation and a Question and returns 201" do
         expect {
-          post api_v1_create_conversation_path, params: payload, as: :json
+          post api_v1_create_conversation_path, params: payload, headers:, as: :json
         }.to change(Conversation, :count).by(1)
         .and change(Question, :count).by(1)
         expect(response).to have_http_status(:created)
       end
 
       it "returns the expected json" do
-        post api_v1_create_conversation_path, params: payload, as: :json
+        post api_v1_create_conversation_path, params: payload, headers:, as: :json
 
         question = Question.last
         expected_payload = QuestionBlueprint.render_as_json(
@@ -430,35 +456,25 @@ RSpec.describe "Api::V1::ConversationsController" do
       end
 
       it "associates the conversation with the SignonUser" do
-        post api_v1_create_conversation_path, params: payload, as: :json
+        post api_v1_create_conversation_path, params: payload, headers:, as: :json
 
         conversation = Conversation.includes(:signon_user).last
         expect(conversation.signon_user).to eq(api_user)
       end
 
       it "sets the conversations source to :api" do
-        post api_v1_create_conversation_path, params: payload, as: :json
+        post api_v1_create_conversation_path, params: payload, headers:, as: :json
 
         conversation = Conversation.last
         expect(conversation.source).to eq("api")
       end
 
-      context "when setting the end_user_id from the header" do
-        it "sets the attribute to the value in the header" do
-          headers = { "HTTP_GOVUK_CHAT_END_USER_ID" => "test-user-123" }
-          post(api_v1_create_conversation_path, params: payload, headers:, as: :json)
+      it "sets the conversation end_user_id attribute to the value in the header" do
+        headers = { "HTTP_GOVUK_CHAT_END_USER_ID" => "test-user-123" }
+        post(api_v1_create_conversation_path, params: payload, headers:, as: :json)
 
-          conversation = Conversation.last
-          expect(conversation.end_user_id).to eq("test-user-123")
-        end
-
-        it "omits empty values" do
-          headers = { "HTTP_GOVUK_CHAT_END_USER_ID" => "    " }
-          post(api_v1_create_conversation_path, params: payload, headers:, as: :json)
-
-          conversation = Conversation.last
-          expect(conversation.end_user_id).to be_nil
-        end
+        conversation = Conversation.last
+        expect(conversation.end_user_id).to eq("test-user-123")
       end
     end
 
@@ -466,13 +482,13 @@ RSpec.describe "Api::V1::ConversationsController" do
       let(:payload) { { user_question: "" } }
 
       it "returns a 422 unprocessable content status" do
-        post api_v1_create_conversation_path, params: payload, as: :json
+        post api_v1_create_conversation_path, params: payload, headers:, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
       end
 
       it "returns the correct JSON in the body" do
-        post api_v1_create_conversation_path, params: payload, as: :json
+        post api_v1_create_conversation_path, params: payload, headers:, as: :json
 
         expect(JSON.parse(response.body))
           .to eq(
@@ -490,8 +506,8 @@ RSpec.describe "Api::V1::ConversationsController" do
       create(
         :conversation,
         :api,
-        signon_user:
-        api_user,
+        signon_user: api_user,
+        end_user_id: "user-123",
         questions: [create(:question, :with_answer)],
       )
     end
@@ -513,20 +529,20 @@ RSpec.describe "Api::V1::ConversationsController" do
       let(:params) { { user_question: } }
 
       it "returns a created status" do
-        put api_v1_update_conversation_path(conversation), params:, as: :json
+        put api_v1_update_conversation_path(conversation), params:, headers:, as: :json
         expect(response).to have_http_status(:created)
       end
 
       it "creates a question on the conversation" do
         expect {
-          put api_v1_update_conversation_path(conversation), params:, as: :json
+          put api_v1_update_conversation_path(conversation), params:, headers:, as: :json
         }.to change(conversation.questions, :count).by(1)
         expect(conversation.questions.strict_loading(false).last.message)
           .to eq(user_question)
       end
 
       it "returns the expected JSON" do
-        put api_v1_update_conversation_path(conversation), params:, as: :json
+        put api_v1_update_conversation_path(conversation), params:, headers:, as: :json
 
         question = conversation.questions.strict_loading(false).last
         expected_response = QuestionBlueprint.render_as_json(
@@ -542,12 +558,12 @@ RSpec.describe "Api::V1::ConversationsController" do
       let(:params) { { user_question: "" } }
 
       it "returns an unprocessable_content status" do
-        put api_v1_update_conversation_path(conversation), params:, as: :json
+        put api_v1_update_conversation_path(conversation), params:, headers:, as: :json
         expect(response).to have_http_status(:unprocessable_content)
       end
 
       it "returns the correct expected JSON" do
-        put api_v1_update_conversation_path(conversation), params:, as: :json
+        put api_v1_update_conversation_path(conversation), params:, headers:, as: :json
 
         expect(JSON.parse(response.body))
           .to eq(
@@ -573,12 +589,12 @@ RSpec.describe "Api::V1::ConversationsController" do
       let!(:answer) { create(:answer, question:) }
 
       it "returns a success status" do
-        get api_v1_answer_question_path(conversation, question), as: :json
+        get api_v1_answer_question_path(conversation, question), headers:, as: :json
         expect(response).to have_http_status(:ok)
       end
 
       it "returns the expected JSON" do
-        get api_v1_answer_question_path(conversation, question), as: :json
+        get api_v1_answer_question_path(conversation, question), headers:, as: :json
 
         expected_response = AnswerBlueprint.render_as_json(answer)
         expect(JSON.parse(response.body)).to eq(expected_response)
@@ -587,7 +603,7 @@ RSpec.describe "Api::V1::ConversationsController" do
       it "returns the correct JSON for answer sources" do
         source = create(:answer_source, answer:)
 
-        get api_v1_answer_question_path(conversation, question), as: :json
+        get api_v1_answer_question_path(conversation, question), headers:, as: :json
 
         expect(JSON.parse(response.body)["sources"])
           .to eq([{ url: source.url, title: "#{source.title}: #{source.heading}" }.as_json])
@@ -596,12 +612,12 @@ RSpec.describe "Api::V1::ConversationsController" do
 
     context "when an answer has not been generated for the question" do
       it "returns an accepted status" do
-        get api_v1_answer_question_path(conversation, question), as: :json
+        get api_v1_answer_question_path(conversation, question), headers:, as: :json
         expect(response).to have_http_status(:accepted)
       end
 
       it "returns an empty JSON response" do
-        get api_v1_answer_question_path(conversation, question), as: :json
+        get api_v1_answer_question_path(conversation, question), headers:, as: :json
         expect(JSON.parse(response.body)).to eq({})
       end
     end
