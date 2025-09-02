@@ -440,7 +440,7 @@ components:
     EndUserIdHeader:
       name: Govuk-Chat-End-User-Id
       in: header
-      required: false
+      required: true
       description: |
         An identifier for an individual end-user client to be used to provide
         individual end-user rate limiting to ensure that no one client can
@@ -451,6 +451,7 @@ components:
         header, it's up to the client to ensure that the value is unique.
       schema:
         type: string
+        pattern: '\S'
   headers:
     GovukApiUserReadRateLimitLimit:
       description: The request limit for the API user in the current period.
