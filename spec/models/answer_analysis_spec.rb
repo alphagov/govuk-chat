@@ -3,28 +3,8 @@ RSpec.describe AnswerAnalysis do
     let(:model) { build(:answer_analysis) }
   end
 
-  describe ".exportable" do
-    let!(:new_answer_analysis) { create(:answer_analysis, created_at: 2.days.ago) }
-
-    before { create(:answer_analysis, created_at: 4.days.ago) }
-
-    it "returns answer_analyses created since the last export time" do
-      last_export = 3.days.ago
-      current_time = Time.current
-
-      exportable_answer_analysis = described_class.exportable(last_export, current_time)
-
-      expect(exportable_answer_analysis).to eq([new_answer_analysis])
-    end
-
-    it "returns an empty array if there are no new answer topics" do
-      last_export = 1.day.ago
-      current_time = Time.current
-
-      exportable_answer_analysis = described_class.exportable(last_export, current_time)
-
-      expect(exportable_answer_analysis).to eq([])
-    end
+  it_behaves_like "exportable by start and end date" do
+    let(:create_record_lambda) { ->(time) { create(:answer_analysis, created_at: time) } }
   end
 
   describe "#serialize for export" do
