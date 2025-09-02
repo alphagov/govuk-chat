@@ -451,6 +451,7 @@ components:
         header, it's up to the client to ensure that the value is unique.
       schema:
         type: string
+        pattern: '\S'
   headers:
     GovukApiUserReadRateLimitLimit:
       description: The request limit for the API user in the current period.

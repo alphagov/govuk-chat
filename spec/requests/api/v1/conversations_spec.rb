@@ -66,8 +66,22 @@ RSpec.describe "Api::V1::ConversationsController" do
       end
     end
 
+    [nil, "", "    "].each do |invalid_value|
+      it "responds with bad request if the end user ID header is '#{invalid_value.inspect}'" do
+        headers = { "HTTP_GOVUK_CHAT_END_USER_ID" => invalid_value }
+        process(method, url, params:, headers:, as: :json)
+        expect(response).to have_http_status(:bad_request)
+      end
+    end
+
     it "responds with bad request if the end user ID header is missing" do
       process(method, url, params:, headers: {}, as: :json)
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it "responds with bad request if the end user ID header is empty" do
+      headers = { "HTTP_GOVUK_CHAT_END_USER_ID" => "     " }
+      process(method, url, params:, headers:, as: :json)
       expect(response).to have_http_status(:bad_request)
     end
   end
