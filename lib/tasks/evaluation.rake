@@ -152,4 +152,18 @@ namespace :evaluation do
 
     puts(items.to_json)
   end
+
+  desc "Produce topics for a user question"
+  task generate_topics_for_question: :environment do
+    raise "Requires an INPUT env var" if ENV["INPUT"].blank?
+
+    result = AnswerAnalysisGeneration::TopicTagger.call(ENV["INPUT"])
+
+    output = {
+      primary_topic: result.primary_topic,
+      secondary_topic: result.secondary_topic,
+    }
+
+    puts(output.to_json)
+  end
 end
