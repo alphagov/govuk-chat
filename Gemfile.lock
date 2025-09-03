@@ -84,7 +84,7 @@ GEM
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     amq-protocol (2.3.3)
-    anthropic (1.7.0)
+    anthropic (1.8.0)
       connection_pool
     ast (2.4.3)
     aws-eventstream (1.4.0)
@@ -148,7 +148,7 @@ GEM
     commonmarker (2.3.0-x86_64-darwin)
     commonmarker (2.3.0-x86_64-linux)
     concurrent-ruby (1.3.5)
-    connection_pool (2.5.3)
+    connection_pool (2.5.4)
     crack (1.0.0)
       bigdecimal
       rexml
@@ -1000,7 +1000,7 @@ CHECKSUMS
   activesupport (8.0.2.1) sha256=0405a76fd1ca989975d9ae00d46a4d3979bdf3817482d846b63affa84bd561c6
   addressable (2.8.7) sha256=462986537cf3735ab5f3c0f557f14155d778f4b43ea4f485a9deb9c8f7c58232
   amq-protocol (2.3.3) sha256=85b42738290913a35dcc487a2ca0dd260a4150b40ed1954c9c1932df466abc1f
-  anthropic (1.7.0) sha256=dc0968a99a6d818191dfc258ad1257bc1ba6a4f46112c5384a9370fec219baaa
+  anthropic (1.8.0) sha256=8144a66dfd3b24e7e4169ef4001d43c3ca7dd738c7ff35142a5bdd65d04f13c4
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
   aws-partitions (1.1152.0) sha256=6af92d429ffea8eeee599671dc0619b37817c71aa33069e77c97c2eb62ead841
@@ -1029,7 +1029,7 @@ CHECKSUMS
   commonmarker (2.3.0-x86_64-darwin) sha256=65919fe63bc1e01319d958351ae611cc913bd2a8aa3f1a4f3fb3d12e82fbc568
   commonmarker (2.3.0-x86_64-linux) sha256=a6f2b523be0c3e4752aaf55cc5026239080b81f91bd2f72226b6e71919d204d0
   concurrent-ruby (1.3.5) sha256=813b3e37aca6df2a21a3b9f1d497f8cbab24a2b94cab325bffe65ee0f6cbebc6
-  connection_pool (2.5.3) sha256=cfd74a82b9b094d1ce30c4f1a346da23ee19dc8a062a16a85f58eab1ced4305b
+  connection_pool (2.5.4) sha256=e9e1922327416091f3f6542f5f4446c2a20745276b9aa796dd0bb2fd0ea1e70a
   crack (1.0.0) sha256=c83aefdb428cdc7b66c7f287e488c796f055c0839e6e545fec2c7047743c4a49
   crass (1.0.6) sha256=dc516022a56e7b3b156099abc81b6d2b08ea1ed12676ac7a5657617f012bd45d
   csv (3.3.5) sha256=6e5134ac3383ef728b7f02725d9872934f523cb40b961479f69cf3afa6c8e73f
