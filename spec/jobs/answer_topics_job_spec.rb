@@ -1,13 +1,50 @@
 RSpec.describe AnswerTopicsJob do
   include ActiveJob::TestHelper
   let(:answer) { create(:answer) }
+  let(:question) { answer.question }
+  let(:topic_tagger_result) do
+    AnswerAnalysisGeneration::TopicTagger::Result.new(
+      primary_topic: "business",
+      secondary_topic: "benefits",
+      metrics: {
+        "duration" => 1.5,
+        "model" => "some-model",
+      },
+      llm_response: {
+        "model" => "some-model",
+      },
+    )
+  end
 
-  before { allow(AnswerAnalysisGeneration::TopicTagger).to receive(:call) }
+  before { allow(AnswerAnalysisGeneration::TopicTagger).to receive(:call).and_return(topic_tagger_result) }
 
   describe "#perform" do
-    it "calls the AnswerAnalysisGeneration::TopicTagger with the answer" do
+    it "calls the AnswerAnalysisGeneration::TopicTagger with the answer message" do
       described_class.new.perform(answer.id)
-      expect(AnswerAnalysisGeneration::TopicTagger).to have_received(:call).with(answer)
+      expect(AnswerAnalysisGeneration::TopicTagger).to have_received(:call).with(question.message)
+    end
+
+    it "creates an analysis for the answer based of the returned result" do
+      expect {
+        described_class.new.perform(answer.id)
+      }.to change(AnswerAnalysis, :count).by(1)
+      expect(answer.reload.analysis)
+        .to have_attributes(
+          primary_topic: topic_tagger_result.primary_topic,
+          secondary_topic: topic_tagger_result.secondary_topic,
+          metrics: { "topic_tagger" => topic_tagger_result.metrics },
+          llm_responses: { "topic_tagger" => topic_tagger_result.llm_response },
+        )
+    end
+
+    context "when the answer has a rephrased_question" do
+      let(:rephrased_question) { "This is a rephrased_question" }
+
+      it "calls the AnswerAnalysisGeneration::TopicTagger with the rephrased question" do
+        answer = create(:answer, rephrased_question: rephrased_question)
+        described_class.new.perform(answer.id)
+        expect(AnswerAnalysisGeneration::TopicTagger).to have_received(:call).with(rephrased_question)
+      end
     end
 
     context "when the answer does not exist" do

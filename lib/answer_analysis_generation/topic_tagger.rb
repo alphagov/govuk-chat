@@ -1,20 +1,17 @@
 class AnswerAnalysisGeneration::TopicTagger
-  delegate :logger, to: Rails
-
-  attr_reader :answer
+  Result = Data.define(:primary_topic,
+                       :secondary_topic,
+                       :metrics,
+                       :llm_response)
 
   def self.call(...) = new(...).call
 
-  def initialize(answer)
-    @answer = answer
+  def initialize(user_question)
+    @user_question = user_question
   end
 
   def call
     start_time = Clock.monotonic_time
-
-    raise "Answer #{answer.id} is not eligible for topic analysis" unless answer.eligible_for_topic_analysis?
-    raise "Topics already generated for answer #{answer.id}" if answer.analysis&.primary_topic.present?
-
     response = anthropic_bedrock_client.messages.create(
       messages:,
       system: [
@@ -26,16 +23,17 @@ class AnswerAnalysisGeneration::TopicTagger
       **inference_config,
     )
 
-    analysis = answer.build_analysis
-    analysis.primary_topic = response[:content][0][:input][:primary_topic]
-    analysis.secondary_topic = response[:content][0][:input][:secondary_topic]
-    analysis.assign_metrics("topic_tagger", build_metrics(response, start_time))
-    analysis.assign_llm_response("topic_tagger", response.to_h)
-
-    analysis.save!
+    Result.new(
+      primary_topic: response[:content][0][:input][:primary_topic],
+      secondary_topic: response[:content][0][:input][:secondary_topic],
+      metrics: build_metrics(response, start_time),
+      llm_response: response.to_h,
+    )
   end
 
 private
+
+  attr_reader :user_question
 
   def anthropic_bedrock_client
     @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(
@@ -61,7 +59,7 @@ private
     [
       {
         role: "user",
-        content: answer.rephrased_question || answer.question.message,
+        content: user_question,
       },
     ]
   end
