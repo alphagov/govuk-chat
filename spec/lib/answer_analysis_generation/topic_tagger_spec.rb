@@ -18,7 +18,7 @@ RSpec.describe AnswerAnalysisGeneration::TopicTagger, :aws_credentials_stubbed d
       result = described_class.call(message)
 
       expected_content = claude_messages_tool_use_block(
-        input: { confidence: "high", primary_topic: "business", reasoning: "reason", secondary_topic: "benefits" },
+        input: { primary_topic: "business", reasoning: "reason", secondary_topic: "benefits" },
         name: "tagger_reasoning",
       )
       expected_llm_response = claude_messages_response(

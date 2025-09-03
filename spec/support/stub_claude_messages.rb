@@ -156,7 +156,7 @@ module StubClaudeMessages
     tools = [topic_tagger_config["tool_spec"]]
     content = [
       claude_messages_tool_use_block(
-        input: { primary_topic: "business", secondary_topic: "benefits", confidence: "high", reasoning: "reason" },
+        input: { primary_topic: "business", secondary_topic: "benefits", reasoning: "reason" },
         name: tools.first["name"],
       ),
     ]
