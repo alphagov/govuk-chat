@@ -22,6 +22,13 @@ RSpec.describe "rake evaluation tasks" do
     end
   end
 
+  shared_examples "a task requiring an input" do
+    it "requires an INPUT env var" do
+      expect { Rake::Task[task_name].invoke }
+        .to raise_error("Requires an INPUT env var")
+    end
+  end
+
   describe "generate_report" do
     let(:task_name) { "evaluation:generate_report" }
     let(:evaluation_data) do
@@ -244,10 +251,7 @@ RSpec.describe "rake evaluation tasks" do
 
     before { Rake::Task[task_name].reenable }
 
-    it "requires an INPUT env var" do
-      expect { Rake::Task[task_name].invoke("openai") }
-        .to raise_error("Requires an INPUT env var")
-    end
+    it_behaves_like "a task requiring an input"
 
     it "requires an llm_provider" do
       ClimateControl.modify(INPUT: input) do
@@ -382,9 +386,7 @@ RSpec.describe "rake evaluation tasks" do
 
     before { Rake::Task[task_name].reenable }
 
-    it "requires an INPUT env var" do
-      expect { Rake::Task[task_name].invoke }.to raise_error("Requires an INPUT env var")
-    end
+    it_behaves_like "a task requiring an input"
 
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input) do
@@ -433,6 +435,30 @@ RSpec.describe "rake evaluation tasks" do
 
         expect { Rake::Task[task_name].invoke }
           .to output("#{expected_output}\n").to_stdout
+      end
+    end
+  end
+
+  describe "generate_topics_for_question" do
+    let(:task_name) { "evaluation:generate_topics_for_question" }
+    let(:input) { "User question" }
+
+    before { Rake::Task[task_name].reenable }
+
+    it_behaves_like "a task requiring an input"
+
+    it "outputs the response as JSON to stdout" do
+      ClimateControl.modify(INPUT: input) do
+        result = AnswerAnalysisGeneration::TopicTagger::Result.new(
+          primary_topic: "tax",
+          secondary_topic: "benefits",
+          metrics: {},
+          llm_response: {},
+        )
+        allow(AnswerAnalysisGeneration::TopicTagger).to receive(:call).with(input).and_return(result)
+
+        expect { Rake::Task[task_name].invoke }
+          .to output("#{result.to_json}\n").to_stdout
       end
     end
   end
