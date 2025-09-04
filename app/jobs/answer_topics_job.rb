@@ -1,6 +1,5 @@
 class AnswerTopicsJob < ApplicationJob
   MAX_RETRIES = 5
-  queue_as :default
   retry_on Anthropic::Errors::APIError, wait: 1.minute, attempts: MAX_RETRIES
 
   def perform(answer_id)

@@ -1,4 +1,6 @@
 RSpec.describe GenerateTextEmbeddingJob, :chunked_content_index do
+  it_behaves_like "a job in queue", "default"
+
   describe "#perform" do
     it "logs an error if the document is not found" do
       expect(Rails.logger).to receive(:info).with("Document non_existent_id not found in the index.")

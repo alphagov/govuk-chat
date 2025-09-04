@@ -1,4 +1,6 @@
 RSpec.describe NotifySlackApiUserRateLimitWarningJob do
+  it_behaves_like "a job in queue", "default"
+
   describe "#perform" do
     it "triggers a Slack notification" do
       expect(SlackPoster).to receive(:api_user_rate_limit_warning).with(

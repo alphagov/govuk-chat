@@ -18,6 +18,8 @@ RSpec.describe AnswerTopicsJob do
 
   before { allow(AnswerAnalysisGeneration::TopicTagger).to receive(:call).and_return(topic_tagger_result) }
 
+  it_behaves_like "a job in queue", "default"
+
   describe "#perform" do
     it "calls the AnswerAnalysisGeneration::TopicTagger with the answer message" do
       described_class.new.perform(answer.id)
