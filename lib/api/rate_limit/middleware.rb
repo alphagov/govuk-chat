@@ -5,7 +5,7 @@ class Api::RateLimit::Middleware
     Api::RateLimit::GOVUK_END_USER_READ_THROTTLE_NAME => "Govuk-End-User-Id-Read",
     Api::RateLimit::GOVUK_END_USER_WRITE_THROTTLE_NAME => "Govuk-End-User-Id-Write",
   }.freeze
-  SLACK_NOTIFICATION_THRESHOLD_PERCENTAGE = 90
+  SLACK_NOTIFICATION_THRESHOLD_PERCENTAGE = 75
 
   delegate :logger, to: Rails
 
