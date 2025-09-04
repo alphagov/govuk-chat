@@ -12,6 +12,13 @@ class AnswerTopicsJob < ApplicationJob
       return logger.info("Answer #{answer_id} is not eligible for topic analysis")
     end
 
-    AnswerAnalysisGeneration::TopicTagger.call(answer)
+    result = AnswerAnalysisGeneration::TopicTagger.call(answer.rephrased_question || answer.question.message)
+    analysis = answer.build_analysis(
+      primary_topic: result.primary_topic,
+      secondary_topic: result.secondary_topic,
+    )
+    analysis.assign_metrics("topic_tagger", result.metrics)
+    analysis.assign_llm_response("topic_tagger", result.llm_response)
+    analysis.save!
   end
 end
