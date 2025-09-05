@@ -100,6 +100,14 @@ class Answer < ApplicationRecord
   enum :question_routing_guardrails_status, GUARDRAIL_STATUSES, prefix: true
   enum :jailbreak_guardrails_status, GUARDRAIL_STATUSES, prefix: true
 
+  enum :completeness,
+       {
+         complete: "complete",
+         partial: "partial",
+         no_information: "no_information",
+       },
+       prefix: true
+
   # guardrail failures are stored as an array so they are more challenging
   # to produce aggregate counts of occurrences
   def self.count_guardrails_failures(attribute)
