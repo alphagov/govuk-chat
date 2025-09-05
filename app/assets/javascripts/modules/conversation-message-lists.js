@@ -49,12 +49,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       })
     }
 
-    async appendNewProgressivelyDisclosedMessages (messagesHtml) {
-      this.newMessagesList.innerHTML = messagesHtml
-      this.newMessagesContainer.focus()
-      await this.progressivelyDiscloseMessages()
-    }
-
     scrollToLastNewMessage () {
       const message = this.newMessagesList.querySelector(`${this.MESSAGE_SELECTOR}:last-child`)
       if (message) this.scrollIntoView(message)
