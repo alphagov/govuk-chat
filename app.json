@@ -52,7 +52,11 @@
       "quantity": 1,
       "size": "basic"
     },
-    "worker": {
+    "answer-worker": {
+      "quantity": 1,
+      "size": "basic"
+    },
+    "default-worker": {
       "quantity": 1,
       "size": "basic"
     }
