@@ -14,7 +14,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     init () {
-      this.module.addEventListener('conversation-append', e => this.conversationAppend(e))
       this.formContainer.addEventListener('submit', e => this.handleFormSubmission(e))
 
       // new messages indicates we are onboarding a user
@@ -132,16 +131,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         console.error(error)
         this.redirect(this.pendingAnswerUrl)
       }
-    }
-
-    async conversationAppend (event) {
-      this.conversationFormRegion.classList.add('govuk-visually-hidden')
-      this.conversationFormRegion.classList.remove('app-conversation-layout__form-region--slide-in')
-      await this.messageLists.appendNewProgressivelyDisclosedMessages(event.detail.html)
-      this.conversationFormRegion.classList.add('app-conversation-layout__form-region--slide-in')
-      this.conversationFormRegion.classList.remove('app-conversation-layout__form-region--slide-out')
-      this.conversationFormRegion.classList.remove('govuk-visually-hidden')
-      this.messageLists.scrollToLastNewMessage()
     }
 
     redirect (url) {

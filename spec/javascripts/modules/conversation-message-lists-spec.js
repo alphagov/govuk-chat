@@ -128,34 +128,6 @@ describe('conversationMessageLists module', () => {
     })
   })
 
-  describe('appendNewProgressivelyDisclosedMessages', () => {
-    it('sets the HTML of the new messages list', done => {
-      jasmine.clock().install()
-
-      newMessagesList.innerHTML = '<!-- expecting this to be empty -->'
-      const newHtml = '<li>A message</li>'
-      const promise = module.appendNewProgressivelyDisclosedMessages(newHtml)
-      jasmine.clock().tick(progressiveDisclosureDelay)
-      promise.then(() => {
-        expect(newMessagesList.innerHTML).toEqual(newHtml)
-        jasmine.clock().uninstall()
-        done()
-      })
-    })
-
-    it('focuses the new messages region', () => {
-      const focusSpy = spyOn(module.newMessagesContainer, 'focus')
-      module.appendNewProgressivelyDisclosedMessages('<li>Message</li>')
-      expect(focusSpy).toHaveBeenCalled()
-    })
-
-    it('delegates to progressivelyDiscloseMessages to do the progressive disclosure', () => {
-      const progressivelyDiscloseMessagesSpy = spyOn(module, 'progressivelyDiscloseMessages')
-      module.appendNewProgressivelyDisclosedMessages('<li>Message</li>')
-      expect(progressivelyDiscloseMessagesSpy).toHaveBeenCalled()
-    })
-  })
-
   describe('scrollToLastNewMessage', () => {
     describe('when there are new messages', () => {
       beforeEach(() => {

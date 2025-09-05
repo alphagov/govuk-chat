@@ -36,15 +36,6 @@ describe('ChatConversation module', () => {
   })
 
   describe('init', () => {
-    it('executes conversationAppend on the conversation-append event', () => {
-      const conversationAppendSpy = spyOn(module, 'conversationAppend')
-
-      module.init()
-      moduleElement.dispatchEvent(new Event('conversation-append'))
-
-      expect(conversationAppendSpy).toHaveBeenCalled()
-    })
-
     it('adds an event listener for handleFormSubmission for form component submit events', () => {
       const handleFormSubmissionSpy = spyOn(module, 'handleFormSubmission')
 
@@ -423,56 +414,6 @@ describe('ChatConversation module', () => {
 
         expect(redirectSpy).toHaveBeenCalledWith(answerUrl)
       })
-    })
-  })
-
-  describe('handle conversationAppend event', () => {
-    let event
-
-    beforeEach(() => {
-      event = new CustomEvent(
-        'conversation-append',
-        {
-          detail: {
-            html: `
-              <li class="js-conversation-message">To show</li>
-              <li class="js-conversation-message">To disclose</li>
-            `
-          }
-        }
-      )
-    })
-
-    it('delegates to messageLists to append new progressively disclosed messages', () => {
-      module.init()
-
-      const appendNewProgressivelyDisclosedMessagesSpy = spyOn(
-        module.messageLists,
-        'appendNewProgressivelyDisclosedMessages'
-      )
-
-      moduleElement.dispatchEvent(event)
-
-      expect(appendNewProgressivelyDisclosedMessagesSpy).toHaveBeenCalled()
-    })
-
-    it('hides the conversationFormRegion.classList prior to disclosing messages and then shows it after', done => {
-      jasmine.clock().install()
-
-      module.init()
-
-      moduleElement.dispatchEvent(event)
-
-      expect(conversationFormRegion.classList).toContain('govuk-visually-hidden')
-
-      jasmine.clock().tick(longWaitForProgressiveDisclosure)
-      jasmine.clock().uninstall()
-
-      // timeout to ensure promise callbacks are executed
-      window.setTimeout(() => {
-        expect(conversationFormRegion.classList).not.toContain('govuk-visually-hidden')
-        done()
-      }, 0)
     })
   })
 })
