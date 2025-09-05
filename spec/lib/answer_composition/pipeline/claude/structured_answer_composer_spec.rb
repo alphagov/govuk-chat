@@ -29,7 +29,8 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
       described_class.call(context)
 
       expect(context.answer.message.squish).to eq(answer)
-      expect(context.answer.status).to eq("answered")
+      expect(context.answer)
+        .to have_attributes(status: "answered", completeness: "complete")
     end
 
     it "stores the LLM response" do
@@ -39,7 +40,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
       described_class.call(context)
 
       expected_content = claude_messages_tool_use_block(
-        input: { answer:, answered: true, sources_used: %w[link_1] },
+        input: { answer:, answered: true, sources_used: %w[link_1], answer_completeness: "complete" },
         name: "output_schema",
       )
       expected_llm_response = claude_messages_response(
@@ -124,12 +125,18 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
           "Sorry I cannot answer that question.",
           answered: false,
           sources_used: [],
+          answer_completeness: "incomplete",
         )
 
         expect { described_class.call(context) }.to throw_symbol(:abort)
 
         expected_content = claude_messages_tool_use_block(
-          input: { answer: "Sorry I cannot answer that question.", answered: false, sources_used: [] },
+          input: {
+            answer: "Sorry I cannot answer that question.",
+            answered: false,
+            sources_used: [],
+            answer_completeness: "incomplete",
+          },
           name: "output_schema",
         )
         expected_llm_response = claude_messages_response(
