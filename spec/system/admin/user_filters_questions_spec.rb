@@ -43,6 +43,13 @@ RSpec.describe "Admin user filters questions" do
     when_i_view_the_questions_conversation
     and_i_filter_on_the_pending_status
     then_i_see_the_pending_question
+
+    when_i_clear_the_filters
+    and_i_filter_questions_by_complete_answers
+    then_i_see_the_question_with_a_complete_answer
+
+    when_i_filter_questions_by_partialy_complete_answers
+    then_i_see_the_question_with_a_partially_complete_answer
   end
 
   scenario "filtered by a signon user" do
@@ -69,7 +76,7 @@ RSpec.describe "Admin user filters questions" do
     @question1 = create(:question, conversation:, message: "Hello world", created_at: 2.years.ago)
     @question2 = create(:question, message: "World", conversation:)
     @question3 = create(:question, conversation: api_conversation, message: "Greetings world", created_at: 1.minute.ago)
-    answer = create(:answer, question: @question2, question_routing_label: "non_english")
+    answer = create(:answer, question: @question2, question_routing_label: "non_english", completeness: :partial)
     create(:answer_feedback, answer: answer, useful: true)
     create(:answer, status: :clarification, question: @question3)
   end
@@ -257,5 +264,27 @@ RSpec.describe "Admin user filters questions" do
 
   def when_i_visit_the_questions_section_filtered_by_a_signon_user
     visit admin_questions_path(signon_user_id: @signon_user.id)
+  end
+
+  def and_i_filter_questions_by_complete_answers
+    select "Complete", from: "completeness"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_question_with_a_complete_answer
+    expect(page).to have_content(@question3.message)
+    expect(page).not_to have_content(@question1.message)
+    expect(page).not_to have_content(@question2.message)
+  end
+
+  def when_i_filter_questions_by_partialy_complete_answers
+    select "Partial", from: "completeness"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_question_with_a_partially_complete_answer
+    expect(page).to have_content(@question2.message)
+    expect(page).not_to have_content(@question1.message)
+    expect(page).not_to have_content(@question3.message)
   end
 end

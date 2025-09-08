@@ -209,6 +209,21 @@
     end,
   } %>
 
+  <%= render "govuk_publishing_components/components/select", {
+    id: "completeness",
+    name: "completeness",
+    label: "Completeness",
+    heading_size: "s",
+    full_width: true,
+    options: [{text: "", value: ""}] + Answer::completenesses.values.map do |value|
+      {
+       text: value.humanize,
+       value: value,
+       selected: params[:completeness] == value,
+      }
+    end,
+  } %>
+
   <%= render "govuk_publishing_components/components/button", {
     text: "Filter",
     margin_bottom: true,

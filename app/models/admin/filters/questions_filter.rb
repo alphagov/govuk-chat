@@ -11,6 +11,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :end_user_id
   attribute :primary_topic
   attribute :secondary_topic
+  attribute :completeness
 
   validate :validate_dates
 
@@ -44,6 +45,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
       scope = end_user_id_scope(scope)
       scope = primary_topic_scope(scope)
       scope = secondary_topic_scope(scope)
+      scope = completeness_scope(scope)
       scope.page(page)
            .per(25)
     end
@@ -152,6 +154,12 @@ private
 
     scope.joins(answer: :analysis)
          .where(answer_analyses: { secondary_topic: secondary_topic })
+  end
+
+  def completeness_scope(scope)
+    return scope if completeness.blank?
+
+    scope.where(answers: { completeness: })
   end
 
   def validate_dates

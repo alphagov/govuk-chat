@@ -31,6 +31,7 @@ private
       :end_user_id,
       :primary_topic,
       :secondary_topic,
+      :completeness,
     )
   end
 end
