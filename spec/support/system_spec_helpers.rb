@@ -21,7 +21,7 @@ module SystemSpecHelpers
 
     within(".gem-c-cookie-banner") do
       click_button "Reject additional cookies"
-      click_button "Hide this message"
+      click_button "Hide cookie message"
     end
   end
   alias_method :and_i_have_dismissed_the_cookie_banner, :given_i_have_dismissed_the_cookie_banner
