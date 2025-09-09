@@ -261,8 +261,8 @@ GEM
     google-protobuf (4.32.0-x86_64-linux-gnu)
       bigdecimal
       rake (>= 13)
-    googleapis-common-protos-types (1.20.0)
-      google-protobuf (>= 3.18, < 5.a)
+    googleapis-common-protos-types (1.21.0)
+      google-protobuf (~> 4.26)
     googleauth (1.15.0)
       faraday (>= 1.0, < 3.a)
       google-cloud-env (~> 2.2)
@@ -271,7 +271,7 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.20.0)
+    govuk_app_config (9.20.1)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.31)
       opentelemetry-instrumentation-all (>= 0.39.1, < 0.81.0)
@@ -1073,9 +1073,9 @@ CHECKSUMS
   google-protobuf (4.32.0-x86-linux-gnu) sha256=a1e6009382255dd6b8fc1151134ac56d64d1f64bbab4bbb3235f5d81727e2fca
   google-protobuf (4.32.0-x86_64-darwin) sha256=60098f391bbb47c31df8f8fb7f86f307606bf560877f6253f9f142f024d86895
   google-protobuf (4.32.0-x86_64-linux-gnu) sha256=0813ffbb2cade07e757be35a32036455d52cb18856e34666b508c492925d747b
-  googleapis-common-protos-types (1.20.0) sha256=5e374b06bcfc7e13556e7c0d87b99f1fa3d42de6396a1de3d8fc13aefb4dd07f
+  googleapis-common-protos-types (1.21.0) sha256=c91b6f2b8a2dab6af4e249e7be8e8d5fe174d6e58e065803d740031880179d8f
   googleauth (1.15.0) sha256=122ae61813805a1cfdf225638f33d354ca6078be17e9712669667226a7243bcf
-  govuk_app_config (9.20.0) sha256=6c7612a2649349da5ea9b672f107bca7e51bdf3c05d4ccf7a258afd18eeabe3b
+  govuk_app_config (9.20.1) sha256=3e9d66213aa002663f37450d8a55ea38486ae39b075bd7f669ce3eb647014698
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
