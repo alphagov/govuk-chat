@@ -9,6 +9,11 @@ class SlackPoster
     )
   end
 
+  def self.previous_days_api_activity
+    message = DailyApiActivityMessage.new(Date.yesterday).message
+    new.send_message(message)
+  end
+
   def send_message(message)
     return if webhook_url.nil?
 

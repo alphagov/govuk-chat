@@ -40,5 +40,14 @@ RSpec.describe SlackPoster do
         )
       end
     end
+
+    describe ".previous_days_api_activity" do
+      it "posts a message with the daily activity message" do
+        activity_message = instance_double(DailyApiActivityMessage, message: "The daily activity message")
+        allow(DailyApiActivityMessage).to receive(:new).and_return(activity_message)
+        expect(slack_poster).to receive(:send_message).with("The daily activity message")
+        described_class.previous_days_api_activity
+      end
+    end
   end
 end
