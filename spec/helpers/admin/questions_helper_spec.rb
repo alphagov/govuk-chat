@@ -77,6 +77,7 @@ RSpec.describe Admin::QuestionsHelper do
         "Answer created at",
         "Answer",
         "Answer strategy",
+        "Completeness",
         "Jailbreak guardrails status",
         "Question routing label",
         "Question routing confidence score",
@@ -142,6 +143,15 @@ RSpec.describe Admin::QuestionsHelper do
       expect(returned_keys(result)).to include("End user ID")
       row = result.find { |r| r[:field] == "End user ID" }
       expect(row[:value]).to include(admin_questions_path(end_user_id: "12345"))
+    end
+
+    it "returns a row with completeness when a question has been answered" do
+      answer = create(:answer, completeness: :partial)
+      answer = answer_from_db(answer)
+      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
+
+      row = result.find { |r| r[:field] == "Completeness" }
+      expect(row[:value]).to eq("Partial")
     end
 
     it "returns a row with a human readable question routing label" do

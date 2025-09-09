@@ -285,6 +285,24 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([tax_question])
     end
 
+    it "filters the results by completeness" do
+      complete_answer = create(:answer, completeness: "complete")
+      complete_question = create(:question, answer: complete_answer)
+      partial_answer = create(:answer, completeness: "partial")
+      partial_question = create(:question, answer: partial_answer)
+      no_info_answer = create(:answer, completeness: "no_information")
+      no_info_question = create(:question, answer: no_info_answer)
+
+      filter = described_class.new(completeness: "complete")
+      expect(filter.results).to eq([complete_question])
+
+      filter = described_class.new(completeness: "partial")
+      expect(filter.results).to eq([partial_question])
+
+      filter = described_class.new(completeness: "no_information")
+      expect(filter.results).to eq([no_info_question])
+    end
+
     it "paginates the results" do
       create_list(:question, 26)
 

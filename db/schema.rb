@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_30_115215) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_05_141456) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -18,6 +18,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_30_115215) do
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "answer_completeness", ["complete", "partial", "no_information"]
   create_enum "answer_status", ["answered", "clarification", "error_answer_guardrails", "error_answer_service_error", "error_jailbreak_guardrails", "error_non_specific", "error_question_routing_guardrails", "error_timeout", "guardrails_answer", "guardrails_forbidden_terms", "guardrails_jailbreak", "guardrails_question_routing", "unanswerable_llm_cannot_answer", "unanswerable_no_govuk_content", "unanswerable_question_routing"]
   create_enum "conversation_source", ["web", "api"]
   create_enum "guardrails_status", ["pass", "fail", "error"]
@@ -77,6 +78,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_30_115215) do
     t.enum "jailbreak_guardrails_status", enum_type: "guardrails_status"
     t.enum "question_routing_guardrails_status", enum_type: "guardrails_status"
     t.string "question_routing_guardrails_failures", default: [], array: true
+    t.enum "completeness", enum_type: "answer_completeness"
     t.index ["created_at"], name: "index_answers_on_created_at"
     t.index ["question_id"], name: "index_answers_on_question_id", unique: true
   end

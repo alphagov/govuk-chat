@@ -3,6 +3,7 @@ FactoryBot.define do
     question
     sequence(:message) { |n| "Answer #{n}" }
     status { :answered }
+    completeness { :complete }
     sources { [] }
     feedback { nil }
     analysis { nil }

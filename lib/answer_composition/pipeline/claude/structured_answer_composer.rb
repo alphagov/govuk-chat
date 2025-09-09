@@ -35,7 +35,7 @@ module AnswerComposition::Pipeline
 
         set_context_sources(tool_output[:sources_used])
         message = link_token_mapper.replace_tokens_with_links(tool_output[:answer])
-        context.answer.assign_attributes(message:, status: "answered")
+        context.answer.assign_attributes(message:, status: "answered", completeness: tool_output[:answer_completeness])
         context.answer.assign_metrics("structured_answer", build_metrics(start_time, response))
       end
 
