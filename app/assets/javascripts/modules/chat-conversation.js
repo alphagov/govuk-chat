@@ -17,12 +17,13 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.formContainer.addEventListener('submit', e => this.handleFormSubmission(e))
 
       // new messages indicates we are onboarding a user
-      if (this.messageLists.hasNewMessages()) {
+      if (this.messageLists.hasNewMessages() && !window.GOVUK.cookie('govuk_chat_onboarding_complete')) {
         this.conversationFormRegion.classList.add('govuk-visually-hidden')
         this.messageLists.progressivelyDiscloseMessages().then(() => {
           this.conversationFormRegion.classList.add('app-conversation-layout__form-region--slide-in')
           this.conversationFormRegion.classList.remove('govuk-visually-hidden')
           this.messageLists.scrollToLastNewMessage()
+          window.GOVUK.cookie('govuk_chat_onboarding_complete', 'true')
         })
       } else {
         this.messageLists.scrollToLastMessageInHistory()
