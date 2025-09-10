@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_10_175702) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_10_181712) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -75,8 +75,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_10_175702) do
     t.string "base_path", null: false
     t.string "heading"
     t.boolean "used", default: true
+    t.uuid "answer_source_chunk_id"
     t.index ["answer_id", "relevancy"], name: "index_answer_sources_on_answer_id_and_relevancy", unique: true
     t.index ["answer_id"], name: "index_answer_sources_on_answer_id"
+    t.index ["answer_source_chunk_id"], name: "index_answer_sources_on_answer_source_chunk_id"
     t.index ["created_at"], name: "index_answer_sources_on_created_at"
   end
 
@@ -173,6 +175,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_10_175702) do
 
   add_foreign_key "answer_analyses", "answers", on_delete: :cascade
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade
+  add_foreign_key "answer_sources", "answer_source_chunks", on_delete: :restrict
   add_foreign_key "answer_sources", "answers", on_delete: :cascade
   add_foreign_key "answers", "questions", on_delete: :cascade
   add_foreign_key "conversations", "signon_users", on_delete: :restrict
