@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_10_181712) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_10_184212) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -76,6 +76,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_10_181712) do
     t.string "heading"
     t.boolean "used", default: true
     t.uuid "answer_source_chunk_id"
+    t.float "search_score"
+    t.float "weighted_score"
     t.index ["answer_id", "relevancy"], name: "index_answer_sources_on_answer_id_and_relevancy", unique: true
     t.index ["answer_id"], name: "index_answer_sources_on_answer_id"
     t.index ["answer_source_chunk_id"], name: "index_answer_sources_on_answer_source_chunk_id"
