@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_05_141456) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_10_175702) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -42,6 +42,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_05_141456) do
     t.datetime "updated_at", null: false
     t.index ["answer_id"], name: "index_answer_feedback_on_answer_id", unique: true
     t.index ["created_at"], name: "index_answer_feedback_on_created_at"
+  end
+
+  create_table "answer_source_chunks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "content_id", null: false
+    t.string "locale", null: false
+    t.integer "chunk_index", null: false
+    t.string "digest", null: false
+    t.string "title", null: false
+    t.string "description"
+    t.string "heading_hierachy", array: true
+    t.string "base_path", null: false
+    t.string "exact_path", null: false
+    t.string "document_type", null: false
+    t.string "parent_document_type"
+    t.string "html_content", null: false
+    t.string "plain_content", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["content_id", "locale", "chunk_index", "digest"], name: "idx_on_content_id_locale_chunk_index_digest_e75f64674c", unique: true
   end
 
   create_table "answer_sources", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

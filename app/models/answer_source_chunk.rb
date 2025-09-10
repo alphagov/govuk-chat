@@ -1,0 +1,2 @@
+class AnswerSourceChunk < ApplicationRecord
+end
