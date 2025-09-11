@@ -1,5 +1,6 @@
 class AnswerSource < ApplicationRecord
   belongs_to :answer
+  belongs_to :chunk, class_name: "AnswerSourceChunk", optional: true
 
   scope :used, -> { where(used: true) }
   scope :unused, -> { where(used: false) }
