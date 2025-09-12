@@ -27,6 +27,10 @@ module MessageQueue
         if base_path_version.payload_version <= payload_version
           result = ContentSynchroniser.call(payload)
           logger.info("#{content_identifier(payload)} synched: #{result}")
+          PrometheusMetrics.gauge(
+            "last_document_ingested",
+            1,
+          )
 
           base_path_version.update!(payload_version:)
         else
