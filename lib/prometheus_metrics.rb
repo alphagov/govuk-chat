@@ -25,6 +25,10 @@ class PrometheusMetrics
       name: "rate_limit_api_user_write_percentage_used",
       description: "The percentage of request quota used for the API user for write requests",
     },
+    {
+      name: "last_document_ingested",
+      description: "A metric triggered each time a document is successfully ingested",
+    },
   ].freeze
 
   def self.register
