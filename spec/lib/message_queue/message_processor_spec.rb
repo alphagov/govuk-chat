@@ -43,6 +43,11 @@ RSpec.describe MessageQueue::MessageProcessor do
         expect(Rails.logger).to have_received(:info).with(log_message)
       end
 
+      it "calls prometheus metrics last_document_ingested gauge" do
+        expect(PrometheusMetrics).to receive(:gauge).with("last_document_ingested", 1)
+        described_class.new.process(message)
+      end
+
       it "creates a base path version model if one does not exist" do
         expect { described_class.new.process(message) }
           .to change(BasePathVersion, :count)
