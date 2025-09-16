@@ -43,9 +43,14 @@ RSpec.describe MessageQueue::MessageProcessor do
         expect(Rails.logger).to have_received(:info).with(log_message)
       end
 
-      it "calls prometheus metrics last_document_ingested gauge" do
-        expect(PrometheusMetrics).to receive(:gauge).with("last_document_ingested", 1)
-        described_class.new.process(message)
+      it "records the current timestamp in the prometheus gauge" do
+        freeze_time do
+          expect(PrometheusMetrics)
+            .to receive(:gauge)
+            .with("message_queue_last_content_indexed_timestamp_seconds", Time.current.to_i)
+
+          described_class.new.process(message)
+        end
       end
 
       it "does not call the gauge when the synchroniser indicates content was skipped" do

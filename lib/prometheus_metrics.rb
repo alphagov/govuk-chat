@@ -26,8 +26,8 @@ class PrometheusMetrics
       description: "The percentage of request quota used for the API user for write requests",
     },
     {
-      name: "last_document_ingested",
-      description: "A metric triggered each time a document is successfully ingested",
+      name: "message_queue_last_content_indexed_timestamp_seconds",
+      description: "Unix timestamp of the last message queue content item indexed",
     },
   ].freeze
 
