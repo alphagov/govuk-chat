@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_10_184212) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_16_082602) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -51,7 +51,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_10_184212) do
     t.string "digest", null: false
     t.string "title", null: false
     t.string "description"
-    t.string "heading_hierachy", array: true
+    t.string "heading_hierarchy", array: true
     t.string "base_path", null: false
     t.string "exact_path", null: false
     t.string "document_type", null: false
