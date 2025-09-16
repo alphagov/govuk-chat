@@ -391,23 +391,18 @@ RSpec.describe "rake evaluation tasks" do
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input) do
         search_results = [
-          Search::ResultsForQuestion::WeightedResult.new(
-            result: build(
-              :chunked_content_search_result,
-              exact_path: "/path1",
-              plain_content: "Content 1",
-              score: 1.5,
-            ),
+          build(
+            :weighted_search_result,
+            exact_path: "/path1",
+            plain_content: "Content 1",
+            score: 1.5,
             weighted_score: 1.0,
           ),
-
-          Search::ResultsForQuestion::WeightedResult.new(
-            result: build(
-              :chunked_content_search_result,
-              exact_path: "/path2",
-              plain_content: "Content 2",
-              score: 0.9,
-            ),
+          build(
+            :weighted_search_result,
+            exact_path: "/path2",
+            plain_content: "Content 2",
+            score: 0.9,
             weighted_score: 0.9,
           ),
         ]

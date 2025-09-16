@@ -19,5 +19,16 @@ FactoryBot.define do
     _id { "#{content_id}_#{locale}_#{chunk_index}" }
 
     initialize_with { new(**attributes) }
+
+    factory :weighted_search_result, class: "Search::ResultsForQuestion::WeightedResult" do
+      weighted_score { 1.5 }
+      initialize_with do
+        result_attributes = attributes.except(:weighted_score)
+        result = Search::ChunkedContentRepository::Result.new(**result_attributes)
+
+        factory_attributes = attributes.slice(:weighted_score).merge(result:)
+        new(**factory_attributes)
+      end
+    end
   end
 end
