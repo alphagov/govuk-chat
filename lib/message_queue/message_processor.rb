@@ -30,8 +30,8 @@ module MessageQueue
           base_path_version.update!(payload_version:)
           if result.content_indexed?
             PrometheusMetrics.gauge(
-              "last_document_ingested",
-              1,
+              "message_queue_last_content_indexed_timestamp_seconds",
+              Time.current.to_i,
             )
           end
         else
