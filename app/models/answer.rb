@@ -148,11 +148,18 @@ class Answer < ApplicationRecord
 
   def build_sources_from_search_results(search_results)
     self.sources = search_results.map.with_index do |result, relevancy|
+      chunk = AnswerSourceChunk.find_or_create_from_search_result(result)
+
       sources.build(
+        relevancy:,
+        answer_source_chunk_id: chunk.id,
+        search_score: result.score,
+        weighted_score: result.weighted_score,
+        # TODO: These fields are stored on the chunk and should be removed
+        # once we've migrated to using chunks
         base_path: result.base_path,
         exact_path: result.exact_path,
         title: result.title,
-        relevancy:,
         content_chunk_id: result._id,
         content_chunk_digest: result.digest,
         heading: result.heading_hierarchy.last,

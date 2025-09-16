@@ -126,8 +126,13 @@ RSpec.describe Answer do
 
   describe "#build_sources_from_search_results" do
     it "sets sources on the answer" do
-      search_result_a = build(:chunked_content_search_result, base_path: "/a")
-      search_result_b = build(:chunked_content_search_result, base_path: "/b")
+      chunk_a = create(:answer_source_chunk, base_path: "/a")
+      chunk_b = create(:answer_source_chunk, base_path: "/b")
+      chunk_excluded_fields = %w[id created_at updated_at]
+
+      search_result_a = build(:weighted_search_result, **chunk_a.attributes.except(*chunk_excluded_fields))
+      search_result_b = build(:weighted_search_result, **chunk_b.attributes.except(*chunk_excluded_fields))
+
       answer = build(:answer)
       answer.build_sources_from_search_results([search_result_a, search_result_b])
 
@@ -135,6 +140,9 @@ RSpec.describe Answer do
       expect(answer.sources.first)
         .to have_attributes(
           relevancy: 0,
+          answer_source_chunk_id: chunk_a.id,
+          search_score: search_result_a.score,
+          weighted_score: search_result_a.weighted_score,
           base_path: search_result_a.base_path,
           exact_path: search_result_a.exact_path,
           title: search_result_a.title,
@@ -145,6 +153,9 @@ RSpec.describe Answer do
       expect(answer.sources.second)
         .to have_attributes(
           relevancy: 1,
+          answer_source_chunk_id: chunk_b.id,
+          search_score: search_result_b.score,
+          weighted_score: search_result_b.weighted_score,
           base_path: search_result_b.base_path,
           exact_path: search_result_b.exact_path,
           title: search_result_b.title,
@@ -154,9 +165,24 @@ RSpec.describe Answer do
         )
     end
 
+    it "creates answer_source_chunks for sources that reference chunks that don't exist" do
+      chunk = create(:answer_source_chunk)
+      chunk_excluded_fields = %w[id created_at updated_at]
+
+      search_results = []
+      search_results << build(:weighted_search_result, **chunk.attributes.except(*chunk_excluded_fields))
+      search_results << build(:weighted_search_result)
+      search_results << build(:weighted_search_result)
+
+      answer = build(:answer)
+      expect { answer.build_sources_from_search_results(search_results) }
+        .to change(AnswerSourceChunk, :count)
+        .by(2)
+    end
+
     it "resets any existing sources" do
       answer = build(:answer, :with_sources)
-      search_result = build(:chunked_content_search_result)
+      search_result = build(:weighted_search_result)
       answer.build_sources_from_search_results([search_result])
 
       expect(answer.sources.length).to be(1)

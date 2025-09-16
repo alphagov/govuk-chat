@@ -42,10 +42,7 @@ RSpec.describe AnswerComposition::Pipeline::Context do
 
     it "sets all sources to unused" do
       instance = described_class.new(build(:question))
-      instance.search_results = [
-        build(:chunked_content_search_result),
-        build(:chunked_content_search_result),
-      ]
+      instance.search_results = build_list(:weighted_search_result, 2)
 
       instance.abort_pipeline
 
@@ -110,7 +107,7 @@ RSpec.describe AnswerComposition::Pipeline::Context do
   end
 
   describe "#search_results=" do
-    let(:search_results) { build_list(:chunked_content_search_result, 2) }
+    let(:search_results) { build_list(:weighted_search_result, 2) }
 
     it "updates the search_results attribute" do
       instance = described_class.new(build(:question))
@@ -207,7 +204,7 @@ RSpec.describe AnswerComposition::Pipeline::Context do
   describe "#search_results_prompt_formatted" do
     it "returns an array of hashes with the correct structure" do
       instance = described_class.new(build(:question))
-      instance.search_results = build_list(:chunked_content_search_result, 2)
+      instance.search_results = build_list(:weighted_search_result, 2)
       link_token_mapper = AnswerComposition::LinkTokenMapper.new
 
       formatted = instance.search_results_prompt_formatted(link_token_mapper)

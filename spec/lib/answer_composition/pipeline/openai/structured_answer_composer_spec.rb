@@ -4,7 +4,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer, :c
     let(:context) { build(:answer_pipeline_context, question:) }
     let(:search_result) do
       build(
-        :chunked_content_search_result,
+        :weighted_search_result,
         _id: "1",
         score: 1.0,
         exact_path: "/vat-rates#vat-basics",
@@ -49,7 +49,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer, :c
       let(:expected_message_history) do
         array_including({ "role" => "user", "content" => question.message })
       end
-      let(:unused_search_result) { build(:chunked_content_search_result, _id: "2", score: 0.5, exact_path: "/vat-rates#vat-rates") }
+      let(:unused_search_result) { build(:weighted_search_result, _id: "2", score: 0.5, exact_path: "/vat-rates#vat-rates") }
 
       it "calls OpenAI chat endpoint and assigns the correct values to the context's answer" do
         stub_openai_chat_completion_structured_response(
