@@ -13,6 +13,6 @@ class AnswerSource < ApplicationRecord
   end
 
   def serialize_for_export
-    as_json
+    as_json(except: :answer_source_chunk_id)
   end
 end
