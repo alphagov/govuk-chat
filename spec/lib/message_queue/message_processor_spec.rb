@@ -48,6 +48,16 @@ RSpec.describe MessageQueue::MessageProcessor do
         described_class.new.process(message)
       end
 
+      it "does not call the gauge when the synchroniser indicates content was skipped" do
+        allow(MessageQueue::ContentSynchroniser)
+          .to receive(:call)
+          .and_return(MessageQueue::ContentSynchroniser::Result.new(skip_index_reason: "has a non-English locale"))
+
+        expect(PrometheusMetrics).not_to receive(:gauge)
+
+        described_class.new.process(message)
+      end
+
       it "creates a base path version model if one does not exist" do
         expect { described_class.new.process(message) }
           .to change(BasePathVersion, :count)

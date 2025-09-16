@@ -19,4 +19,22 @@ RSpec.describe MessageQueue::ContentSynchroniser::Result do
       end
     end
   end
+
+  describe "#content_indexed?" do
+    context "when skip_index_reason is nil" do
+      it "returns true" do
+        result = described_class.new
+
+        expect(result).to be_content_indexed
+      end
+    end
+
+    context "when skip_index_reason is present" do
+      it "returns false" do
+        result = described_class.new(skip_index_reason: "something went wrong")
+
+        expect(result).not_to be_content_indexed
+      end
+    end
+  end
 end

@@ -14,6 +14,10 @@ class MessageQueue::ContentSynchroniser
       super
     end
 
+    def content_indexed?
+      skip_index_reason.nil?
+    end
+
     def to_s
       if skip_index_reason
         "content not indexed (#{skip_index_reason}), " \
