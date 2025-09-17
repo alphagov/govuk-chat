@@ -17,7 +17,7 @@ description: An optional sentence describing in the content as you would expect 
 chunks - this must be an array objects within. This array should have between 2 and 4 items. The objects need to be in the following structure:
   html_content: HTML content within a paragraph element that relates to the GOV.UK content and is multiple sentences long at around 50 words. It must offer guidance on how a user can achieve a task. Make sure it is within a <p> element.
   heading_hierarchy: an array of strings that represent headings of the GOV.UK. Can be between 0 and 3 items - mix this up in your answer
-  exact_path: this is the base_path again but with the last item of the heading_hierachy appended as a valid URL fragment that is all lowercase. Do not have an empty fragment, if there isn't something you can link to don't put a # character
+  exact_path: this is the base_path again but with the last item of the heading_hierarchy appended as a valid URL fragment that is all lowercase. Do not have an empty fragment, if there isn't something you can link to don't put a # character
 
 Please check your answer before replying - make sure html_content has at least 2 sentences and that each html_content varies in the number of sentences. Check the YAML is valid and put double quotes around strings that contain any non alphanumeric characters.
 ```

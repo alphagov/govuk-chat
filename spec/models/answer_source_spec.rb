@@ -25,9 +25,10 @@ RSpec.describe AnswerSource do
   end
 
   describe "#serialize for export" do
-    it "returns a source serialzed as json" do
-      source = create(:answer_feedback)
-      expect(source.serialize_for_export).to eq(source.as_json)
+    it "returns a source serialzed as json without the answer_source_chunk_id" do
+      source = build(:answer_source)
+      json = source.as_json(except: :answer_source_chunk_id)
+      expect(source.serialize_for_export).to eq(json)
     end
   end
 end

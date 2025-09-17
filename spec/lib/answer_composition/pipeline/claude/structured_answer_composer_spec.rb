@@ -4,7 +4,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
     let(:context) { build(:answer_pipeline_context, question:) }
     let(:search_result) do
       build(
-        :chunked_content_search_result,
+        :weighted_search_result,
         _id: "1",
         score: 1.0,
         exact_path: "/vat-rates#vat-basics",
@@ -13,7 +13,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
     end
     let(:unused_search_result) do
       build(
-        :chunked_content_search_result,
+        :weighted_search_result,
         _id: "2",
         score: 0.5,
         exact_path: "/vat-rates#vat-rates",

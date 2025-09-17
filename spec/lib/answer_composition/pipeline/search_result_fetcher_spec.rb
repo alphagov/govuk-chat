@@ -1,6 +1,6 @@
 RSpec.describe AnswerComposition::Pipeline::SearchResultFetcher, :chunked_content_index do
   let(:context) { build(:answer_pipeline_context) }
-  let(:search_result) { build(:chunked_content_search_result) }
+  let(:search_result) { build(:weighted_search_result) }
   let(:search_results) do
     Search::ResultsForQuestion::ResultSet.new(
       results: [search_result],
