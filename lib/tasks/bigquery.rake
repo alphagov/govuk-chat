@@ -51,4 +51,29 @@ namespace :bigquery do
 
     puts "Deleted all #{records} BigqueryExport records"
   end
+
+  desc "Delete all BigQuery exports for an opted-out user"
+  task :delete_opted_out_end_user_data, %i[end_user_id] => :environment do |_, args|
+    end_user_id = args[:end_user_id]
+    abort "You must provide an end_user_id" if end_user_id.blank?
+
+    bigquery = Google::Cloud::Bigquery.new
+    project_id = bigquery.project_id
+    dataset_id = bigquery.dataset(Rails.configuration.bigquery_dataset_id).dataset_id
+    hashed_end_user_id = OpenSSL::HMAC.hexdigest(
+      "SHA256",
+      Rails.application.secret_key_base,
+      end_user_id,
+    )
+
+    sql = <<~SQL
+      DELETE FROM #{project_id}.#{dataset_id}.questions
+      WHERE end_user_id = @hashed_end_user_id
+    SQL
+
+    job = bigquery.query_job sql, params: { hashed_end_user_id: hashed_end_user_id }
+    job.wait_until_done!
+    deleted_count = job.statistics["query"]["dmlStats"]["deletedRowCount"].to_i
+    puts "Deleted #{deleted_count} #{'row'.pluralize(deleted_count)} from questions table"
+  end
 end
