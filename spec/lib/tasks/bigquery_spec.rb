@@ -153,4 +153,68 @@ RSpec.describe "rake bigquery tasks" do
         .and change(BigqueryExport, :count).to(0)
     end
   end
+
+  describe "bigquery:delete_opted_out_end_user_data" do
+    let(:task_name) { "bigquery:delete_opted_out_end_user_data" }
+    let(:end_user_id) { "user-123" }
+    let(:bigquery) { instance_double(Google::Cloud::Bigquery::Project, project_id: "test_project") }
+    let(:dataset) { instance_double(Google::Cloud::Bigquery::Dataset, dataset_id: "test_dataset") }
+    let(:job) { instance_double(Google::Cloud::Bigquery::QueryJob, wait_until_done!: nil, statistics: stats) }
+    let(:stats) { { "query" => { "dmlStats" => { "deletedRowCount" => "3" } } } }
+    let(:hashed_end_user_id) do
+      OpenSSL::HMAC.hexdigest(
+        "SHA256",
+        Rails.application.secret_key_base,
+        end_user_id,
+      )
+    end
+
+    before do
+      Rake::Task[task_name].reenable
+      allow(Google::Cloud::Bigquery).to receive(:new).and_return(bigquery)
+      allow(bigquery).to receive(:dataset).with("test_dataset").and_return(dataset)
+      allow(Rails.configuration).to receive(:bigquery_dataset_id).and_return("test_dataset")
+      allow(bigquery).to receive(:query_job).and_return(job)
+    end
+
+    it "outputs the number of deleted rows to stdout" do
+      expect { Rake::Task[task_name].invoke(end_user_id) }
+        .to output("Deleted 3 rows from questions table\n").to_stdout
+    end
+
+    it "runs a delete query with the correct SQL and params" do
+      expect { Rake::Task[task_name].invoke(end_user_id) }.to output.to_stdout
+      expected_query = <<~SQL
+        DELETE FROM test_project.test_dataset.questions
+        WHERE end_user_id = @hashed_end_user_id
+      SQL
+
+      expect(bigquery).to have_received(:query_job).with(
+        a_string_including(expected_query),
+        params: { hashed_end_user_id: hashed_end_user_id },
+      )
+    end
+
+    it "waits for the job to finish" do
+      expect(job).to receive(:wait_until_done!)
+      expect { Rake::Task[task_name].invoke(end_user_id) }.to output.to_stdout
+    end
+
+    context "when no end_user_id is provided" do
+      it "exits with an error" do
+        expect { Rake::Task[task_name].invoke }
+          .to raise_error(SystemExit)
+          .and output(/You must provide an end_user_id/).to_stderr
+        expect(bigquery).not_to have_received(:query_job)
+      end
+    end
+
+    context "when nil is passed as the end_user_id" do
+      it "exits with an error" do
+        expect { Rake::Task[task_name].invoke(nil) }
+          .to raise_error(SystemExit)
+          .and output(/You must provide an end_user_id/).to_stderr
+      end
+    end
+  end
 end
