@@ -81,4 +81,52 @@ namespace :search do
 
     puts "#{indexed} chunks indexed"
   end
+
+  # Temporary task - to remove after running in production
+  desc "Backfill AnswerSourceChunk records with missing data"
+  task backfill_answer_source_chunks: :environment do
+    checked = 0
+    updated = 0
+    skipped_out_of_date = 0
+    skipped_not_found = 0
+
+    template = "Checked %{checked} records - updated %{updated}, out of date " \
+               "%{skipped_out_of_date}, not found %{skipped_not_found}"
+
+    AnswerSourceChunk.where(document_type: "").find_each do |chunk|
+      if checked.positive? && (checked % 500).zero?
+        message = sprintf(template, checked:, updated:, skipped_out_of_date:, skipped_not_found:)
+
+        puts "Progress - #{message}"
+      end
+
+      checked += 1
+
+      id = "#{chunk.content_id}_#{chunk.locale}_#{chunk.chunk_index}"
+
+      repo = Search::ChunkedContentRepository.new
+      search_result = repo.chunk(id)
+
+      if search_result.digest == chunk.digest
+        attributes = search_result.to_h.slice(:heading_hierarchy,
+                                              :html_content,
+                                              :plain_content,
+                                              :document_type,
+                                              :parent_document_type,
+                                              :description)
+
+        chunk.update!(attributes)
+        updated += 1
+      else
+        skipped_out_of_date += 1
+      end
+    rescue Search::ChunkedContentRepository::NotFound
+      skipped_not_found += 1
+      next
+    end
+
+    message = sprintf(template, checked:, updated:, skipped_out_of_date:, skipped_not_found:)
+
+    puts "Finished - #{message}"
+  end
 end
