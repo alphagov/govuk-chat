@@ -116,3 +116,14 @@ common_chart_options = { refresh: 30 }
     <% end %>
   </div>
 </div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-8">
+  <div class="<%= column_class %>" id="topics">
+    <h2 class="govuk-heading-l">Topics</h2>
+    <% if @period == :last_7_days %>
+      <%= column_chart admin_metrics_topics_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% else %>
+      <%= pie_chart admin_metrics_topics_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% end %>
+  </div>
+</div>

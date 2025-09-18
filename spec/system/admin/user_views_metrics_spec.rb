@@ -15,7 +15,7 @@ RSpec.describe "Admin user views metrics", :js do
   def and_there_has_been_activity
     create_list(:question, 2)
     create_list(:answer_feedback, 1, created_at: 1.hour.ago)
-    create_list(:answer, 2, created_at: 6.hours.ago, status: :unanswerable_llm_cannot_answer)
+    create_list(:answer, 2, :with_analysis, created_at: 6.hours.ago, status: :unanswerable_llm_cannot_answer)
     create_list(:answer, 3, created_at: 4.hours.ago, status: :error_timeout)
     create_list(:answer, 1, created_at: 20.hours.ago, question_routing_label: :genuine_rag)
     create_list(:answer,
@@ -49,6 +49,7 @@ RSpec.describe "Admin user views metrics", :js do
     expect(page).to have_selector("#question-routing-labels canvas")
     expect(page).to have_selector("#answer-guardrails-failures canvas")
     expect(page).to have_selector("#question-routing-guardrails-failures canvas")
+    expect(page).to have_selector("#topics canvas")
   end
 
   def and_i_can_see_its_for_last_24_hours
