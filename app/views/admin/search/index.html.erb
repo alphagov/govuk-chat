@@ -3,7 +3,7 @@ content_for(:title, "Search RAG index")
 content_for(:active_navigation_item, admin_search_path)
 %>
 
-<%= form_with url: admin_search_url, method: :get do |f| %>
+<%= form_with url: admin_search_path, method: :get do |f| %>
     <%= render "govuk_publishing_components/components/search", {
         label_text: "Text to search for",
         inline_label: false,
