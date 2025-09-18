@@ -100,6 +100,31 @@ class Admin::MetricsController < Admin::BaseController
     render json: data.chart_json
   end
 
+  def topics
+    scope = AnswerAnalysis.joins(:answer)
+                          .where(answer: { created_at: start_time.. })
+
+    primary_topic_scope = scope.where.not(primary_topic: nil)
+                               .group(:primary_topic)
+
+    secondary_topic_scope = scope.where.not(secondary_topic: nil)
+                                       .group(:secondary_topic)
+
+    if @period == :last_7_days
+      primary_topic_counts = group_by_period(primary_topic_scope, "answer.created_at").count
+      secondary_topic_counts = group_by_period(secondary_topic_scope, "answer.created_at").count
+    else
+      primary_topic_counts = primary_topic_scope.count
+      secondary_topic_counts = secondary_topic_scope.count
+    end
+
+    combined_counts = primary_topic_counts.merge(secondary_topic_counts) do |_name, primary_count, secondary_count|
+      primary_count + secondary_count
+    end
+
+    render json: combined_counts.chart_json
+  end
+
 private
 
   def set_period

@@ -65,6 +65,7 @@ Rails.application.routes.draw do
                                           as: :metrics_answer_guardrails_failures
         get "question-routing-guardrails-failures", to: "metrics#question_routing_guardrails_failures",
                                                     as: :metrics_question_routing_guardrails_failures
+        get "topics", to: "metrics#topics", as: :metrics_topics
       end
     end
 
