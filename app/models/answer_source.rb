@@ -2,7 +2,6 @@ class AnswerSource < ApplicationRecord
   belongs_to :answer
   belongs_to :chunk,
              class_name: "AnswerSourceChunk",
-             optional: true,
              foreign_key: "answer_source_chunk_id"
 
   scope :used, -> { where(used: true) }
