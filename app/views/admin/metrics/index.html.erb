@@ -127,3 +127,19 @@ common_chart_options = { refresh: 30 }
     <% end %>
   </div>
 </div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-8">
+  <div class="<%= column_class %>" id="answer-completeness">
+    <h2 class="govuk-heading-l">Answer completeness</h2>
+    <% if @period == :last_7_days %>
+      <%= column_chart admin_metrics_answer_completeness_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% else %>
+      <%= pie_chart admin_metrics_answer_completeness_path(period: @period), **common_chart_options.merge(legend: legend_position) %>
+    <% end %>
+
+  </div>
+
+<% if @period == :last_7_days %>
+</div>
+<div class="govuk-grid-row govuk-!-margin-bottom-8">
+<% end %>

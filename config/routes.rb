@@ -66,6 +66,7 @@ Rails.application.routes.draw do
         get "question-routing-guardrails-failures", to: "metrics#question_routing_guardrails_failures",
                                                     as: :metrics_question_routing_guardrails_failures
         get "topics", to: "metrics#topics", as: :metrics_topics
+        get "answer-completeness", to: "metrics#answer_completeness", as: :metrics_answer_completeness
       end
     end
 

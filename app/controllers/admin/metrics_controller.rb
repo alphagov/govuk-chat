@@ -125,6 +125,18 @@ class Admin::MetricsController < Admin::BaseController
     render json: combined_counts.chart_json
   end
 
+  def answer_completeness
+    scope = Answer.where(created_at: start_time..)
+                  .where.not(completeness: nil)
+                  .group(:completeness)
+
+    if @period == :last_7_days
+      render json: count_by_period(scope, :created_at).chart_json
+    else
+      render json: scope.count.chart_json
+    end
+  end
+
 private
 
   def set_period
