@@ -152,7 +152,7 @@ class Answer < ApplicationRecord
 
       sources.build(
         relevancy:,
-        answer_source_chunk_id: chunk.id,
+        chunk:,
         search_score: result.score,
         weighted_score: result.weighted_score,
         # TODO: These fields are stored on the chunk and should be removed

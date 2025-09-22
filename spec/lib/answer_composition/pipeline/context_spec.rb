@@ -129,29 +129,41 @@ RSpec.describe AnswerComposition::Pipeline::Context do
     let(:answer) { instance.answer }
 
     it "sets used to 'true' for used sources" do
-      source = build(:answer_source, exact_path: "/vat-rates#vat", used: false)
+      source = build(:answer_source,
+                     used: false,
+                     chunk: build(:answer_source_chunk, exact_path: "/vat-rates#vat"))
+
       answer.sources = [source]
 
-      instance.update_sources_from_exact_urls_used([source.exact_path])
+      instance.update_sources_from_exact_urls_used([source.chunk.govuk_url])
 
       expect(answer.sources).to contain_exactly(source)
       expect(source.used).to be(true)
     end
 
     it "sets used to 'false' for unused sources" do
-      used_source = build(:answer_source, exact_path: "/vat-rates#vat")
-      unused_source = build(:answer_source, exact_path: "/vat-rates#vat-basics", used: true)
+      used_source = build(:answer_source,
+                          chunk: build(:answer_source_chunk, exact_path: "/vat-rates#vat"))
+
+      unused_source = build(:answer_source,
+                            used: true,
+                            chunk: build(:answer_source_chunk, exact_path: "/vat-rates#vat-basics"))
+
       answer.sources = [used_source, unused_source]
 
-      instance.update_sources_from_exact_urls_used([used_source.url])
+      instance.update_sources_from_exact_urls_used([used_source.chunk.govuk_url])
 
       expect(answer.sources).to contain_exactly(used_source, unused_source)
       expect(unused_source.used).to be(false)
     end
 
     it "sets all sources used to 'true' if no sources are passed in" do
-      first_source = build(:answer_source, exact_path: "/vat-rates#vat", used: false)
-      second_source = build(:answer_source, exact_path: "/vat-rates#vat", used: false)
+      first_source = build(:answer_source,
+                           used: false,
+                           chunk: build(:answer_source_chunk, exact_path: "/vat-rates#vat-1"))
+      second_source = build(:answer_source,
+                            used: false,
+                            chunk: build(:answer_source_chunk, exact_path: "/vat-rates#vat-2"))
       answer.sources = [first_source, second_source]
 
       instance.update_sources_from_exact_urls_used([])
@@ -162,7 +174,10 @@ RSpec.describe AnswerComposition::Pipeline::Context do
     end
 
     it "handles invalid exact_paths gracefully" do
-      source = build(:answer_source, exact_path: "/vat-rates#vat", used: false)
+      source = build(:answer_source,
+                     used: false,
+                     chunk: build(:answer_source_chunk, exact_path: "/vat-rates#vat"))
+
       answer.sources = [source]
 
       instance.update_sources_from_exact_urls_used(["/made-up-path"])
@@ -172,14 +187,20 @@ RSpec.describe AnswerComposition::Pipeline::Context do
     end
 
     it "orders the relevancy of sources based on the order of the exact_paths passed in" do
-      first_used_source = build(:answer_source, exact_path: "/vat-rates#vat", relevancy: 1)
-      second_used_source = build(:answer_source, exact_path: "/vat-rates#vat-basics", relevancy: 0)
+      first_used_source = build(:answer_source,
+                                relevancy: 1,
+                                chunk: build(:answer_source_chunk, exact_path: "/vat-rates#vat"))
+
+      second_used_source = build(:answer_source,
+                                 relevancy: 0,
+                                 chunk: build(:answer_source_chunk, exact_path: "/vat-rates#vat-basics"))
+
       answer.sources = [second_used_source, first_used_source]
 
       instance.update_sources_from_exact_urls_used(
         [
-          first_used_source.url,
-          second_used_source.url,
+          first_used_source.chunk.govuk_url,
+          second_used_source.chunk.govuk_url,
         ],
       )
 
@@ -189,11 +210,17 @@ RSpec.describe AnswerComposition::Pipeline::Context do
     end
 
     it "orders used sources before unused sources" do
-      unused_source = build(:answer_source, exact_path: "/vat-rates#vat", relevancy: 0)
-      used_source = build(:answer_source, exact_path: "/vat-rates#vat-basics", relevancy: 1)
+      unused_source = build(:answer_source,
+                            relevancy: 0,
+                            chunk: build(:answer_source_chunk, exact_path: "/vat-rates#vat"))
+
+      used_source = build(:answer_source,
+                          relevancy: 1,
+                          chunk: build(:answer_source_chunk, exact_path: "/vat-rates#vat-basics"))
+
       answer.sources = [unused_source, used_source]
 
-      instance.update_sources_from_exact_urls_used([used_source.url])
+      instance.update_sources_from_exact_urls_used([used_source.chunk.govuk_url])
 
       expect(answer.sources).to contain_exactly(used_source, unused_source)
       expect(used_source.relevancy).to eq(0)
