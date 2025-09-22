@@ -19,6 +19,16 @@ class Conversation < ApplicationRecord
        },
        prefix: true
 
+  def self.hashed_end_user_id(end_user_id)
+    return nil if end_user_id.blank?
+
+    OpenSSL::HMAC.hexdigest(
+      "SHA256",
+      Rails.application.secret_key_base,
+      end_user_id,
+    )
+  end
+
   def questions_for_showing_conversation(only_answered: false, before_id: nil, after_id: nil, limit: nil)
     scope = Question.where(conversation: self)
                   .includes(answer: %i[feedback sources])
@@ -55,10 +65,6 @@ class Conversation < ApplicationRecord
   def hashed_end_user_id
     return nil if end_user_id.blank?
 
-    OpenSSL::HMAC.hexdigest(
-      "SHA256",
-      Rails.application.secret_key_base,
-      end_user_id,
-    )
+    self.class.hashed_end_user_id(end_user_id)
   end
 end

@@ -60,11 +60,7 @@ namespace :bigquery do
     bigquery = Google::Cloud::Bigquery.new
     project_id = bigquery.project_id
     dataset_id = bigquery.dataset(Rails.configuration.bigquery_dataset_id).dataset_id
-    hashed_end_user_id = OpenSSL::HMAC.hexdigest(
-      "SHA256",
-      Rails.application.secret_key_base,
-      end_user_id,
-    )
+    hashed_end_user_id = Conversation.hashed_end_user_id(end_user_id)
 
     sql = <<~SQL
       DELETE FROM #{project_id}.#{dataset_id}.questions
