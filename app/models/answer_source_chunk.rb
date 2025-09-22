@@ -24,4 +24,8 @@ class AnswerSourceChunk < ApplicationRecord
   def govuk_url
     "#{Plek.website_root}#{exact_path}"
   end
+
+  def heading
+    heading_hierarchy.last
+  end
 end
