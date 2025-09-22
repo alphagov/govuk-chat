@@ -112,19 +112,25 @@ RSpec.describe Admin::QuestionsHelper do
     end
 
     it "returns a used sources row when the answer has sources" do
-      answer = create(:answer, sources: [create(:answer_source)])
+      source = create(:answer_source)
+      answer = create(:answer, sources: [source])
       answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
       expect(returned_keys(result)).to include("Used sources")
+      expect(returned_value(result, "Used sources"))
+        .to have_link(source.chunk.title, href: source.chunk.govuk_url)
     end
 
     it "returns an unused sources row when the answer has unused sources" do
-      answer = create(:answer, sources: [create(:answer_source, used: false)])
+      source = create(:answer_source, used: false)
+      answer = create(:answer, sources: [source])
       answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
       expect(returned_keys(result)).to include("Unused sources")
+      expect(returned_value(result, "Unused sources"))
+        .to have_link(source.chunk.title, href: source.chunk.govuk_url)
     end
 
     it "returns feedback rows when the answer has feedback" do

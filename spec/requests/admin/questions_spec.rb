@@ -221,9 +221,9 @@ RSpec.describe "Admin::QuestionsController" do
 
       expect(response.body)
         .to have_content("Used sources")
-        .and have_link(used_source.title, href: used_source.url)
+        .and have_link(used_source.chunk.title, href: used_source.chunk.govuk_url)
         .and have_content("Unused sources")
-        .and have_link(unused_source.title, href: unused_source.url)
+        .and have_link(unused_source.chunk.title, href: unused_source.chunk.govuk_url)
     end
 
     it "renders the feedback for an answer when present" do
