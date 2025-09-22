@@ -43,7 +43,6 @@ RSpec.describe "Admin user views metrics", :js do
     # element, unclear how to assert correct chart
     expect(page).to have_selector("#conversations canvas")
     expect(page).to have_selector("#questions canvas")
-    expect(page).to have_selector("#answer-feedback canvas")
     expect(page).to have_selector("#answers-with-unanswerable-status canvas")
     expect(page).to have_selector("#answers-with-error-status canvas")
     expect(page).to have_selector("#question-routing-labels canvas")

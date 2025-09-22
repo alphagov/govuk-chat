@@ -18,12 +18,6 @@ class Admin::MetricsController < Admin::BaseController
     render json: count_by_period(scope, :created_at).chart_json
   end
 
-  def answer_feedback
-    scope = AnswerFeedback.where(created_at: start_time..)
-                          .group_useful_by_label
-    render json: count_by_period(scope, :created_at).chart_json
-  end
-
   def answer_unanswerable_statuses
     scope = Answer.where(created_at: start_time..)
                   .aggregate_status("unanswerable")
