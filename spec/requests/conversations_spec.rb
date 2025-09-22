@@ -131,30 +131,30 @@ RSpec.describe "ConversationsController" do
         it "renders the sources correctly for answers with the success status" do
           question = create(:question, conversation:)
           answer = create(:answer, :with_sources, question:)
-          first_source = answer.sources.first
-          second_source = answer.sources.second
+          first_source_chunk = answer.sources.first.chunk
+          second_source_chunk = answer.sources.second.chunk
 
           get show_conversation_path
 
           expect(response).to have_http_status(:success)
           expect(response.body)
             # The following links will not be visible due to collapsed state of details element, but should be present in the DOM
-            .to have_link(first_source.title, href: first_source.url, visible: :hidden)
-            .and have_link(second_source.title, href: second_source.url, visible: :hidden)
+            .to have_link(first_source_chunk.title, href: first_source_chunk.govuk_url, visible: :hidden)
+            .and have_link(second_source_chunk.title, href: second_source_chunk.govuk_url, visible: :hidden)
         end
 
         it "doesn't render unused sources" do
           question = create(:question, conversation:)
           answer = create(:answer, question:)
-          first_source = create(:answer_source, answer:, used: true)
-          second_source = create(:answer_source, answer:, used: false)
+          first_source_chunk = create(:answer_source, answer:, used: true).chunk
+          second_source_chunk = create(:answer_source, answer:, used: false).chunk
 
           get show_conversation_path
 
           expect(response).to have_http_status(:success)
           expect(response.body)
-            .to have_link(first_source.title, href: first_source.url, visible: :hidden)
-            .and have_no_link(second_source.title)
+            .to have_link(first_source_chunk.title, href: first_source_chunk.govuk_url, visible: :hidden)
+            .and have_no_link(second_source_chunk.title)
         end
 
         it "doesn't render the sources component if all sources are unused" do

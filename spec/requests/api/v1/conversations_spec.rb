@@ -616,11 +616,12 @@ RSpec.describe "Api::V1::ConversationsController" do
 
       it "returns the correct JSON for answer sources" do
         source = create(:answer_source, answer:)
+        chunk = source.chunk
 
         get api_v1_answer_question_path(conversation, question), headers:, as: :json
 
         expect(JSON.parse(response.body)["sources"])
-          .to eq([{ url: source.url, title: "#{source.title}: #{source.heading}" }.as_json])
+          .to eq([{ url: chunk.govuk_url, title: "#{chunk.title}: #{chunk.heading}" }.as_json])
       end
     end
 

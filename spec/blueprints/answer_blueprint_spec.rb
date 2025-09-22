@@ -14,7 +14,7 @@ RSpec.describe AnswerBlueprint do
     end
 
     it "generates the correct JSON for an Answer with used sources" do
-      answer_source = create(:answer_source, answer:)
+      answer_source_chunk = create(:answer_source, answer:).chunk
 
       expected_json = {
         id: answer.id,
@@ -22,8 +22,8 @@ RSpec.describe AnswerBlueprint do
         message: answer.message,
         sources: [
           {
-            title: "#{answer_source.title}: #{answer_source.heading}",
-            url: answer_source.url,
+            title: "#{answer_source_chunk.title}: #{answer_source_chunk.heading}",
+            url: answer_source_chunk.govuk_url,
           },
         ],
       }.as_json

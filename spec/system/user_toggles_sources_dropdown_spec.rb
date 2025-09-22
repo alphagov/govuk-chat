@@ -15,9 +15,19 @@ RSpec.describe "User toggles the sources dropdown" do
   def and_i_have_an_active_conversation_with_an_answered_question_with_sources
     @conversation = create(:conversation, signon_user: @signon_user)
     set_rack_cookie(:conversation_id, @conversation.id)
-    @source_vat = build(:answer_source, exact_path: "/vat", title: "Everything about VAT", relevancy: 0)
-    @source_income_tax = build(:answer_source, exact_path: "/income-tax", title: "Income Tax Details", relevancy: 1)
-    answer = build(:answer, sources: [@source_vat, @source_income_tax], message: "Example answer")
+    @source_chunk_vat = create(:answer_source_chunk,
+                               exact_path: "/vat",
+                               base_path: "/vat",
+                               title: "Everything about VAT")
+    @source_chunk_income_tax = create(:answer_source_chunk,
+                                      exact_path: "/income-tax",
+                                      base_path: "/income-tax",
+                                      title: "Income Tax Details")
+    sources = [
+      build(:answer_source, chunk: @source_chunk_vat),
+      build(:answer_source, chunk: @source_chunk_income_tax),
+    ]
+    answer = build(:answer, sources:, message: "Example answer")
     create(:question, answer:, conversation: @conversation, message: "Example question")
   end
 
@@ -26,8 +36,10 @@ RSpec.describe "User toggles the sources dropdown" do
   end
 
   def then_i_cannot_see_the_source_links
-    expect(page).not_to have_link(@source_vat.title, href: @source_vat.url)
-    expect(page).not_to have_link(@source_income_tax.title, href: @source_income_tax.url)
+    expect(page).not_to have_link(@source_chunk_vat.title,
+                                  href: @source_chunk_vat.govuk_url)
+    expect(page).not_to have_link(@source_chunk_income_tax.title,
+                                  href: @source_chunk_income_tax.govuk_url)
   end
 
   def when_i_click_on_the_sources_dropdown
@@ -37,7 +49,9 @@ RSpec.describe "User toggles the sources dropdown" do
   alias_method :when_i_click_on_the_sources_dropdown_again, :when_i_click_on_the_sources_dropdown
 
   def then_i_can_see_the_source_links
-    expect(page).to have_link(@source_vat.title, href: @source_vat.url)
-    expect(page).to have_link(@source_income_tax.title, href: @source_income_tax.url)
+    expect(page).to have_link(@source_chunk_vat.title,
+                              href: @source_chunk_vat.govuk_url)
+    expect(page).to have_link(@source_chunk_income_tax.title,
+                              href: @source_chunk_income_tax.govuk_url)
   end
 end
