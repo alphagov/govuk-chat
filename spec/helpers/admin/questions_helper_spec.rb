@@ -99,8 +99,8 @@ RSpec.describe Admin::QuestionsHelper do
       answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
-      row = result.find { |r| r[:field] == "Unsanitised question" }
-      expect(row[:value]).to eq("ASCII smuggling decoded:<br><br>Message with hidden characters <mark>hidden</mark>")
+      expect(returned_value(result, "Unsanitised question"))
+        .to eq("ASCII smuggling decoded:<br><br>Message with hidden characters <mark>hidden</mark>")
     end
 
     it "returns an error message row if the answer has an error message" do
@@ -141,8 +141,8 @@ RSpec.describe Admin::QuestionsHelper do
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
       expect(returned_keys(result)).to include("End user ID")
-      row = result.find { |r| r[:field] == "End user ID" }
-      expect(row[:value]).to include(admin_questions_path(end_user_id: "12345"))
+      expect(returned_value(result, "End user ID"))
+        .to include(admin_questions_path(end_user_id: "12345"))
     end
 
     it "returns a row with completeness when a question has been answered" do
@@ -150,8 +150,7 @@ RSpec.describe Admin::QuestionsHelper do
       answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
-      row = result.find { |r| r[:field] == "Completeness" }
-      expect(row[:value]).to eq("Partial")
+      expect(returned_value(result, "Completeness")).to eq("Partial")
     end
 
     it "returns a row with a human readable question routing label" do
@@ -159,8 +158,8 @@ RSpec.describe Admin::QuestionsHelper do
       answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
-      row = result.find { |r| r[:field] == "Question routing label" }
-      expect(row[:value]).to eq("Advice, opinions, predictions")
+      expect(returned_value(result, "Question routing label"))
+        .to eq("Advice, opinions, predictions")
     end
 
     it "returns a row with a link to filter the questions table by the signon user" do
@@ -168,8 +167,7 @@ RSpec.describe Admin::QuestionsHelper do
       conversation.update!(signon_user:)
       result = helper.question_show_summary_list_rows(question, nil, 1, 1)
 
-      row = result.find { |r| r[:field] == "Signon user" }
-      expect(row[:value])
+      expect(returned_value(result, "Signon user"))
         .to include(conversation.signon_user.name)
         .and have_link(
           "View all questions",
@@ -180,14 +178,12 @@ RSpec.describe Admin::QuestionsHelper do
     it "returns a row with the source of the conversation" do
       result = helper.question_show_summary_list_rows(question, nil, 1, 1)
 
-      row = result.find { |r| r[:field] == "Source" }
-      expect(row[:value]).to eq("Web")
+      expect(returned_value(result, "Source")).to eq("Web")
 
       conversation.update!(source: :api)
       result = helper.question_show_summary_list_rows(question, nil, 1, 1)
 
-      row = result.find { |r| r[:field] == "Source" }
-      expect(row[:value]).to eq("API")
+      expect(returned_value(result, "Source")).to eq("API")
     end
 
     it "doesn't return a signon user row if the conversation wasn't created via the API" do
@@ -203,8 +199,8 @@ RSpec.describe Admin::QuestionsHelper do
       answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
-      row = result.find { |r| r[:field] == "Primary topic" }
-      expect(row[:value]).to eq(answer.analysis.primary_topic.humanize)
+      expect(returned_value(result, "Primary topic"))
+        .to eq(answer.analysis.primary_topic.humanize)
     end
 
     it "returns a row with the secondary topic of the answer when present" do
@@ -212,8 +208,8 @@ RSpec.describe Admin::QuestionsHelper do
       answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
-      row = result.find { |r| r[:field] == "Secondary topic" }
-      expect(row[:value]).to eq(answer.analysis.secondary_topic.humanize)
+      expect(returned_value(result, "Secondary topic"))
+        .to eq(answer.analysis.secondary_topic.humanize)
     end
   end
 
@@ -250,6 +246,14 @@ RSpec.describe Admin::QuestionsHelper do
 
   def returned_keys(result)
     result.map { |row| row[:field] }
+  end
+
+  def returned_value(result, key)
+    found = result.find { |row| row[:field] == key }
+
+    raise "field not found: #{key}" unless found
+
+    found.fetch(:value)
   end
 
   def answer_from_db(answer)
