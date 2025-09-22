@@ -7,9 +7,12 @@ class AnswerSource < ApplicationRecord
   scope :used, -> { where(used: true) }
   scope :unused, -> { where(used: false) }
 
-  def url
-    "#{Plek.website_root}#{exact_path}"
-  end
+  self.ignored_columns = %w[base_path
+                            exact_path
+                            title
+                            heading
+                            content_chunk_id
+                            content_chunk_digest]
 
   def serialize_for_export
     as_json(except: :answer_source_chunk_id).merge(

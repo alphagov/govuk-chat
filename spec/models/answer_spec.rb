@@ -108,8 +108,8 @@ RSpec.describe Answer do
   describe "#sources" do
     it "implicitly orders sources by relevancy" do
       answer = create(:answer)
-      source_1 = create(:answer_source, answer:, relevancy: 1, exact_path: "/1")
-      source_2 = create(:answer_source, answer:, relevancy: 0, exact_path: "/2")
+      source_1 = create(:answer_source, answer:, relevancy: 1)
+      source_2 = create(:answer_source, answer:, relevancy: 0)
 
       expect(answer.reload.sources.strict_loading(false)).to eq([source_2, source_1])
     end
@@ -143,12 +143,6 @@ RSpec.describe Answer do
           answer_source_chunk_id: chunk_a.id,
           search_score: search_result_a.score,
           weighted_score: search_result_a.weighted_score,
-          base_path: search_result_a.base_path,
-          exact_path: search_result_a.exact_path,
-          title: search_result_a.title,
-          content_chunk_id: search_result_a._id,
-          content_chunk_digest: search_result_a.digest,
-          heading: search_result_a.heading_hierarchy.last,
         )
       expect(answer.sources.second)
         .to have_attributes(
@@ -156,12 +150,6 @@ RSpec.describe Answer do
           answer_source_chunk_id: chunk_b.id,
           search_score: search_result_b.score,
           weighted_score: search_result_b.weighted_score,
-          base_path: search_result_b.base_path,
-          exact_path: search_result_b.exact_path,
-          title: search_result_b.title,
-          content_chunk_id: search_result_b._id,
-          content_chunk_digest: search_result_b.digest,
-          heading: search_result_b.heading_hierarchy.last,
         )
     end
 
@@ -186,7 +174,7 @@ RSpec.describe Answer do
       answer.build_sources_from_search_results([search_result])
 
       expect(answer.sources.length).to be(1)
-      expect(answer.sources.first).to have_attributes(exact_path: search_result.exact_path)
+      expect(answer.sources.first.chunk).to have_attributes(exact_path: search_result.exact_path)
     end
   end
 
