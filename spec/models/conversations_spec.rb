@@ -30,6 +30,22 @@ RSpec.describe Conversation do
     end
   end
 
+  describe ".exclude_opted_out_end_user_ids" do
+    it "excludes conversations with opted-out end users" do
+      opted_out_end_user_id = "opted-out-id"
+      allow(Rails.configuration.govuk_chat_private)
+        .to receive(:opted_out_end_user_ids)
+        .and_return([opted_out_end_user_id])
+
+      create(:conversation, end_user_id: opted_out_end_user_id)
+      conversation = create(:conversation, end_user_id: "included-id")
+      conversation_with_no_end_user = create(:conversation, end_user_id: nil)
+
+      result = described_class.exclude_opted_out_end_user_ids
+      expect(result).to eq([conversation, conversation_with_no_end_user])
+    end
+  end
+
   describe ".questions_for_showing_conversation" do
     let(:conversation) { create(:conversation) }
 
@@ -194,6 +210,23 @@ RSpec.describe Conversation do
       create(:question, created_at: 1.day.ago)
 
       expect(conversation.active_answered_questions_after?(question.created_at)).to be(false)
+    end
+  end
+
+  describe ".hashed_end_user_id" do
+    it "returns nil if end_user_id is blank" do
+      expect(described_class.hashed_end_user_id(nil)).to be_nil
+      expect(described_class.hashed_end_user_id("")).to be_nil
+    end
+
+    it "returns the hashed end_user_id" do
+      hashed_id = OpenSSL::HMAC.hexdigest(
+        "SHA256",
+        Rails.application.secret_key_base,
+        "12345",
+      )
+
+      expect(described_class.hashed_end_user_id("12345")).to eq(hashed_id)
     end
   end
 

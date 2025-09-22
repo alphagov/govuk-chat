@@ -5,12 +5,29 @@ class Conversation < ApplicationRecord
 
   scope :active, -> { where(Question.active.where("questions.conversation_id = conversations.id").arel.exists) }
 
+  scope :exclude_opted_out_end_user_ids, lambda {
+    ids = Rails.configuration.govuk_chat_private&.opted_out_end_user_ids || []
+
+    where(end_user_id: nil)
+    .or(where.not(end_user_id: ids))
+  }
+
   enum :source,
        {
          api: "api",
          web: "web",
        },
        prefix: true
+
+  def self.hashed_end_user_id(end_user_id)
+    return nil if end_user_id.blank?
+
+    OpenSSL::HMAC.hexdigest(
+      "SHA256",
+      Rails.application.secret_key_base,
+      end_user_id,
+    )
+  end
 
   def questions_for_showing_conversation(only_answered: false, before_id: nil, after_id: nil, limit: nil)
     scope = Question.where(conversation: self)
@@ -48,10 +65,6 @@ class Conversation < ApplicationRecord
   def hashed_end_user_id
     return nil if end_user_id.blank?
 
-    OpenSSL::HMAC.hexdigest(
-      "SHA256",
-      Rails.application.secret_key_base,
-      end_user_id,
-    )
+    self.class.hashed_end_user_id(end_user_id)
   end
 end
