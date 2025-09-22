@@ -218,6 +218,13 @@ RSpec.describe Answer do
     end
   end
 
+  describe "#serialize_for_evaluation" do
+    it "returns the same as serialize_for_export" do
+      answer = build(:answer)
+      expect(answer.serialize_for_export).to eq(answer.serialize_for_evaluation)
+    end
+  end
+
   it "ensures the question routing labels and the enum values are in sync" do
     label_config = Rails.configuration.question_routing_labels
     enum_values = described_class.question_routing_labels.values

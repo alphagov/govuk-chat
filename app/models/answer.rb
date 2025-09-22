@@ -173,6 +173,7 @@ class Answer < ApplicationRecord
       "llm_responses" => llm_responses.to_json,
     )
   end
+  alias_method :serialize_for_evaluation, :serialize_for_export
 
   def use_in_rephrasing?
     STATUSES_EXCLUDED_FROM_REPHRASING.exclude?(status)

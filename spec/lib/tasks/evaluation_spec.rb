@@ -269,10 +269,11 @@ RSpec.describe "rake evaluation tasks" do
 
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input) do
-        answer = build(:answer)
+        answer = build(:answer, :with_sources)
+        answer_json = answer.serialize_for_evaluation.to_json
         allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
         expect { Rake::Task[task_name].invoke("openai") }
-          .to output("#{answer.to_json}\n").to_stdout
+          .to output("#{answer_json}\n").to_stdout
       end
     end
 
