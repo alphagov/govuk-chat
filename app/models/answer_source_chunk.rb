@@ -28,4 +28,8 @@ class AnswerSourceChunk < ApplicationRecord
   def heading
     heading_hierarchy.last
   end
+
+  def serialize_for_export
+    as_json
+  end
 end

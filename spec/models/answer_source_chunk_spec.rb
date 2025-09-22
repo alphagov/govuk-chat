@@ -47,4 +47,11 @@ RSpec.describe AnswerSourceChunk do
       expect(instance.heading).to be_nil
     end
   end
+
+  describe "#serialize for export" do
+    it "returns the model data as json" do
+      chunk = build(:answer_source_chunk)
+      expect(chunk.serialize_for_export).to eq(chunk.as_json)
+    end
+  end
 end
