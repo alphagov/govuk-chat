@@ -20,4 +20,8 @@ class AnswerSourceChunk < ApplicationRecord
       chunk.assign_attributes(attributes)
     end
   end
+
+  def govuk_url
+    "#{Plek.website_root}#{exact_path}"
+  end
 end

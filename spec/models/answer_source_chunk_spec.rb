@@ -26,4 +26,11 @@ RSpec.describe AnswerSourceChunk do
       end
     end
   end
+
+  describe "#govuk_url" do
+    it "concatenates the website root and source path for a URL to GOV.UK" do
+      chunk = build(:answer_source_chunk, exact_path: "/income-tax")
+      expect(chunk.govuk_url).to eq("#{Plek.website_root}/income-tax")
+    end
+  end
 end
