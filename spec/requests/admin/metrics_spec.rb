@@ -97,42 +97,6 @@ RSpec.describe "Admin::MetricsController" do
     end
   end
 
-  describe "GET :answer_feedback" do
-    it "renders a successful JSON response" do
-      get admin_metrics_answer_feedback_path
-      expect(response).to have_http_status(:ok)
-      expect(response.headers["Content-Type"]).to match("application/json")
-      expect(JSON.parse(response.body)).to eq([])
-    end
-
-    it "returns data of answer feedback grouped by useful and hour" do
-      create_list(:answer_feedback, 3, created_at: 3.hours.ago, useful: true)
-      create_list(:answer_feedback, 2, created_at: 5.hours.ago, useful: false)
-      create(:answer_feedback, created_at: 26.hours.ago)
-
-      get admin_metrics_answer_feedback_path
-
-      expect(JSON.parse(response.body)).to contain_exactly(
-        { "name" => "useful", "data" => counts_for_last_24_hours(hours_ago_3: 3) },
-        { "name" => "not useful", "data" => counts_for_last_24_hours(hours_ago_5: 2) },
-      )
-    end
-
-    context "when period is last_7_days" do
-      it "returns data of answer feedback grouped by useful label by day" do
-        create_list(:answer_feedback, 3, created_at: 3.days.ago, useful: true)
-        create_list(:answer_feedback, 2, created_at: 3.days.ago, useful: false)
-
-        get admin_metrics_answer_feedback_path(period: "last_7_days")
-
-        expect(JSON.parse(response.body)).to contain_exactly(
-          { "name" => "useful", "data" => counts_for_last_7_days(days_ago_3: 3) },
-          { "name" => "not useful", "data" => counts_for_last_7_days(days_ago_3: 2) },
-        )
-      end
-    end
-  end
-
   describe "GET :answer_unanswerable_statuses" do
     it "renders a successful JSON response" do
       get admin_metrics_answer_unanswerable_statuses_path
@@ -496,6 +460,47 @@ RSpec.describe "Admin::MetricsController" do
           { "name" => "tax", "data" => counts_for_last_7_days(days_ago_3: 2) },
           { "name" => "benefits", "data" => counts_for_last_7_days(days_ago_3: 2, days_ago_4: 2) },
           { "name" => "childcare", "data" => counts_for_last_7_days(days_ago_4: 2) },
+        )
+      end
+    end
+  end
+
+  describe "GET :answer_completeness" do
+    it "renders a successful JSON response" do
+      get admin_metrics_answer_completeness_path
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Content-Type"]).to match("application/json")
+      expect(JSON.parse(response.body)).to eq([])
+    end
+
+    it "returns data of answer completeness for answers generated over the last 24 hours" do
+      create_list(:answer, 3, completeness: "complete", created_at: 3.hours.ago)
+      create_list(:answer, 2, completeness: "partial", created_at: 5.hours.ago)
+      create(:answer, completeness: "no_information", created_at: 8.hours.ago)
+      create(:answer, created_at: 26.hours.ago)
+
+      get admin_metrics_answer_completeness_path
+
+      expect(JSON.parse(response.body)).to contain_exactly(
+        ["complete", 3],
+        ["partial", 2],
+        ["no_information", 1],
+      )
+    end
+
+    context "when period is last_7_days" do
+      it "returns data of answer feedback grouped by useful label by day" do
+        create_list(:answer, 3, completeness: "complete", created_at: 3.days.ago)
+        create_list(:answer, 2, completeness: "partial", created_at: 4.days.ago)
+        create(:answer, completeness: "no_information", created_at: 6.days.ago)
+        create(:answer, created_at: 8.days.ago)
+
+        get admin_metrics_answer_completeness_path(period: "last_7_days")
+
+        expect(JSON.parse(response.body)).to contain_exactly(
+          { "name" => "complete", "data" => counts_for_last_7_days(days_ago_3: 3) },
+          { "name" => "partial", "data" => counts_for_last_7_days(days_ago_4: 2) },
+          { "name" => "no_information", "data" => counts_for_last_7_days(days_ago_6: 1) },
         )
       end
     end

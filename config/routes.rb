@@ -56,7 +56,6 @@ Rails.application.routes.draw do
       scope defaults: { format: "json" }, constraints: html_json_constraint do
         get "conversations", to: "metrics#conversations", as: :metrics_conversations
         get "questions", to: "metrics#questions", as: :metrics_questions
-        get "answer-feedback", to: "metrics#answer_feedback", as: :metrics_answer_feedback
         get "answer-unanswerable-statuses", to: "metrics#answer_unanswerable_statuses", as: :metrics_answer_unanswerable_statuses
         get "answer-guardrails-statuses", to: "metrics#answer_guardrails_statuses", as: :metrics_answer_guardrails_statuses
         get "answer-error-statuses", to: "metrics#answer_error_statuses", as: :metrics_answer_error_statuses
@@ -66,6 +65,7 @@ Rails.application.routes.draw do
         get "question-routing-guardrails-failures", to: "metrics#question_routing_guardrails_failures",
                                                     as: :metrics_question_routing_guardrails_failures
         get "topics", to: "metrics#topics", as: :metrics_topics
+        get "answer-completeness", to: "metrics#answer_completeness", as: :metrics_answer_completeness
       end
     end
 
