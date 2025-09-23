@@ -21,7 +21,7 @@ module Evaluation
           question: evaluation_question,
           answer: answer_json,
           answer_strategy:,
-          retrieved_context: answer.sources.flat_map(&method(:build_retrieved_context)),
+          retrieved_context: answer.sources.map(&method(:build_retrieved_context)),
         }
       end
     end
@@ -37,35 +37,12 @@ module Evaluation
     end
 
     def build_retrieved_context(source)
-      data = {
-        title: source.title,
+      {
+        search_score: source.search_score,
+        weighted_score: source.weighted_score,
         used: source.used,
-        exact_path: source.exact_path,
-        base_path: source.base_path,
-        content_chunk_id: source.content_chunk_id,
-        content_chunk_available: false,
+        chunk: source.chunk.as_json(except: %i[id updated_at created_at]).symbolize_keys,
       }
-
-      begin
-        chunk = repository.chunk(source.content_chunk_id)
-      rescue Search::ChunkedContentRepository::NotFound
-        return data
-      end
-
-      if chunk.digest != source.content_chunk_digest
-        return data
-      end
-
-      data.merge({
-        content_chunk_available: true,
-        heading_hierarchy: chunk.heading_hierarchy,
-        description: chunk.description,
-        html_content: chunk.html_content,
-      })
-    end
-
-    def repository
-      @repository ||= Search::ChunkedContentRepository.new
     end
   end
 end

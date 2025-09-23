@@ -20,4 +20,16 @@ class AnswerSourceChunk < ApplicationRecord
       chunk.assign_attributes(attributes)
     end
   end
+
+  def govuk_url
+    "#{Plek.website_root}#{exact_path}"
+  end
+
+  def heading
+    heading_hierarchy.last
+  end
+
+  def serialize_for_export
+    as_json
+  end
 end

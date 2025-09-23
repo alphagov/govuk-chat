@@ -1,4 +1,4 @@
-RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
+RSpec.describe Evaluation::ReportGenerator do
   let(:evaluation_questions) { ["How do I pay VAT?", "Do I need a visa?"] }
   let(:input_file) do
     temp_file = Tempfile.new
@@ -15,22 +15,16 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
         sources: [
           build(
             :answer_source,
-            title: "Late payments",
-            content_chunk_id: "id2",
-            content_chunk_digest: "digest2",
-            exact_path: "/vat-payments/late-payments",
-            base_path: "/vat-payments",
+            chunk: build(:answer_source_chunk, title: "Late payments"),
           ),
           build(
             :answer_source,
-            title: "Pay your VAT bill online",
-            content_chunk_id: "id1",
-            content_chunk_digest: "digest1",
+            chunk: build(:answer_source_chunk, title: "Pay your VAT bill online"),
           ),
           build(
             :answer_source,
-            title: "Unused source",
             used: false,
+            chunk: build(:answer_source_chunk, title: "Unused source"),
           ),
         ],
       ),
@@ -38,34 +32,16 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
         :answer,
         message: "Second answer",
         sources: [
-          build(:answer_source, title: "Check if you need a visa", content_chunk_id: "id3", content_chunk_digest: "digest3"),
+          build(
+            :answer_source,
+            chunk: build(:answer_source_chunk, title: "Check if you need a visa"),
+          ),
         ],
       ),
     ]
   end
 
   before do
-    populate_chunked_content_index({
-      "id1" => build(
-        :chunked_content_record,
-        description: "Paying your VAT bill",
-        digest: "digest1",
-        heading_hierarchy: %w[VAT],
-      ),
-      "id2" => build(
-        :chunked_content_record,
-        description: "Paying your VAT bill",
-        digest: "digest2",
-        heading_hierarchy: ["VAT", "Late payments"],
-      ),
-      "id3" => build(
-        :chunked_content_record,
-        description: "Visa requirements",
-        digest: "digest3",
-        heading_hierarchy: %w[Visas],
-      ),
-    })
-
     allow(AnswerComposition::Composer).to receive(:call).and_return(*answers)
   end
 
@@ -96,16 +72,18 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
           answer: hash_including("message" => "First answer"),
           answer_strategy: Rails.configuration.answer_strategy,
           retrieved_context: [
-            hash_including(title: "Late payments", used: true),
-            hash_including(title: "Pay your VAT bill online", used: true),
-            hash_including(title: "Unused source", used: false),
+            hash_including(used: true, chunk: hash_including(title: "Late payments")),
+            hash_including(used: true, chunk: hash_including(title: "Pay your VAT bill online")),
+            hash_including(used: false, chunk: hash_including(title: "Unused source")),
           ],
         },
         {
           question: "Do I need a visa?",
           answer: hash_including("message" => "Second answer"),
           answer_strategy: Rails.configuration.answer_strategy,
-          retrieved_context: [hash_including(title: "Check if you need a visa", used: true)],
+          retrieved_context: [
+            hash_including(used: true, chunk: hash_including(title: "Check if you need a visa")),
+          ],
         },
       ])
     end
@@ -114,16 +92,13 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
       items = described_class.call(input_file.path)
       context = items.first[:retrieved_context].first
 
-      expect(context).to eq({
-        title: "Late payments",
+      chunk = answers.first.sources.first.chunk
+
+      expect(context).to match({
+        search_score: an_instance_of(Float),
+        weighted_score: an_instance_of(Float),
         used: true,
-        exact_path: "/vat-payments/late-payments",
-        base_path: "/vat-payments",
-        content_chunk_id: "id2",
-        content_chunk_available: true,
-        heading_hierarchy: ["VAT", "Late payments"],
-        description: "Paying your VAT bill",
-        html_content: "<p>Some content</p>",
+        chunk: chunk.as_json(except: %i[id updated_at created_at]).symbolize_keys,
       })
     end
 
@@ -133,42 +108,6 @@ RSpec.describe Evaluation::ReportGenerator, :chunked_content_index do
       expected_answer_data = answers.first.as_json(except: %i[id question_id created_at updated_at])
 
       expect(answer_data).to match(expected_answer_data)
-    end
-
-    context "when the content chunk cannot be found" do
-      let(:answers) do
-        [build(:answer, sources: [build(:answer_source, content_chunk_id: "id999")])]
-      end
-
-      it "marks the chunk as unavailable" do
-        items = described_class.call(input_file.path)
-        context = items.first[:retrieved_context].first
-
-        expect(context).to include(
-          content_chunk_id: "id999",
-          content_chunk_available: false,
-        )
-      end
-    end
-
-    context "when the content chunk digest does not match" do
-      let(:answers) do
-        [
-          build(:answer, sources: [
-            build(:answer_source, content_chunk_id: "id1", content_chunk_digest: "abc"),
-          ]),
-        ]
-      end
-
-      it "marks the content chunk as unavailable" do
-        items = described_class.call(input_file.path)
-        context = items.first[:retrieved_context].first
-
-        expect(context).to include(
-          content_chunk_id: "id1",
-          content_chunk_available: false,
-        )
-      end
     end
 
     it "yields the progress" do

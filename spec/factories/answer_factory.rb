@@ -11,8 +11,16 @@ FactoryBot.define do
     trait :with_sources do
       sources do
         [
-          build(:answer_source, exact_path: "/income-tax", relevancy: 0),
-          build(:answer_source, exact_path: "/vat-tax", relevancy: 1),
+          build(:answer_source,
+                relevancy: 0,
+                chunk: build(:answer_source_chunk,
+                             base_path: "/income-tax",
+                             exact_path: "/income-tax")),
+          build(:answer_source,
+                relevancy: 1,
+                chunk: build(:answer_source_chunk,
+                             base_path: "/vat-tax",
+                             exact_path: "/vat-tax")),
         ]
       end
     end

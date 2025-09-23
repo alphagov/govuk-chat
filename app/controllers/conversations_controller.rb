@@ -42,7 +42,7 @@ class ConversationsController < BaseController
 
   def answer
     @question = Question.where(conversation: @conversation)
-                        .includes(answer: %i[sources feedback])
+                        .includes(answer: [{ sources: :chunk }, :feedback])
                         .find(params[:question_id])
     answer = @question.check_or_create_timeout_answer
 

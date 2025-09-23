@@ -31,7 +31,7 @@ class Conversation < ApplicationRecord
 
   def questions_for_showing_conversation(only_answered: false, before_id: nil, after_id: nil, limit: nil)
     scope = Question.where(conversation: self)
-                  .includes(answer: %i[feedback sources])
+                  .includes(answer: [{ sources: :chunk }, :feedback])
                   .active
     scope = scope.joins(:answer) if only_answered
 

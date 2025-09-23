@@ -26,4 +26,32 @@ RSpec.describe AnswerSourceChunk do
       end
     end
   end
+
+  describe "#govuk_url" do
+    it "concatenates the website root and source path for a URL to GOV.UK" do
+      chunk = build(:answer_source_chunk, exact_path: "/income-tax")
+      expect(chunk.govuk_url).to eq("#{Plek.website_root}/income-tax")
+    end
+  end
+
+  describe "#heading" do
+    it "returns the last header in the heading hierarchy if there are items" do
+      instance = build(:answer_source_chunk, heading_hierarchy: ["Top", "More Specific", "Very Specific"])
+
+      expect(instance.heading).to eq("Very Specific")
+    end
+
+    it "returns nil for an empty heading hierarchy" do
+      instance = build(:answer_source_chunk, heading_hierarchy: [])
+
+      expect(instance.heading).to be_nil
+    end
+  end
+
+  describe "#serialize for export" do
+    it "returns the model data as json" do
+      chunk = build(:answer_source_chunk)
+      expect(chunk.serialize_for_export).to eq(chunk.as_json)
+    end
+  end
 end

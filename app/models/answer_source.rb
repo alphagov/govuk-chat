@@ -12,6 +12,8 @@ class AnswerSource < ApplicationRecord
   end
 
   def serialize_for_export
-    as_json(except: :answer_source_chunk_id)
+    as_json(except: :answer_source_chunk_id).merge(
+      "chunk" => chunk.serialize_for_export,
+    )
   end
 end

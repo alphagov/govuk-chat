@@ -5,8 +5,12 @@ class Admin::QuestionsController < Admin::BaseController
   end
 
   def show
-    @question = Question.includes(conversation: :signon_user, answer: %i[feedback sources analysis])
-                         .find(params[:id])
+    question_scope = Question.includes(
+      conversation: :signon_user,
+      answer: [{ sources: :chunk }, :feedback, :analysis],
+    )
+
+    @question = question_scope.find(params[:id])
     @answer = @question.answer
     @question_number = Question.where(conversation: @question.conversation)
                                .where("created_at <= ? ", @question.created_at)

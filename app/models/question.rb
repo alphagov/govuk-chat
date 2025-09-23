@@ -24,7 +24,7 @@ class Question < ApplicationRecord
 
   scope :exportable, lambda { |start_date, end_date|
                        joins(:conversation, :answer)
-                       .preload(:conversation, answer: %i[sources])
+                       .preload(:conversation, answer: { sources: :chunk })
                        .where("answer.created_at": start_date...end_date)
                        .merge(Conversation.exclude_opted_out_end_user_ids)
                      }

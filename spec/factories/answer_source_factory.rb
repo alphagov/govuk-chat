@@ -3,6 +3,8 @@ FactoryBot.define do
     answer
     chunk(factory: :answer_source_chunk)
     sequence(:relevancy) { |n| n }
+    search_score { rand(0.1..1.0) }
+    weighted_score { rand(0.1..2.0) }
     sequence(:base_path) { |n| "/base_path/#{n}" }
     sequence(:exact_path) { |n| "#{base_path}/path/#{n}" }
     sequence(:title) { |n| "Title #{n}" }

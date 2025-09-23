@@ -279,10 +279,13 @@ RSpec.describe Answer do
         create(:answer, sources: [
           create(
             :answer_source,
-            base_path: "/childcare-provider",
-            exact_path: "/childcare-provider/how-to-get-a-childcare-provider",
-            title: "Childcare providers",
-            heading: "How to get a childcare provider",
+            chunk: create(
+              :answer_source_chunk,
+              base_path: "/childcare-provider",
+              exact_path: "/childcare-provider/how-to-get-a-childcare-provider",
+              title: "Childcare providers",
+              heading_hierarchy: ["Childcare providers", "How to get a childcare provider"],
+            ),
           ),
         ])
       end
@@ -308,17 +311,23 @@ RSpec.describe Answer do
         create(:answer, sources: [
           create(
             :answer_source,
-            base_path: "/childcare-provider",
-            exact_path: "/childcare-provider/how-to-get-a-childcare-provider",
-            title: "Childcare providers",
-            heading: "How to get a childcare provider",
+            chunk: create(
+              :answer_source_chunk,
+              base_path: "/childcare-provider",
+              exact_path: "/childcare-provider/how-to-get-a-childcare-provider",
+              title: "Childcare providers",
+              heading_hierarchy: ["Childcare providers", "How to get a childcare provider"],
+            ),
           ),
           create(
             :answer_source,
-            base_path: "/childcare-provider",
-            exact_path: "/childcare-provider/how-much-it-costs",
-            title: "Childcare providers",
-            heading: "How much it costs",
+            chunk: create(
+              :answer_source_chunk,
+              base_path: "/childcare-provider",
+              exact_path: "/childcare-provider/how-much-it-costs",
+              title: "Childcare providers",
+              heading_hierarchy: ["Childcare providers", "How much it costs"],
+            ),
           ),
         ])
       end
