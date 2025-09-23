@@ -105,7 +105,7 @@ namespace :evaluation do
 
     raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/
 
-    puts(answer.to_json)
+    puts(answer.serialize_for_evaluation.to_json)
   end
 
   desc "Produce the output of question routing for a user input"
