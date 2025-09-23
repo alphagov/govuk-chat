@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_18_151214) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_22_122626) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -65,14 +65,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_151214) do
 
   create_table "answer_sources", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
-    t.string "exact_path", null: false
+    t.string "exact_path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "relevancy", null: false
-    t.string "title", null: false
-    t.string "content_chunk_id", null: false
-    t.string "content_chunk_digest", null: false
-    t.string "base_path", null: false
+    t.string "title"
+    t.string "content_chunk_id"
+    t.string "content_chunk_digest"
+    t.string "base_path"
     t.string "heading"
     t.boolean "used", default: true
     t.uuid "answer_source_chunk_id", null: false
