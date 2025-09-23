@@ -155,14 +155,6 @@ class Answer < ApplicationRecord
         chunk:,
         search_score: result.score,
         weighted_score: result.weighted_score,
-        # TODO: These fields are stored on the chunk and should be removed
-        # once we've migrated to using chunks
-        base_path: result.base_path,
-        exact_path: result.exact_path,
-        title: result.title,
-        content_chunk_id: result._id,
-        content_chunk_digest: result.digest,
-        heading: result.heading_hierarchy.last,
       )
     end
   end
