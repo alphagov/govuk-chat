@@ -137,6 +137,7 @@ private
     cookies[:conversation_id] = {
       value: conversation.id,
       expires: Rails.configuration.conversations.max_question_age_days.days.from_now,
+      secure: Rails.env.production?,
     }
   end
 
