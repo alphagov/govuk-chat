@@ -180,10 +180,10 @@ class Answer < ApplicationRecord
   end
 
   def group_used_answer_sources_by_base_path
-    sources_by_base_path = sources.used.group_by { |source| source.chunk.base_path }
+    sources_by_base_path = sources.used.group_by(&:base_path)
 
     sources_by_base_path.map do |base_path, group|
-      result = group.first.chunk
+      result = group.first
       path = group.count == 1 ? result.exact_path : base_path
 
       title = result.title

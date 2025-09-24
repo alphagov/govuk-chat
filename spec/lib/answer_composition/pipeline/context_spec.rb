@@ -199,8 +199,8 @@ RSpec.describe AnswerComposition::Pipeline::Context do
 
       instance.update_sources_from_exact_urls_used(
         [
-          first_used_source.chunk.govuk_url,
-          second_used_source.chunk.govuk_url,
+          first_used_source.govuk_url,
+          second_used_source.govuk_url,
         ],
       )
 
@@ -220,7 +220,7 @@ RSpec.describe AnswerComposition::Pipeline::Context do
 
       answer.sources = [unused_source, used_source]
 
-      instance.update_sources_from_exact_urls_used([used_source.chunk.govuk_url])
+      instance.update_sources_from_exact_urls_used([used_source.govuk_url])
 
       expect(answer.sources).to contain_exactly(used_source, unused_source)
       expect(used_source.relevancy).to eq(0)

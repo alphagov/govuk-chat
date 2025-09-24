@@ -119,7 +119,7 @@ RSpec.describe Admin::QuestionsHelper do
 
       expect(returned_keys(result)).to include("Used sources")
       expect(returned_value(result, "Used sources"))
-        .to have_link(source.chunk.title, href: source.chunk.govuk_url)
+        .to have_link(source.title, href: source.govuk_url)
     end
 
     it "returns an unused sources row when the answer has unused sources" do
@@ -130,7 +130,7 @@ RSpec.describe Admin::QuestionsHelper do
 
       expect(returned_keys(result)).to include("Unused sources")
       expect(returned_value(result, "Unused sources"))
-        .to have_link(source.chunk.title, href: source.chunk.govuk_url)
+        .to have_link(source.title, href: source.govuk_url)
     end
 
     it "returns feedback rows when the answer has feedback" do
