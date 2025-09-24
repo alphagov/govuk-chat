@@ -83,7 +83,7 @@ module GovukChat
 
     config.bigquery_dataset_id = ENV["BIGQUERY_DATASET"]
 
-    config.answer_strategy = ENV.fetch("ANSWER_STRATEGY", "claude_structured_answer")
+    config.answer_strategy = "non_llm_answer"
 
     config.question_topics = GovukChatPrivate.config
                                              .llm_prompts.claude
