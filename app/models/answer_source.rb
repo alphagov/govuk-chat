@@ -7,12 +7,22 @@ class AnswerSource < ApplicationRecord
   scope :used, -> { where(used: true) }
   scope :unused, -> { where(used: false) }
 
-  self.ignored_columns = %w[base_path
-                            exact_path
-                            title
-                            heading
-                            content_chunk_id
-                            content_chunk_digest]
+  delegate :content_id,
+           :locale,
+           :chunk_index,
+           :digest,
+           :title,
+           :description,
+           :heading_hierarchy,
+           :base_path,
+           :exact_path,
+           :document_type,
+           :parent_document_type,
+           :html_content,
+           :plain_content,
+           :govuk_url,
+           :heading,
+           to: :chunk
 
   def serialize_for_export
     as_json(except: :answer_source_chunk_id).merge(

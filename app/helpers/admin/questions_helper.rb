@@ -170,11 +170,11 @@ module Admin
 
       if answer&.sources.present?
         used_source_links = answer.sources.used.map do |source|
-          tag.a(source.chunk.title, href: source.chunk.govuk_url, class: "govuk-link")
+          tag.a(source.title, href: source.govuk_url, class: "govuk-link")
         end
 
         unused_source_links = answer.sources.unused.map do |source|
-          tag.a(source.chunk.title, href: source.chunk.govuk_url, class: "govuk-link")
+          tag.a(source.title, href: source.govuk_url, class: "govuk-link")
         end
 
         rows << {
