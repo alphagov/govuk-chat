@@ -636,6 +636,38 @@ RSpec.describe "Api::V1::ConversationsController" do
         expect(JSON.parse(response.body)).to eq({})
       end
     end
+
+    context "when the answer generation has timed out" do
+      let(:question) do
+        create(
+          :question,
+          conversation:,
+          created_at: Rails.configuration.conversations.answer_timeout_in_seconds.seconds.ago,
+        )
+      end
+
+      it "creates the answer with a status of error_timeout" do
+        expect { get api_v1_answer_question_path(conversation, question), headers:, as: :json }
+          .to change { question.reload.answer }.from(nil)
+        expect(question.answer).to have_attributes(
+          message: Answer::CannedResponses::TIMED_OUT_RESPONSE,
+          status: "error_timeout",
+        )
+      end
+
+      it "returns a success status" do
+        get api_v1_answer_question_path(conversation, question), headers:, as: :json
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "returns the expected JSON" do
+        get api_v1_answer_question_path(conversation, question), headers:, as: :json
+
+        answer = question.reload.answer
+        expected_response = AnswerBlueprint.render_as_json(answer)
+        expect(JSON.parse(response.body)).to eq(expected_response)
+      end
+    end
   end
 
   def answer_path(question)
