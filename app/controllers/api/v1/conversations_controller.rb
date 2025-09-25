@@ -70,7 +70,7 @@ class Api::V1::ConversationsController < Api::BaseController
 
   def answer
     question = @conversation.questions.find(params[:question_id])
-    answer = question.answer
+    answer = question.check_or_create_timeout_answer
 
     if answer.present?
       render json: AnswerBlueprint.render(answer), status: :ok
