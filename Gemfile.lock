@@ -183,8 +183,6 @@ GEM
     factory_bot_rails (6.5.1)
       factory_bot (~> 6.5)
       railties (>= 6.1.0)
-    faker (3.5.2)
-      i18n (>= 1.8.11, < 2)
     faraday (2.13.4)
       faraday-net_http (>= 2.0, < 3.5)
       json
@@ -299,8 +297,7 @@ GEM
       rouge
       sprockets (>= 3)
       sprockets-rails
-    govuk_schemas (6.1.0)
-      faker (>= 3.4.1, < 3.6.0)
+    govuk_schemas (6.2.0)
       json-schema (>= 2.8, < 6.1)
     govuk_sidekiq (10.0.0)
       gds-api-adapters (>= 19.1.0)
@@ -1050,7 +1047,6 @@ CHECKSUMS
   execjs (2.10.0) sha256=6bcb8be8f0052ff9d370b65d1c080f2406656e150452a0abdb185a133048450d
   factory_bot (6.5.5) sha256=ce59295daee1b4704dab8a2fee6816f513d467c6aa3bc587860767d74a66efbe
   factory_bot_rails (6.5.1) sha256=d3cc4851eae4dea8a665ec4a4516895045e710554d2b5ac9e68b94d351bc6d68
-  faker (3.5.2) sha256=f9a80291b2e3f259801d1dd552f0732fe04dce5d1f74e798365bc0413789c473
   faraday (2.13.4) sha256=c719ff52cfd0dbaeca79dd83ed3aeea3f621032abf8bc959d1c05666157cac26
   faraday-follow_redirects (0.3.0) sha256=d92d975635e2c7fe525dd494fcd4b9bb7f0a4a0ec0d5f4c15c729530fdb807f9
   faraday-multipart (1.1.1) sha256=77a18ff40149030fd1aef55bb4fc7a67ce46419a8a3fcd010e28c2526e8d8903
@@ -1080,7 +1076,7 @@ CHECKSUMS
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
   govuk_publishing_components (61.0.0) sha256=3740c1b7735534df79cd473e24f11d141095b52a441dc623770ac9e792ecfab5
-  govuk_schemas (6.1.0) sha256=26b454dab622c1bed100d17485a6a363fbad2c27cc2c46a514448e1103a8dd2d
+  govuk_schemas (6.2.0) sha256=9a5a7b672256664d1bef1b7db80926df92a3ce9196bfe00ce96b8fd8bacc56d2
   govuk_sidekiq (10.0.0) sha256=0d0485f6946f5e212eb5d6f5105c406a25f3cd059592a5b490b78f1d71818de8
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
   groupdate (6.7.0) sha256=beaa8d5bf3856814681914a1d4a20e77436a2214b85d0017dc2ea5c355fb6777
