@@ -22,7 +22,7 @@ module Healthcheck
         GovukHealthcheck::CRITICAL
       end
     rescue StandardError => e
-      @message = e.message
+      @message = "Communicating with OpenSearch failed with a #{e.class} error"
       GovukHealthcheck::CRITICAL
     end
   end

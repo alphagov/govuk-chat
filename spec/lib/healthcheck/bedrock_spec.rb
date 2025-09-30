@@ -69,7 +69,7 @@ RSpec.describe Healthcheck::Bedrock do
       it "sets the message attribute to the error message" do
         healthcheck.status
         expect(healthcheck.message).to eq(
-          "Failure to communicate to Bedrock: Contrived error",
+          "Communicating with Bedrock failed with a RuntimeError error",
         )
       end
     end
