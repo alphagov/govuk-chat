@@ -14,7 +14,7 @@ module Healthcheck
         GovukHealthcheck::OK
       end
     rescue StandardError => e
-      @message = "Failure to communicate to Bedrock: #{e.message}"
+      @message = "Communicating with Bedrock failed with a #{e.class} error"
       GovukHealthcheck::CRITICAL
     end
 

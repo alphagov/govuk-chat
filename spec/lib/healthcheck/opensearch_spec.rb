@@ -71,7 +71,7 @@ RSpec.describe Healthcheck::Opensearch do
 
       it "sets the message attribute to the error message" do
         healthcheck.status
-        expect(healthcheck.message).to eq("Contrived error")
+        expect(healthcheck.message).to eq("Communicating with OpenSearch failed with a StandardError error")
       end
     end
   end

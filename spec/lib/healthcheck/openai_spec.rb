@@ -34,7 +34,9 @@ RSpec.describe Healthcheck::OpenAI do # rubocop:disable RSpec/SpecFilePathFormat
 
       it "sets the message attribute to the error message" do
         healthcheck.status
-        expect(healthcheck.message).to eq("Contrived error")
+        expect(healthcheck.message).to eq(
+          "Listing OpenAI models failed with a OpenAIClient::RequestError error",
+        )
       end
     end
   end

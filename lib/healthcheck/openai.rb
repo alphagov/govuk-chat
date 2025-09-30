@@ -11,7 +11,7 @@ module Healthcheck
       client.models.list
       GovukHealthcheck::OK
     rescue StandardError => e
-      @message = e.message
+      @message = "Listing OpenAI models failed with a #{e.class} error"
       GovukHealthcheck::CRITICAL
     end
 
