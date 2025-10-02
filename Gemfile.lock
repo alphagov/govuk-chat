@@ -137,7 +137,7 @@ GEM
     chartkick (5.2.0)
     climate_control (1.2.0)
     coderay (1.1.3)
-    committee (5.5.5)
+    committee (5.6.0)
       json_schema (~> 0.14, >= 0.14.3)
       openapi_parser (~> 2.0)
       rack (>= 1.5)
@@ -425,7 +425,7 @@ GEM
       omniauth (~> 2.0)
     openapi3_parser (0.10.1)
       commonmarker (>= 1.0)
-    openapi_parser (2.2.6)
+    openapi_parser (2.3.0)
     opensearch-ruby (3.4.0)
       faraday (>= 1.0, < 3)
       multi_json (>= 1.0)
@@ -1021,7 +1021,7 @@ CHECKSUMS
   chartkick (5.2.0) sha256=75273928d7a4a93301d23647885a1041359104550071699222e0923d2d38f576
   climate_control (1.2.0) sha256=36b21896193fa8c8536fa1cd843a07cf8ddbd03aaba43665e26c53ec1bd70aa5
   coderay (1.1.3) sha256=dc530018a4684512f8f38143cd2a096c9f02a1fc2459edcfe534787a7fc77d4b
-  committee (5.5.5) sha256=4785d70103fafc0d1a88ff5c4a03183e96d178cd76d08c4ec8ba71e218a53c13
+  committee (5.6.0) sha256=cf1f1196aa5b2f49e47d863a890e179139e4d80c193057712ada0c5adfb739c1
   commonmarker (2.3.0) sha256=74fb85e4ae59a9fc166dd1813ad791805d09dec1a4e79c81a7be0a6a8dc5dc63
   commonmarker (2.3.0-aarch64-linux) sha256=63e6c599ed2b1a01c012e5524ed25f60ab1132c6b582bcef0aa542770d3087ee
   commonmarker (2.3.0-arm64-darwin) sha256=fb5a6416395cbac63bb7741887c74e17141be75f407a292ab98cd6c8ab4894a2
@@ -1138,7 +1138,7 @@ CHECKSUMS
   omniauth (2.1.3) sha256=8d24e2e55c41926c96e4a93fd566bc026dfd6f2c850408748e89945a565956c2
   omniauth-oauth2 (1.8.0) sha256=b2f8e9559cc7e2d4efba57607691d6d2b634b879fc5b5b6ccfefa3da85089e78
   openapi3_parser (0.10.1) sha256=e373bfcec1f183252a51fbe28787b52c4052e045697bae1778258bb9b3296a19
-  openapi_parser (2.2.6) sha256=10ca80caa40997f6a6dc4412c0c0f6890b835c276e7ece4f0e4f25a45c19c584
+  openapi_parser (2.3.0) sha256=5273a92984ed596474b625293eb1879a41c2f72da18948c03d2c40ecb65dca55
   opensearch-ruby (3.4.0) sha256=0a8621686bed3c59b4c23e08cbaef873685a3fe4568e9d2703155ca92b8ca05d
   opentelemetry-api (1.7.0) sha256=ccfd264ea6f2db5bf4185e3c07a1297977b44a944e2ce65457c4fe63a697214f
   opentelemetry-common (0.22.0) sha256=ce5e96a0f838d67eb70a1d32e02bdbe7b8f41767bc71994d73b299a8b0c5878d
