@@ -69,11 +69,18 @@ private
     filters = {}
     filters[:status] = status if status.present?
     filters[:search] = search if search.present?
+    filters[:source] = source if source.present?
     filters[:start_date_params] = start_date_params if start_date_params.values.any?(&:present?)
     filters[:end_date_params] = end_date_params if end_date_params.values.any?(&:present?)
     filters[:sort] = sort if sort != self.class.default_sort
     filters[:answer_feedback_useful] = answer_feedback_useful unless answer_feedback_useful.nil?
     filters[:conversation_id] = conversation.id if conversation.present?
+    filters[:signon_user_id] = signon_user_id if signon_user_id.present?
+    filters[:end_user_id] = end_user_id if end_user_id.present?
+    filters[:question_routing_label] = question_routing_label if question_routing_label.present?
+    filters[:primary_topic] = primary_topic if primary_topic.present?
+    filters[:secondary_topic] = secondary_topic if secondary_topic.present?
+    filters[:completeness] = completeness if completeness.present?
 
     filters
   end
@@ -127,13 +134,13 @@ private
   def signon_user_scope(scope)
     return scope if signon_user_id.blank?
 
-    scope.joins(:conversation).where(conversation: { signon_user_id: signon_user_id })
+    scope.joins(:conversation).where("signon_user_id = ?", signon_user_id)
   end
 
   def end_user_id_scope(scope)
     return scope if end_user_id.blank?
 
-    scope.joins(:conversation).where(conversation: { end_user_id: end_user_id, source: :api })
+    scope.joins(:conversation).where("end_user_id = ? AND conversations.source = ?", end_user_id, "api")
   end
 
   def question_routing_label_scope(scope)

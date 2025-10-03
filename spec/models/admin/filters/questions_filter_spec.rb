@@ -367,72 +367,69 @@ RSpec.describe Admin::Filters::QuestionsFilter do
 
   describe "#previous_page_params" do
     it "retains all other query params when constructing the params" do
-      conversation = create(:conversation)
-      26.times do
-        question = create(:question, conversation:)
-        create(:answer, :with_feedback, question:)
-      end
-      today = Date.current
-      start_date_params = { day: today.day, month: today.month, year: today.year - 1 }
-      end_date_params = { day: today.day, month: today.month, year: today.year + 1 }
+      filter = create_paginatable_filter({ page: 2 })
 
-      filter = described_class.new(
-        status: "answered",
-        search: "message",
-        page: 2,
-        start_date_params:,
-        end_date_params:,
-        answer_feedback_useful: "true",
-        conversation_id: conversation.id,
-      )
-
-      expect(filter.previous_page_params)
-        .to eq(
-          {
-            status: "answered",
-            search: "message",
-            answer_feedback_useful: true,
-            start_date_params:,
-            end_date_params:,
-            conversation_id: conversation.id,
-          },
-        )
+      expected_params = filter.attributes
+                              .symbolize_keys
+                              .except(:page, :answer_feedback_useful)
+                              .merge(answer_feedback_useful: true)
+      expect(filter.previous_page_params).to eq(expected_params)
     end
   end
 
   describe "#next_page_params" do
     it "retains all other query params when constructing the params" do
-      conversation = create(:conversation)
-      26.times do
-        question = create(:question, conversation:)
-        create(:answer, :with_feedback, question:)
-      end
       today = Date.current
       start_date_params = { day: today.day, month: today.month, year: today.year - 1 }
       end_date_params = { day: today.day, month: today.month, year: today.year + 1 }
 
-      filter = described_class.new(
-        status: "answered",
-        search: "message",
-        start_date_params:,
-        end_date_params:,
-        answer_feedback_useful: "true",
-        conversation_id: conversation.id,
-      )
+      filter = create_paginatable_filter({ start_date_params:, end_date_params: })
 
-      expect(filter.next_page_params)
-        .to eq(
-          {
-            status: "answered",
-            search: "message",
-            answer_feedback_useful: true,
-            page: 2,
-            start_date_params:,
-            end_date_params:,
-            conversation_id: conversation.id,
-          },
-        )
+      expected_params = filter.attributes
+                              .symbolize_keys
+                              .except(:answer_feedback_useful)
+                              .merge(answer_feedback_useful: true, page: 2)
+      expect(filter.next_page_params).to eq(expected_params)
     end
+  end
+
+  def create_paginatable_filter(attrs = {})
+    signon_user = create(:signon_user)
+    conversation = create(:conversation, signon_user_id: signon_user.id, end_user_id: "end-user-id", source: :api)
+    26.times do
+      question = create(:question, conversation:)
+      answer = create(
+        :answer,
+        :with_feedback,
+        question:,
+        question_routing_label: "vague_acronym_grammar",
+        completeness: "complete",
+      )
+      create(:answer_analysis, answer:, primary_topic: "business", secondary_topic: "tax")
+    end
+
+    today = Date.current
+    start_date_params = { day: today.day, month: today.month, year: today.year - 1 }
+    end_date_params = { day: today.day, month: today.month, year: today.year + 1 }
+
+    filter_params = {
+      status: "answered",
+      search: "message",
+      sort: "created_at",
+      source: "api",
+      start_date_params:,
+      end_date_params:,
+      answer_feedback_useful: "true",
+      conversation_id: conversation.id,
+      signon_user_id: signon_user.id,
+      end_user_id: "end-user-id",
+      question_routing_label: "vague_acronym_grammar",
+      primary_topic: "business",
+      secondary_topic: "tax",
+      completeness: "complete",
+    }.merge(attrs)
+
+    described_class.new(**filter_params)
   end
 
   it_behaves_like "a sortable filter", "created_at"
