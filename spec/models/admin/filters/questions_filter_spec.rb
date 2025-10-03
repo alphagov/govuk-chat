@@ -367,71 +367,89 @@ RSpec.describe Admin::Filters::QuestionsFilter do
 
   describe "#previous_page_params" do
     it "retains all other query params when constructing the params" do
-      conversation = create(:conversation)
+      signon_user = create(:signon_user)
+      conversation = create(:conversation, signon_user_id: signon_user.id, end_user_id: "end-user-id", source: :api)
       26.times do
         question = create(:question, conversation:)
-        create(:answer, :with_feedback, question:)
+        answer = create(
+          :answer,
+          :with_feedback,
+          question:,
+          question_routing_label: "vague_acronym_grammar",
+          completeness: "complete",
+        )
+        create(:answer_analysis, answer:, primary_topic: "business", secondary_topic: "tax")
       end
       today = Date.current
       start_date_params = { day: today.day, month: today.month, year: today.year - 1 }
       end_date_params = { day: today.day, month: today.month, year: today.year + 1 }
 
-      filter = described_class.new(
+      filter_params = {
         status: "answered",
         search: "message",
+        source: "api",
         page: 2,
         start_date_params:,
         end_date_params:,
         answer_feedback_useful: "true",
         conversation_id: conversation.id,
-      )
+        signon_user_id: signon_user.id,
+        end_user_id: "end-user-id",
+        question_routing_label: "vague_acronym_grammar",
+        primary_topic: "business",
+        secondary_topic: "tax",
+        completeness: "complete",
+      }
 
-      expect(filter.previous_page_params)
-        .to eq(
-          {
-            status: "answered",
-            search: "message",
-            answer_feedback_useful: true,
-            start_date_params:,
-            end_date_params:,
-            conversation_id: conversation.id,
-          },
-        )
+      filter = described_class.new(**filter_params)
+
+      expected_params = filter_params.except(:page, :answer_feedback_useful)
+                                     .merge(answer_feedback_useful: true)
+      expect(filter.previous_page_params).to eq(expected_params)
     end
   end
 
   describe "#next_page_params" do
     it "retains all other query params when constructing the params" do
-      conversation = create(:conversation)
+      signon_user = create(:signon_user)
+      conversation = create(:conversation, signon_user_id: signon_user.id, end_user_id: "end-user-id", source: :api)
       26.times do
         question = create(:question, conversation:)
-        create(:answer, :with_feedback, question:)
+        answer = create(
+          :answer,
+          :with_feedback,
+          question:,
+          question_routing_label: "vague_acronym_grammar",
+          completeness: "complete",
+        )
+        create(:answer_analysis, answer:, primary_topic: "business", secondary_topic: "tax")
       end
+
       today = Date.current
       start_date_params = { day: today.day, month: today.month, year: today.year - 1 }
       end_date_params = { day: today.day, month: today.month, year: today.year + 1 }
 
-      filter = described_class.new(
+      filter_params = {
         status: "answered",
         search: "message",
+        source: "api",
         start_date_params:,
         end_date_params:,
         answer_feedback_useful: "true",
         conversation_id: conversation.id,
-      )
+        signon_user_id: signon_user.id,
+        end_user_id: "end-user-id",
+        question_routing_label: "vague_acronym_grammar",
+        primary_topic: "business",
+        secondary_topic: "tax",
+        completeness: "complete",
+      }
 
-      expect(filter.next_page_params)
-        .to eq(
-          {
-            status: "answered",
-            search: "message",
-            answer_feedback_useful: true,
-            page: 2,
-            start_date_params:,
-            end_date_params:,
-            conversation_id: conversation.id,
-          },
-        )
+      filter = described_class.new(**filter_params)
+      expected_params = filter_params.except(:answer_feedback_useful)
+                                     .merge(answer_feedback_useful: true, page: 2)
+
+      expect(filter.next_page_params).to eq(expected_params)
     end
   end
 
