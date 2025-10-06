@@ -25,7 +25,7 @@ module AnswerComposition
         else
           ensure_absolute_url(link)
         end
-      rescue URI::InvalidURIError
+      rescue URI::InvalidURIError, URI::InvalidComponentError
         link
       end
 
