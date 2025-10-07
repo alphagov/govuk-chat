@@ -73,6 +73,12 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
 
       expect(mapper.link_for_token(token)).to eq("#{Plek.website_root}/tax-returns")
     end
+
+    it "handles URIs with invalid components" do
+      mapper = described_class.new
+      token = mapper.map_link_to_token("mailto://user@example.com")
+      expect(mapper.link_for_token(token)).to eq("mailto://user@example.com")
+    end
   end
 
   describe "#replace_tokens_with_links" do
