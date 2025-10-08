@@ -10,7 +10,7 @@ class DailyApiActivityMessage
       status_config = Rails.configuration.answer_statuses[status]
       status_text = status_config&.label_and_description || status_config&.label
       url_text = "#{count} #{status_text}"
-      list_items << "* #{admin_url_markdown(url_text, status)}"
+      list_items << "- #{admin_url_slack_link(url_text, status)}"
     end
 
     <<~MSG.strip
@@ -36,7 +36,7 @@ private
     @total_count ||= statuses.values.sum
   end
 
-  def admin_url_markdown(text, status)
+  def admin_url_slack_link(text, status)
     start_date_params = {
       day: date.day,
       month: date.month,
@@ -56,6 +56,6 @@ private
       host: Plek.external_url_for(:chat),
     )
 
-    "[#{text}](#{url})"
+    "<#{url}|#{text}>"
   end
 end
