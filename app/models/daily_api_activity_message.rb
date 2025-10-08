@@ -37,16 +37,21 @@ private
   end
 
   def admin_url_markdown(text, status)
-    date_params = {
+    start_date_params = {
       day: date.day,
       month: date.month,
       year: date.year,
     }
+    end_date_params = {
+      day: (date + 1).day,
+      month: (date + 1).month,
+      year: (date + 1).year,
+    }
 
     url = Rails.application.routes.url_helpers.admin_questions_url(
       source: :api,
-      start_date_params: date_params,
-      end_date_params: date_params,
+      start_date_params:,
+      end_date_params:,
       status:,
       host: Plek.external_url_for(:chat),
     )

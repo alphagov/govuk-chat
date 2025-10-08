@@ -9,10 +9,12 @@ RSpec.describe DailyApiActivityMessage do
     end
 
     def admin_url(status)
+      today = yesterday.to_date + 1
+
       url_params = {
         source: :api,
         start_date_params: { day: yesterday.day, month: yesterday.month, year: yesterday.year },
-        end_date_params: { day: yesterday.day, month: yesterday.month, year: yesterday.year },
+        end_date_params: { day: today.day, month: today.month, year: today.year },
         host: Plek.external_url_for(:chat),
       }
 
@@ -22,7 +24,7 @@ RSpec.describe DailyApiActivityMessage do
     end
 
     around do |example|
-      travel_to(Time.zone.local(2000, 1, 1, 13, 0, 0)) do
+      travel_to(Time.zone.local(2025, 1, 1, 13, 0, 0)) do
         example.run
       end
     end
