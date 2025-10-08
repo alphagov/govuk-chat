@@ -9,10 +9,12 @@ RSpec.describe DailyApiActivityMessage do
     end
 
     def admin_url(status)
+      today = yesterday.to_date + 1
+
       url_params = {
         source: :api,
         start_date_params: { day: yesterday.day, month: yesterday.month, year: yesterday.year },
-        end_date_params: { day: yesterday.day, month: yesterday.month, year: yesterday.year },
+        end_date_params: { day: today.day, month: today.month, year: today.year },
         host: Plek.external_url_for(:chat),
       }
 
@@ -22,7 +24,7 @@ RSpec.describe DailyApiActivityMessage do
     end
 
     around do |example|
-      travel_to(Time.zone.local(2000, 1, 1, 13, 0, 0)) do
+      travel_to(Time.zone.local(2025, 1, 1, 13, 0, 0)) do
         example.run
       end
     end
@@ -37,7 +39,7 @@ RSpec.describe DailyApiActivityMessage do
       expected_message = <<~MSG.strip
         Yesterday GOV.UK Chat API received 1 question:
 
-        * [1 Clarification - question routing requested more information](#{admin_url(:clarification)})
+        - <#{admin_url(:clarification)}|1 Clarification - question routing requested more information>
       MSG
 
       message = described_class.new(Date.yesterday).message
@@ -73,13 +75,14 @@ RSpec.describe DailyApiActivityMessage do
       expected_message = <<~MSG.strip
         Yesterday GOV.UK Chat API received 12 questions:
 
-        * [4 #{label_for_status(:error_non_specific)}](#{admin_url(:error_non_specific)})
-        * [3 #{label_for_status(:clarification)}](#{admin_url(:clarification)})
-        * [2 Answered](#{admin_url(:answered)})
-        * [2 #{label_for_status(:unanswerable_no_govuk_content)}](#{admin_url(:unanswerable_no_govuk_content)})
-        * [1 #{label_for_status(:guardrails_forbidden_terms)}](#{admin_url(:guardrails_forbidden_terms)})
+        - <#{admin_url(:error_non_specific)}|4 #{label_for_status(:error_non_specific)}>
+        - <#{admin_url(:clarification)}|3 #{label_for_status(:clarification)}>
+        - <#{admin_url(:answered)}|2 Answered>
+        - <#{admin_url(:unanswerable_no_govuk_content)}|2 #{label_for_status(:unanswerable_no_govuk_content)}>
+        - <#{admin_url(:guardrails_forbidden_terms)}|1 #{label_for_status(:guardrails_forbidden_terms)}>
       MSG
 
+      puts expected_message
       message = described_class.new(Date.yesterday).message
       expect(message).to eq(expected_message)
     end
