@@ -13,8 +13,16 @@ class DailyApiActivityMessage
       list_items << "- #{admin_url_slack_link(url_text, status)}"
     end
 
+    potential_question_link = if total_count.positive?
+                                link_text = "#{total_count} #{'question'.pluralize(total_count)}"
+
+                                admin_url_slack_link(link_text)
+                              else
+                                "0 questions"
+                              end
+
     <<~MSG.strip
-      Yesterday GOV.UK Chat API received #{total_count} #{total_count == 1 ? 'question' : 'questions'}#{total_count.zero? ? '.' : ':'}
+      Yesterday GOV.UK Chat API received #{potential_question_link}#{total_count.zero? ? '.' : ':'}
 
       #{list_items.join("\n")}
     MSG
@@ -36,7 +44,7 @@ private
     @total_count ||= statuses.values.sum
   end
 
-  def admin_url_slack_link(text, status)
+  def admin_url_slack_link(text, status = nil)
     start_date_params = {
       day: date.day,
       month: date.month,

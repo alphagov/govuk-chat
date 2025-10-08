@@ -8,7 +8,7 @@ RSpec.describe DailyApiActivityMessage do
       create(:answer, status:, created_at:, question: build(:question, conversation:))
     end
 
-    def admin_url(status)
+    def admin_url(status = nil)
       today = yesterday.to_date + 1
 
       url_params = {
@@ -37,7 +37,7 @@ RSpec.describe DailyApiActivityMessage do
     it "only includes non-zero question counts" do
       create_answer(:clarification, yesterday + 2.hours, api_conversation)
       expected_message = <<~MSG.strip
-        Yesterday GOV.UK Chat API received 1 question:
+        Yesterday GOV.UK Chat API received <#{admin_url}|1 question>:
 
         - <#{admin_url(:clarification)}|1 Clarification - question routing requested more information>
       MSG
@@ -73,7 +73,7 @@ RSpec.describe DailyApiActivityMessage do
       create_answer(:guardrails_forbidden_terms, yesterday + 4.hours, api_conversation)
 
       expected_message = <<~MSG.strip
-        Yesterday GOV.UK Chat API received 12 questions:
+        Yesterday GOV.UK Chat API received <#{admin_url}|12 questions>:
 
         - <#{admin_url(:error_non_specific)}|4 #{label_for_status(:error_non_specific)}>
         - <#{admin_url(:clarification)}|3 #{label_for_status(:clarification)}>
@@ -82,7 +82,6 @@ RSpec.describe DailyApiActivityMessage do
         - <#{admin_url(:guardrails_forbidden_terms)}|1 #{label_for_status(:guardrails_forbidden_terms)}>
       MSG
 
-      puts expected_message
       message = described_class.new(Date.yesterday).message
       expect(message).to eq(expected_message)
     end
