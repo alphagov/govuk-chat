@@ -21,8 +21,12 @@ module AnswerComposition::Pipeline
           tool_choice: { type: "tool", name: "output_schema" },
           **inference_config,
         )
+        llm_response_with_link_token_mapping = {
+          "response" => response.to_h.stringify_keys,
+          "link_token_mapping" => link_token_mapper.mapping.invert,
+        }
 
-        context.answer.assign_llm_response("structured_answer", response.to_h)
+        context.answer.assign_llm_response("structured_answer", llm_response_with_link_token_mapping)
         tool_output = response[:content][0][:input]
 
         unless tool_output[:answered]
