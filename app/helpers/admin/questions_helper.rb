@@ -152,6 +152,10 @@ module Admin
                     field: "Answer guardrails triggered",
                     value: answer.answer_guardrails_failures.join(", "),
                   },
+                  {
+                    field: "Forbidden terms detected",
+                    value: answer.forbidden_terms_detected.map { |term| "\"#{term}\"" }.to_sentence,
+                  },
                 ]
               else
                 {

@@ -11,12 +11,14 @@ module AnswerComposition
 
     def call
       start_time = Clock.monotonic_time
+      forbidden_terms_detected = find_forbidden_terms
 
-      if contains_forbidden_term?
+      if forbidden_terms_detected.any?
         answer.set_sources_as_unused
         answer.assign_attributes(
           status: "guardrails_forbidden_terms",
           message: Answer::CannedResponses::FORBIDDEN_TERMS_MESSAGE,
+          forbidden_terms_detected:,
         )
       end
 
@@ -25,12 +27,15 @@ module AnswerComposition
 
   private
 
-    def contains_forbidden_term?
+    def find_forbidden_terms
       # Regex matches words or phrases that aren't a subtring of a longer word.
       # It will match if the word is preceded or followed by a non-letter character.
       # i.e badword! or !badword or 1badword or badword1
-      regex = /(\A|[^a-z])(#{forbidden_terms.map(&Regexp.method(:escape)).join('|')})([^a-z]|\Z)/
-      answer.message.downcase.match?(regex)
+      # This uses lookbehind and lookahead assertions to avoid capturing the
+      # surrounding characters so that we catch consecutive forbidden terms.
+
+      regex = /(?<=\A|[^a-z])(#{forbidden_terms.map(&Regexp.method(:escape)).join('|')})(?=[^a-z]|\Z)/
+      answer.message.downcase.scan(regex).flatten.uniq
     end
 
     def build_metrics(start_time)
