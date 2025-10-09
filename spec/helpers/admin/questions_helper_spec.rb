@@ -85,6 +85,7 @@ RSpec.describe Admin::QuestionsHelper do
         "Question routing guardrails triggered",
         "Answer guardrails status",
         "Answer guardrails triggered",
+        "Forbidden terms detected",
         "Primary topic",
         "Secondary topic",
       ]
@@ -166,6 +167,18 @@ RSpec.describe Admin::QuestionsHelper do
 
       expect(returned_value(result, "Question routing label"))
         .to eq("Advice, opinions, predictions")
+    end
+
+    it "returns a row with forbidden terms detected when present" do
+      answer = create(
+        :answer,
+        forbidden_terms_detected: ["really rude term", "even ruder term"],
+      )
+      answer = answer_from_db(answer)
+      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
+
+      expect(returned_value(result, "Forbidden terms detected"))
+        .to eq('"really rude term" and "even ruder term"')
     end
 
     it "returns a row with a link to filter the questions table by the signon user" do
