@@ -33,15 +33,16 @@ RSpec.describe AnswerComposition::ForbiddenTermsChecker do
     end
   end
 
-  shared_examples "updates the answers message and status" do
+  shared_examples "updates the answers message and status" do |forbidden_words = %w[badterm]|
     it "updates the message to the forbidden terms message" do
       expect { described_class.call(answer) }
         .to change(answer, :message).to(Answer::CannedResponses::FORBIDDEN_TERMS_MESSAGE)
     end
 
-    it "updates the status" do
+    it "updates the status and forbidden_terms_detected" do
       expect { described_class.call(answer) }
         .to change(answer, :status).to("guardrails_forbidden_terms")
+        .and change(answer, :forbidden_terms_detected).to eq(forbidden_words)
     end
 
     it "sets the sources as unused" do
@@ -66,7 +67,7 @@ RSpec.describe AnswerComposition::ForbiddenTermsChecker do
     end
 
     context "and the forbidden phrase is multiple words" do
-      it_behaves_like "updates the answers message and status" do
+      it_behaves_like "updates the answers message and status", ["extra bad term"] do
         let(:answer_message) { "answer message with extra bad term in it" }
       end
     end
@@ -88,6 +89,12 @@ RSpec.describe AnswerComposition::ForbiddenTermsChecker do
 
       it_behaves_like "updates the answers message and status" do
         let(:answer_message) { "answer message with 1badterm" }
+      end
+    end
+
+    context "and there are multiple forbidden terms" do
+      it_behaves_like "updates the answers message and status", ["badterm", "extra bad term"] do
+        let(:answer_message) { "answer message with badterm and extra bad term" }
       end
     end
   end
