@@ -31,11 +31,11 @@ module AnswerComposition
       # Regex matches words or phrases that aren't a subtring of a longer word.
       # It will match if the word is preceded or followed by a non-letter character.
       # i.e badword! or !badword or 1badword or badword1
-      # Scanning the regex returns an array of arrays, where each sub-array contains
-      # the preceding character, the matched forbidden term, and the following character
-      # respectively.
-      regex = /(\A|[^a-z])(#{forbidden_terms.map(&Regexp.method(:escape)).join('|')})([^a-z]|\Z)/
-      answer.message.downcase.scan(regex).map(&:second).uniq
+      # This uses lookbehind and lookahead assertions to avoid capturing the
+      # surrounding characters so that we catch consecutive forbidden terms.
+
+      regex = /(?<=\A|[^a-z])(#{forbidden_terms.map(&Regexp.method(:escape)).join('|')})(?=[^a-z]|\Z)/
+      answer.message.downcase.scan(regex).flatten.uniq
     end
 
     def build_metrics(start_time)

@@ -97,5 +97,11 @@ RSpec.describe AnswerComposition::ForbiddenTermsChecker do
         let(:answer_message) { "answer message with badterm and extra bad term" }
       end
     end
+
+    context "and there are multiple consecutive forbidden terms" do
+      it_behaves_like "updates the answers message and status", ["badterm", "extra bad term"] do
+        let(:answer_message) { "answer message with badterm extra bad term" }
+      end
+    end
   end
 end
