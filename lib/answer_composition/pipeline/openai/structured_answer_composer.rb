@@ -11,7 +11,11 @@ module AnswerComposition::Pipeline::OpenAI
 
     def call
       start_time = Clock.monotonic_time
-      context.answer.assign_llm_response("structured_answer", openai_response_choice)
+      llm_response_with_link_token_mapping = {
+        "response" => openai_response_choice,
+        "link_token_mapping" => link_token_mapper.mapping.invert,
+      }
+      context.answer.assign_llm_response("structured_answer", llm_response_with_link_token_mapping)
 
       unless parsed_structured_response["answered"]
         return context.abort_pipeline!(

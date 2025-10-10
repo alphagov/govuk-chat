@@ -1,6 +1,7 @@
 module AnswerComposition
   class LinkTokenMapper
     TOKEN_PREFIX = "link_".freeze
+    attr_reader :mapping
 
     def initialize
       @mapping = {}
@@ -49,8 +50,6 @@ module AnswerComposition
     end
 
   private
-
-    attr_reader :mapping
 
     def rewrite_links(element)
       if element.type == :a

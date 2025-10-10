@@ -63,9 +63,12 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer, :c
           "VAT (Value Added Tax) is a [tax][1] applied to most goods and services in the UK. [1]: https://www.test.gov.uk/what-is-tax",
         )
         expect(context.answer.status).to eq("answered")
-        expect(context.answer.llm_responses["structured_answer"]).to match(
-          hash_including_openai_response_with_tool_call("generate_answer_using_retrieved_contexts"),
-        )
+        expect(context.answer.llm_responses["structured_answer"])
+          .to match(hash_including("response" => hash_including_openai_response_with_tool_call("generate_answer_using_retrieved_contexts")))
+          .and match(hash_including("link_token_mapping" => {
+            "link_1" => "https://www.test.gov.uk/vat-rates#vat-basics",
+            "link_2" => "https://www.test.gov.uk/what-is-tax",
+          }))
       end
 
       it "sets the 'used' boolean to false for unused sources" do
