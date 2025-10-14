@@ -338,18 +338,10 @@ RSpec.describe "rake evaluation tasks" do
       ClimateControl.modify(INPUT: input) do
         answer = build(:answer, question_routing_label: "genuine_rag", question_routing_confidence_score: 0.8, message: nil)
         allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
-
-        expected_output = {
-          classification: "genuine_rag",
-          confidence_score: 0.8,
-          answer: nil
-        }.to_json + "\n"
-
         expect { Rake::Task[task_name].invoke("openai") }
-          .to output(expected_output).to_stdout
+          .to output("{\"classification\":\"genuine_rag\",\"confidence_score\":0.8,\"answer\":null}\n").to_stdout
       end
     end
-
 
     it "raises an error if the the answer has an error status" do
       ClimateControl.modify(INPUT: input) do
