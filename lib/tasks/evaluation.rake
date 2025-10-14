@@ -130,6 +130,7 @@ namespace :evaluation do
     result = {
       classification: answer.question_routing_label,
       confidence_score: answer.question_routing_confidence_score,
+      answer: answer.message,
     }
 
     puts(result.to_json)
