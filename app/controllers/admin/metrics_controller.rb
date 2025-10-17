@@ -9,13 +9,22 @@ class Admin::MetricsController < Admin::BaseController
   def conversations
     scope = Conversation.where(created_at: start_time..)
 
-    render json: count_by_period(scope, :created_at).chart_json
+    render json: count_by_period(scope).chart_json
   end
 
   def questions
     scope = Question.where(created_at: start_time..).group_by_aggregate_status
 
-    render json: count_by_period(scope, :created_at).chart_json
+    render json: count_by_period(scope).chart_json
+  end
+
+  def api_end_users
+    scope = Question.joins(:conversation)
+                    .distinct
+                    .where(created_at: start_time.., conversation: { source: :api })
+                    .where.not(conversation: { end_user_id: nil })
+
+    render json: count_by_period(scope, field_to_count: :end_user_id).chart_json
   end
 
   def answer_unanswerable_statuses
@@ -24,7 +33,7 @@ class Admin::MetricsController < Admin::BaseController
                   .group(:status)
 
     if @period == :last_7_days
-      render json: count_by_period(scope, :created_at).chart_json
+      render json: count_by_period(scope).chart_json
     else
       render json: scope.count.chart_json
     end
@@ -36,7 +45,7 @@ class Admin::MetricsController < Admin::BaseController
                   .group(:status)
 
     if @period == :last_7_days
-      render json: count_by_period(scope, :created_at).chart_json
+      render json: count_by_period(scope).chart_json
     else
       render json: scope.count.chart_json
     end
@@ -48,7 +57,7 @@ class Admin::MetricsController < Admin::BaseController
                   .group(:status)
 
     if @period == :last_7_days
-      render json: count_by_period(scope, :created_at).chart_json
+      render json: count_by_period(scope).chart_json
     else
       render json: scope.count.chart_json
     end
@@ -60,7 +69,7 @@ class Admin::MetricsController < Admin::BaseController
                   .group(:question_routing_label)
 
     if @period == :last_7_days
-      render json: count_by_period(scope, :created_at).chart_json
+      render json: count_by_period(scope).chart_json
     else
       render json: scope.count.chart_json
     end
@@ -125,7 +134,7 @@ class Admin::MetricsController < Admin::BaseController
                   .group(:completeness)
 
     if @period == :last_7_days
-      render json: count_by_period(scope, :created_at).chart_json
+      render json: count_by_period(scope).chart_json
     else
       render json: scope.count.chart_json
     end
@@ -157,8 +166,8 @@ private
     end
   end
 
-  def count_by_period(scope, field)
-    count = group_by_period(scope, field).count
+  def count_by_period(scope, group_field: :created_at, field_to_count: nil)
+    count = group_by_period(scope, group_field).count(field_to_count)
     remove_empty_count_data(count)
   end
 
