@@ -18,6 +18,15 @@ class Admin::MetricsController < Admin::BaseController
     render json: count_by_period(scope).chart_json
   end
 
+  def api_end_users
+    scope = Question.joins(:conversation)
+                    .distinct
+                    .where(created_at: start_time.., conversation: { source: :api })
+                    .where.not(conversation: { end_user_id: nil })
+
+    render json: count_by_period(scope, field_to_count: :end_user_id).chart_json
+  end
+
   def answer_unanswerable_statuses
     scope = Answer.where(created_at: start_time..)
                   .aggregate_status("unanswerable")
@@ -157,8 +166,8 @@ private
     end
   end
 
-  def count_by_period(scope, group_field: :created_at)
-    count = group_by_period(scope, group_field).count
+  def count_by_period(scope, group_field: :created_at, field_to_count: nil)
+    count = group_by_period(scope, group_field).count(field_to_count)
     remove_empty_count_data(count)
   end
 
