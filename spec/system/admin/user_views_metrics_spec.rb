@@ -14,6 +14,8 @@ RSpec.describe "Admin user views metrics", :js do
 
   def and_there_has_been_activity
     create_list(:question, 2)
+    api_conversation = build(:conversation, source: :api, end_user_id: SecureRandom.uuid)
+    create(:question, conversation: api_conversation)
     create_list(:answer_feedback, 1, created_at: 1.hour.ago)
     create_list(:answer, 2, :with_analysis, created_at: 6.hours.ago, status: :unanswerable_llm_cannot_answer)
     create_list(:answer, 3, created_at: 4.hours.ago, status: :error_timeout)
@@ -41,8 +43,9 @@ RSpec.describe "Admin user views metrics", :js do
   def then_i_can_see_activity
     # We're relying on the rendering of a successful chart results in a canvas
     # element, unclear how to assert correct chart
-    expect(page).to have_selector("#conversations canvas")
     expect(page).to have_selector("#questions canvas")
+    expect(page).to have_selector("#conversations canvas")
+    expect(page).to have_selector("#api-end-users canvas")
     expect(page).to have_selector("#answers-with-unanswerable-status canvas")
     expect(page).to have_selector("#answers-with-error-status canvas")
     expect(page).to have_selector("#question-routing-labels canvas")
