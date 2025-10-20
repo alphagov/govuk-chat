@@ -23,6 +23,10 @@ RSpec.describe DailyApiActivityMessage do
       )
     end
 
+    def label_for_status(status)
+      Rails.configuration.answer_statuses[status][:label_and_description]
+    end
+
     around do |example|
       travel_to(Time.zone.local(2025, 1, 1, 13, 0, 0)) do
         example.run
@@ -130,15 +134,11 @@ RSpec.describe DailyApiActivityMessage do
         expected_message = <<~MSG.strip
           Yesterday GOV.UK Chat API received <#{admin_url}|1 question>:
 
-          - <#{admin_url(:clarification)}|1 Clarification - question routing requested more information>
+          - <#{admin_url(:clarification)}|1 #{label_for_status(:clarification)}>
         MSG
 
         message = described_class.new(Date.yesterday).message
         expect(message).to eq(expected_message)
-      end
-
-      def label_for_status(status)
-        Rails.configuration.answer_statuses[status][:label_and_description]
       end
 
       it "builds the message with various question counts" do
