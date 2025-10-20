@@ -4,8 +4,9 @@ RSpec.describe DailyApiActivityMessage do
     let(:api_conversation) { create(:conversation, source: :api) }
     let(:yesterday) { 1.day.ago }
 
-    def create_answer(status, created_at, conversation)
-      create(:answer, status:, created_at:, question: build(:question, conversation:))
+    def create_question(status, created_at, conversation)
+      answer = build(:answer, status:, created_at:)
+      create(:question, conversation:, created_at:, answer:)
     end
 
     def admin_url(status = nil)
@@ -130,7 +131,7 @@ RSpec.describe DailyApiActivityMessage do
       end
 
       it "only includes non-zero question counts" do
-        create_answer(:clarification, yesterday + 2.hours, api_conversation)
+        create_question(:clarification, yesterday + 2.hours, api_conversation)
         expected_message = <<~MSG.strip
           Yesterday GOV.UK Chat API received <#{admin_url}|1 question>:
 
@@ -142,26 +143,26 @@ RSpec.describe DailyApiActivityMessage do
       end
 
       it "builds the message with various question counts" do
-        create_answer(:answered, 2.days.ago, api_conversation)
-        create_answer(:answered, 2.days.ago, web_conversation)
+        create_question(:answered, 2.days.ago, api_conversation)
+        create_question(:answered, 2.days.ago, web_conversation)
 
         2.times do
-          create_answer(:answered, yesterday + 4.hours, api_conversation)
+          create_question(:answered, yesterday + 4.hours, api_conversation)
         end
 
         3.times do
-          create_answer(:clarification, yesterday + 2.hours, api_conversation)
+          create_question(:clarification, yesterday + 2.hours, api_conversation)
         end
 
         2.times do
-          create_answer(:unanswerable_no_govuk_content, yesterday + 2.hours, api_conversation)
+          create_question(:unanswerable_no_govuk_content, yesterday + 2.hours, api_conversation)
         end
 
         4.times do
-          create_answer(:error_non_specific, yesterday + 4.hours, api_conversation)
+          create_question(:error_non_specific, yesterday + 4.hours, api_conversation)
         end
 
-        create_answer(:guardrails_forbidden_terms, yesterday + 4.hours, api_conversation)
+        create_question(:guardrails_forbidden_terms, yesterday + 4.hours, api_conversation)
 
         expected_message = <<~MSG.strip
           Yesterday GOV.UK Chat API received <#{admin_url}|12 questions>:
@@ -175,6 +176,35 @@ RSpec.describe DailyApiActivityMessage do
 
         message = described_class.new(Date.yesterday).message
         expect(message).to eq(expected_message)
+      end
+
+      context "when conversations are associated with an end user id" do
+        it "includes the number of distinct end users associated with the conversations" do
+          conversations = Array.new(3) do
+            build(:conversation, source: :api, end_user_id: SecureRandom.uuid)
+          end
+
+          2.times { create_question(:answered, yesterday, conversations[0]) }
+          2.times { create_question(:answered, yesterday, conversations[1]) }
+          create_question(:answered, yesterday, conversations[2])
+
+          expected_message = "Yesterday GOV.UK Chat API received <#{admin_url}|5 questions> " \
+                             "from 3 end users:"
+
+          message = described_class.new(Date.yesterday).message
+          expect(message).to include(expected_message)
+        end
+
+        it "has the correct plural for a singular end user" do
+          end_user_conversation = build(:conversation, source: :api, end_user_id: SecureRandom.uuid)
+          4.times { create_question(:answered, yesterday, end_user_conversation) }
+
+          expected_message = "Yesterday GOV.UK Chat API received <#{admin_url}|4 questions> " \
+                             "from 1 end user:"
+
+          message = described_class.new(Date.yesterday).message
+          expect(message).to include(expected_message)
+        end
       end
     end
   end
