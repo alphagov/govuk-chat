@@ -144,10 +144,10 @@ RSpec.describe DailyApiActivityMessage do
 
       it "builds the message with various question counts" do
         create_question(:answered, 2.days.ago, api_conversation)
-        create_question(:answered, 2.days.ago, web_conversation)
 
         2.times do
           create_question(:answered, yesterday + 4.hours, api_conversation)
+          create_question(:answered, yesterday, web_conversation)
         end
 
         3.times do
