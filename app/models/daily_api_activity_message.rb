@@ -26,7 +26,7 @@ private
                          ""
                        end
 
-    list_items = question_statuses.sort_by { |_, v| -v }.map do |status, count|
+    list_items = question_statuses.sort_by { |k, v| [-v, k] }.map do |status, count|
       status_config = Rails.configuration.answer_statuses[status]
       status_text = status_config&.label_and_description || status_config&.label
       url_text = "#{count} #{status_text}"
@@ -70,11 +70,11 @@ private
   end
 
   def question_statuses
-    @question_statuses ||= Answer.joins(question: :conversation)
-                        .where(created_at: date_range)
-                        .where("conversations.source": "api")
-                        .group(:status)
-                        .count
+    @question_statuses ||= Question.group_by_status
+                                   .joins(:conversation)
+                                   .where(created_at: date_range)
+                                   .where(conversations: { source: :api })
+                                   .count
   end
 
   def total_question_count

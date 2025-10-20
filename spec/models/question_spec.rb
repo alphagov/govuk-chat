@@ -17,6 +17,26 @@ RSpec.describe Question do
     end
   end
 
+  describe ".group_by_status" do
+    it "groups questions by their answer status" do
+      create(:question)
+      create_list(:answer, 5, status: :answered)
+      create_list(:answer, 3, status: :unanswerable_no_govuk_content)
+      create_list(:answer, 2, status: :guardrails_answer)
+      create(:answer, status: :error_non_specific)
+      create(:answer, status: :error_answer_service_error)
+
+      expect(described_class.group_by_status.count).to eq({
+        "answered" => 5,
+        "unanswerable_no_govuk_content" => 3,
+        "guardrails_answer" => 2,
+        "error_non_specific" => 1,
+        "error_answer_service_error" => 1,
+        "pending" => 1,
+      })
+    end
+  end
+
   describe ".group_by_aggregate_status" do
     it "groups unanswered questions into a 'pending' group" do
       create(:question)

@@ -5,7 +5,7 @@ RSpec.describe DailyApiActivityMessage do
     let(:yesterday) { 1.day.ago }
 
     def create_question(status, created_at, conversation)
-      answer = build(:answer, status:, created_at:)
+      answer = status == :pending ? nil : build(:answer, status:)
       create(:question, conversation:, created_at:, answer:)
     end
 
@@ -25,7 +25,8 @@ RSpec.describe DailyApiActivityMessage do
     end
 
     def label_for_status(status)
-      Rails.configuration.answer_statuses[status][:label_and_description]
+      config = Rails.configuration.answer_statuses.fetch(status)
+      config[:label_and_description] || config[:label]
     end
 
     around do |example|
@@ -162,16 +163,18 @@ RSpec.describe DailyApiActivityMessage do
           create_question(:error_non_specific, yesterday + 4.hours, api_conversation)
         end
 
+        create_question(:pending, yesterday + 4.hours, api_conversation)
         create_question(:guardrails_forbidden_terms, yesterday + 4.hours, api_conversation)
 
         expected_message = <<~MSG.strip
-          Yesterday GOV.UK Chat API received <#{admin_url}|12 questions>:
+          Yesterday GOV.UK Chat API received <#{admin_url}|13 questions>:
 
           - <#{admin_url(:error_non_specific)}|4 #{label_for_status(:error_non_specific)}>
           - <#{admin_url(:clarification)}|3 #{label_for_status(:clarification)}>
-          - <#{admin_url(:answered)}|2 Answered>
+          - <#{admin_url(:answered)}|2 #{label_for_status(:answered)}>
           - <#{admin_url(:unanswerable_no_govuk_content)}|2 #{label_for_status(:unanswerable_no_govuk_content)}>
           - <#{admin_url(:guardrails_forbidden_terms)}|1 #{label_for_status(:guardrails_forbidden_terms)}>
+          - <#{admin_url(:pending)}|1 #{label_for_status(:pending)}>
         MSG
 
         message = described_class.new(Date.yesterday).message
