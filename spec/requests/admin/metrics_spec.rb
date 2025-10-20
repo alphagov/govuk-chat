@@ -97,6 +97,76 @@ RSpec.describe "Admin::MetricsController" do
     end
   end
 
+  describe "GET :api_end_users" do
+    it "renders a successful JSON response" do
+      get admin_metrics_api_end_users_path
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Content-Type"]).to match("application/json")
+      expect(JSON.parse(response.body)).to eq([])
+    end
+
+    it "returns the number of distinct end user ids for API requests by hour" do
+      end_user_ids = Array.new(4) { SecureRandom.uuid }
+
+      first_user_conversation = build(:conversation, end_user_id: end_user_ids[0], source: :api)
+      create_list(:question, 2, conversation: first_user_conversation)
+      3.times do |index|
+        conversation = build(:conversation,
+                             end_user_id: end_user_ids[index + 1],
+                             source: :api)
+        create(:question, conversation:)
+      end
+
+      create(:question, created_at: 1.hour.ago, conversation: first_user_conversation)
+      create(:question,
+             created_at: 1.hour.ago,
+             conversation: build(:conversation, end_user_id: end_user_ids[1], source: :api))
+
+      get admin_metrics_api_end_users_path
+
+      expect(JSON.parse(response.body))
+        .to eq(counts_for_last_24_hours(hours_ago_0: 4, hours_ago_1: 2))
+    end
+
+    it "only counts API requests" do
+      api_conversation = build(:conversation, end_user_id: SecureRandom.uuid, source: :api)
+      create(:question, conversation: api_conversation)
+      web_conversation = build(:conversation, end_user_id: SecureRandom.uuid, source: :web)
+      create(:question, conversation: web_conversation)
+
+      get admin_metrics_api_end_users_path
+
+      expect(JSON.parse(response.body)).to eq(counts_for_last_24_hours(hours_ago_0: 1))
+    end
+
+    it "doesn't include API requests without an end user id" do
+      end_user_id_conversation = build(:conversation, end_user_id: SecureRandom.uuid, source: :api)
+      create(:question, conversation: end_user_id_conversation)
+      non_end_user_id_conversation = build(:conversation, end_user_id: nil, source: :api)
+      create(:question, conversation: non_end_user_id_conversation)
+
+      get admin_metrics_api_end_users_path
+
+      expect(JSON.parse(response.body)).to eq(counts_for_last_24_hours(hours_ago_0: 1))
+    end
+
+    context "when period is last_7_days" do
+      it "returns counts of distinct API end user ids" do
+        2.times do
+          conversation = build(:conversation, end_user_id: SecureRandom.uuid, source: :api)
+          create(:question, conversation:)
+        end
+
+        conversation = build(:conversation, end_user_id: SecureRandom.uuid, source: :api)
+        create(:question, created_at: 2.days.ago, conversation:)
+
+        get admin_metrics_api_end_users_path(period: "last_7_days")
+
+        expect(JSON.parse(response.body)).to eq(counts_for_last_7_days(days_ago_0: 2, days_ago_2: 1))
+      end
+    end
+  end
+
   describe "GET :answer_unanswerable_statuses" do
     it "renders a successful JSON response" do
       get admin_metrics_answer_unanswerable_statuses_path
