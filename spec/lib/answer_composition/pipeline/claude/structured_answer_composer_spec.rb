@@ -43,11 +43,17 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
         input: { answer:, answered: true, sources_used: %w[link_1], answer_completeness: "complete" },
         name: "output_schema",
       )
-      expected_llm_response = claude_messages_response(
-        content: [expected_content],
-        usage: { cache_read_input_tokens: 20 },
-        stop_reason: :tool_use,
-      ).to_h
+      expected_llm_response = {
+        "response" => claude_messages_response(
+          content: [expected_content],
+          usage: { cache_read_input_tokens: 20 },
+          stop_reason: :tool_use,
+        ).to_h.stringify_keys,
+        "link_token_mapping" => {
+          "link_1" => "https://www.test.gov.uk/vat-rates#vat-basics",
+          "link_2" => "https://www.test.gov.uk/what-is-tax",
+        },
+      }
       expect(context.answer.llm_responses["structured_answer"]).to eq(expected_llm_response)
     end
 
@@ -139,11 +145,17 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
           },
           name: "output_schema",
         )
-        expected_llm_response = claude_messages_response(
-          content: [expected_content],
-          usage: { cache_read_input_tokens: 20 },
-          stop_reason: :tool_use,
-        ).to_h
+        expected_llm_response = {
+          "response" => claude_messages_response(
+            content: [expected_content],
+            usage: { cache_read_input_tokens: 20 },
+            stop_reason: :tool_use,
+          ).to_h.stringify_keys,
+          "link_token_mapping" => {
+            "link_1" => "https://www.test.gov.uk/vat-rates#vat-basics",
+            "link_2" => "https://www.test.gov.uk/what-is-tax",
+          },
+        }
         expect(context.answer.llm_responses["structured_answer"]).to eq(expected_llm_response)
       end
     end
