@@ -4,8 +4,9 @@ RSpec.describe DailyApiActivityMessage do
     let(:api_conversation) { create(:conversation, source: :api) }
     let(:yesterday) { 1.day.ago }
 
-    def create_answer(status, created_at, conversation)
-      create(:answer, status:, created_at:, question: build(:question, conversation:))
+    def create_question(status, created_at, conversation)
+      answer = status == :pending ? nil : build(:answer, status:)
+      create(:question, conversation:, created_at:, answer:)
     end
 
     def admin_url(status = nil)
@@ -21,6 +22,11 @@ RSpec.describe DailyApiActivityMessage do
       Rails.application.routes.url_helpers.admin_questions_url(
         url_params.merge(status:),
       )
+    end
+
+    def label_for_status(status)
+      config = Rails.configuration.answer_statuses.fetch(status)
+      config[:label_and_description] || config[:label]
     end
 
     around do |example|
@@ -126,55 +132,82 @@ RSpec.describe DailyApiActivityMessage do
       end
 
       it "only includes non-zero question counts" do
-        create_answer(:clarification, yesterday + 2.hours, api_conversation)
+        create_question(:clarification, yesterday + 2.hours, api_conversation)
         expected_message = <<~MSG.strip
           Yesterday GOV.UK Chat API received <#{admin_url}|1 question>:
 
-          - <#{admin_url(:clarification)}|1 Clarification - question routing requested more information>
+          - <#{admin_url(:clarification)}|1 #{label_for_status(:clarification)}>
         MSG
 
         message = described_class.new(Date.yesterday).message
         expect(message).to eq(expected_message)
-      end
-
-      def label_for_status(status)
-        Rails.configuration.answer_statuses[status][:label_and_description]
       end
 
       it "builds the message with various question counts" do
-        create_answer(:answered, 2.days.ago, api_conversation)
-        create_answer(:answered, 2.days.ago, web_conversation)
+        create_question(:answered, 2.days.ago, api_conversation)
 
         2.times do
-          create_answer(:answered, yesterday + 4.hours, api_conversation)
+          create_question(:answered, yesterday + 4.hours, api_conversation)
+          create_question(:answered, yesterday, web_conversation)
         end
 
         3.times do
-          create_answer(:clarification, yesterday + 2.hours, api_conversation)
+          create_question(:clarification, yesterday + 2.hours, api_conversation)
         end
 
         2.times do
-          create_answer(:unanswerable_no_govuk_content, yesterday + 2.hours, api_conversation)
+          create_question(:unanswerable_no_govuk_content, yesterday + 2.hours, api_conversation)
         end
 
         4.times do
-          create_answer(:error_non_specific, yesterday + 4.hours, api_conversation)
+          create_question(:error_non_specific, yesterday + 4.hours, api_conversation)
         end
 
-        create_answer(:guardrails_forbidden_terms, yesterday + 4.hours, api_conversation)
+        create_question(:pending, yesterday + 4.hours, api_conversation)
+        create_question(:guardrails_forbidden_terms, yesterday + 4.hours, api_conversation)
 
         expected_message = <<~MSG.strip
-          Yesterday GOV.UK Chat API received <#{admin_url}|12 questions>:
+          Yesterday GOV.UK Chat API received <#{admin_url}|13 questions>:
 
           - <#{admin_url(:error_non_specific)}|4 #{label_for_status(:error_non_specific)}>
           - <#{admin_url(:clarification)}|3 #{label_for_status(:clarification)}>
-          - <#{admin_url(:answered)}|2 Answered>
+          - <#{admin_url(:answered)}|2 #{label_for_status(:answered)}>
           - <#{admin_url(:unanswerable_no_govuk_content)}|2 #{label_for_status(:unanswerable_no_govuk_content)}>
           - <#{admin_url(:guardrails_forbidden_terms)}|1 #{label_for_status(:guardrails_forbidden_terms)}>
+          - <#{admin_url(:pending)}|1 #{label_for_status(:pending)}>
         MSG
 
         message = described_class.new(Date.yesterday).message
         expect(message).to eq(expected_message)
+      end
+
+      context "when conversations are associated with an end user id" do
+        it "includes the number of distinct end users associated with the conversations" do
+          conversations = Array.new(3) do
+            build(:conversation, source: :api, end_user_id: SecureRandom.uuid)
+          end
+
+          2.times { create_question(:answered, yesterday, conversations[0]) }
+          2.times { create_question(:answered, yesterday, conversations[1]) }
+          create_question(:answered, yesterday, conversations[2])
+
+          expected_message = "Yesterday GOV.UK Chat API received <#{admin_url}|5 questions> " \
+                             "from 3 end users:"
+
+          message = described_class.new(Date.yesterday).message
+          expect(message).to include(expected_message)
+        end
+
+        it "has the correct plural for a singular end user" do
+          end_user_conversation = build(:conversation, source: :api, end_user_id: SecureRandom.uuid)
+          4.times { create_question(:answered, yesterday, end_user_conversation) }
+
+          expected_message = "Yesterday GOV.UK Chat API received <#{admin_url}|4 questions> " \
+                             "from 1 end user:"
+
+          message = described_class.new(Date.yesterday).message
+          expect(message).to include(expected_message)
+        end
       end
     end
   end

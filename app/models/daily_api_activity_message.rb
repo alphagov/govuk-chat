@@ -12,25 +12,29 @@ private
   attr_reader :date
 
   def question_summary
-    list_items = []
+    summary_prefix = "Yesterday GOV.UK Chat API received"
 
-    question_statuses.sort_by { |_, v| -v }.each do |status, count|
+    return "#{summary_prefix} 0 questions." if total_question_count.zero?
+
+    question_link = admin_url_slack_link(
+      "#{total_question_count} #{'question'.pluralize(total_question_count)}",
+    )
+
+    end_user_summary = if end_user_count.positive?
+                         " from #{end_user_count} end #{'user'.pluralize(end_user_count)}"
+                       else
+                         ""
+                       end
+
+    list_items = question_statuses.sort_by { |k, v| [-v, k] }.map do |status, count|
       status_config = Rails.configuration.answer_statuses[status]
       status_text = status_config&.label_and_description || status_config&.label
       url_text = "#{count} #{status_text}"
-      list_items << "- #{admin_url_slack_link(url_text, status)}"
+      "- #{admin_url_slack_link(url_text, status)}"
     end
 
-    potential_question_link = if total_question_count.positive?
-                                link_text = "#{total_question_count} #{'question'.pluralize(total_question_count)}"
-
-                                admin_url_slack_link(link_text)
-                              else
-                                "0 questions"
-                              end
-
     <<~MSG.strip
-      Yesterday GOV.UK Chat API received #{potential_question_link}#{total_question_count.zero? ? '.' : ':'}
+      #{summary_prefix} #{question_link}#{end_user_summary}:
 
       #{list_items.join("\n")}
     MSG
@@ -66,15 +70,30 @@ private
   end
 
   def question_statuses
-    @question_statuses ||= Answer.joins(question: :conversation)
-                        .where(created_at: date.beginning_of_day..date.end_of_day)
-                        .where("conversations.source": "api")
-                        .group(:status)
-                        .count
+    @question_statuses ||= Question.group_by_status
+                                   .joins(:conversation)
+                                   .where(created_at: date_range)
+                                   .where(conversations: { source: :api })
+                                   .count
   end
 
   def total_question_count
     @total_question_count ||= question_statuses.values.sum
+  end
+
+  def end_user_count
+    return 0 unless total_question_count.positive?
+
+    @end_user_count ||= Question.joins(:conversation)
+                                .where(created_at: date_range)
+                                .where(conversation: { source: :api })
+                                .where.not(conversation: { end_user_id: nil })
+                                .distinct
+                                .count(:end_user_id)
+  end
+
+  def date_range
+    date.beginning_of_day..date.end_of_day
   end
 
   def admin_url_slack_link(text, status = nil)
