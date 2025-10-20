@@ -17,6 +17,13 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
     HTML
   end
 
+  describe "#initialize" do
+    it "initializes mapping as an empty hash" do
+      mapper = described_class.new
+      expect(mapper.mapping).to eq({})
+    end
+  end
+
   describe "#map_links_to_tokens" do
     it "replaces href attributes with tokens" do
       amended_html = described_class.new.map_links_to_tokens(html, "/exact-path")
@@ -47,6 +54,20 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
       result = described_class.new.map_links_to_tokens(html, "/exact-path")
 
       expect(result).to eq(html)
+    end
+
+    it "updates the mapping attribute with the link mappings" do
+      mapper = described_class.new
+      mapper.map_links_to_tokens(html, "/exact-path")
+
+      expect(mapper.mapping).to eq(
+        {
+          "https://www.test.gov.uk/tax-returns" => "link_1",
+          "https://www.test.gov.uk/tax-news" => "link_2",
+          "https://www.gov.uk/national-insurance/what-national-insurance-is" => "link_3",
+          "https://www.test.gov.uk/exact-path#some-heading" => "link_4",
+        },
+      )
     end
   end
 
