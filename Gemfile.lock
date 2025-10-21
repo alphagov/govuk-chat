@@ -274,10 +274,10 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.20.4)
+    govuk_app_config (9.20.5)
       logstasher (~> 2.1)
-      opentelemetry-exporter-otlp (>= 0.25, < 0.31)
-      opentelemetry-instrumentation-all (>= 0.39.1, < 0.85.0)
+      opentelemetry-exporter-otlp (>= 0.25, < 0.32)
+      opentelemetry-instrumentation-all (>= 0.39.1, < 0.86.0)
       opentelemetry-sdk (~> 1.2)
       plek (>= 4, < 6)
       prometheus_exporter (~> 2.3)
@@ -437,7 +437,7 @@ GEM
     opentelemetry-api (1.7.0)
     opentelemetry-common (0.23.0)
       opentelemetry-api (~> 1.0)
-    opentelemetry-exporter-otlp (0.30.0)
+    opentelemetry-exporter-otlp (0.31.0)
       google-protobuf (>= 3.18)
       googleapis-common-protos-types (~> 1.3)
       opentelemetry-api (~> 1.1)
@@ -467,11 +467,11 @@ GEM
       opentelemetry-instrumentation-active_support (~> 0.7)
     opentelemetry-instrumentation-active_support (0.9.1)
       opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-all (0.84.0)
+    opentelemetry-instrumentation-all (0.85.0)
       opentelemetry-instrumentation-active_model_serializers (~> 0.23.0)
       opentelemetry-instrumentation-anthropic (~> 0.2.0)
       opentelemetry-instrumentation-aws_lambda (~> 0.5.0)
-      opentelemetry-instrumentation-aws_sdk (~> 0.9.0)
+      opentelemetry-instrumentation-aws_sdk (~> 0.10.0)
       opentelemetry-instrumentation-bunny (~> 0.23.0)
       opentelemetry-instrumentation-concurrent_ruby (~> 0.23.0)
       opentelemetry-instrumentation-dalli (~> 0.28.0)
@@ -509,7 +509,7 @@ GEM
       opentelemetry-instrumentation-base (~> 0.24)
     opentelemetry-instrumentation-aws_lambda (0.5.1)
       opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-aws_sdk (0.9.1)
+    opentelemetry-instrumentation-aws_sdk (0.10.0)
       opentelemetry-instrumentation-base (~> 0.24)
     opentelemetry-instrumentation-base (0.24.0)
       opentelemetry-api (~> 1.7)
@@ -636,7 +636,7 @@ GEM
       date
       stringio
     public_suffix (6.0.2)
-    puma (7.0.4)
+    puma (7.1.0)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.3)
@@ -1036,7 +1036,7 @@ CHECKSUMS
   google-protobuf (4.33.0-x86_64-linux-gnu) sha256=02782270835a6ee35e6abdba478614c8664c9cb793e574cebf4bbf16467479ca
   googleapis-common-protos-types (1.22.0) sha256=f97492b77bd6da0018c860d5004f512fe7cd165554d7019a8f4df6a56fbfc4c7
   googleauth (1.15.0) sha256=122ae61813805a1cfdf225638f33d354ca6078be17e9712669667226a7243bcf
-  govuk_app_config (9.20.4) sha256=43eb35b6df4b999eec0d44ec75a969e6483f40011856919bc7595eb4bc5269f4
+  govuk_app_config (9.20.5) sha256=d2840bd1cc68c8a70d1b721494ea37198ad3724c78becf11b40fa71ad5780004
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
@@ -1105,7 +1105,7 @@ CHECKSUMS
   opensearch-ruby (3.4.0) sha256=0a8621686bed3c59b4c23e08cbaef873685a3fe4568e9d2703155ca92b8ca05d
   opentelemetry-api (1.7.0) sha256=ccfd264ea6f2db5bf4185e3c07a1297977b44a944e2ce65457c4fe63a697214f
   opentelemetry-common (0.23.0) sha256=da721190479d57bae0ad2207468f47f3e2c3b9a91024b5bc32c9d280183eb32c
-  opentelemetry-exporter-otlp (0.30.0) sha256=07cb0446bb782dfcf7cc27d2d6ebcf9aef1a4585b3f4952be6276a1e77d5ba97
+  opentelemetry-exporter-otlp (0.31.0) sha256=eb92fe8c5b0f11f7a1c2c15b0964249c80f3ef852b5c9032f9fe0cf52d1ffb98
   opentelemetry-helpers-mysql (0.3.0) sha256=cfe61bb3fe483f239b3d44fe0d2e49fca0def849dff9d3029a95d420692780ec
   opentelemetry-helpers-sql (0.2.0) sha256=9f23977bcac6ee7f8782a4821181ca75d75e635e6e01f2a0da7e2b5169bb884d
   opentelemetry-helpers-sql-obfuscation (0.4.0) sha256=7252199f13df8dabb0a44f6b856c0ed3393585b9ad055371da4227a88a2c2341
@@ -1117,10 +1117,10 @@ CHECKSUMS
   opentelemetry-instrumentation-active_record (0.10.1) sha256=47fdd3dcc27d2c1a9335be7a393980a28eb532df127ab39966c8777e866d1afb
   opentelemetry-instrumentation-active_storage (0.2.0) sha256=d8aff194b7469f3beb63a707d5fb3179fd24a02c84ee5ba4d428367e86764d66
   opentelemetry-instrumentation-active_support (0.9.1) sha256=deab7f8583c30a50220452e2f5fa3e84d3f6eb5941f6f950d623a5e7db99b1e1
-  opentelemetry-instrumentation-all (0.84.0) sha256=dab7efb035df4c820738cfdf16197709cfe785ccd944f1f6a32664844fcc1c51
+  opentelemetry-instrumentation-all (0.85.0) sha256=a6cb390a8fbedac4ab9257a360d76ee33ed260d5ffec3ffd4f1a048609f8b6a0
   opentelemetry-instrumentation-anthropic (0.2.1) sha256=14efa524e14f1dd3af41c063c1d57d4381f76229852a028ae8c58187d3dc712b
   opentelemetry-instrumentation-aws_lambda (0.5.1) sha256=aab868448d18e4d38730257977490befabcc1ac0cf9266d4a714ca4d0dfa9f6e
-  opentelemetry-instrumentation-aws_sdk (0.9.1) sha256=b48d73178d66a0ad6a614a4782604ee6b1581ef9ce7991464a54da8acac1b529
+  opentelemetry-instrumentation-aws_sdk (0.10.0) sha256=f3799333712800234079888eab1b15c9b221c232d63ffe994b9b3b0a417dfcdd
   opentelemetry-instrumentation-base (0.24.0) sha256=38bc93fcb399bd3b06dcb04395ca617576de16cd1acc26594aec17529b2a0dab
   opentelemetry-instrumentation-bunny (0.23.1) sha256=4385c959feb2109d610ea7ff333021afba5a2711dceceff53c5b8f95251d985f
   opentelemetry-instrumentation-concurrent_ruby (0.23.1) sha256=b34f0f63b6396af6e35b2d2997d0edb66ad8f7e3918f0e3aed50bf1aa2c42801
@@ -1177,7 +1177,7 @@ CHECKSUMS
   pry-rails (0.3.11) sha256=a69e28e24a34d75d1f60bcf241192a54253f8f7ef8a62cba1e75750a9653593d
   psych (5.2.6) sha256=814328aa5dcb6d604d32126a20bc1cbcf05521a5b49dbb1a8b30a07e580f316e
   public_suffix (6.0.2) sha256=bfa7cd5108066f8c9602e0d6d4114999a5df5839a63149d3e8b0f9c1d3558394
-  puma (7.0.4) sha256=b4c6ae11d1458052eeaa415176c3bf0000f4232287f413525ab2504446154b7a
+  puma (7.1.0) sha256=e45c10cb124f224d448c98db653a75499794edbecadc440ad616cf50f2fd49dd
   racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f
   rack (3.2.3) sha256=239a373da6584574f25f042d8ed4ba21e691c9799f1d2b5c8920bbbc23ca3d41
   rack-attack (6.8.0) sha256=f2499fdebf85bcc05573a22dff57d24305ac14ec2e4156cd3c28d47cafeeecf2
