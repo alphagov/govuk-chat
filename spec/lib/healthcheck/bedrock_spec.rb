@@ -16,7 +16,7 @@ RSpec.describe Healthcheck::Bedrock do
       allow(Aws::Bedrock::Client).to receive(:new).and_return(client)
 
       allow(BedrockModels).to receive(:MODEL_IDS).and_return({
-        claude_sonnet: "eu.anthropic.claude-sonnet-4-20250514-v1:0",
+        claude_sonnet: "eu.anthropic.claude-haiku-4-5-20251001-v1:0",
         titan_embed_v2: "amazon.titan-embed-text-v2:0",
       })
     end
@@ -26,8 +26,8 @@ RSpec.describe Healthcheck::Bedrock do
         {
           model_summaries: [
             Aws::Bedrock::Types::FoundationModelSummary.new(
-              model_id: "anthropic.claude-sonnet-4-20250514-v1:0",
-              model_arn: "arn:claude-sonnet-4",
+              model_id: "anthropic.claude-haiku-4-5-20251001-v1:0",
+              model_arn: "arn:claude-haiku-4-5",
             ),
             Aws::Bedrock::Types::FoundationModelSummary.new(
               model_id: "amazon.titan-embed-text-v2:0",
