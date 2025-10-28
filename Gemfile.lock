@@ -106,7 +106,7 @@ GEM
     aws-sigv4 (1.12.1)
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.3.0)
-    benchmark (0.4.1)
+    benchmark (0.5.0)
     better_html (2.1.1)
       actionview (>= 6.0)
       activesupport (>= 6.0)
@@ -274,10 +274,10 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.20.5)
+    govuk_app_config (9.20.6)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.32)
-      opentelemetry-instrumentation-all (>= 0.39.1, < 0.86.0)
+      opentelemetry-instrumentation-all (>= 0.39.1, < 0.87.0)
       opentelemetry-sdk (~> 1.2)
       plek (>= 4, < 6)
       prometheus_exporter (~> 2.3)
@@ -437,165 +437,165 @@ GEM
     opentelemetry-api (1.7.0)
     opentelemetry-common (0.23.0)
       opentelemetry-api (~> 1.0)
-    opentelemetry-exporter-otlp (0.31.0)
+    opentelemetry-exporter-otlp (0.31.1)
       google-protobuf (>= 3.18)
       googleapis-common-protos-types (~> 1.3)
       opentelemetry-api (~> 1.1)
       opentelemetry-common (~> 0.20)
-      opentelemetry-sdk (~> 1.2)
+      opentelemetry-sdk (~> 1.10)
       opentelemetry-semantic_conventions
-    opentelemetry-helpers-mysql (0.3.0)
+    opentelemetry-helpers-mysql (0.4.0)
       opentelemetry-api (~> 1.7)
       opentelemetry-common (~> 0.21)
-    opentelemetry-helpers-sql (0.2.0)
+    opentelemetry-helpers-sql (0.3.0)
       opentelemetry-api (~> 1.7)
-    opentelemetry-helpers-sql-obfuscation (0.4.0)
+    opentelemetry-helpers-sql-obfuscation (0.5.0)
       opentelemetry-common (~> 0.21)
-    opentelemetry-instrumentation-action_mailer (0.5.0)
-      opentelemetry-instrumentation-active_support (~> 0.7)
-    opentelemetry-instrumentation-action_pack (0.14.1)
-      opentelemetry-instrumentation-rack (~> 0.21)
-    opentelemetry-instrumentation-action_view (0.10.0)
-      opentelemetry-instrumentation-active_support (~> 0.7)
-    opentelemetry-instrumentation-active_job (0.9.2)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-active_model_serializers (0.23.0)
+    opentelemetry-instrumentation-action_mailer (0.6.1)
+      opentelemetry-instrumentation-active_support (~> 0.10)
+    opentelemetry-instrumentation-action_pack (0.15.1)
+      opentelemetry-instrumentation-rack (~> 0.29)
+    opentelemetry-instrumentation-action_view (0.11.1)
+      opentelemetry-instrumentation-active_support (~> 0.10)
+    opentelemetry-instrumentation-active_job (0.10.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-active_model_serializers (0.24.0)
       opentelemetry-instrumentation-active_support (>= 0.7.0)
-    opentelemetry-instrumentation-active_record (0.10.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-active_storage (0.2.0)
-      opentelemetry-instrumentation-active_support (~> 0.7)
-    opentelemetry-instrumentation-active_support (0.9.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-all (0.85.0)
-      opentelemetry-instrumentation-active_model_serializers (~> 0.23.0)
-      opentelemetry-instrumentation-anthropic (~> 0.2.0)
-      opentelemetry-instrumentation-aws_lambda (~> 0.5.0)
-      opentelemetry-instrumentation-aws_sdk (~> 0.10.0)
-      opentelemetry-instrumentation-bunny (~> 0.23.0)
-      opentelemetry-instrumentation-concurrent_ruby (~> 0.23.0)
-      opentelemetry-instrumentation-dalli (~> 0.28.0)
-      opentelemetry-instrumentation-delayed_job (~> 0.24.0)
-      opentelemetry-instrumentation-ethon (~> 0.24.0)
-      opentelemetry-instrumentation-excon (~> 0.25.0)
-      opentelemetry-instrumentation-faraday (~> 0.29.0)
-      opentelemetry-instrumentation-grape (~> 0.4.0)
-      opentelemetry-instrumentation-graphql (~> 0.30.0)
-      opentelemetry-instrumentation-grpc (~> 0.3.0)
-      opentelemetry-instrumentation-gruf (~> 0.4.0)
-      opentelemetry-instrumentation-http (~> 0.26.0)
-      opentelemetry-instrumentation-http_client (~> 0.25.0)
-      opentelemetry-instrumentation-httpx (~> 0.4.0)
-      opentelemetry-instrumentation-koala (~> 0.22.0)
-      opentelemetry-instrumentation-lmdb (~> 0.24.0)
-      opentelemetry-instrumentation-mongo (~> 0.24.0)
-      opentelemetry-instrumentation-mysql2 (~> 0.30.0)
-      opentelemetry-instrumentation-net_http (~> 0.25.0)
-      opentelemetry-instrumentation-pg (~> 0.31.0)
-      opentelemetry-instrumentation-que (~> 0.10.0)
-      opentelemetry-instrumentation-racecar (~> 0.5.0)
-      opentelemetry-instrumentation-rack (~> 0.28.0)
-      opentelemetry-instrumentation-rails (~> 0.38.0)
-      opentelemetry-instrumentation-rake (~> 0.4.0)
-      opentelemetry-instrumentation-rdkafka (~> 0.8.0)
-      opentelemetry-instrumentation-redis (~> 0.27.0)
-      opentelemetry-instrumentation-resque (~> 0.7.0)
-      opentelemetry-instrumentation-restclient (~> 0.25.0)
-      opentelemetry-instrumentation-ruby_kafka (~> 0.23.0)
-      opentelemetry-instrumentation-sidekiq (~> 0.27.0)
-      opentelemetry-instrumentation-sinatra (~> 0.27.0)
-      opentelemetry-instrumentation-trilogy (~> 0.63.0)
-    opentelemetry-instrumentation-anthropic (0.2.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-aws_lambda (0.5.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-aws_sdk (0.10.0)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-base (0.24.0)
+    opentelemetry-instrumentation-active_record (0.11.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-active_storage (0.3.1)
+      opentelemetry-instrumentation-active_support (~> 0.10)
+    opentelemetry-instrumentation-active_support (0.10.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-all (0.86.1)
+      opentelemetry-instrumentation-active_model_serializers (~> 0.24.0)
+      opentelemetry-instrumentation-anthropic (~> 0.3.0)
+      opentelemetry-instrumentation-aws_lambda (~> 0.6.0)
+      opentelemetry-instrumentation-aws_sdk (~> 0.11.0)
+      opentelemetry-instrumentation-bunny (~> 0.24.0)
+      opentelemetry-instrumentation-concurrent_ruby (~> 0.24.0)
+      opentelemetry-instrumentation-dalli (~> 0.29.0)
+      opentelemetry-instrumentation-delayed_job (~> 0.25.1)
+      opentelemetry-instrumentation-ethon (~> 0.25.0)
+      opentelemetry-instrumentation-excon (~> 0.26.0)
+      opentelemetry-instrumentation-faraday (~> 0.30.0)
+      opentelemetry-instrumentation-grape (~> 0.5.0)
+      opentelemetry-instrumentation-graphql (~> 0.31.1)
+      opentelemetry-instrumentation-grpc (~> 0.4.1)
+      opentelemetry-instrumentation-gruf (~> 0.5.0)
+      opentelemetry-instrumentation-http (~> 0.27.0)
+      opentelemetry-instrumentation-http_client (~> 0.26.0)
+      opentelemetry-instrumentation-httpx (~> 0.5.0)
+      opentelemetry-instrumentation-koala (~> 0.23.0)
+      opentelemetry-instrumentation-lmdb (~> 0.25.0)
+      opentelemetry-instrumentation-mongo (~> 0.25.0)
+      opentelemetry-instrumentation-mysql2 (~> 0.31.0)
+      opentelemetry-instrumentation-net_http (~> 0.26.0)
+      opentelemetry-instrumentation-pg (~> 0.32.0)
+      opentelemetry-instrumentation-que (~> 0.11.1)
+      opentelemetry-instrumentation-racecar (~> 0.6.0)
+      opentelemetry-instrumentation-rack (~> 0.29.0)
+      opentelemetry-instrumentation-rails (~> 0.39.1)
+      opentelemetry-instrumentation-rake (~> 0.5.0)
+      opentelemetry-instrumentation-rdkafka (~> 0.9.0)
+      opentelemetry-instrumentation-redis (~> 0.28.0)
+      opentelemetry-instrumentation-resque (~> 0.8.0)
+      opentelemetry-instrumentation-restclient (~> 0.26.0)
+      opentelemetry-instrumentation-ruby_kafka (~> 0.24.0)
+      opentelemetry-instrumentation-sidekiq (~> 0.28.0)
+      opentelemetry-instrumentation-sinatra (~> 0.28.0)
+      opentelemetry-instrumentation-trilogy (~> 0.64.0)
+    opentelemetry-instrumentation-anthropic (0.3.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-aws_lambda (0.6.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-aws_sdk (0.11.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-base (0.25.0)
       opentelemetry-api (~> 1.7)
       opentelemetry-common (~> 0.21)
       opentelemetry-registry (~> 0.1)
-    opentelemetry-instrumentation-bunny (0.23.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-concurrent_ruby (0.23.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-dalli (0.28.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-delayed_job (0.24.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-ethon (0.24.2)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-excon (0.25.2)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-faraday (0.29.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-grape (0.4.0)
-      opentelemetry-instrumentation-rack (~> 0.21)
-    opentelemetry-instrumentation-graphql (0.30.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-grpc (0.3.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-gruf (0.4.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-http (0.26.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-http_client (0.25.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-httpx (0.4.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-koala (0.22.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-lmdb (0.24.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-mongo (0.24.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-mysql2 (0.30.1)
+    opentelemetry-instrumentation-bunny (0.24.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-concurrent_ruby (0.24.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-dalli (0.29.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-delayed_job (0.25.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-ethon (0.25.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-excon (0.26.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-faraday (0.30.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-grape (0.5.0)
+      opentelemetry-instrumentation-rack (~> 0.29)
+    opentelemetry-instrumentation-graphql (0.31.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-grpc (0.4.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-gruf (0.5.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-http (0.27.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-http_client (0.26.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-httpx (0.5.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-koala (0.23.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-lmdb (0.25.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-mongo (0.25.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-mysql2 (0.31.0)
       opentelemetry-helpers-mysql
       opentelemetry-helpers-sql
       opentelemetry-helpers-sql-obfuscation
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-net_http (0.25.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-pg (0.31.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-net_http (0.26.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-pg (0.32.0)
       opentelemetry-helpers-sql
       opentelemetry-helpers-sql-obfuscation
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-que (0.10.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-racecar (0.5.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-rack (0.28.2)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-rails (0.38.0)
-      opentelemetry-instrumentation-action_mailer (~> 0.4)
-      opentelemetry-instrumentation-action_pack (~> 0.13)
-      opentelemetry-instrumentation-action_view (~> 0.9)
-      opentelemetry-instrumentation-active_job (~> 0.8)
-      opentelemetry-instrumentation-active_record (~> 0.9)
-      opentelemetry-instrumentation-active_storage (~> 0.1)
-      opentelemetry-instrumentation-active_support (~> 0.8)
-      opentelemetry-instrumentation-concurrent_ruby (~> 0.22)
-    opentelemetry-instrumentation-rake (0.4.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-rdkafka (0.8.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-redis (0.27.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-resque (0.7.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-restclient (0.25.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-ruby_kafka (0.23.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-sidekiq (0.27.1)
-      opentelemetry-instrumentation-base (~> 0.24)
-    opentelemetry-instrumentation-sinatra (0.27.1)
-      opentelemetry-instrumentation-rack (~> 0.21)
-    opentelemetry-instrumentation-trilogy (0.63.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-que (0.11.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-racecar (0.6.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-rack (0.29.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-rails (0.39.1)
+      opentelemetry-instrumentation-action_mailer (~> 0.6)
+      opentelemetry-instrumentation-action_pack (~> 0.15)
+      opentelemetry-instrumentation-action_view (~> 0.11)
+      opentelemetry-instrumentation-active_job (~> 0.10)
+      opentelemetry-instrumentation-active_record (~> 0.11)
+      opentelemetry-instrumentation-active_storage (~> 0.3)
+      opentelemetry-instrumentation-active_support (~> 0.10)
+      opentelemetry-instrumentation-concurrent_ruby (~> 0.23)
+    opentelemetry-instrumentation-rake (0.5.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-rdkafka (0.9.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-redis (0.28.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-resque (0.8.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-restclient (0.26.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-ruby_kafka (0.24.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-sidekiq (0.28.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+    opentelemetry-instrumentation-sinatra (0.28.0)
+      opentelemetry-instrumentation-rack (~> 0.29)
+    opentelemetry-instrumentation-trilogy (0.64.0)
       opentelemetry-helpers-mysql
       opentelemetry-helpers-sql
       opentelemetry-helpers-sql-obfuscation
-      opentelemetry-instrumentation-base (~> 0.24)
+      opentelemetry-instrumentation-base (~> 0.25)
       opentelemetry-semantic_conventions (>= 1.8.0)
     opentelemetry-registry (0.4.0)
       opentelemetry-api (~> 1.1)
@@ -966,7 +966,7 @@ CHECKSUMS
   aws-sdk-core (3.234.0) sha256=bbaaf1a0cd233b61f11acd0e9092cdf87f47e0398b996c99741d62ad7d54fd19
   aws-sigv4 (1.12.1) sha256=6973ff95cb0fd0dc58ba26e90e9510a2219525d07620c8babeb70ef831826c00
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
-  benchmark (0.4.1) sha256=d4ef40037bba27f03b28013e219b950b82bace296549ec15a78016552f8d2cce
+  benchmark (0.5.0) sha256=465df122341aedcb81a2a24b4d3bd19b6c67c1530713fd533f3ff034e419236c
   better_html (2.1.1) sha256=046c3551d1488a3f2939a7cac6fabf2bde08c32e135c91fcd683380118e5af55
   bigdecimal (3.3.1) sha256=eaa01e228be54c4f9f53bf3cc34fe3d5e845c31963e7fcc5bedb05a4e7d52218
   blueprinter (1.2.1) sha256=11b534060b0b548f7c7d2084f891742fe12760d8df77cb9a1cffe502a9ceca10
@@ -1036,7 +1036,7 @@ CHECKSUMS
   google-protobuf (4.33.0-x86_64-linux-gnu) sha256=02782270835a6ee35e6abdba478614c8664c9cb793e574cebf4bbf16467479ca
   googleapis-common-protos-types (1.22.0) sha256=f97492b77bd6da0018c860d5004f512fe7cd165554d7019a8f4df6a56fbfc4c7
   googleauth (1.15.0) sha256=122ae61813805a1cfdf225638f33d354ca6078be17e9712669667226a7243bcf
-  govuk_app_config (9.20.5) sha256=d2840bd1cc68c8a70d1b721494ea37198ad3724c78becf11b40fa71ad5780004
+  govuk_app_config (9.20.6) sha256=928c7dc3170a7a4bfffe09ef751081877839c55136d0c553b12033d2b896ccf1
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
@@ -1105,56 +1105,56 @@ CHECKSUMS
   opensearch-ruby (3.4.0) sha256=0a8621686bed3c59b4c23e08cbaef873685a3fe4568e9d2703155ca92b8ca05d
   opentelemetry-api (1.7.0) sha256=ccfd264ea6f2db5bf4185e3c07a1297977b44a944e2ce65457c4fe63a697214f
   opentelemetry-common (0.23.0) sha256=da721190479d57bae0ad2207468f47f3e2c3b9a91024b5bc32c9d280183eb32c
-  opentelemetry-exporter-otlp (0.31.0) sha256=eb92fe8c5b0f11f7a1c2c15b0964249c80f3ef852b5c9032f9fe0cf52d1ffb98
-  opentelemetry-helpers-mysql (0.3.0) sha256=cfe61bb3fe483f239b3d44fe0d2e49fca0def849dff9d3029a95d420692780ec
-  opentelemetry-helpers-sql (0.2.0) sha256=9f23977bcac6ee7f8782a4821181ca75d75e635e6e01f2a0da7e2b5169bb884d
-  opentelemetry-helpers-sql-obfuscation (0.4.0) sha256=7252199f13df8dabb0a44f6b856c0ed3393585b9ad055371da4227a88a2c2341
-  opentelemetry-instrumentation-action_mailer (0.5.0) sha256=c6b2311a6b687a0e7601c69a9c31ba7de2d35b9b82c5ed1a36dc0d5356c2386a
-  opentelemetry-instrumentation-action_pack (0.14.1) sha256=c6ec48256e33bc4d5ca22d65676476ed1b35db6071c7e4391fb3cd30ed2d5924
-  opentelemetry-instrumentation-action_view (0.10.0) sha256=da91f6e48286d3904246fbd9b445111471d46dd212206bb554914d679928b377
-  opentelemetry-instrumentation-active_job (0.9.2) sha256=b2c54bbf34950e05d39aa5fdde7df69d4c3b2390821aef43815a7e98f57fbdb8
-  opentelemetry-instrumentation-active_model_serializers (0.23.0) sha256=9caf0ed1306f6de9f939ee8049172553caefd7fe0d4039971f5ea617511faca2
-  opentelemetry-instrumentation-active_record (0.10.1) sha256=47fdd3dcc27d2c1a9335be7a393980a28eb532df127ab39966c8777e866d1afb
-  opentelemetry-instrumentation-active_storage (0.2.0) sha256=d8aff194b7469f3beb63a707d5fb3179fd24a02c84ee5ba4d428367e86764d66
-  opentelemetry-instrumentation-active_support (0.9.1) sha256=deab7f8583c30a50220452e2f5fa3e84d3f6eb5941f6f950d623a5e7db99b1e1
-  opentelemetry-instrumentation-all (0.85.0) sha256=a6cb390a8fbedac4ab9257a360d76ee33ed260d5ffec3ffd4f1a048609f8b6a0
-  opentelemetry-instrumentation-anthropic (0.2.1) sha256=14efa524e14f1dd3af41c063c1d57d4381f76229852a028ae8c58187d3dc712b
-  opentelemetry-instrumentation-aws_lambda (0.5.1) sha256=aab868448d18e4d38730257977490befabcc1ac0cf9266d4a714ca4d0dfa9f6e
-  opentelemetry-instrumentation-aws_sdk (0.10.0) sha256=f3799333712800234079888eab1b15c9b221c232d63ffe994b9b3b0a417dfcdd
-  opentelemetry-instrumentation-base (0.24.0) sha256=38bc93fcb399bd3b06dcb04395ca617576de16cd1acc26594aec17529b2a0dab
-  opentelemetry-instrumentation-bunny (0.23.1) sha256=4385c959feb2109d610ea7ff333021afba5a2711dceceff53c5b8f95251d985f
-  opentelemetry-instrumentation-concurrent_ruby (0.23.1) sha256=b34f0f63b6396af6e35b2d2997d0edb66ad8f7e3918f0e3aed50bf1aa2c42801
-  opentelemetry-instrumentation-dalli (0.28.1) sha256=030b58329d79c1ec54eb1430ed5e4207f19ed3bdf5660d36c58463c540cd294a
-  opentelemetry-instrumentation-delayed_job (0.24.1) sha256=60b43e5b1d50aa67ff62249987ff7cbf57635ccb4fd9e362ecb609f2879793d1
-  opentelemetry-instrumentation-ethon (0.24.2) sha256=9c63debd1cc1ffc9430f9e0eba021ee10a0380ef7bae25d54061a613971e507e
-  opentelemetry-instrumentation-excon (0.25.2) sha256=e1f3e7e6a6f83c2beab067a942fa9e6be6e7884d66436d784ca9eb268687d692
-  opentelemetry-instrumentation-faraday (0.29.1) sha256=b25b5ccce6380dabcf98b4fabb0b2e2f76d4e3b79b05b4c563dd357b7fdfd625
-  opentelemetry-instrumentation-grape (0.4.0) sha256=6e8fa023b01fd9502bf4ad393a00bd678a4c06e811ebc1d22b1897fb4af63c66
-  opentelemetry-instrumentation-graphql (0.30.1) sha256=4db1fdd4738b306b9247c1ff046bf55ee198bf9355476e16d2a6f457947c0006
-  opentelemetry-instrumentation-grpc (0.3.1) sha256=7f41b69cb96b60b5ad1150668720e02b2e733c2e05f310c9af9a66b61f222403
-  opentelemetry-instrumentation-gruf (0.4.1) sha256=d4da43ee186d0973b8feaadb04127af82aa3eca1d58068209625bc20ebf8f7d4
-  opentelemetry-instrumentation-http (0.26.1) sha256=f018c4f4285fc00ab7bce67a5ca94a76c2fde5d560dd089fb01ee0b0a30a4d31
-  opentelemetry-instrumentation-http_client (0.25.1) sha256=ce1cffff3f822805cda47e3e28839f495bfdcbd7524def1258f258f790fe666a
-  opentelemetry-instrumentation-httpx (0.4.1) sha256=edb9753b998f6d14e19329be41cf6c150f03e222a165b84e4a0941d2ca8d6e50
-  opentelemetry-instrumentation-koala (0.22.1) sha256=c3e52d37d6d105bc5d33c04a111e0129d98a5283555545c1352896a7feddb213
-  opentelemetry-instrumentation-lmdb (0.24.1) sha256=dcd02eb4efa664c6130457f76dc912cc2c86d7e7b0ba295b36534394a7b76f85
-  opentelemetry-instrumentation-mongo (0.24.1) sha256=564098eef96eb10dd956a1ff20315a58fde0ff08466249fa1b4b141fe6544b8b
-  opentelemetry-instrumentation-mysql2 (0.30.1) sha256=6c5dd3403fbbda6f0c174ff0cab1dd7e9bc391346bfc64b4a2270808bdafeb83
-  opentelemetry-instrumentation-net_http (0.25.1) sha256=43eabc848aa800872ffc36dcb0c4ce72740b7ccdd4125f03a983e3cd21ec27af
-  opentelemetry-instrumentation-pg (0.31.1) sha256=57c81cd93feba4a79702a083eb62db12a0b2f8e3cfcbb9db25b6f141eb56a78d
-  opentelemetry-instrumentation-que (0.10.1) sha256=9081ed34289a17ad501f2057c3274a149aac540006c0dcae1dbd67c26813cdd1
-  opentelemetry-instrumentation-racecar (0.5.1) sha256=48ae22e230af411cf04cd58f8e440a1cde8a2f476d10c33adeda9c11b060c64c
-  opentelemetry-instrumentation-rack (0.28.2) sha256=f207d70fd23022ffa227fae0c24f81cd4975a61e879912029c7e713740a81e3d
-  opentelemetry-instrumentation-rails (0.38.0) sha256=c1aec7b854cfc873747495c4375cf8dbedbe2c30e2e86d44c0860bf993bdd1af
-  opentelemetry-instrumentation-rake (0.4.1) sha256=68a5f854113f96a92aa7ca68d6da9815f12da2b9272ec22e87c919c8d15c4380
-  opentelemetry-instrumentation-rdkafka (0.8.1) sha256=dce82018958ac61d80fb7a91c01bbd0312155d282d47178b4af87426a06f5bb1
-  opentelemetry-instrumentation-redis (0.27.1) sha256=f0bee2dfc83d1b737f3948e875bfa3ae5610c90d46dc708d1ceea03b525287f8
-  opentelemetry-instrumentation-resque (0.7.1) sha256=391401e252547d104a1f5e79f61495dcc002759e4c33256377dacd2ebed8a156
-  opentelemetry-instrumentation-restclient (0.25.1) sha256=df83d6709ef81a28d7acab0221ee70e6bf603b398aaa56e6de68ae7dc0a26fc9
-  opentelemetry-instrumentation-ruby_kafka (0.23.1) sha256=f98a55fb918ba58ebeac9d4cc51abe20f946fbf409326bafe5d3c73118409b23
-  opentelemetry-instrumentation-sidekiq (0.27.1) sha256=c06fa51594b0a50979b0386cea7ec2f0ed823fac0d7f591d8d262d57ab2676e9
-  opentelemetry-instrumentation-sinatra (0.27.1) sha256=494e58cf0dd8c0eb58411f4597938ae997506296c0b4f56812a3078771e3bee4
-  opentelemetry-instrumentation-trilogy (0.63.1) sha256=7a90bb0eae48b139ed44e9070e690c48d4f5caf5c265d67603d71dc609b60122
+  opentelemetry-exporter-otlp (0.31.1) sha256=5358be17d7849cbcc4f49e1fc24105edc780a6f96c8e57b64192ab9a8e47474a
+  opentelemetry-helpers-mysql (0.4.0) sha256=d309c0b20825bdd14d4dbc75e0d3b381ffdad37d16424ceca3cb8453d9cb5a4f
+  opentelemetry-helpers-sql (0.3.0) sha256=4bb08017d6a16dd41c4d1c53c7fd30f9c5bb691195d8b458933724627b3f37f9
+  opentelemetry-helpers-sql-obfuscation (0.5.0) sha256=b0a073fb4ac4bf9e3b87ef68db4e5267a3260495c48d0c7682c1d3c3b2baef3f
+  opentelemetry-instrumentation-action_mailer (0.6.1) sha256=8384866bdb066ae14b9a1fe686ffaf1f23468326a35af64390c0395fcd471057
+  opentelemetry-instrumentation-action_pack (0.15.1) sha256=84fade740783caeebf260aaefcbf8f1a7a4c49f946944ff520a2fb1d6b07f273
+  opentelemetry-instrumentation-action_view (0.11.1) sha256=426134dd7604b77032abe26a49d75d16de32d89af962704c0fdf4ab203e5f599
+  opentelemetry-instrumentation-active_job (0.10.1) sha256=aea1311224c20d064a8f218a44299171152dc36eeb531b9eba84bed8b3942a89
+  opentelemetry-instrumentation-active_model_serializers (0.24.0) sha256=8fe81e44167d17e45d9acfa588d20140c7640c323e58aca99e266de1bb3fce15
+  opentelemetry-instrumentation-active_record (0.11.1) sha256=1b083f34eea0449f8d6f4370b3fb4b935757fac6e4e538e67bb98211809e7c92
+  opentelemetry-instrumentation-active_storage (0.3.1) sha256=f89b0fef54921f17c0c4c38a6e0926d29afabd0ac98436fcdbb8bde85dfde89e
+  opentelemetry-instrumentation-active_support (0.10.1) sha256=82ea98367158797e33c6de96581f10aa4fe8adf0ebec832dcff5fd04c59bc57d
+  opentelemetry-instrumentation-all (0.86.1) sha256=f193c38209eb6b5b5e09f83d84ed30bdfc2238fca85a3adf8077be4329a77eef
+  opentelemetry-instrumentation-anthropic (0.3.0) sha256=09bd9b4ba6189389a6c0f7ba49f1d11f387d93b411ab585137a48b59925a48de
+  opentelemetry-instrumentation-aws_lambda (0.6.0) sha256=1a3161393cfe9bc9eddd81a0668d076c38a0a2c3d5df40e95d02f5a8fcd3334c
+  opentelemetry-instrumentation-aws_sdk (0.11.0) sha256=67a21e754ddf51e2bb8c3e46e116aa9158d8db800f34c2a9b1e0da5a6ca911e3
+  opentelemetry-instrumentation-base (0.25.0) sha256=642a3a7f08354e6e969423327a4fa67ed2cca7ac6fe5ee09e55b17d1c576da27
+  opentelemetry-instrumentation-bunny (0.24.0) sha256=1ec484e48a5f42a1d0c33e8e6bc7e9e78dd80f3ed9d63520b8a22ba564aa2585
+  opentelemetry-instrumentation-concurrent_ruby (0.24.0) sha256=229bd8b72000c59de693609bb637b8a9114992f5e0ab03730d7fd7ef91f7d1d2
+  opentelemetry-instrumentation-dalli (0.29.0) sha256=a2686650545609e8d7e281c9fd1aef529ab578ef2dcf9a6258737e4ba214bc2f
+  opentelemetry-instrumentation-delayed_job (0.25.1) sha256=47f35b10d2bfd9ac7c2bbbe10dea095a2e25db2a84f5351860ead969d180c3ec
+  opentelemetry-instrumentation-ethon (0.25.0) sha256=c7b51b89593ec4214cbf11659b815e11423e224b411e9ee310981e7148d23256
+  opentelemetry-instrumentation-excon (0.26.0) sha256=cfa146f7aadc9cd6917a0a801832bdcc75374dfec10ad71c673bc1436bb73c07
+  opentelemetry-instrumentation-faraday (0.30.0) sha256=015b09dcdb695d4cae540a001565c0caa021852bf986baab218e268935566258
+  opentelemetry-instrumentation-grape (0.5.0) sha256=b9fcbe13b015b663577b8bde5b419c297da2588d0a022f4ce40f9ffc49df7624
+  opentelemetry-instrumentation-graphql (0.31.1) sha256=7096bba9631fdb455e39f91ec2390e834804ff00101e42aa5a3e09e3ebca7883
+  opentelemetry-instrumentation-grpc (0.4.1) sha256=5ffa2bb1d5ec69bcd1fe23e1d8c1a563a00351ce052fe9d76885cc43f21ebc87
+  opentelemetry-instrumentation-gruf (0.5.0) sha256=ee21be36e312e71b847c9a87168225625890121140a364b68d3668e0df58dacd
+  opentelemetry-instrumentation-http (0.27.0) sha256=27d70d146d93433a1b34bacbb6dd7b3f51468a568c797621fd8d1c0578cea029
+  opentelemetry-instrumentation-http_client (0.26.0) sha256=a8eb182b3e336773daf97cc54d56b4294dce8e0f00de19ea97bed0995405cad5
+  opentelemetry-instrumentation-httpx (0.5.0) sha256=713cc0ab1033336fb874d5a68d51cf460823666879d4e3a7a1405d0daed5c125
+  opentelemetry-instrumentation-koala (0.23.0) sha256=8f324b50a2a64fd4994bb2b105a4cb0c80b64ec05cf5487d2daa906c650bc6f9
+  opentelemetry-instrumentation-lmdb (0.25.0) sha256=1e4d66d583ea242d4f72051062971f5af1ea353484d224abbd0aabdd1ce5f5cb
+  opentelemetry-instrumentation-mongo (0.25.0) sha256=d04585669f928ea82e7c469f996061d39d8ff184278d57cf4fc77a6d607f9c7a
+  opentelemetry-instrumentation-mysql2 (0.31.0) sha256=e86fdce4845e2dd7ee00501beb1eecb28626e86c3b0230b9867a4b5f614711fd
+  opentelemetry-instrumentation-net_http (0.26.0) sha256=4ec1dc3c814e215926323e7eaaac905a661d0bf4236e121ab330e1ec42311d92
+  opentelemetry-instrumentation-pg (0.32.0) sha256=a6dcb82d7bc158dbe74a3f9f33f3d9ca37d93e311e2968ef5e919ce1c29efb0a
+  opentelemetry-instrumentation-que (0.11.1) sha256=8c3fb084165481be569760c5b3f194d2af62c4144deed079f993fe0cf9c9f727
+  opentelemetry-instrumentation-racecar (0.6.0) sha256=de267a1af9f22b76286ad1830f0ef81b437aad519c230d63f4059e0eb60168cc
+  opentelemetry-instrumentation-rack (0.29.0) sha256=9e2cbb8336087064cbe33b502d917d85b174162bc717efda1cfdbd182342f377
+  opentelemetry-instrumentation-rails (0.39.1) sha256=7959df7895543040fbb5cd3877c37bc9f95d79ff9d7749334314c50b871ac96f
+  opentelemetry-instrumentation-rake (0.5.0) sha256=fa6bd019078975ac8a67eaea06294e4fe6707e6770d8ced88d74dc573b0a01ef
+  opentelemetry-instrumentation-rdkafka (0.9.0) sha256=f3beb56828c584d7d91a2c46f6e5a2ef82289b1d4445b1eb5bc13b80ab6aca89
+  opentelemetry-instrumentation-redis (0.28.0) sha256=8721957d1c527dd22bd564d17f3a8db252081abb302be189511282d023693900
+  opentelemetry-instrumentation-resque (0.8.0) sha256=559edde9d6273dd757ae5149ed36e26d147b63028d084121203f51c8cff805e5
+  opentelemetry-instrumentation-restclient (0.26.0) sha256=5d4e9d93ef51564a1023c076e17b4ac3b42fe81003321d9fb66e44886538bdce
+  opentelemetry-instrumentation-ruby_kafka (0.24.0) sha256=257e891f4ce630ba3e0669408d497b44afcc493cd49aed09343d5a51fa8952c2
+  opentelemetry-instrumentation-sidekiq (0.28.0) sha256=748d651c49740f261caf2da33d0a665b97442bf1caec4e35757a1b430353226e
+  opentelemetry-instrumentation-sinatra (0.28.0) sha256=9f11d68c580a421cadd633aca1f8f92707d6b6995d48fffa045a48c187347f26
+  opentelemetry-instrumentation-trilogy (0.64.0) sha256=a2aa19f727e86e57ee9799a2fd2c0fe9fd5b2eff69f16b30cde11d7748309fc5
   opentelemetry-registry (0.4.0) sha256=903fa6bfaa29eac1c1d73a4fdd29b850977b5353b84b8cdff11222c00ad2968f
   opentelemetry-sdk (1.10.0) sha256=43719949be8df24dcaeb86ebbf75636cda87d51a01af2729499b92a48b80521a
   opentelemetry-semantic_conventions (1.36.0) sha256=c1b1607dbc7853aac7f9e23f6e8b76969c45b07f2b812a4aa4383c19a3b0f617
