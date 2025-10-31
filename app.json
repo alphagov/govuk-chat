@@ -45,6 +45,9 @@
     },
     "AWS_SECRET_ACCESS_KEY": {
       "required": true
+    },
+    "SIDEKIQ_CONCURRENCY": {
+      "value": "5"
     }
   },
   "formation": {
