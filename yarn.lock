@@ -1954,7 +1954,7 @@ __metadata:
   resolution: "govuk-chat@workspace:."
   dependencies:
     jasmine-browser-runner: "npm:^3.0.0"
-    jasmine-core: "npm:^5.12.0"
+    jasmine-core: "npm:^5.12.1"
     standard: "npm:^17.1.2"
     stylelint: "npm:^16.25.0"
     stylelint-config-gds: "npm:^2.0.0"
@@ -2505,10 +2505,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jasmine-core@npm:^5.12.0":
-  version: 5.12.0
-  resolution: "jasmine-core@npm:5.12.0"
-  checksum: 10c0/696e91c637d832045f8e9fe716d10c3e08413cecc54750a5847f5ae89a1aa652976aaf2858824345cc99ddbb35b5f583c3f641a7d4f0947aacd8ddf8b4e42537
+"jasmine-core@npm:^5.12.1":
+  version: 5.12.1
+  resolution: "jasmine-core@npm:5.12.1"
+  checksum: 10c0/35d83a91176e68960b4aa62d9a18bbeabed09cec42a138a70125a1952c0df6849d721d7e032101a3bd2ef17f1244fac166aaca8353cac7aa221831e005b84760
   languageName: node
   linkType: hard
 
