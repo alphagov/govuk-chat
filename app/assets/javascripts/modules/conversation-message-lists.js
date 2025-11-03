@@ -18,6 +18,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.questionLoadingTimeout = null
       this.questionLoadingElement = null
       this.answerLoadingElement = null
+      this.answerHTML = null
     }
 
     hasNewMessages () {
@@ -93,14 +94,61 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.answerLoadingElement = this.appendLoadingElement(this.loadingAnswerTemplate)
     }
 
-    renderAnswer (answerHtml) {
-      if (this.answerLoadingElement) this.newMessagesList.removeChild(this.answerLoadingElement)
+   renderAnswer(html) {
+      if (this.answerLoadingElement) {
+        this.newMessagesList.removeChild(this.answerLoadingElement);
+        this.answerLoadingElement = null;
+      }
+      let lastMessage = this.newMessagesList.lastElementChild;
+      let lastMessageBody = lastMessage ? lastMessage.querySelector('.app-c-conversation-message__body') : null;
+      let pTag = null
 
-      this.newMessagesList.insertAdjacentHTML('beforeend', answerHtml)
+      if (
+        lastMessage &&
+        lastMessageBody &&
+        lastMessageBody.classList.contains('app-c-conversation-message__body--govuk-message')
+      ) {
+        pTag = lastMessageBody.querySelector('.govuk-govspeak p')
+      }
+
+      if (!pTag) {
+        const list = document.createElement('li')
+        list.classList.add('app-c-conversation-message', 'js-conversation-message')
+        this.newMessagesList.appendChild(list)
+
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('app-c-conversation-message__message', 'app-c-conversation-message__message--govuk-message')
+        list.appendChild(messageDiv);
+
+        const messageBody = document.createElement('div')
+        messageBody.classList.add('app-c-conversation-message__body', 'app-c-conversation-message__body--govuk-message')
+        messageDiv.appendChild(messageBody)
+
+        const identifierSpan = document.createElement('span')
+        identifierSpan.classList.add('app-c-conversation-message__identifier')
+        identifierSpan.textContent = 'GOV.UK Chat'
+        messageBody.appendChild(identifierSpan)
+
+        const answerDiv = document.createElement('div')
+        answerDiv.classList.add('app-c-conversation-message__answer')
+        messageBody.appendChild(answerDiv)
+
+        const govspeakDiv = document.createElement('div')
+        govspeakDiv.classList.add('gem-c-govspeak', 'govuk-govspeak', 'govuk-!-margin-bottom-0')
+        answerDiv.appendChild(govspeakDiv);
+
+        pTag = document.createElement('p')
+        govspeakDiv.appendChild(pTag);
+        this.answerHTML = '';
+      }
+
+      this.answerHTML += html;
+      pTag.innerHTML = this.answerHTML;
       this.newMessagesContainer.focus()
       window.GOVUK.modules.start(this.newMessagesList)
       this.scrollIntoView(this.newMessagesList.lastElementChild)
     }
+
 
     // private methods
 

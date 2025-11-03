@@ -22,16 +22,12 @@ class Form::CreateQuestion
   def submit
     validate!
 
-    question = Question.create!(
+    Question.create!(
       answer_strategy: Rails.configuration.answer_strategy,
       message: @sanitised_user_question,
       unsanitised_message: (@unsanitised_user_question if @sanitised_user_question != @unsanitised_user_question),
       conversation:,
     )
-
-    ComposeAnswerJob.perform_later(question.id)
-
-    question
   end
 
 private

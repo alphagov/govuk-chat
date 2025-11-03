@@ -8,134 +8,107 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.conversationFormRegion = this.module.querySelector('.js-conversation-form-region')
       this.formContainer = this.module.querySelector('.js-question-form-container')
       this.form = this.module.querySelector('.js-question-form')
-      this.messageLists = new Modules.ConversationMessageLists(this.module.querySelector('.js-conversation-message-lists'))
-      this.pendingAnswerUrl = this.module.dataset.pendingAnswerUrl
-      this.ANSWER_INTERVAL = 500
+      this.messageLists = new Modules.ConversationMessageLists(
+        this.module.querySelector('.js-conversation-message-lists')
+      )
+      this.conversationId = this.module.dataset.conversationId // set from backend
+      this.questionId = null
+      this.stopButton = this.module.querySelector('.js-stop-stream')
     }
 
-    init () {
+    init() {
       this.formContainer.addEventListener('submit', e => this.handleFormSubmission(e))
-
-      // new messages indicates we are onboarding a user
-      if (this.messageLists.hasNewMessages() && !window.GOVUK.cookie('govuk_chat_onboarding_complete')) {
-        this.conversationFormRegion.classList.add('govuk-visually-hidden')
-        this.messageLists.progressivelyDiscloseMessages().then(() => {
-          this.conversationFormRegion.classList.add('app-conversation-layout__form-region--slide-in')
-          this.conversationFormRegion.classList.remove('govuk-visually-hidden')
-          this.messageLists.scrollToLastNewMessage()
-          window.GOVUK.cookie('govuk_chat_onboarding_complete', 'true')
-        })
-      } else {
-        this.messageLists.scrollToLastMessageInHistory()
-      }
-
-      if (!this.pendingAnswerUrl) return
-
-      const loadPendingAnswer = () => {
-        this.messageLists.renderAnswerLoading()
-        this.checkAnswer()
-        this.formContainer.dispatchEvent(new Event('question-accepted'))
-      }
-
-      if (this.formContainer.dataset.conversationFormModuleStarted) {
-        loadPendingAnswer()
-      } else {
-        this.formContainer.addEventListener('init', loadPendingAnswer)
+      this.stopButton.addEventListener('click', e => this.stopStreaming(e))
+      if (this.conversationId) {
+        this.subscribeToChannel()
       }
     }
 
-    async handleFormSubmission (event) {
+    subscribeToChannel() {
+      if (!this.conversationId || !this.questionId || this.chatSubscription) return
+
+      this.chatSubscription = window.GOVUK.consumer.subscriptions.create(
+        { channel: "ChatChannel", conversation_id: this.conversationId, question_id: this.questionId },
+        {
+          connected: () => console.log(`Connected to conversation ${this.conversationId} and question ${this.questionId} channel.`),
+          received: (data) => {
+            if (data.message) {
+              this.messageLists.renderAnswer(data.message)
+            }
+
+            if (data.finished) {
+              console.log(`Disconnecting from conversation ${this.conversationId} and question ${this.questionId} channel.`)
+              this.chatSubscription.unsubscribe()
+              this.questionId = null
+              this.chatSubscription = null
+            }
+          }
+        }
+      )
+    }
+
+    stopStreaming() {
+      if (this.chatSubscription) {
+        if (this.messageLists.answerLoadingElement) {
+          this.messageLists.newMessagesList.removeChild(this.messageLists.answerLoadingElement);
+          this.messageLists.answerLoadingElement = null;
+        }
+
+        console.log(`Disconnecting from conversation ${this.conversationId} and question ${this.questionId} channel.`)
+        this.chatSubscription.unsubscribe()
+        this.chatSubscription = null
+        const warning = document.createElement('div')
+        warning.className = 'gem-c-warning-text govuk-warning-text js-conversation-message';
+
+        const icon = document.createElement('span')
+        icon.className = 'govuk-warning-text__icon'
+        icon.setAttribute('aria-hidden', 'true')
+        icon.textContent = '!'
+
+        const strong = document.createElement('strong')
+        strong.className = 'govuk-warning-text__text'
+
+        const hidden = document.createElement('span')
+        hidden.className = 'govuk-visually-hidden'
+        hidden.textContent = 'Warning'
+
+        strong.appendChild(hidden)
+        strong.append(' Streaming has been stopped or cancelled.')
+        warning.appendChild(icon)
+        warning.appendChild(strong)
+
+        this.messageLists.newMessagesList.appendChild(warning)
+        this.messageLists.scrollIntoView(warning)
+      }
+    }
+
+    async handleFormSubmission(event) {
       event.preventDefault()
 
-      try {
-        this.formContainer.dispatchEvent(new Event('question-pending'))
+      this.messageLists.moveNewMessagesToHistory()
+      this.messageLists.renderQuestionLoading()
 
-        this.messageLists.moveNewMessagesToHistory()
-        this.messageLists.renderQuestionLoading()
+      const formData = new FormData(this.form)
+      const response = await fetch(this.form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { Accept: 'application/json' }
+      })
 
-        const formData = new FormData(this.form)
-        const response = await fetch(this.form.action, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            Accept: 'application/json'
-          }
-        })
+      const responseJson = await response.json()
 
-        await this.handleQuestionResponse(response)
-
-        if (this.pendingAnswerUrl) {
-          this.messageLists.renderAnswerLoading()
-          setTimeout(() => this.checkAnswer(), this.ANSWER_INTERVAL)
-        }
-      } catch (error) {
-        console.error(error)
-        this.form.submit()
+      if (response.status === 201) {
+        this.messageLists.renderQuestion(responseJson.question_html)
+        this.messageLists.renderAnswerLoading()
+        this.conversationId = responseJson.conversation_id
+        this.questionId = responseJson.question_id
+        this.subscribeToChannel()
+      } else if (response.status === 422) {
+        this.messageLists.resetQuestionLoading()
+        console.error(responseJson.error_messages)
       }
-    }
 
-    async handleQuestionResponse (response) {
-      switch (response.status) {
-        case 201: {
-          const responseJson = await response.json()
-          this.messageLists.renderQuestion(responseJson.question_html)
-
-          this.formContainer.dispatchEvent(new Event('question-accepted'))
-
-          this.module.dispatchEvent(new Event('conversation-active', { bubbles: true }))
-
-          this.pendingAnswerUrl = responseJson.answer_url
-          break
-        }
-        case 422: {
-          const responseJson = await response.json()
-          this.messageLists.resetQuestionLoading()
-
-          this.formContainer.dispatchEvent(
-            new CustomEvent('question-rejected', {
-              detail: { errorMessages: responseJson.error_messages }
-            })
-          )
-
-          this.pendingAnswerUrl = null
-          break
-        }
-        default:
-          throw new Error(`Unexpected response status: ${response.status}`)
-      }
-    }
-
-    async checkAnswer () {
-      if (!this.pendingAnswerUrl) return
-
-      try {
-        const response = await fetch(this.pendingAnswerUrl, { headers: { Accept: 'application/json' } })
-        switch (response.status) {
-          case 200: {
-            const responseJson = await response.json()
-
-            this.messageLists.renderAnswer(responseJson.answer_html)
-
-            this.pendingAnswerUrl = null
-
-            this.formContainer.dispatchEvent(new Event('answer-received'))
-            break
-          }
-          case 202: {
-            setTimeout(() => this.checkAnswer(), this.ANSWER_INTERVAL)
-            break
-          }
-          default:
-            throw new Error(`Unexpected response status: ${response.status}`)
-        }
-      } catch (error) {
-        console.error(error)
-        this.redirect(this.pendingAnswerUrl)
-      }
-    }
-
-    redirect (url) {
-      window.location.href = url
+      this.form.reset()
     }
   }
 
