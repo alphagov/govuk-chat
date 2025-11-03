@@ -162,4 +162,39 @@ namespace :evaluation do
 
     puts(result.to_json)
   end
+
+  desc "Batch process a YAML file of questions using any single-input rake task"
+  task :batch_process, %i[task_name input_path output_path] => :environment do |_, args|
+    task_name = args[:task_name]
+    input_path = args[:input_path]
+    output_path = args[:output_path]
+
+    raise "Requires a task_name argument" if task_name.blank?
+    raise "Requires an input_path argument" if input_path.blank?
+    raise "Requires an output_path argument" if output_path.blank?
+
+    questions = YAML.load_file(input_path)
+    results = []
+
+    questions.each_with_index do |question, index|
+      puts "(#{index + 1} / #{questions.size}): #{question}"
+
+      # set INPUT or QUESTION depending on the task
+      env_var = (task_name == "evaluation:generate_answer" ? "QUESTION" : "INPUT")
+      output = `#{env_var}="#{question.gsub('"', '\"')}" bundle exec rake #{task_name}`
+
+      if output.strip.empty?
+        puts "No output for question: #{question}"
+      else
+        result = JSON.parse(output)
+        result["question"] = question
+        results << result
+      end
+    end
+
+    # write results to file or print to stdout
+    jsonl = results.map(&:to_json).join("\n")
+    File.open(output_path, "wb") { |file| file.write(jsonl) }
+    puts "Written to #{output_path}"
+  end
 end

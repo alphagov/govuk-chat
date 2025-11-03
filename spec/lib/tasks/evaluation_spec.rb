@@ -466,4 +466,90 @@ RSpec.describe "rake evaluation tasks" do
       end
     end
   end
+
+  describe "rake batch_process task" do
+    let(:task_name) { "evaluation:batch_process" }
+    let(:evaluation_data) do
+      [
+        { question: "First question" },
+        { question: "Second question" },
+      ]
+    end
+    let(:questions) { ["First question", "Second question"] }
+    let(:results) do
+      questions.map { |q| { "result" => "stubbed answer for #{q}", "question" => q } }
+    end
+    let(:jsonl) { results.map(&:to_json).join("\n") }
+
+    before do
+      Rake::Task[task_name].reenable
+    end
+
+    it "requires a task_name argument" do
+      expect {
+        Rake::Task[task_name].invoke(nil, "input.yml", "output.jsonl")
+      }.to raise_error("Requires a task_name argument")
+    end
+
+    it "requires an input_path argument" do
+      expect {
+        Rake::Task[task_name].invoke("evaluation:generate_question_routing_response", nil, "output.jsonl")
+      }.to raise_error("Requires an input_path argument")
+    end
+
+    it "requires an output_path argument" do
+      expect {
+        Rake::Task[task_name].invoke("evaluation:generate_question_routing_response", "input.yml", nil)
+      }.to raise_error("Requires an output_path argument")
+    end
+
+    it "uses QUESTION env var when calling evaluation:generate_answer" do
+      temp = Tempfile.new
+      output_path = temp.path
+
+      allow(YAML).to receive(:load_file).with("input.yml").and_return(["First question"])
+
+      captured_cmd = nil
+      allow_any_instance_of(Object).to receive(:`).with(/evaluation:generate_answer/) do |_, cmd| # rubocop:disable RSpec/AnyInstance
+        captured_cmd = cmd
+        { message: "Answer for First question" }.to_json
+      end
+
+      begin
+        expect {
+          Rake::Task[task_name].invoke("evaluation:generate_answer", "input.yml", output_path)
+        }.to output(/Written to #{Regexp.escape(output_path)}/).to_stdout
+
+        expect(captured_cmd).to include('QUESTION="First question"')
+      ensure
+        temp.close
+        temp.unlink
+      end
+    end
+
+    it "generates the results as JSONL and writes them to a file" do
+      temp = Tempfile.new
+      output_path = temp.path
+
+      # Stub YAML.load_file so it doesn't require a real file
+      allow(YAML).to receive(:load_file).with("input.yml").and_return(["First question", "Second question"])
+
+      # Stub the system call to subtasks
+      allow_any_instance_of(Object).to receive(:`).with(/evaluation:generate_question_routing_response/) do |_, cmd| # rubocop:disable RSpec/AnyInstance
+        question = cmd.match(/"(.*)"/)[1]
+        { result: "stubbed answer for #{question}" }.to_json
+      end
+
+      begin
+        expect {
+          Rake::Task[task_name].invoke("evaluation:generate_question_routing_response", "input.yml", output_path)
+        }.to output(/Written to #{Regexp.escape(output_path)}/).to_stdout
+
+        expect(File.read(output_path)).to eq(jsonl)
+      ensure
+        temp.close
+        temp.unlink
+      end
+    end
+  end
 end
