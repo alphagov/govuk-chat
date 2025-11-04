@@ -467,88 +467,126 @@ RSpec.describe "rake evaluation tasks" do
     end
   end
 
-  describe "rake batch_process task" do
+  describe "batch_process" do
     let(:task_name) { "evaluation:batch_process" }
-    let(:evaluation_data) do
-      [
-        { question: "First question" },
-        { question: "Second question" },
-      ]
-    end
+    let(:usage_regex) { /#{Regexp.escape('Usage: evaluation:batch_process[task_name, *task_args]')}/ }
     let(:questions) { ["First question", "Second question"] }
-    let(:results) do
-      questions.map { |q| { "result" => "stubbed answer for #{q}", "question" => q } }
+    let(:responses) do
+      questions.map do |question|
+        { "input" => question, "output" => { "some" => "data" } }
+      end
     end
-    let(:jsonl) { results.map(&:to_json).join("\n") }
+    let(:expected_output) { responses.map(&:to_json).join("\n") }
+    let(:batch_task) { "my_task" }
+    let(:batch_task_args) { %w[arg1 arg2] }
 
     before do
       Rake::Task[task_name].reenable
+
+      responses = questions.map do |question|
+        { "input" => question, "output" => { "some" => "data" } }
+      end
+
+      allow(Evaluation::BatchTaskProcesser)
+        .to receive(:call)
+        .and_return(responses)
     end
 
     it "requires a task_name argument" do
-      expect {
-        Rake::Task[task_name].invoke(nil, "input.yml", "output.jsonl")
-      }.to raise_error("Requires a task_name argument")
+      expect { Rake::Task[task_name].invoke(nil) }.to raise_error(usage_regex)
     end
 
-    it "requires an input_path argument" do
-      expect {
-        Rake::Task[task_name].invoke("evaluation:generate_question_routing_response", nil, "output.jsonl")
-      }.to raise_error("Requires an input_path argument")
+    it "requires an INPUT PATH env var" do
+      expect { Rake::Task[task_name].invoke(batch_task) }.to raise_error(usage_regex)
     end
 
-    it "requires an output_path argument" do
-      expect {
-        Rake::Task[task_name].invoke("evaluation:generate_question_routing_response", "input.yml", nil)
-      }.to raise_error("Requires an output_path argument")
-    end
+    it "delegates running a rake task to Evaluation::BatchTaskProcesser" do
+      ClimateControl.modify(INPUT_PATH: "file.yaml") do
+        expect { Rake::Task[task_name].invoke(batch_task, *batch_task_args) }
+          .to output.to_stdout
 
-    it "uses QUESTION env var when calling evaluation:generate_answer" do
-      temp = Tempfile.new
-      output_path = temp.path
-
-      allow(YAML).to receive(:load_file).with("input.yml").and_return(["First question"])
-
-      captured_cmd = nil
-      allow_any_instance_of(Object).to receive(:`).with(/evaluation:generate_answer/) do |_, cmd| # rubocop:disable RSpec/AnyInstance
-        captured_cmd = cmd
-        { message: "Answer for First question" }.to_json
-      end
-
-      begin
-        expect {
-          Rake::Task[task_name].invoke("evaluation:generate_answer", "input.yml", output_path)
-        }.to output(/Written to #{Regexp.escape(output_path)}/).to_stdout
-
-        expect(captured_cmd).to include('QUESTION="First question"')
-      ensure
-        temp.close
-        temp.unlink
+        expect(Evaluation::BatchTaskProcesser)
+          .to have_received(:call)
+          .with("file.yaml", batch_task, batch_task_args, concurrency: Integer)
       end
     end
 
-    it "generates the results as JSONL and writes them to a file" do
-      temp = Tempfile.new
-      output_path = temp.path
+    it "writes progress to stdout" do
+      allow(Evaluation::BatchTaskProcesser)
+        .to receive(:call)
+        .and_return(responses)
+        .and_yield([], 2, 1)
+        .and_yield([], 2, 2)
 
-      # Stub YAML.load_file so it doesn't require a real file
-      allow(YAML).to receive(:load_file).with("input.yml").and_return(["First question", "Second question"])
-
-      # Stub the system call to subtasks
-      allow_any_instance_of(Object).to receive(:`).with(/evaluation:generate_question_routing_response/) do |_, cmd| # rubocop:disable RSpec/AnyInstance
-        question = cmd.match(/"(.*)"/)[1]
-        { result: "stubbed answer for #{question}" }.to_json
+      ClimateControl.modify(INPUT_PATH: "file.yaml") do
+        expect { Rake::Task[task_name].invoke(batch_task, *batch_task_args) }
+          .to output(%r{#{Regexp.escape('(1 / 2)')}\n#{Regexp.escape('(2 / 2)')}}).to_stdout
       end
+    end
 
-      begin
-        expect {
-          Rake::Task[task_name].invoke("evaluation:generate_question_routing_response", "input.yml", output_path)
-        }.to output(/Written to #{Regexp.escape(output_path)}/).to_stdout
+    it "writes warnings yielded to stderr" do
+      allow(Evaluation::BatchTaskProcesser)
+        .to receive(:call)
+        .and_return(responses)
+        .and_yield(["Warning 1"], 2, 1)
+        .and_yield(["Warning 2", "Warning 3"], 2, 2)
 
-        expect(File.read(output_path)).to eq(jsonl)
-      ensure
-        temp.close
-        temp.unlink
+      ClimateControl.modify(INPUT_PATH: "file.yaml") do
+        expect { Rake::Task[task_name].invoke(batch_task, *batch_task_args) }
+          .to output.to_stdout
+          .and output(/(Warning (1|2|3)\n?){3}/).to_stderr
+      end
+    end
+
+    context "when given an OUTPUT_PATH env var" do
+      it "writes the output to the OUTPUT_PATH file given" do
+        tempfile = Tempfile.new
+
+        ClimateControl.modify(INPUT_PATH: "file.yaml", OUTPUT_PATH: tempfile.path) do
+          output_confirmation = "Written to #{tempfile.path}"
+
+          expect { Rake::Task[task_name].invoke(batch_task, *batch_task_args) }
+            .to output(/#{Regexp.escape(output_confirmation)}/).to_stdout
+
+          expect(File.read(tempfile.path)).to eq(expected_output)
+        end
+
+        tempfile.close!
+      end
+    end
+
+    context "when not given an OUTPUT_PATH env var" do
+      it "writes the output to stdout" do
+        ClimateControl.modify(INPUT_PATH: "file.yaml") do
+          expect { Rake::Task[task_name].invoke(batch_task, *batch_task_args) }
+            .to output(/#{Regexp.escape(expected_output)}/).to_stdout
+        end
+      end
+    end
+
+    context "when given a CONCURRENCY env var" do
+      it "outputs to stdout and passes it to Evaluation::BatchTaskProcesser" do
+        ClimateControl.modify(INPUT_PATH: "file.yaml", CONCURRENCY: "20") do
+          expect { Rake::Task[task_name].invoke(batch_task, *batch_task_args) }
+            .to output(/Running with a concurrency of 20/).to_stdout
+
+          expect(Evaluation::BatchTaskProcesser)
+            .to have_received(:call)
+            .with("file.yaml", batch_task, batch_task_args, concurrency: 20)
+        end
+      end
+    end
+
+    context "when not given a CONCURRENCY env var" do
+      it "defaults to a concurrency of 10" do
+        ClimateControl.modify(INPUT_PATH: "file.yaml") do
+          expect { Rake::Task[task_name].invoke(batch_task, *batch_task_args) }
+            .to output(/Running with a concurrency of 10/).to_stdout
+
+          expect(Evaluation::BatchTaskProcesser)
+            .to have_received(:call)
+            .with("file.yaml", batch_task, batch_task_args, concurrency: 10)
+        end
       end
     end
   end
