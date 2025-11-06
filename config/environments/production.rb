@@ -90,4 +90,10 @@ Rails.application.configure do
 
   # Skip DNS rebinding protection for these requests
   config.host_authorization = ProductionHostConfig::HOST_AUTHORIZATION
+
+  # Action Cable endpoint configuration
+
+  config.action_cable.url = "wss://#{ENV['HEROKU_APP_NAME']}.herokuapp.com/cable"
+
+  config.action_cable.allowed_request_origins = ProductionHostConfig::HOSTS
 end
