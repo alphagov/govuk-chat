@@ -274,10 +274,10 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.20.6)
+    govuk_app_config (9.22.0)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.32)
-      opentelemetry-instrumentation-all (>= 0.39.1, < 0.87.0)
+      opentelemetry-instrumentation-all (>= 0.39.1, < 0.88.0)
       opentelemetry-sdk (~> 1.2)
       plek (>= 4, < 6)
       prometheus_exporter (~> 2.3)
@@ -468,7 +468,7 @@ GEM
       opentelemetry-instrumentation-active_support (~> 0.10)
     opentelemetry-instrumentation-active_support (0.10.1)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-all (0.86.1)
+    opentelemetry-instrumentation-all (0.87.0)
       opentelemetry-instrumentation-active_model_serializers (~> 0.24.0)
       opentelemetry-instrumentation-anthropic (~> 0.3.0)
       opentelemetry-instrumentation-aws_lambda (~> 0.6.0)
@@ -492,7 +492,7 @@ GEM
       opentelemetry-instrumentation-mongo (~> 0.25.0)
       opentelemetry-instrumentation-mysql2 (~> 0.31.0)
       opentelemetry-instrumentation-net_http (~> 0.26.0)
-      opentelemetry-instrumentation-pg (~> 0.32.0)
+      opentelemetry-instrumentation-pg (~> 0.33.0)
       opentelemetry-instrumentation-que (~> 0.11.1)
       opentelemetry-instrumentation-racecar (~> 0.6.0)
       opentelemetry-instrumentation-rack (~> 0.29.0)
@@ -557,7 +557,7 @@ GEM
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-net_http (0.26.0)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-pg (0.32.0)
+    opentelemetry-instrumentation-pg (0.33.0)
       opentelemetry-helpers-sql
       opentelemetry-helpers-sql-obfuscation
       opentelemetry-instrumentation-base (~> 0.25)
@@ -862,7 +862,7 @@ GEM
     unicode-display_width (3.1.5)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
-    uri (1.1.0)
+    uri (1.1.1)
     useragent (0.16.11)
     version_gem (1.1.8)
     warden (1.2.9)
@@ -1037,7 +1037,7 @@ CHECKSUMS
   google-protobuf (4.33.0-x86_64-linux-gnu) sha256=02782270835a6ee35e6abdba478614c8664c9cb793e574cebf4bbf16467479ca
   googleapis-common-protos-types (1.22.0) sha256=f97492b77bd6da0018c860d5004f512fe7cd165554d7019a8f4df6a56fbfc4c7
   googleauth (1.15.1) sha256=d61960893d0d573601d94a38889613b991f40a59ab755b5beed87bf2c3d3cb24
-  govuk_app_config (9.20.6) sha256=928c7dc3170a7a4bfffe09ef751081877839c55136d0c553b12033d2b896ccf1
+  govuk_app_config (9.22.0) sha256=983f1936561c4549617f9ca379dd5a3548f2f10b0f002311c6d40c2e15eea89f
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
@@ -1118,7 +1118,7 @@ CHECKSUMS
   opentelemetry-instrumentation-active_record (0.11.1) sha256=1b083f34eea0449f8d6f4370b3fb4b935757fac6e4e538e67bb98211809e7c92
   opentelemetry-instrumentation-active_storage (0.3.1) sha256=f89b0fef54921f17c0c4c38a6e0926d29afabd0ac98436fcdbb8bde85dfde89e
   opentelemetry-instrumentation-active_support (0.10.1) sha256=82ea98367158797e33c6de96581f10aa4fe8adf0ebec832dcff5fd04c59bc57d
-  opentelemetry-instrumentation-all (0.86.1) sha256=f193c38209eb6b5b5e09f83d84ed30bdfc2238fca85a3adf8077be4329a77eef
+  opentelemetry-instrumentation-all (0.87.0) sha256=63a9661a3552d20f19ec7fba69e9fdda632fb5f331fe4a72c275cdaeb721de2a
   opentelemetry-instrumentation-anthropic (0.3.0) sha256=09bd9b4ba6189389a6c0f7ba49f1d11f387d93b411ab585137a48b59925a48de
   opentelemetry-instrumentation-aws_lambda (0.6.0) sha256=1a3161393cfe9bc9eddd81a0668d076c38a0a2c3d5df40e95d02f5a8fcd3334c
   opentelemetry-instrumentation-aws_sdk (0.11.0) sha256=67a21e754ddf51e2bb8c3e46e116aa9158d8db800f34c2a9b1e0da5a6ca911e3
@@ -1142,7 +1142,7 @@ CHECKSUMS
   opentelemetry-instrumentation-mongo (0.25.0) sha256=d04585669f928ea82e7c469f996061d39d8ff184278d57cf4fc77a6d607f9c7a
   opentelemetry-instrumentation-mysql2 (0.31.0) sha256=e86fdce4845e2dd7ee00501beb1eecb28626e86c3b0230b9867a4b5f614711fd
   opentelemetry-instrumentation-net_http (0.26.0) sha256=4ec1dc3c814e215926323e7eaaac905a661d0bf4236e121ab330e1ec42311d92
-  opentelemetry-instrumentation-pg (0.32.0) sha256=a6dcb82d7bc158dbe74a3f9f33f3d9ca37d93e311e2968ef5e919ce1c29efb0a
+  opentelemetry-instrumentation-pg (0.33.0) sha256=26dc3617408de73608aa548754cfe2899e63993231fde307ab9ab0de747d132f
   opentelemetry-instrumentation-que (0.11.1) sha256=8c3fb084165481be569760c5b3f194d2af62c4144deed079f993fe0cf9c9f727
   opentelemetry-instrumentation-racecar (0.6.0) sha256=de267a1af9f22b76286ad1830f0ef81b437aad519c230d63f4059e0eb60168cc
   opentelemetry-instrumentation-rack (0.29.0) sha256=9e2cbb8336087064cbe33b502d917d85b174162bc717efda1cfdbd182342f377
@@ -1263,7 +1263,7 @@ CHECKSUMS
   uber (0.1.0) sha256=5beeb407ff807b5db994f82fa9ee07cfceaa561dad8af20be880bc67eba935dc
   unicode-display_width (3.1.5) sha256=bf566817855ee7ee3adcf7bace0d5906cb14401417db59193f8a5fcedf02dd4e
   unicode-emoji (4.0.4) sha256=2c2c4ef7f353e5809497126285a50b23056cc6e61b64433764a35eff6c36532a
-  uri (1.1.0) sha256=e23a2061c1e924efa2cc3016f517f888e7c866c0d7f6531f5cded089f2b9e625
+  uri (1.1.1) sha256=379fa58d27ffb1387eaada68c749d1426738bd0f654d812fcc07e7568f5c57c6
   useragent (0.16.11) sha256=700e6413ad4bb954bb63547fa098dddf7b0ebe75b40cc6f93b8d54255b173844
   version_gem (1.1.8) sha256=a964767ecbe36551b9ff2e59099548c27569f2f7f94bdb09f609d76393a8e008
   warden (1.2.9) sha256=46684f885d35a69dbb883deabf85a222c8e427a957804719e143005df7a1efd0
