@@ -1,4 +1,6 @@
 class ConversationsController < BaseController
+  include ActionController::Live
+
   layout "conversation", except: %i[answer clear]
   before_action :find_conversation
   before_action :require_conversation, only: %i[answer answer_feedback clear]
@@ -38,6 +40,27 @@ class ConversationsController < BaseController
         format.json { render json: question_error_json(@create_question), status: :unprocessable_content }
       end
     end
+  end
+
+  def answer_stream
+    @question = Question.where(conversation: @conversation)
+                        .includes(answer: [{ sources: :chunk }, :feedback])
+                        .find(params[:question_id])
+
+    random_answer = streamed_answers.sample
+
+    answer = @question.create_answer(message: random_answer, status: :answered)
+
+    response.headers["Content-Type"] = "text/event-stream"
+    response.headers["Last-Modified"] = Time.zone.now.httpdate
+    sse = SSE.new(response.stream, event: "message")
+
+    chunk_string(answer.message).each do |chunk|
+      sse.write({ event: "update", message: chunk })
+      sleep 0.1
+    end
+    sse.write({ event: "stream_finished" })
+    sse.close
   end
 
   def answer
@@ -110,7 +133,7 @@ private
         formats: :html,
         locals: { question: },
       ),
-      answer_url: answer_question_path(question),
+      answer_url: answer_stream_question_path(question),
       error_messages: [],
     }
   end
@@ -149,5 +172,29 @@ private
     @title = "Your conversation"
     @questions = conversation.questions_for_showing_conversation
     @active_conversation = conversation.persisted?
+  end
+
+  def streamed_answers
+    [
+      "<p>When renewing your driving licence, you <strong>do not need</strong> to send your old licence back to DVLA in most cases.</p><p>However, there are some specific situations where you must send your old licence to DVLA:</p><ul><li>if you find your old licence after applying for or receiving a replacement for a lost, stolen, damaged or destroyed licence</li><li>if DVLA writes to you asking for your licence (for example, if you’re a new driver with 6 or more penalty points, have been disqualified, or have changed your address)</li><li>after getting a new lorry or bus licence, if you have not already sent your old licence</li></ul>",
+      "<p>You may get a <strong>£150 discount</strong> on your electricity bill if you get Universal Credit and meet the low income criteria for your area.</p><p>Your Winter Fuel Payment amount may be different if you get Universal Credit, but this is primarily for people born before 22 September 1959. Check the Cold Weather Payment eligibility guidance and Warm Home Discount Scheme information on GOV.UK for full details.</p>",
+      "<p>If your employer cannot pay its debts, you can apply to the government for:<ul><li>redundancy</li><li>payment holiday pay</li></ul><p>You’re owed outstanding payments like unpaid wages, overtime and commission money you would have earned during your notice period.</p><p>The insolvency practitioner will give you an RP1 fact sheet and a case reference number to use when applying.</p>",
+      "<p>You can get Maternity Allowance if you do unpaid work for your spouse or civil partner’s business. To be eligible, for at least <strong>26 weeks</strong> in the 66 weeks before your baby is due, you must have:</p><ul><li>taken part in unpaid work for the business of your spouse or civil partner</li><li>not been employed or self-employed</li></ul><p>In the same 26 weeks, your spouse or civil partner must:</p><ul><li>be registered as self-employed with HMRC</li><li>pay Class 2 National Insurance contributions</li></ul><p>You can get £27 a week for up to 14 weeks if you do unpaid work for your spouse or civil partner’s business.</p>",
+    ]
+  end
+
+  def chunk_string(string)
+    chunks = []
+    position = 0
+
+    while position < string.length
+      chunk_length = [1, 1, 2, 2, 3, 5, 8].sample
+      chunk_length = [chunk_length, string.length - position].min
+
+      chunks << string[position, chunk_length]
+      position += chunk_length
+    end
+
+    chunks
   end
 end

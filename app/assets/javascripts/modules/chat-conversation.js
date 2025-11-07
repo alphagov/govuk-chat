@@ -108,6 +108,31 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     async checkAnswer () {
       if (!this.pendingAnswerUrl) return
 
+      if (this.pendingAnswerUrl.endsWith('stream')) {
+        const eventSource = new EventSource(this.pendingAnswerUrl)
+
+        this.messageLists.createStreamedAnswerContainer()
+
+        let html = '';
+
+        eventSource.onmessage = (msg) => {
+          const data = JSON.parse(msg.data)
+
+          switch (data.event) {
+            case 'update':
+              html += data.message
+              this.messageLists.renderStreamedAnswer(html)
+              break
+            case 'stream_finished':
+              eventSource.close()
+              this.pendingAnswerUrl = null
+              this.formContainer.dispatchEvent(new Event('answer-received'))
+              break
+          }
+        }
+        return
+      }
+
       try {
         const response = await fetch(this.pendingAnswerUrl, { headers: { Accept: 'application/json' } })
         switch (response.status) {

@@ -1,7 +1,7 @@
 <%
 @conversation_data_attributes = { module: "chat-conversation" }
 if @questions.last && !@questions.last.answer
-  @conversation_data_attributes[:"pending-answer-url"] = answer_question_path(@questions.last)
+  @conversation_data_attributes[:"pending-answer-url"] = answer_stream_question_path(@questions.last)
 end
 
 # Expected that only users without JS will see this prefixed browser title

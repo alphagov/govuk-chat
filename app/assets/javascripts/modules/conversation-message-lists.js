@@ -93,6 +93,51 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.answerLoadingElement = this.appendLoadingElement(this.loadingAnswerTemplate)
     }
 
+    createStreamedAnswerContainer () {
+      const li = document.createElement('li')
+      li.classList.add('app-c-conversation-message', 'js-conversation-message')
+      this.newMessagesList.appendChild(li)
+
+      const convMessage = document.createElement('div')
+      convMessage.classList.add('app-c-conversation-message__message', 'app-c-conversation-message__message--govuk-message')
+      li.appendChild(convMessage)
+
+      const body = document.createElement('div')
+      body.classList.add('app-c-conversation-message__body', 'app-c-conversation-message__body--govuk-message')
+      convMessage.appendChild(body)
+
+      const span = document.createElement('span')
+      span.classList.add('app-c-conversation-message__identifier')
+      span.innerText = 'GOV.UK Chat'
+      body.appendChild(span)
+
+      const answerEl = document.createElement('div')
+      answerEl.classList.add('app-c-conversation-message__answer')
+      body.appendChild(answerEl)
+
+      const govSpeak = document.createElement('div')
+      govSpeak.classList.add('gem-c-govspeak', 'govuk-govspeak', 'govuk-!-margin-bottom-0')
+      answerEl.appendChild(govSpeak)
+
+      const p = document.createElement('p')
+      p.innerText = ''
+      govSpeak.appendChild(p)
+    }
+
+    renderStreamedAnswer (html) {
+      if (this.answerLoadingElement) {
+        this.newMessagesList.removeChild(this.answerLoadingElement)
+        this.answerLoadingElement = null
+      }
+
+      const node = this.newMessagesList.querySelector('.app-c-conversation-message__answer .gem-c-govspeak p')
+
+      node.innerHTML = html
+      this.newMessagesContainer.focus()
+      window.GOVUK.modules.start(this.newMessagesList)
+      this.scrollIntoView(this.newMessagesList.lastElementChild)
+    }
+
     renderAnswer (answerHtml) {
       if (this.answerLoadingElement) this.newMessagesList.removeChild(this.answerLoadingElement)
 
