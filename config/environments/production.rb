@@ -93,7 +93,11 @@ Rails.application.configure do
 
   # Action Cable endpoint configuration
 
-  config.action_cable.url = "wss://#{ENV['HEROKU_APP_NAME']}.herokuapp.com/cable"
+  config.action_cable.url = if ENV["HEROKU_APP_NAME"].present?
+                              "wss://#{ENV['HEROKU_APP_NAME']}.herokuapp.com/cable"
+                            else
+                              "wss://chat.integration.publishing.service.gov.uk/cable"
+                            end
 
   config.action_cable.allowed_request_origins = ProductionHostConfig::HOSTS
 end
