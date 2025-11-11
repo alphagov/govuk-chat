@@ -26,20 +26,6 @@ class ConversationsController < BaseController
       respond_to do |format|
         format.html { redirect_to answer_question_path(question) }
         format.json do
-          simulated_response = answer_html.split(" ").map { |word| "#{word} " }
-
-          Thread.new do
-            sleep 3.5
-            simulated_response.each do |chunk|
-              ActionCable.server.broadcast("chat_#{question.conversation.id}_#{question.id}", { message: chunk })
-              sleep 0.05
-            end
-
-            ActionCable.server.broadcast("chat_#{question.conversation.id}_#{question.id}", { finished: true })
-          end
-
-          question.create_answer(message: simulated_response.join, status: "answered")
-
           render json: question_success_json(question), status: :created
         end
       end
@@ -166,19 +152,5 @@ private
     @title = "Your conversation"
     @questions = conversation.questions_for_showing_conversation
     @active_conversation = conversation.persisted?
-  end
-
-  def answer_html
-    <<~HTML
-      <p>When renewing your driving licence, you do not need to send your old licence back to DVLA in most cases.</p>
-      <p>However, there are some specific situations where you must send your old licence to DVLA:</p>
-      <ul>
-        <li>if you find your old licence after applying for or receiving a replacement for a lost, stolen, damaged or destroyed licence</li>
-        <li>if DVLA writes to you asking for your licence (for example, if you're a new driver with 6 or more penalty points, have been disqualified, or have changed your address)</li>
-        <li>after getting a new lorry or bus licence, if you have not already sent your old licence</li>
-      </ul>
-      <p>For standard licence renewals, you can keep your current licence while applying and do not need to return it unless specifically asked by DVLA.</p>
-      <p>Check the <a href='https://www.gov.uk/renew-driving-licence#apply-at-a-post-office'>guidance on renewing your driving licence</a> for more information about the renewal process.</p>
-    HTML
   end
 end
