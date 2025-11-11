@@ -274,10 +274,10 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.20.6)
+    govuk_app_config (9.22.1)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.32)
-      opentelemetry-instrumentation-all (>= 0.39.1, < 0.87.0)
+      opentelemetry-instrumentation-all (>= 0.39.1, < 0.88.0)
       opentelemetry-sdk (~> 1.2)
       plek (>= 4, < 6)
       prometheus_exporter (~> 2.3)
@@ -381,7 +381,7 @@ GEM
     mime-types-data (3.2025.0812)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
-    minitest (5.26.0)
+    minitest (5.26.1)
     msgpack (1.8.0)
     multi_json (1.17.0)
     multi_xml (0.7.2)
@@ -468,7 +468,7 @@ GEM
       opentelemetry-instrumentation-active_support (~> 0.10)
     opentelemetry-instrumentation-active_support (0.10.1)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-all (0.86.1)
+    opentelemetry-instrumentation-all (0.87.0)
       opentelemetry-instrumentation-active_model_serializers (~> 0.24.0)
       opentelemetry-instrumentation-anthropic (~> 0.3.0)
       opentelemetry-instrumentation-aws_lambda (~> 0.6.0)
@@ -492,7 +492,7 @@ GEM
       opentelemetry-instrumentation-mongo (~> 0.25.0)
       opentelemetry-instrumentation-mysql2 (~> 0.31.0)
       opentelemetry-instrumentation-net_http (~> 0.26.0)
-      opentelemetry-instrumentation-pg (~> 0.32.0)
+      opentelemetry-instrumentation-pg (~> 0.33.0)
       opentelemetry-instrumentation-que (~> 0.11.1)
       opentelemetry-instrumentation-racecar (~> 0.6.0)
       opentelemetry-instrumentation-rack (~> 0.29.0)
@@ -557,7 +557,7 @@ GEM
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-net_http (0.26.0)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-pg (0.32.0)
+    opentelemetry-instrumentation-pg (0.33.0)
       opentelemetry-helpers-sql
       opentelemetry-helpers-sql-obfuscation
       opentelemetry-instrumentation-base (~> 0.25)
@@ -702,7 +702,7 @@ GEM
     redis-client (0.26.1)
       connection_pool
     regexp_parser (2.11.2)
-    reline (0.6.2)
+    reline (0.6.3)
       io-console (~> 0.5)
     representable (3.2.0)
       declarative (< 0.1.0)
@@ -1037,7 +1037,7 @@ CHECKSUMS
   google-protobuf (4.33.0-x86_64-linux-gnu) sha256=02782270835a6ee35e6abdba478614c8664c9cb793e574cebf4bbf16467479ca
   googleapis-common-protos-types (1.22.0) sha256=f97492b77bd6da0018c860d5004f512fe7cd165554d7019a8f4df6a56fbfc4c7
   googleauth (1.15.1) sha256=d61960893d0d573601d94a38889613b991f40a59ab755b5beed87bf2c3d3cb24
-  govuk_app_config (9.20.6) sha256=928c7dc3170a7a4bfffe09ef751081877839c55136d0c553b12033d2b896ccf1
+  govuk_app_config (9.22.1) sha256=52daf5e13803f970732847e4e707975f3e69d451069c527a901ede2015b145ab
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
@@ -1079,7 +1079,7 @@ CHECKSUMS
   mime-types-data (3.2025.0812) sha256=3b94426896fa1390304fb8c6fe23b69c2c6f471aa2bb0b59bd2ddc532bea0538
   mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
   mini_portile2 (2.8.9) sha256=0cd7c7f824e010c072e33f68bc02d85a00aeb6fce05bb4819c03dfd3c140c289
-  minitest (5.26.0) sha256=f5817ad09f863a4f7eac917707c1ca5c09cdc4a35e17d91171760178324d2c30
+  minitest (5.26.1) sha256=f16a63d4278e230bba342c3bda3006a69c5216d46461b77dd57f7c7c529b5a96
   msgpack (1.8.0) sha256=e64ce0212000d016809f5048b48eb3a65ffb169db22238fb4b72472fecb2d732
   multi_json (1.17.0) sha256=76581f6c96aebf2e85f8a8b9854829e0988f335e8671cd1a56a1036eb75e4a1b
   multi_xml (0.7.2) sha256=307a96dc48613badb7b2fc174fd4e62d7c7b619bc36ea33bfd0c49f64f5787ce
@@ -1118,7 +1118,7 @@ CHECKSUMS
   opentelemetry-instrumentation-active_record (0.11.1) sha256=1b083f34eea0449f8d6f4370b3fb4b935757fac6e4e538e67bb98211809e7c92
   opentelemetry-instrumentation-active_storage (0.3.1) sha256=f89b0fef54921f17c0c4c38a6e0926d29afabd0ac98436fcdbb8bde85dfde89e
   opentelemetry-instrumentation-active_support (0.10.1) sha256=82ea98367158797e33c6de96581f10aa4fe8adf0ebec832dcff5fd04c59bc57d
-  opentelemetry-instrumentation-all (0.86.1) sha256=f193c38209eb6b5b5e09f83d84ed30bdfc2238fca85a3adf8077be4329a77eef
+  opentelemetry-instrumentation-all (0.87.0) sha256=63a9661a3552d20f19ec7fba69e9fdda632fb5f331fe4a72c275cdaeb721de2a
   opentelemetry-instrumentation-anthropic (0.3.0) sha256=09bd9b4ba6189389a6c0f7ba49f1d11f387d93b411ab585137a48b59925a48de
   opentelemetry-instrumentation-aws_lambda (0.6.0) sha256=1a3161393cfe9bc9eddd81a0668d076c38a0a2c3d5df40e95d02f5a8fcd3334c
   opentelemetry-instrumentation-aws_sdk (0.11.0) sha256=67a21e754ddf51e2bb8c3e46e116aa9158d8db800f34c2a9b1e0da5a6ca911e3
@@ -1142,7 +1142,7 @@ CHECKSUMS
   opentelemetry-instrumentation-mongo (0.25.0) sha256=d04585669f928ea82e7c469f996061d39d8ff184278d57cf4fc77a6d607f9c7a
   opentelemetry-instrumentation-mysql2 (0.31.0) sha256=e86fdce4845e2dd7ee00501beb1eecb28626e86c3b0230b9867a4b5f614711fd
   opentelemetry-instrumentation-net_http (0.26.0) sha256=4ec1dc3c814e215926323e7eaaac905a661d0bf4236e121ab330e1ec42311d92
-  opentelemetry-instrumentation-pg (0.32.0) sha256=a6dcb82d7bc158dbe74a3f9f33f3d9ca37d93e311e2968ef5e919ce1c29efb0a
+  opentelemetry-instrumentation-pg (0.33.0) sha256=26dc3617408de73608aa548754cfe2899e63993231fde307ab9ab0de747d132f
   opentelemetry-instrumentation-que (0.11.1) sha256=8c3fb084165481be569760c5b3f194d2af62c4144deed079f993fe0cf9c9f727
   opentelemetry-instrumentation-racecar (0.6.0) sha256=de267a1af9f22b76286ad1830f0ef81b437aad519c230d63f4059e0eb60168cc
   opentelemetry-instrumentation-rack (0.29.0) sha256=9e2cbb8336087064cbe33b502d917d85b174162bc717efda1cfdbd182342f377
@@ -1201,7 +1201,7 @@ CHECKSUMS
   rdoc (6.15.1) sha256=28bfac73cd8b226a8079f53a564ceaccdb5b4480e34335100001570ddb1a481a
   redis-client (0.26.1) sha256=1e39d2862c4516a75ff777ee6ed08827af39336bfece4a48e944244891d9a073
   regexp_parser (2.11.2) sha256=5e5e9c1485ffd8de53ab1d2807affd81f617f72967dfc64fc75a69e2cbf0ff98
-  reline (0.6.2) sha256=1dad26a6008872d59c8e05244b119347c9f2ddaf4a53dce97856cd5f30a02846
+  reline (0.6.3) sha256=1198b04973565b36ec0f11542ab3f5cfeeec34823f4e54cebde90968092b1835
   representable (3.2.0) sha256=cc29bf7eebc31653586849371a43ffe36c60b54b0a6365b5f7d95ec34d1ebace
   request_store (1.7.0) sha256=e1b75d5346a315f452242a68c937ef8e48b215b9453a77a6c0acdca2934c88cb
   rest-client (2.1.0) sha256=35a6400bdb14fae28596618e312776c158f7ebbb0ccad752ff4fa142bf2747e3
