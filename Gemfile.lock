@@ -845,12 +845,13 @@ GEM
     terser (1.2.6)
       execjs (>= 0.3.0, < 3)
     thor (1.4.0)
-    tiktoken_ruby (0.0.12)
+    tiktoken_ruby (0.0.13)
       rb_sys (~> 0.9)
-    tiktoken_ruby (0.0.12-aarch64-linux)
-    tiktoken_ruby (0.0.12-arm64-darwin)
-    tiktoken_ruby (0.0.12-x86_64-darwin)
-    tiktoken_ruby (0.0.12-x86_64-linux)
+    tiktoken_ruby (0.0.13-aarch64-linux)
+    tiktoken_ruby (0.0.13-arm-linux)
+    tiktoken_ruby (0.0.13-arm64-darwin)
+    tiktoken_ruby (0.0.13-x86_64-darwin)
+    tiktoken_ruby (0.0.13-x86_64-linux)
     timeout (0.4.4)
     trailblazer-option (0.1.2)
     tsort (0.2.0)
@@ -1250,11 +1251,12 @@ CHECKSUMS
   stringio (3.1.7) sha256=5b78b7cb242a315fb4fca61a8255d62ec438f58da2b90be66048546ade4507fa
   terser (1.2.6) sha256=6ddf00b93df7015b07e2b9b149e74cd70fa7aa4f0f89a15d9922a6ebd13f37ab
   thor (1.4.0) sha256=8763e822ccb0f1d7bee88cde131b19a65606657b847cc7b7b4b82e772bcd8a3d
-  tiktoken_ruby (0.0.12) sha256=6b2aef7a6f8a40838dbfdf9278d081c625c550a655597026e5931149357cae0a
-  tiktoken_ruby (0.0.12-aarch64-linux) sha256=0c85919651abcc8a2d26ff3c9e9deaa54408a52c94846ffda51dbdd581026bc8
-  tiktoken_ruby (0.0.12-arm64-darwin) sha256=2519ef9b346c33417e8ebdd09582e7805622610cf34bf33d1b725e96fcd4cb81
-  tiktoken_ruby (0.0.12-x86_64-darwin) sha256=cbf5a807b42ef83ea2c58820346e457ed1f2fcda2e179289b08d49bcbaab3401
-  tiktoken_ruby (0.0.12-x86_64-linux) sha256=6bd9285a48b7b05835b62c5ee26cce15c4f75ac47577c18a6285078de8b03593
+  tiktoken_ruby (0.0.13) sha256=24586eeb6644f27b98a9d54de5ec581ab6d9eea16fc0871a4d9fbe03b6725455
+  tiktoken_ruby (0.0.13-aarch64-linux) sha256=a02fdd4cae11336caf607309c9153b8bbafb19b14ec9c5b92455f2053cdb2804
+  tiktoken_ruby (0.0.13-arm-linux) sha256=4a5beed02ed5f5438567c90aab17474d9bd53917956cc5a72e3fd659b45ec609
+  tiktoken_ruby (0.0.13-arm64-darwin) sha256=5b9fd776335c1167c750b0ddd69f4fc2dab43230230663d5902c3420b8cf7d92
+  tiktoken_ruby (0.0.13-x86_64-darwin) sha256=7faa6e3575724ad312e5fd3ef6638fc6832b30b881bdb59696d5f3337a704bc7
+  tiktoken_ruby (0.0.13-x86_64-linux) sha256=a520ba7b82a73fb21ced150a9e1a5c2ee6e9a245714534744ba9ced2cc2b2335
   timeout (0.4.4) sha256=f0f6f970104b82427cd990680f539b6bbb8b1e55efa913a55c6492935e4e0edb
   trailblazer-option (0.1.2) sha256=20e4f12ea4e1f718c8007e7944ca21a329eee4eed9e0fa5dde6e8ad8ac4344a3
   tsort (0.2.0) sha256=9650a793f6859a43b6641671278f79cfead60ac714148aabe4e3f0060480089f
