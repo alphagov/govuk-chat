@@ -32,6 +32,10 @@ Rails.application.routes.draw do
                                             as: :answer_question,
                                             constraints: html_json_constraint
 
+      get "/questions/:question_id/answer_stream",
+          to: "conversations#answer_stream",
+          as: :answer_stream_question
+
       post "/answers/:answer_id/feedback", to: "conversations#answer_feedback",
                                            as: :answer_feedback,
                                            constraints: html_json_constraint
