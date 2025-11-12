@@ -30,7 +30,20 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.chatSubscription = window.GOVUK.consumer.subscriptions.create(
         { channel: "ChatChannel", conversation_id: this.conversationId, question_id: this.questionId },
         {
-          connected: () => console.log(`Connected to conversation ${this.conversationId} and question ${this.questionId} channel.`),
+          connected: () => {
+            this.hideReconnectingMessage()
+            if (this.hasPreviouslyConnected) {
+              console.log(`Reconnected to conversation ${this.conversationId} and question ${this.questionId} channel.`)
+              this.rebroadcastMissedAnswer()
+            } else {
+              console.log(`Connected to conversation ${this.conversationId} and question ${this.questionId} channel.`)
+              this.hasPreviouslyConnected = true
+            }
+          },
+          disconnected: () => {
+            console.log(`Disconnected from conversation ${this.conversationId} and question ${this.questionId}`)
+            this.showReconnectingMessage()
+          },
           received: (data) => {
             if (data.message) {
               this.messageLists.renderAnswer(data.message)
@@ -38,13 +51,20 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
             if (data.finished) {
               console.log(`Disconnecting from conversation ${this.conversationId} and question ${this.questionId} channel.`)
-              this.chatSubscription.unsubscribe()
-              this.questionId = null
-              this.chatSubscription = null
+              this.unsubscribeFromChannel()
             }
           }
         }
       )
+    }
+
+    unsubscribeFromChannel() {
+      if (this.chatSubscription) {
+        this.chatSubscription.unsubscribe()
+        this.hasPreviouslyConnected = false
+        this.questionId = null
+        this.chatSubscription = null
+      }
     }
 
     stopStreaming() {
@@ -55,8 +75,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         }
 
         console.log(`Disconnecting from conversation ${this.conversationId} and question ${this.questionId} channel.`)
-        this.chatSubscription.unsubscribe()
-        this.chatSubscription = null
+        this.unsubscribeFromChannel()
         const warning = document.createElement('div')
         warning.className = 'gem-c-warning-text govuk-warning-text js-conversation-message';
 
@@ -80,6 +99,42 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         this.messageLists.newMessagesList.appendChild(warning)
         this.messageLists.scrollIntoView(warning)
       }
+    }
+
+    showReconnectingMessage() {
+      if (!this.reconnectingElement) {
+        const list = document.createElement('li');
+        list.className = 'app-c-conversation-message js-conversation-message'
+
+        const divBody = document.createElement('div');
+        divBody.className = 'app-c-conversation-message__body app-c-conversation-message__body--loading-message'
+        divBody.innerHTML = `
+          <p class="app-c-conversation-message__loading-text govuk-body">
+            Attempting to reconnect<span class="app-c-conversation-message__loading-ellipsis" aria-hidden="true">...</span>
+          </p>
+        `
+        list.appendChild(divBody)
+
+        this.reconnectingElement = list
+        this.messageLists.newMessagesList.appendChild(list)
+        this.messageLists.scrollIntoView(list)
+      }
+    }
+
+    hideReconnectingMessage() {
+      if (this.reconnectingElement) {
+        this.messageLists.newMessagesList.removeChild(this.reconnectingElement)
+        this.reconnectingElement = null
+      }
+    }
+
+    async rebroadcastMissedAnswer() {
+      if (!this.conversationId || !this.questionId|| !this.chatSubscription) return
+
+      console.log(`Attempting to retrieve missed answer for question ${this.questionId}.`)
+      await this.chatSubscription.perform("answer", {
+        current_html: this.messageLists.answerHTML
+      })
     }
 
     async handleFormSubmission(event) {
