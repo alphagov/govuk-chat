@@ -20,6 +20,8 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
       )
     end
 
+    before { context.search_results = [search_result] }
+
     shared_examples "llm cannot answer the question" do |options|
       it "aborts the pipeline and sets the answer's status and message correctly" do
         stub_claude_structured_answer(
@@ -31,6 +33,17 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
         expect { described_class.call(context) }.to throw_symbol(:abort)
           .and change { context.answer.status }.to("unanswerable_llm_cannot_answer")
           .and change { context.answer.message }.to(Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE)
+      end
+
+      it "sets sources used to false for all sources" do
+        stub_claude_structured_answer(
+          question.message,
+          "Sorry I cannot answer that question.",
+          **options,
+        )
+
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+          .and change { context.answer.sources.first.used }.to(false)
       end
 
       it "assigns metrics to the answer even when not answered" do
@@ -82,8 +95,6 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
         expect(context.answer.llm_responses["structured_answer"]).to eq(expected_llm_response)
       end
     end
-
-    before { context.search_results = [search_result] }
 
     it "uses Claude via Anthropic to assign the correct values to the context's answer" do
       answer = "VAT (Value Added Tax) is a tax applied to most goods and services in the UK."
@@ -154,6 +165,20 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
       described_class.call(context)
 
       expect(context.answer.sources.map(&:used)).to eq([true, false])
+    end
+
+    it "aborts the pipeline when only an unknown source is used" do
+      structured_response = {
+        answered: true,
+        sources_used: %w[unknown_link_token],
+        answer_completeness: "complete",
+      }
+      stub_claude_structured_answer(
+        question.message, "Here is an answer.", **structured_response
+      )
+
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+        .and change { context.answer.sources.first.used }.to(false)
     end
 
     context "when answered is false" do

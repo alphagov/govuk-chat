@@ -19,6 +19,8 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer, :c
       }.to_json
     end
 
+    before { context.search_results = [search_result] }
+
     shared_examples "llm cannot answer the question" do |structured_response_json|
       it "aborts the pipeline and sets the answers status" do
         stub_openai_chat_completion_structured_response(
@@ -29,6 +31,16 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer, :c
         expect { described_class.call(context) }.to throw_symbol(:abort)
           .and change { context.answer.status }.to("unanswerable_llm_cannot_answer")
           .and change { context.answer.message }.to(Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE)
+      end
+
+      it "sets sources used to false for all sources" do
+        stub_openai_chat_completion_structured_response(
+          expected_message_history,
+          structured_response_json,
+        )
+
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+          .and change { context.answer.sources.first.used }.to(false)
       end
 
       it "assigns metrics to the answer" do
@@ -48,10 +60,6 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer, :c
           model: "gpt-4o-mini-2024-07-18",
         })
       end
-    end
-
-    before do
-      context.search_results = [search_result]
     end
 
     it "sends OpenAI a series of messages combining system prompt and the user question" do
@@ -132,6 +140,21 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer, :c
           llm_cached_tokens: 10,
           model: "gpt-4o-mini-2024-07-18",
         })
+      end
+
+      it "aborts the pipeline when only an unknown source is used" do
+        structured_response = {
+          answer: "Here is an answer.",
+          answered: true,
+          sources_used: ["/unknown-path"],
+        }.to_json
+        stub_openai_chat_completion_structured_response(
+          expected_message_history,
+          structured_response,
+        )
+
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+          .and change { context.answer.sources.first.used }.to(false)
       end
 
       context "and answered is 'false'" do

@@ -157,22 +157,6 @@ RSpec.describe AnswerComposition::Pipeline::Context do
       expect(unused_source.used).to be(false)
     end
 
-    it "sets all sources used to 'true' if no sources are passed in" do
-      first_source = build(:answer_source,
-                           used: false,
-                           chunk: build(:answer_source_chunk, exact_path: "/vat-rates#vat-1"))
-      second_source = build(:answer_source,
-                            used: false,
-                            chunk: build(:answer_source_chunk, exact_path: "/vat-rates#vat-2"))
-      answer.sources = [first_source, second_source]
-
-      instance.update_sources_from_exact_urls_used([])
-
-      expect(answer.sources).to contain_exactly(first_source, second_source)
-      expect(first_source.used).to be(true)
-      expect(second_source.used).to be(true)
-    end
-
     it "handles invalid exact_paths gracefully" do
       source = build(:answer_source,
                      used: false,
@@ -183,7 +167,7 @@ RSpec.describe AnswerComposition::Pipeline::Context do
       instance.update_sources_from_exact_urls_used(["/made-up-path"])
 
       expect(answer.sources).to contain_exactly(source)
-      expect(source.used).to be(true)
+      expect(source.used).to be(false)
     end
 
     it "orders the relevancy of sources based on the order of the exact_paths passed in" do

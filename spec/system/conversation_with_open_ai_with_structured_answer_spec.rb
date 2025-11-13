@@ -50,7 +50,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :aws_credent
       {
         answer: "Lots of tax.",
         answered: true,
-        sources_used: ["/pay-more-tax#yes-really"],
+        sources_used: %w[link_1],
       }.to_json,
     )
     stub_openai_output_guardrail("Lots of tax.")
@@ -70,7 +70,7 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :aws_credent
       {
         answer: "Even more tax.",
         answered: true,
-        sources_used: ["/pay-more-tax#yes-really"],
+        sources_used: %w[link_1],
       }.to_json,
     )
     stub_openai_output_guardrail("Even more tax.")

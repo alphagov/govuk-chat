@@ -169,7 +169,7 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
     stubs_for_mock_answer(@first_question,
                           @first_answer,
                           answered: true,
-                          sources_used: %w[/pensions-service])
+                          sources_used: %w[link_1])
 
     execute_queued_sidekiq_jobs
   end
@@ -198,7 +198,7 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
                           @second_answer,
                           rephrase_question: true,
                           answered: true,
-                          sources_used: %w[/pensions-service])
+                          sources_used: %w[link_1])
 
     execute_queued_sidekiq_jobs
   end
