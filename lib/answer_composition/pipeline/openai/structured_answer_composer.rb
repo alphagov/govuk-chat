@@ -17,7 +17,7 @@ module AnswerComposition::Pipeline::OpenAI
       }
       context.answer.assign_llm_response("structured_answer", llm_response_with_link_token_mapping)
 
-      unless parsed_structured_response["answered"]
+      unless parsed_structured_response["answered"] && parsed_structured_response["sources_used"].present?
         return context.abort_pipeline!(
           message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
           status: "unanswerable_llm_cannot_answer",

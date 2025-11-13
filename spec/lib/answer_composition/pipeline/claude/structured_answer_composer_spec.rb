@@ -20,6 +20,69 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
       )
     end
 
+    shared_examples "llm cannot answer the question" do |options|
+      it "aborts the pipeline and sets the answer's status and message correctly" do
+        stub_claude_structured_answer(
+          question.message,
+          "Sorry I cannot answer that question.",
+          **options,
+        )
+
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+          .and change { context.answer.status }.to("unanswerable_llm_cannot_answer")
+          .and change { context.answer.message }.to(Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE)
+      end
+
+      it "assigns metrics to the answer even when not answered" do
+        allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
+        stub_claude_structured_answer(
+          question.message,
+          "Sorry I cannot answer that question.",
+          **options,
+        )
+
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+
+        expect(context.answer.metrics["structured_answer"]).to eq(
+          duration: 1.5,
+          llm_prompt_tokens: 30,
+          llm_completion_tokens: 20,
+          llm_cached_tokens: 20,
+          model: BedrockModels.model_id(:claude_sonnet),
+        )
+      end
+
+      it "stores the LLM response even when not answered" do
+        stub_claude_structured_answer(
+          question.message,
+          "Sorry I cannot answer that question.",
+          **options,
+        )
+
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+
+        expected_content = claude_messages_tool_use_block(
+          input: {
+            answer: "Sorry I cannot answer that question.",
+            **options,
+          },
+          name: "output_schema",
+        )
+        expected_llm_response = {
+          "response" => claude_messages_response(
+            content: [expected_content],
+            usage: { cache_read_input_tokens: 20 },
+            stop_reason: :tool_use,
+          ).to_h.stringify_keys,
+          "link_token_mapping" => {
+            "link_1" => "https://www.test.gov.uk/vat-rates#vat-basics",
+            "link_2" => "https://www.test.gov.uk/what-is-tax",
+          },
+        }
+        expect(context.answer.llm_responses["structured_answer"]).to eq(expected_llm_response)
+      end
+    end
+
     before { context.search_results = [search_result] }
 
     it "uses Claude via Anthropic to assign the correct values to the context's answer" do
@@ -94,70 +157,19 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
     end
 
     context "when answered is false" do
-      it "aborts the pipeline and sets the answer's status and message correctly" do
-        stub_claude_structured_answer(
-          question.message,
-          "Sorry I cannot answer that question.",
-          answered: false,
-        )
+      include_examples "llm cannot answer the question", {
+        answered: false,
+        sources_used: [],
+        answer_completeness: "incomplete",
+      }
+    end
 
-        expect { described_class.call(context) }.to throw_symbol(:abort)
-          .and change { context.answer.status }.to("unanswerable_llm_cannot_answer")
-          .and change { context.answer.message }.to(Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE)
-      end
-
-      it "assigns metrics to the answer even when not answered" do
-        allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
-        stub_claude_structured_answer(
-          question.message,
-          "Sorry I cannot answer that question.",
-          answered: false,
-        )
-
-        expect { described_class.call(context) }.to throw_symbol(:abort)
-
-        expect(context.answer.metrics["structured_answer"]).to eq(
-          duration: 1.5,
-          llm_prompt_tokens: 30,
-          llm_completion_tokens: 20,
-          llm_cached_tokens: 20,
-          model: BedrockModels.model_id(:claude_sonnet),
-        )
-      end
-
-      it "stores the LLM response even when not answered" do
-        stub_claude_structured_answer(
-          question.message,
-          "Sorry I cannot answer that question.",
-          answered: false,
-          sources_used: [],
-          answer_completeness: "incomplete",
-        )
-
-        expect { described_class.call(context) }.to throw_symbol(:abort)
-
-        expected_content = claude_messages_tool_use_block(
-          input: {
-            answer: "Sorry I cannot answer that question.",
-            answered: false,
-            sources_used: [],
-            answer_completeness: "incomplete",
-          },
-          name: "output_schema",
-        )
-        expected_llm_response = {
-          "response" => claude_messages_response(
-            content: [expected_content],
-            usage: { cache_read_input_tokens: 20 },
-            stop_reason: :tool_use,
-          ).to_h.stringify_keys,
-          "link_token_mapping" => {
-            "link_1" => "https://www.test.gov.uk/vat-rates#vat-basics",
-            "link_2" => "https://www.test.gov.uk/what-is-tax",
-          },
-        }
-        expect(context.answer.llm_responses["structured_answer"]).to eq(expected_llm_response)
-      end
+    context "when sources_used is empty" do
+      include_examples "llm cannot answer the question", {
+        answered: true,
+        sources_used: [],
+        answer_completeness: "complete",
+      }
     end
   end
 end

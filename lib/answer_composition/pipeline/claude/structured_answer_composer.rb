@@ -29,7 +29,7 @@ module AnswerComposition::Pipeline
         context.answer.assign_llm_response("structured_answer", llm_response_with_link_token_mapping)
         tool_output = response[:content][0][:input]
 
-        unless tool_output[:answered]
+        unless tool_output[:answered] && tool_output[:sources_used].present?
           return context.abort_pipeline!(
             message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
             status: "unanswerable_llm_cannot_answer",
