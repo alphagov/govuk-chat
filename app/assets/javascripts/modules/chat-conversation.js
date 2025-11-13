@@ -25,46 +25,39 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     subscribeToChannel() {
-      if (!this.conversationId || !this.questionId || this.chatSubscription) return
+      if (!this.conversationId || this.chatSubscription) return
 
       this.chatSubscription = window.GOVUK.consumer.subscriptions.create(
-        { channel: "ChatChannel", conversation_id: this.conversationId, question_id: this.questionId },
+        { channel: "ChatChannel", conversation_id: this.conversationId },
         {
           connected: () => {
             this.hideReconnectingMessage()
             if (this.hasPreviouslyConnected) {
-              console.log(`Reconnected to conversation ${this.conversationId} and question ${this.questionId} channel.`)
-              this.rebroadcastMissedAnswer()
+              console.log(`Reconnected to conversation ${this.conversationId} channel.`)
+              if (this.questionId) {
+                this.rebroadcastMissedAnswer()
+              }
             } else {
-              console.log(`Connected to conversation ${this.conversationId} and question ${this.questionId} channel.`)
+              console.log(`Connected to conversation ${this.conversationId} channel.`)
               this.hasPreviouslyConnected = true
             }
           },
           disconnected: () => {
-            console.log(`Disconnected from conversation ${this.conversationId} and question ${this.questionId}`)
+            console.log(`Disconnected from conversation ${this.conversationId}`)
             this.showReconnectingMessage()
           },
           received: (data) => {
-            if (data.message) {
+            if (data.message && this.questionId == data.question_id) {
               this.messageLists.renderAnswer(data.message)
             }
 
-            if (data.finished) {
-              console.log(`Disconnecting from conversation ${this.conversationId} and question ${this.questionId} channel.`)
-              this.unsubscribeFromChannel()
+            if (data.finished && this.questionId == data.question_id) {
+              console.log(`Finished receiving answer for question ${this.questionId}.`)
+              this.questionId = null
             }
           }
         }
       )
-    }
-
-    unsubscribeFromChannel() {
-      if (this.chatSubscription) {
-        this.chatSubscription.unsubscribe()
-        this.hasPreviouslyConnected = false
-        this.questionId = null
-        this.chatSubscription = null
-      }
     }
 
     stopStreaming() {
@@ -74,8 +67,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
           this.messageLists.answerLoadingElement = null;
         }
 
-        console.log(`Disconnecting from conversation ${this.conversationId} and question ${this.questionId} channel.`)
-        this.unsubscribeFromChannel()
+        console.log(`Stopping streaming for question ${this.questionId}.`)
+        this.questionId = null
         const warning = document.createElement('div')
         warning.className = 'gem-c-warning-text govuk-warning-text js-conversation-message';
 
@@ -133,7 +126,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
       console.log(`Attempting to retrieve missed answer for question ${this.questionId}.`)
       await this.chatSubscription.perform("answer", {
-        current_html: this.messageLists.answerHTML
+        current_html: this.messageLists.answerHTML,
+        question_id: this.questionId
       })
     }
 

@@ -8,11 +8,11 @@ class ComposeAnswerJob < ApplicationJob
     sleep 2
     question.create_answer(message: simulated_response.join, status: "answered")
     simulated_response.each do |chunk|
-      ActionCable.server.broadcast("chat_#{question.conversation.id}_#{question.id}", { message: chunk })
+      ActionCable.server.broadcast("chat_#{question.conversation.id}", { question_id: question.id, message: chunk })
       sleep 0.05
     end
 
-    ActionCable.server.broadcast("chat_#{question.conversation.id}_#{question.id}", { finished: true })
+    ActionCable.server.broadcast("chat_#{question.conversation.id}", { question_id: question.id, finished: true })
   end
 
 private
