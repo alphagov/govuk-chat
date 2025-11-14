@@ -1,12 +1,10 @@
 development:
-  adapter: redis
-  url: <%= ENV['REDIS_URL'] %>
+  adapter: postgresql
+  database: <%= ENV["DATABASE_URL"] %>
 
 test:
   adapter: test
 
 production:
-  adapter: redis
-  url: <%= ENV['REDIS_URL'] %>
-  ssl_params:
-    verify_mode: 0
+  adapter: postgresql
+  database: <%= ENV["DATABASE_URL"] %>
