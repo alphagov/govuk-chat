@@ -34,6 +34,11 @@ class ChatChannel < ApplicationCable::Channel
   def cancelled(data)
     question = Question.includes(:answer).find_by(id: data["question_id"])
 
+    if data["job_id"].present?
+      logger.info("Cancelling received for job ID #{data['job_id']}")
+      Sidekiq.redis { |c| c.set("cancelled-#{data['job_id']}", 1, ex: 600) }
+    end
+
     unless question
       logger.warn("Cancel received for non-existent question ID #{data['question_id']}")
       return

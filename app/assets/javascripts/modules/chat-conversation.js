@@ -14,6 +14,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.conversationId = this.module.dataset.conversationId // set from backend
       this.questionId = null
       this.stopButton = this.module.querySelector('.js-stop-stream')
+      this.jobId = null
     }
 
     init() {
@@ -49,11 +50,15 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
           received: (data) => {
             if (data.message && this.questionId == data.question_id) {
               this.messageLists.renderAnswer(data.message)
+              if (data.job_id) {
+                this.jobId = data.job_id
+              }
             }
 
             if (data.finished && this.questionId == data.question_id) {
               console.log(`Finished receiving answer for question ${this.questionId}.`)
               this.questionId = null
+              this.jobId = null
             }
           }
         }
@@ -61,7 +66,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     }
 
     stopStreaming() {
-      if (this.chatSubscription) {
+      if (this.chatSubscription && this.questionId) {
         if (this.messageLists.answerLoadingElement) {
           this.messageLists.newMessagesList.removeChild(this.messageLists.answerLoadingElement);
           this.messageLists.answerLoadingElement = null;
@@ -70,7 +75,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         console.log(`Stopping streaming for question ${this.questionId}.`)
         this.chatSubscription.perform("cancelled", {
           streamed_answer: this.messageLists.answerHTML,
-          question_id: this.questionId
+          question_id: this.questionId,
+          job_id: this.jobId
         })
         this.questionId = null
         const warning = document.createElement('div')

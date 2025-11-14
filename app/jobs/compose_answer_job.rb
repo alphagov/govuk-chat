@@ -1,14 +1,26 @@
 class ComposeAnswerJob < ApplicationJob
   queue_as :answer
+  delegate :logger, to: Rails
 
   def perform(question_id)
+    if cancelled?
+      logger.info("Answer generation cancelled before starting for question ID #{question_id}")
+      return
+    end
+
     question = Question.includes(:answer, :conversation).find(question_id)
 
     simulated_response = answer_html.split(" ").map { |word| "#{word} " }
     sleep 2
     question.create_answer(message: simulated_response.join, status: "answered")
+
     simulated_response.each do |chunk|
-      ActionCable.server.broadcast("chat_#{question.conversation.id}", { question_id: question.id, message: chunk })
+      if cancelled?
+        logger.info("Answer generation cancelled for question ID #{question.id}")
+        break
+      end
+
+      ActionCable.server.broadcast("chat_#{question.conversation.id}", { question_id: question.id, message: chunk, job_id: job_id })
       sleep 0.05
     end
 
@@ -29,5 +41,9 @@ private
       <p>For standard licence renewals, you can keep your current licence while applying and do not need to return it unless specifically asked by DVLA.</p>
       <p>Check the <a href='https://www.gov.uk/renew-driving-licence#apply-at-a-post-office'>guidance on renewing your driving licence</a> for more information about the renewal process.</p>
     HTML
+  end
+
+  def cancelled?
+    Sidekiq.redis { |c| c.exists("cancelled-#{job_id}") == 1 }
   end
 end
