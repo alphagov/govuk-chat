@@ -7,7 +7,11 @@ default: &default
 development:
   <<: *default
   database: govuk_chat_development
-  url: <%= ENV["DATABASE_URL"]%>
+  url: <%= ENV["DATABASE_URL"] %>
+  cable:
+    <<: *default
+    database: govuk_chat_development_cable
+    migrations_paths: db/cable_migrate
 
 test:
   <<: *default
@@ -17,4 +21,8 @@ test:
 production:
   <<: *default
   database: govuk_chat_production
-  url: <%= ENV["DATABASE_URL"]%>
+  url: <%= ENV["DATABASE_URL"] %>
+  cable:
+    <<: *default
+    database: govuk_chat_production_cable
+    migrations_paths: db/cable_migrate
