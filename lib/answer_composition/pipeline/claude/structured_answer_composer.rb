@@ -29,15 +29,11 @@ module AnswerComposition::Pipeline
         context.answer.assign_llm_response("structured_answer", llm_response_with_link_token_mapping)
         tool_output = response[:content][0][:input]
 
-        unless tool_output[:answered]
-          return context.abort_pipeline!(
-            message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
-            status: "unanswerable_llm_cannot_answer",
-            metrics: { "structured_answer" => build_metrics(start_time, response) },
-          )
-        end
+        return abort_cannot_answer(start_time, response) unless tool_output[:answered]
 
         set_context_sources(tool_output[:sources_used])
+        return abort_cannot_answer(start_time, response) if context.answer.sources.none?(&:used)
+
         message = link_token_mapper.replace_tokens_with_links(tool_output[:answer])
         context.answer.assign_attributes(message:, status: "answered", completeness: tool_output[:answer_completeness])
         context.answer.assign_metrics("structured_answer", build_metrics(start_time, response))
@@ -113,6 +109,14 @@ module AnswerComposition::Pipeline
 
       def tools
         [prompt_config[:tool_spec]]
+      end
+
+      def abort_cannot_answer(start_time, response)
+        context.abort_pipeline!(
+          message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
+          status: "unanswerable_llm_cannot_answer",
+          metrics: { "structured_answer" => build_metrics(start_time, response) },
+        )
       end
     end
   end

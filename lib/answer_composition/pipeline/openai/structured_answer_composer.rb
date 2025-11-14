@@ -17,17 +17,12 @@ module AnswerComposition::Pipeline::OpenAI
       }
       context.answer.assign_llm_response("structured_answer", llm_response_with_link_token_mapping)
 
-      unless parsed_structured_response["answered"]
-        return context.abort_pipeline!(
-          message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
-          status: "unanswerable_llm_cannot_answer",
-          metrics: { "structured_answer" => build_metrics(start_time) },
-        )
-      end
+      return abort_cannot_answer(start_time) unless parsed_structured_response["answered"]
+
+      set_context_sources
+      return abort_cannot_answer(start_time) if context.answer.sources.none?(&:used)
 
       message = link_token_mapper.replace_tokens_with_links(parsed_structured_response["answer"])
-      set_context_sources
-
       context.answer.assign_attributes(message:, status: "answered")
       context.answer.assign_metrics("structured_answer", build_metrics(start_time))
     end
@@ -120,6 +115,14 @@ module AnswerComposition::Pipeline::OpenAI
         llm_cached_tokens: openai_response.dig("usage", "prompt_tokens_details", "cached_tokens"),
         model: openai_response["model"],
       }
+    end
+
+    def abort_cannot_answer(start_time)
+      context.abort_pipeline!(
+        message: Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE,
+        status: "unanswerable_llm_cannot_answer",
+        metrics: { "structured_answer" => build_metrics(start_time) },
+      )
     end
   end
 end

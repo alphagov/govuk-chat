@@ -49,11 +49,6 @@ module AnswerComposition::Pipeline
         answer.sources.find { |source| source.govuk_url == exact_url }
       end
 
-      if used_sources.empty?
-        answer.sources.each { |source| source.used = true }
-        return answer.sources
-      end
-
       used_sources.each_with_index do |source, index|
         source.used = true
         source.relevancy = index
