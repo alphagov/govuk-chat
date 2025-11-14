@@ -68,6 +68,10 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         }
 
         console.log(`Stopping streaming for question ${this.questionId}.`)
+        this.chatSubscription.perform("cancelled", {
+          streamed_answer: this.messageLists.answerHTML,
+          question_id: this.questionId
+        })
         this.questionId = null
         const warning = document.createElement('div')
         warning.className = 'gem-c-warning-text govuk-warning-text js-conversation-message';

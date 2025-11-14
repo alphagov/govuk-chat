@@ -1,4 +1,6 @@
 class ChatChannel < ApplicationCable::Channel
+  delegate :logger, to: Rails
+
   def subscribed
     stream_from "chat_#{params[:conversation_id]}"
   end
@@ -26,6 +28,21 @@ class ChatChannel < ApplicationCable::Channel
         "chat_#{question.conversation_id}",
         answer: nil,
       )
+    end
+  end
+
+  def cancelled(data)
+    question = Question.includes(:answer).find_by(id: data["question_id"])
+
+    unless question
+      logger.warn("Cancel received for non-existent question ID #{data['question_id']}")
+      return
+    end
+
+    Answer.find_or_initialize_by(question_id: question.id).tap do |answer|
+      answer.cancelled_message = data["streamed_answer"].presence
+      answer.cancelled = true
+      answer.save!
     end
   end
 end

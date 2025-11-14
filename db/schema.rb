@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_09_082241) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_14_113858) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -97,6 +97,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_09_082241) do
     t.string "question_routing_guardrails_failures", default: [], array: true
     t.enum "completeness", enum_type: "answer_completeness"
     t.string "forbidden_terms_detected", default: [], null: false, array: true
+    t.string "cancelled_message"
+    t.boolean "cancelled", default: false, null: false
     t.index ["created_at"], name: "index_answers_on_created_at"
     t.index ["question_id"], name: "index_answers_on_question_id", unique: true
   end
