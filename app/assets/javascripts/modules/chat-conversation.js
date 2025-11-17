@@ -82,11 +82,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         const warning = document.createElement('div')
         warning.className = 'gem-c-warning-text govuk-warning-text js-conversation-message';
 
-        const icon = document.createElement('span')
-        icon.className = 'govuk-warning-text__icon'
-        icon.setAttribute('aria-hidden', 'true')
-        icon.textContent = '!'
-
         const strong = document.createElement('strong')
         strong.className = 'govuk-warning-text__text'
 
@@ -96,7 +91,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
 
         strong.appendChild(hidden)
         strong.append(' Streaming has been stopped or cancelled.')
-        warning.appendChild(icon)
         warning.appendChild(strong)
 
         this.messageLists.newMessagesList.appendChild(warning)
