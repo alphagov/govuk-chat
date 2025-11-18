@@ -53,7 +53,7 @@ namespace :evaluation do
       warn answer.error_message
     end
 
-    puts({ message: answer.message }.to_json)
+    puts(answer.serialize_for_evaluation.to_json)
   end
 
   desc "Produce the output of the jailbreak response for a user input"

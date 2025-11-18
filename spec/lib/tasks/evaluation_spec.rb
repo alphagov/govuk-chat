@@ -114,7 +114,7 @@ RSpec.describe "rake evaluation tasks" do
         .and_return(answer)
 
       ClimateControl.modify(INPUT: input) do
-        answer_json = { message: answer.message }.to_json
+        answer_json = answer.serialize_for_evaluation.to_json
         expect { Rake::Task[task_name].invoke(answer_strategy) }
           .to output("#{answer_json}\n").to_stdout
       end
