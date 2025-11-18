@@ -78,6 +78,7 @@ class Answer < ApplicationRecord
 
   enum :question_routing_label,
        {
+         about_chat: "about_chat",
          about_mps: "about_mps",
          advice_opinions_predictions: "advice_opinions_predictions",
          character_fun: "character_fun",
