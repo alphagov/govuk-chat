@@ -96,19 +96,16 @@ RSpec.describe "rake evaluation tasks" do
 
   describe "generate_answer" do
     let(:task_name) { "evaluation:generate_answer" }
+    let(:input) { "What is the current VAT rate?" }
 
     before do
       Rake::Task[task_name].reenable
     end
 
-    it "requires a QUESTION env var" do
-      expect { Rake::Task[task_name].invoke }
-        .to raise_error("requires a QUESTION env var")
-    end
+    it_behaves_like "a task requiring an input"
 
     it "outputs the answer as JSON to stdout" do
       answer = build(:answer)
-      question = "What is the current VAT rate?"
       answer_strategy = "claude_structured_answer"
 
       allow(AnswerComposition::Composer)
@@ -116,7 +113,7 @@ RSpec.describe "rake evaluation tasks" do
         .with(an_instance_of(Question))
         .and_return(answer)
 
-      ClimateControl.modify(QUESTION: question) do
+      ClimateControl.modify(INPUT: input) do
         answer_json = { message: answer.message }.to_json
         expect { Rake::Task[task_name].invoke(answer_strategy) }
           .to output("#{answer_json}\n").to_stdout
@@ -124,14 +121,13 @@ RSpec.describe "rake evaluation tasks" do
 
       expect(AnswerComposition::Composer)
         .to have_received(:call)
-        .with(an_object_having_attributes(message: question,
+        .with(an_object_having_attributes(message: input,
                                           conversation: an_instance_of(Conversation),
                                           answer_strategy: answer_strategy))
     end
 
     it "warns when an answer_strategy argument isn't given" do
       answer = build(:answer)
-      question = "What is the current VAT rate?"
       default_answer_strategy = Rails.configuration.answer_strategy
 
       allow(AnswerComposition::Composer)
@@ -139,7 +135,7 @@ RSpec.describe "rake evaluation tasks" do
         .with(an_instance_of(Question))
         .and_return(answer)
 
-      ClimateControl.modify(QUESTION: question) do
+      ClimateControl.modify(INPUT: input) do
         expect { Rake::Task[task_name].invoke }
           .to output.to_stdout
           .and output("No answer strategy argument provided, using #{default_answer_strategy}\n").to_stderr
@@ -147,12 +143,12 @@ RSpec.describe "rake evaluation tasks" do
 
       expect(AnswerComposition::Composer)
         .to have_received(:call)
-        .with(an_object_having_attributes(message: question,
+        .with(an_object_having_attributes(message: input,
                                           conversation: an_instance_of(Conversation),
                                           answer_strategy: default_answer_strategy))
     end
 
-    it "warns when an answer has an erorr status" do
+    it "warns when an answer has an error status" do
       error_message = "Something is broken"
       answer = build(:answer, status: :error_answer_service_error, error_message:)
 
@@ -161,7 +157,7 @@ RSpec.describe "rake evaluation tasks" do
         .with(an_instance_of(Question))
         .and_return(answer)
 
-      ClimateControl.modify(QUESTION: "What is the current VAT rate?") do
+      ClimateControl.modify(INPUT: input) do
         expected_message = "Warning: answer has an error status: error_answer_service_error\n#{error_message}\n"
         expect { Rake::Task[task_name].invoke("claude_structured_answer") }
           .to output.to_stdout
