@@ -1,3 +1,10 @@
+about_chat:
+  label: "About Chat"
+  use_answer: true
+  answer_status: unanswerable_question_routing
+  canned_responses:
+    - "Something went wrong while trying to answer your question. Please ask again."
+
 about_mps:
   label: "About MPs"
   use_answer: false
@@ -86,7 +93,6 @@ requires_account_data:
   answer_status: unanswerable_question_routing
   canned_responses:
     - I do not have access to any personal or confidential information. You can try searching for the [service you need on GOV.UK](https://www.gov.uk/search/services). Or ask me another question, if you need more help.
-
 
 positive_acknowledgement:
   label: "Positive acknowledgement"
