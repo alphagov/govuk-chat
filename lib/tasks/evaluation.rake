@@ -162,4 +162,53 @@ namespace :evaluation do
 
     puts(result.to_json)
   end
+
+  desc "Batch process a YAML file of questions using any single-input rake task"
+  task :batch_process, %i[task_name] => :environment do |task, args|
+    input_path, output_path, concurrency = ENV.values_at("INPUT_PATH", "OUTPUT_PATH", "CONCURRENCY")
+    concurrency = (concurrency || 10).to_i
+
+    unless args[:task_name] && input_path
+      msg = <<-MSG
+        Usage: #{task.name}[task_name, *task_args] INPUT_PATH=/path/to/questions.yaml OUTPUT_PATH=output.jsonl CONCURRENCY=10
+
+        `task_name` should refer to which evaluation task that will be run as a batch
+        `task_args` are whatever arguments being passed to the task
+
+        e.g: #{task.name}[generate_output_guardrail_response, claude]
+
+        `INPUT_PATH` should point to a YAML file of evaluation questions formatted as an array, e.g.
+
+        - How do I pay VAT?
+        - Do I need a visa?
+
+        `OUTPUT_PATH` is optional and, if set, will be used to write the results to a JSONL file.
+        `CONCURRENCY` is optional and defaults to 10, which determines how many threads are used for concurrent execution
+      MSG
+
+      raise msg
+    end
+
+    puts "Running with a concurrency of #{concurrency}"
+
+    results = Evaluation::BatchTaskProcesser.call(
+      input_path,
+      args[:task_name],
+      args.extras,
+      concurrency:,
+    ) do |new_warnings, total, current|
+      new_warnings.each(&method(:warn))
+
+      puts "(#{current} / #{total})"
+    end
+
+    jsonl = results.map(&:to_json).join("\n")
+
+    if output_path.present?
+      File.open(output_path, "wb") { |file| file.write(jsonl) }
+      puts "Written to #{output_path}"
+    else
+      puts jsonl
+    end
+  end
 end
