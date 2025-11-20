@@ -29,86 +29,18 @@ RSpec.describe "rake evaluation tasks" do
     end
   end
 
-  describe "generate_report" do
-    let(:task_name) { "evaluation:generate_report" }
-    let(:evaluation_data) do
-      [
-        { question: "First question", answer: { "message" => "First answer" }, retrieved_context: [] },
-        { question: "Second question", answer: { "message" => "Second answer" }, retrieved_context: [] },
-      ]
-    end
-    let(:jsonl) do
-      evaluation_data.map(&:to_json).join("\n")
-    end
-
-    before do
-      Rake::Task[task_name].reenable
-
-      allow(Evaluation::ReportGenerator).to receive(:call).and_return(evaluation_data)
-    end
-
-    it "raises an error if input_path is not specified" do
-      expect { Rake::Task[task_name].invoke }
-        .to raise_error(/Usage: evaluation:generate_report/)
-    end
-
-    it "outputs the answer_strategy to stdout" do
-      expect { Rake::Task[task_name].invoke("input.yml") }
-        .to output(/Generating report with answer strategy: \S*/).to_stdout
-    end
-
-    it "generates the results as JSONL and prints them" do
-      expect { Rake::Task[task_name].invoke("input.yml") }
-        .to output(/#{Regexp.escape(jsonl)}/).to_stdout
-    end
-
-    it "generates the results as JSONL and writes them to a file" do
-      temp = Tempfile.new
-      output_path = temp.path
-
-      begin
-        expect { Rake::Task[task_name].invoke("input.yml", output_path) }
-          .to output(/Written to #{output_path}/).to_stdout
-
-        expect(File.read(output_path)).to eq(jsonl)
-      ensure
-        temp.close
-        temp.unlink
-      end
-    end
-
-    it "sets GOVUK_WEBSITE_ROOT, if not set, to specify https://www.gov.uk links" do
-      ClimateControl.modify(GOVUK_WEBSITE_ROOT: nil) do
-        expect { Rake::Task[task_name].invoke("input.yml") }.to output.to_stdout
-
-        expect(ENV["GOVUK_WEBSITE_ROOT"]).to eq("https://www.gov.uk")
-      end
-    end
-
-    it "doesn't change GOVUK_WEBSITE_ROOT when already set" do
-      ClimateControl.modify(GOVUK_WEBSITE_ROOT: "http://test.gov.uk") do
-        expect { Rake::Task[task_name].invoke("input.yml") }.to output.to_stdout
-
-        expect(ENV["GOVUK_WEBSITE_ROOT"]).to eq("http://test.gov.uk")
-      end
-    end
-  end
-
   describe "generate_answer" do
     let(:task_name) { "evaluation:generate_answer" }
+    let(:input) { "What is the current VAT rate?" }
 
     before do
       Rake::Task[task_name].reenable
     end
 
-    it "requires a QUESTION env var" do
-      expect { Rake::Task[task_name].invoke }
-        .to raise_error("requires a QUESTION env var")
-    end
+    it_behaves_like "a task requiring an input"
 
     it "outputs the answer as JSON to stdout" do
       answer = build(:answer)
-      question = "What is the current VAT rate?"
       answer_strategy = "claude_structured_answer"
 
       allow(AnswerComposition::Composer)
@@ -116,22 +48,21 @@ RSpec.describe "rake evaluation tasks" do
         .with(an_instance_of(Question))
         .and_return(answer)
 
-      ClimateControl.modify(QUESTION: question) do
-        answer_json = { message: answer.message }.to_json
+      ClimateControl.modify(INPUT: input) do
+        answer_json = answer.serialize_for_evaluation.to_json
         expect { Rake::Task[task_name].invoke(answer_strategy) }
           .to output("#{answer_json}\n").to_stdout
       end
 
       expect(AnswerComposition::Composer)
         .to have_received(:call)
-        .with(an_object_having_attributes(message: question,
+        .with(an_object_having_attributes(message: input,
                                           conversation: an_instance_of(Conversation),
                                           answer_strategy: answer_strategy))
     end
 
     it "warns when an answer_strategy argument isn't given" do
       answer = build(:answer)
-      question = "What is the current VAT rate?"
       default_answer_strategy = Rails.configuration.answer_strategy
 
       allow(AnswerComposition::Composer)
@@ -139,7 +70,7 @@ RSpec.describe "rake evaluation tasks" do
         .with(an_instance_of(Question))
         .and_return(answer)
 
-      ClimateControl.modify(QUESTION: question) do
+      ClimateControl.modify(INPUT: input) do
         expect { Rake::Task[task_name].invoke }
           .to output.to_stdout
           .and output("No answer strategy argument provided, using #{default_answer_strategy}\n").to_stderr
@@ -147,12 +78,12 @@ RSpec.describe "rake evaluation tasks" do
 
       expect(AnswerComposition::Composer)
         .to have_received(:call)
-        .with(an_object_having_attributes(message: question,
+        .with(an_object_having_attributes(message: input,
                                           conversation: an_instance_of(Conversation),
                                           answer_strategy: default_answer_strategy))
     end
 
-    it "warns when an answer has an erorr status" do
+    it "warns when an answer has an error status" do
       error_message = "Something is broken"
       answer = build(:answer, status: :error_answer_service_error, error_message:)
 
@@ -161,7 +92,7 @@ RSpec.describe "rake evaluation tasks" do
         .with(an_instance_of(Question))
         .and_return(answer)
 
-      ClimateControl.modify(QUESTION: "What is the current VAT rate?") do
+      ClimateControl.modify(INPUT: input) do
         expected_message = "Warning: answer has an error status: error_answer_service_error\n#{error_message}\n"
         expect { Rake::Task[task_name].invoke("claude_structured_answer") }
           .to output.to_stdout
