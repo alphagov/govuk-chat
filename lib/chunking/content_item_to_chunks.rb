@@ -6,6 +6,7 @@ module Chunking
       ContentItemParsing::PartsContentParser,
       ContentItemParsing::StepByStepNavParser,
       ContentItemParsing::TransactionParser,
+      ContentItemParsing::TravelGuideParser,
     ].freeze
 
     def self.call(content_item)

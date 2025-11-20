@@ -1,0 +1,6 @@
+# See https://github.com/alphagov/frontend/blob/c9252c627f96cc9b00ac8a3a979da1975bb0be39/config/locales/en.yml#L644-L647
+
+avoid_all_but_essential_travel_to_parts: FCDO advises against all but essential travel to parts of %{country}.
+avoid_all_but_essential_travel_to_whole_country: FCDO advises against all but essential travel to %{country}.
+avoid_all_travel_to_parts: FCDO advises against all travel to parts of %{country}.
+avoid_all_travel_to_whole_country: FCDO advises against all travel to %{country}.
