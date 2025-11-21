@@ -84,7 +84,7 @@ GEM
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     amq-protocol (2.3.3)
-    anthropic (1.15.1)
+    anthropic (1.15.2)
       connection_pool
     ast (2.4.3)
     aws-eventstream (1.4.0)
@@ -959,7 +959,7 @@ CHECKSUMS
   activesupport (8.0.3) sha256=a711ce5e30660b23232f26a38699469f8d859d47aa1f722e183fda6d7cc17823
   addressable (2.8.7) sha256=462986537cf3735ab5f3c0f557f14155d778f4b43ea4f485a9deb9c8f7c58232
   amq-protocol (2.3.3) sha256=85b42738290913a35dcc487a2ca0dd260a4150b40ed1954c9c1932df466abc1f
-  anthropic (1.15.1) sha256=76acc09147ecd961a4e4c8856bcc576e2fb4e33d7c4e73f3b32a25bf219e74d3
+  anthropic (1.15.2) sha256=c8b34ba2551be2020249c59a190b9750341b71f8538ec62df0b26a0b2dea7d33
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
   aws-partitions (1.1185.0) sha256=cc711b7c3381e83abfd9e3a84b8a50e37f23c82fd0386ef6b91c15b6e4981b1b
