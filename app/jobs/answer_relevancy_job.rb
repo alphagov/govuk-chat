@@ -11,7 +11,7 @@ class AnswerRelevancyJob < ApplicationJob
       return logger.info("Answer #{answer_id} is not eligible for auto evaluation")
     end
 
-    result = AnswerAnalysisGeneration::Metrics::AnswerRelevancy.call(
+    result = AnswerAnalysisGeneration::Metrics::AnswerRelevancy::Metric.call(
       question_message: answer.rephrased_question || answer.question.message,
       answer_message: answer.message,
     )
@@ -28,6 +28,10 @@ class AnswerRelevancyJob < ApplicationJob
       result.llm_responses.stringify_keys.each do |name, llm_response|
         analysis.assign_llm_response(name, llm_response)
       end
+      result.metrics.stringify_keys.each do |name, metrics|
+        analysis.assign_metrics(name, metrics)
+      end
+
       analysis.save!
     end
   end
