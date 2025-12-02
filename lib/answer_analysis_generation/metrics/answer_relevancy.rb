@@ -12,11 +12,10 @@ module AnswerAnalysisGeneration::Metrics
 
     def self.call(...) = new(...).call
 
-    def initialize(question_message:, answer_message:, strict_mode: false, threshold: 0.5)
+    def initialize(question_message:, answer_message:, threshold: 0.5)
       @question_message = question_message
       @answer_message = answer_message
-      @strict_mode = strict_mode
-      @threshold = strict_mode ? 1.0 : threshold
+      @threshold = threshold
     end
 
     def call
@@ -29,7 +28,7 @@ module AnswerAnalysisGeneration::Metrics
 
   private
 
-    attr_reader :question_message, :answer_message, :threshold, :strict_mode
+    attr_reader :question_message, :answer_message, :threshold
 
     def bedrock_client
       @bedrock_client ||= Aws::BedrockRuntime::Client.new
