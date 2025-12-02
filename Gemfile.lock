@@ -292,7 +292,7 @@ GEM
     govuk_personalisation (1.1.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
-    govuk_publishing_components (62.1.0)
+    govuk_publishing_components (62.2.0)
       govuk_app_config
       govuk_personalisation (>= 0.7.0)
       kramdown
@@ -588,7 +588,7 @@ GEM
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-ruby_kafka (0.24.0)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-sidekiq (0.28.0)
+    opentelemetry-instrumentation-sidekiq (0.28.1)
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-sinatra (0.28.0)
       opentelemetry-instrumentation-rack (~> 0.29)
@@ -695,7 +695,7 @@ GEM
     rb_sys (0.9.117)
       rake-compiler-dock (= 1.9.1)
     rbtree (0.4.6)
-    rdoc (6.16.0)
+    rdoc (6.16.1)
       erb
       psych (>= 4.0.0)
       tsort
@@ -841,7 +841,7 @@ GEM
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
     statsd-ruby (1.5.0)
-    stringio (3.1.8)
+    stringio (3.1.9)
     terser (1.2.6)
       execjs (>= 0.3.0, < 3)
     thor (1.4.0)
@@ -1042,7 +1042,7 @@ CHECKSUMS
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
-  govuk_publishing_components (62.1.0) sha256=363923399998ec6c37ff35b71bd20d6a08cbd3fdbdecd024e89d30fa6385556e
+  govuk_publishing_components (62.2.0) sha256=5a7bfd13680dc6bdfaaad6cdd7c6033fee22e16f57567be3d3e4820391d27082
   govuk_schemas (6.2.0) sha256=9a5a7b672256664d1bef1b7db80926df92a3ce9196bfe00ce96b8fd8bacc56d2
   govuk_sidekiq (10.0.0) sha256=0d0485f6946f5e212eb5d6f5105c406a25f3cd059592a5b490b78f1d71818de8
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
@@ -1154,7 +1154,7 @@ CHECKSUMS
   opentelemetry-instrumentation-resque (0.8.0) sha256=559edde9d6273dd757ae5149ed36e26d147b63028d084121203f51c8cff805e5
   opentelemetry-instrumentation-restclient (0.26.0) sha256=5d4e9d93ef51564a1023c076e17b4ac3b42fe81003321d9fb66e44886538bdce
   opentelemetry-instrumentation-ruby_kafka (0.24.0) sha256=257e891f4ce630ba3e0669408d497b44afcc493cd49aed09343d5a51fa8952c2
-  opentelemetry-instrumentation-sidekiq (0.28.0) sha256=748d651c49740f261caf2da33d0a665b97442bf1caec4e35757a1b430353226e
+  opentelemetry-instrumentation-sidekiq (0.28.1) sha256=abc85d62996a5362e7a9fd7af9f6c709d01ce04795514d12fee5126335ae97ae
   opentelemetry-instrumentation-sinatra (0.28.0) sha256=9f11d68c580a421cadd633aca1f8f92707d6b6995d48fffa045a48c187347f26
   opentelemetry-instrumentation-trilogy (0.64.0) sha256=a2aa19f727e86e57ee9799a2fd2c0fe9fd5b2eff69f16b30cde11d7748309fc5
   opentelemetry-registry (0.4.0) sha256=903fa6bfaa29eac1c1d73a4fdd29b850977b5353b84b8cdff11222c00ad2968f
@@ -1199,7 +1199,7 @@ CHECKSUMS
   rb-inotify (0.11.1) sha256=a0a700441239b0ff18eb65e3866236cd78613d6b9f78fea1f9ac47a85e47be6e
   rb_sys (0.9.117) sha256=755feaf6c640baceca7a9362dfb0ae87ff4ff16e3566d9ef86533896eb85cb59
   rbtree (0.4.6) sha256=14eea4469b24fd2472542e5f3eb105d6344c8ccf36f0b56d55fdcfeb4e0f10fc
-  rdoc (6.16.0) sha256=d0ce6f787027a24e480c1acb9f3110125213cb5df6806fd7832d5a1b8f26a205
+  rdoc (6.16.1) sha256=71357cc208e6da77ba0c4494e01ae870dd18b437c7c7d801dd73ee2f340b9f5c
   redis-client (0.26.1) sha256=1e39d2862c4516a75ff777ee6ed08827af39336bfece4a48e944244891d9a073
   regexp_parser (2.11.2) sha256=5e5e9c1485ffd8de53ab1d2807affd81f617f72967dfc64fc75a69e2cbf0ff98
   reline (0.6.3) sha256=1198b04973565b36ec0f11542ab3f5cfeeec34823f4e54cebde90968092b1835
@@ -1248,7 +1248,7 @@ CHECKSUMS
   sprockets (4.2.2) sha256=761e5a49f1c288704763f73139763564c845a8f856d52fba013458f8af1b59b1
   sprockets-rails (3.5.2) sha256=a9e88e6ce9f8c912d349aa5401509165ec42326baf9e942a85de4b76dbc4119e
   statsd-ruby (1.5.0) sha256=369ddf09537408e273849e09b84d4edbdac24ac461f5c9b6cacb0e4398190109
-  stringio (3.1.8) sha256=99c43c3a9302843cca223fd985bfc503dd50a4b1723d3e4a9eb1d9c37d99e4ec
+  stringio (3.1.9) sha256=c111af13d3a73eab96a3bc2655ecf93788d13d28cb8e25c1dcbff89ace885121
   terser (1.2.6) sha256=6ddf00b93df7015b07e2b9b149e74cd70fa7aa4f0f89a15d9922a6ebd13f37ab
   thor (1.4.0) sha256=8763e822ccb0f1d7bee88cde131b19a65606657b847cc7b7b4b82e772bcd8a3d
   tiktoken_ruby (0.0.13) sha256=24586eeb6644f27b98a9d54de5ec581ab6d9eea16fc0871a4d9fbe03b6725455
