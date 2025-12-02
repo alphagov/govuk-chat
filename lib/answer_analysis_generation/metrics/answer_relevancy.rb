@@ -30,22 +30,16 @@ module AnswerAnalysisGeneration::Metrics
 
     attr_reader :question_message, :answer_message, :threshold
 
-    def bedrock_client
-      @bedrock_client ||= Aws::BedrockRuntime::Client.new
-    end
-
     def llm_prompts
       Rails.configuration.govuk_chat_private.llm_prompts.auto_evaluation.answer_relevancy
     end
 
     def statements
       @statements ||= begin
-        unparsed_statements = bedrock_client.converse(
-          model_id: MODEL,
+        bedrock_response = BedrockConverseClient.call(
           messages: [{ "role": "user", "content": [{ "text": statements_system_prompt }] }],
-          inference_config:,
         )
-        parse_first_text_content(unparsed_statements)["statements"]
+        BedrockConverseClient.parse_first_text_content_from_response(bedrock_response)["statements"]
       end
     end
 
@@ -56,29 +50,12 @@ module AnswerAnalysisGeneration::Metrics
       )
     end
 
-    def inference_config
-      {
-        max_tokens: 4096,
-        temperature: 0.0,
-      }
-    end
-
-    def parse_first_text_content(bedrock_response)
-      first_text_content_block = bedrock_response.output.message.content.detect do |content_block|
-        content_block.is_a?(Aws::BedrockRuntime::Types::ContentBlock::Text)
-      end
-
-      JSON.parse(first_text_content_block.text)
-    end
-
     def verdicts
       @verdicts ||= begin
-        verdicts_response = bedrock_client.converse(
-          model_id: MODEL,
+        bedrock_response = BedrockConverseClient.call(
           messages: [{ "role": "user", "content": [{ "text": verdicts_system_prompt }] }],
-          inference_config:,
         )
-        parse_first_text_content(verdicts_response)["verdicts"]
+        BedrockConverseClient.parse_first_text_content_from_response(bedrock_response)["verdicts"]
       end
     end
 
@@ -102,13 +79,10 @@ module AnswerAnalysisGeneration::Metrics
 
     def reason
       @reason ||= begin
-        reasons_response = bedrock_client.converse(
-          model_id: MODEL,
+        bedrock_response = BedrockConverseClient.call(
           messages: [{ "role": "user", "content": [{ "text": reason_system_prompt }] }],
-          inference_config:,
         )
-
-        parse_first_text_content(reasons_response)["reason"]
+        BedrockConverseClient.parse_first_text_content_from_response(bedrock_response)["reason"]
       end
     end
 
