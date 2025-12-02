@@ -6,6 +6,7 @@ module AnswerAnalysisGeneration::Metrics
       :score,
       :reason,
       :success,
+      :llm_responses,
     )
 
     MODEL = "openai.gpt-oss-120b-1:0".freeze
@@ -23,6 +24,11 @@ module AnswerAnalysisGeneration::Metrics
         score: calculate_score,
         reason:,
         success: is_successful?,
+        llm_responses: {
+          answer_relevancy_statements: statements_response.to_h,
+          answer_relevancy_verdicts: verdicts_response.to_h,
+          answer_relevancy_reason: reason_response.to_h,
+        },
       )
     end
 
@@ -34,13 +40,14 @@ module AnswerAnalysisGeneration::Metrics
       Rails.configuration.govuk_chat_private.llm_prompts.auto_evaluation.answer_relevancy
     end
 
+    def statements_response
+      @statements_response ||= BedrockConverseClient.call(
+        messages: [{ "role": "user", "content": [{ "text": statements_system_prompt }] }],
+      )
+    end
+
     def statements
-      @statements ||= begin
-        bedrock_response = BedrockConverseClient.call(
-          messages: [{ "role": "user", "content": [{ "text": statements_system_prompt }] }],
-        )
-        BedrockConverseClient.parse_first_text_content_from_response(bedrock_response)["statements"]
-      end
+      BedrockConverseClient.parse_first_text_content_from_response(statements_response)["statements"]
     end
 
     def statements_system_prompt
@@ -50,13 +57,14 @@ module AnswerAnalysisGeneration::Metrics
       )
     end
 
+    def verdicts_response
+      @verdicts_response ||= BedrockConverseClient.call(
+        messages: [{ "role": "user", "content": [{ "text": verdicts_system_prompt }] }],
+      )
+    end
+
     def verdicts
-      @verdicts ||= begin
-        bedrock_response = BedrockConverseClient.call(
-          messages: [{ "role": "user", "content": [{ "text": verdicts_system_prompt }] }],
-        )
-        BedrockConverseClient.parse_first_text_content_from_response(bedrock_response)["verdicts"]
-      end
+      BedrockConverseClient.parse_first_text_content_from_response(verdicts_response)["verdicts"]
     end
 
     def verdicts_system_prompt
@@ -77,13 +85,14 @@ module AnswerAnalysisGeneration::Metrics
       end
     end
 
+    def reason_response
+      @reason_response ||= BedrockConverseClient.call(
+        messages: [{ "role": "user", "content": [{ "text": reason_system_prompt }] }],
+      )
+    end
+
     def reason
-      @reason ||= begin
-        bedrock_response = BedrockConverseClient.call(
-          messages: [{ "role": "user", "content": [{ "text": reason_system_prompt }] }],
-        )
-        BedrockConverseClient.parse_first_text_content_from_response(bedrock_response)["reason"]
-      end
+      BedrockConverseClient.parse_first_text_content_from_response(reason_response)["reason"]
     end
 
     def reason_system_prompt

@@ -204,6 +204,7 @@ namespace :evaluation do
       score: result.score,
       reason: result.reason,
       success: result.success,
+      llm_responses: result.llm_responses,
     }
 
     puts(output.to_json)

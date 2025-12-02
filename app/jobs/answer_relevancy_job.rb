@@ -24,6 +24,10 @@ class AnswerRelevancyJob < ApplicationJob
         answer_relevancy_score: result.score,
         answer_relevancy_reason: result.reason,
       )
+
+      result.llm_responses.stringify_keys.each do |name, llm_response|
+        analysis.assign_llm_response(name, llm_response)
+      end
       analysis.save!
     end
   end
