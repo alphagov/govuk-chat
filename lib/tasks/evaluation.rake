@@ -172,4 +172,42 @@ namespace :evaluation do
       puts jsonl
     end
   end
+
+  desc "Run answer relevancy evaluation for a user input"
+  task :generate_answer_relevancy_evaluation, %i[strict_mode threshold] => :environment do |_, args|
+    raise "Requires an INPUT env var" if ENV["INPUT"].blank?
+
+    strict_mode = args[:strict_mode] == "true"
+    threshold = args[:threshold]&.to_f || 0.5
+
+    question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
+
+    puts "Generating answer for evaluation."
+    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [
+      AnswerComposition::Pipeline::Claude::QuestionRouter,
+      AnswerComposition::Pipeline::SearchResultFetcher,
+      AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
+    ])
+
+    if answer.status =~ /^error/
+      warn "Warning: answer has an error status: #{answer.status}"
+      return warn answer.error_message
+    end
+
+    puts "Generating relevancy evaluation with strict_mode=#{strict_mode}, threshold=#{threshold}."
+    result = AnswerAnalysisGeneration::Metrics::AnswerRelevancy.new(
+      question_message: answer.rephrased_question || question.message,
+      answer_message: answer.message,
+      strict_mode: strict_mode,
+      threshold: threshold,
+    ).call
+
+    output = {
+      score: result.score,
+      reason: result.reason,
+      success: result.success,
+    }
+
+    puts(output.to_json)
+  end
 end
