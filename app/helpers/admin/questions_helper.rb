@@ -222,6 +222,19 @@ module Admin
         ]
       end
 
+      if answer&.analysis&.answer_relevancy_score.present?
+        rows << [
+          {
+            field: "Answer relevancy score",
+            value: answer.analysis.answer_relevancy_score,
+          },
+          {
+            field: "Answer relevancy reason",
+            value: answer.analysis.answer_relevancy_reason,
+          },
+        ]
+      end
+
       rows.flatten
     end
 
