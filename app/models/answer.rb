@@ -49,6 +49,11 @@ class Answer < ApplicationRecord
     guardrails_jailbreak
   ].freeze
 
+  STATUSES_INCLUDED_IN_AUTO_EVALUATION = %w[
+    answered
+    unanswerable_question_routing
+  ].freeze
+
   scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
 
   belongs_to :question
@@ -174,6 +179,10 @@ class Answer < ApplicationRecord
 
   def eligible_for_topic_analysis?
     STATUSES_EXCLUDED_FROM_TOPIC_ANALYSIS.exclude?(status)
+  end
+
+  def eligible_for_auto_evaluation?
+    STATUSES_INCLUDED_IN_AUTO_EVALUATION.include?(status)
   end
 
   def set_sources_as_unused

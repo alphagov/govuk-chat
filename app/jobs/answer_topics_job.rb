@@ -12,12 +12,18 @@ class AnswerTopicsJob < ApplicationJob
     end
 
     result = AnswerAnalysisGeneration::TopicTagger.call(answer.rephrased_question || answer.question.message)
-    analysis = answer.build_analysis(
-      primary_topic: result.primary_topic,
-      secondary_topic: result.secondary_topic,
-    )
-    analysis.assign_metrics("topic_tagger", result.metrics)
-    analysis.assign_llm_response("topic_tagger", result.llm_response)
-    analysis.save!
+
+    answer.with_lock do
+      return logger.warn("Answer #{answer_id} has already been tagged with topics") if answer.analysis&.primary_topic.present?
+
+      analysis = AnswerAnalysis.find_or_initialize_by(answer_id: answer.id)
+      analysis.assign_attributes(
+        primary_topic: result.primary_topic,
+        secondary_topic: result.secondary_topic,
+      )
+      analysis.assign_metrics("topic_tagger", result.metrics)
+      analysis.assign_llm_response("topic_tagger", result.llm_response)
+      analysis.save!
+    end
   end
 end
