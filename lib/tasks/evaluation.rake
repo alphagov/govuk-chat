@@ -194,17 +194,18 @@ namespace :evaluation do
     end
 
     puts "Generating relevancy evaluation with threshold=#{threshold}."
-    result = AnswerAnalysisGeneration::Metrics::AnswerRelevancy.new(
+    result = AnswerAnalysisGeneration::Metrics::AnswerRelevancy::Metric.call(
       question_message: answer.rephrased_question || question.message,
       answer_message: answer.message,
       threshold: threshold,
-    ).call
+    )
 
     output = {
       score: result.score,
       reason: result.reason,
       success: result.success,
       llm_responses: result.llm_responses,
+      metrics: result.metrics,
     }
 
     puts(output.to_json)
