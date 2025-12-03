@@ -27,4 +27,32 @@ module StubBedrock
     random_generator = Random.new(text.bytes.sum)
     dimensions.times.map { random_generator.rand }
   end
+
+  def stub_bedrock_converse(*responses)
+    bedrock_client = Aws::BedrockRuntime::Client.new(stub_responses: true)
+    allow(Aws::BedrockRuntime::Client).to receive(:new).and_return(bedrock_client)
+    bedrock_client.stub_responses(:converse, responses)
+    bedrock_client
+  end
+
+  def bedrock_converse_client_response(content:)
+    text_content_block = Aws::BedrockRuntime::Types::ContentBlock::Text.new(text: content)
+    message = Aws::BedrockRuntime::Types::Message.new(
+      role: "assistant",
+      content: [text_content_block],
+    )
+    output = Aws::BedrockRuntime::Types::ConverseOutput::Message.new(message:)
+    usage = Aws::BedrockRuntime::Types::TokenUsage.new(
+      input_tokens: 25,
+      output_tokens: 35,
+      total_tokens: 60,
+    )
+    metrics = Aws::BedrockRuntime::Types::ConverseMetrics.new(latency_ms: 2000)
+    Aws::BedrockRuntime::Types::ConverseResponse.new(
+      output:,
+      usage:,
+      stop_reason: "end_turn",
+      metrics:,
+    )
+  end
 end
