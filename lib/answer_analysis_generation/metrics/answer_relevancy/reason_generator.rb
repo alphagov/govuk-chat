@@ -1,0 +1,55 @@
+module AnswerAnalysisGeneration::Metrics::AnswerRelevancy
+  class ReasonGenerator
+    Result = Data.define(
+      :reason,
+      :llm_response,
+      :metrics,
+    )
+
+    def self.call(...) = new(...).call
+
+    def initialize(question_message:, verdicts:, score:)
+      @question_message = question_message
+      @verdicts = verdicts
+      @score = score
+    end
+
+    def call
+      start_time = Clock.monotonic_time
+      llm_response = BedrockConverseClient.converse(
+        messages: [{ "role": "user", "content": [{ "text": system_prompt }] }],
+      )
+      metrics = {
+        duration: Clock.monotonic_time - start_time,
+        model: AnswerAnalysisGeneration::Metrics::AnswerRelevancy::Metric::MODEL,
+        llm_prompt_tokens: llm_response["usage"]["input_tokens"],
+        llm_completion_tokens: llm_response["usage"]["output_tokens"],
+      }
+      reason = BedrockConverseClient.parse_first_text_content_from_response(llm_response)["reason"]
+
+      Result.new(reason:, llm_response: llm_response.to_h, metrics:)
+    end
+
+  private
+
+    attr_reader :question_message, :verdicts, :score
+
+    def llm_prompts
+      Rails.configuration.govuk_chat_private.llm_prompts.auto_evaluation.answer_relevancy
+    end
+
+    def system_prompt
+      sprintf(
+        llm_prompts["reason"]["system_prompt"],
+        score:,
+        irrelevant_statements:,
+        question: question_message,
+      )
+    end
+
+    def irrelevant_statements
+      verdicts.select { |verdict| verdict["verdict"].strip.downcase == "no" }
+              .map { |verdict| verdict["reason"] }
+    end
+  end
+end
