@@ -73,5 +73,35 @@ RSpec.describe BedrockConverseClient do
         expect(result.text_content).to eq({ "response" => "This is the first text content block." })
       end
     end
+
+    context "when the LLM returns invalid JSON" do
+      let(:invalid_json_response) do
+        bedrock_converse_client_response(content: "This is not valid JSON.")
+      end
+
+      it "retries the request when the LLM returns invalid JSON" do
+        stub_bedrock_converse(
+          invalid_json_response,
+          bedrock_client_response,
+        )
+
+        expect(logger).to receive(:warn)
+                      .with(/LLM returned invalid JSON, retrying 1\/#{described_class::MAX_RETRIES}:/)
+        result = described_class.converse(user_message)
+
+        expect(result.text_content).to eq({ "response" => "This is the first text content block." })
+      end
+
+      it "retries up to the maximum number of retries" do
+        allow(Rails.logger).to receive(:warn)
+        stub_bedrock_converse(invalid_json_response)
+
+        expect {
+          described_class.converse(user_message)
+        }.to raise_error(JSON::ParserError)
+
+        expect(Rails.logger).to have_received(:warn).exactly(BedrockConverseClient::MAX_RETRIES).times
+      end
+    end
   end
 end

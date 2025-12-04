@@ -5,6 +5,9 @@ class BedrockConverseClient
   )
 
   MODEL = "openai.gpt-oss-120b-1:0".freeze
+  MAX_RETRIES = 3
+
+  delegate :logger, to: Rails
 
   def self.converse(...) = new(...).converse
 
@@ -13,19 +16,29 @@ class BedrockConverseClient
   end
 
   def converse
-    llm_response = bedrock_client.converse(
-      messages: [{ role: "user", content: [{ text: user_message }] }],
-      model_id: MODEL,
-      inference_config: {
-        max_tokens: 4096,
-        temperature: 0.0,
-      },
-    )
+    retry_count = 0
 
-    Result.new(
-      text_content: parse_first_text_content_from_response(llm_response),
-      llm_response:,
-    )
+    begin
+      llm_response = bedrock_client.converse(
+        messages: [{ role: "user", content: [{ text: user_message }] }],
+        model_id: MODEL,
+        inference_config: {
+          max_tokens: 4096,
+          temperature: 0.0,
+        },
+      )
+
+      Result.new(
+        text_content: parse_first_text_content_from_response(llm_response),
+        llm_response:,
+      )
+    rescue JSON::ParserError => e
+      raise e if retry_count >= MAX_RETRIES
+
+      retry_count += 1
+      logger.warn("LLM returned invalid JSON, retrying #{retry_count}/#{MAX_RETRIES}: #{e.message}")
+      retry
+    end
   end
 
 private
