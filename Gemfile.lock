@@ -148,7 +148,7 @@ GEM
     commonmarker (2.3.0-x86_64-darwin)
     commonmarker (2.3.0-x86_64-linux)
     concurrent-ruby (1.3.5)
-    connection_pool (2.5.5)
+    connection_pool (3.0.1)
     crack (1.0.1)
       bigdecimal
       rexml
@@ -274,16 +274,16 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.22.1)
+    govuk_app_config (9.22.2)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.32)
-      opentelemetry-instrumentation-all (>= 0.39.1, < 0.88.0)
+      opentelemetry-instrumentation-all (>= 0.39.1, < 0.89.0)
       opentelemetry-sdk (~> 1.2)
       plek (>= 4, < 6)
       prometheus_exporter (~> 2.3)
       puma (>= 5.6, < 8.0)
       rack-proxy (~> 0.7)
-      sentry-rails (~> 5.3)
+      sentry-rails (>= 5.3, < 7.0)
       sentry-ruby (~> 5.3)
       statsd-ruby (~> 1.5)
     govuk_message_queue_consumer (6.0.0)
@@ -468,7 +468,7 @@ GEM
       opentelemetry-instrumentation-active_support (~> 0.10)
     opentelemetry-instrumentation-active_support (0.10.1)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-all (0.87.0)
+    opentelemetry-instrumentation-all (0.88.0)
       opentelemetry-instrumentation-active_model_serializers (~> 0.24.0)
       opentelemetry-instrumentation-anthropic (~> 0.3.0)
       opentelemetry-instrumentation-aws_lambda (~> 0.6.0)
@@ -477,7 +477,7 @@ GEM
       opentelemetry-instrumentation-concurrent_ruby (~> 0.24.0)
       opentelemetry-instrumentation-dalli (~> 0.29.0)
       opentelemetry-instrumentation-delayed_job (~> 0.25.1)
-      opentelemetry-instrumentation-ethon (~> 0.25.0)
+      opentelemetry-instrumentation-ethon (~> 0.26.0)
       opentelemetry-instrumentation-excon (~> 0.26.0)
       opentelemetry-instrumentation-faraday (~> 0.30.0)
       opentelemetry-instrumentation-grape (~> 0.5.0)
@@ -524,7 +524,7 @@ GEM
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-delayed_job (0.25.1)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-ethon (0.25.1)
+    opentelemetry-instrumentation-ethon (0.26.0)
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-excon (0.26.1)
       opentelemetry-instrumentation-base (~> 0.25)
@@ -988,7 +988,7 @@ CHECKSUMS
   commonmarker (2.3.0-x86_64-darwin) sha256=65919fe63bc1e01319d958351ae611cc913bd2a8aa3f1a4f3fb3d12e82fbc568
   commonmarker (2.3.0-x86_64-linux) sha256=a6f2b523be0c3e4752aaf55cc5026239080b81f91bd2f72226b6e71919d204d0
   concurrent-ruby (1.3.5) sha256=813b3e37aca6df2a21a3b9f1d497f8cbab24a2b94cab325bffe65ee0f6cbebc6
-  connection_pool (2.5.5) sha256=e54ff92855753df1fd7c59fa04a398833355f27dd14c074f8c83a05f72a716ad
+  connection_pool (3.0.1) sha256=819ea60fcbee0b557fec6dce41925ec7d24a137a6602587785a9e5a3aaaa6b6c
   crack (1.0.1) sha256=ff4a10390cd31d66440b7524eb1841874db86201d5b70032028553130b6d4c7e
   crass (1.0.6) sha256=dc516022a56e7b3b156099abc81b6d2b08ea1ed12676ac7a5657617f012bd45d
   csv (3.3.5) sha256=6e5134ac3383ef728b7f02725d9872934f523cb40b961479f69cf3afa6c8e73f
@@ -1038,7 +1038,7 @@ CHECKSUMS
   google-protobuf (4.33.1-x86_64-linux-gnu) sha256=8205efe9313f19b5106a912b3c2146d6da5681a2a3427d361613a8f20f3e3750
   googleapis-common-protos-types (1.22.0) sha256=f97492b77bd6da0018c860d5004f512fe7cd165554d7019a8f4df6a56fbfc4c7
   googleauth (1.15.1) sha256=d61960893d0d573601d94a38889613b991f40a59ab755b5beed87bf2c3d3cb24
-  govuk_app_config (9.22.1) sha256=52daf5e13803f970732847e4e707975f3e69d451069c527a901ede2015b145ab
+  govuk_app_config (9.22.2) sha256=6c7aad74dcbd13907d2c3387909ab751f4e6cd0a641e7f95507528a5d3fcb961
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
@@ -1119,7 +1119,7 @@ CHECKSUMS
   opentelemetry-instrumentation-active_record (0.11.1) sha256=1b083f34eea0449f8d6f4370b3fb4b935757fac6e4e538e67bb98211809e7c92
   opentelemetry-instrumentation-active_storage (0.3.1) sha256=f89b0fef54921f17c0c4c38a6e0926d29afabd0ac98436fcdbb8bde85dfde89e
   opentelemetry-instrumentation-active_support (0.10.1) sha256=82ea98367158797e33c6de96581f10aa4fe8adf0ebec832dcff5fd04c59bc57d
-  opentelemetry-instrumentation-all (0.87.0) sha256=63a9661a3552d20f19ec7fba69e9fdda632fb5f331fe4a72c275cdaeb721de2a
+  opentelemetry-instrumentation-all (0.88.0) sha256=79a66aae58e7ae8327c7718b56cd7ab1f01932f121351ed8f2920b5aa527022c
   opentelemetry-instrumentation-anthropic (0.3.0) sha256=09bd9b4ba6189389a6c0f7ba49f1d11f387d93b411ab585137a48b59925a48de
   opentelemetry-instrumentation-aws_lambda (0.6.0) sha256=1a3161393cfe9bc9eddd81a0668d076c38a0a2c3d5df40e95d02f5a8fcd3334c
   opentelemetry-instrumentation-aws_sdk (0.11.0) sha256=67a21e754ddf51e2bb8c3e46e116aa9158d8db800f34c2a9b1e0da5a6ca911e3
@@ -1128,7 +1128,7 @@ CHECKSUMS
   opentelemetry-instrumentation-concurrent_ruby (0.24.0) sha256=229bd8b72000c59de693609bb637b8a9114992f5e0ab03730d7fd7ef91f7d1d2
   opentelemetry-instrumentation-dalli (0.29.0) sha256=a2686650545609e8d7e281c9fd1aef529ab578ef2dcf9a6258737e4ba214bc2f
   opentelemetry-instrumentation-delayed_job (0.25.1) sha256=47f35b10d2bfd9ac7c2bbbe10dea095a2e25db2a84f5351860ead969d180c3ec
-  opentelemetry-instrumentation-ethon (0.25.1) sha256=0d3b233a37b7b234e97d6853d67abd5f4ce1e13717dfa432473e6f6d7c5f574d
+  opentelemetry-instrumentation-ethon (0.26.0) sha256=d4461082c84e8912ab1204340f31cae4aba58b4ae2a854d517b27116750e3752
   opentelemetry-instrumentation-excon (0.26.1) sha256=a856816c98d45ff4cd3ec3b0d7fc1e5e340390f47478f882eb4a688cfc678fef
   opentelemetry-instrumentation-faraday (0.30.1) sha256=526822c0575aba333e53bfdb26a4a7b6a30c9cb1b1d400d514d891f4507732f9
   opentelemetry-instrumentation-grape (0.5.0) sha256=b9fcbe13b015b663577b8bde5b419c297da2588d0a022f4ce40f9ffc49df7624
