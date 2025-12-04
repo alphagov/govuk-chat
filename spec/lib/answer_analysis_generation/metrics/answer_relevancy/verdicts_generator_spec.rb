@@ -11,13 +11,13 @@ RSpec.describe AnswerAnalysisGeneration::Metrics::AnswerRelevancy::VerdictsGener
 
     before { stub_bedrock_converse(bedrock_converse_client_response(content: { verdicts: }.to_json)) }
 
-    it "calls the BedrockConverseClient with the expected prompt" do
+    it "calls the AnswerAnalysisGeneration::Metrics::BedrockConverseClient with the expected prompt" do
       expected_system_prompt = sprintf(
         Rails.configuration.govuk_chat_private.llm_prompts.auto_evaluation.answer_relevancy["verdicts"]["system_prompt"],
         question: question_message,
         statements:,
       )
-      expect(BedrockConverseClient).to receive(:converse)
+      expect(AnswerAnalysisGeneration::Metrics::BedrockConverseClient).to receive(:converse)
                                    .with(expected_system_prompt)
                                    .and_call_original
 

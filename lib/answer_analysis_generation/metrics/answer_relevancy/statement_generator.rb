@@ -14,7 +14,7 @@ module AnswerAnalysisGeneration::Metrics::AnswerRelevancy
 
     def call
       start_time = Clock.monotonic_time
-      client_response = BedrockConverseClient.converse(system_prompt)
+      client_response = AnswerAnalysisGeneration::Metrics::BedrockConverseClient.converse(system_prompt)
       llm_response = client_response.llm_response
       statements = client_response.text_content["statements"]
       metrics = {

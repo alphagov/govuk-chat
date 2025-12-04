@@ -14,14 +14,14 @@ RSpec.describe AnswerAnalysisGeneration::Metrics::AnswerRelevancy::ReasonGenerat
 
     before { stub_bedrock_converse(bedrock_converse_client_response(content: reason_json)) }
 
-    it "calls the BedrockConverseClient with the expected prompt" do
+    it "calls the AnswerAnalysisGeneration::Metrics::BedrockConverseClient with the expected prompt" do
       expected_system_prompt = sprintf(
         Rails.configuration.govuk_chat_private.llm_prompts.auto_evaluation.answer_relevancy["reason"]["system_prompt"],
         score:,
         unsuccessful_verdicts_reasons: ["The statement is irrelevant."],
         question: question_message,
       )
-      expect(BedrockConverseClient).to receive(:converse).with(expected_system_prompt).and_call_original
+      expect(AnswerAnalysisGeneration::Metrics::BedrockConverseClient).to receive(:converse).with(expected_system_prompt).and_call_original
 
       described_class.call(question_message:, verdicts:, score:)
     end

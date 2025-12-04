@@ -1,4 +1,4 @@
-RSpec.describe BedrockConverseClient do
+RSpec.describe AnswerAnalysisGeneration::Metrics::BedrockConverseClient do
   describe ".converse" do
     let(:user_message) { "Hello, this is a user message." }
     let(:bedrock_client) { Aws::BedrockRuntime::Client.new(stub_responses: true) }
@@ -18,7 +18,7 @@ RSpec.describe BedrockConverseClient do
       described_class.converse(user_message)
 
       expected_request_args = {
-        model_id: BedrockConverseClient::MODEL,
+        model_id: described_class::MODEL,
         messages: [{ role: "user", content: [{ text: user_message }] }],
         inference_config: {
           max_tokens: 4096,
@@ -31,7 +31,7 @@ RSpec.describe BedrockConverseClient do
     it "returns a Result object with the text content and LLM response" do
       result = described_class.converse(user_message)
 
-      expect(result).to be_a(BedrockConverseClient::Result)
+      expect(result).to be_a(described_class::Result)
       expect(result.text_content).to eq({ "response" => "This is the first text content block." })
       expect(result.llm_response).to eq(bedrock_client_response)
     end
@@ -100,7 +100,7 @@ RSpec.describe BedrockConverseClient do
           described_class.converse(user_message)
         }.to raise_error(JSON::ParserError)
 
-        expect(Rails.logger).to have_received(:warn).exactly(BedrockConverseClient::MAX_RETRIES).times
+        expect(Rails.logger).to have_received(:warn).exactly(described_class::MAX_RETRIES).times
       end
     end
   end
