@@ -15,14 +15,15 @@ module AnswerAnalysisGeneration::Metrics::AnswerRelevancy
 
     def call
       start_time = Clock.monotonic_time
-      llm_response = BedrockConverseClient.converse(system_prompt)
+      client_response = BedrockConverseClient.converse(system_prompt)
+      llm_response = client_response.llm_response
+      verdicts = client_response.text_content["verdicts"]
       metrics = {
         duration: Clock.monotonic_time - start_time,
         model: AnswerAnalysisGeneration::Metrics::AnswerRelevancy::Metric::MODEL,
         llm_prompt_tokens: llm_response["usage"]["input_tokens"],
         llm_completion_tokens: llm_response["usage"]["output_tokens"],
       }
-      verdicts = BedrockConverseClient.parse_first_text_content_from_response(llm_response)["verdicts"]
 
       Result.new(verdicts:, llm_response: llm_response.to_h, metrics:)
     end
