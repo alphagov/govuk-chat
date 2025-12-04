@@ -7,6 +7,9 @@ module AutoEvaluation
     )
 
     MODEL = BedrockModels.model_id(:openai_gpt_oss_120b).freeze
+    MAX_RETRIES = 3
+
+    delegate :logger, to: Rails
 
     def self.call(...) = new(...).call
 
@@ -15,22 +18,32 @@ module AutoEvaluation
     end
 
     def call
-      start_time = Clock.monotonic_time
-      bedrock_client = Aws::BedrockRuntime::Client.new
-      llm_response = bedrock_client.converse(
-        messages: [{ role: "user", content: [{ text: user_message }] }],
-        model_id: MODEL,
-        inference_config: {
-          max_tokens: 4096,
-          temperature: 0.0,
-        },
-      )
+      retry_count = 0
 
-      Result.new(
-        evaluation_data: parse_first_text_content_from_response(llm_response),
-        llm_response: llm_response.to_h,
-        metrics: build_metrics(start_time, llm_response),
-      )
+      begin
+        start_time = Clock.monotonic_time
+        bedrock_client = Aws::BedrockRuntime::Client.new
+        llm_response = bedrock_client.converse(
+          messages: [{ role: "user", content: [{ text: user_message }] }],
+          model_id: MODEL,
+          inference_config: {
+            max_tokens: 4096,
+            temperature: 0.0,
+          },
+        )
+
+        Result.new(
+          evaluation_data: parse_first_text_content_from_response(llm_response),
+          llm_response: llm_response.to_h,
+          metrics: build_metrics(start_time, llm_response),
+        )
+      rescue JSON::ParserError => e
+        raise e if retry_count >= MAX_RETRIES
+
+        retry_count += 1
+        logger.warn("LLM returned invalid JSON, retrying #{retry_count}/#{MAX_RETRIES}: #{e.message}")
+        retry
+      end
     end
 
   private
