@@ -1,8 +1,11 @@
 module StubBedrock
   TITAN_EMBEDDING_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*titan-embed-text.*?/invoke}
+  OPENAI_GPT_OSS_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/openai\.gpt-oss.*?/invoke}
 
-  def stub_bedrock_invoke_model_response(request_body:, response_body:)
-    stub_request(:post, TITAN_EMBEDDING_ENDPOINT_REGEX)
+  def stub_bedrock_invoke_model_response(request_body:,
+                                         response_body:,
+                                         endpoint_regex: TITAN_EMBEDDING_ENDPOINT_REGEX)
+    stub_request(:post, endpoint_regex)
       .with(body: request_body)
       .to_return_json(
         status: 200,
@@ -42,5 +45,39 @@ module StubBedrock
     # text given
     random_generator = Random.new(text.bytes.sum)
     dimensions.times.map { random_generator.rand }
+  end
+
+  def bedrock_invoke_model_openai_oss_structured_response(user_message, json_schema, content)
+    request_body = {
+      include_reasoning: false,
+      messages: [
+        { role: "user", content: [{ type: "text", text: user_message }] },
+      ],
+      response_format: {
+        type: "json_schema",
+        json_schema:,
+      },
+      max_tokens: 4096,
+      temperature: 0.0,
+    }.to_json
+
+    response_body = {
+      choices: [
+        {
+          message: {
+            content: content,
+            role: "assistant",
+          },
+        },
+      ],
+      model: "openai.gpt-oss-120b-1:0",
+      usage: { completion_tokens: 35, prompt_tokens: 25, total_tokens: 60 },
+    }.to_json
+
+    stub_bedrock_invoke_model_response(
+      request_body: request_body,
+      response_body: response_body,
+      endpoint_regex: OPENAI_GPT_OSS_ENDPOINT_REGEX,
+    )
   end
 end
