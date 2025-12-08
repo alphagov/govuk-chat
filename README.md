@@ -69,6 +69,10 @@ If you're not using govuk-docker you can run:
 bin/setup
 ```
 
+### Frozen OpenSearch instance
+
+To test against the frozen OpenSearch instance, see the [govuk-chat-opensearch](https://github.com/alphagov/govuk-chat-opensearch?tab=readme-ov-file#using-the-frozen-opensearch-instance-in-the-govuk-chat-rails-app) repository.
+
 ### Further documentation
 
 - [Message queue consumption](docs/message-queue-consumption.md)
