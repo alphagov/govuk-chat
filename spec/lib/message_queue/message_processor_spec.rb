@@ -2,9 +2,10 @@ RSpec.describe MessageQueue::MessageProcessor do
   it_behaves_like "a message queue processor"
 
   describe "#process" do
-    context "when given a payload we can index", :chunked_content_index do
+    context "when given a payload we can index", :aws_credentials_stubbed, :chunked_content_index do
       before do
-        stub_bedrock_titan_embedding
+        chunks = Chunking::ContentItemToChunks.call(content_item)
+        chunks.map(&:plain_content).each { |chunk| stub_bedrock_titan_embedding(chunk) }
       end
 
       let(:base_path) { "/news" }

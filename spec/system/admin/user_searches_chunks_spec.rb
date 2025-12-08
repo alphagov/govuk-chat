@@ -1,4 +1,4 @@
-RSpec.describe "Admin user searches and views chunks", :chunked_content_index do
+RSpec.describe "Admin user searches and views chunks", :aws_credentials_stubbed, :chunked_content_index do
   scenario do
     given_i_am_an_admin
     and_there_is_a_pax_my_tax_chunk_to_find
