@@ -18,12 +18,9 @@ module AutoEvaluation
     attr_reader :question_message, :verdicts, :score
 
     def llm_prompts
-      Rails.configuration
-           .govuk_chat_private
-           .llm_prompts
-           .auto_evaluation
-           .answer_relevancy
-           .fetch(:reason)
+      Prompts.config
+             .answer_relevancy
+             .fetch(:reason)
     end
 
     def user_prompt
