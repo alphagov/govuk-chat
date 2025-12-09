@@ -27,9 +27,9 @@ RSpec.describe "rake bigquery tasks" do
 
     it "prints what it has exported" do
       previous_export = create(:bigquery_export, exported_until: 2.hours.ago)
-      create(:answer, created_at: 1.hour.ago)
-      create(:answer_feedback, created_at: 1.hour.ago)
-      create(:answer_analysis, created_at: 1.hour.ago)
+      answer = create(:answer, created_at: 1.hour.ago)
+      create(:answer_feedback, created_at: 1.hour.ago, answer:)
+      create(:answer_analysis, created_at: 1.hour.ago, answer:)
 
       expected_counts = {
         "questions" => 1,
