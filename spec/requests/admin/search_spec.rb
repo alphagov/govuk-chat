@@ -1,4 +1,4 @@
-RSpec.describe "Admin::SearchController", :chunked_content_index do
+RSpec.describe "Admin::SearchController", :aws_credentials_stubbed, :chunked_content_index do
   describe "GET :index" do
     before do
       stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS", { "guide" => 1.2, "answer" => 0.5 })

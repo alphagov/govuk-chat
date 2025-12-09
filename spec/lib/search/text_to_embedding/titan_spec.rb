@@ -1,84 +1,62 @@
-RSpec.describe Search::TextToEmbedding::Titan do
+RSpec.describe Search::TextToEmbedding::Titan, :aws_credentials_stubbed do
   describe ".call" do
     it "returns a single embedding array for a string input" do
-      client = stub_bedrock_invoke_model(
-        bedrock_titan_embedding_response([1.0, 2.0, 3.0]),
-      )
+      request = stub_bedrock_titan_embedding("text")
 
       embedding = described_class.call("text")
 
-      expect(client.api_requests.size).to eq(1)
-
-      expect(embedding).to eq([1.0, 2.0, 3.0])
+      expect(request).to have_been_made.once
+      expect(embedding).to eq(mock_titan_embedding("text"))
     end
 
     it "returns an array of embedding arrays for an array input" do
-      client = stub_bedrock_invoke_model(
-        bedrock_titan_embedding_response([1.0, 2.0, 3.0]),
-        bedrock_titan_embedding_response([4.0, 5.0, 6.0]),
-      )
+      first_request = stub_bedrock_titan_embedding("Embed this")
+      second_request = stub_bedrock_titan_embedding("Embed that")
 
       embedding = described_class.call(["Embed this", "Embed that"])
 
-      expect(client.api_requests.size).to eq(2)
+      expect(first_request).to have_been_made.once
+      expect(second_request).to have_been_made.once
 
-      expect(embedding).to eq([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+      expect(embedding)
+        .to eq([mock_titan_embedding("Embed this"), mock_titan_embedding("Embed that")])
     end
 
     it "truncates input text to the character length limit" do
-      client = stub_bedrock_titan_embedding
+      max_length_text = "a" * described_class::INPUT_TEXT_LENGTH_LIMIT
+      longer_text = "#{max_length_text}a"
+      request = stub_bedrock_titan_embedding(max_length_text)
 
-      long_text = "a" * (described_class::INPUT_TEXT_LENGTH_LIMIT + 1)
-      described_class.call(long_text)
+      described_class.call(longer_text)
 
-      expect(client.api_requests.size).to eq(1)
-
-      request_body = JSON.parse(
-        client.api_requests.first.dig(:params, :body),
-      )
-
-      expect(request_body["inputText"].length)
-        .to eq(described_class::INPUT_TEXT_LENGTH_LIMIT)
+      expect(request).to have_been_made
     end
 
     it "retries embedding generation if the input exceeds the token limit" do
-      client = Aws::BedrockRuntime::Client.new(stub_responses: true)
-      allow(Aws::BedrockRuntime::Client).to receive(:new).and_return(client)
-      client.stub_responses(
-        :invoke_model,
-        [
-          Aws::BedrockRuntime::Errors::ValidationException.new({}, "400 Bad Request: Too many input tokens."),
-          Aws::BedrockRuntime::Errors::ValidationException.new({}, "400 Bad Request: Too many input tokens."),
-          bedrock_titan_embedding_response([1.0, 2.0, 3.0]),
-        ],
+      first_error_request = stub_titan_too_many_tokens_error(
+        "a" * described_class::INPUT_TEXT_LENGTH_LIMIT,
       )
+      second_error_request = stub_titan_too_many_tokens_error("a" * 40_000)
+      successful_request = stub_bedrock_titan_embedding("a" * 32_000)
 
       long_text = "a" * described_class::INPUT_TEXT_LENGTH_LIMIT
       described_class.call(long_text)
 
-      expect(client.api_requests.size).to eq(3)
-
-      request_input_text_lengths = client.api_requests.map do |request|
-        JSON.parse(request.dig(:params, :body))["inputText"].length
-      end
-
-      expect(request_input_text_lengths).to eq([50_000, 40_000, 32_000])
+      expect(first_error_request).to have_been_made.once
+      expect(second_error_request).to have_been_made.once
+      expect(successful_request).to have_been_made.once
     end
 
     it "raises an error if embedding generation fails after max number of retries" do
-      client = Aws::BedrockRuntime::Client.new(stub_responses: true)
-      allow(Aws::BedrockRuntime::Client).to receive(:new).and_return(client)
-      client.stub_responses(
-        :invoke_model,
-        [
-          Aws::BedrockRuntime::Errors::ValidationException.new({}, "400 Bad Request: Too many input tokens."),
-          Aws::BedrockRuntime::Errors::ValidationException.new({}, "400 Bad Request: Too many input tokens."),
-          Aws::BedrockRuntime::Errors::ValidationException.new({}, "400 Bad Request: Too many input tokens."),
-          Aws::BedrockRuntime::Errors::ValidationException.new({}, "400 Bad Request: Too many input tokens."),
-          Aws::BedrockRuntime::Errors::ValidationException.new({}, "400 Bad Request: Too many input tokens."),
-          bedrock_titan_embedding_response([1.0, 2.0, 3.0]),
-        ],
-      )
+      requests = [
+        stub_titan_too_many_tokens_error(
+          "a" * described_class::INPUT_TEXT_LENGTH_LIMIT,
+        ),
+        stub_titan_too_many_tokens_error("a" * 40_000),
+        stub_titan_too_many_tokens_error("a" * 32_000),
+        stub_titan_too_many_tokens_error("a" * 25_600),
+        stub_titan_too_many_tokens_error("a" * 20_480),
+      ]
 
       long_text = "a" * described_class::INPUT_TEXT_LENGTH_LIMIT
 
@@ -87,22 +65,26 @@ RSpec.describe Search::TextToEmbedding::Titan do
         /Failed to generate Titan embedding after 5 attempts/,
       )
 
-      expect(client.api_requests.size).to eq(5)
+      requests.all? { |request| expect(request).to have_been_made.once }
     end
 
     it "raises the original error if it is not a token limit error" do
-      client = Aws::BedrockRuntime::Client.new(stub_responses: true)
-      allow(Aws::BedrockRuntime::Client).to receive(:new).and_return(client)
-      client.stub_responses(
-        :invoke_model,
-        [
-          Aws::BedrockRuntime::Errors::ValidationException.new({}, "503 Service Unavailable"),
-        ],
+      stub_bedrock_titan_invoke_error(
+        "text",
+        "400 Bad Request: Some other bad request error.",
       )
 
       expect { described_class.call("text") }.to raise_error(
         Aws::BedrockRuntime::Errors::ValidationException,
+        "400 Bad Request: Some other bad request error.",
       )
     end
+  end
+
+  def stub_titan_too_many_tokens_error(input_text)
+    stub_bedrock_titan_invoke_error(
+      input_text,
+      "400 Bad Request: Too many input tokens.",
+    )
   end
 end

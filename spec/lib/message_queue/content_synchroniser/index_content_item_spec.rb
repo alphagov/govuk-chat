@@ -1,4 +1,4 @@
-RSpec.describe MessageQueue::ContentSynchroniser::IndexContentItem, :chunked_content_index do
+RSpec.describe MessageQueue::ContentSynchroniser::IndexContentItem, :aws_credentials_stubbed, :chunked_content_index do
   describe ".call" do
     let(:base_path) { "/path" }
     let(:content_item) { build(:notification_content_item, base_path:) }
@@ -12,7 +12,7 @@ RSpec.describe MessageQueue::ContentSynchroniser::IndexContentItem, :chunked_con
     end
 
     before do
-      stub_bedrock_titan_embedding
+      chunks.map(&:plain_content).each { |chunk| stub_bedrock_titan_embedding(chunk) }
       allow(Chunking::ContentItemToChunks).to receive(:call).with(content_item).and_return(chunks)
     end
 

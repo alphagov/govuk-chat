@@ -1,4 +1,4 @@
-RSpec.describe GenerateTextEmbeddingJob, :chunked_content_index do
+RSpec.describe GenerateTextEmbeddingJob, :aws_credentials_stubbed, :chunked_content_index do
   it_behaves_like "a job in queue", "default"
 
   describe "#perform" do
