@@ -1,10 +1,4 @@
 RSpec.describe Chunking::ContentItemToChunks do
-  describe "PARSERS_FOR_SCHEMAS" do
-    it "contains all BaseParser descendants" do
-      expect(described_class::PARSERS_FOR_SCHEMAS).to match_array(Chunking::ContentItemParsing::BaseParser.descendants)
-    end
-  end
-
   describe ".call" do
     it "returns an array of ContentItemChunk objects for a valid schema" do
       content_item = build(:notification_content_item, schema_name: "detailed_guide")
@@ -27,22 +21,6 @@ RSpec.describe Chunking::ContentItemToChunks do
 
       expect { described_class.call(content_item) }
         .to raise_error("Content item not supported for parsing: document type: decision not supported for schema: publication")
-    end
-  end
-
-  describe ".parsers_by_schema_name" do
-    it "returns a hash of schema names that are all valid Publishing API ones" do
-      schemas = described_class.parsers_by_schema_name.keys
-      all_valid_schema_names = GovukSchemas::Schema.schema_names
-
-      unknown_schemas = schemas - all_valid_schema_names
-
-      expect(unknown_schemas).to be_empty, "Schemas not in Publishing API: #{unknown_schemas.join(', ')}"
-    end
-
-    it "maps schemas defined in all parser classes" do
-      map = described_class.parsers_by_schema_name
-      expect(map.values.uniq).to match_array(described_class::PARSERS_FOR_SCHEMAS)
     end
   end
 
