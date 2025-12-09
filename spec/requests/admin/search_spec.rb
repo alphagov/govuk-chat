@@ -1,7 +1,9 @@
 RSpec.describe "Admin::SearchController", :aws_credentials_stubbed, :chunked_content_index do
   describe "GET :index" do
     before do
-      stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS", { "guide" => 1.2, "answer" => 0.5 })
+      allow(Search::ResultsForQuestion::Reranker).to receive(:document_type_weighting).with("guide", "guide", parent_document_type: nil).and_return(1.2)
+      allow(Search::ResultsForQuestion::Reranker).to receive(:document_type_weighting).with("answer", "answer", parent_document_type: nil).and_return(0.5)
+
       allow(Rails.configuration.search.thresholds).to receive_messages(minimum_score: 0.6, max_results: 5)
     end
 
@@ -25,6 +27,7 @@ RSpec.describe "Admin::SearchController", :aws_credentials_stubbed, :chunked_con
         build(:chunked_content_record,
               title: "Looking for this one",
               document_type: "guide",
+              schema_name: "guide",
               heading_hierarchy: ["Main header", "Sub header"],
               titan_embedding:)
       end
@@ -49,6 +52,7 @@ RSpec.describe "Admin::SearchController", :aws_credentials_stubbed, :chunked_con
             "anything" => build(:chunked_content_record,
                                 title: "Shouldn't find this",
                                 document_type: "answer",
+                                schema_name: "answer",
                                 titan_embedding: close_embedding),
           })
         end
@@ -69,7 +73,7 @@ RSpec.describe "Admin::SearchController", :aws_credentials_stubbed, :chunked_con
 
           results = Search::ChunkedContentRepository.new.search_by_embedding(titan_embedding, max_chunks: 2)
           result = results.detect { |r| r.digest == chunk_to_find[:digest] }
-          document_type_weight = Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS[chunk_to_find[:document_type]]
+          document_type_weight = Search::ResultsForQuestion::Reranker.document_type_weighting(chunk_to_find[:document_type], chunk_to_find[:schema_name], parent_document_type: nil)
           weighted_score = result.score * document_type_weight
 
           expected_link = admin_chunk_path(id: chunk_id, back_link: admin_search_path(search_text:))
