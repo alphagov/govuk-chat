@@ -1,10 +1,6 @@
 module Chunking
   module ContentItemParsing
     class PartsContentParser < BaseParser
-      def self.allowed_schemas
-        %w[guide]
-      end
-
       def call
         chunk_index = 0
         chunked_parts.flat_map do |chunked_part|

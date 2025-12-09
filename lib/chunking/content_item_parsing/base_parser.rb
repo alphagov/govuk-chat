@@ -1,8 +1,6 @@
 module Chunking
   module ContentItemParsing
     class BaseParser
-      ANY_DOCUMENT_TYPE = ->(_) { true }.freeze
-
       def self.call(...) = new(...).call
 
       def initialize(content_item)

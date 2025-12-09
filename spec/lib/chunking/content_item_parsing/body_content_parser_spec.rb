@@ -1,7 +1,7 @@
 RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
   include ContentItemParserExamples
 
-  it_behaves_like "a chunking content item parser", described_class.allowed_schemas do
+  it_behaves_like "a chunking content item parser" do
     let(:content_item) { build(:notification_content_item, body: "<p>Content</p>", schema_name:) }
   end
 
@@ -32,15 +32,18 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
   end
 
   describe ".non_indexable_content_item_reason" do
-    it "returns nil for a schema that doesn't care about document type" do
-      content_item = build(:notification_content_item, schema_name: "service_manual_guide")
-      expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
-    end
-
     it "rejects unsupported document types for 'publication' schema" do
       content_item = build(:notification_content_item, schema_name: "publication", document_type: "correspondence")
       expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
         "document type: correspondence not supported for schema: publication",
+      )
+    end
+
+    it "raises an error if the schema is not configured to use this parser" do
+      content_item = build(:notification_content_item, schema_name: "guide", document_type: "guide")
+
+      expect { described_class.non_indexable_content_item_reason(content_item) }.to raise_error(
+        "#{content_item['schema_name']} cannot be parsed by #{described_class.name}",
       )
     end
 
