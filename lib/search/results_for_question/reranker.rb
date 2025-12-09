@@ -1,9 +1,18 @@
 module Search
   class ResultsForQuestion
     class Reranker
-      DOCUMENT_TYPE_WEIGHTINGS = Rails.configuration.search.document_type_weightings.to_h.freeze
-
       def self.call(...) = new(...).call
+
+      def self.document_type_weightings
+        @document_type_weightings ||= begin
+          schemas = Rails.configuration.search.document_types_by_schema
+          schemas.each_with_object({}) do |(_, config), memo|
+            config["document_types"].each do |doc_type, config|
+              memo[doc_type] = config["weight"] if config && config["weight"]
+            end
+          end
+        end
+      end
 
       def initialize(search_results)
         @search_results = search_results
@@ -19,9 +28,9 @@ module Search
 
       def weight_result(result)
         document_type_weight = if result.document_type == "html_publication"
-                                 DOCUMENT_TYPE_WEIGHTINGS.fetch(result.parent_document_type, 1.0)
+                                 self.class.document_type_weightings.fetch(result.parent_document_type, 1.0)
                                else
-                                 DOCUMENT_TYPE_WEIGHTINGS.fetch(result.document_type, 1.0)
+                                 self.class.document_type_weightings.fetch(result.document_type, 1.0)
                                end
         Search::ResultsForQuestion::WeightedResult.new(
           result:,

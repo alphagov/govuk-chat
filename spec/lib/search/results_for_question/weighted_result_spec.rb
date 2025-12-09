@@ -5,7 +5,9 @@ RSpec.describe Search::ResultsForQuestion::WeightedResult do
   let(:reranked_result) { described_class.new(result:, weighted_score:) }
 
   before do
-    stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS", { "guide" => 0.5 })
+    allow(Search::ResultsForQuestion::Reranker).to receive(:document_type_weightings).and_return(
+      { "guide" => 0.5 },
+    )
   end
 
   it "returns the weighted_score" do

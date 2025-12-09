@@ -1,7 +1,10 @@
 RSpec.describe "Admin::SearchController", :chunked_content_index do
   describe "GET :index" do
     before do
-      stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS", { "guide" => 1.2, "answer" => 0.5 })
+      allow(Search::ResultsForQuestion::Reranker).to receive(:document_type_weightings).and_return(
+        { "guide" => 1.2, "answer" => 0.5 },
+      )
+
       allow(Rails.configuration.search.thresholds).to receive_messages(minimum_score: 0.6, max_results: 5)
     end
 
@@ -69,7 +72,7 @@ RSpec.describe "Admin::SearchController", :chunked_content_index do
 
           results = Search::ChunkedContentRepository.new.search_by_embedding(titan_embedding, max_chunks: 2)
           result = results.detect { |r| r.digest == chunk_to_find[:digest] }
-          document_type_weight = Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS[chunk_to_find[:document_type]]
+          document_type_weight = Search::ResultsForQuestion::Reranker.document_type_weightings[chunk_to_find[:document_type]]
           weighted_score = result.score * document_type_weight
 
           expected_link = admin_chunk_path(id: chunk_id, back_link: admin_search_path(search_text:))
