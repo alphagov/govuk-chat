@@ -1,5 +1,10 @@
 module ContentItemParserExamples
-  shared_examples "a chunking content item parser" do |schemas|
+  shared_examples "a chunking content item parser" do
+    parser_class = described_class.name
+    schemas = Rails.configuration.search.document_types_by_schema.select do |_, config|
+      config.parser == parser_class
+    end
+
     schemas.each do |schema_name|
       context "when the content items uses the '#{schema_name}' schema" do
         let(:schema_name) { schema_name }
@@ -11,13 +16,6 @@ module ContentItemParserExamples
           expect(result).not_to be_empty
         end
       end
-    end
-
-    it "responds to .allowed_schemas with an array of valid schemas" do
-      result = described_class.allowed_schemas
-      expect(result).to be_an_instance_of(Array)
-      unexpected_schemas = result - GovukSchemas::Schema.schema_names
-      expect(unexpected_schemas).to be_empty, "schema(s) #{unexpected_schemas.join(', ')} are not known to GovukSchemas"
     end
   end
 end
