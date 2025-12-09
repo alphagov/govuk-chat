@@ -1,21 +1,11 @@
 module Chunking
   class ContentItemToChunks
-    PARSERS_FOR_SCHEMAS = [
-      ContentItemParsing::BodyContentArrayParser,
-      ContentItemParsing::BodyContentParser,
-      ContentItemParsing::PartsContentParser,
-      ContentItemParsing::StepByStepNavParser,
-      ContentItemParsing::TransactionParser,
-      ContentItemParsing::TravelGuideParser,
-    ].freeze
-
     def self.call(content_item)
       unless supported_content_item?(content_item)
         raise "Content item not supported for parsing: #{non_indexable_content_item_reason(content_item)}"
       end
 
-      parser_class = parsers_by_schema_name[content_item["schema_name"]]
-      parser_class.call(content_item)
+      parser_class(content_item["schema_name"]).call(content_item)
     end
 
     def self.supported_content_item?(content_item)
@@ -24,7 +14,8 @@ module Chunking
 
     def self.non_indexable_content_item_reason(content_item)
       schema_name = content_item["schema_name"]
-      parser = parsers_by_schema_name[schema_name]
+
+      parser = parser_class(schema_name)
 
       return "#{schema_name} is not a supported schema" if parser.nil?
       return unless parser.respond_to?(:non_indexable_content_item_reason)
@@ -32,12 +23,15 @@ module Chunking
       parser.non_indexable_content_item_reason(content_item)
     end
 
-    def self.parsers_by_schema_name
-      parser_list = []
-      PARSERS_FOR_SCHEMAS.each do |parser|
-        parser_list += parser.allowed_schemas.map { |schema| [schema, parser] }
-      end
-      parser_list.to_h
+    def self.parser_class(schema_name)
+      config = Rails.configuration.search.document_types_by_schema[schema_name]
+      return if config.nil?
+
+      parser_name = config.parser
+
+      return if parser_name.nil?
+
+      "Chunking::ContentItemParsing::#{parser_name}".constantize
     end
   end
 end
