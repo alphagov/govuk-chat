@@ -1,9 +1,11 @@
 module Chunking
   module ContentItemParsing
     class BaseParser
-      ANY_DOCUMENT_TYPE = ->(_) { true }.freeze
-
       def self.call(...) = new(...).call
+
+      def self.document_types_by_schema
+        Rails.configuration.search.document_types_by_schema
+      end
 
       def initialize(content_item)
         @content_item = content_item

@@ -1,6 +1,6 @@
 RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
   include ContentItemParserExamples
-  it_behaves_like "a chunking content item parser", described_class.allowed_schemas do
+  it_behaves_like "a chunking content item parser" do
     let(:body) do
       [
         {
@@ -68,11 +68,6 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
   end
 
   describe ".non_indexable_content_item_reason" do
-    it "returns nil for a schema without document type requirements" do
-      content_item = build(:notification_content_item, schema_name: "answer")
-      expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
-    end
-
     it "returns nil for an allowed specialist_document schema" do
       content_item = build(:notification_content_item, schema_name: "specialist_document", document_type: "business_finance_support_scheme")
       expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil

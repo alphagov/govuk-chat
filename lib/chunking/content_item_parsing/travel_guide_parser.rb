@@ -3,10 +3,6 @@ module Chunking
     class TravelGuideParser < PartsContentParser
       include ActionView::Helpers
 
-      def self.allowed_schemas
-        %w[travel_advice]
-      end
-
       def initialize(content_item)
         super(content_item.dup)
 

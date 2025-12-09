@@ -1,7 +1,7 @@
 RSpec.describe Chunking::ContentItemParsing::TransactionParser do
   include ContentItemParserExamples
 
-  it_behaves_like "a chunking content item parser", described_class.allowed_schemas do
+  it_behaves_like "a chunking content item parser" do
     let(:content_item) do
       build(
         :notification_content_item,
