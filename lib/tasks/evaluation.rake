@@ -179,7 +179,6 @@ namespace :evaluation do
 
     question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
 
-    puts "Generating answer for evaluation."
     answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [
       AnswerComposition::Pipeline::Claude::QuestionRouter,
       AnswerComposition::Pipeline::SearchResultFetcher,
