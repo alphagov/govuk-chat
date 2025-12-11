@@ -18,6 +18,7 @@ RSpec.describe Healthcheck::Bedrock do
       allow(BedrockModels).to receive(:MODEL_IDS).and_return({
         claude_sonnet: "eu.anthropic.claude-sonnet-4-20250514-v1:0",
         titan_embed_v2: "amazon.titan-embed-text-v2:0",
+        openai_gpt_oss_120b: "openai.gpt-oss-120b-1:0",
       })
     end
 
@@ -32,6 +33,10 @@ RSpec.describe Healthcheck::Bedrock do
             Aws::Bedrock::Types::FoundationModelSummary.new(
               model_id: "amazon.titan-embed-text-v2:0",
               model_arn: "arn:titan",
+            ),
+            Aws::Bedrock::Types::FoundationModelSummary.new(
+              model_id: "openai.gpt-oss-120b-1:0",
+              model_arn: "arn:gpt-oss",
             ),
           ],
         }
@@ -54,7 +59,7 @@ RSpec.describe Healthcheck::Bedrock do
       it "sets the message attribute to show the name of the missing models" do
         healthcheck.status
         expect(healthcheck.message).to eq(
-          "Bedrock model(s) not available: amazon.titan-embed-text-v2:0, anthropic.claude-sonnet-4-20250514-v1:0",
+          "Bedrock model(s) not available: amazon.titan-embed-text-v2:0, anthropic.claude-sonnet-4-20250514-v1:0, openai.gpt-oss-120b-1:0",
         )
       end
     end
