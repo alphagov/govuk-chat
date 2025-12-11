@@ -573,7 +573,7 @@ RSpec.describe "rake evaluation tasks" do
         }.to_json
 
         expect { Rake::Task[task_name].invoke }
-          .to output(/#{expected_result_output}/).to_stdout
+          .to output("#{expected_result_output}\n").to_stdout
       end
     end
 
@@ -583,7 +583,7 @@ RSpec.describe "rake evaluation tasks" do
 
       it "warns the user and outputs the error message" do
         ClimateControl.modify(INPUT: question_message) do
-          expected_stderr = /Warning: answer has an error status: #{answer.status}\n#{error_message}\n/
+          expected_stderr = "Warning: answer has an error status: #{answer.status}\n#{error_message}\n"
           expect { Rake::Task[task_name].invoke }
             .to raise_error(SystemExit)
             .and output(expected_stderr).to_stderr
