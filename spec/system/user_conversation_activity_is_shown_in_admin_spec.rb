@@ -13,6 +13,9 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
     and_i_click_on_my_question
     then_i_see_the_answer
     and_i_see_the_answer_feedback
+
+    when_i_click_the_analysis_tab
+    then_i_see_the_topics_have_been_tagged
   end
 
   def given_i_am_an_admin_with_the_web_chat_permission
@@ -80,5 +83,14 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
 
   def and_i_see_the_answer_feedback
     expect(page).to have_content("Useful")
+  end
+
+  def when_i_click_the_analysis_tab
+    click_link "Analysis"
+  end
+
+  def then_i_see_the_topics_have_been_tagged
+    expect(page).to have_content("Business")
+    expect(page).to have_content("Benefits")
   end
 end

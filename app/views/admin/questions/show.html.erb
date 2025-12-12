@@ -18,42 +18,36 @@ content_for(:active_navigation_item, admin_questions_path)
   } %>
 <% end %>
 
+<%
+  tabs = [
+    {
+      id: "details-tab",
+      label: "Details",
+      content: render(
+        "details_tab",
+        question: @question,
+        answer: @answer,
+        question_number: @question_number,
+        total_questions: @total_questions,
+      ),
+    },
+  ]
+
+  tabs << {
+    id: "analysis-tab",
+    label: "Analysis",
+    content: render(
+      "analysis_tab",
+      analysis: @answer.analysis,
+    ),
+  } if @answer&.analysis.present?
+%>
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-three-quarters">
-    <%= render "govuk_publishing_components/components/summary_list", {
-      items: question_show_summary_list_rows(@question, @answer, @question_number, @total_questions),
+    <%= render "govuk_publishing_components/components/tabs", {
+      panel_border: false,
+      tabs:,
     } %>
-
-     <% if @answer&.llm_responses.present? %>
-      <%= render "govuk_publishing_components/components/details", {
-        title: "LLM responses",
-      } do %>
-        <% @answer.llm_responses.each do |namespace, response| %>
-          <h3 class="govuk-heading-m"><%= namespace %></h3>
-          <p class="govuk-body">
-            <%= render("components/code_snippet", content: JSON.pretty_generate(response)) %>
-          </p>
-        <% end %>
-      <% end %>
-    <% end %>
-
-    <% if @answer&.metrics&.present? %>
-      <%= render "govuk_publishing_components/components/details", {
-        title: "Metrics",
-      } do %>
-        <% @answer.metrics.sort.each do |namespace, metrics| %>
-          <%= render "govuk_publishing_components/components/summary_list", {
-            title: namespace,
-            items: metrics.map do |metric, value|
-              {
-                field: metric,
-                value: value,
-              }
-            end,
-            borderless: true,
-          } %>
-        <% end %>
-      <% end %>
-    <% end %>
   </div>
 </div>
