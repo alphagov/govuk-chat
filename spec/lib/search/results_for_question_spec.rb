@@ -12,12 +12,14 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
         .and_return(titan_embedding)
 
       allow(Rails.configuration.search.thresholds).to receive_messages(minimum_score: min_score, max_results:)
-      stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS",
-                 { "guide" => 1.0, "notice" => 0.4, "about" => 0.3 })
+
+      allow(Search::ResultsForQuestion::Reranker).to receive(:document_type_weightings).and_return(
+        { "guide" => 1.0, "about" => 0.3, "help_page" => 0.4 },
+      )
 
       populate_chunked_content_index([
         build(:chunked_content_record, title: "find this", document_type: "guide", titan_embedding:),
-        build(:chunked_content_record, title: "not found 1", document_type: "notice", titan_embedding:),
+        build(:chunked_content_record, title: "not found 1", document_type: "help_page", titan_embedding:),
         build(:chunked_content_record, title: "not found 2", document_type: "about", titan_embedding:),
       ])
 
