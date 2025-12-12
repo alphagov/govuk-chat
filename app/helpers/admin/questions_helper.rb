@@ -209,19 +209,6 @@ module Admin
         ]
       end
 
-      if answer&.analysis&.primary_topic.present?
-        rows << [
-          {
-            field: "Primary topic",
-            value: answer.analysis.primary_topic.humanize,
-          },
-          {
-            field: "Secondary topic",
-            value: answer.analysis.secondary_topic&.humanize,
-          },
-        ]
-      end
-
       rows.flatten
     end
 

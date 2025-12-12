@@ -1,0 +1,44 @@
+<%= render "govuk_publishing_components/components/summary_list", {
+  items: [
+    {
+      field: "Primary topic",
+      value: analysis.primary_topic&.humanize,
+    },
+    {
+      field: "Secondary topic",
+      value: analysis.secondary_topic&.humanize,
+    },
+  ],
+} %>
+
+<% if analysis.llm_responses.present? %>
+  <%= render "govuk_publishing_components/components/details", {
+    title: "LLM responses",
+  } do %>
+    <% analysis.llm_responses.each do |namespace, response| %>
+      <h3 class="govuk-heading-m"><%= namespace %></h3>
+      <p class="govuk-body">
+        <%= render("components/code_snippet", content: JSON.pretty_generate(response)) %>
+      </p>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if analysis.metrics.present? %>
+  <%= render "govuk_publishing_components/components/details", {
+    title: "Metrics",
+  } do %>
+    <% analysis.metrics.sort.each do |namespace, metrics| %>
+      <%= render "govuk_publishing_components/components/summary_list", {
+        title: namespace,
+        items: metrics.map do |metric, value|
+          {
+            field: metric,
+            value: value,
+          }
+        end,
+        borderless: true,
+      } %>
+    <% end %>
+  <% end %>
+<% end %>
