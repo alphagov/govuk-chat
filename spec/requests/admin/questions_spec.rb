@@ -238,17 +238,6 @@ RSpec.describe "Admin::QuestionsController" do
         .and have_content("Useful")
     end
 
-    it "renders details on the topics when present" do
-      question = create(:question)
-      create(:answer, :with_analysis, question:)
-
-      get admin_show_question_path(question)
-
-      expect(response.body)
-        .to have_content("Primary topic")
-        .and have_content("Secondary topic")
-    end
-
     it "renders the metrics" do
       metrics = {
         "answer_composition" => { duration: 1.55556 },
@@ -256,20 +245,7 @@ RSpec.describe "Admin::QuestionsController" do
       }
 
       question = create(:question)
-      answer = create(:answer, question:, metrics:)
-      create(
-        :answer_analysis,
-        answer:,
-        metrics: {
-          "topic_tagger" => {
-            duration: 1.5,
-            llm_prompt_tokens: 30,
-            llm_completion_tokens: 20,
-            llm_cached_tokens: 20,
-            model: BedrockModels.model_id(:claude_sonnet),
-          },
-        },
-      )
+      create(:answer, question:, metrics:)
 
       get admin_show_question_path(question)
 
@@ -284,14 +260,6 @@ RSpec.describe "Admin::QuestionsController" do
         .and have_content(/duration.*0\.55/)
         .and have_content(/llm_prompt_tokens.*400/)
         .and have_content(/llm_completion_tokens.*101/)
-
-      expect(response.body.squish)
-        .to have_content("topic")
-        .and have_content(/duration.*1\.5/)
-        .and have_content(/llm_prompt_tokens.*30/)
-        .and have_content(/llm_completion_tokens.*20/)
-        .and have_content(/llm_cached_tokens.*20/)
-        .and have_content(/model.*#{BedrockModels.model_id(:claude_sonnet)}/)
     end
 
     it "renders the LLM responses" do
@@ -303,17 +271,8 @@ RSpec.describe "Admin::QuestionsController" do
         },
       }
 
-      topic_llm_responses = {
-        "topic_tagger" => {
-          "tool_calls": [
-            { "id": "topic_tool_call" },
-          ],
-        },
-      }
-
       question = create(:question)
-      answer = create(:answer, question:, llm_responses:)
-      create(:answer_analysis, answer:, llm_responses: topic_llm_responses)
+      create(:answer, question:, llm_responses:)
 
       get admin_show_question_path(question)
 
@@ -323,11 +282,6 @@ RSpec.describe "Admin::QuestionsController" do
         .to have_content("structured_answer")
         .and have_content("tool_calls")
         .and have_content('"id": "call_dqGpbb39drQDafLsjDLtnbGD"')
-
-      expect(response.body.squish)
-        .to have_content("topic")
-        .and have_content("tool_calls")
-        .and have_content('"id": "topic_tool_call"')
     end
   end
 
