@@ -8,7 +8,7 @@ module AutoEvaluation
     end
 
     def call
-      result = BedrockOpenAIOssInvoke.call(user_prompt, json_schema)
+      result = BedrockOpenAIOssInvoke.call(user_prompt, tools)
       [result.evaluation_data.fetch("verdicts"), result.llm_response, result.metrics]
     end
 
@@ -30,8 +30,8 @@ module AutoEvaluation
       )
     end
 
-    def json_schema
-      llm_prompts.fetch(:json_schema)
+    def tools
+      [llm_prompts.fetch(:tool_spec)]
     end
   end
 end

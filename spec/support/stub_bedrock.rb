@@ -47,16 +47,15 @@ module StubBedrock
     dimensions.times.map { random_generator.rand }
   end
 
-  def bedrock_invoke_model_openai_oss_structured_response(user_message, json_schema, content)
+  def bedrock_invoke_model_openai_oss_tool_call(user_message, tools, content)
     request_body = {
       include_reasoning: false,
       messages: [
         { role: "user", content: [{ type: "text", text: user_message }] },
       ],
-      response_format: {
-        type: "json_schema",
-        json_schema:,
-      },
+      tools:,
+      tool_choice: "required",
+      parallel_tool_calls: false,
       max_tokens: 4096,
       temperature: 0.0,
     }.to_json
@@ -65,8 +64,14 @@ module StubBedrock
       choices: [
         {
           message: {
-            content: content,
-            role: "assistant",
+            tool_calls: [
+              {
+                type: "function",
+                function: {
+                  arguments: content,
+                },
+              },
+            ],
           },
         },
       ],

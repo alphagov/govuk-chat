@@ -10,9 +10,9 @@ module AutoEvaluation
 
     def self.call(...) = new(...).call
 
-    def initialize(user_message, json_schema)
+    def initialize(user_message, tools)
       @user_message = user_message
-      @json_schema = json_schema
+      @tools = tools
     end
 
     def call
@@ -25,19 +25,17 @@ module AutoEvaluation
           messages: [
             { role: "user", content: [{ type: "text", text: user_message }] },
           ],
-          response_format: {
-            type: "json_schema",
-            json_schema:,
-          },
+          tools:,
+          tool_choice: "required",
+          parallel_tool_calls: false,
           max_tokens: 4096,
           temperature: 0.0,
         }.to_json,
       )
       parsed_response = JSON.parse(response.body.read)
-      corrected_json = resolve_bedrock_openai_oss_json(
-        parsed_response["choices"][0]["message"]["content"],
+      parsed_structured_output = JSON.parse(
+        parsed_response["choices"][0]["message"]["tool_calls"][0]["function"]["arguments"],
       )
-      parsed_structured_output = JSON.parse(corrected_json)
 
       Result.new(
         evaluation_data: parsed_structured_output,
@@ -48,7 +46,7 @@ module AutoEvaluation
 
   private
 
-    attr_reader :user_message, :json_schema
+    attr_reader :user_message, :tools
 
     def build_metrics(start_time, response)
       {
@@ -58,13 +56,6 @@ module AutoEvaluation
         llm_cached_tokens: nil,
         model: response["model"],
       }
-    end
-
-    def resolve_bedrock_openai_oss_json(json_string)
-      # Bedrock adds an extra curly brace at the start of the structured output
-      # which causes JSON parsing to fail. This removes the double opening brace
-      # with and without newlines.
-      json_string.gsub(/\A\{\s*\{/, "{")
     end
   end
 end

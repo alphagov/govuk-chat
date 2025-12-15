@@ -12,11 +12,11 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         answer: answer_message,
       )
     end
-    let(:json_schema_statements) { prompts.fetch(:statements).fetch(:json_schema) }
-    let(:statements_stub) do
-      bedrock_invoke_model_openai_oss_structured_response(
+    let(:statements_tools) { [prompts.fetch(:statements).fetch(:tool_spec)] }
+    let!(:statements_stub) do
+      bedrock_invoke_model_openai_oss_tool_call(
         user_prompt_statements,
-        json_schema_statements,
+        statements_tools,
         statements_json,
       )
     end
@@ -35,11 +35,11 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         statements:,
       )
     end
-    let(:json_schema_verdicts) { prompts.fetch(:verdicts).fetch(:json_schema) }
-    let(:verdicts_stub) do
-      bedrock_invoke_model_openai_oss_structured_response(
+    let(:verdicts_tools) { [prompts.fetch(:verdicts).fetch(:tool_spec)] }
+    let!(:verdicts_stub) do
+      bedrock_invoke_model_openai_oss_tool_call(
         user_prompt_verdicts,
-        json_schema_verdicts,
+        verdicts_tools,
         verdicts_json,
       )
     end
@@ -54,19 +54,13 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         question: question_message,
       )
     end
-    let(:json_schema_reason) { prompts.fetch(:reason).fetch(:json_schema) }
-    let(:reason_stub) do
-      bedrock_invoke_model_openai_oss_structured_response(
+    let(:reason_tools) { [prompts.fetch(:reason).fetch(:tool_spec)] }
+    let!(:reason_stub) do
+      bedrock_invoke_model_openai_oss_tool_call(
         user_prompt_reason,
-        json_schema_reason,
+        reason_tools,
         reason_json,
       )
-    end
-
-    before do
-      statements_stub
-      verdicts_stub
-      reason_stub
     end
 
     it "returns a results object with the expected attributes" do
