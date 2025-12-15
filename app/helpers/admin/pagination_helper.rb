@@ -1,10 +1,10 @@
 module Admin::PaginationHelper
-  def previous_and_next_page_hash(paginator, previous_page_url:, next_page_url:)
+  def pagination_component_args(paginator, previous_page_href:, next_page_href:)
     pages = {}
 
     if paginator.prev_page
       pages[:previous_page] = {
-        url: previous_page_url,
+        href: previous_page_href,
         label: "#{paginator.current_page - 1} of #{paginator.total_pages}",
         title: "Previous page",
       }
@@ -12,7 +12,7 @@ module Admin::PaginationHelper
 
     if paginator.next_page
       pages[:next_page] = {
-        url: next_page_url,
+        href: next_page_href,
         label: "#{paginator.current_page + 1} of #{paginator.total_pages}",
         title: "Next page",
       }

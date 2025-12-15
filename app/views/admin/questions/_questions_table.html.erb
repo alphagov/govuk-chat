@@ -37,11 +37,11 @@
     end,
   } %>
 
-  <%= render "govuk_publishing_components/components/previous_and_next_navigation",
-    previous_and_next_page_hash(
+  <%= render "govuk_publishing_components/components/pagination",
+    pagination_component_args(
       questions,
-      previous_page_url: admin_questions_path(filter.previous_page_params),
-      next_page_url: admin_questions_path(filter.next_page_params),
+      previous_page_href: admin_questions_path(filter.previous_page_params),
+      next_page_href: admin_questions_path(filter.next_page_params),
     ) %>
 <% else %>
   <%= render "govuk_publishing_components/components/inset_text", {
