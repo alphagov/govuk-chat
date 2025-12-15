@@ -384,13 +384,13 @@ RSpec.describe "rake evaluation tasks" do
 
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input) do
-        result = AnswerAnalysisGeneration::TopicTagger::Result.new(
+        result = AutoEvaluation::TopicTagger::Result.new(
           primary_topic: "tax",
           secondary_topic: "benefits",
           metrics: {},
           llm_response: {},
         )
-        allow(AnswerAnalysisGeneration::TopicTagger).to receive(:call).with(input).and_return(result)
+        allow(AutoEvaluation::TopicTagger).to receive(:call).with(input).and_return(result)
 
         expect { Rake::Task[task_name].invoke }
           .to output("#{result.to_json}\n").to_stdout

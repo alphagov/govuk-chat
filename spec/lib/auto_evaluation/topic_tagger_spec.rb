@@ -1,4 +1,4 @@
-RSpec.describe AnswerAnalysisGeneration::TopicTagger, :aws_credentials_stubbed do
+RSpec.describe AutoEvaluation::TopicTagger, :aws_credentials_stubbed do
   describe ".call" do
     let(:message) { "This is a test message." }
 
@@ -7,7 +7,7 @@ RSpec.describe AnswerAnalysisGeneration::TopicTagger, :aws_credentials_stubbed d
     it "returns a results object with the expected topics" do
       result = described_class.call(message)
       expect(result)
-        .to be_a(AnswerAnalysisGeneration::TopicTagger::Result)
+        .to be_a(AutoEvaluation::TopicTagger::Result)
         .and have_attributes(
           primary_topic: "business",
           secondary_topic: "benefits",

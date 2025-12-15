@@ -291,31 +291,27 @@ RSpec.describe "Admin::QuestionsController" do
       expect(response.body).not_to have_content("govuk-tabs")
     end
 
-    context "when analysis is present" do
-      let!(:analysis) do
+    context "when topics are present" do
+      let!(:topics) do
         create(
-          :answer_analysis,
+          :answer_topics,
           primary_topic: "business",
           secondary_topic: "tax",
           metrics: {
-            "topic_tagger" => {
-              duration: 1.5,
-              llm_prompt_tokens: 30,
-              llm_completion_tokens: 20,
-              llm_cached_tokens: 20,
-              model: BedrockModels.model_id(:claude_sonnet),
-            },
+            duration: 1.5,
+            llm_prompt_tokens: 30,
+            llm_completion_tokens: 20,
+            llm_cached_tokens: 20,
+            model: BedrockModels.model_id(:claude_sonnet),
           },
-          llm_responses: {
-            "topic_tagger" => {
-              "tool_calls": [
-                { "id": "topic_tool_call" },
-              ],
-            },
+          llm_response: {
+            "tool_calls": [
+              { "id": "topic_tool_call" },
+            ],
           },
         )
       end
-      let(:question) { analysis.answer.question }
+      let(:question) { topics.answer.question }
 
       it "renders the topics" do
         get admin_show_question_path(question)
@@ -325,11 +321,11 @@ RSpec.describe "Admin::QuestionsController" do
           .and have_content("Tax")
       end
 
-      it "renders the analysis metrics" do
+      it "renders the topic metrics" do
         get admin_show_question_path(question)
 
         expect(response.body.squish)
-          .to have_content("topic")
+          .to have_content("Topic tagger")
           .and have_content(/duration.*1\.5/)
           .and have_content(/llm_prompt_tokens.*30/)
           .and have_content(/llm_completion_tokens.*20/)
@@ -337,11 +333,11 @@ RSpec.describe "Admin::QuestionsController" do
           .and have_content(/model.*#{BedrockModels.model_id(:claude_sonnet)}/)
       end
 
-      it "renders the analysis LLM responses" do
+      it "renders the topics LLM responses" do
         get admin_show_question_path(question)
 
         expect(response.body.squish)
-          .to have_content("topic")
+          .to have_content("Topic tagger")
           .and have_content("tool_calls")
           .and have_content('"id": "topic_tool_call"')
       end
@@ -353,12 +349,12 @@ RSpec.describe "Admin::QuestionsController" do
           .to have_selector("#details-tab", text: question.message)
       end
 
-      it "renders the analysis in the analysis tab" do
+      it "renders the topics in the analysis tab" do
         get admin_show_question_path(question)
 
         expect(response.body)
-         .to have_selector("#analysis-tab", text: analysis.primary_topic.capitalize)
-         .and have_selector("#analysis-tab", text: analysis.secondary_topic.capitalize)
+         .to have_selector("#analysis-tab", text: topics.primary_topic.capitalize)
+         .and have_selector("#analysis-tab", text: topics.secondary_topic.capitalize)
       end
     end
   end
