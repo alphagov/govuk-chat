@@ -13,15 +13,6 @@ RSpec.describe Chunking::ContentItemToChunks do
       expect { described_class.call(content_item) }
         .to raise_error("Content item not supported for parsing: doesnt_exist is not a supported schema")
     end
-
-    it "raises an error when given a document_type that is not supported" do
-      content_item = build(:notification_content_item,
-                           schema_name: "publication",
-                           document_type: "decision")
-
-      expect { described_class.call(content_item) }
-        .to raise_error("Content item not supported for parsing: document type: decision not supported for schema: publication")
-    end
   end
 
   describe ".non_indexable_content_item_reason" do
@@ -41,8 +32,13 @@ RSpec.describe Chunking::ContentItemToChunks do
       end
     end
 
-    context "when the schema/document_type is mapped to a parser but is not supported" do
-      it "returns the reason from the parser" do
+    context "when the schema config defines a document_type" do
+      it "returns nil when the document_type is supported" do
+        content_item = build(:notification_content_item, schema_name: "detailed_guide")
+        expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
+      end
+
+      it "returns the reason when the document_type is not supported" do
         content_item = build(:notification_content_item, schema_name: "publication", document_type: "correspondence")
         expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
           "document type: correspondence not supported for schema: publication",
@@ -50,9 +46,25 @@ RSpec.describe Chunking::ContentItemToChunks do
       end
     end
 
-    context "when mapped parser doesn't respond to :non_indexable_content_item_reason" do
-      it "returns nil" do
-        content_item = build(:notification_content_item, schema_name: "transaction")
+    context "when the schema config defines a parent_document_type" do
+      it "returns an error when the parent_document_type is missing" do
+        content_item = build(:notification_content_item, schema_name: "html_publication", parent_document_type: nil)
+
+        expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
+          "content item lacks a parent document_type",
+        )
+      end
+
+      it "returns an error when the parent_document_type is not supported" do
+        content_item = build(:notification_content_item, schema_name: "html_publication", parent_document_type: "decision")
+
+        expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
+          "html_publication items with parent document type: decision are not supported",
+        )
+      end
+
+      it "returns nil when the parent_document_type is supported" do
+        content_item = build(:notification_content_item, schema_name: "html_publication", parent_document_type: "guidance")
         expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
       end
     end

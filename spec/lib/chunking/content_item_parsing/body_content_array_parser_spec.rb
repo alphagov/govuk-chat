@@ -66,25 +66,4 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
         .to raise_error("content type text/html not found in schema: generic")
     end
   end
-
-  describe ".non_indexable_content_item_reason" do
-    it "returns nil for an allowed specialist_document schema" do
-      content_item = build(:notification_content_item, schema_name: "specialist_document", document_type: "business_finance_support_scheme")
-      expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
-    end
-
-    it "returns a message other document types for specialist_document" do
-      content_item = build(:notification_content_item, schema_name: "specialist_document",
-                                                       document_type: "anything", ensure_valid: false)
-      expect(described_class.non_indexable_content_item_reason(content_item)).to eq("document type: anything not supported for schema: specialist_document")
-    end
-
-    it "raises an error if the schema is not configured to use this parser" do
-      content_item = build(:notification_content_item, schema_name: "guide", document_type: "guide")
-
-      expect { described_class.non_indexable_content_item_reason(content_item) }.to raise_error(
-        "#{content_item['schema_name']} cannot be parsed by #{described_class.name}",
-      )
-    end
-  end
 end
