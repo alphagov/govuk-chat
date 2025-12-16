@@ -12,11 +12,11 @@ RSpec.describe AutoEvaluation::AnswerRelevancy::StatementGenerator, :aws_credent
         answer: answer_message,
       )
     end
-    let(:json_schema) { prompts.fetch(:json_schema) }
+    let(:tools) { [prompts.fetch(:tool_spec)] }
     let!(:stub_bedrock) do
-      bedrock_invoke_model_openai_oss_structured_response(
+      bedrock_invoke_model_openai_oss_tool_call(
         user_prompt,
-        json_schema,
+        tools,
         statements_json,
       )
     end
