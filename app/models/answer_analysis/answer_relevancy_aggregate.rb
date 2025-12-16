@@ -1,5 +1,7 @@
 module AnswerAnalysis
   class AnswerRelevancyAggregate < ApplicationRecord
+    include AnalysisResultsCreatable
+
     self.table_name = "answer_analysis_answer_relevancy_aggregates"
 
     belongs_to :answer
