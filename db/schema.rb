@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_15_161508) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_16_092915) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -23,6 +23,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_161508) do
   create_enum "conversation_source", ["web", "api"]
   create_enum "guardrails_status", ["pass", "fail", "error"]
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar", "unclear_intent", "requires_account_data", "about_chat"]
+
+  create_table "answer_analysis_answer_relevancy_aggregates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.decimal "mean_score", null: false
+    t.uuid "answer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_answer_analysis_answer_relevancy_aggregates_on_answer_id", unique: true
+  end
+
+  create_table "answer_analysis_answer_relevancy_runs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.decimal "score", null: false
+    t.string "reason", null: false
+    t.jsonb "llm_responses"
+    t.jsonb "metrics"
+    t.uuid "answer_analysis_answer_relevancy_aggregate_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["answer_analysis_answer_relevancy_aggregate_id"], name: "idx_on_answer_analysis_answer_relevancy_aggregate_i_d9d79a637a"
+  end
 
   create_table "answer_analysis_topics", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "primary_topic"
@@ -170,6 +189,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_161508) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "answer_analysis_answer_relevancy_aggregates", "answers", on_delete: :cascade
+  add_foreign_key "answer_analysis_answer_relevancy_runs", "answer_analysis_answer_relevancy_aggregates", on_delete: :cascade
   add_foreign_key "answer_analysis_topics", "answers", on_delete: :cascade
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade
   add_foreign_key "answer_sources", "answer_source_chunks", on_delete: :restrict
