@@ -1,10 +1,11 @@
-RSpec.describe "Users interactions with chat are shown in admin area", :aws_credentials_stubbed, :chunked_content_index do
+RSpec.describe "Users interactions with chat are shown in admin area", :aws_credentials_stubbed, :chunked_content_index, :js do
   scenario do
     given_i_am_an_admin_with_the_web_chat_permission
+    and_i_have_dismissed_the_cookie_banner
+
     when_i_visit_the_conversation_page
     and_i_enter_a_question
     and_the_answer_is_generated
-    and_i_click_on_the_check_answer_button
     and_i_click_that_the_answer_was_useful
     then_i_see_that_my_feedback_was_submitted
 
@@ -13,9 +14,11 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
     and_i_click_on_my_question
     then_i_see_the_answer
     and_i_see_the_answer_feedback
+    and_i_dont_see_the_tagged_topics
 
     when_i_click_the_analysis_tab
     then_i_see_the_topics_have_been_tagged
+    and_i_dont_see_the_answer
   end
 
   def given_i_am_an_admin_with_the_web_chat_permission
@@ -53,16 +56,12 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
     execute_queued_sidekiq_jobs
   end
 
-  def and_i_click_on_the_check_answer_button
-    click_on "Check if an answer has been generated"
-  end
-
   def and_i_click_that_the_answer_was_useful
     click_on "Useful"
   end
 
   def then_i_see_that_my_feedback_was_submitted
-    expect(page).to have_content("Feedback submitted successfully.")
+    expect(page).to have_content("Thanks for your feedback.")
   end
 
   def when_i_visit_the_admin_area
@@ -85,12 +84,21 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
     expect(page).to have_content("Useful")
   end
 
+  def and_i_dont_see_the_tagged_topics
+    expect(page).not_to have_content("Business")
+  end
+
   def when_i_click_the_analysis_tab
     click_link "Analysis"
   end
 
   def then_i_see_the_topics_have_been_tagged
-    expect(page).to have_content("Business")
-    expect(page).to have_content("Benefits")
+    expect(page)
+      .to have_content("Business")
+      .and have_content("Benefits")
+  end
+
+  def and_i_dont_see_the_answer
+    expect(page).not_to have_content(@answer)
   end
 end
