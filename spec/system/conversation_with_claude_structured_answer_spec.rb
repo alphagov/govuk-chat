@@ -51,6 +51,10 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
     stub_claude_structured_answer(@first_question, @first_answer)
     stub_claude_output_guardrails(@first_answer, "False | None")
     stub_claude_messages_topic_tagger(@first_question)
+    stub_bedrock_invoke_model_openai_oss_answer_relevancy(
+      question_message: @first_question,
+      answer_message: @first_answer,
+    )
 
     execute_queued_sidekiq_jobs
   end
@@ -83,6 +87,10 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
     stub_claude_structured_answer(rephrased_question, @second_answer)
     stub_claude_output_guardrails(@second_answer, "False | None")
     stub_claude_messages_topic_tagger(rephrased_question)
+    stub_bedrock_invoke_model_openai_oss_answer_relevancy(
+      question_message: rephrased_question,
+      answer_message: @second_answer,
+    )
 
     execute_queued_sidekiq_jobs
   end
