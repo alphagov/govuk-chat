@@ -61,7 +61,7 @@ RSpec.describe Admin::QuestionsHelper do
     end
 
     it "returns the correct rows when the question has an answer" do
-      answer = create(:answer, :with_analysis, sources: [])
+      answer = create(:answer, sources: [])
       answer = answer_from_db(answer)
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
       expected_keys = [
@@ -86,8 +86,6 @@ RSpec.describe Admin::QuestionsHelper do
         "Answer guardrails status",
         "Answer guardrails triggered",
         "Forbidden terms detected",
-        "Primary topic",
-        "Secondary topic",
       ]
 
       expect(returned_keys(result)).to eq(expected_keys)
@@ -211,24 +209,6 @@ RSpec.describe Admin::QuestionsHelper do
 
       result = helper.question_show_summary_list_rows(question, nil, 1, 1)
       expect(returned_keys(result)).not_to include("API user")
-    end
-
-    it "returns a row with the primary topic of the answer when present" do
-      answer = create(:answer, :with_analysis)
-      answer = answer_from_db(answer)
-      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
-
-      expect(returned_value(result, "Primary topic"))
-        .to eq(answer.analysis.primary_topic.humanize)
-    end
-
-    it "returns a row with the secondary topic of the answer when present" do
-      answer = create(:answer, :with_analysis)
-      answer = answer_from_db(answer)
-      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
-
-      expect(returned_value(result, "Secondary topic"))
-        .to eq(answer.analysis.secondary_topic.humanize)
     end
   end
 

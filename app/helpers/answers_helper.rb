@@ -9,17 +9,4 @@ module AnswersHelper
       end
     end
   end
-
-  def answer_combined_llm_responses(answer)
-    return [] if answer.llm_responses.blank?
-
-    answer.llm_responses.sort + (answer.analysis&.llm_responses || []).sort
-  end
-
-  def answer_combined_metrics(answer)
-    return {} if answer.metrics.blank?
-    return answer.metrics if answer.analysis&.metrics.blank?
-
-    answer.metrics.merge(answer.analysis.metrics)
-  end
 end
