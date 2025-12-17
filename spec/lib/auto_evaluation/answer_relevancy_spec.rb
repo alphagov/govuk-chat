@@ -1,6 +1,5 @@
 RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
   describe ".call" do
-    let(:prompts) { AutoEvaluation::Prompts.config.answer_relevancy }
     let(:question_message) { "This is a test question message." }
     let(:answer_message) { "This is a test answer message." }
     let(:question) { build(:question, message: question_message) }
@@ -8,21 +7,6 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
 
     let(:statements) { ["This is the first statement.", "This is the second statement."] }
     let(:statements_json) { { statements: }.to_json }
-    let(:user_prompt_statements) do
-      sprintf(
-        prompts.fetch(:statements).fetch(:user_prompt),
-        answer: answer_message,
-      )
-    end
-    let(:statements_tools) { [prompts.fetch(:statements).fetch(:tool_spec)] }
-    let!(:statements_stub) do
-      bedrock_invoke_model_openai_oss_tool_call(
-        user_prompt_statements,
-        statements_tools,
-        statements_json,
-      )
-    end
-
     let(:verdicts) do
       [
         { "verdict" => "yes" },
@@ -30,40 +14,20 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
       ]
     end
     let(:verdicts_json) { { verdicts: }.to_json }
-    let(:user_prompt_verdicts) do
-      sprintf(
-        prompts.fetch(:verdicts).fetch(:user_prompt),
-        question: question_message,
-        statements:,
-      )
-    end
-    let(:verdicts_tools) { [prompts.fetch(:verdicts).fetch(:tool_spec)] }
-    let!(:verdicts_stub) do
-      bedrock_invoke_model_openai_oss_tool_call(
-        user_prompt_verdicts,
-        verdicts_tools,
-        verdicts_json,
-      )
-    end
-
     let(:reason) { "This is the reason for the score." }
     let(:reason_json) { { reason: }.to_json }
-    let(:user_prompt_reason) do
-      sprintf(
-        prompts.fetch(:reason).fetch(:user_prompt),
-        score: 0.5,
-        unsuccessful_verdicts_reasons: ["The statement is irrelevant."],
-        question: question_message,
+    let!(:answer_relevancy_stubs) do
+      stub_bedrock_invoke_model_openai_oss_answer_relevancy(
+        question_message:,
+        answer_message:,
+        statements_json:,
+        verdicts_json:,
+        reason_json:,
       )
     end
-    let(:reason_tools) { [prompts.fetch(:reason).fetch(:tool_spec)] }
-    let!(:reason_stub) do
-      bedrock_invoke_model_openai_oss_tool_call(
-        user_prompt_reason,
-        reason_tools,
-        reason_json,
-      )
-    end
+    let(:statements_stub) { answer_relevancy_stubs[:statements] }
+    let(:verdicts_stub) { answer_relevancy_stubs[:verdicts] }
+    let(:reason_stub) { answer_relevancy_stubs[:reason] }
 
     it "returns a results object with the expected attributes" do
       allow(Clock).to receive(:monotonic_time)

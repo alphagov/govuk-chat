@@ -18,7 +18,7 @@ RSpec.describe AutoEvaluation::Coherence, :aws_credentials_stubbed do
 
     it "returns a results object with the expected attributes" do
       allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0)
-      stub = bedrock_invoke_model_openai_oss_tool_call(
+      stub = stub_bedrock_invoke_model_openai_oss_tool_call(
         user_prompt,
         tools,
         response_json,
@@ -55,7 +55,7 @@ RSpec.describe AutoEvaluation::Coherence, :aws_credentials_stubbed do
         5 => 1.0,
       }.each do |rubric_score, expected_score|
         response_json = { score: rubric_score, reason: }.to_json
-        bedrock_invoke_model_openai_oss_tool_call(
+        stub_bedrock_invoke_model_openai_oss_tool_call(
           user_prompt,
           tools,
           response_json,
@@ -73,7 +73,7 @@ RSpec.describe AutoEvaluation::Coherence, :aws_credentials_stubbed do
       let(:answer) { build(:answer, message: answer_message, rephrased_question: question_message) }
 
       it "uses the rephrased question in the prompt" do
-        stub = bedrock_invoke_model_openai_oss_tool_call(
+        stub = stub_bedrock_invoke_model_openai_oss_tool_call(
           user_prompt,
           tools,
           response_json,
