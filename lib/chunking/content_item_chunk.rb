@@ -50,6 +50,10 @@ module Chunking
       content_item.dig("expanded_links", "parent", 0, "document_type")
     end
 
+    def schema_name
+      content_item["schema_name"]
+    end
+
     def exact_path
       chunk_exact_path || base_path
     end
@@ -67,6 +71,7 @@ module Chunking
                   base_path,
                   document_type,
                   parent_document_type,
+                  schema_name,
                   plain_content]
 
         Digest::SHA2.new(256).hexdigest(JSON.dump(values))
@@ -81,6 +86,7 @@ module Chunking
         exact_path:,
         document_type:,
         parent_document_type:,
+        schema_name:,
         title:,
         description:,
         chunk_index:,
@@ -104,6 +110,7 @@ module Chunking
         exact_path:,
         document_type:,
         parent_document_type:,
+        schema_name:,
       }
       string_parts = values.map { |k, v| "#{k}: #{v.inspect}" }
 
