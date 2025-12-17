@@ -18,6 +18,7 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
 
     when_i_click_the_analysis_tab
     then_i_see_the_topics_have_been_tagged
+    and_i_see_the_answer_relevancy_statistics
     and_i_dont_see_the_answer
   end
 
@@ -104,5 +105,9 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
 
   def and_i_dont_see_the_answer
     expect(page).not_to have_content(@answer)
+  end
+
+  def and_i_see_the_answer_relevancy_statistics
+    expect(page).to have_content(/Mean score.*1.0/)
   end
 end

@@ -197,4 +197,8 @@ class Answer < ApplicationRecord
       }
     end
   end
+
+  def has_analysis?
+    topics.present? || answer_relevancy_aggregate.present?
+  end
 end

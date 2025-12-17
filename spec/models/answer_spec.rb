@@ -353,4 +353,23 @@ RSpec.describe Answer do
       end
     end
   end
+
+  describe "#has_analysis?" do
+    it "returns true if topics are present" do
+      answer = build(:answer, :with_topics)
+      expect(answer.has_analysis?).to be(true)
+    end
+
+    it "returns true if answer_relevancy_aggregate is present" do
+      answer = build(
+        :answer, answer_relevancy_aggregate: build(:answer_relevancy_aggregate)
+      )
+      expect(answer.has_analysis?).to be(true)
+    end
+
+    it "returns false if no analysis is present" do
+      answer = build(:answer)
+      expect(answer.has_analysis?).to be(false)
+    end
+  end
 end
