@@ -1,0 +1,75 @@
+<%
+  items = [
+    {
+      field: "Mean score",
+      value: aggregate.mean_score,
+    },
+  ]
+
+  items += aggregate.runs.flat_map.with_index(1) do |run, index|
+    [
+      { field: "Run #{index} score", value: run.score },
+      { field: "Run #{index} reason", value: run.reason },
+    ]
+  end
+%>
+
+<%= render "govuk_publishing_components/components/summary_list", {
+  title:,
+  heading_level: 2,
+  margin_bottom: 4,
+  heading_size: "l",
+  items: items,
+} %>
+
+<%= render "govuk_publishing_components/components/details", {
+  title: "LLM responses",
+} do %>
+  <% aggregate.runs.each.with_index(1) do |run, index| %>
+    <%= render "govuk_publishing_components/components/heading", {
+      text: "Run #{index}",
+      font_size: "m",
+      heading_level: 2,
+      margin_bottom: 4,
+    } %>
+
+    <% run.llm_responses.each do |namespace, response| %>
+      <%= render "govuk_publishing_components/components/heading", {
+        text: namespace.capitalize,
+        font_size: "s",
+        heading_level: 3,
+      } %>
+
+      <p class="govuk-body">
+        <%= render("components/code_snippet", content: JSON.pretty_generate(response)) %>
+      </p>
+    <% end %>
+  <% end %>
+<% end %>
+
+<%= render "govuk_publishing_components/components/details", {
+  title: "Metrics",
+} do %>
+  <% aggregate.runs.each.with_index(1) do |run, index| %>
+    <%= render "govuk_publishing_components/components/heading", {
+      text: "Run #{index}",
+      font_size: "m",
+      heading_level: 2,
+    } %>
+
+    <% run.metrics.sort.each do |namespace, metrics| %>
+      <%= render "govuk_publishing_components/components/summary_list", {
+        title: namespace.capitalize,
+        items: metrics.map do |metric, value|
+          {
+            field: metric,
+            value: value,
+          }
+        end,
+        borderless: true,
+        heading_size: "s",
+        margin_bottom: 6,
+      } %>
+    <% end %>
+  <% end %>
+<% end %>
