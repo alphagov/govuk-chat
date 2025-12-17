@@ -1,5 +1,6 @@
 - base_path: "/apply-for-council-housing"
   document_type: "guide"
+  schema_name: "guide"
   title: "How to Apply for Council Housing"
   description: "Learn how to apply for council housing, including eligibility and the application process."
   chunks:
@@ -12,6 +13,7 @@
 
 - base_path: "/renting-rights"
   document_type: "guide"
+  schema_name: "guide"
   title: "Understanding Your Rights as a Tenant"
   description: "A guide to understanding the rights and responsibilities of tenants in rented properties."
   chunks:
@@ -24,6 +26,7 @@
 
 - base_path: "/buying-your-first-home"
   document_type: "guide"
+  schema_name: "guide"
   title: "Guide to Buying Your First Home"
   description: "Essential tips and steps for first-time home buyers."
   chunks:
@@ -36,6 +39,7 @@
 
 - base_path: "/home-energy-grants"
   document_type: "guide"
+  schema_name: "guide"
   title: "Applying for Home Energy Grants"
   description: "Find out how to apply for grants to improve the energy efficiency of your home."
   chunks:
@@ -48,6 +52,7 @@
 
 - base_path: "/landlord-responsibilities"
   document_type: "guide"
+  schema_name: "guide"
   title: "Landlord Responsibilities and Duties"
   description: "A comprehensive guide on what responsibilities landlords have towards their tenants."
   chunks:

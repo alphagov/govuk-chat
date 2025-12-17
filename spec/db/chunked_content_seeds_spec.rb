@@ -24,6 +24,7 @@ RSpec.describe "chunked_content_seeds" do
         "title" => instance_of(String),
         "description" => satisfy { |d| d.nil? || d.is_a?(String) },
         "chunks" => all(chunk_match),
+        "schema_name" => instance_of(String),
       ),
     )
   end
