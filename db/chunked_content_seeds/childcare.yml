@@ -1,5 +1,6 @@
 - base_path: "/apply-for-childcare-support"
   document_type: "transaction"
+  schema_name: "transaction"
   title: "Apply for Childcare Support"
   description: "Learn how to apply for financial support for childcare, including eligibility and application process."
   chunks:
@@ -12,6 +13,7 @@
 
 - base_path: "/childcare-choices"
   document_type: "guide"
+  schema_name: "guide"
   title: "Explore Childcare Choices"
   description: "A comprehensive guide to understanding different childcare options available to parents."
   chunks:
@@ -24,6 +26,7 @@
 
 - base_path: "/free-childcare-entitlement"
   document_type: "answer"
+  schema_name: "answer"
   title: "Free Childcare Entitlement"
   description: "Find out if you are eligible for free childcare and how to claim it."
   chunks:
@@ -36,6 +39,7 @@
 
 - base_path: "/childcare-safety-regulations"
   document_type: "guide"
+  schema_name: "guide"
   title: "Childcare Safety Regulations"
   description: "Understand the safety regulations that childcare providers must adhere to."
   chunks:
@@ -48,6 +52,7 @@
 
 - base_path: "/childcare-provider-registration"
   document_type: "transaction"
+  schema_name: "transaction"
   title: "Register as a Childcare Provider"
   description: "Steps to register as a childcare provider in the UK."
   chunks:

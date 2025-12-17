@@ -1,5 +1,6 @@
 - base_path: "/apply-for-a-driving-license"
   document_type: "transaction"
+  schema_name: "transaction"
   title: "Apply for Your First Driving License"
   description: "Learn how to apply for your first driving license, including the documents required and the application process."
   chunks:
@@ -12,6 +13,7 @@
 
 - base_path: "/renew-driving-license"
   document_type: "transaction"
+  schema_name: "transaction"
   title: "Renew Your Driving License"
   description: "Guidance on how to renew your driving license online or by post, including fees and required documents."
   chunks:
@@ -24,6 +26,7 @@
 
 - base_path: "/change-address-driving-license"
   document_type: "transaction"
+  schema_name: "transaction"
   title: "Change Address on Driving License"
   description: "How to update your address on your driving license, which is a legal requirement if you move."
   chunks:
@@ -36,6 +39,7 @@
 
 - base_path: "/check-driving-license"
   document_type: "guide"
+  schema_name: "guide"
   title: "Check Your Driving License Information"
   description: "A guide on how to check the details on your driving license, including endorsements and points."
   chunks:
@@ -48,6 +52,7 @@
 
 - base_path: "/report-lost-driving-license"
   document_type: "transaction"
+  schema_name: "transaction"
   title: "Report a Lost or Stolen Driving License"
   description: "Steps to take if your driving license is lost or stolen, to prevent identity theft and unauthorized use."
   chunks:

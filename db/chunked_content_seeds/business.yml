@@ -1,5 +1,6 @@
 - base_path: "/starting-your-own-business"
   document_type: "guide"
+  schema_name: "guide"
   title: "Starting Your Own Business"
   description: "A comprehensive guide to starting your own business, covering everything from planning to launch."
   chunks:
@@ -12,6 +13,7 @@
 
 - base_path: "/business-tax"
   document_type: "guide"
+  schema_name: "guide"
   title: "Understanding Business Tax"
   description: "Learn about different types of business taxes and how to manage them effectively."
   chunks:
@@ -24,6 +26,7 @@
 
 - base_path: "/employing-staff"
   document_type: "guide"
+  schema_name: "guide"
   title: "Employing Staff for the First Time"
   description: "A guide to the basics of hiring and managing staff in your business."
   chunks:
@@ -36,6 +39,7 @@
 
 - base_path: "/business-insurance"
   document_type: "guide"
+  schema_name: "guide"
   title: "Choosing the Right Business Insurance"
   description: "Information on selecting the appropriate insurance to protect your business and employees."
   chunks:
@@ -48,6 +52,7 @@
 
 - base_path: "/data-protection-for-business"
   document_type: "guide"
+  schema_name: "guide"
   title: "Data Protection for Businesses"
   description: "Understand how to protect customer data and comply with data protection laws."
   chunks:

@@ -73,6 +73,7 @@ RSpec.describe Chunking::ContentItemChunk do
           exact_path: "/exact-path",
           document_type: instance.content_item["document_type"],
           parent_document_type: "guide",
+          schema_name: instance.content_item["schema_name"],
           title: instance.content_item["title"],
           description: instance.content_item["description"],
           chunk_index: 0,
@@ -107,6 +108,7 @@ RSpec.describe Chunking::ContentItemChunk do
         exact_path: "#{instance.content_item['base_path']}"
         document_type: "#{instance.content_item['document_type']}"
         parent_document_type: "parent"
+        schema_name: "#{instance.content_item['schema_name']}"
         )
       HEREDOC
     end

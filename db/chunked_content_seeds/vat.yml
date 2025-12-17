@@ -1,5 +1,6 @@
 - base_path: "/vat-rates"
   document_type: "guide"
+  schema_name: "guide"
   title: "VAT Rates"
   description: "Learn about the different VAT rates applicable to various goods and services in the UK."
   chunks:
@@ -12,6 +13,7 @@
 
 - base_path: "/register-for-vat"
   document_type: "transaction"
+  schema_name: "transaction"
   title: "Register for VAT"
   description: "Steps to register your business for VAT in the UK."
   chunks:
@@ -24,6 +26,7 @@
 
 - base_path: "/vat-returns"
   document_type: "guide"
+  schema_name: "guide"
   title: "Filing VAT Returns"
   description: "Guide on how to file VAT returns electronically."
   chunks:
@@ -36,6 +39,7 @@
 
 - base_path: "/vat-reliefs"
   document_type: "guide"
+  schema_name: "guide"
   title: "VAT Reliefs"
   description: "Understanding VAT reliefs available for businesses and individuals."
   chunks:
@@ -48,6 +52,7 @@
 
 - base_path: "/vat-exemptions"
   document_type: "guide"
+  schema_name: "guide"
   title: "VAT Exemptions"
   description: "Explore the list of goods and services exempt from VAT in the UK."
   chunks:
