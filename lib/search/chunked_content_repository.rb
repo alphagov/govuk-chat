@@ -7,6 +7,7 @@ module Search
       base_path: { type: "keyword" },
       document_type: { type: "keyword" },
       parent_document_type: { type: "keyword" },
+      schema_name: { type: "keyword" },
       title: { type: "text" },
       description: { type: "text" },
       exact_path: { type: "keyword" },
