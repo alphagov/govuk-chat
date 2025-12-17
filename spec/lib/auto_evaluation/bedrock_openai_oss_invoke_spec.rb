@@ -21,7 +21,7 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
       ]
     end
     let!(:stub) do
-      bedrock_invoke_model_openai_oss_tool_call(
+      stub_bedrock_invoke_model_openai_oss_tool_call(
         user_message,
         tools,
         { "response" => "Expected response." }.to_json,
