@@ -38,6 +38,61 @@ RSpec.describe "rake search tasks" do
     end
   end
 
+  describe "search:set_schema_name", :chunked_content_index do
+    let(:task_name) { "search:set_schema_name" }
+
+    before { Rake::Task[task_name].reenable }
+
+    it "sets the schema_name for existing documents" do
+      mappings = {
+        "answer" => "answer",
+        "business_finance_support_scheme" => "specialist_document",
+        "detailed_guide" => "detailed_guide",
+        "export_health_certificate" => "specialist_document",
+        "form" => "publication",
+        "guidance" => "publication",
+        "guide" => "guide",
+        "help_page" => "help_page",
+        "international_development_fund" => "specialist_document",
+        "licence_transaction" => "specialist_document",
+        "manual" => "manual",
+        "manual_section" => "manual_section",
+        "notice" => "publication",
+        "promotional" => "publication",
+        "regulation" => "publication",
+        "service_manual_guide" => "service_manual_guide",
+        "simple_smart_answer" => "simple_smart_answer",
+        "statutory_guidance" => "publication",
+        "step_by_step_nav" => "step_by_step_nav",
+        "transaction" => "transaction",
+        "travel_advice" => "travel_advice",
+        "worldwide_organisation" => "worldwide_organisation",
+      }
+
+      mappings.each_key do |document_type|
+        populate_chunked_content_index(
+          "id_#{document_type}" => build(:chunked_content_record, document_type:, schema_name: nil),
+        )
+      end
+
+      # Add some documents where the schema_name is already set
+      populate_chunked_content_index(
+        "id_answer_2" => build(:chunked_content_record, document_type: "answer", schema_name: "answer"),
+        "id_step_by_step_nav_2" => build(:chunked_content_record, document_type: "step_by_step_nav", schema_name: "step_by_step_nav"),
+      )
+
+      expect { Rake::Task[task_name].invoke }
+        .to output(a_string_including("answer: updated 1 of 1 documents")
+        .and(a_string_including("transaction: updated 1 of 1 documents"))).to_stdout
+
+      repo = Search::ChunkedContentRepository.new
+      mappings.each do |document_type, schema_name|
+        document = repo.chunk("id_#{document_type}")
+        expect(document.schema_name).to eq(schema_name)
+      end
+    end
+  end
+
   describe "search:recreate_chunked_content_index" do
     let(:task_name) { "search:recreate_chunked_content_index" }
 
