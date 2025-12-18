@@ -15,6 +15,7 @@ FactoryBot.define do
     title { "Title" }
     description { "Description" }
     plain_content { "Some content" }
+    schema_name { "guide" }
     titan_embedding { [rand(-0.9...0.9)] * Search::ChunkedContentRepository::TITAN_EMBEDDING_DIMENSIONS }
 
     initialize_with { attributes }
