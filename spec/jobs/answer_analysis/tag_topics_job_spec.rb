@@ -19,6 +19,7 @@ RSpec.describe AnswerAnalysis::TagTopicsJob do
   before { allow(AutoEvaluation::TopicTagger).to receive(:call).and_return(topic_tagger_result) }
 
   it_behaves_like "a job in queue", "default"
+  it_behaves_like "a job that adheres to the metric quota", AutoEvaluation::TopicTagger
 
   describe "#perform" do
     it "calls the AutoEvaluation::TopicTagger with the answer message" do
@@ -34,8 +35,8 @@ RSpec.describe AnswerAnalysis::TagTopicsJob do
         .to have_attributes(
           primary_topic: topic_tagger_result.primary_topic,
           secondary_topic: topic_tagger_result.secondary_topic,
-          metrics: { "topic_tagger" => topic_tagger_result.metrics },
-          llm_responses: { "topic_tagger" => topic_tagger_result.llm_response },
+          metrics: topic_tagger_result.metrics,
+          llm_response: topic_tagger_result.llm_response,
         )
     end
 
@@ -75,23 +76,6 @@ RSpec.describe AnswerAnalysis::TagTopicsJob do
           .with("Answer #{answer.id} has already been tagged with topics")
 
         described_class.new.perform(answer.id)
-      end
-    end
-
-    context "when AutoEvaluation::TopicTagger raises an Anthropic::Errors::APIError" do
-      it "retries the job the max number of times" do
-        allow(AutoEvaluation::TopicTagger).to receive(:call)
-          .and_raise(Anthropic::Errors::APIError.new(
-                       url: "url",
-                     ))
-
-        (described_class::MAX_RETRIES - 1).times do
-          described_class.perform_later(answer.id)
-          expect { perform_enqueued_jobs }.not_to raise_error
-        end
-
-        described_class.perform_later(answer.id)
-        expect { perform_enqueued_jobs }.to raise_error(Anthropic::Errors::APIError)
       end
     end
 

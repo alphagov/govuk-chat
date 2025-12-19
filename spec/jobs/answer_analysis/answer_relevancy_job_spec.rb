@@ -53,10 +53,10 @@ RSpec.describe AnswerAnalysis::AnswerRelevancyJob do
     allow(AutoEvaluation::AnswerRelevancy)
       .to receive(:call).and_return(first_result, second_result, third_result)
     stub_const("AnswerAnalysis::BaseMetricJob::NUMBER_OF_RUNS", 3)
-    allow(Rails.configuration).to receive(:max_auto_evaluation_metrics_per_hour).and_return(2)
   end
 
   it_behaves_like "a job in queue", "default"
+  it_behaves_like "a job that adheres to the metric quota", AutoEvaluation::AnswerRelevancy
 
   describe "#perform" do
     it "calls AutoEvaluation::AnswerRelevancy the configured number of times with the correct arguments" do
@@ -97,31 +97,6 @@ RSpec.describe AnswerAnalysis::AnswerRelevancyJob do
             metrics: result.metrics,
           )
       end
-    end
-
-    it "writes the auto_evaluation_metrics_run_count cache key on the first metric run" do
-      expect(Rails.cache).to receive(:write)
-                         .with("auto_evaluation_metrics_run_count", 1, expires_in: 1.hour)
-
-      described_class.new.perform(answer.id)
-    end
-
-    it "increments the auto_evaluation_metrics_run_count cache key in subsequent runs" do
-      allow(Rails.cache).to receive(:read).with("auto_evaluation_metrics_run_count").and_return(1)
-      expect(Rails.cache).to receive(:increment)
-                         .with("auto_evaluation_metrics_run_count")
-
-      described_class.new.perform(answer.id)
-    end
-
-    it "logs info and does not perform evaluation when quota limit is reached" do
-      allow(Rails.cache).to receive(:read).with("auto_evaluation_metrics_run_count").and_return(2)
-      expect(described_class.logger)
-        .to receive(:warn)
-        .with("Auto-evaluation quota limit of 2 metrics per hour reached")
-      expect(AutoEvaluation::AnswerRelevancy).not_to receive(:call)
-
-      described_class.new.perform(answer.id)
     end
 
     context "when the answer has a rephrased_question" do
