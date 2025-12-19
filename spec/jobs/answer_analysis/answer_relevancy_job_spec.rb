@@ -14,9 +14,11 @@ RSpec.describe AnswerAnalysis::AnswerRelevancyJob do
   before do
     allow(AutoEvaluation::AnswerRelevancy)
       .to receive(:call).and_return(*results)
+    allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new)
   end
 
   it_behaves_like "a job in queue", "default"
+  it_behaves_like "a job that adheres to the auto_evaluation quota", AutoEvaluation::AnswerRelevancy
 
   describe "#perform" do
     it "calls AutoEvaluation::AnswerRelevancy the configured number of times with the correct arguments" do

@@ -1,6 +1,5 @@
 module AnswerAnalysis
-  class TagTopicsJob < ApplicationJob
-    MAX_RETRIES = 5
+  class TagTopicsJob < BaseJob
     retry_on Anthropic::Errors::APIError, wait: 1.minute, attempts: MAX_RETRIES
 
     def perform(answer_id)
@@ -11,6 +10,7 @@ module AnswerAnalysis
       unless answer.eligible_for_topic_analysis?
         return logger.info("Answer #{answer_id} is not eligible for topic analysis")
       end
+      return if quota_limit_reached?
 
       result = AutoEvaluation::TopicTagger.call(answer.question_used)
 

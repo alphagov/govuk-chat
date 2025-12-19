@@ -15,5 +15,19 @@ module AnswerAnalysis
 
       eligible
     end
+
+    def quota_limit_reached?
+      key = "auto_evaluations_count_#{Time.current.beginning_of_hour.to_i}"
+      max_evaluations = Rails.configuration.max_auto_evaluations_per_hour
+      # fallback to 1 in scenarios where we have a null cache (test environment) and this returns nil
+      count = Rails.cache.increment(key, expires_in: 1.hour) || 1
+
+      if count > max_evaluations
+        logger.warn("Auto-evaluation quota limit of #{max_evaluations} evaluations per hour reached")
+        return true
+      end
+
+      false
+    end
   end
 end

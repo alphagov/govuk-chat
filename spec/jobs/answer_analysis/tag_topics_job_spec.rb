@@ -16,9 +16,13 @@ RSpec.describe AnswerAnalysis::TagTopicsJob do
     )
   end
 
-  before { allow(AutoEvaluation::TopicTagger).to receive(:call).and_return(topic_tagger_result) }
+  before do
+    allow(AutoEvaluation::TopicTagger).to receive(:call).and_return(topic_tagger_result)
+    allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new)
+  end
 
   it_behaves_like "a job in queue", "default"
+  it_behaves_like "a job that adheres to the auto_evaluation quota", AutoEvaluation::TopicTagger
 
   describe "#perform" do
     it "calls the AutoEvaluation::TopicTagger with the answer message" do
