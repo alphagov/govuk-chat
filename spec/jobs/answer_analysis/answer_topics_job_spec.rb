@@ -19,6 +19,7 @@ RSpec.describe AnswerAnalysis::AnswerTopicsJob do
   before { allow(AutoEvaluation::TopicTagger).to receive(:call).and_return(topic_tagger_result) }
 
   it_behaves_like "a job in queue", "default"
+  it_behaves_like "a job that adheres to the metric quota", AutoEvaluation::TopicTagger
 
   describe "#perform" do
     it "calls the AutoEvaluation::TopicTagger with the answer message" do
