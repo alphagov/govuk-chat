@@ -1,6 +1,5 @@
 module AnswerAnalysis
   class AnswerTopicsJob < BaseMetricJob
-    MAX_RETRIES = 5
     retry_on Anthropic::Errors::APIError, wait: 1.minute, attempts: MAX_RETRIES
 
     def perform(answer_id)
