@@ -35,4 +35,17 @@ module JobExamples
       described_class.new.perform(answer.id)
     end
   end
+
+  shared_examples "a job that retries on service errors" do |error_class|
+    let(:answer) { create(:answer) }
+    it "retries the job the max number of times on #{error_class}" do
+      (described_class::MAX_RETRIES - 1).times do
+        described_class.perform_later(answer.id)
+        expect { perform_enqueued_jobs }.not_to raise_error
+      end
+
+      described_class.perform_later(answer.id)
+      expect { perform_enqueued_jobs }.to raise_error(error_class)
+    end
+  end
 end

@@ -20,6 +20,12 @@ RSpec.describe AnswerAnalysis::TagTopicsJob do
 
   it_behaves_like "a job in queue", "default"
   it_behaves_like "a job that adheres to the metric quota", AutoEvaluation::TopicTagger
+  it_behaves_like "a job that retries on service errors", Anthropic::Errors::APIError do
+    before do
+      allow(AutoEvaluation::TopicTagger).to receive(:call)
+                                        .and_raise(Anthropic::Errors::APIError.new(url: "url"))
+    end
+  end
 
   describe "#perform" do
     it "calls the AutoEvaluation::TopicTagger with the answer message" do
