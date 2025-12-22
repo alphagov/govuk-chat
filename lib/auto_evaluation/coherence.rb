@@ -1,13 +1,5 @@
 module AutoEvaluation
   class Coherence
-    Result = Data.define(
-      :score,
-      :reason,
-      :success,
-      :llm_responses,
-      :metrics,
-    )
-
     THRESHOLD = 0.75
 
     def self.call(...) = new(...).call
@@ -21,7 +13,7 @@ module AutoEvaluation
       result = BedrockOpenAIOssInvoke.call(user_prompt, tools)
       score = normalise_rubric_score(result.evaluation_data.fetch("score"))
 
-      Result.new(
+      AutoEvaluation::ScoreResult.new(
         score:,
         reason: result.evaluation_data.fetch("reason").strip,
         success: score >= THRESHOLD,

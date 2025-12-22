@@ -1,12 +1,4 @@
 class AutoEvaluation::AnswerRelevancy
-  Result = Data.define(
-    :score,
-    :reason,
-    :success,
-    :llm_responses,
-    :metrics,
-  )
-
   THRESHOLD = 0.5
 
   def self.call(...) = new(...).call
@@ -55,7 +47,7 @@ class AutoEvaluation::AnswerRelevancy
       question_message:, verdicts:, score:,
     )
 
-    Result.new(
+    AutoEvaluation::ScoreResult.new(
       score:,
       reason:,
       success: score >= THRESHOLD,
@@ -78,7 +70,7 @@ private
   end
 
   def build_maximum_score_result(reason:, llm_responses:, metrics:)
-    Result.new(
+    AutoEvaluation::ScoreResult.new(
       score: 1.0,
       reason:,
       success: true,

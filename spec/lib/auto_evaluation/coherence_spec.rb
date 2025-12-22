@@ -37,7 +37,7 @@ RSpec.describe AutoEvaluation::Coherence, :aws_credentials_stubbed do
         },
       }
       expect(result)
-        .to be_a(described_class::Result)
+        .to be_a(AutoEvaluation::ScoreResult)
         .and have_attributes(
           score: 0.5,
           reason:,
