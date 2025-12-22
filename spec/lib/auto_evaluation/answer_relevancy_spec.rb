@@ -100,6 +100,24 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         )
     end
 
+    context "when 'idk' verdicts are present" do
+      let(:verdicts) do
+        [
+          { "verdict" => "idk", "reason" => "Cannot determine relevance." },
+          { "verdict" => "No", "reason" => "The statement is irrelevant." },
+        ]
+      end
+
+      it "treats 'idk' verdicts as positive in the score" do
+        result = described_class.call(
+          question_message:,
+          answer_message:,
+        )
+
+        expect(result.score).to eq(0.5)
+      end
+    end
+
     context "when no statements are extracted from the answer" do
       let(:statements_json) { { statements: [] }.to_json }
 

@@ -73,7 +73,7 @@ private
     verdict_count = verdicts.count
     return 1.0 if verdict_count.zero?
 
-    relevant_count = verdicts.count { |verdict| verdict["verdict"].strip.downcase == "yes" }
+    relevant_count = verdicts.count { |verdict| verdict["verdict"].strip.downcase != "no" }
     relevant_count.to_f / verdict_count
   end
 
