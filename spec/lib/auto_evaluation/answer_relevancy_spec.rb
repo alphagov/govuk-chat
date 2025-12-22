@@ -90,7 +90,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         reason: shared_expected_metrics_attributes,
       }
       expect(result)
-        .to be_a(described_class::Result)
+        .to be_a(AutoEvaluation::ScoreResult)
         .and have_attributes(
           score: 0.5,
           reason:,
@@ -130,7 +130,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         )
 
         expect(result)
-          .to be_a(described_class::Result)
+          .to be_a(AutoEvaluation::ScoreResult)
           .and have_attributes(
             score: 1.0,
             reason: "No statements were extracted from the answer.",
@@ -154,7 +154,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         )
 
         expect(result)
-          .to be_a(described_class::Result)
+          .to be_a(AutoEvaluation::ScoreResult)
           .and have_attributes(
             score: 1.0,
             reason: "No verdicts were generated for the extracted statements.",
@@ -183,7 +183,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         )
 
         expect(result)
-          .to be_a(described_class::Result)
+          .to be_a(AutoEvaluation::ScoreResult)
           .and have_attributes(
             score: 1.0,
             reason: "The response fully addressed the input with no irrelevant statements.",
