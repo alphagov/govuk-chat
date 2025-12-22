@@ -1,13 +1,5 @@
 module AutoEvaluation
   class Coherence
-    Result = Data.define(
-      :score,
-      :reason,
-      :success,
-      :llm_responses,
-      :metrics,
-    )
-
     THRESHOLD = 0.75
 
     def self.call(...) = new(...).call
@@ -22,7 +14,7 @@ module AutoEvaluation
       rubric_score = result.evaluation_data.fetch("score").to_f
       score = normalise_rubric_score(rubric_score)
 
-      Result.new(
+      AutoEvaluation::Result.new(
         score:,
         reason: result.evaluation_data.fetch("reason").strip,
         success: score >= THRESHOLD,

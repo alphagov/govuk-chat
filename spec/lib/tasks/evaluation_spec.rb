@@ -527,7 +527,7 @@ RSpec.describe "rake evaluation tasks" do
     let(:question_message) { "What is the current VAT rate?" }
     let(:answer) { build(:answer) }
     let(:evaluation_result) do
-      AutoEvaluation::AnswerRelevancy::Result.new(
+      AutoEvaluation::Result.new(
         score: 0.7,
         reason: "Most statements are relevant.",
         success: true,
