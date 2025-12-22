@@ -23,62 +23,6 @@ namespace :search do
     puts "Index created"
   end
 
-  desc "Set schema_name for existing documents"
-  task set_schema_name: :environment do
-    mappings = {
-      "answer" => "answer",
-      "business_finance_support_scheme" => "specialist_document",
-      "detailed_guide" => "detailed_guide",
-      "export_health_certificate" => "specialist_document",
-      "form" => "publication",
-      "guidance" => "publication",
-      "guide" => "guide",
-      "help_page" => "help_page",
-      "international_development_fund" => "specialist_document",
-      "licence_transaction" => "specialist_document",
-      "manual" => "manual",
-      "manual_section" => "manual_section",
-      "notice" => "publication",
-      "promotional" => "publication",
-      "regulation" => "publication",
-      "service_manual_guide" => "service_manual_guide",
-      "simple_smart_answer" => "simple_smart_answer",
-      "statutory_guidance" => "publication",
-      "step_by_step_nav" => "step_by_step_nav",
-      "transaction" => "transaction",
-      "travel_advice" => "travel_advice",
-      "worldwide_organisation" => "worldwide_organisation",
-    }
-
-    repo = Search::ChunkedContentRepository.new
-    client = repo.client
-
-    mappings.each do |document_type, schema_name|
-      result = client.update_by_query(
-        index: repo.index,
-        body: {
-          query: {
-            bool: {
-              must: [
-                { term: { document_type: } },
-              ],
-              must_not: [
-                { exists: { field: "schema_name" } },
-              ],
-            },
-          },
-          script: {
-            source: "ctx._source.schema_name = params.schema_name",
-            params: {
-              schema_name:,
-            },
-          },
-        },
-      )
-      puts "#{document_type}: updated #{result['updated']} of #{result['total']} documents"
-    end
-  end
-
   desc "Update the chunked context index mappings"
   task update_chunked_content_mappings: :environment do
     puts "Adding missing content mappings"
