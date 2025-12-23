@@ -10,6 +10,9 @@ class ComposeAnswerJob < ApplicationJob
 
     begin
       answer.save!
+
+      # answer_aggregate_status = answer.status.split("_").first
+      PrometheusMetrics.counter("answer_aggregate_status_total", { status: "error" })
     rescue ActiveRecord::RecordNotUnique
       logger.warn("Already an answer created for #{question_id}")
     end
