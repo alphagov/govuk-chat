@@ -119,7 +119,7 @@ namespace :evaluation do
   task generate_topics_for_question: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
 
-    result = AnswerAnalysisGeneration::TopicTagger.call(ENV["INPUT"])
+    result = AutoEvaluation::TopicTagger.call(ENV["INPUT"])
 
     puts(result.to_json)
   end

@@ -1,6 +1,4 @@
-class AnswerAnalysis < ApplicationRecord
-  include LlmCallsRecordable
-
+class AnswerAnalysis::AnswerTopics < ApplicationRecord
   belongs_to :answer
 
   scope :exportable, lambda { |start_date, end_date|
@@ -10,6 +8,6 @@ class AnswerAnalysis < ApplicationRecord
   }
 
   def serialize_for_export
-    as_json(except: :llm_responses).merge("llm_responses" => llm_responses.to_json)
+    as_json(except: :llm_response).merge("llm_response" => llm_response.to_json)
   end
 end

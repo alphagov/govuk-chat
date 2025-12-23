@@ -17,8 +17,7 @@ module Bigquery
 
     def self.call(...) = new.call(...)
 
-    def call(table_name, export_from: nil, export_until: nil)
-      model = model_for_table_name(table_name)
+    def call(model, export_from: nil, export_until: nil)
       records_to_export = model.exportable(export_from, export_until)
                                 .map(&:serialize_for_export)
       export_data = self.class.remove_nil_values(records_to_export)
@@ -27,10 +26,6 @@ module Bigquery
     end
 
   private
-
-    def model_for_table_name(table_name)
-      table_name.singularize.camelize.constantize
-    end
 
     def save_export_data_to_tempfile(export_data)
       return Result.new(tempfile: nil, count: 0) unless export_data

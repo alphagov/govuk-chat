@@ -19,7 +19,7 @@ module Bigquery
 
       last_export.with_lock do
         export_until = last_export.exported_until
-        export = IndividualExport.call(table.name, export_until:)
+        export = IndividualExport.call(table.model, export_until:)
 
         delete_bigquery_table(table.name)
 

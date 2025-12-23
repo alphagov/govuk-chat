@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_18_120929) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_15_161508) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -23,17 +23,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_120929) do
   create_enum "conversation_source", ["web", "api"]
   create_enum "guardrails_status", ["pass", "fail", "error"]
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar", "unclear_intent", "requires_account_data", "about_chat"]
-
-  create_table "answer_analyses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "primary_topic"
-    t.string "secondary_topic"
-    t.jsonb "metrics"
-    t.jsonb "llm_responses"
-    t.uuid "answer_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["answer_id"], name: "index_answer_analyses_on_answer_id", unique: true
-  end
 
   create_table "answer_feedback", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
@@ -76,6 +65,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_120929) do
     t.index ["answer_id"], name: "index_answer_sources_on_answer_id"
     t.index ["answer_source_chunk_id"], name: "index_answer_sources_on_answer_source_chunk_id"
     t.index ["created_at"], name: "index_answer_sources_on_created_at"
+  end
+
+  create_table "answer_topics", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "primary_topic"
+    t.string "secondary_topic"
+    t.jsonb "metrics"
+    t.uuid "answer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.float "answer_relevancy_score"
+    t.string "answer_relevancy_reason"
+    t.jsonb "llm_response"
+    t.index ["answer_id"], name: "index_answer_topics_on_answer_id", unique: true
   end
 
   create_table "answers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -170,10 +172,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_120929) do
     t.datetime "updated_at", null: false
   end
 
-  add_foreign_key "answer_analyses", "answers", on_delete: :cascade
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade
   add_foreign_key "answer_sources", "answer_source_chunks", on_delete: :restrict
   add_foreign_key "answer_sources", "answers", on_delete: :cascade
+  add_foreign_key "answer_topics", "answers", on_delete: :cascade
   add_foreign_key "answers", "questions", on_delete: :cascade
   add_foreign_key "conversations", "signon_users", on_delete: :restrict
   add_foreign_key "questions", "conversations"

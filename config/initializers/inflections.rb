@@ -15,4 +15,5 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "OpenAI"
   inflect.plural "reason_for_visit", "reason_for_visit"
   inflect.plural "found_chat", "found_chat"
+  inflect.uncountable "answer_topics"
 end
