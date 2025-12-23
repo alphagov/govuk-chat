@@ -91,5 +91,7 @@ module GovukChat
                                              .topic_tagger
                                              .dig("tool_spec", "input_schema", "$defs", "govuk_topic_tags", "enum")
                                              .sort
+
+    config.max_auto_evaluation_metrics_per_hour = 300
   end
 end
