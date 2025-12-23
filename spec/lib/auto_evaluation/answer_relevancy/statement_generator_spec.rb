@@ -14,7 +14,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy::StatementGenerator, :aws_credent
     end
     let(:tools) { [prompts.fetch(:tool_spec)] }
     let!(:stub_bedrock) do
-      bedrock_invoke_model_openai_oss_tool_call(
+      stub_bedrock_invoke_model_openai_oss_tool_call(
         user_prompt,
         tools,
         statements_json,
