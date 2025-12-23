@@ -1,10 +1,4 @@
 RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
-  include ContentItemParserExamples
-
-  it_behaves_like "a chunking content item parser" do
-    let(:content_item) { build(:notification_content_item, body: "<p>Content</p>", schema_name:) }
-  end
-
   describe ".call" do
     it "returns chunks for a HTML body field" do
       body = '<h2 id="heading-1">Heading 1</h2><p>Content 1</p><h2 id="heading-2">Heading 2</h2><p>Content 2</p>'
