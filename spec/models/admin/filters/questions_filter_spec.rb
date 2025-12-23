@@ -303,6 +303,17 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([no_info_question])
     end
 
+    it "filters the results by performance_analysis_consent" do
+      consented_question = create(:question, performance_analysis_consent: true)
+      non_consented_question = create(:question, performance_analysis_consent: false)
+
+      filter = described_class.new(performance_analysis_consent: "true")
+      expect(filter.results).to eq([consented_question])
+
+      filter = described_class.new(performance_analysis_consent: "false")
+      expect(filter.results).to eq([non_consented_question])
+    end
+
     it "paginates the results" do
       create_list(:question, 26)
 
@@ -371,8 +382,8 @@ RSpec.describe Admin::Filters::QuestionsFilter do
 
       expected_params = filter.attributes
                               .symbolize_keys
-                              .except(:page, :answer_feedback_useful)
-                              .merge(answer_feedback_useful: true)
+                              .except(:page, :answer_feedback_useful, :performance_analysis_consent)
+                              .merge(answer_feedback_useful: true, performance_analysis_consent: true)
       expect(filter.previous_page_params).to eq(expected_params)
     end
   end
@@ -387,8 +398,8 @@ RSpec.describe Admin::Filters::QuestionsFilter do
 
       expected_params = filter.attributes
                               .symbolize_keys
-                              .except(:answer_feedback_useful)
-                              .merge(answer_feedback_useful: true, page: 2)
+                              .except(:answer_feedback_useful, :performance_analysis_consent)
+                              .merge(answer_feedback_useful: true, performance_analysis_consent: true, page: 2)
       expect(filter.next_page_params).to eq(expected_params)
     end
   end
@@ -397,7 +408,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
     signon_user = create(:signon_user)
     conversation = create(:conversation, signon_user_id: signon_user.id, end_user_id: "end-user-id", source: :api)
     26.times do
-      question = create(:question, conversation:)
+      question = create(:question, conversation:, performance_analysis_consent: true)
       answer = create(
         :answer,
         :with_feedback,
@@ -427,6 +438,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       primary_topic: "business",
       secondary_topic: "tax",
       completeness: "complete",
+      performance_analysis_consent: "true",
     }.merge(attrs)
 
     described_class.new(**filter_params)

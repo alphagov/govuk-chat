@@ -521,6 +521,12 @@ components:
       properties:
         user_question:
           type: string
+        performance_analysis_consent:
+          type: boolean
+          description: |
+            An optional field to indicate whether the end user consents to their question and
+            associated data being used in performance analysis. If not provided this will
+            default to false and the user's data will not be used.
     Conversation:
       type: object
       required:

@@ -50,6 +50,13 @@ RSpec.describe "Admin user filters questions" do
 
     when_i_filter_questions_by_partialy_complete_answers
     then_i_see_the_question_with_a_partially_complete_answer
+
+    when_i_clear_the_filters
+    and_i_filter_questions_by_performance_analysis_consented
+    then_i_see_the_questions_which_have_consented_to_performance_analysis
+
+    when_i_filter_questions_by_performance_analysis_not_consented
+    then_i_see_the_questions_which_have_not_consented_to_performance_analysis
   end
 
   scenario "filtered by a signon user" do
@@ -74,7 +81,7 @@ RSpec.describe "Admin user filters questions" do
     conversation = build(:conversation)
     api_conversation = build(:conversation, source: :api)
     @question1 = create(:question, conversation:, message: "Hello world", created_at: 2.years.ago)
-    @question2 = create(:question, message: "World", conversation:)
+    @question2 = create(:question, message: "World", conversation:, performance_analysis_consent: true)
     @question3 = create(:question, conversation: api_conversation, message: "Greetings world", created_at: 1.minute.ago)
     answer = create(:answer, question: @question2, question_routing_label: "non_english", completeness: :partial)
     create(:answer_feedback, answer: answer, useful: true)
@@ -286,5 +293,27 @@ RSpec.describe "Admin user filters questions" do
     expect(page).to have_content(@question2.message)
     expect(page).not_to have_content(@question1.message)
     expect(page).not_to have_content(@question3.message)
+  end
+
+  def and_i_filter_questions_by_performance_analysis_consented
+    select "Consented"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_questions_which_have_consented_to_performance_analysis
+    expect(page).to have_content(@question2.message)
+    expect(page).not_to have_content(@question1.message)
+    expect(page).not_to have_content(@question3.message)
+  end
+
+  def when_i_filter_questions_by_performance_analysis_not_consented
+    select "Not consented"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_questions_which_have_not_consented_to_performance_analysis
+    expect(page).to have_content(@question1.message)
+    expect(page).to have_content(@question3.message)
+    expect(page).not_to have_content(@question2.message)
   end
 end

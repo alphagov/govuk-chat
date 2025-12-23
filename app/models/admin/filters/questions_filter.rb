@@ -12,6 +12,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :primary_topic
   attribute :secondary_topic
   attribute :completeness
+  attribute :performance_analysis_consent, :boolean
 
   validate :validate_dates
 
@@ -46,6 +47,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
       scope = primary_topic_scope(scope)
       scope = secondary_topic_scope(scope)
       scope = completeness_scope(scope)
+      scope = performance_analysis_consent_scope(scope)
       scope.page(page)
            .per(25)
     end
@@ -81,7 +83,7 @@ private
     filters[:primary_topic] = primary_topic if primary_topic.present?
     filters[:secondary_topic] = secondary_topic if secondary_topic.present?
     filters[:completeness] = completeness if completeness.present?
-
+    filters[:performance_analysis_consent] = performance_analysis_consent unless performance_analysis_consent.nil?
     filters
   end
 
@@ -167,6 +169,12 @@ private
     return scope if completeness.blank?
 
     scope.where(answers: { completeness: })
+  end
+
+  def performance_analysis_consent_scope(scope)
+    return scope if performance_analysis_consent.nil?
+
+    scope.where(performance_analysis_consent:)
   end
 
   def validate_dates

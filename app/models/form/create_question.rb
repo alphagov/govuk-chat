@@ -5,6 +5,7 @@ class Form::CreateQuestion
 
   attribute :user_question
   attribute :conversation
+  attribute :performance_analysis_consent, :boolean, default: false
 
   USER_QUESTION_PRESENCE_ERROR_MESSAGE = "Ask a question. For example, 'how do I register for VAT?'".freeze
   USER_QUESTION_LENGTH_MAXIMUM = 300
@@ -27,6 +28,7 @@ class Form::CreateQuestion
       message: @sanitised_user_question,
       unsanitised_message: (@unsanitised_user_question if @sanitised_user_question != @unsanitised_user_question),
       conversation:,
+      performance_analysis_consent:,
     )
 
     ComposeAnswerJob.perform_later(question.id)
