@@ -490,6 +490,14 @@ RSpec.describe "Api::V1::ConversationsController" do
         conversation = Conversation.last
         expect(conversation.end_user_id).to eq("test-user-123")
       end
+
+      it "sets the optional performance_analysis_consent param when present" do
+        payload[:performance_analysis_consent] = true
+        post api_v1_create_conversation_path, params: payload, headers:, as: :json
+
+        question = Question.last
+        expect(question.performance_analysis_consent).to be(true)
+      end
     end
 
     context "when the question is invalid" do
@@ -540,7 +548,7 @@ RSpec.describe "Api::V1::ConversationsController" do
 
     context "when the params are valid" do
       let(:user_question) { "What is the capital of France?" }
-      let(:params) { { user_question: } }
+      let(:params) { { user_question:, performance_analysis_consent: true } }
 
       it "returns a created status" do
         put api_v1_update_conversation_path(conversation), params:, headers:, as: :json
@@ -553,6 +561,14 @@ RSpec.describe "Api::V1::ConversationsController" do
         }.to change(conversation.questions, :count).by(1)
         expect(conversation.questions.strict_loading(false).last.message)
           .to eq(user_question)
+      end
+
+      it "sets the optional performance_analysis_consent param when present" do
+        params[:performance_analysis_consent] = true
+        put api_v1_update_conversation_path(conversation), params:, headers:, as: :json
+
+        question = Question.last
+        expect(question.performance_analysis_consent).to be(true)
       end
 
       it "returns the expected JSON" do

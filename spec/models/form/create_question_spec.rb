@@ -115,7 +115,7 @@ RSpec.describe Form::CreateQuestion do
       let(:conversation) { create(:conversation, questions: [create(:question, :with_answer, created_at: 1.second.ago)]) }
 
       it "adds a new question with the correct attributes to the conversation" do
-        described_class.new(user_question:, conversation:).submit
+        described_class.new(user_question:, conversation:, performance_analysis_consent: true).submit
 
         expect(Question.where(conversation:).count).to eq 2
         expect(Question.where(conversation:).last)
@@ -123,6 +123,7 @@ RSpec.describe Form::CreateQuestion do
             message: user_question,
             unsanitised_message: nil,
             answer_strategy: Rails.configuration.answer_strategy,
+            performance_analysis_consent: true,
           )
       end
 
@@ -159,13 +160,14 @@ RSpec.describe Form::CreateQuestion do
       end
 
       it "returns the created question with the correct attributes" do
-        form = described_class.new(user_question:, conversation:)
+        form = described_class.new(user_question:, conversation:, performance_analysis_consent: true)
         question = form.submit
 
         expect(question)
           .to have_attributes(
             message: user_question,
             answer_strategy: Rails.configuration.answer_strategy,
+            performance_analysis_consent: true,
           )
       end
     end

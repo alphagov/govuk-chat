@@ -122,7 +122,7 @@ private
   end
 
   def question_params
-    params.permit(:user_question)
+    params.permit(:user_question, :performance_analysis_consent)
   end
 
   def answer_path(question)
