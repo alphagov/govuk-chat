@@ -36,6 +36,7 @@ private
       :primary_topic,
       :secondary_topic,
       :completeness,
+      :performance_analysis_consent,
     )
   end
 end

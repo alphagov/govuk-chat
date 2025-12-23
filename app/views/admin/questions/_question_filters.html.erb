@@ -224,6 +224,30 @@
     end,
   } %>
 
+  <%= render "govuk_publishing_components/components/select", {
+    id: "performance_analysis_consent",
+    name: "performance_analysis_consent",
+    label: "Performance analysis consent",
+    heading_size: "s",
+    full_width: true,
+    options: [
+      {
+        text: "",
+        value: "",
+      },
+      {
+        text: "Consented",
+        value: "true",
+        selected: params[:performance_analysis_consent] == "true",
+      },
+      {
+        text: "Not consented",
+        value: "false",
+        selected: params[:performance_analysis_consent] == "false",
+      },
+    ],
+  } %>
+
   <%= render "govuk_publishing_components/components/button", {
     text: "Filter",
     margin_bottom: true,
