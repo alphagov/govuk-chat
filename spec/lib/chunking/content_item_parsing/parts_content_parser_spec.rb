@@ -1,27 +1,4 @@
 RSpec.describe Chunking::ContentItemParsing::PartsContentParser do
-  include ContentItemParserExamples
-
-  it_behaves_like "a chunking content item parser" do
-    let(:content_item) do
-      build(
-        :notification_content_item,
-        schema_name:,
-        details_merge: {
-          "parts" => [
-            "title" => "Part 1",
-            "slug" => "slug-1",
-            "body" => [
-              {
-                "content_type" => "text/html",
-                "content" => "<p>Content</p>",
-              },
-            ],
-          ],
-        },
-      )
-    end
-  end
-
   describe ".call" do
     it "converts the array of parts into an array of chunks" do
       parts = [

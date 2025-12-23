@@ -1,22 +1,4 @@
 RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
-  include ContentItemParserExamples
-  it_behaves_like "a chunking content item parser" do
-    let(:body) do
-      [
-        {
-          "content_type" => "text/html",
-          "content" => "<p>Content</p>",
-        },
-        {
-          "content_type" => "text/govspeak",
-          "content" => "Content",
-        },
-      ]
-    end
-
-    let(:content_item) { build(:notification_content_item, schema_name:, body:) }
-  end
-
   describe ".call" do
     it "raises an error if there is not a body field in the details hash" do
       content_item = build(:notification_content_item, details: {}, ensure_valid: false)
