@@ -1,4 +1,4 @@
-class AnswerTopics < ApplicationRecord
+class AnswerAnalysis::AnswerTopics < ApplicationRecord
   belongs_to :answer
 
   scope :exportable, lambda { |start_date, end_date|

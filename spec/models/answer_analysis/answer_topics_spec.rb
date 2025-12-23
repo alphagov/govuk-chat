@@ -1,4 +1,4 @@
-RSpec.describe AnswerTopics do
+RSpec.describe AnswerAnalysis::AnswerTopics do
   it_behaves_like "exportable by start and end date" do
     let(:conversation) { create(:conversation, end_user_id: "opted-out-id") }
     let(:question) { create(:question, conversation:) }

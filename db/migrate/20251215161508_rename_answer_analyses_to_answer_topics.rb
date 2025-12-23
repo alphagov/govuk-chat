@@ -1,12 +1,12 @@
 class RenameAnswerAnalysesToAnswerTopics < ActiveRecord::Migration[8.0]
-  class AnswerTopics < ApplicationRecord; end
+  class AnswerAnalysis::AnswerTopics < ApplicationRecord; end
 
   def up
     rename_table :answer_analyses, :answer_topics
 
     add_column :answer_topics, :llm_response, :jsonb
 
-    AnswerTopics.find_each do |topic|
+    AnswerAnalysis::AnswerTopics.find_each do |topic|
       topic.update(llm_response: topic.llm_responses["topic_tagger"])
     end
 
@@ -18,7 +18,7 @@ class RenameAnswerAnalysesToAnswerTopics < ActiveRecord::Migration[8.0]
 
     add_column :answer_analyses, :llm_responses, :jsonb
 
-    AnswerTopics.find_each do |topics|
+    AnswerAnalysis::AnswerTopics.find_each do |topics|
       topics.update(llm_responses: { "topic_tagger" => topics.llm_response })
     end
 

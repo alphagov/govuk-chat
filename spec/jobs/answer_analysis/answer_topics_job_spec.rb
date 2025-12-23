@@ -1,4 +1,4 @@
-RSpec.describe AnswerTopicsJob do
+RSpec.describe AnswerAnalysis::AnswerTopicsJob do
   include ActiveJob::TestHelper
   let(:answer) { create(:answer) }
   let(:question) { answer.question }
@@ -29,7 +29,7 @@ RSpec.describe AnswerTopicsJob do
     it "creates topics for the answer based of the returned result" do
       expect {
         described_class.new.perform(answer.id)
-      }.to change(AnswerTopics, :count).by(1)
+      }.to change(AnswerAnalysis::AnswerTopics, :count).by(1)
       expect(answer.reload.topics)
         .to have_attributes(
           primary_topic: topic_tagger_result.primary_topic,

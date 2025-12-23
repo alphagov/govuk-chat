@@ -50,23 +50,23 @@ RSpec.describe Bigquery::IndividualExport do
   end
 
   describe ".call" do
-    it "can successfully return a Result for each table_name in Bigquery::TABLES_TO_EXPORT" do
+    it "can successfully return a Result for each table in Bigquery::TABLES_TO_EXPORT" do
       results = Bigquery::TABLES_TO_EXPORT.map do |table|
-        described_class.call(table.name)
+        described_class.call(table.model)
       end
 
       expect(results).to all(be_a(described_class::Result))
     end
 
-    context "when given a model table name" do
-      let(:table_name) { "questions" }
+    context "when given a model name" do
+      let(:model) { Question }
       let(:export_from) { 3.hours.ago }
       let(:export_until) { 1.hour.ago }
 
       it "returns a result with the count of the items from the timeframe" do
         create_list(:answer, 3, created_at: 2.hours.ago)
 
-        result = described_class.call(table_name, export_from:, export_until:)
+        result = described_class.call(model, export_from:, export_until:)
 
         expect(result.count).to eq(3)
       end
@@ -77,7 +77,7 @@ RSpec.describe Bigquery::IndividualExport do
         # answer at a specific time.
         question = create(:answer, :with_sources, :with_feedback, created_at: 2.hours.ago).question
 
-        result = described_class.call(table_name, export_from:, export_until:)
+        result = described_class.call(model, export_from:, export_until:)
 
         first_json_record = JSON.parse(result.tempfile.readline.chomp)
         expected_json = described_class.remove_nil_values(question.serialize_for_export)
