@@ -22,6 +22,15 @@ RSpec.describe ComposeAnswerJob do
       expect(AnswerTopicsJob).to have_received(:perform_later).with(returned_answer.id)
     end
 
+    it "calls PrometheusMetrics.counter with the answer aggregate status" do
+      expect(PrometheusMetrics).to receive(:counter).with(
+        "answer_aggregate_status_total",
+        { status: "error" },
+      )
+
+      described_class.new.perform(question.id)
+    end
+
     context "when the question has already been answered" do
       let(:question) { create(:question, :with_answer) }
 
