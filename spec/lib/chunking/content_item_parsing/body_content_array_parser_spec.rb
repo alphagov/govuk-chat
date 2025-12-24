@@ -1,22 +1,4 @@
 RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
-  include ContentItemParserExamples
-  it_behaves_like "a chunking content item parser", described_class.allowed_schemas do
-    let(:body) do
-      [
-        {
-          "content_type" => "text/html",
-          "content" => "<p>Content</p>",
-        },
-        {
-          "content_type" => "text/govspeak",
-          "content" => "Content",
-        },
-      ]
-    end
-
-    let(:content_item) { build(:notification_content_item, schema_name:, body:) }
-  end
-
   describe ".call" do
     it "raises an error if there is not a body field in the details hash" do
       content_item = build(:notification_content_item, details: {}, ensure_valid: false)
@@ -64,24 +46,6 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentArrayParser do
 
       expect { described_class.call(content_item) }
         .to raise_error("content type text/html not found in schema: generic")
-    end
-  end
-
-  describe ".non_indexable_content_item_reason" do
-    it "returns nil for a schema without document type requirements" do
-      content_item = build(:notification_content_item, schema_name: "answer")
-      expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
-    end
-
-    it "returns nil for an allowed specialist_document schema" do
-      content_item = build(:notification_content_item, schema_name: "specialist_document", document_type: "business_finance_support_scheme")
-      expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
-    end
-
-    it "returns a message other document types for specialist_document" do
-      content_item = build(:notification_content_item, schema_name: "specialist_document",
-                                                       document_type: "anything", ensure_valid: false)
-      expect(described_class.non_indexable_content_item_reason(content_item)).to eq("document type: anything not supported for schema: specialist_document")
     end
   end
 end

@@ -2,23 +2,126 @@ thresholds:
   retrieved_from_index: 80
   minimum_score: 0.75
   max_results: 20
-document_type_weightings:
-  about: 1.1
-  answer: 2.0
-  business_finance_support_scheme: 2.0
-  complaints_procedure: 1.1
-  contact: 1.5
-  detailed_guide: 1.5
-  export_health_certificate: 0.5
-  guidance: 1.1
-  guide: 2.0
-  help_page: 1.5
-  licence_transaction: 2.0
-  manual_section: 1.5
-  notice: 0.5
-  service_manual_guide: 0.5
-  simple_smart_answer: 2.0
-  step_by_step_nav: 2.0
-  take_part: 0.5
-  transaction: 2.0
-  worldwide_organisation: 1.1
+
+_shared_document_types:
+  corporate_information_types: &corporate_information_types
+    about:
+      weight: 1.1
+    complaints_procedure:
+      weight: 1.1
+    modern_slavery_statement:
+  publication_document_types: &publication_document_types
+    form:
+    guidance:
+      weight: 1.1
+    notice:
+      weight: 0.5
+    promotional:
+    regulation:
+    statutory_guidance:
+
+document_types_by_schema:
+  answer:
+    parser: Chunking::ContentItemParsing::BodyContentArrayParser
+    document_types:
+      answer:
+        weight: 2.0
+
+  corporate_information_page:
+    parser: Chunking::ContentItemParsing::BodyContentParser
+    document_types: *corporate_information_types
+
+  detailed_guide:
+    parser: Chunking::ContentItemParsing::BodyContentParser
+    document_types:
+      detailed_guide:
+        weight: 1.5
+
+  guide:
+    parser: Chunking::ContentItemParsing::PartsContentParser
+    document_types:
+      guide:
+        weight: 2.0
+
+  help_page:
+    parser: Chunking::ContentItemParsing::BodyContentArrayParser
+    document_types:
+      help_page:
+        weight: 1.5
+
+  html_publication:
+    parser: Chunking::ContentItemParsing::BodyContentParser
+    document_types:
+      html_publication:
+        requires_parent_document_type: *publication_document_types
+
+  manual:
+    parser: Chunking::ContentItemParsing::BodyContentArrayParser
+    document_types:
+      manual:
+
+  manual_section:
+    parser: Chunking::ContentItemParsing::BodyContentArrayParser
+    document_types:
+      manual_section:
+        weight: 1.5
+
+  publication:
+    parser: Chunking::ContentItemParsing::BodyContentParser
+    document_types: *publication_document_types
+
+  service_manual_guide:
+    parser: Chunking::ContentItemParsing::BodyContentParser
+    document_types:
+      service_manual_guide:
+        weight: 0.5
+
+  simple_smart_answer:
+    parser: Chunking::ContentItemParsing::BodyContentArrayParser
+    document_types:
+      simple_smart_answer:
+        weight: 2.0
+
+  specialist_document:
+    parser: Chunking::ContentItemParsing::BodyContentArrayParser
+    document_types:
+      business_finance_support_scheme:
+        weight: 2.0
+      export_health_certificate:
+        weight: 0.5
+      international_development_fund:
+      licence_transaction:
+        weight: 2.0
+
+  step_by_step_nav:
+    parser: Chunking::ContentItemParsing::StepByStepNavParser
+    document_types:
+      step_by_step_nav:
+        weight: 2.0
+
+  take_part:
+    parser: Chunking::ContentItemParsing::BodyContentParser
+    document_types:
+      take_part:
+        weight: 0.5
+
+  transaction:
+    parser: Chunking::ContentItemParsing::TransactionParser
+    document_types:
+      transaction:
+        weight: 2.0
+
+  travel_advice:
+    parser: Chunking::ContentItemParsing::TravelGuideParser
+    document_types:
+      travel_advice:
+
+  worldwide_corporate_information_page:
+    parser: Chunking::ContentItemParsing::BodyContentParser
+    document_types: *corporate_information_types
+
+  worldwide_organisation:
+    parser: Chunking::ContentItemParsing::BodyContentParser
+    document_types:
+      worldwide_organisation:
+        weight: 1.1

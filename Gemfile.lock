@@ -923,6 +923,7 @@ DEPENDENCIES
   groupdate
   hashie
   inline_svg
+  json-schema
   kaminari
   kramdown
   nokogiri

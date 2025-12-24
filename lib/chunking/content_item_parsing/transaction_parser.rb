@@ -13,9 +13,5 @@ module Chunking::ContentItemParsing
 
       build_chunks(html)
     end
-
-    def self.allowed_schemas
-      %w[transaction]
-    end
   end
 end
