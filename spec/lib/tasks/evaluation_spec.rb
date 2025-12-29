@@ -588,4 +588,11 @@ RSpec.describe "rake evaluation tasks" do
       let(:evaluation_class) { AutoEvaluation::Coherence }
     end
   end
+
+  describe "generate_faithfulness_evaluation" do
+    it_behaves_like "a task that returns a ScoreResult" do
+      let(:task_name) { "evaluation:generate_faithfulness_evaluation" }
+      let(:evaluation_class) { AutoEvaluation::Faithfulness }
+    end
+  end
 end
