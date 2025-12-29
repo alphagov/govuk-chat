@@ -591,4 +591,30 @@ RSpec.describe "rake evaluation tasks" do
       end
     end
   end
+
+  describe "generate_faithfulness_evaluation" do
+    it_behaves_like "an auto-evaluation generate task" do
+      let(:question_message) { "What is the current VAT rate?" }
+      let(:task_name) { "evaluation:generate_faithfulness_evaluation" }
+      let(:used_sources) do
+        [
+          build(:answer_source, used: true, chunk: build(:answer_source_chunk, plain_content: "Source 1 content")),
+          build(:answer_source, used: true, chunk: build(:answer_source_chunk, plain_content: "Source 2 content")),
+        ]
+      end
+      let(:retrieval_context) { "Source 1 content\n\nSource 2 content" }
+
+      before do
+        allow(answer.sources).to receive(:used).and_return(used_sources)
+
+        allow(AutoEvaluation::Faithfulness)
+          .to receive(:call)
+          .with(
+            answer_message: answer.message,
+            retrieval_context:,
+          )
+          .and_return(evaluation_result)
+      end
+    end
+  end
 end
