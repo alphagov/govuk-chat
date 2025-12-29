@@ -293,7 +293,7 @@ GEM
     govuk_personalisation (1.1.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
-    govuk_publishing_components (63.1.0)
+    govuk_publishing_components (63.1.1)
       govuk_app_config
       govuk_personalisation (>= 0.7.0)
       kramdown
@@ -323,7 +323,7 @@ GEM
     http-accept (1.7.0)
     http-cookie (1.1.0)
       domain_name (~> 0.5)
-    i18n (1.14.7)
+    i18n (1.14.8)
       concurrent-ruby (~> 1.0)
     inline_svg (1.10.0)
       activesupport (>= 3.0)
@@ -383,7 +383,8 @@ GEM
     mime-types-data (3.2025.0924)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
-    minitest (5.27.0)
+    minitest (6.0.1)
+      prism (~> 1.5)
     msgpack (1.8.0)
     multi_json (1.17.0)
     multi_xml (0.7.2)
@@ -565,7 +566,7 @@ GEM
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-que (0.12.0)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-racecar (0.6.0)
+    opentelemetry-instrumentation-racecar (0.6.1)
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-rack (0.29.0)
       opentelemetry-instrumentation-base (~> 0.25)
@@ -624,7 +625,7 @@ GEM
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
-    prism (1.4.0)
+    prism (1.7.0)
     prometheus_exporter (2.3.1)
       webrick
     pry (0.15.2)
@@ -697,7 +698,7 @@ GEM
     rb_sys (0.9.123)
       rake-compiler-dock (= 1.10.0)
     rbtree (0.4.6)
-    rdoc (7.0.1)
+    rdoc (7.0.3)
       erb
       psych (>= 4.0.0)
       tsort
@@ -1043,7 +1044,7 @@ CHECKSUMS
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
-  govuk_publishing_components (63.1.0) sha256=5c2a7766dbb3d98694202afb69ffee4ff1f6af663e142dbaa9122e0526e0a78b
+  govuk_publishing_components (63.1.1) sha256=fa0529ba7fff7d1d17c71667bebecc45b7af4adabff5eb8421acf2a025b26a8c
   govuk_schemas (6.2.0) sha256=9a5a7b672256664d1bef1b7db80926df92a3ce9196bfe00ce96b8fd8bacc56d2
   govuk_sidekiq (10.0.0) sha256=0d0485f6946f5e212eb5d6f5105c406a25f3cd059592a5b490b78f1d71818de8
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
@@ -1052,7 +1053,7 @@ CHECKSUMS
   hashie (5.1.0) sha256=c266471896f323c446ea8207f8ffac985d2718df0a0ba98651a3057096ca3870
   http-accept (1.7.0) sha256=c626860682bfbb3b46462f8c39cd470fd7b0584f61b3cc9df5b2e9eb9972a126
   http-cookie (1.1.0) sha256=38a5e60d1527eebc396831b8c4b9455440509881219273a6c99943d29eadbb19
-  i18n (1.14.7) sha256=ceba573f8138ff2c0915427f1fc5bdf4aa3ab8ae88c8ce255eb3ecf0a11a5d0f
+  i18n (1.14.8) sha256=285778639134865c5e0f6269e0b818256017e8cde89993fdfcbfb64d088824a5
   inline_svg (1.10.0) sha256=5b652934236fd9f8adc61f3fd6e208b7ca3282698b19f28659971da84bf9a10f
   io-console (0.8.2) sha256=d6e3ae7a7cc7574f4b8893b4fca2162e57a825b223a177b7afa236c5ef9814cc
   irb (1.16.0) sha256=2abe56c9ac947cdcb2f150572904ba798c1e93c890c256f8429981a7675b0806
@@ -1081,7 +1082,7 @@ CHECKSUMS
   mime-types-data (3.2025.0924) sha256=f276bca15e59f35767cbcf2bc10e023e9200b30bd6a572c1daf7f4cc24994728
   mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
   mini_portile2 (2.8.9) sha256=0cd7c7f824e010c072e33f68bc02d85a00aeb6fce05bb4819c03dfd3c140c289
-  minitest (5.27.0) sha256=2d3b17f8a36fe7801c1adcffdbc38233b938eb0b4966e97a6739055a45fa77d5
+  minitest (6.0.1) sha256=7854c74f48e2e975969062833adc4013f249a4b212f5e7b9d5c040bf838d54bb
   msgpack (1.8.0) sha256=e64ce0212000d016809f5048b48eb3a65ffb169db22238fb4b72472fecb2d732
   multi_json (1.17.0) sha256=76581f6c96aebf2e85f8a8b9854829e0988f335e8671cd1a56a1036eb75e4a1b
   multi_xml (0.7.2) sha256=307a96dc48613badb7b2fc174fd4e62d7c7b619bc36ea33bfd0c49f64f5787ce
@@ -1146,7 +1147,7 @@ CHECKSUMS
   opentelemetry-instrumentation-net_http (0.26.1) sha256=354ebf161f2aca0eaafdc9decc014f98b246994308a5de3ccf303f1d4abdfa2c
   opentelemetry-instrumentation-pg (0.34.1) sha256=8d6d75f8d895eea040f72ac7765257e82f9aaa81eed44bd1afbcaa7f49ebb5c2
   opentelemetry-instrumentation-que (0.12.0) sha256=3b7a84341f6af5a04f8c57860aeba4033f87c855d40c611a2fc40dde849944fb
-  opentelemetry-instrumentation-racecar (0.6.0) sha256=de267a1af9f22b76286ad1830f0ef81b437aad519c230d63f4059e0eb60168cc
+  opentelemetry-instrumentation-racecar (0.6.1) sha256=833f6611906fb661f577e841d4ec52549474d32b4e8edea8048162348d35b845
   opentelemetry-instrumentation-rack (0.29.0) sha256=9e2cbb8336087064cbe33b502d917d85b174162bc717efda1cfdbd182342f377
   opentelemetry-instrumentation-rails (0.39.1) sha256=7959df7895543040fbb5cd3877c37bc9f95d79ff9d7749334314c50b871ac96f
   opentelemetry-instrumentation-rake (0.5.0) sha256=fa6bd019078975ac8a67eaea06294e4fe6707e6770d8ced88d74dc573b0a01ef
@@ -1173,7 +1174,7 @@ CHECKSUMS
   plek (5.2.2) sha256=f508a25c97cf174e492be6270ee9fc9698051ab79170461582302d7b8cb0e180
   pp (0.6.3) sha256=2951d514450b93ccfeb1df7d021cae0da16e0a7f95ee1e2273719669d0ab9df6
   prettyprint (0.2.0) sha256=2bc9e15581a94742064a3cc8b0fb9d45aae3d03a1baa6ef80922627a0766f193
-  prism (1.4.0) sha256=dc0e3e00e93160213dc2a65519d9002a4a1e7b962db57d444cf1a71565bb703e
+  prism (1.7.0) sha256=10062f734bf7985c8424c44fac382ac04a58124ea3d220ec3ba9fe4f2da65103
   prometheus_exporter (2.3.1) sha256=c501a7a46c3a3b515b152eecfaeffa65fd0b4c02d8e617a476c6d67a91fc6a04
   pry (0.15.2) sha256=12d54b8640d3fa29c9211dd4ffb08f3fd8bf7a4fd9b5a73ce5b59c8709385b6b
   pry-byebug (3.11.0) sha256=0b0abb7d309bc7f00044d512a3c8567274f7012b944b38becc8440439a1cea72
@@ -1200,7 +1201,7 @@ CHECKSUMS
   rb-inotify (0.11.1) sha256=a0a700441239b0ff18eb65e3866236cd78613d6b9f78fea1f9ac47a85e47be6e
   rb_sys (0.9.123) sha256=c22ae84d1bca3eec0f13a45ae4ca9ba6eace93d5be270a40a9c0a9a5b92a34e5
   rbtree (0.4.6) sha256=14eea4469b24fd2472542e5f3eb105d6344c8ccf36f0b56d55fdcfeb4e0f10fc
-  rdoc (7.0.1) sha256=7ae1540c54eb8174f6549440dd2299276eac51deaa7d80ea7db9ea5b96559f53
+  rdoc (7.0.3) sha256=dfe3d0981d19b7bba71d9dbaeb57c9f4e3a7a4103162148a559c4fc687ea81f9
   redis-client (0.26.1) sha256=1e39d2862c4516a75ff777ee6ed08827af39336bfece4a48e944244891d9a073
   regexp_parser (2.11.2) sha256=5e5e9c1485ffd8de53ab1d2807affd81f617f72967dfc64fc75a69e2cbf0ff98
   reline (0.6.3) sha256=1198b04973565b36ec0f11542ab3f5cfeeec34823f4e54cebde90968092b1835
