@@ -134,4 +134,78 @@ module StubBedrock
 
     stubs
   end
+
+  def stub_bedrock_invoke_model_openai_oss_faithfulness(retrieval_context:,
+                                                        answer_message:,
+                                                        truths_json: { truths: ["Truth."] }.to_json,
+                                                        claims_json: { claims: ["Claim."] }.to_json,
+                                                        verdicts_json: { verdicts: [{ "verdict" => "yes" }] }.to_json,
+                                                        reason_json: { reason: "This is the reason for the score." }.to_json)
+    prompts = AutoEvaluation::Prompts.config.faithfulness
+
+    truths = JSON.parse(truths_json).fetch("truths")
+    claims = JSON.parse(claims_json).fetch("claims")
+    verdicts = JSON.parse(verdicts_json).fetch("verdicts")
+
+    score = if verdicts.empty?
+              1.0
+            else
+              faithful_count = verdicts.count { |v| v["verdict"].strip.downcase != "no" }
+              (faithful_count.to_d / verdicts.count).round(2).to_f
+            end
+
+    contradictions = verdicts.select { |v| v["verdict"].strip.downcase == "no" }
+                             .map { |v| v["reason"] }
+
+    truths_user_prompt = sprintf(
+      prompts.fetch(:truths).fetch(:user_prompt),
+      retrieval_context:,
+    )
+    claims_user_prompt = sprintf(
+      prompts.fetch(:claims).fetch(:user_prompt),
+      answer: answer_message,
+    )
+    verdicts_user_prompt = sprintf(
+      prompts.fetch(:verdicts).fetch(:user_prompt),
+      claims:,
+      retrieval_context: truths.join("\n\n"),
+    )
+    reason_user_prompt = sprintf(
+      prompts.fetch(:reason).fetch(:user_prompt),
+      score:,
+      contradictions:,
+    )
+
+    truths_tools = [prompts.fetch(:truths).fetch(:tool_spec)]
+    claims_tools = [prompts.fetch(:claims).fetch(:tool_spec)]
+    verdicts_tools = [prompts.fetch(:verdicts).fetch(:tool_spec)]
+    reason_tools = [prompts.fetch(:reason).fetch(:tool_spec)]
+
+    stubs = {}
+    stubs[:truths] = stub_bedrock_invoke_model_openai_oss_tool_call(
+      truths_user_prompt,
+      truths_tools,
+      truths_json,
+    )
+
+    stubs[:claims] = stub_bedrock_invoke_model_openai_oss_tool_call(
+      claims_user_prompt,
+      claims_tools,
+      claims_json,
+    )
+
+    stubs[:verdicts] = stub_bedrock_invoke_model_openai_oss_tool_call(
+      verdicts_user_prompt,
+      verdicts_tools,
+      verdicts_json,
+    )
+
+    stubs[:reason] = stub_bedrock_invoke_model_openai_oss_tool_call(
+      reason_user_prompt,
+      reason_tools,
+      reason_json,
+    )
+
+    stubs
+  end
 end
