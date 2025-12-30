@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/alphagov/govuk_chat_private.git
-  revision: 94780dcddbff0a7794fde351fc7ecb08cb92d90f
+  revision: 039cf0cb3d7bf75b3a47a8f62c2f028122c99e9d
   specs:
     govuk_chat_private (0.0.1)
       activesupport (>= 8)
