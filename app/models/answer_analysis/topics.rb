@@ -1,5 +1,7 @@
-class AnswerAnalysis < ApplicationRecord
+class AnswerAnalysis::Topics < ApplicationRecord
   include LlmCallsRecordable
+
+  self.table_name = "answer_analysis_topics"
 
   belongs_to :answer
 

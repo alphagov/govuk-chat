@@ -29,8 +29,8 @@ RSpec.describe AnswerTopicsJob do
     it "creates an analysis for the answer based of the returned result" do
       expect {
         described_class.new.perform(answer.id)
-      }.to change(AnswerAnalysis, :count).by(1)
-      expect(answer.reload.analysis)
+      }.to change(AnswerAnalysis::Topics, :count).by(1)
+      expect(answer.reload.topics)
         .to have_attributes(
           primary_topic: topic_tagger_result.primary_topic,
           secondary_topic: topic_tagger_result.secondary_topic,
@@ -67,7 +67,7 @@ RSpec.describe AnswerTopicsJob do
     end
 
     context "when the answer analysis has tagged topics" do
-      let(:answer) { create(:answer, :with_analysis) }
+      let(:answer) { create(:answer, :with_topics) }
 
       it "logs a warning" do
         expect(described_class.logger)

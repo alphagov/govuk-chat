@@ -6,7 +6,7 @@ FactoryBot.define do
     completeness { :complete }
     sources { [] }
     feedback { nil }
-    analysis { nil }
+    topics { nil }
 
     trait :with_sources do
       sources do
@@ -29,8 +29,8 @@ FactoryBot.define do
       feedback { build(:answer_feedback) }
     end
 
-    trait :with_analysis do
-      analysis { build(:answer_analysis) }
+    trait :with_topics do
+      topics { build(:answer_analysis_topics) }
     end
   end
 end

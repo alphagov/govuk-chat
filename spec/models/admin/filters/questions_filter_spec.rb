@@ -260,9 +260,9 @@ RSpec.describe Admin::Filters::QuestionsFilter do
     end
 
     it "filters the results by primary topic" do
-      business_answer = build(:answer, analysis: build(:answer_analysis, primary_topic: "business"))
+      business_answer = build(:answer, topics: build(:answer_analysis_topics, primary_topic: "business"))
       business_question = create(:question, answer: business_answer)
-      tax_answer = build(:answer, analysis: build(:answer_analysis, primary_topic: "tax"))
+      tax_answer = build(:answer, topics: build(:answer_analysis_topics, primary_topic: "tax"))
       tax_question = create(:question, answer: tax_answer)
 
       filter = described_class.new(primary_topic: "business")
@@ -273,9 +273,9 @@ RSpec.describe Admin::Filters::QuestionsFilter do
     end
 
     it "filters the results by secondary topic" do
-      business_answer = build(:answer, analysis: build(:answer_analysis, secondary_topic: "business"))
+      business_answer = build(:answer, topics: build(:answer_analysis_topics, secondary_topic: "business"))
       business_question = create(:question, answer: business_answer)
-      tax_answer = build(:answer, analysis: build(:answer_analysis, secondary_topic: "tax"))
+      tax_answer = build(:answer, topics: build(:answer_analysis_topics, secondary_topic: "tax"))
       tax_question = create(:question, answer: tax_answer)
 
       filter = described_class.new(secondary_topic: "business")
@@ -405,7 +405,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
         question_routing_label: "vague_acronym_grammar",
         completeness: "complete",
       )
-      create(:answer_analysis, answer:, primary_topic: "business", secondary_topic: "tax")
+      create(:answer_analysis_topics, answer:, primary_topic: "business", secondary_topic: "tax")
     end
 
     today = Date.current

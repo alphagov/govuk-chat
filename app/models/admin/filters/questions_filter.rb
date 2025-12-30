@@ -30,7 +30,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
 
   def results
     @results ||= begin
-      scope = Question.includes(answer: %i[feedback analysis])
+      scope = Question.includes(answer: %i[feedback topics])
                       .left_outer_joins(:answer)
       scope = search_scope(scope)
       scope = status_scope(scope)
@@ -152,15 +152,15 @@ private
   def primary_topic_scope(scope)
     return scope if primary_topic.blank?
 
-    scope.joins(answer: :analysis)
-         .where(answer_analyses: { primary_topic: primary_topic })
+    scope.joins(answer: :topics)
+         .where(answer_analysis_topics: { primary_topic: primary_topic })
   end
 
   def secondary_topic_scope(scope)
     return scope if secondary_topic.blank?
 
-    scope.joins(answer: :analysis)
-         .where(answer_analyses: { secondary_topic: secondary_topic })
+    scope.joins(answer: :topics)
+         .where(answer_analysis_topics: { secondary_topic: secondary_topic })
   end
 
   def completeness_scope(scope)

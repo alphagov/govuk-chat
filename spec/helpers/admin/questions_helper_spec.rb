@@ -256,6 +256,6 @@ RSpec.describe Admin::QuestionsHelper do
   end
 
   def answer_from_db(answer)
-    Answer.includes(:sources, :feedback, :analysis).find(answer.id)
+    Answer.includes(:sources, :feedback, :topics).find(answer.id)
   end
 end

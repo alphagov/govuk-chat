@@ -7,7 +7,7 @@ class Admin::QuestionsController < Admin::BaseController
   def show
     question_scope = Question.includes(
       conversation: :signon_user,
-      answer: [{ sources: :chunk }, :feedback, :analysis],
+      answer: [{ sources: :chunk }, :feedback, :topics],
     )
 
     @question = question_scope.find(params[:id])
