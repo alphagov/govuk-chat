@@ -104,8 +104,8 @@ class Admin::MetricsController < Admin::BaseController
   end
 
   def topics
-    scope = AnswerAnalysis.joins(:answer)
-                          .where(answer: { created_at: start_time.. })
+    scope = AnswerAnalysis::Topics.joins(:answer)
+                                  .where(answer: { created_at: start_time.. })
 
     primary_topic_scope = scope.where.not(primary_topic: nil)
                                .group(:primary_topic)

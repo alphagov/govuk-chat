@@ -17,7 +17,7 @@ RSpec.describe "Admin user views metrics", :js do
     api_conversation = build(:conversation, source: :api, end_user_id: SecureRandom.uuid)
     create(:question, conversation: api_conversation)
     create_list(:answer_feedback, 1, created_at: 1.hour.ago)
-    create_list(:answer, 2, :with_analysis, created_at: 6.hours.ago, status: :unanswerable_llm_cannot_answer)
+    create_list(:answer, 2, :with_topics, created_at: 6.hours.ago, status: :unanswerable_llm_cannot_answer)
     create_list(:answer, 3, created_at: 4.hours.ago, status: :error_timeout)
     create_list(:answer, 1, created_at: 20.hours.ago, question_routing_label: :genuine_rag)
     create_list(:answer,

@@ -23,7 +23,7 @@ module Bigquery
 
     def export(export_from, export_until)
       tables = TABLES_TO_EXPORT.map do |table|
-        export = IndividualExport.call(table.name, export_from:, export_until:)
+        export = IndividualExport.call(table.model, export_from:, export_until:)
 
         {
           name: table.name,

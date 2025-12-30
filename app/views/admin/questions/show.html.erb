@@ -38,9 +38,9 @@ content_for(:active_navigation_item, admin_questions_path)
     label: "Analysis",
     content: render(
       "analysis_tab",
-      analysis: @answer.analysis,
+      topics: @answer.topics,
     ),
-  } if @answer&.analysis.present?
+  } if @answer&.topics.present?
 %>
 
 <div class="govuk-grid-row">

@@ -39,7 +39,7 @@ RSpec.describe Bigquery::Backfiller do
         described_class.call(table)
 
         expect(Bigquery::IndividualExport)
-          .to have_received(:call).with(table.name, export_until: previous_export.exported_until)
+          .to have_received(:call).with(table.model, export_until: previous_export.exported_until)
 
         expect(Bigquery::Uploader)
           .to have_received(:call).with(table.name,

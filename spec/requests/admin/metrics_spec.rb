@@ -475,20 +475,20 @@ RSpec.describe "Admin::MetricsController" do
 
     it "returns data of tagged topics for answers generated over the last 24 hours" do
       2.times do
-        create(:answer_analysis,
+        create(:answer_analysis_topics,
                answer: create(:answer, created_at: 2.hours.ago),
                primary_topic: "tax",
                secondary_topic: "benefits")
       end
       2.times do
-        create(:answer_analysis,
+        create(:answer_analysis_topics,
                answer: create(:answer, created_at: 10.hours.ago),
                primary_topic: "benefits",
                secondary_topic: "childcare")
       end
 
       create(
-        :answer_analysis,
+        :answer_analysis_topics,
         answer: create(:answer, created_at: 26.hours.ago),
         primary_topic: "tax",
         secondary_topic: "benefits",
@@ -506,19 +506,19 @@ RSpec.describe "Admin::MetricsController" do
     context "when period is last_7_days" do
       it "returns data of the tagged topics for answers by day" do
         2.times do
-          create(:answer_analysis,
+          create(:answer_analysis_topics,
                  answer: create(:answer, created_at: 3.days.ago),
                  primary_topic: "tax",
                  secondary_topic: "benefits")
         end
         2.times do
-          create(:answer_analysis,
+          create(:answer_analysis_topics,
                  answer: create(:answer, created_at: 4.days.ago),
                  primary_topic: "benefits",
                  secondary_topic: "childcare")
         end
         create(
-          :answer_analysis,
+          :answer_analysis_topics,
           answer: create(:answer, created_at: 8.days.ago),
           primary_topic: "tax",
           secondary_topic: "benefits",

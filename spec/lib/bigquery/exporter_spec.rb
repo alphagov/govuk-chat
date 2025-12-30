@@ -38,7 +38,7 @@ RSpec.describe Bigquery::Exporter do
         described_class.call
 
         expect(Bigquery::IndividualExport)
-          .to have_received(:call).with(first_table.name,
+          .to have_received(:call).with(first_table.model,
                                         export_from: instance_of(ActiveSupport::TimeWithZone),
                                         export_until: Time.current)
 
@@ -101,22 +101,23 @@ RSpec.describe Bigquery::Exporter do
       before do
         allow(Bigquery::IndividualExport)
           .to receive(:call)
-          .with(table_name, export_from: anything, export_until: anything) do
+          .with(table_model, export_from: anything, export_until: anything) do
             Bigquery::IndividualExport::Result.new(tempfile: nil, count: 0)
           end
       end
 
-      let(:table_name) { Bigquery::TABLES_TO_EXPORT.first.name }
+      let(:table_model) { Bigquery::TABLES_TO_EXPORT.first.model }
 
       it "does not call the uploader for that table" do
         described_class.call
 
-        expect(Bigquery::Uploader).not_to have_received(:call).with(table_name, anything, anything)
+        expect(Bigquery::Uploader).not_to have_received(:call).with(table_model, anything, anything)
       end
 
       it "returns a count of 0 in the table results" do
         result = described_class.call
 
+        table_name = Bigquery::TABLES_TO_EXPORT.first.name
         expect(result.tables[table_name]).to eq(0)
       end
     end

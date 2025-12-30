@@ -29,12 +29,12 @@ RSpec.describe "rake bigquery tasks" do
       previous_export = create(:bigquery_export, exported_until: 2.hours.ago)
       answer = create(:answer, created_at: 1.hour.ago)
       create(:answer_feedback, created_at: 1.hour.ago, answer:)
-      create(:answer_analysis, created_at: 1.hour.ago, answer:)
+      create(:answer_analysis_topics, created_at: 1.hour.ago, answer:)
 
       expected_counts = {
         "questions" => 1,
         "answer_feedback" => 1,
-        "answer_analysis" => 1,
+        "answer_analysis_topics" => 1,
       }
 
       tables_output = Bigquery::TABLES_TO_EXPORT.map do |table|
