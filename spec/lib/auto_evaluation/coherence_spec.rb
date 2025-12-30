@@ -4,7 +4,7 @@ RSpec.describe AutoEvaluation::Coherence, :aws_credentials_stubbed do
     let(:question_message) { "This is a test question message." }
     let(:answer_message) { "This is a test answer message." }
     let(:reason) { "This is the reason for the score." }
-    let(:response_json) { { score: 3.0, reason: }.to_json }
+    let(:response_json) { { score: 3, reason: }.to_json }
     let(:user_prompt) do
       sprintf(
         prompts.fetch(:user_prompt),
@@ -49,11 +49,11 @@ RSpec.describe AutoEvaluation::Coherence, :aws_credentials_stubbed do
 
     it "returns the correct score and success for each rubric score" do
       {
-        1.0 => 0.0,
-        2.0 => 0.25,
-        3.0 => 0.5,
-        4.0 => 0.75,
-        5.0 => 1.0,
+        1 => 0.0,
+        2 => 0.25,
+        3 => 0.5,
+        4 => 0.75,
+        5 => 1.0,
       }.each do |rubric_score, expected_score|
         response_json = { score: rubric_score, reason: }.to_json
         bedrock_invoke_model_openai_oss_tool_call(
