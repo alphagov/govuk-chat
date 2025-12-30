@@ -1,4 +1,4 @@
-RSpec.describe AnswerTopicsJob do
+RSpec.describe AnswerAnalysis::TagTopicsJob do
   include ActiveJob::TestHelper
   let(:answer) { create(:answer) }
   let(:question) { answer.question }
@@ -26,7 +26,7 @@ RSpec.describe AnswerTopicsJob do
       expect(AutoEvaluation::TopicTagger).to have_received(:call).with(question.message)
     end
 
-    it "creates an analysis for the answer based of the returned result" do
+    it "creates topics for the answer based of the returned result" do
       expect {
         described_class.new.perform(answer.id)
       }.to change(AnswerAnalysis::Topics, :count).by(1)
@@ -66,7 +66,7 @@ RSpec.describe AnswerTopicsJob do
       end
     end
 
-    context "when the answer analysis has tagged topics" do
+    context "when topics have been tagged" do
       let(:answer) { create(:answer, :with_topics) }
 
       it "logs a warning" do

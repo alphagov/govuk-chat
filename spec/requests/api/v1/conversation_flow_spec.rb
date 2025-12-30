@@ -73,7 +73,7 @@ RSpec.describe "Conversation API flow" do
         status: :answered,
       )
     end
-    allow(AnswerTopicsJob).to receive(:perform_later)
+    allow(AnswerAnalysis::TagTopicsJob).to receive(:perform_later)
 
     post api_v1_create_conversation_path,
          params: { user_question: "What is the capital of France?" },
