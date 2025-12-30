@@ -177,47 +177,33 @@ namespace :evaluation do
   task generate_answer_relevancy_evaluation: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
 
-    question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
-
-    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [
-      AnswerComposition::Pipeline::SearchResultFetcher,
-      AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
-    ])
-
-    if answer.status =~ /^error/
-      warn "Warning: answer has an error status: #{answer.status}"
-      abort(answer.error_message)
-    end
-
-    result = AutoEvaluation::AnswerRelevancy.call(
-      question_message: answer.rephrased_question || question.message,
-      answer_message: answer.message,
+    output = AutoEvaluation::RunMetricEvaluation.call(
+      metric_class: AutoEvaluation::AnswerRelevancy,
+      question_message: ENV["INPUT"],
     )
 
-    puts(result.to_json)
+    if output.is_a?(Answer)
+      warn "Warning: answer has an error status: #{output.status}"
+      abort(output.error_message)
+    end
+
+    puts(output.to_json)
   end
 
   desc "Run answer coherence evaluation for a user input"
   task generate_coherence_evaluation: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
 
-    question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
-
-    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [
-      AnswerComposition::Pipeline::SearchResultFetcher,
-      AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
-    ])
-
-    if answer.status =~ /^error/
-      warn "Warning: answer has an error status: #{answer.status}"
-      abort(answer.error_message)
-    end
-
-    result = AutoEvaluation::Coherence.call(
-      question_message: answer.rephrased_question || question.message,
-      answer_message: answer.message,
+    output = AutoEvaluation::RunMetricEvaluation.call(
+      metric_class: AutoEvaluation::Coherence,
+      question_message: ENV["INPUT"],
     )
 
-    puts(result.to_json)
+    if output.is_a?(Answer)
+      warn "Warning: answer has an error status: #{output.status}"
+      abort(output.error_message)
+    end
+
+    puts(output.to_json)
   end
 end
