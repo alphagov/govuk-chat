@@ -15,7 +15,7 @@ module Search
     private
 
       def weighting
-        Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS.fetch(document_type, 1.0)
+        Search::ResultsForQuestion::Reranker.document_type_weighting(schema_name, document_type, parent_document_type:)
       end
     end
   end

@@ -12,13 +12,15 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
         .and_return(titan_embedding)
 
       allow(Rails.configuration.search.thresholds).to receive_messages(minimum_score: min_score, max_results:)
-      stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS",
-                 { "guide" => 1.0, "notice" => 0.4, "about" => 0.3 })
+
+      allow(described_class::Reranker).to receive(:document_type_weighting).with("guide", "guide", parent_document_type: nil).and_return(1.0)
+      allow(described_class::Reranker).to receive(:document_type_weighting).with("corporate_information_page", "about", parent_document_type: nil).and_return(0.3)
+      allow(described_class::Reranker).to receive(:document_type_weighting).with("help_page", "help_page", parent_document_type: nil).and_return(0.4)
 
       populate_chunked_content_index([
-        build(:chunked_content_record, title: "find this", document_type: "guide", titan_embedding:),
-        build(:chunked_content_record, title: "not found 1", document_type: "notice", titan_embedding:),
-        build(:chunked_content_record, title: "not found 2", document_type: "about", titan_embedding:),
+        build(:chunked_content_record, title: "find this", schema_name: "guide", document_type: "guide", titan_embedding:),
+        build(:chunked_content_record, title: "not found 1", schema_name: "help_page", document_type: "help_page", titan_embedding:),
+        build(:chunked_content_record, title: "not found 2", schema_name: "corporate_information_page", document_type: "about", titan_embedding:),
       ])
 
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5, 101.6, 103.6, 103.7, 104.7)

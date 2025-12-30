@@ -14,10 +14,6 @@ module Chunking::ContentItemParsing
       ]
     end
 
-    def self.allowed_schemas
-      %w[step_by_step_nav]
-    end
-
   private
 
     def parse_details_field

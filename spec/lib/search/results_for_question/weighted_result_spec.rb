@@ -1,11 +1,15 @@
 RSpec.describe Search::ResultsForQuestion::WeightedResult do
   let(:score) { 1.7 }
   let(:weighted_score) { 0.85 }
-  let(:result) { Search::ChunkedContentRepository::Result.new(score:, document_type: "guide") }
+  let(:result) do
+    Search::ChunkedContentRepository::Result.new(score:, schema_name: "guide", document_type: "guide")
+  end
   let(:reranked_result) { described_class.new(result:, weighted_score:) }
 
   before do
-    stub_const("Search::ResultsForQuestion::Reranker::DOCUMENT_TYPE_WEIGHTINGS", { "guide" => 0.5 })
+    allow(Search::ResultsForQuestion::Reranker).to receive(:document_type_weighting).with("guide", "guide", parent_document_type: nil).and_return(
+      0.5,
+    )
   end
 
   it "returns the weighted_score" do

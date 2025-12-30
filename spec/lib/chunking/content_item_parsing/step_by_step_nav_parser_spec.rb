@@ -1,15 +1,4 @@
 RSpec.describe Chunking::ContentItemParsing::StepByStepNavParser do
-  include ContentItemParserExamples
-
-  it_behaves_like "a chunking content item parser", described_class.allowed_schemas do
-    let(:content_item) do
-      build(
-        :notification_content_item,
-        schema_name: "step_by_step_nav",
-        details:,
-      )
-    end
-  end
   let(:details) do
     {
       "step_by_step_nav" => {

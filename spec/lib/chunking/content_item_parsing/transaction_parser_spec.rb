@@ -1,23 +1,4 @@
 RSpec.describe Chunking::ContentItemParsing::TransactionParser do
-  include ContentItemParserExamples
-
-  it_behaves_like "a chunking content item parser", described_class.allowed_schemas do
-    let(:content_item) do
-      build(
-        :notification_content_item,
-        schema_name:,
-        details: {
-          "introductory_paragraph" => [
-            {
-              "content_type" => "text/html",
-              "content" => "<p>Content/p>",
-            },
-          ],
-        },
-      )
-    end
-  end
-
   describe ".call" do
     it "uses the introductory_paragraph, more_information, other_ways_to_apply and what_you_need_to_know fields for chunks" do
       details = {

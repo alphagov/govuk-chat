@@ -1,10 +1,4 @@
 RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
-  include ContentItemParserExamples
-
-  it_behaves_like "a chunking content item parser", described_class.allowed_schemas do
-    let(:content_item) { build(:notification_content_item, body: "<p>Content</p>", schema_name:) }
-  end
-
   describe ".call" do
     it "returns chunks for a HTML body field" do
       body = '<h2 id="heading-1">Heading 1</h2><p>Content 1</p><h2 id="heading-2">Heading 2</h2><p>Content 2</p>'
@@ -28,51 +22,6 @@ RSpec.describe Chunking::ContentItemParsing::BodyContentParser do
 
       expect { described_class.call(content_item) }
         .to raise_error("nil value in details hash for body in schema: generic")
-    end
-  end
-
-  describe ".non_indexable_content_item_reason" do
-    it "returns nil for a schema that doesn't care about document type" do
-      content_item = build(:notification_content_item, schema_name: "service_manual_guide")
-      expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
-    end
-
-    it "rejects unsupported document types for 'publication' schema" do
-      content_item = build(:notification_content_item, schema_name: "publication", document_type: "correspondence")
-      expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
-        "document type: correspondence not supported for schema: publication",
-      )
-    end
-
-    it "allows other document types for 'publication' schema" do
-      content_item = build(:notification_content_item, schema_name: "publication", document_type: "guidance")
-      expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
-    end
-
-    context "when the schema is html_publication" do
-      context "when the content item has no parent link" do
-        let(:content_item) { build(:notification_content_item, schema_name: "html_publication", parent_document_type: nil) }
-
-        it "returns error that parent is missing" do
-          expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
-            "HTML publication lacks a parent document_type",
-          )
-        end
-      end
-
-      context "when the content_item has a parent link" do
-        it "doesn't support parsing an excluded item with a message" do
-          content_item = build(:notification_content_item, schema_name: "html_publication", parent_document_type: "decision")
-          expect(described_class.non_indexable_content_item_reason(content_item)).to eq(
-            "html_publication items with parent document type: decision are not supported",
-          )
-        end
-
-        it "supports parsing other items" do
-          content_item = build(:notification_content_item, schema_name: "html_publication", parent_document_type: "guidance")
-          expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
-        end
-      end
     end
   end
 end

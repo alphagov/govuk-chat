@@ -1,0 +1,33 @@
+type: object
+required:
+  - parser
+  - document_types
+additionalProperties: false
+properties:
+  parser:
+    type: string
+  document_types:
+    type: object
+    additionalProperties: false
+    patternProperties:
+      ".*":
+        oneOf:
+          - type: "null"
+          - type: object
+            additionalProperties: false
+            properties:
+              weight: &weight
+                type: number
+                min: 0
+                max: 2
+              requires_parent_document_type:
+                type: object
+                additionalProperties: false
+                patternProperties:
+                  ".*":
+                    oneOf:
+                      - type: "null"
+                      - type: object
+                        additionalProperties: false
+                        properties:
+                          weight: *weight
