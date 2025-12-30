@@ -4,18 +4,18 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
     let(:tools) do
       [
         {
-          type: "function",
-          function: {
-            name: "test_schema",
-            description: "A test JSON schema",
-            schema: {
-              type: "object",
-              properties: {
-                response: { type: "string" },
+          "type" => "function",
+          "function" => {
+            "name" => "test_schema",
+            "description" => "A test JSON schema",
+            "parameters" => {
+              "type" => "object",
+              "properties" => {
+                "response" => { "type" => "string" },
               },
-              required: %w[response],
+              "required" => %w[response],
             },
-            strict: true,
+            "strict" => true,
           },
         },
       ]
@@ -53,6 +53,21 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
           llm_cached_tokens: nil,
           model: described_class::MODEL,
         },
+      )
+    end
+
+    it "raises an error if the response does not conform to the schema" do
+      bedrock_invoke_model_openai_oss_tool_call(
+        user_message,
+        tools,
+        { "invalid_key" => "This does not conform to the schema." }.to_json,
+      )
+
+      expect {
+        described_class.call(user_message, tools)
+      }.to raise_error(
+        described_class::InvalidToolCallSchemaError,
+        /The property '#\/' did not contain a required property of 'response'/,
       )
     end
   end

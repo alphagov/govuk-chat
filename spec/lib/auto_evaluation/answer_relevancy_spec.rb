@@ -23,8 +23,8 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
 
     let(:verdicts) do
       [
-        { "verdict" => "Yes" },
-        { "verdict" => "No", "reason" => "The statement is irrelevant." },
+        { "verdict" => "yes" },
+        { "verdict" => "no", "reason" => "The statement is irrelevant." },
       ]
     end
     let(:verdicts_json) { { verdicts: }.to_json }
@@ -104,7 +104,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
       let(:verdicts) do
         [
           { "verdict" => "idk", "reason" => "Cannot determine relevance." },
-          { "verdict" => "No", "reason" => "The statement is irrelevant." },
+          { "verdict" => "no", "reason" => "The statement is irrelevant." },
         ]
       end
 
@@ -172,7 +172,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
     end
 
     context "when verdicts are generated and none have a 'no' verdict" do
-      let(:verdicts_json) { { verdicts: [{ "verdict" => "Yes" }, { "verdict" => "Yes" }] }.to_json }
+      let(:verdicts_json) { { verdicts: [{ "verdict" => "yes" }, { "verdict" => "yes" }] }.to_json }
 
       it "returns a result object with the expected attributes" do
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0, 204.0, 206.0)
