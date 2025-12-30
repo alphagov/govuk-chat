@@ -30,59 +30,53 @@ RSpec.describe "rake evaluation tasks" do
   end
 
   shared_examples "a task that returns a ScoreResult" do
+    let(:question_message) { "What is the current VAT rate?" }
     let(:answer) { build(:answer) }
-    let(:evaluation_result) do
-      AutoEvaluation::ScoreResult.new(
-        score: 0.7,
-        reason: "Most statements are relevant.",
-        success: true,
-        llm_responses: {},
-        metrics: {},
-      )
-    end
+    let(:score_result) { build(:auto_evaluation_score_result) }
 
     before do
       Rake::Task[task_name].reenable
-
-      allow(AnswerComposition::PipelineRunner)
-        .to receive(:call)
-        .with(
-          question: an_instance_of(Question),
-          pipeline: [
-            AnswerComposition::Pipeline::SearchResultFetcher,
-            AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
-          ],
-        )
-        .and_return(answer)
     end
 
     it_behaves_like "a task requiring an input"
 
-    it "outputs the evaluation result as JSON to stdout" do
-      ClimateControl.modify(INPUT: question_message) do
-        expected_result_output = {
-          score: evaluation_result.score,
-          reason: evaluation_result.reason,
-          success: evaluation_result.success,
-          llm_responses: evaluation_result.llm_responses,
-          metrics: evaluation_result.metrics,
-        }.to_json
+    it "outputs the evaluation result as to stdout" do
+      allow(AutoEvaluation::EvaluateAnswerFromQuestionMessage)
+        .to receive(:call)
+        .with(
+          evaluation_class:,
+          question_message:,
+        )
+        .and_return(score_result)
 
+      ClimateControl.modify(INPUT: question_message) do
         expect { Rake::Task[task_name].invoke }
-          .to output("#{expected_result_output}\n").to_stdout
+          .to output("#{score_result.to_json}\n").to_stdout
       end
     end
 
-    context "when an answer has an error status" do
-      let(:error_message) { "Answer generation failed" }
-      let(:answer) { build(:answer, status: :error_answer_service_error, error_message:) }
+    context "when a TaskFailedError is raised" do
+      let(:answer) do
+        build(
+          :answer,
+          status: :error_answer_service_error,
+          error_message: "Contrived error message",
+        )
+      end
 
-      it "warns the user and outputs the error message" do
+      it "catches the error and aborts with the error message" do
+        allow(AutoEvaluation::EvaluateAnswerFromQuestionMessage)
+          .to receive(:call)
+          .with(
+            evaluation_class:,
+            question_message:,
+          )
+          .and_raise(AutoEvaluation::EvaluateAnswerFromQuestionMessage::TaskFailedError.new("Contrived error."))
+
         ClimateControl.modify(INPUT: question_message) do
-          expected_stderr = "Warning: answer has an error status: #{answer.status}\n#{error_message}\n"
           expect { Rake::Task[task_name].invoke }
             .to raise_error(SystemExit)
-            .and output(expected_stderr).to_stderr
+            .and output("Contrived error.\n").to_stderr
         end
       end
     end
@@ -582,37 +576,16 @@ RSpec.describe "rake evaluation tasks" do
   end
 
   describe "generate_answer_relevancy_evaluation" do
-    let(:question_message) { "What is the current VAT rate?" }
-
     it_behaves_like "a task that returns a ScoreResult" do
       let(:task_name) { "evaluation:generate_answer_relevancy_evaluation" }
-
-      before do
-        allow(AutoEvaluation::AnswerRelevancy)
-          .to receive(:call)
-          .with(
-            question_message:,
-            answer_message: answer.message,
-          )
-          .and_return(evaluation_result)
-      end
+      let(:evaluation_class) { AutoEvaluation::AnswerRelevancy }
     end
   end
 
   describe "generate_coherence_evaluation" do
     it_behaves_like "a task that returns a ScoreResult" do
-      let(:question_message) { "What is the current VAT rate?" }
       let(:task_name) { "evaluation:generate_coherence_evaluation" }
-
-      before do
-        allow(AutoEvaluation::Coherence)
-          .to receive(:call)
-          .with(
-            question_message:,
-            answer_message: answer.message,
-          )
-          .and_return(evaluation_result)
-      end
+      let(:evaluation_class) { AutoEvaluation::Coherence }
     end
   end
 end

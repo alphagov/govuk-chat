@@ -177,47 +177,31 @@ namespace :evaluation do
   task generate_answer_relevancy_evaluation: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
 
-    question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
+    begin
+      result = AutoEvaluation::EvaluateAnswerFromQuestionMessage.call(
+        evaluation_class: AutoEvaluation::AnswerRelevancy,
+        question_message: ENV["INPUT"],
+      )
 
-    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [
-      AnswerComposition::Pipeline::SearchResultFetcher,
-      AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
-    ])
-
-    if answer.status =~ /^error/
-      warn "Warning: answer has an error status: #{answer.status}"
-      abort(answer.error_message)
+      puts result.to_json
+    rescue AutoEvaluation::EvaluateAnswerFromQuestionMessage::TaskFailedError => e
+      abort e.message
     end
-
-    result = AutoEvaluation::AnswerRelevancy.call(
-      question_message: answer.rephrased_question || question.message,
-      answer_message: answer.message,
-    )
-
-    puts(result.to_json)
   end
 
   desc "Run answer coherence evaluation for a user input"
   task generate_coherence_evaluation: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
 
-    question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
+    begin
+      result = AutoEvaluation::EvaluateAnswerFromQuestionMessage.call(
+        evaluation_class: AutoEvaluation::Coherence,
+        question_message: ENV["INPUT"],
+      )
 
-    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [
-      AnswerComposition::Pipeline::SearchResultFetcher,
-      AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
-    ])
-
-    if answer.status =~ /^error/
-      warn "Warning: answer has an error status: #{answer.status}"
-      abort(answer.error_message)
+      puts result.to_json
+    rescue AutoEvaluation::EvaluateAnswerFromQuestionMessage::TaskFailedError => e
+      abort e.message
     end
-
-    result = AutoEvaluation::Coherence.call(
-      question_message: answer.rephrased_question || question.message,
-      answer_message: answer.message,
-    )
-
-    puts(result.to_json)
   end
 end
