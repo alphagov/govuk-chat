@@ -197,4 +197,30 @@ namespace :evaluation do
 
     puts(result.to_json)
   end
+
+  desc "Run faithfulness evaluation for a user input"
+  task generate_faithfulness_evaluation: :environment do
+    raise "Requires an INPUT env var" if ENV["INPUT"].blank?
+
+    question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
+
+    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [
+      AnswerComposition::Pipeline::SearchResultFetcher,
+      AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
+    ])
+
+    if answer.status =~ /^error/
+      warn "Warning: answer has an error status: #{answer.status}"
+      abort(answer.error_message)
+    end
+
+    retrieval_context = answer.sources.used.map(&:plain_content).join("\n\n")
+
+    result = AutoEvaluation::Faithfulness.call(
+      answer_message: answer.message,
+      retrieval_context:,
+    )
+
+    puts(result.to_json)
+  end
 end
