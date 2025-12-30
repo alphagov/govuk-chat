@@ -3,7 +3,7 @@ RSpec.describe AnswerTopicsJob do
   let(:answer) { create(:answer) }
   let(:question) { answer.question }
   let(:topic_tagger_result) do
-    AnswerAnalysisGeneration::TopicTagger::Result.new(
+    AutoEvaluation::TopicTagger::Result.new(
       primary_topic: "business",
       secondary_topic: "benefits",
       metrics: {
@@ -16,14 +16,14 @@ RSpec.describe AnswerTopicsJob do
     )
   end
 
-  before { allow(AnswerAnalysisGeneration::TopicTagger).to receive(:call).and_return(topic_tagger_result) }
+  before { allow(AutoEvaluation::TopicTagger).to receive(:call).and_return(topic_tagger_result) }
 
   it_behaves_like "a job in queue", "default"
 
   describe "#perform" do
-    it "calls the AnswerAnalysisGeneration::TopicTagger with the answer message" do
+    it "calls the AutoEvaluation::TopicTagger with the answer message" do
       described_class.new.perform(answer.id)
-      expect(AnswerAnalysisGeneration::TopicTagger).to have_received(:call).with(question.message)
+      expect(AutoEvaluation::TopicTagger).to have_received(:call).with(question.message)
     end
 
     it "creates an analysis for the answer based of the returned result" do
@@ -42,10 +42,10 @@ RSpec.describe AnswerTopicsJob do
     context "when the answer has a rephrased_question" do
       let(:rephrased_question) { "This is a rephrased_question" }
 
-      it "calls the AnswerAnalysisGeneration::TopicTagger with the rephrased question" do
+      it "calls the AutoEvaluation::TopicTagger with the rephrased question" do
         answer = create(:answer, rephrased_question: rephrased_question)
         described_class.new.perform(answer.id)
-        expect(AnswerAnalysisGeneration::TopicTagger).to have_received(:call).with(rephrased_question)
+        expect(AutoEvaluation::TopicTagger).to have_received(:call).with(rephrased_question)
       end
     end
 
@@ -60,9 +60,9 @@ RSpec.describe AnswerTopicsJob do
         described_class.new.perform(answer_id)
       end
 
-      it "doesn't call the TopicTagger" do
+      it "doesn't call the AutoEvaluation::TopicTagger" do
         described_class.new.perform(answer_id)
-        expect(AnswerAnalysisGeneration::TopicTagger).not_to have_received(:call)
+        expect(AutoEvaluation::TopicTagger).not_to have_received(:call)
       end
     end
 
@@ -78,9 +78,9 @@ RSpec.describe AnswerTopicsJob do
       end
     end
 
-    context "when TopicTagger raises an Anthropic::Errors::APIError" do
+    context "when AutoEvaluation::TopicTagger raises an Anthropic::Errors::APIError" do
       it "retries the job the max number of times" do
-        allow(AnswerAnalysisGeneration::TopicTagger).to receive(:call)
+        allow(AutoEvaluation::TopicTagger).to receive(:call)
           .and_raise(Anthropic::Errors::APIError.new(
                        url: "url",
                      ))
@@ -106,8 +106,8 @@ RSpec.describe AnswerTopicsJob do
         described_class.new.perform(answer.id)
       end
 
-      it "does not call the TopicTagger" do
-        expect(AnswerAnalysisGeneration::TopicTagger).not_to receive(:call)
+      it "does not call the AutoEvaluation::TopicTagger" do
+        expect(AutoEvaluation::TopicTagger).not_to receive(:call)
         described_class.new.perform(answer.id)
       end
     end
