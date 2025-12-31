@@ -55,6 +55,7 @@ class Answer < ApplicationRecord
   has_many :sources, -> { order(relevancy: :asc) }, class_name: "AnswerSource"
   has_one :feedback, class_name: "AnswerFeedback"
   has_one :topics, class_name: "AnswerAnalysis::Topics"
+  has_one :answer_relevancy_aggregate, class_name: "AnswerAnalysis::AnswerRelevancyAggregate"
 
   enum :status,
        {

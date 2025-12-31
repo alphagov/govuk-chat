@@ -14,6 +14,11 @@ class ComposeAnswerJob < ApplicationJob
       logger.warn("Already an answer created for #{question_id}")
     end
 
-    AnswerAnalysis::TagTopicsJob.perform_later(answer.id) if answer.persisted?
+    if answer.persisted?
+      # TODO: Once we've added a few metrics we should move these to a single job that
+      # kicks off all analysis jobs.
+      AnswerAnalysis::TagTopicsJob.perform_later(answer.id)
+      AnswerAnalysis::AnswerRelevancyJob.perform_later(answer.id)
+    end
   end
 end
