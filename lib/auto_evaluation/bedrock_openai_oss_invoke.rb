@@ -1,5 +1,6 @@
 module AutoEvaluation
   class BedrockOpenAIOssInvoke
+    class InvalidToolCallSchemaError < StandardError; end
     Result = Data.define(
       :evaluation_data,
       :llm_response,
@@ -33,12 +34,14 @@ module AutoEvaluation
         }.to_json,
       )
       parsed_response = JSON.parse(response.body.read)
-      parsed_structured_output = JSON.parse(
+      parsed_tool_output = JSON.parse(
         parsed_response["choices"][0]["message"]["tool_calls"][0]["function"]["arguments"],
       )
 
+      validate_tool_output_against_schema(parsed_tool_output)
+
       Result.new(
-        evaluation_data: parsed_structured_output,
+        evaluation_data: parsed_tool_output,
         llm_response: parsed_response,
         metrics: build_metrics(start_time, parsed_response),
       )
@@ -56,6 +59,13 @@ module AutoEvaluation
         llm_cached_tokens: nil,
         model: response["model"],
       }
+    end
+
+    def validate_tool_output_against_schema(tool_output)
+      schema = tools.dig(0, "function", "parameters")
+      JSON::Validator.validate!(schema, tool_output)
+    rescue JSON::Schema::ValidationError => e
+      raise InvalidToolCallSchemaError, "Tool call response does not match schema: #{e.message}"
     end
   end
 end

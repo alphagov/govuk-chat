@@ -4,8 +4,8 @@ RSpec.describe AutoEvaluation::AnswerRelevancy::VerdictsGenerator, :aws_credenti
     let(:statements) { ["Statement one.", "Statement two."] }
     let(:verdicts) do
       [
-        { "verdict" => "Yes" },
-        { "verdict" => "No", "reason" => "The statement is irrelevant." },
+        { "verdict" => "yes" },
+        { "verdict" => "no", "reason" => "The statement is irrelevant." },
       ]
     end
     let(:verdicts_json) do
