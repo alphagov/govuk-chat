@@ -3,10 +3,10 @@ FactoryBot.define do
     skip_create
 
     score { 0.85.to_d }
-    reason { "Most statements are relevant." }
+    sequence(:reason) { |n| "Reason #{n}" }
     success { true }
-    llm_responses { {} }
-    metrics { {} }
+    sequence(:llm_responses) { |n| { "llm_response" => { "reason" => "Reason #{n}" } } }
+    sequence(:metrics) { |n| { "llm_response" => { "duration" => n } } }
 
     initialize_with { new(**attributes) }
   end
