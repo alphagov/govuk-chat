@@ -22,10 +22,7 @@ module AutoEvaluation
         raise TaskFailedError, error_message
       end
 
-      evaluation_class.call(
-        question_message:,
-        answer_message: answer.message,
-      )
+      evaluation_class.call(answer)
     end
 
   private

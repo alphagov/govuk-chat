@@ -3,15 +3,14 @@ class AutoEvaluation::AnswerRelevancy
 
   def self.call(...) = new(...).call
 
-  def initialize(question_message:, answer_message:)
-    @question_message = question_message
-    @answer_message = answer_message
+  def initialize(answer)
+    @answer = answer
     @llm_responses = {}
     @metrics = {}
   end
 
   def call
-    statements, llm_responses[:statements], metrics[:statements] = StatementGenerator.call(answer_message:)
+    statements, llm_responses[:statements], metrics[:statements] = StatementGenerator.call(answer_message: answer.message)
 
     if statements.empty?
       return build_maximum_score_result(
@@ -58,8 +57,12 @@ class AutoEvaluation::AnswerRelevancy
 
 private
 
-  attr_reader :question_message, :answer_message
+  attr_reader :answer
   attr_accessor :llm_responses, :metrics
+
+  def question_message
+    answer.rephrased_question || answer.question.message
+  end
 
   def calculate_score(verdicts)
     verdict_count = verdicts.count

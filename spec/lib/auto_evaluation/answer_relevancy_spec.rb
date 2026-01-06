@@ -3,6 +3,8 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
     let(:prompts) { AutoEvaluation::Prompts.config.answer_relevancy }
     let(:question_message) { "This is a test question message." }
     let(:answer_message) { "This is a test answer message." }
+    let(:question) { build(:question, message: question_message) }
+    let(:answer) { build(:answer, question:, message: answer_message) }
 
     let(:statements) { ["This is the first statement.", "This is the second statement."] }
     let(:statements_json) { { statements: }.to_json }
@@ -67,10 +69,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
       allow(Clock).to receive(:monotonic_time)
                   .and_return(200.0, 202.0, 204.0, 206.0, 208.0, 210.0)
 
-      result = described_class.call(
-        question_message:,
-        answer_message:,
-      )
+      result = described_class.call(answer)
 
       expected_llm_responses = {
         statements: JSON.parse(statements_stub.response.body),
@@ -100,6 +99,16 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         )
     end
 
+    context "when the answer has a rephrased question" do
+      let(:question_message) { "This is a rephrased test question." }
+      let(:answer) { build(:answer, message: answer_message, rephrased_question: question_message) }
+
+      it "uses the rephrased question in the prompt" do
+        result = described_class.call(answer)
+        expect(result.reason).to eq(reason)
+      end
+    end
+
     context "when 'idk' verdicts are present" do
       let(:verdicts) do
         [
@@ -109,10 +118,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
       end
 
       it "treats 'idk' verdicts as positive in the score" do
-        result = described_class.call(
-          question_message:,
-          answer_message:,
-        )
+        result = described_class.call(answer)
 
         expect(result.score).to eq(0.5)
       end
@@ -124,10 +130,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
       it "returns a result object with the expected attributes" do
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0)
 
-        result = described_class.call(
-          question_message:,
-          answer_message:,
-        )
+        result = described_class.call(answer)
 
         expect(result)
           .to be_a(AutoEvaluation::ScoreResult)
@@ -148,10 +151,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         allow(Clock).to receive(:monotonic_time)
                     .and_return(200.0, 202.0, 204.0, 206.0)
 
-        result = described_class.call(
-          question_message:,
-          answer_message:,
-        )
+        result = described_class.call(answer)
 
         expect(result)
           .to be_a(AutoEvaluation::ScoreResult)
@@ -177,10 +177,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
       it "returns a result object with the expected attributes" do
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0, 204.0, 206.0)
 
-        result = described_class.call(
-          question_message:,
-          answer_message:,
-        )
+        result = described_class.call(answer)
 
         expect(result)
           .to be_a(AutoEvaluation::ScoreResult)
