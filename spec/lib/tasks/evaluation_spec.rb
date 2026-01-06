@@ -29,6 +29,59 @@ RSpec.describe "rake evaluation tasks" do
     end
   end
 
+  shared_examples "a task that returns a ScoreResult" do
+    let(:question_message) { "What is the current VAT rate?" }
+    let(:answer) { build(:answer) }
+    let(:score_result) { build(:auto_evaluation_score_result) }
+
+    before do
+      Rake::Task[task_name].reenable
+    end
+
+    it_behaves_like "a task requiring an input"
+
+    it "outputs the evaluation result as to stdout" do
+      allow(AutoEvaluation::EvaluateAnswerFromQuestionMessage)
+        .to receive(:call)
+        .with(
+          evaluation_class:,
+          question_message:,
+        )
+        .and_return(score_result)
+
+      ClimateControl.modify(INPUT: question_message) do
+        expect { Rake::Task[task_name].invoke }
+          .to output("#{score_result.to_json}\n").to_stdout
+      end
+    end
+
+    context "when a TaskFailedError is raised" do
+      let(:answer) do
+        build(
+          :answer,
+          status: :error_answer_service_error,
+          error_message: "Contrived error message",
+        )
+      end
+
+      it "catches the error and aborts with the error message" do
+        allow(AutoEvaluation::EvaluateAnswerFromQuestionMessage)
+          .to receive(:call)
+          .with(
+            evaluation_class:,
+            question_message:,
+          )
+          .and_raise(AutoEvaluation::EvaluateAnswerFromQuestionMessage::TaskFailedError.new("Contrived error."))
+
+        ClimateControl.modify(INPUT: question_message) do
+          expect { Rake::Task[task_name].invoke }
+            .to raise_error(SystemExit)
+            .and output("Contrived error.\n").to_stderr
+        end
+      end
+    end
+  end
+
   describe "generate_answer" do
     let(:task_name) { "evaluation:generate_answer" }
     let(:input) { "What is the current VAT rate?" }
@@ -523,72 +576,16 @@ RSpec.describe "rake evaluation tasks" do
   end
 
   describe "generate_answer_relevancy_evaluation" do
-    let(:task_name) { "evaluation:generate_answer_relevancy_evaluation" }
-    let(:question_message) { "What is the current VAT rate?" }
-    let(:answer) { build(:answer) }
-    let(:evaluation_result) do
-      AutoEvaluation::AnswerRelevancy::Result.new(
-        score: 0.7,
-        reason: "Most statements are relevant.",
-        success: true,
-        llm_responses: {},
-        metrics: {},
-      )
+    it_behaves_like "a task that returns a ScoreResult" do
+      let(:task_name) { "evaluation:generate_answer_relevancy_evaluation" }
+      let(:evaluation_class) { AutoEvaluation::AnswerRelevancy }
     end
+  end
 
-    before do
-      Rake::Task[task_name].reenable
-
-      allow(AnswerComposition::PipelineRunner)
-        .to receive(:call)
-        .with(
-          question: an_instance_of(Question),
-          pipeline: [
-            AnswerComposition::Pipeline::Claude::QuestionRouter,
-            AnswerComposition::Pipeline::SearchResultFetcher,
-            AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
-          ],
-        )
-        .and_return(answer)
-
-      allow(AutoEvaluation::AnswerRelevancy)
-        .to receive(:call)
-        .with(
-          question_message:,
-          answer_message: answer.message,
-        )
-        .and_return(evaluation_result)
-    end
-
-    it_behaves_like "a task requiring an input"
-
-    it "outputs the evaluation result as JSON to stdout" do
-      ClimateControl.modify(INPUT: question_message) do
-        expected_result_output = {
-          score: evaluation_result.score,
-          reason: evaluation_result.reason,
-          success: evaluation_result.success,
-          llm_responses: evaluation_result.llm_responses,
-          metrics: evaluation_result.metrics,
-        }.to_json
-
-        expect { Rake::Task[task_name].invoke }
-          .to output("#{expected_result_output}\n").to_stdout
-      end
-    end
-
-    context "when an answer has an error status" do
-      let(:error_message) { "Answer generation failed" }
-      let(:answer) { build(:answer, status: :error_answer_service_error, error_message:) }
-
-      it "warns the user and outputs the error message" do
-        ClimateControl.modify(INPUT: question_message) do
-          expected_stderr = "Warning: answer has an error status: #{answer.status}\n#{error_message}\n"
-          expect { Rake::Task[task_name].invoke }
-            .to raise_error(SystemExit)
-            .and output(expected_stderr).to_stderr
-        end
-      end
+  describe "generate_coherence_evaluation" do
+    it_behaves_like "a task that returns a ScoreResult" do
+      let(:task_name) { "evaluation:generate_coherence_evaluation" }
+      let(:evaluation_class) { AutoEvaluation::Coherence }
     end
   end
 end

@@ -23,8 +23,8 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
 
     let(:verdicts) do
       [
-        { "verdict" => "Yes" },
-        { "verdict" => "No", "reason" => "The statement is irrelevant." },
+        { "verdict" => "yes" },
+        { "verdict" => "no", "reason" => "The statement is irrelevant." },
       ]
     end
     let(:verdicts_json) { { verdicts: }.to_json }
@@ -90,7 +90,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         reason: shared_expected_metrics_attributes,
       }
       expect(result)
-        .to be_a(described_class::Result)
+        .to be_a(AutoEvaluation::ScoreResult)
         .and have_attributes(
           score: 0.5,
           reason:,
@@ -104,7 +104,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
       let(:verdicts) do
         [
           { "verdict" => "idk", "reason" => "Cannot determine relevance." },
-          { "verdict" => "No", "reason" => "The statement is irrelevant." },
+          { "verdict" => "no", "reason" => "The statement is irrelevant." },
         ]
       end
 
@@ -130,7 +130,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         )
 
         expect(result)
-          .to be_a(described_class::Result)
+          .to be_a(AutoEvaluation::ScoreResult)
           .and have_attributes(
             score: 1.0,
             reason: "No statements were extracted from the answer.",
@@ -154,7 +154,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         )
 
         expect(result)
-          .to be_a(described_class::Result)
+          .to be_a(AutoEvaluation::ScoreResult)
           .and have_attributes(
             score: 1.0,
             reason: "No verdicts were generated for the extracted statements.",
@@ -172,7 +172,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
     end
 
     context "when verdicts are generated and none have a 'no' verdict" do
-      let(:verdicts_json) { { verdicts: [{ "verdict" => "Yes" }, { "verdict" => "Yes" }] }.to_json }
+      let(:verdicts_json) { { verdicts: [{ "verdict" => "yes" }, { "verdict" => "yes" }] }.to_json }
 
       it "returns a result object with the expected attributes" do
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0, 204.0, 206.0)
@@ -183,7 +183,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         )
 
         expect(result)
-          .to be_a(described_class::Result)
+          .to be_a(AutoEvaluation::ScoreResult)
           .and have_attributes(
             score: 1.0,
             reason: "The response fully addressed the input with no irrelevant statements.",
