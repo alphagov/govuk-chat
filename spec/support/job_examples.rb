@@ -75,4 +75,16 @@ module JobExamples
       end
     end
   end
+
+  shared_examples "a job that retries on errors" do |error_class|
+    let(:answer) { create(:answer) }
+    it "retries the job the max number of times on #{error_class}" do
+      described_class.perform_later(answer.id)
+
+      assert_performed_jobs described_class::MAX_RETRIES do
+        expect { perform_enqueued_jobs }
+          .to raise_error(error_class)
+      end
+    end
+  end
 end

@@ -19,6 +19,13 @@ RSpec.describe AnswerAnalysis::AnswerRelevancyJob do
 
   it_behaves_like "a job in queue", "default"
   it_behaves_like "a job that adheres to the auto_evaluation quota", AutoEvaluation::AnswerRelevancy
+  it_behaves_like "a job that retries on errors", Aws::Errors::ServiceError do
+    before do
+      allow(AutoEvaluation::AnswerRelevancy)
+        .to receive(:call)
+        .and_raise(Aws::Errors::ServiceError.new(nil, "error"))
+    end
+  end
 
   describe "#perform" do
     it "calls AutoEvaluation::AnswerRelevancy the configured number of times with the correct arguments" do
@@ -117,21 +124,6 @@ RSpec.describe AnswerAnalysis::AnswerRelevancyJob do
           .with("Answer #{answer.id} has already been evaluated for relevancy")
 
         described_class.new.perform(answer.id)
-      end
-    end
-
-    context "when the AnswerRelevancy metric raises an Aws::Errors::ServiceError" do
-      it "retries the job the max number of times" do
-        allow(AutoEvaluation::AnswerRelevancy)
-          .to receive(:call)
-          .and_raise(Aws::Errors::ServiceError.new(nil, "error"))
-
-        described_class.perform_later(answer.id)
-
-        assert_performed_jobs described_class::MAX_RETRIES do
-          expect { perform_enqueued_jobs }
-            .to raise_error(Aws::Errors::ServiceError)
-        end
       end
     end
 
