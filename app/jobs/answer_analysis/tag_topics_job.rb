@@ -12,7 +12,7 @@ module AnswerAnalysis
         return logger.info("Answer #{answer_id} is not eligible for topic analysis")
       end
 
-      result = AutoEvaluation::TopicTagger.call(answer.rephrased_question || answer.question.message)
+      result = AutoEvaluation::TopicTagger.call(answer.question_used)
 
       topics = answer.build_topics(
         primary_topic: result.primary_topic,

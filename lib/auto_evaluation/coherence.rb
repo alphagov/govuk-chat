@@ -49,7 +49,7 @@ module AutoEvaluation
     end
 
     def question_message
-      answer.rephrased_question || answer.question.message
+      answer.question_used
     end
   end
 end

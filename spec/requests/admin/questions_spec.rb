@@ -284,7 +284,7 @@ RSpec.describe "Admin::QuestionsController" do
         .and have_content('"id": "call_dqGpbb39drQDafLsjDLtnbGD"')
     end
 
-    it "doesn't render the tabs component when there is no analysis" do
+    it "doesn't render the tabs component when there are no topics or auto-eval aggregate data" do
       question = create(:question, :with_answer)
       get admin_show_question_path(question)
 
@@ -359,6 +359,60 @@ RSpec.describe "Admin::QuestionsController" do
         expect(response.body)
          .to have_selector("#analysis-tab", text: topics.primary_topic.capitalize)
          .and have_selector("#analysis-tab", text: topics.secondary_topic.capitalize)
+      end
+    end
+
+    context "when answer relevancy aggregate data is present" do
+      let(:run) do
+        create(
+          :answer_relevancy_run,
+          score: 0.85,
+          reason: "The answer is relevant to the question.",
+          llm_responses: {
+            "statements" => { "statements" => ["The answer is relevant."] },
+            "verdicts" => { "verdicts" => [{ "verdict" => "yes" }] },
+          },
+          metrics: {
+            "statements" => { duration: 1.55556 },
+            "verdicts" => { duration: 1.44445 },
+          },
+        )
+      end
+      let!(:aggregate) do
+        create(
+          :answer_relevancy_aggregate,
+          runs: [run],
+        )
+      end
+      let(:question) { aggregate.answer.question }
+
+      it "renders the answer relevancy aggregate and run details" do
+        get admin_show_question_path(question)
+
+        expect(response.body.squish)
+          .to have_content("Answer relevancy")
+          .and have_content("Run 1 score")
+          .and have_content("0.85")
+          .and have_content("Run 1 reason")
+          .and have_content("The answer is relevant to the question.")
+      end
+
+      it "renders the runs llm responses" do
+        get admin_show_question_path(question)
+
+        expect(response.body.squish)
+          .to have_content('{ "statements": [ "The answer is relevant." ] }')
+          .and have_content('{ "verdicts": [ { "verdict": "yes" } ] }')
+      end
+
+      it "renders the runs metrics" do
+        get admin_show_question_path(question)
+
+        expect(response.body.squish)
+          .to have_content("Statements")
+          .and have_content(/duration.*1\.55556/)
+          .and have_content("Verdicts")
+          .and have_content(/duration.*1\.44445/)
       end
     end
   end

@@ -47,7 +47,7 @@ module StubBedrock
     dimensions.times.map { random_generator.rand }
   end
 
-  def bedrock_invoke_model_openai_oss_tool_call(user_message, tools, content)
+  def stub_bedrock_invoke_model_openai_oss_tool_call(user_message, tools, content)
     request_body = {
       include_reasoning: false,
       messages: [
@@ -84,5 +84,54 @@ module StubBedrock
       response_body: response_body,
       endpoint_regex: OPENAI_GPT_OSS_ENDPOINT_REGEX,
     )
+  end
+
+  def stub_bedrock_invoke_model_openai_oss_answer_relevancy(question_message:,
+                                                            answer_message:,
+                                                            statements_json: { statements: ["Statement."] }.to_json,
+                                                            verdicts_json: { verdicts: [{ "verdict" => "yes" }] }.to_json,
+                                                            reason_json: { reason: "This is the reason for the score." }.to_json)
+    prompts = AutoEvaluation::Prompts.config.answer_relevancy
+
+    statements_user_prompt = sprintf(
+      prompts.fetch(:statements).fetch(:user_prompt),
+      answer: answer_message,
+    )
+    verdicts_user_prompt = sprintf(
+      prompts.fetch(:verdicts).fetch(:user_prompt),
+      question: question_message,
+      statements: JSON.parse(statements_json).fetch("statements"),
+    )
+    reason_user_prompt = sprintf(
+      prompts.fetch(:reason).fetch(:user_prompt),
+      score: 0.5,
+      unsuccessful_verdicts_reasons: ["The statement is irrelevant."],
+      question: question_message,
+    )
+
+    statements_tools = [prompts.fetch(:statements).fetch(:tool_spec)]
+    verdicts_tools = [prompts.fetch(:verdicts).fetch(:tool_spec)]
+    reason_tools = [prompts.fetch(:reason).fetch(:tool_spec)]
+
+    stubs = {}
+    stubs[:statements] = stub_bedrock_invoke_model_openai_oss_tool_call(
+      statements_user_prompt,
+      statements_tools,
+      statements_json,
+    )
+
+    stubs[:verdicts] = stub_bedrock_invoke_model_openai_oss_tool_call(
+      verdicts_user_prompt,
+      verdicts_tools,
+      verdicts_json,
+    )
+
+    stubs[:reason] = stub_bedrock_invoke_model_openai_oss_tool_call(
+      reason_user_prompt,
+      reason_tools,
+      reason_json,
+    )
+
+    stubs
   end
 end

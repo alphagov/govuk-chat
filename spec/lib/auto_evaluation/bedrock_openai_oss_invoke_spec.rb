@@ -21,7 +21,7 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
       ]
     end
     let!(:stub) do
-      bedrock_invoke_model_openai_oss_tool_call(
+      stub_bedrock_invoke_model_openai_oss_tool_call(
         user_message,
         tools,
         { "response" => "Expected response." }.to_json,
@@ -57,7 +57,7 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
     end
 
     it "raises an error if the response does not conform to the schema" do
-      bedrock_invoke_model_openai_oss_tool_call(
+      stub_bedrock_invoke_model_openai_oss_tool_call(
         user_message,
         tools,
         { "invalid_key" => "This does not conform to the schema." }.to_json,

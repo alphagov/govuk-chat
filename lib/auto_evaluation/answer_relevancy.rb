@@ -61,7 +61,7 @@ private
   attr_accessor :llm_responses, :metrics
 
   def question_message
-    answer.rephrased_question || answer.question.message
+    answer.question_used
   end
 
   def calculate_score(verdicts)
@@ -69,7 +69,7 @@ private
     return 1.0 if verdict_count.zero?
 
     relevant_count = verdicts.count { |verdict| verdict["verdict"].strip.downcase != "no" }
-    relevant_count.to_f / verdict_count
+    relevant_count.to_d / verdict_count
   end
 
   def build_maximum_score_result(reason:, llm_responses:, metrics:)
