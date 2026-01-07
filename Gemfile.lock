@@ -691,12 +691,12 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.3.1)
-    rake-compiler-dock (1.10.0)
+    rake-compiler-dock (1.11.0)
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
       ffi (~> 1.0)
-    rb_sys (0.9.123)
-      rake-compiler-dock (= 1.10.0)
+    rb_sys (0.9.124)
+      rake-compiler-dock (= 1.11.0)
     rbtree (0.4.6)
     rdoc (7.0.3)
       erb
@@ -848,12 +848,11 @@ GEM
     terser (1.2.6)
       execjs (>= 0.3.0, < 3)
     thor (1.4.0)
-    tiktoken_ruby (0.0.14.1)
+    tiktoken_ruby (0.0.15)
       rb_sys (~> 0.9)
-    tiktoken_ruby (0.0.14.1-aarch64-linux)
-    tiktoken_ruby (0.0.14.1-arm64-darwin)
-    tiktoken_ruby (0.0.14.1-x86_64-darwin)
-    tiktoken_ruby (0.0.14.1-x86_64-linux)
+    tiktoken_ruby (0.0.15-aarch64-linux)
+    tiktoken_ruby (0.0.15-arm64-darwin)
+    tiktoken_ruby (0.0.15-x86_64-darwin)
     timeout (0.6.0)
     trailblazer-option (0.1.2)
     tsort (0.2.0)
@@ -1197,10 +1196,10 @@ CHECKSUMS
   railties (8.0.3) sha256=ace31dcad7134299a64d6d96310d76d32868756e58e2983e25b121acd457f1d2
   rainbow (3.1.1) sha256=039491aa3a89f42efa1d6dec2fc4e62ede96eb6acd95e52f1ad581182b79bc6a
   rake (13.3.1) sha256=8c9e89d09f66a26a01264e7e3480ec0607f0c497a861ef16063604b1b08eb19c
-  rake-compiler-dock (1.10.0) sha256=dd62ee19df2a185a3315697e560cfa8cc9129901332152851e023fab0e94bf11
+  rake-compiler-dock (1.11.0) sha256=eab51f2cd533eb35cea6b624a75281f047123e70a64c58b607471bb49428f8c2
   rb-fsevent (0.11.2) sha256=43900b972e7301d6570f64b850a5aa67833ee7d87b458ee92805d56b7318aefe
   rb-inotify (0.11.1) sha256=a0a700441239b0ff18eb65e3866236cd78613d6b9f78fea1f9ac47a85e47be6e
-  rb_sys (0.9.123) sha256=c22ae84d1bca3eec0f13a45ae4ca9ba6eace93d5be270a40a9c0a9a5b92a34e5
+  rb_sys (0.9.124) sha256=513476557b12eaf73764b3da9f8746024558fe8699bda785fb548c9aa3877ae7
   rbtree (0.4.6) sha256=14eea4469b24fd2472542e5f3eb105d6344c8ccf36f0b56d55fdcfeb4e0f10fc
   rdoc (7.0.3) sha256=dfe3d0981d19b7bba71d9dbaeb57c9f4e3a7a4103162148a559c4fc687ea81f9
   redis-client (0.26.1) sha256=1e39d2862c4516a75ff777ee6ed08827af39336bfece4a48e944244891d9a073
@@ -1254,11 +1253,10 @@ CHECKSUMS
   stringio (3.2.0) sha256=c37cb2e58b4ffbd33fe5cd948c05934af997b36e0b6ca6fdf43afa234cf222e1
   terser (1.2.6) sha256=6ddf00b93df7015b07e2b9b149e74cd70fa7aa4f0f89a15d9922a6ebd13f37ab
   thor (1.4.0) sha256=8763e822ccb0f1d7bee88cde131b19a65606657b847cc7b7b4b82e772bcd8a3d
-  tiktoken_ruby (0.0.14.1) sha256=cff8ecf6e8a7b9e854027812b01e55c35f5f7719182c3589655008d0eeb51db1
-  tiktoken_ruby (0.0.14.1-aarch64-linux) sha256=f706e3ef6e6374cbd58d205cae9efbf6399cfecf78bbb9b3705094b031b86076
-  tiktoken_ruby (0.0.14.1-arm64-darwin) sha256=46a2e07f44c6fb4aa14eb3214b0a100c65c802912791178b7d7681a2923f7387
-  tiktoken_ruby (0.0.14.1-x86_64-darwin) sha256=e4a64417418be1c5b3caf036685551fdcc0ffe594f75ce43dfe51b5e7061794c
-  tiktoken_ruby (0.0.14.1-x86_64-linux) sha256=fa6e9e6803fbed1eec64acd0d10ae0f12e981732bb091548c888e230fcac585d
+  tiktoken_ruby (0.0.15) sha256=6148ac87e80b2c2afb691c6801f7e2ed2e0e1b8e34268cf0da51f2aae7796842
+  tiktoken_ruby (0.0.15-aarch64-linux) sha256=57c17198c4c090a633a51f67c6b99e328028425c853bc56371038b5a012950c2
+  tiktoken_ruby (0.0.15-arm64-darwin) sha256=25f067b945e63c1550e30f60c3590b8a85f777ed01ad0c18af44b488051a9c41
+  tiktoken_ruby (0.0.15-x86_64-darwin) sha256=5ee17af61c2660a96a50fcb67d1d97188fd357461acf5774f97beb7cf473cd1f
   timeout (0.6.0) sha256=6d722ad619f96ee383a0c557ec6eb8c4ecb08af3af62098a0be5057bf00de1af
   trailblazer-option (0.1.2) sha256=20e4f12ea4e1f718c8007e7944ca21a329eee4eed9e0fa5dde6e8ad8ac4344a3
   tsort (0.2.0) sha256=9650a793f6859a43b6641671278f79cfead60ac714148aabe4e3f0060480089f
