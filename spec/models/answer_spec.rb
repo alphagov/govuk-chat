@@ -372,4 +372,18 @@ RSpec.describe Answer do
       expect(answer.has_analysis?).to be(false)
     end
   end
+
+  describe "#question_used" do
+    let(:question) { build(:question, message: "Original question") }
+
+    it "returns the rephrased question if present" do
+      answer = build(:answer, question:, rephrased_question: "Rephrased question")
+      expect(answer.question_used).to eq("Rephrased question")
+    end
+
+    it "returns the original question message if no rephrased question is present" do
+      answer = build(:answer, question:, rephrased_question: nil)
+      expect(answer.question_used).to eq("Original question")
+    end
+  end
 end

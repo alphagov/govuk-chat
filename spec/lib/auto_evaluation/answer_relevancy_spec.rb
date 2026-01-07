@@ -63,16 +63,6 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         )
     end
 
-    context "when the answer has a rephrased question" do
-      let(:question_message) { "This is a rephrased test question." }
-      let(:answer) { build(:answer, message: answer_message, rephrased_question: question_message) }
-
-      it "uses the rephrased question in the prompt" do
-        result = described_class.call(answer)
-        expect(result.reason).to eq(reason)
-      end
-    end
-
     context "when 'idk' verdicts are present" do
       let(:verdicts) do
         [

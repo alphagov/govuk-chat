@@ -39,16 +39,6 @@ RSpec.describe AnswerAnalysis::TagTopicsJob do
         )
     end
 
-    context "when the answer has a rephrased_question" do
-      let(:rephrased_question) { "This is a rephrased_question" }
-
-      it "calls the AutoEvaluation::TopicTagger with the rephrased question" do
-        answer = create(:answer, rephrased_question: rephrased_question)
-        described_class.new.perform(answer.id)
-        expect(AutoEvaluation::TopicTagger).to have_received(:call).with(rephrased_question)
-      end
-    end
-
     context "when the answer does not exist" do
       let(:answer_id) { 999 }
 

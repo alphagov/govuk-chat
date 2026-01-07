@@ -61,7 +61,7 @@ private
   attr_accessor :llm_responses, :metrics
 
   def question_message
-    answer.rephrased_question || answer.question.message
+    answer.question_used
   end
 
   def calculate_score(verdicts)

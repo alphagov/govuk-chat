@@ -201,4 +201,8 @@ class Answer < ApplicationRecord
   def has_analysis?
     topics.present? || answer_relevancy_aggregate.present?
   end
+
+  def question_used
+    rephrased_question || question.message
+  end
 end
