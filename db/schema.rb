@@ -35,6 +35,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_08_130827) do
     t.index ["answer_id"], name: "index_answer_analysis_answer_relevancy_runs_on_answer_id"
   end
 
+  create_table "answer_analysis_coherence_runs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.decimal "score", null: false
+    t.string "reason", null: false
+    t.jsonb "llm_responses"
+    t.jsonb "metrics"
+    t.uuid "answer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_answer_analysis_coherence_runs_on_answer_id"
+  end
+
   create_table "answer_analysis_topics", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "primary_topic"
     t.string "secondary_topic"
@@ -182,6 +193,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_08_130827) do
   end
 
   add_foreign_key "answer_analysis_answer_relevancy_runs", "answers", on_delete: :cascade
+  add_foreign_key "answer_analysis_coherence_runs", "answers", on_delete: :cascade
   add_foreign_key "answer_analysis_topics", "answers", on_delete: :cascade
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade
   add_foreign_key "answer_sources", "answer_source_chunks", on_delete: :restrict
