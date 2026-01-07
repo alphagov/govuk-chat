@@ -220,4 +220,20 @@ namespace :evaluation do
       abort e.message
     end
   end
+
+  desc "Run context relevancy evaluation for a user input"
+  task generate_context_relevancy_evaluation: :environment do
+    raise "Requires an INPUT env var" if ENV["INPUT"].blank?
+
+    begin
+      result = AutoEvaluation::EvaluateAnswerFromQuestionMessage.call(
+        evaluation_class: AutoEvaluation::ContextRelevancy,
+        question_message: ENV["INPUT"],
+      )
+
+      puts result.to_json
+    rescue AutoEvaluation::EvaluateAnswerFromQuestionMessage::TaskFailedError => e
+      abort e.message
+    end
+  end
 end
