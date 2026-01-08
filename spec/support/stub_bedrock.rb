@@ -293,4 +293,23 @@ module StubBedrock
 
     stubs
   end
+
+  def stub_bedrock_invoke_model_openai_oss_coherence(answer_message:,
+                                                     question_message:,
+                                                     response_json: { score: 3, reason: "The reason" }.to_json)
+    prompts = AutoEvaluation::Prompts.config.coherence
+
+    user_prompt = sprintf(
+      prompts.fetch(:user_prompt),
+      answer: answer_message,
+      question: question_message,
+    )
+    tools = [prompts.fetch(:tool_spec)]
+
+    stub_bedrock_invoke_model_openai_oss_tool_call(
+      user_prompt,
+      tools,
+      response_json,
+    )
+  end
 end
