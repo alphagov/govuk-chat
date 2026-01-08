@@ -204,4 +204,20 @@ namespace :evaluation do
       abort e.message
     end
   end
+
+  desc "Run faithfulness evaluation for a user input"
+  task generate_faithfulness_evaluation: :environment do
+    raise "Requires an INPUT env var" if ENV["INPUT"].blank?
+
+    begin
+      result = AutoEvaluation::EvaluateAnswerFromQuestionMessage.call(
+        evaluation_class: AutoEvaluation::Faithfulness,
+        question_message: ENV["INPUT"],
+      )
+
+      puts result.to_json
+    rescue AutoEvaluation::EvaluateAnswerFromQuestionMessage::TaskFailedError => e
+      abort e.message
+    end
+  end
 end
