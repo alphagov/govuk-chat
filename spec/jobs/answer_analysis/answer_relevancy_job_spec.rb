@@ -28,8 +28,10 @@ RSpec.describe AnswerAnalysis::AnswerRelevancyJob do
   end
 
   describe "#perform" do
+    let(:answer_id) { answer.id }
+
     it "calls AutoEvaluation::AnswerRelevancy the configured number of times with the correct arguments" do
-      described_class.new.perform(answer.id)
+      described_class.new.perform(answer_id)
 
       expect(AutoEvaluation::AnswerRelevancy)
         .to have_received(:call)
@@ -37,41 +39,17 @@ RSpec.describe AnswerAnalysis::AnswerRelevancyJob do
         .exactly(AnswerAnalysis::BaseJob::NUMBER_OF_RUNS).times
     end
 
-    it "creates answer relevancy aggregate with the correct score" do
-      expect {
-        described_class.new.perform(answer.id)
-      }.to change(AnswerAnalysis::AnswerRelevancyAggregate, :count).by(1)
-      answer = Answer.includes(:answer_relevancy_aggregate)
-                     .find(AnswerAnalysis::AnswerRelevancyAggregate.last.answer_id)
-      expect(answer.answer_relevancy_aggregate.mean_score).to eq(0.8)
-    end
-
     it "creates answer relevancy runs for each result" do
       expect {
-        described_class.new.perform(answer.id)
+        described_class.new.perform(answer_id)
       }.to change(AnswerAnalysis::AnswerRelevancyRun, :count).by(results.count)
 
-      answer = Answer.includes(answer_relevancy_aggregate: :runs)
-                     .find(AnswerAnalysis::AnswerRelevancyAggregate.last.answer_id)
+      answer = Answer.includes(:answer_relevancy_runs)
+                     .find(answer_id)
 
       results.each_with_index do |result, index|
-        expect(answer.answer_relevancy_aggregate.runs[index])
+        expect(answer.answer_relevancy_runs[index])
           .to have_attributes(result.to_h.except(:success))
-      end
-    end
-
-    context "when the answer has a rephrased_question" do
-      let(:rephrased_question) { "This is a rephrased_question" }
-
-      it "passes the rephrased question to AutoEvaluation::AnswerRelevancy as the question_message" do
-        answer = create(:answer, rephrased_question: rephrased_question)
-
-        described_class.new.perform(answer.id)
-
-        expect(AutoEvaluation::AnswerRelevancy)
-          .to have_received(:call)
-          .with(answer)
-          .exactly(AnswerAnalysis::BaseJob::NUMBER_OF_RUNS).times
       end
     end
 
@@ -93,8 +71,8 @@ RSpec.describe AnswerAnalysis::AnswerRelevancyJob do
     end
 
     context "when answer relevancy has already been evaluated" do
-      let(:aggregate) { create(:answer_relevancy_aggregate) }
-      let(:answer) { aggregate.answer }
+      let(:run) { create(:answer_relevancy_run) }
+      let(:answer) { run.answer }
 
       it "logs a warning" do
         expect(described_class.logger)
@@ -107,23 +85,6 @@ RSpec.describe AnswerAnalysis::AnswerRelevancyJob do
       it "doesn't call AutoEvaluation::AnswerRelevancy" do
         described_class.new.perform(answer.id)
         expect(AutoEvaluation::AnswerRelevancy).not_to have_received(:call)
-      end
-    end
-
-    context "when aggregate data is persisted mid job" do
-      before do
-        allow(AnswerAnalysis::AnswerRelevancyAggregate)
-          .to receive(:create_mean_aggregate_and_score_runs)
-          .with(answer, anything)
-          .and_raise(ActiveRecord::RecordNotUnique)
-      end
-
-      it "logs a warning" do
-        expect(described_class.logger)
-          .to receive(:warn)
-          .with("Answer #{answer.id} has already been evaluated for relevancy")
-
-        described_class.new.perform(answer.id)
       end
     end
 

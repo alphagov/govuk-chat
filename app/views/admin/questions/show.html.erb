@@ -39,7 +39,7 @@ content_for(:active_navigation_item, admin_questions_path)
     content: render(
       "analysis_tab",
       topics: @answer.topics,
-      answer_relevancy_aggregate: @answer.answer_relevancy_aggregate,
+      answer_relevancy_runs: @answer.answer_relevancy_runs,
     ),
   } if @answer&.has_analysis?
 %>

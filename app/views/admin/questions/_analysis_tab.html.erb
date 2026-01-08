@@ -46,6 +46,6 @@
   <% end %>
 <% end %>
 
-<% if answer_relevancy_aggregate.present? %>
-  <%= render "generic_aggregate_auto_evaluation", aggregate: answer_relevancy_aggregate, title: "Answer relevancy" %>
+<% if answer_relevancy_runs.present? %>
+  <%= render "generic_auto_evaluation_runs", runs: answer_relevancy_runs, title: "Answer relevancy" %>
 <% end %>
