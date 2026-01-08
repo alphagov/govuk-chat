@@ -15,10 +15,8 @@ class ComposeAnswerJob < ApplicationJob
     end
 
     if answer.persisted?
-      # TODO: Once we've added a few metrics we should move these to a single job that
-      # kicks off all analysis jobs.
-      AnswerAnalysis::TagTopicsJob.perform_later(answer.id)
-      AnswerAnalysis::AnswerRelevancyJob.perform_later(answer.id)
+      AnswerAnalysisJob.perform_later(answer.id)
+
     end
   end
 end
