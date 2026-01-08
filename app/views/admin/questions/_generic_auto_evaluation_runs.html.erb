@@ -1,12 +1,13 @@
 <%
+  mean_score = runs.map(&:score).sum / runs.count
   items = [
     {
       field: "Mean score",
-      value: aggregate.mean_score,
+      value: mean_score,
     },
   ]
 
-  items += aggregate.runs.flat_map.with_index(1) do |run, index|
+  items += runs.flat_map.with_index(1) do |run, index|
     [
       { field: "Run #{index} score", value: run.score },
       { field: "Run #{index} reason", value: run.reason },
@@ -25,7 +26,7 @@
 <%= render "govuk_publishing_components/components/details", {
   title: "LLM responses",
 } do %>
-  <% aggregate.runs.each.with_index(1) do |run, index| %>
+  <% runs.each.with_index(1) do |run, index| %>
     <%= render "govuk_publishing_components/components/heading", {
       text: "Run #{index}",
       font_size: "m",
@@ -50,7 +51,7 @@
 <%= render "govuk_publishing_components/components/details", {
   title: "Metrics",
 } do %>
-  <% aggregate.runs.each.with_index(1) do |run, index| %>
+  <% runs.each.with_index(1) do |run, index| %>
     <%= render "govuk_publishing_components/components/heading", {
       text: "Run #{index}",
       font_size: "m",

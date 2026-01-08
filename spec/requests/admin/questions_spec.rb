@@ -378,13 +378,7 @@ RSpec.describe "Admin::QuestionsController" do
           },
         )
       end
-      let!(:aggregate) do
-        create(
-          :answer_relevancy_aggregate,
-          runs: [run],
-        )
-      end
-      let(:question) { aggregate.answer.question }
+      let(:question) { run.answer.question }
 
       it "renders the answer relevancy aggregate and run details" do
         get admin_show_question_path(question)
