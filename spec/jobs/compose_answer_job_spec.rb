@@ -5,7 +5,6 @@ RSpec.describe ComposeAnswerJob do
 
   before do
     allow(AnswerComposition::Composer).to receive(:call).and_return(returned_answer)
-    allow(AnswerAnalysisJob).to receive(:perform_later)
   end
 
   it_behaves_like "a job in queue", "answer"
@@ -17,9 +16,9 @@ RSpec.describe ComposeAnswerJob do
         .and change(AnswerSource, :count).by(2)
     end
 
-    it "calls the AnswerAnalysisJob with the answer id" do
+    it "enqueues the answer analysis jobs" do
+      expect(AnswerAnalysis).to receive(:enqueue_async_analysis).with(returned_answer)
       described_class.new.perform(question.id)
-      expect(AnswerAnalysisJob).to have_received(:perform_later).with(returned_answer.id)
     end
 
     context "when the question has already been answered" do
