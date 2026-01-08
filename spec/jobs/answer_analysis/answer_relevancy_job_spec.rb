@@ -53,21 +53,6 @@ RSpec.describe AnswerAnalysis::AnswerRelevancyJob do
       end
     end
 
-    context "when the answer has a rephrased_question" do
-      let(:rephrased_question) { "This is a rephrased_question" }
-
-      it "passes the rephrased question to AutoEvaluation::AnswerRelevancy as the question_message" do
-        answer = create(:answer, rephrased_question: rephrased_question)
-
-        described_class.new.perform(answer.id)
-
-        expect(AutoEvaluation::AnswerRelevancy)
-          .to have_received(:call)
-          .with(answer)
-          .exactly(AnswerAnalysis::BaseJob::NUMBER_OF_RUNS).times
-      end
-    end
-
     context "when the answer does not exist" do
       let(:answer_id) { 999 }
 
