@@ -2,6 +2,7 @@ module AnswerAnalysis
   class AnswerRelevancyJob < BaseJob
     def perform(answer_id)
       return unless eligible_for_answer_analysis?(answer_id)
+      return if quota_limit_reached?
 
       answer = Answer.includes(:question, :answer_relevancy_aggregate).find(answer_id)
       return logger.warn(aggregate_exists_warn_message(answer.id)) if answer.answer_relevancy_aggregate.present?
