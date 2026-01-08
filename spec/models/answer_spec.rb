@@ -360,9 +360,9 @@ RSpec.describe Answer do
       expect(answer.has_analysis?).to be(true)
     end
 
-    it "returns true if answer_relevancy_aggregate is present" do
+    it "returns true if answer_relevancy_runs are present" do
       answer = build(
-        :answer, answer_relevancy_aggregate: build(:answer_relevancy_aggregate)
+        :answer, answer_relevancy_runs: [build(:answer_relevancy_run)]
       )
       expect(answer.has_analysis?).to be(true)
     end

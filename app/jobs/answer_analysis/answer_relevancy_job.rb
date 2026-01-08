@@ -10,7 +10,9 @@ module AnswerAnalysis
       results = NUMBER_OF_RUNS.times.map { AutoEvaluation::AnswerRelevancy.call(answer) }
 
       begin
-        AnswerAnalysis::AnswerRelevancyAggregate.create_mean_aggregate_and_score_runs(answer, results)
+        AnswerAnalysis::AnswerRelevancyRun.create_runs_from_score_results(
+          answer, results, :answer_relevancy_runs
+        )
       rescue ActiveRecord::RecordNotUnique
         logger.warn(aggregate_exists_warn_message(answer.id))
       end

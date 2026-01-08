@@ -110,11 +110,11 @@ RSpec.describe AnswerAnalysis::AnswerRelevancyJob do
       end
     end
 
-    context "when aggregate data is persisted mid job" do
+    context "when runs are persisted mid job" do
       before do
-        allow(AnswerAnalysis::AnswerRelevancyAggregate)
-          .to receive(:create_mean_aggregate_and_score_runs)
-          .with(answer, anything)
+        allow(AnswerAnalysis::AnswerRelevancyRun)
+          .to receive(:create_runs_from_score_results)
+          .with(answer, anything, :answer_relevancy_runs)
           .and_raise(ActiveRecord::RecordNotUnique)
       end
 

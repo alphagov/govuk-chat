@@ -55,8 +55,9 @@ class Answer < ApplicationRecord
   has_many :sources, -> { order(relevancy: :asc) }, class_name: "AnswerSource"
   has_one :feedback, class_name: "AnswerFeedback"
   has_one :topics, class_name: "AnswerAnalysis::Topics"
-  has_one :answer_relevancy_aggregate, class_name: "AnswerAnalysis::AnswerRelevancyAggregate"
-
+  has_many :answer_relevancy_runs,
+           -> { order(:created_at) },
+           class_name: "AnswerAnalysis::AnswerRelevancyRun"
   enum :status,
        {
          answered: "answered",
@@ -199,7 +200,7 @@ class Answer < ApplicationRecord
   end
 
   def has_analysis?
-    topics.present? || answer_relevancy_aggregate.present?
+    topics.present? || answer_relevancy_runs.present?
   end
 
   def question_used
