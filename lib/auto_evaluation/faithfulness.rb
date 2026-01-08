@@ -86,7 +86,7 @@ private
   end
 
   def used_sources
-    answer.sources.used
+    answer.sources.select(&:used)
   end
 
   def build_maximum_score_result(reason:, llm_responses:, metrics:)

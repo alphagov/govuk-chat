@@ -3,8 +3,9 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
     let(:answer_message) { "Einstein won the Nobel Prize in 1968 for the photoelectric effect." }
     let(:retrieval_context) { "Einstein won the Nobel Prize in 1921 for the photoelectric effect." }
     let(:question) { build(:question, message: "When did Einstein win the Nobel Prize?") }
-    let(:chunk) { create(:answer_source_chunk, plain_content: retrieval_context) }
-    let(:answer) { create(:answer, question:, message: answer_message, sources: [create(:answer_source, chunk:, used: true)]) }
+    let(:chunk) { build(:answer_source_chunk, plain_content: retrieval_context) }
+    let(:used_source) { build(:answer_source, used: true, chunk:) }
+    let(:answer) { build(:answer, question:, message: answer_message, sources: [used_source]) }
 
     let(:truths) { ["Einstein won the Nobel Prize in 1921.", "Einstein won the Nobel Prize for the photoelectric effect."] }
     let(:truths_json) { { truths: }.to_json }
