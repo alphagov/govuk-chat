@@ -203,7 +203,9 @@ class Answer < ApplicationRecord
   end
 
   def has_analysis?
-    topics.present? || answer_relevancy_runs.present?
+    topics.present? ||
+      answer_relevancy_runs.present? ||
+      coherence_runs.present?
   end
 
   def question_used
