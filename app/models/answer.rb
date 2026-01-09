@@ -64,6 +64,9 @@ class Answer < ApplicationRecord
   has_many :faithfulness_runs,
            -> { order(:created_at) },
            class_name: "AnswerAnalysis::FaithfulnessRun"
+  has_many :context_relevancy_runs,
+           -> { order(:created_at) },
+           class_name: "AnswerAnalysis::ContextRelevancyRun"
   enum :status,
        {
          answered: "answered",
