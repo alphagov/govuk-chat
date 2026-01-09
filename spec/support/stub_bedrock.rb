@@ -208,4 +208,89 @@ module StubBedrock
 
     stubs
   end
+
+  def stub_bedrock_invoke_model_openai_oss_context_relevancy(
+    retrieval_context:,
+    question_message:,
+    truths_json: { truths: [{ "context" => "Context", "facts" => ["Fact."] }] }.to_json,
+    information_needs_json: { claims: ["Information need."] }.to_json,
+    verdicts_json: { verdicts: [{ "verdict" => "yes" }] }.to_json,
+    reason_json: { reason: "This is the reason for the score." }.to_json
+  )
+    prompts = AutoEvaluation::Prompts.config.context_relevancy
+
+    truths = JSON.parse(truths_json).fetch("truths")
+    information_needs = JSON.parse(information_needs_json).fetch("information_needs")
+    verdicts = JSON.parse(verdicts_json).fetch("verdicts")
+
+    score = if verdicts.empty?
+              1.0
+            else
+              verdicts_count = verdicts.count { |v| v["verdict"].strip.downcase != "no" }
+              (verdicts_count.to_d / verdicts.count).round(2).to_f
+            end
+
+    unmet_needs = verdicts.select { |v| v["verdict"].strip.downcase == "no" }.map { |v| v["reason"] }
+
+    truths_user_prompt = sprintf(
+      prompts.fetch(:truths).fetch(:user_prompt),
+      retrieval_context:,
+    )
+    information_needs_user_prompt = sprintf(
+      prompts.fetch(:information_needs).fetch(:user_prompt),
+      question: question_message,
+    )
+
+    formatted_truths = truths.map do |truth|
+      <<~TRUTH
+        Context: #{truth['context']}
+        Facts:
+        #{truth['facts'].join("\n")}
+      TRUTH
+    end
+
+    verdicts_user_prompt = sprintf(
+      prompts.dig(:verdicts, :user_prompt),
+      truths: formatted_truths,
+      information_needs: information_needs.join("\n"),
+    )
+
+    reason_user_prompt = sprintf(
+      prompts.dig(:reason, :user_prompt),
+      score:,
+      question: question_message,
+      unmet_needs: unmet_needs.join("\n"),
+    )
+    truths_tools = [prompts.fetch(:truths).fetch(:tool_spec)]
+    information_needs_tools = [prompts.fetch(:information_needs).fetch(:tool_spec)]
+    verdicts_tools = [prompts.fetch(:verdicts).fetch(:tool_spec)]
+    reason_tools = [prompts.fetch(:reason).fetch(:tool_spec)]
+
+    stubs = {}
+    stubs[:truths] = stub_bedrock_invoke_model_openai_oss_tool_call(
+      truths_user_prompt,
+      truths_tools,
+      truths_json,
+    )
+
+    stubs[:information_needs] = stub_bedrock_invoke_model_openai_oss_tool_call(
+      information_needs_user_prompt,
+      information_needs_tools,
+      information_needs_json,
+    )
+
+    stubs[:verdicts] = stub_bedrock_invoke_model_openai_oss_tool_call(
+      verdicts_user_prompt,
+      verdicts_tools,
+      verdicts_json,
+    )
+
+    stubs[:reason] = stub_bedrock_invoke_model_openai_oss_tool_call(
+      reason_user_prompt,
+      reason_tools,
+      reason_json,
+    )
+
+    stubs
+  end
 end

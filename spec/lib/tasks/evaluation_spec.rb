@@ -595,4 +595,11 @@ RSpec.describe "rake evaluation tasks" do
       let(:evaluation_class) { AutoEvaluation::Faithfulness }
     end
   end
+
+  describe "generate_context_relevancy_evaluation" do
+    it_behaves_like "a task that returns a ScoreResult" do
+      let(:task_name) { "evaluation:generate_context_relevancy_evaluation" }
+      let(:evaluation_class) { AutoEvaluation::ContextRelevancy }
+    end
+  end
 end
