@@ -40,6 +40,7 @@ content_for(:active_navigation_item, admin_questions_path)
       "analysis_tab",
       topics: @answer.topics,
       answer_relevancy_runs: @answer.answer_relevancy_runs,
+      coherence_runs: @answer.coherence_runs,
     ),
   } if @answer&.has_analysis?
 %>

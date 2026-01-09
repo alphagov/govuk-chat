@@ -49,3 +49,7 @@
 <% if answer_relevancy_runs.present? %>
   <%= render "generic_auto_evaluation_runs", runs: answer_relevancy_runs, title: "Answer relevancy" %>
 <% end %>
+
+<% if coherence_runs.present? %>
+  <%= render "generic_auto_evaluation_runs", runs: coherence_runs, title: "Coherence" %>
+<% end %>

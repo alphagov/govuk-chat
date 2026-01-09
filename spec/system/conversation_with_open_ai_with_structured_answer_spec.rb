@@ -59,6 +59,10 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :aws_credent
       question_message: @first_question,
       answer_message: "Lots of tax.",
     )
+    stub_bedrock_invoke_model_openai_oss_coherence(
+      question_message: @first_question,
+      answer_message: "Lots of tax.",
+    )
 
     execute_queued_sidekiq_jobs
   end
@@ -80,6 +84,10 @@ RSpec.describe "Conversation with OpenAI with a structured answer", :aws_credent
     stub_openai_output_guardrail("Even more tax.")
     stub_claude_messages_topic_tagger(rephrased_question)
     stub_bedrock_invoke_model_openai_oss_answer_relevancy(
+      question_message: rephrased_question,
+      answer_message: "Even more tax.",
+    )
+    stub_bedrock_invoke_model_openai_oss_coherence(
       question_message: rephrased_question,
       answer_message: "Even more tax.",
     )

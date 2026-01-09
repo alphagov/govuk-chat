@@ -4,6 +4,7 @@ RSpec.describe AnswerAnalysis do
       answer = build(:answer)
       expect(described_class::TagTopicsJob).to receive(:perform_later).with(answer.id)
       expect(described_class::AnswerRelevancyJob).to receive(:perform_later).with(answer.id)
+      expect(described_class::CoherenceJob).to receive(:perform_later).with(answer.id)
       described_class.enqueue_async_analysis(answer)
     end
   end
