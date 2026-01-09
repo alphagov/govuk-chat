@@ -14,9 +14,6 @@ class ComposeAnswerJob < ApplicationJob
       logger.warn("Already an answer created for #{question_id}")
     end
 
-    if answer.persisted?
-      AnswerAnalysisJob.perform_later(answer.id)
-
-    end
+    AnswerAnalysis.enqueue_async_analysis(answer) if answer.persisted?
   end
 end
