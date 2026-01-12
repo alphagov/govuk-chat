@@ -389,4 +389,14 @@ RSpec.describe Answer do
       expect(answer.question_used).to eq("Original question")
     end
   end
+
+  describe "#answer_count" do
+    it "sends the answer count to Prometheus with the answer status as a label on create" do
+      allow(PrometheusMetrics).to receive(:increment_counter)
+      answer = create(:answer)
+
+      expect(PrometheusMetrics).to have_received(:increment_counter)
+                               .with("answer_count", status: answer.status)
+    end
+  end
 end
