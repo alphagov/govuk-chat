@@ -10,6 +10,10 @@ class AutoEvaluation::ContextRelevancy
   end
 
   def call
+    if used_sources.empty?
+      return build_maximum_score_result("No sources were retrieved when generating the answer.")
+    end
+
     information_needs, llm_responses[:information_needs], metrics[:information_needs] = InformationNeedsGenerator.call(
       question: answer.question_used,
     )

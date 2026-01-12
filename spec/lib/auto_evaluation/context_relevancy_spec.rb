@@ -20,11 +20,11 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
       )
     end
     let(:question) { build(:question, message: "Can I get financial help for my heating bills?") }
-    let(:used_source) do
-      build(:answer_source, used: true, chunk:)
+    let(:used_sources) do
+      [build(:answer_source, used: true, chunk:)]
     end
     let(:answer) do
-      build(:answer, question:, sources: [used_source])
+      build(:answer, question:, sources: used_sources)
     end
     let(:score) { 0.5 }
 
@@ -133,6 +133,24 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
         result = described_class.call(answer)
 
         expect(result.score).to eq(0.5)
+      end
+    end
+
+    context "when no sources are used in the answer generation" do
+      let(:used_sources) { [] }
+
+      it "returns a early with a maxiumum score" do
+        result = described_class.call(answer)
+
+        expect(result)
+          .to be_a(AutoEvaluation::ScoreResult)
+          .and have_attributes(
+            score: 1.0,
+            reason: "No sources were retrieved when generating the answer.",
+            success: true,
+          )
+        expect(result.llm_responses.keys).to eq([])
+        expect(result.metrics.keys).to eq([])
       end
     end
 
