@@ -33,15 +33,18 @@
     <%= render "govuk_publishing_components/components/details", {
       title: "Metrics",
     } do %>
-      <%= render "govuk_publishing_components/components/summary_list", {
-        items: topics.metrics.map do |metric, value|
-          {
-            field: metric,
-            value: value,
-          }
-        end,
-        borderless: true,
-      } %>
+      <% topics.metrics.sort.each do |namespace, metrics| %>
+        <%= render "govuk_publishing_components/components/summary_list", {
+          title: namespace,
+          items: metrics.map do |metric, value|
+            {
+              field: metric,
+              value: value,
+            }
+          end,
+          borderless: true,
+        } %>
+      <% end %>
     <% end %>
   <% end %>
 <% end %>
