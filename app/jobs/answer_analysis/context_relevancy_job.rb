@@ -6,7 +6,7 @@ module AnswerAnalysis
       return unless eligible_for_answer_analysis?(answer_id)
       return if quota_limit_reached?
 
-      answer = Answer.includes(:question, :context_relevancy_runs).find(answer_id)
+      answer = Answer.includes(:question, { sources: :chunk }, :context_relevancy_runs).find(answer_id)
       if answer.context_relevancy_runs.present?
         return logger.warn("Answer #{answer_id} has already been evaluated for #{EVALUATION_TYPE}")
       end

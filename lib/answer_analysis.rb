@@ -4,5 +4,6 @@ module AnswerAnalysis
     AnswerRelevancyJob.perform_later(answer.id)
     CoherenceJob.perform_later(answer.id)
     FaithfulnessJob.perform_later(answer.id)
+    ContextRelevancyJob.perform_later(answer.id)
   end
 end

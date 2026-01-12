@@ -73,10 +73,7 @@ RSpec.describe "Conversation API flow" do
         status: :answered,
       )
     end
-    allow(AnswerAnalysis::TagTopicsJob).to receive(:perform_later)
-    allow(AnswerAnalysis::AnswerRelevancyJob).to receive(:perform_later)
-    allow(AnswerAnalysis::CoherenceJob).to receive(:perform_later)
-    allow(AnswerAnalysis::FaithfulnessJob).to receive(:perform_later)
+    allow(AnswerAnalysis).to receive(:enqueue_async_analysis)
 
     post api_v1_create_conversation_path,
          params: { user_question: "What is the capital of France?" },
