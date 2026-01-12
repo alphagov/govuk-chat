@@ -1,5 +1,5 @@
 class AutoEvaluation::ContextRelevancy
-  THRESHOLD = 0.5
+  THRESHOLD = 0.8
 
   def self.call(...) = new(...).call
 

@@ -26,7 +26,7 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
     let(:answer) do
       build(:answer, question:, sources: used_sources)
     end
-    let(:score) { 0.5 }
+    let(:score) { 0.8 }
 
     let(:truths) do
       [
@@ -66,6 +66,18 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
         {
           "verdict" => "no",
           "reason" => "The provided facts only state that eligibility criteria can be checked on the official website.",
+        },
+        {
+          "verdict" => "yes",
+          "reason" => "Positive reason.",
+        },
+        {
+          "verdict" => "yes",
+          "reason" => "Positive reason.",
+        },
+        {
+          "verdict" => "yes",
+          "reason" => "Positive reason.",
         },
       ]
     end
