@@ -51,6 +51,8 @@ class Answer < ApplicationRecord
 
   scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
 
+  after_commit :send_answer_count_to_prometheus, on: :create
+
   belongs_to :question
   has_many :sources, -> { order(relevancy: :asc) }, class_name: "AnswerSource"
   has_one :feedback, class_name: "AnswerFeedback"
@@ -218,5 +220,9 @@ class Answer < ApplicationRecord
 
   def question_used
     rephrased_question || question.message
+  end
+
+  def send_answer_count_to_prometheus
+    PrometheusMetrics.increment_counter("answer_count", status:)
   end
 end
