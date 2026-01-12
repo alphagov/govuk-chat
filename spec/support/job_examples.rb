@@ -5,7 +5,7 @@ module JobExamples
     end
   end
 
-  shared_examples "a job that adheres to the auto_evaluation quota" do |metric|
+  shared_examples "a job that adheres to the auto_evaluation quota" do |evaluation_class|
     let(:answer) { create(:answer) }
     let(:beginning_of_current_hour) { Time.current.beginning_of_hour }
 
@@ -35,7 +35,7 @@ module JobExamples
         expect(described_class.logger)
           .to receive(:warn)
           .with("Auto-evaluation quota limit of #{max_evaluations} evaluations per hour reached")
-        expect(metric).not_to receive(:call)
+        expect(evaluation_class).not_to receive(:call)
 
         described_class.new.perform(answer.id)
       end
@@ -84,6 +84,98 @@ module JobExamples
       assert_performed_jobs described_class::MAX_RETRIES do
         expect { perform_enqueued_jobs }
           .to raise_error(error_class)
+      end
+    end
+  end
+
+  shared_examples "a job that creates runs from score results" do |evaluation_class, run_class, association|
+    let(:answer) { create(:answer) }
+    let(:question) { answer.question }
+
+    let(:results) do
+      [
+        build(:auto_evaluation_score_result, score: 0.8),
+        build(:auto_evaluation_score_result, score: 0.7),
+        build(:auto_evaluation_score_result, score: 0.9),
+      ]
+    end
+
+    describe "#perform" do
+      let(:answer_id) { answer.id }
+
+      it "calls #{evaluation_class} the configured number of times with the correct arguments" do
+        described_class.new.perform(answer_id)
+
+        expect(evaluation_class)
+          .to have_received(:call)
+          .with(answer)
+          .exactly(described_class::NUMBER_OF_RUNS).times
+      end
+
+      it "creates a #{association.to_s.singularize} for each result" do
+        expect {
+          described_class.new.perform(answer_id)
+        }.to change(run_class, :count).by(results.count)
+
+        answer = Answer.includes(association)
+                       .find(answer_id)
+
+        results.each_with_index do |result, index|
+          expect(answer.public_send(association)[index])
+            .to have_attributes(result.to_h.except(:success))
+        end
+      end
+
+      context "when the answer does not exist" do
+        let(:answer_id) { 999 }
+
+        it "logs a warning" do
+          expect(described_class.logger)
+            .to receive(:warn)
+            .with("Couldn't find an answer 999 that was eligible for auto-evaluation")
+
+          described_class.new.perform(answer_id)
+        end
+
+        it "doesn't call #{evaluation_class}" do
+          described_class.new.perform(answer_id)
+          expect(evaluation_class).not_to have_received(:call)
+        end
+      end
+
+      context "when #{association} are present on the answer" do
+        let(:run) { create(association.to_s.singularize) }
+        let(:answer) { run.answer }
+
+        it "logs a warning" do
+          expect(described_class.logger)
+            .to receive(:warn)
+            .with("Answer #{answer.id} has already been evaluated for #{described_class::EVALUATION_TYPE}")
+
+          described_class.new.perform(answer.id)
+        end
+
+        it "doesn't call #{evaluation_class}" do
+          described_class.new.perform(answer.id)
+          expect(evaluation_class).not_to have_received(:call)
+        end
+      end
+
+      context "when the answer is not eligible for auto-evaluation" do
+        let(:answer) { create(:answer, status: Answer.statuses.except(:answered).keys.sample) }
+
+        it "logs a warning message" do
+          expect(described_class.logger)
+            .to receive(:warn)
+            .with("Couldn't find an answer #{answer.id} that was eligible for auto-evaluation")
+
+          described_class.new.perform(answer.id)
+        end
+
+        it "does not call #{evaluation_class}" do
+          expect(evaluation_class).not_to receive(:call)
+          described_class.new.perform(answer.id)
+        end
       end
     end
   end
