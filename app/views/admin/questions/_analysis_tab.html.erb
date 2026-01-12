@@ -60,3 +60,7 @@
 <% if faithfulness_runs.present? %>
   <%= render "generic_auto_evaluation_runs", runs: faithfulness_runs, title: "Faithfulness" %>
 <% end %>
+
+<% if context_relevancy_runs.present? %>
+  <%= render "generic_auto_evaluation_runs", runs: context_relevancy_runs , title: "Context relevancy" %>
+<% end %>
