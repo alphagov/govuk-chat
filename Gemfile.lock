@@ -116,7 +116,7 @@ GEM
       smart_properties
     bigdecimal (3.3.1)
     blueprinter (1.2.1)
-    bootsnap (1.20.1)
+    bootsnap (1.21.0)
       msgpack (~> 1.2)
     brakeman (7.1.2)
       racc
@@ -977,7 +977,7 @@ CHECKSUMS
   better_html (2.1.1) sha256=046c3551d1488a3f2939a7cac6fabf2bde08c32e135c91fcd683380118e5af55
   bigdecimal (3.3.1) sha256=eaa01e228be54c4f9f53bf3cc34fe3d5e845c31963e7fcc5bedb05a4e7d52218
   blueprinter (1.2.1) sha256=11b534060b0b548f7c7d2084f891742fe12760d8df77cb9a1cffe502a9ceca10
-  bootsnap (1.20.1) sha256=7ad62cda65c5157bcca0acfcc0ee11fcbb83d7d7a8a72d52ccd85e6ffc130b93
+  bootsnap (1.21.0) sha256=27893da6347c925e5bf299034b68131bbaf5d22036d466a61d38022cb235da50
   brakeman (7.1.2) sha256=6b04927710a2e7d13a72248b5d404c633188e02417f28f3d853e4b6370d26dce
   builder (3.3.0) sha256=497918d2f9dca528fdca4b88d84e4ef4387256d984b8154e9d5d3fe5a9c8835f
   bunny (2.24.0) sha256=072fe4ae98eaa9c95a17e4d166204f710bba8a9a7070b73a8c3b023f439d1682
