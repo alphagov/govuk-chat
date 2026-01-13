@@ -57,6 +57,10 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
       question_message: @question,
       answer_message: @answer,
     )
+    stub_bedrock_invoke_model_openai_oss_faithfulness(
+      retrieval_context: "Some content",
+      answer_message: @answer,
+    )
     stub_bedrock_invoke_model_openai_oss_coherence(
       question_message: @question,
       answer_message: @answer,
