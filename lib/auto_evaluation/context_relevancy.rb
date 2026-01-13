@@ -10,7 +10,7 @@ class AutoEvaluation::ContextRelevancy
   end
 
   def call
-    if used_sources.empty?
+    if answer.sources.empty?
       return build_maximum_score_result("No sources were retrieved when generating the answer.")
     end
 
@@ -23,7 +23,7 @@ class AutoEvaluation::ContextRelevancy
     end
 
     truths, llm_responses[:truths], metrics[:truths] = TruthsGenerator.call(
-      answer_sources: used_sources,
+      answer_sources: answer.sources,
     )
 
     if truths.empty?
@@ -64,10 +64,6 @@ private
   def calculate_score(verdicts)
     verdicts_count = verdicts.count { |verdict| verdict["verdict"].strip.downcase != "no" }
     verdicts_count.to_d / verdicts.count
-  end
-
-  def used_sources
-    answer.sources.select(&:used)
   end
 
   def build_maximum_score_result(reason)
