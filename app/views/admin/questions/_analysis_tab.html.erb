@@ -56,3 +56,7 @@
 <% if coherence_runs.present? %>
   <%= render "generic_auto_evaluation_runs", runs: coherence_runs, title: "Coherence" %>
 <% end %>
+
+<% if faithfulness_runs.present? %>
+  <%= render "generic_auto_evaluation_runs", runs: faithfulness_runs, title: "Faithfulness" %>
+<% end %>
