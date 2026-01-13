@@ -61,6 +61,9 @@ class Answer < ApplicationRecord
   has_many :coherence_runs,
            -> { order(:created_at) },
            class_name: "AnswerAnalysis::CoherenceRun"
+  has_many :faithfulness_runs,
+           -> { order(:created_at) },
+           class_name: "AnswerAnalysis::FaithfulnessRun"
   enum :status,
        {
          answered: "answered",
@@ -205,7 +208,8 @@ class Answer < ApplicationRecord
   def has_analysis?
     topics.present? ||
       answer_relevancy_runs.present? ||
-      coherence_runs.present?
+      coherence_runs.present? ||
+      faithfulness_runs.present?
   end
 
   def question_used
