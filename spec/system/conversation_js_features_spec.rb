@@ -198,7 +198,8 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
                           @second_answer,
                           rephrase_question: true,
                           answered: true,
-                          sources_used: %w[link_1])
+                          sources_used: %w[link_1],
+                          create_content_chunk: false)
 
     execute_queued_sidekiq_jobs
   end
@@ -260,7 +261,8 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
                             answer,
                             rephrase_question: false,
                             answered: true,
-                            sources_used: [])
+                            sources_used: [],
+                            create_content_chunk: true)
     stub_claude_jailbreak_guardrails(question, triggered: false)
 
     if rephrase_question
@@ -273,9 +275,11 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
 
     stub_bedrock_titan_embedding(question)
 
-    populate_chunked_content_index([
-      build(:chunked_content_record, titan_embedding: mock_titan_embedding(question)),
-    ])
+    if create_content_chunk
+      populate_chunked_content_index([
+        build(:chunked_content_record, titan_embedding: mock_titan_embedding(question)),
+      ])
+    end
 
     stub_claude_question_routing(question)
     stub_claude_structured_answer(question, answer, answered:, sources_used:)
@@ -293,6 +297,9 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
     stub_bedrock_invoke_model_openai_oss_coherence(
       question_message: question,
       answer_message: answer,
+    )
+    stub_bedrock_invoke_model_openai_oss_context_relevancy(
+      question_message: question,
     )
   end
 

@@ -1,15 +1,5 @@
 RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
   describe ".call" do
-    let(:retrieval_context) do
-      <<~CONTEXT
-        # Context
-        Page title: #{chunk.title}
-        Description: #{chunk.description}
-        Headings: #{chunk.heading_hierarchy.join(' > ')}
-        # Content
-        #{Nokogiri::HTML(chunk.html_content).text}
-      CONTEXT
-    end
     let(:chunk) do
       build(
         :answer_source_chunk,
@@ -88,7 +78,7 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
 
     let!(:context_relevancy_stubs) do
       stub_bedrock_invoke_model_openai_oss_context_relevancy(
-        retrieval_context:,
+        answer_sources:,
         question_message: question.message,
         truths_json:,
         information_needs_json:,

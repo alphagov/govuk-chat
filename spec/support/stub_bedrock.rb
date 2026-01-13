@@ -210,14 +210,25 @@ module StubBedrock
   end
 
   def stub_bedrock_invoke_model_openai_oss_context_relevancy(
-    retrieval_context:,
     question_message:,
+    answer_sources: [build(:answer_source)],
     truths_json: { truths: [{ "context" => "Context", "facts" => ["Fact."] }] }.to_json,
-    information_needs_json: { claims: ["Information need."] }.to_json,
-    verdicts_json: { verdicts: [{ "verdict" => "yes" }] }.to_json,
+    information_needs_json: { information_needs: ["Information need."] }.to_json,
+    verdicts_json: { verdicts: [{ "verdict" => "yes", "reason" => "Some reason" }] }.to_json,
     reason_json: { reason: "This is the reason for the score." }.to_json
   )
     prompts = AutoEvaluation::Prompts.config.context_relevancy
+
+    retrieval_context = answer_sources.map do |source|
+      <<~CONTEXT
+        # Context
+        Page title: #{source.title}
+        Description: #{source.description}
+        Headings: #{source.heading_hierarchy.join(' > ')}
+        # Content
+        #{Nokogiri::HTML(source.html_content).text}
+      CONTEXT
+    end
 
     truths = JSON.parse(truths_json).fetch("truths")
     information_needs = JSON.parse(information_needs_json).fetch("information_needs")
@@ -234,7 +245,7 @@ module StubBedrock
 
     truths_user_prompt = sprintf(
       prompts.fetch(:truths).fetch(:user_prompt),
-      retrieval_context:,
+      retrieval_context: retrieval_context.join("\n\n"),
     )
     information_needs_user_prompt = sprintf(
       prompts.fetch(:information_needs).fetch(:user_prompt),

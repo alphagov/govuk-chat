@@ -228,6 +228,7 @@ RSpec.describe "Admin::QuestionsController" do
     it_behaves_like "renders_run in analysis tab when present", :answer_relevancy_run, "Answer relevancy"
     it_behaves_like "renders_run in analysis tab when present", :coherence_run, "Coherence"
     it_behaves_like "renders_run in analysis tab when present", :faithfulness_run, "Faithfulness"
+    it_behaves_like "renders_run in analysis tab when present", :context_relevancy_run, "Context relevancy"
 
     it "renders the page successfully" do
       question = create(:question)
