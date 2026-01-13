@@ -41,6 +41,7 @@ content_for(:active_navigation_item, admin_questions_path)
       topics: @answer.topics,
       answer_relevancy_runs: @answer.answer_relevancy_runs,
       coherence_runs: @answer.coherence_runs,
+      faithfulness_runs: @answer.faithfulness_runs,
     ),
   } if @answer&.has_analysis?
 %>

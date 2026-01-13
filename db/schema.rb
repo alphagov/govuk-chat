@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_08_130827) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_13_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -44,6 +44,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_08_130827) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["answer_id"], name: "index_answer_analysis_coherence_runs_on_answer_id"
+  end
+
+  create_table "answer_analysis_faithfulness_runs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.decimal "score", null: false
+    t.string "reason", null: false
+    t.jsonb "llm_responses"
+    t.jsonb "metrics"
+    t.uuid "answer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_answer_analysis_faithfulness_runs_on_answer_id"
   end
 
   create_table "answer_analysis_topics", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -194,6 +205,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_08_130827) do
 
   add_foreign_key "answer_analysis_answer_relevancy_runs", "answers", on_delete: :cascade
   add_foreign_key "answer_analysis_coherence_runs", "answers", on_delete: :cascade
+  add_foreign_key "answer_analysis_faithfulness_runs", "answers", on_delete: :cascade
   add_foreign_key "answer_analysis_topics", "answers", on_delete: :cascade
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade
   add_foreign_key "answer_sources", "answer_source_chunks", on_delete: :restrict

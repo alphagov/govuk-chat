@@ -55,6 +55,10 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
       question_message: @first_question,
       answer_message: @first_answer,
     )
+    stub_bedrock_invoke_model_openai_oss_faithfulness(
+      retrieval_context: "Some content",
+      answer_message: @first_answer,
+    )
     stub_bedrock_invoke_model_openai_oss_coherence(
       question_message: @first_question,
       answer_message: @first_answer,
@@ -93,6 +97,10 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
     stub_claude_messages_topic_tagger(rephrased_question)
     stub_bedrock_invoke_model_openai_oss_answer_relevancy(
       question_message: rephrased_question,
+      answer_message: @second_answer,
+    )
+    stub_bedrock_invoke_model_openai_oss_faithfulness(
+      retrieval_context: "Some content",
       answer_message: @second_answer,
     )
     stub_bedrock_invoke_model_openai_oss_coherence(
