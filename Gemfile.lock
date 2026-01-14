@@ -247,22 +247,22 @@ GEM
       faraday (>= 1.0, < 3.a)
     google-cloud-errors (1.5.0)
     google-logging-utils (0.2.0)
-    google-protobuf (4.33.2)
+    google-protobuf (4.33.4)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.33.2-aarch64-linux-gnu)
+    google-protobuf (4.33.4-aarch64-linux-gnu)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.33.2-arm64-darwin)
+    google-protobuf (4.33.4-arm64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.33.2-x86-linux-gnu)
+    google-protobuf (4.33.4-x86-linux-gnu)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.33.2-x86_64-darwin)
+    google-protobuf (4.33.4-x86_64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.33.2-x86_64-linux-gnu)
+    google-protobuf (4.33.4-x86_64-linux-gnu)
       bigdecimal
       rake (>= 13)
     googleapis-common-protos-types (1.22.0)
@@ -275,7 +275,7 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.22.3)
+    govuk_app_config (9.23.0)
       connection_pool (< 3)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.32)
@@ -454,7 +454,8 @@ GEM
       opentelemetry-common (~> 0.21)
     opentelemetry-helpers-sql (0.3.0)
       opentelemetry-api (~> 1.7)
-    opentelemetry-helpers-sql-processor (0.3.1)
+    opentelemetry-helpers-sql-processor (0.4.0)
+      opentelemetry-api (~> 1.0)
       opentelemetry-common (~> 0.21)
     opentelemetry-instrumentation-action_mailer (0.6.1)
       opentelemetry-instrumentation-active_support (~> 0.10)
@@ -626,7 +627,7 @@ GEM
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
-    prism (1.7.0)
+    prism (1.8.0)
     prometheus_exporter (2.3.1)
       webrick
     pry (0.15.2)
@@ -699,7 +700,7 @@ GEM
     rb_sys (0.9.124)
       rake-compiler-dock (= 1.11.0)
     rbtree (0.4.6)
-    rdoc (7.0.3)
+    rdoc (7.1.0)
       erb
       psych (>= 4.0.0)
       tsort
@@ -1035,15 +1036,15 @@ CHECKSUMS
   google-cloud-env (2.3.1) sha256=0faac01eb27be78c2591d64433663b1a114f8f7af55a4f819755426cac9178e7
   google-cloud-errors (1.5.0) sha256=b56be28b8c10628125214dde571b925cfcebdbc58619e598250c37a2114f7b4b
   google-logging-utils (0.2.0) sha256=675462b4ea5affa825a3442694ca2d75d0069455a1d0956127207498fca3df7b
-  google-protobuf (4.33.2) sha256=748150d6c642fd655ef39efa23ecf2abe6d616020039a6d1c1764be1da530315
-  google-protobuf (4.33.2-aarch64-linux-gnu) sha256=822b2dcb707e94e652cd994642c31035935fca021adfac6164772c511eb7acd4
-  google-protobuf (4.33.2-arm64-darwin) sha256=6d0ac185fed18768e5f16338455b1e4b7c38a97fc46f352e709f7a3007b64e1d
-  google-protobuf (4.33.2-x86-linux-gnu) sha256=82612c425d7a0b0f8f299d8e595a367984fcd22a155b8ac5861eea0e76ca1a93
-  google-protobuf (4.33.2-x86_64-darwin) sha256=87cde586234674562cf099e2b708a65e376e2d39b0f0f48281f4b4ea182b47f8
-  google-protobuf (4.33.2-x86_64-linux-gnu) sha256=73cba041477afcac92ff383fcbdec195ea28d96b994876d1deaa944d18f91786
+  google-protobuf (4.33.4) sha256=86921935b023ed0d872d6e84382e79016c91689be0520d614c74426778f13c16
+  google-protobuf (4.33.4-aarch64-linux-gnu) sha256=7b091ec8a80520738a4dbff59458e2a7ed4304d7fc20fd779b3d019ff52fbead
+  google-protobuf (4.33.4-arm64-darwin) sha256=63bb57e3d7108986f961546a536adaa38bd9ab5b1ebc39a1741a16c6eba3e869
+  google-protobuf (4.33.4-x86-linux-gnu) sha256=c54fab97506b79d6c7857d2caf373df5428c4f318fcffcd7acddc4ee29af383f
+  google-protobuf (4.33.4-x86_64-darwin) sha256=72906abcb572b324eba760b0abdbb827ab781b8e26f718fa3f7f49485295c8d3
+  google-protobuf (4.33.4-x86_64-linux-gnu) sha256=a8cff953d742bc804ece78bd96e82d88cf65a7d8c1910e045359e2f53074e55d
   googleapis-common-protos-types (1.22.0) sha256=f97492b77bd6da0018c860d5004f512fe7cd165554d7019a8f4df6a56fbfc4c7
   googleauth (1.16.0) sha256=1e7b5c2ee7edc6a0f5a4a4312c579b3822dc0be2679d6d09ca19d8c7ca5bd5f1
-  govuk_app_config (9.22.3) sha256=e12dbbb3a59b613b2e926d924a2a994a4b78ff0c2281a7e24ead35786e9129c1
+  govuk_app_config (9.23.0) sha256=b6be6acc5d31e4c9d673ebe6fd8a78cfc2e27745dbfddc51c653594a2e8d33b3
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
@@ -1115,7 +1116,7 @@ CHECKSUMS
   opentelemetry-exporter-otlp (0.31.1) sha256=5358be17d7849cbcc4f49e1fc24105edc780a6f96c8e57b64192ab9a8e47474a
   opentelemetry-helpers-mysql (0.4.0) sha256=d309c0b20825bdd14d4dbc75e0d3b381ffdad37d16424ceca3cb8453d9cb5a4f
   opentelemetry-helpers-sql (0.3.0) sha256=4bb08017d6a16dd41c4d1c53c7fd30f9c5bb691195d8b458933724627b3f37f9
-  opentelemetry-helpers-sql-processor (0.3.1) sha256=6041e934bee76c593e971a8bca0979a6ee411723affdd3c11ca1312903bcd9bc
+  opentelemetry-helpers-sql-processor (0.4.0) sha256=ec238d7a2887219bd247dc31d0eb8a1a03d414a899963b68e14bb9f4d18b23f4
   opentelemetry-instrumentation-action_mailer (0.6.1) sha256=8384866bdb066ae14b9a1fe686ffaf1f23468326a35af64390c0395fcd471057
   opentelemetry-instrumentation-action_pack (0.15.1) sha256=84fade740783caeebf260aaefcbf8f1a7a4c49f946944ff520a2fb1d6b07f273
   opentelemetry-instrumentation-action_view (0.11.2) sha256=e6a099015d672dabc19993d6fca99ef1e7210361ef21549a6e2076a67719fafc
@@ -1177,7 +1178,7 @@ CHECKSUMS
   plek (5.2.2) sha256=f508a25c97cf174e492be6270ee9fc9698051ab79170461582302d7b8cb0e180
   pp (0.6.3) sha256=2951d514450b93ccfeb1df7d021cae0da16e0a7f95ee1e2273719669d0ab9df6
   prettyprint (0.2.0) sha256=2bc9e15581a94742064a3cc8b0fb9d45aae3d03a1baa6ef80922627a0766f193
-  prism (1.7.0) sha256=10062f734bf7985c8424c44fac382ac04a58124ea3d220ec3ba9fe4f2da65103
+  prism (1.8.0) sha256=84453a16ef5530ea62c5f03ec16b52a459575ad4e7b9c2b360fd8ce2c39c1254
   prometheus_exporter (2.3.1) sha256=c501a7a46c3a3b515b152eecfaeffa65fd0b4c02d8e617a476c6d67a91fc6a04
   pry (0.15.2) sha256=12d54b8640d3fa29c9211dd4ffb08f3fd8bf7a4fd9b5a73ce5b59c8709385b6b
   pry-byebug (3.11.0) sha256=0b0abb7d309bc7f00044d512a3c8567274f7012b944b38becc8440439a1cea72
@@ -1204,7 +1205,7 @@ CHECKSUMS
   rb-inotify (0.11.1) sha256=a0a700441239b0ff18eb65e3866236cd78613d6b9f78fea1f9ac47a85e47be6e
   rb_sys (0.9.124) sha256=513476557b12eaf73764b3da9f8746024558fe8699bda785fb548c9aa3877ae7
   rbtree (0.4.6) sha256=14eea4469b24fd2472542e5f3eb105d6344c8ccf36f0b56d55fdcfeb4e0f10fc
-  rdoc (7.0.3) sha256=dfe3d0981d19b7bba71d9dbaeb57c9f4e3a7a4103162148a559c4fc687ea81f9
+  rdoc (7.1.0) sha256=494899df0706c178596ca6e1d50f1b7eb285a9b2aae715be5abd742734f17363
   redis-client (0.26.1) sha256=1e39d2862c4516a75ff777ee6ed08827af39336bfece4a48e944244891d9a073
   regexp_parser (2.11.2) sha256=5e5e9c1485ffd8de53ab1d2807affd81f617f72967dfc64fc75a69e2cbf0ff98
   reline (0.6.3) sha256=1198b04973565b36ec0f11542ab3f5cfeeec34823f4e54cebde90968092b1835
