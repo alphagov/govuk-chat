@@ -4,4 +4,5 @@ RSpec.describe AnswerAnalysis::FaithfulnessRun do
   end
 
   include_examples "auto_evaluation create runs from score results", :faithfulness_runs
+  include_examples "auto evaluation exportable runs"
 end
