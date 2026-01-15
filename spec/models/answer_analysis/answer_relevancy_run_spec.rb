@@ -4,4 +4,5 @@ RSpec.describe AnswerAnalysis::AnswerRelevancyRun do
   end
 
   include_examples "auto_evaluation create runs from score results", :answer_relevancy_runs
+  include_examples "auto evaluation exportable runs"
 end
