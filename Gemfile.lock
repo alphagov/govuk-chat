@@ -275,7 +275,7 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.23.0)
+    govuk_app_config (9.23.2)
       connection_pool (< 3)
       logstasher (~> 2.1)
       opentelemetry-exporter-otlp (>= 0.25, < 0.32)
@@ -286,7 +286,7 @@ GEM
       puma (>= 5.6, < 8.0)
       rack-proxy (~> 0.7)
       sentry-rails (>= 5.3, < 7.0)
-      sentry-ruby (~> 5.3)
+      sentry-ruby (>= 5.3, < 7.0)
       statsd-ruby (~> 1.5)
     govuk_message_queue_consumer (6.0.0)
       bunny (~> 2.17)
@@ -704,7 +704,7 @@ GEM
       erb
       psych (>= 4.0.0)
       tsort
-    redis-client (0.26.1)
+    redis-client (0.26.3)
       connection_pool
     regexp_parser (2.11.2)
     reline (0.6.3)
@@ -801,22 +801,22 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
-    sentry-rails (5.28.1)
-      railties (>= 5.0)
-      sentry-ruby (~> 5.28.1)
-    sentry-ruby (5.28.1)
+    sentry-rails (6.3.0)
+      railties (>= 5.2.0)
+      sentry-ruby (~> 6.3.0)
+    sentry-ruby (6.3.0)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
-    sentry-sidekiq (5.28.1)
-      sentry-ruby (~> 5.28.1)
-      sidekiq (>= 3.0)
+    sentry-sidekiq (6.3.0)
+      sentry-ruby (~> 6.3.0)
+      sidekiq (>= 5.0)
     set (1.1.1)
-    sidekiq (7.3.9)
+    sidekiq (7.3.10)
       base64
-      connection_pool (>= 2.3.0)
+      connection_pool (>= 2.3.0, < 3)
       logger
-      rack (>= 2.2.4)
-      redis-client (>= 0.22.2)
+      rack (>= 2.2.4, < 3.3)
+      redis-client (>= 0.23.0, < 1)
     signet (0.21.0)
       addressable (~> 2.8)
       faraday (>= 0.17.5, < 3.a)
@@ -1044,7 +1044,7 @@ CHECKSUMS
   google-protobuf (4.33.4-x86_64-linux-gnu) sha256=a8cff953d742bc804ece78bd96e82d88cf65a7d8c1910e045359e2f53074e55d
   googleapis-common-protos-types (1.22.0) sha256=f97492b77bd6da0018c860d5004f512fe7cd165554d7019a8f4df6a56fbfc4c7
   googleauth (1.16.0) sha256=1e7b5c2ee7edc6a0f5a4a4312c579b3822dc0be2679d6d09ca19d8c7ca5bd5f1
-  govuk_app_config (9.23.0) sha256=b6be6acc5d31e4c9d673ebe6fd8a78cfc2e27745dbfddc51c653594a2e8d33b3
+  govuk_app_config (9.23.2) sha256=1ffcba8f81247a846201f65e37ea37716e12370d83b0def7fb8909fa9d9a028b
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
@@ -1206,7 +1206,7 @@ CHECKSUMS
   rb_sys (0.9.124) sha256=513476557b12eaf73764b3da9f8746024558fe8699bda785fb548c9aa3877ae7
   rbtree (0.4.6) sha256=14eea4469b24fd2472542e5f3eb105d6344c8ccf36f0b56d55fdcfeb4e0f10fc
   rdoc (7.1.0) sha256=494899df0706c178596ca6e1d50f1b7eb285a9b2aae715be5abd742734f17363
-  redis-client (0.26.1) sha256=1e39d2862c4516a75ff777ee6ed08827af39336bfece4a48e944244891d9a073
+  redis-client (0.26.3) sha256=37a95ca193b7a79f350c09fe5e696dc15d1701195d559d031a107ab725effc49
   regexp_parser (2.11.2) sha256=5e5e9c1485ffd8de53ab1d2807affd81f617f72967dfc64fc75a69e2cbf0ff98
   reline (0.6.3) sha256=1198b04973565b36ec0f11542ab3f5cfeeec34823f4e54cebde90968092b1835
   representable (3.2.0) sha256=cc29bf7eebc31653586849371a43ffe36c60b54b0a6365b5f7d95ec34d1ebace
@@ -1238,11 +1238,11 @@ CHECKSUMS
   sass-embedded (1.81.0-x86_64-linux-gnu) sha256=5e2c5ed82496eb4e217bf171300e8b66cb5a06394eeb1009bfa99ec271099ecf
   securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
   selenium-webdriver (4.32.0) sha256=20dbdf27b586beeac9e2791a22312b414d0a30192b6ce144779f7dfde8ae8afe
-  sentry-rails (5.28.1) sha256=43a5f884622c60fa459ba05dc8bd22fbd5f28daaced1d00dbcfc4669eaf93807
-  sentry-ruby (5.28.1) sha256=1162d474271e8b82202c984b1116db234007a084c5b73293e921468898d07e99
-  sentry-sidekiq (5.28.1) sha256=1873d6ca4ba49086baec7a8128b322ae2c26ce892563ed625b8bfc0fa1bcd968
+  sentry-rails (6.3.0) sha256=2ea15aba6d5b08621764b3dab7d87af34823a890813d5023e0e07ae3d17a3eef
+  sentry-ruby (6.3.0) sha256=14b5806b25d5101002959e21ed1970cb48c038bda3ac0713c1b9a3f1b746f2a5
+  sentry-sidekiq (6.3.0) sha256=f5aa846295a70c7f4852a4f5633cbc13816c3f41724da88653403ce6ad079360
   set (1.1.1) sha256=6c7ac6c06d5907216395a4d5dae3ffe52ca5ee8a372befe6d4dea794383f98f0
-  sidekiq (7.3.9) sha256=1108712e1def89002b28e3545d5ae15d4a57ffd4d2c25d97bb1360988826b5a7
+  sidekiq (7.3.10) sha256=781eb4f65ef36042534ad73d72f211283afb7fee82eec786ada4ed1972ef8e3c
   signet (0.21.0) sha256=d617e9fbf24928280d39dcfefba9a0372d1c38187ffffd0a9283957a10a8cd5b
   simplecov (0.22.0) sha256=fe2622c7834ff23b98066bb0a854284b2729a569ac659f82621fc22ef36213a5
   simplecov-html (0.13.1) sha256=5dab0b7ee612e60e9887ad57693832fdf4695b4c0c859eaea5f95c18791ef10b
