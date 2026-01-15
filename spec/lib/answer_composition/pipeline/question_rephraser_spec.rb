@@ -41,7 +41,9 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
     let(:conversation) { create :conversation, :with_history }
     let(:context) { build(:answer_pipeline_context, question:) }
     let(:question) { conversation.questions.strict_loading(false).last }
-    let(:question_records_for_rephrasing) { conversation.questions.joins(:answer) }
+    let(:question_records_for_rephrasing) do
+      conversation.questions.joins(:answer).order("answers.created_at")
+    end
 
     it "raises an error if the llm_provider is unknown" do
       expect { described_class.new(llm_provider: :unknown).call(context) }
