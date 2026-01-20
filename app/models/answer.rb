@@ -191,18 +191,32 @@ class Answer < ApplicationRecord
     sources.each { |source| source.used = false }
   end
 
-  def group_used_answer_sources_by_base_path
-    sources_by_base_path = sources.used.group_by(&:base_path)
-
-    sources_by_base_path.map do |base_path, group|
+  def group_used_answer_sources_by_path
+    sources.used
+          .group_by { |source| source.chunk.exact_path.split("#").first }
+          .map do |path_minus_fragment, group|
       result = group.first
-      path = group.count == 1 ? result.exact_path : base_path
-
       title = result.title
-      title += ": #{result.heading}" if group.count == 1 && result.heading.present?
 
+      if group.count == 1
+        title += ": #{result.heading}" if result.heading.present?
+
+        next {
+          href: "#{Plek.website_root}#{result.exact_path}",
+          title:,
+        }
+      end
+
+      # We've chosen to use the first heading in the heading hierarchy instead of the
+      # most recent shared heading for each group with multiple sources. While we
+      # could obtain the shared heading, we would be unable to deeplink to it as we
+      # don't store the uri for each heading in our OpenSearch index.
+      # Adding the uri for each heading in the hierarchy would require us to update the index
+      # and reindex all of our OpenSearch documents. We will add this functionality to Chat V2
+      # if we continue to chunk content by headings.
+      title += ": #{result.heading_hierarchy.first}" if result.heading_hierarchy.present?
       {
-        href: "#{Plek.website_root}#{path}",
+        href: "#{Plek.website_root}#{path_minus_fragment}",
         title:,
       }
     end
