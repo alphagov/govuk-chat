@@ -23,11 +23,12 @@ FactoryBot.define do
 
     factory :weighted_search_result, class: "Search::ResultsForQuestion::WeightedResult" do
       weighted_score { 1.5 }
+      weighting { 1.0 }
       initialize_with do
-        result_attributes = attributes.except(:weighted_score)
+        result_attributes = attributes.except(:weighted_score, :weighting)
         result = Search::ChunkedContentRepository::Result.new(**result_attributes)
 
-        factory_attributes = attributes.slice(:weighted_score).merge(result:)
+        factory_attributes = attributes.slice(:weighted_score, :weighting).merge(result:)
         new(**factory_attributes)
       end
     end

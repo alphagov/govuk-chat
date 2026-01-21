@@ -31,6 +31,7 @@ module Search
         Search::ResultsForQuestion::WeightedResult.new(
           result:,
           weighted_score: result.score * document_type_weight,
+          weighting: document_type_weight,
         )
       end
     end
