@@ -1,10 +1,11 @@
 RSpec.describe "Admin::SearchController", :aws_credentials_stubbed, :chunked_content_index do
   describe "GET :index" do
     before do
-      allow(Search::ResultsForQuestion::Reranker).to receive(:document_type_weighting).with("guide", "guide", parent_document_type: nil).and_return(1.2)
-      allow(Search::ResultsForQuestion::Reranker).to receive(:document_type_weighting).with("answer", "answer", parent_document_type: nil).and_return(0.5)
-
       allow(Rails.configuration.search.thresholds).to receive_messages(minimum_score: 0.6, max_results: 5)
+      allow(Rails.configuration.search).to receive(:document_types_by_schema).and_return(
+        "guide" => { "document_types" => { "guide" => { "weight" => 1.2 } } },
+        "answer" => { "document_types" => { "answer" => { "weight" => 0.5 } } },
+      )
     end
 
     context "with empty params" do
@@ -73,8 +74,9 @@ RSpec.describe "Admin::SearchController", :aws_credentials_stubbed, :chunked_con
 
           results = Search::ChunkedContentRepository.new.search_by_embedding(titan_embedding, max_chunks: 2)
           result = results.detect { |r| r.digest == chunk_to_find[:digest] }
-          document_type_weight = Search::ResultsForQuestion::Reranker.document_type_weighting(chunk_to_find[:document_type], chunk_to_find[:schema_name], parent_document_type: nil)
-          weighted_score = result.score * document_type_weight
+          weighted_result = Search::ResultsForQuestion::Reranker.call(results).detect { |r| r.digest == chunk_to_find[:digest] }
+          document_type_weight = weighted_result.weighting
+          weighted_score = weighted_result.weighted_score
 
           expected_link = admin_chunk_path(id: chunk_id, back_link: admin_search_path(search_text:))
           score_calculation_pattern = /#{result.score}
