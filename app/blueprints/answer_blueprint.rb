@@ -7,7 +7,7 @@ class AnswerBlueprint < Blueprinter::Base
   end
 
   field :sources, if: ->(_field_name, answer, _options) { answer.sources.used.present? } do |answer, _options|
-    answer.group_used_answer_sources_by_base_path.map do |source|
+    answer.group_used_answer_sources_by_path.map do |source|
       { url: source[:href], title: source[:title] }
     end
   end

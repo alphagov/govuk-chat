@@ -268,8 +268,8 @@ RSpec.describe Answer do
     end
   end
 
-  describe "#group_used_answer_sources_by_base_path" do
-    context "when there is one source per base path" do
+  describe "#group_used_answer_sources_by_path" do
+    context "when there is one source per path" do
       let(:answer) do
         create(:answer, sources: [
           create(
@@ -279,39 +279,7 @@ RSpec.describe Answer do
               base_path: "/childcare-provider",
               exact_path: "/childcare-provider/how-to-get-a-childcare-provider",
               title: "Childcare providers",
-              heading_hierarchy: ["Childcare providers", "How to get a childcare provider"],
-            ),
-          ),
-        ])
-      end
-
-      it "builds the sources using the exact path and including the heading" do
-        expect(answer.group_used_answer_sources_by_base_path).to contain_exactly(
-          {
-            href: "#{Plek.website_root}/childcare-provider/how-to-get-a-childcare-provider",
-            title: "Childcare providers: How to get a childcare provider",
-          },
-        )
-      end
-
-      it "filters out unused sources" do
-        answer.sources << create(:answer_source, used: false, answer:)
-
-        expect(answer.group_used_answer_sources_by_base_path.length).to eq 1
-      end
-    end
-
-    context "when there are multiple sources per base path" do
-      let(:answer) do
-        create(:answer, sources: [
-          create(
-            :answer_source,
-            chunk: create(
-              :answer_source_chunk,
-              base_path: "/childcare-provider",
-              exact_path: "/childcare-provider/how-to-get-a-childcare-provider",
-              title: "Childcare providers",
-              heading_hierarchy: ["Childcare providers", "How to get a childcare provider"],
+              heading_hierarchy: ["How to get a childcare provider", "Find one online"],
             ),
           ),
           create(
@@ -321,19 +289,99 @@ RSpec.describe Answer do
               base_path: "/childcare-provider",
               exact_path: "/childcare-provider/how-much-it-costs",
               title: "Childcare providers",
-              heading_hierarchy: ["Childcare providers", "How much it costs"],
+              heading_hierarchy: ["How much it costs", "Additional fees"],
             ),
           ),
         ])
       end
 
-      it "builds the sources using the base path and excluding the heading" do
-        expect(answer.group_used_answer_sources_by_base_path).to contain_exactly(
+      it "builds the sources using the exact path and last heading in the heading hierarchy" do
+        expect(answer.group_used_answer_sources_by_path).to contain_exactly(
           {
-            href: "#{Plek.website_root}/childcare-provider",
-            title: "Childcare providers",
+            href: "#{Plek.website_root}/childcare-provider/how-to-get-a-childcare-provider",
+            title: "Childcare providers: Find one online",
+          },
+          { href: "#{Plek.website_root}/childcare-provider/how-much-it-costs",
+            title: "Childcare providers: Additional fees" },
+        )
+      end
+
+      it "filters out unused sources" do
+        answer.sources << create(:answer_source, used: false, answer:)
+
+        expect(answer.group_used_answer_sources_by_path.length).to eq 2
+      end
+    end
+
+    context "when there are multiple sources with the same path" do
+      let(:answer) do
+        create(:answer, sources: [
+          create(
+            :answer_source,
+            chunk: create(
+              :answer_source_chunk,
+              base_path: "/childcare-provider",
+              exact_path: "/childcare-provider/how-to-get-a-childcare-provider#section-1",
+              title: "Childcare providers",
+              heading_hierarchy: ["How to find a childcare provider", "Find one online"],
+            ),
+          ),
+          create(
+            :answer_source,
+            chunk: create(
+              :answer_source_chunk,
+              base_path: "/childcare-provider",
+              exact_path: "/childcare-provider/how-to-get-a-childcare-provider#section-2",
+              title: "Childcare providers",
+              heading_hierarchy: ["How to find a childcare provider online", "Find one in person"],
+            ),
+          ),
+        ])
+      end
+
+      it "builds the sources using the exact path and the first heading in the heading hierarchy" do
+        expect(answer.group_used_answer_sources_by_path).to contain_exactly(
+          {
+            href: "#{Plek.website_root}/childcare-provider/how-to-get-a-childcare-provider",
+            title: "Childcare providers: How to find a childcare provider",
           },
         )
+      end
+
+      context "when the chunks have no heading hierarchy" do
+        let(:answer) do
+          create(:answer, sources: [
+            create(
+              :answer_source,
+              chunk: create(
+                :answer_source_chunk,
+                base_path: "/childcare-provider",
+                exact_path: "/childcare-provider/how-to-get-a-childcare-provider#section-1",
+                title: "Childcare providers",
+                heading_hierarchy: [],
+              ),
+            ),
+            create(
+              :answer_source,
+              chunk: create(
+                :answer_source_chunk,
+                base_path: "/childcare-provider",
+                exact_path: "/childcare-provider/how-to-get-a-childcare-provider#section-2",
+                title: "Childcare providers",
+                heading_hierarchy: [],
+              ),
+            ),
+          ])
+        end
+
+        it "builds the source using base path and title" do
+          expect(answer.group_used_answer_sources_by_path).to contain_exactly(
+            {
+              href: "#{Plek.website_root}/childcare-provider/how-to-get-a-childcare-provider",
+              title: "Childcare providers",
+            },
+          )
+        end
       end
     end
   end
