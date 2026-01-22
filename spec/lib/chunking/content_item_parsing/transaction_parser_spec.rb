@@ -1,6 +1,6 @@
 RSpec.describe Chunking::ContentItemParsing::TransactionParser do
   describe ".call" do
-    it "uses the introductory_paragraph, more_information, other_ways_to_apply and what_you_need_to_know fields for chunks" do
+    it "uses the relevant fields for chunking 'transaction' content types" do
       details = {
         "introductory_paragraph" => [
           {
@@ -37,6 +37,39 @@ RSpec.describe Chunking::ContentItemParsing::TransactionParser do
       expect(chunk_2).to have_attributes(html_content: "<p>Content 2</p>")
       expect(chunk_3).to have_attributes(html_content: "<p>Content 3</p>")
       expect(chunk_4).to have_attributes(html_content: "<p>Content 4</p>")
+    end
+
+    it "uses the relevant fields for chunking 'local_transaction' content types" do
+      details = {
+        "introduction" => [
+          {
+            "content_type" => "text/html",
+            "content" => "<h2>Heading 1</h2><p>Content 1</p>",
+          },
+        ],
+        "more_information" => [
+          {
+            "content_type" => "text/html",
+            "content" => "<h2>Heading 2</h2><p>Content 2</p>",
+          },
+        ],
+        "need_to_know" => [
+          {
+            "content_type" => "text/html",
+            "content" => "<h2>Heading 3</h2><p>Content 3</p>",
+          },
+        ],
+
+      }
+      content_item = build(:notification_content_item,
+                           :local_transaction,
+                           details_merge: details)
+
+      chunk_1, chunk_2, chunk_3 = described_class.call(content_item)
+
+      expect(chunk_1).to have_attributes(html_content: "<p>Content 1</p>")
+      expect(chunk_2).to have_attributes(html_content: "<p>Content 2</p>")
+      expect(chunk_3).to have_attributes(html_content: "<p>Content 3</p>")
     end
 
     it "copes if fields are missing" do
