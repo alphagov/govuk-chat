@@ -115,6 +115,7 @@ document_types_by_schema:
     parser: Chunking::ContentItemParsing::TravelGuideParser
     document_types:
       travel_advice:
+        weight: 1.5
 
   worldwide_corporate_information_page:
     parser: Chunking::ContentItemParsing::BodyContentParser
