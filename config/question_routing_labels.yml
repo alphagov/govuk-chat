@@ -3,7 +3,7 @@ about_chat:
   use_answer: true
   answer_status: unanswerable_question_routing
   canned_responses:
-    - "Something went wrong while trying to answer your question. Please ask again."
+    - "Sorry, I experienced a technical error while trying to answer your question. Please try again."
 
 about_mps:
   label: "About MPs"
@@ -17,14 +17,14 @@ advice_opinions_predictions:
   use_answer: true
   answer_status: unanswerable_question_routing
   canned_responses:
-    - "Something went wrong while trying to answer your question. Please ask again."
+    - "Sorry, I experienced a technical error while trying to answer your question. Please try again."
 
 character_fun:
   label: "Character fun"
   use_answer: false
   answer_status: unanswerable_question_routing
   canned_responses:
-    - I cannot answer that. If you have genuine questions that can be answered using GOV.UK guidance, I'd be happy to help.
+    - I can only provide information based on GOV.UK guidance, so I cannot answer that. If you have a different question, I’d be happy to help.
 
 genuine_rag:
   label: "Genuine RAG"
@@ -53,14 +53,14 @@ harmful_vulgar_controversy:
   use_answer: false
   answer_status: unanswerable_question_routing
   canned_responses:
-    - I cannot answer that. If you have genuine questions that can be answered using GOV.UK guidance, I’d be happy to help.
+    - I can only provide information based on GOV.UK guidance, so I cannot answer that. If you have a different question, I’d be happy to help.
 
 multi_questions:
   label: "Multi-questions"
   use_answer: true
   answer_status: clarification
   canned_responses:
-    - "Something went wrong while trying to answer your question. Please ask again."
+    - "Sorry, I experienced a technical error while trying to answer your question. Please try again."
 
 negative_acknowledgement:
   label: "Negative acknowledgement"
@@ -110,11 +110,11 @@ vague_acronym_grammar:
   use_answer: true
   answer_status: clarification
   canned_responses:
-    - "Something went wrong while trying to answer your question. Please ask again."
+    - "Sorry, I experienced a technical error while trying to answer your question. Please try again."
 
 unclear_intent:
   label: "Unclear intent"
   use_answer: true
   answer_status: clarification
   canned_responses:
-    - "Something went wrong while trying to answer your question. Please ask again"
+    - "Sorry, I experienced a technical error while trying to answer your question. Please try again."
