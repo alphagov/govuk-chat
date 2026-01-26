@@ -13,9 +13,11 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
 
       allow(Rails.configuration.search.thresholds).to receive_messages(minimum_score: min_score, max_results:)
 
-      allow(described_class::Reranker).to receive(:document_type_weighting).with("guide", "guide", parent_document_type: nil).and_return(1.0)
-      allow(described_class::Reranker).to receive(:document_type_weighting).with("corporate_information_page", "about", parent_document_type: nil).and_return(0.3)
-      allow(described_class::Reranker).to receive(:document_type_weighting).with("help_page", "help_page", parent_document_type: nil).and_return(0.4)
+      allow(Rails.configuration.search).to receive(:document_types_by_schema).and_return(
+        "guide" => { "document_types" => { "guide" => { "weight" => 1.0 } } },
+        "corporate_information_page" => { "document_types" => { "about" => { "weight" => 0.3 } } },
+        "help_page" => { "document_types" => { "help_page" => { "weight" => 0.4 } } },
+      )
 
       populate_chunked_content_index([
         build(:chunked_content_record, title: "find this", schema_name: "guide", document_type: "guide", titan_embedding:),
