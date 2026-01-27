@@ -1,8 +1,10 @@
 module Chunking::ContentItemParsing
   class TransactionParser < BaseParser
     def call
-      multiple_content_type_fields = %w[introductory_paragraph
+      multiple_content_type_fields = %w[introduction
+                                        introductory_paragraph
                                         more_information
+                                        need_to_know
                                         other_ways_to_apply
                                         what_you_need_to_know]
 
