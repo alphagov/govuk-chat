@@ -34,23 +34,11 @@ module PiiValidator
                                     \b # word boundary
                                     /x
 
-  POSTCODE_REGEX = /
-                   \b # word boundary
-                   ([A-Z]{1,2} # 1 or 2 letters
-                   [0-9] # 1 digit
-                   [0-9A-Z]?) # optional second digit or letter
-                   \s? # optional single space
-                   ([0-9] # 1 digit
-                   [A-Z]{2}) # 2 letters
-                   \b # word boundary
-                   /xi # i for case insensitive
-
   PII_REGEXS = [
     EMAIL_REGEX,
     CREDIT_CARD_REGEX,
     PHONE_NUMBER_REGEX,
     NATIONAL_INSURANCE_NUMBER_REGEX,
-    POSTCODE_REGEX,
   ].freeze
 
   def self.invalid?(input)

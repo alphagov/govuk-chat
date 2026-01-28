@@ -102,26 +102,5 @@ RSpec.describe PiiValidator do
         end
       end
     end
-
-    context "when the input contains a postcode" do
-      it "returns true" do
-        postcodes = [
-          "SW1A 1AA",
-          "SW1A1AA",
-          "sw1a 1aa",
-          "Sw1a 1Aa",
-          "W1A 0AX",
-          "M1 1AE",
-          "B33 8TH",
-          "CR2 6XH",
-          "DN55 1PT",
-        ]
-
-        postcodes.each do |postcode|
-          user_question = "My postcode is #{postcode}"
-          expect(described_class.invalid?(user_question)).to be true
-        end
-      end
-    end
   end
 end
