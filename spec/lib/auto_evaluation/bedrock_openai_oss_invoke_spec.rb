@@ -70,5 +70,18 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
         /The property '#\/' did not contain a required property of 'response'/,
       )
     end
+
+    it "raises an error if the response exceeds the maximum token count" do
+      stub_bedrock_invoke_model_openai_oss_tool_call(
+        user_message,
+        tools,
+        nil,
+        "length",
+      )
+
+      expect {
+        described_class.call(user_message, tools)
+      }.to raise_error(described_class::LengthLimitExceededError)
+    end
   end
 end

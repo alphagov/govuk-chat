@@ -47,7 +47,7 @@ module StubBedrock
     dimensions.times.map { random_generator.rand }
   end
 
-  def stub_bedrock_invoke_model_openai_oss_tool_call(user_message, tools, content)
+  def stub_bedrock_invoke_model_openai_oss_tool_call(user_message, tools, content, finish_reason = "tool_calls")
     request_body = {
       include_reasoning: false,
       messages: [
@@ -63,6 +63,7 @@ module StubBedrock
     response_body = {
       choices: [
         {
+          finish_reason:,
           message: {
             tool_calls: [
               {
