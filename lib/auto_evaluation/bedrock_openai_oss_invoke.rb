@@ -29,7 +29,7 @@ module AutoEvaluation
           tools:,
           tool_choice: "required",
           parallel_tool_calls: false,
-          max_tokens: 4096,
+          max_tokens: 15_000,
           temperature: 0.0,
         }.to_json,
       )
