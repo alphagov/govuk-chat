@@ -1,6 +1,8 @@
 module AutoEvaluation
   class BedrockOpenAIOssInvoke
     class InvalidToolCallSchemaError < StandardError; end
+    class LengthLimitExceededError < StandardError; end
+
     Result = Data.define(
       :evaluation_data,
       :llm_response,
@@ -29,13 +31,18 @@ module AutoEvaluation
           tools:,
           tool_choice: "required",
           parallel_tool_calls: false,
-          max_tokens: 4096,
+          max_tokens: 15_000,
           temperature: 0.0,
         }.to_json,
       )
       parsed_response = JSON.parse(response.body.read)
+
+      choice = parsed_response["choices"][0]
+
+      raise LengthLimitExceededError if choice["finish_reason"] == "length"
+
       parsed_tool_output = JSON.parse(
-        parsed_response["choices"][0]["message"]["tool_calls"][0]["function"]["arguments"],
+        choice["message"]["tool_calls"][0]["function"]["arguments"],
       )
 
       validate_tool_output_against_schema(parsed_tool_output)
