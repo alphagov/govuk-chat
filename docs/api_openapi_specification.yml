@@ -20,8 +20,8 @@ info:
 
     | User type | Write request limit | Read request limit |
     |-----------|---------------------|--------------------|
-    | API User  | 100 RPM             | 1,200 RPM          |
-    | End User  | 10 RPM              | 120 RPM            |
+    | API User  | 200 RPM             | 2,400 RPM          |
+    | End User  | 15 RPM              | 180 RPM            |
 
   version: "0.5.0"
 servers:
