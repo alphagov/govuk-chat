@@ -309,7 +309,7 @@ GEM
       sprockets-rails
     govuk_schemas (6.2.2)
       json-schema (>= 2.8, < 6.2)
-    govuk_sidekiq (10.0.0)
+    govuk_sidekiq (10.1.0)
       gds-api-adapters (>= 19.1.0)
       govuk_app_config (>= 1.1)
       redis-client (>= 0.22.2)
@@ -385,7 +385,7 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2026.0127)
+    mime-types-data (3.2026.0203)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
     minitest (6.0.1)
@@ -709,7 +709,7 @@ GEM
       erb
       psych (>= 4.0.0)
       tsort
-    redis-client (0.26.3)
+    redis-client (0.26.4)
       connection_pool
     regexp_parser (2.11.3)
     reline (0.6.3)
@@ -1056,7 +1056,7 @@ CHECKSUMS
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
   govuk_publishing_components (64.0.0) sha256=90893858abf4305a2f9ee8cbbe9ae6031c4099ed5b7d7a7bcf9517ab9020b45e
   govuk_schemas (6.2.2) sha256=1af140e4d82a357cd70b2c2ac396cf8278a337ce3f2add3175a87a8ad08aa008
-  govuk_sidekiq (10.0.0) sha256=0d0485f6946f5e212eb5d6f5105c406a25f3cd059592a5b490b78f1d71818de8
+  govuk_sidekiq (10.1.0) sha256=040e131c7c68e391e1ad66ef02e2c8fcc4f286df5e0ff905c1bdc368c47c290f
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
   groupdate (6.7.0) sha256=beaa8d5bf3856814681914a1d4a20e77436a2214b85d0017dc2ea5c355fb6777
   hashdiff (1.2.1) sha256=9c079dbc513dfc8833ab59c0c2d8f230fa28499cc5efb4b8dd276cf931457cd1
@@ -1089,7 +1089,7 @@ CHECKSUMS
   matrix (0.4.2) sha256=71083ccbd67a14a43bfa78d3e4dc0f4b503b9cc18e5b4b1d686dc0f9ef7c4cc0
   method_source (1.1.0) sha256=181301c9c45b731b4769bc81e8860e72f9161ad7d66dd99103c9ab84f560f5c5
   mime-types (3.7.0) sha256=dcebf61c246f08e15a4de34e386ebe8233791e868564a470c3fe77c00eed5e56
-  mime-types-data (3.2026.0127) sha256=4a58692436a987ad930e75bf8f24da7e627acfa0d06e1720aa514791b4c7d12b
+  mime-types-data (3.2026.0203) sha256=54353d693af028847391c28361c07d4b8b689cad78c3e1cc272fb1205c6d2a2f
   mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
   mini_portile2 (2.8.9) sha256=0cd7c7f824e010c072e33f68bc02d85a00aeb6fce05bb4819c03dfd3c140c289
   minitest (6.0.1) sha256=7854c74f48e2e975969062833adc4013f249a4b212f5e7b9d5c040bf838d54bb
@@ -1212,7 +1212,7 @@ CHECKSUMS
   rb_sys (0.9.124) sha256=513476557b12eaf73764b3da9f8746024558fe8699bda785fb548c9aa3877ae7
   rbtree (0.4.6) sha256=14eea4469b24fd2472542e5f3eb105d6344c8ccf36f0b56d55fdcfeb4e0f10fc
   rdoc (7.1.0) sha256=494899df0706c178596ca6e1d50f1b7eb285a9b2aae715be5abd742734f17363
-  redis-client (0.26.3) sha256=37a95ca193b7a79f350c09fe5e696dc15d1701195d559d031a107ab725effc49
+  redis-client (0.26.4) sha256=3ad70beff5da2653e02dfeae996e7d8d7147a558da12b16b2282ad345e4c7120
   regexp_parser (2.11.3) sha256=ca13f381a173b7a93450e53459075c9b76a10433caadcb2f1180f2c741fc55a4
   reline (0.6.3) sha256=1198b04973565b36ec0f11542ab3f5cfeeec34823f4e54cebde90968092b1835
   representable (3.2.0) sha256=cc29bf7eebc31653586849371a43ffe36c60b54b0a6365b5f7d95ec34d1ebace
