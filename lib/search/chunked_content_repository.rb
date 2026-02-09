@@ -25,6 +25,7 @@ module Search
         },
       },
       digest: { type: "keyword" },
+      llm_instructions: { type: "text" },
     }.freeze
 
     class NotFound < StandardError
