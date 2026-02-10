@@ -11,6 +11,7 @@ module Chunking
               heading_hierarchy: [chunked_part[:title]] + html_chunk.headers.map(&:text_content),
               chunk_index:,
               exact_path: append_fragment(chunked_part[:exact_path], html_chunk.fragment),
+              llm_instructions:,
             )
 
             chunk_index += 1
@@ -38,6 +39,10 @@ module Chunking
             chunks: Chunking::HtmlHierarchicalChunker.call(html),
           }
         end
+      end
+
+      def llm_instructions
+        nil
       end
     end
   end

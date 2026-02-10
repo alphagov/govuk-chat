@@ -120,6 +120,31 @@ RSpec.describe Chunking::ContentItemParsing::TravelGuideParser do
       end
     end
 
+    describe "setting the llm_instructions field" do
+      it "sets the llm_instructions field to the travel alert status warnings" do
+        chunk_1, chunk_2, chunk_3 = described_class.call(content_item)
+
+        prefix = described_class::LLM_INSTRUCTIONS_PREFIX
+        instructions = "#{prefix} FCDO advises against all but essential travel to Thailand. FCDO advises against all travel to parts of Thailand."
+
+        expect(chunk_1.llm_instructions).to eq(instructions)
+        expect(chunk_2.llm_instructions).to eq(instructions)
+        expect(chunk_3.llm_instructions).to eq(instructions)
+      end
+
+      context "when there are no alert statuses" do
+        let(:alert_status) { [] }
+
+        it "does not set the llm_instructions field" do
+          chunk_1, chunk_2, chunk_3 = described_class.call(content_item)
+
+          expect(chunk_1.llm_instructions).to be_nil
+          expect(chunk_2.llm_instructions).to be_nil
+          expect(chunk_3.llm_instructions).to be_nil
+        end
+      end
+    end
+
     it "converts the array of parts into an array of chunks" do
       _, chunk_1, chunk_2, chunk_3 = described_class.call(content_item)
 
