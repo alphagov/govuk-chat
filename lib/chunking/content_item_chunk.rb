@@ -1,13 +1,14 @@
 module Chunking
   class ContentItemChunk
-    attr_reader :content_item, :html_content, :heading_hierarchy, :chunk_index, :chunk_exact_path
+    attr_reader :content_item, :html_content, :heading_hierarchy, :chunk_index, :chunk_exact_path, :llm_instructions
 
-    def initialize(content_item:, html_content:, heading_hierarchy:, chunk_index:, exact_path: nil)
+    def initialize(content_item:, html_content:, heading_hierarchy:, chunk_index:, exact_path: nil, llm_instructions: nil)
       @content_item = content_item
       @html_content = html_content
       @heading_hierarchy = heading_hierarchy
       @chunk_index = chunk_index
       @chunk_exact_path = exact_path
+      @llm_instructions = llm_instructions
     end
 
     def plain_content
@@ -94,6 +95,7 @@ module Chunking
         html_content:,
         plain_content:,
         digest:,
+        llm_instructions:,
       }
     end
 
@@ -111,6 +113,7 @@ module Chunking
         document_type:,
         parent_document_type:,
         schema_name:,
+        llm_instructions:,
       }
       string_parts = values.map { |k, v| "#{k}: #{v.inspect}" }
 
