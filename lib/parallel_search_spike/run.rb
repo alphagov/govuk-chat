@@ -108,16 +108,86 @@ module ParallelSearchSpike
     end
 
     def run_msearch_only
-      raise NotImplementedError, <<~MESSAGE.strip
-        msearch_only is not implemented in this harness yet.
+      return [] if phrases.empty?
 
-        TODO:
-          1) Build phrase embeddings (likely still sequential titan calls)
-          2) Build OpenSearch msearch actions in phrase order
-          3) Execute one client.msearch request
-          4) Map responses back to phrase-indexed summaries
-          5) Optionally align reranking/threshold behaviour with ResultsForQuestion
-      MESSAGE
+      min_score = Rails.configuration.search.thresholds.minimum_score
+      max_results = Rails.configuration.search.thresholds.max_results
+      max_chunks = Rails.configuration.search.thresholds.retrieved_from_index
+
+      phrase_results = Array.new(phrases.length)
+      embedding_durations = {}
+      embeddings = []
+      phrase_indexes_by_embedding = []
+
+      phrases.each_with_index do |phrase, phrase_index|
+        embedding_start_time = Clock.monotonic_time
+
+        begin
+          embeddings << Search::TextToEmbedding.call(phrase)
+          phrase_indexes_by_embedding << phrase_index
+          embedding_durations[phrase_index] = Clock.monotonic_time - embedding_start_time
+        rescue StandardError => e
+          phrase_results[phrase_index] = phrase_error(phrase, e).merge(
+            metrics: {
+              embedding_provider: "titan",
+              embedding_duration: Clock.monotonic_time - embedding_start_time,
+            },
+          )
+        end
+      end
+
+      return phrase_results if embeddings.empty?
+
+      search_start_time = Clock.monotonic_time
+      msearch_results = Search::ChunkedContentRepository.new.msearch_by_embeddings(
+        embeddings,
+        max_chunks:,
+        max_concurrent_searches: msearch_concurrency,
+      )
+      search_duration = Clock.monotonic_time - search_start_time
+
+      msearch_results.each_with_index do |msearch_result, msearch_index|
+        phrase_index = phrase_indexes_by_embedding[msearch_index]
+        phrase = phrases[phrase_index]
+
+        if msearch_result.error
+          phrase_results[phrase_index] = {
+            phrase:,
+            result_count: 0,
+            top_titles: [],
+            metrics: {
+              embedding_provider: "titan",
+              embedding_duration: embedding_durations[phrase_index],
+              search_duration:,
+              search_strategy: "msearch_only",
+            },
+            error: msearch_error_to_hash(msearch_result.error),
+          }
+          next
+        end
+
+        reranking_start_time = Clock.monotonic_time
+        accepted_results = rerank_and_filter(msearch_result.results, min_score:, max_results:)
+        reranking_duration = Clock.monotonic_time - reranking_start_time
+
+        phrase_results[phrase_index] = {
+          phrase:,
+          result_count: accepted_results.size,
+          top_titles: accepted_results.first(top_n).map(&:title),
+          metrics: {
+            embedding_provider: "titan",
+            embedding_duration: embedding_durations[phrase_index],
+            search_duration:,
+            reranking_duration:,
+            search_strategy: "msearch_only",
+          },
+          error: nil,
+        }
+      end
+
+      phrase_results
+    rescue StandardError => e
+      phrases.map { |phrase| phrase_error(phrase, e) }
     end
 
     def run_hybrid
@@ -196,6 +266,26 @@ module ParallelSearchSpike
 
     def wrap_in_executor(&block)
       Rails.application.executor.wrap(&block)
+    end
+
+    def rerank_and_filter(results, min_score:, max_results:)
+      weighted_results = Search::ResultsForQuestion::Reranker.call(results)
+      weighted_results.select { |result| result.weighted_score >= min_score }.take(max_results)
+    end
+
+    def msearch_concurrency
+      value = ENV.fetch("PARALLEL_SEARCH_MSEARCH_CONCURRENCY", nil)
+      return nil unless value
+
+      concurrency = value.to_i
+      concurrency.positive? ? concurrency : nil
+    end
+
+    def msearch_error_to_hash(error)
+      {
+        class: "OpenSearch::MsearchItemError",
+        message: error["reason"] || error.to_json,
+      }
     end
 
     def format_error(exception)
