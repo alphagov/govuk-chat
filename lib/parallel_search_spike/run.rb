@@ -6,7 +6,7 @@ module ParallelSearchSpike
   class Run
     DEFAULT_POOL_SIZE = Integer(ENV.fetch("PARALLEL_SEARCH_POOL_SIZE", 5))
     DEFAULT_RUNS = Integer(ENV.fetch("PARALLEL_SEARCH_RUNS", 10))
-    DEFAULT_STRATEGIES = %i[sequential parallel_per_phrase].freeze
+    DEFAULT_STRATEGIES = %i[sequential parallel_per_phrase msearch_only].freeze
     STOCK_PHRASES = [
       "pay vat",
       "need a visa",
@@ -61,6 +61,8 @@ module ParallelSearchSpike
           run_sequential
         when :parallel_per_phrase
           run_parallel_per_phrase
+        when :msearch_only
+          run_msearch_only
         else
           raise ArgumentError, "Unknown strategy: #{strategy.inspect}"
         end
@@ -95,6 +97,44 @@ module ParallelSearchSpike
       failures.value
     end
 
+    def run_msearch_only
+      embeddings = []
+      failures = 0
+
+      phrases.each do |phrase|
+        begin
+          embeddings << Search::TextToEmbedding.call(phrase)
+        rescue StandardError
+          failures += 1
+        end
+      end
+
+      return failures if embeddings.empty?
+
+      thresholds = Rails.configuration.search.thresholds
+      min_score = thresholds.minimum_score
+      max_results = thresholds.max_results
+      max_chunks = thresholds.retrieved_from_index
+
+      msearch_results = Search::ChunkedContentRepository.new.msearch_by_embeddings(
+        embeddings,
+        max_chunks:,
+      )
+
+      msearch_results.each do |msearch_result|
+        if msearch_result.error
+          failures += 1
+          next
+        end
+
+        rerank_and_filter(msearch_result.results, min_score:, max_results:)
+      rescue StandardError
+        failures += 1
+      end
+
+      failures
+    end
+
     def run_one_phrase_pipeline(phrase)
       result_set = Search::ResultsForQuestion.call(phrase)
       result_set.results
@@ -109,6 +149,11 @@ module ParallelSearchSpike
 
     def wrap_in_executor(&block)
       Rails.application.executor.wrap(&block)
+    end
+
+    def rerank_and_filter(results, min_score:, max_results:)
+      weighted_results = Search::ResultsForQuestion::Reranker.call(results)
+      weighted_results.select { |result| result.weighted_score >= min_score }.take(max_results)
     end
 
     def build_worker(work:, failures:, phrase_runner:)

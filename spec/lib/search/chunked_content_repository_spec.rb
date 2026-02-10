@@ -270,6 +270,108 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
     end
   end
 
+  describe "#msearch_by_embeddings", chunked_content_index: false do
+    let(:embeddings) { [[0.1, 0.2], [0.3, 0.4]] }
+    let(:max_chunks) { 10 }
+    let(:search_hit) do
+      {
+        "_id" => "chunk-1",
+        "_score" => 0.95,
+        "_source" => build(:chunked_content_record, title: "match title").except(:titan_embedding),
+      }
+    end
+
+    it "sends one msearch request and parses per-query responses in order" do
+      allow(repository.client).to receive(:msearch).and_return(
+        {
+          "responses" => [
+            { "status" => 200, "hits" => { "hits" => [search_hit] } },
+            { "status" => 200, "hits" => { "hits" => [] } },
+          ],
+        },
+      )
+
+      results = repository.msearch_by_embeddings(embeddings, max_chunks:)
+
+      expect(repository.client).to have_received(:msearch).with(
+        body: [
+          { index: repository.index },
+          {
+            size: max_chunks,
+            query: {
+              knn: {
+                titan_embedding: {
+                  vector: embeddings.first,
+                  k: max_chunks,
+                },
+              },
+            },
+            _source: { exclude: %w[titan_embedding] },
+          },
+          { index: repository.index },
+          {
+            size: max_chunks,
+            query: {
+              knn: {
+                titan_embedding: {
+                  vector: embeddings.last,
+                  k: max_chunks,
+                },
+              },
+            },
+            _source: { exclude: %w[titan_embedding] },
+          },
+        ],
+      )
+      expect(results).to all be_a(described_class::MsearchItem)
+      expect(results[0]).to have_attributes(status: 200, error: nil)
+      expect(results[0].results).to all be_a(described_class::Result)
+      expect(results[0].results.first.title).to eq("match title")
+      expect(results[1]).to have_attributes(status: 200, error: nil, results: [])
+    end
+
+    it "preserves per-response errors without raising" do
+      allow(repository.client).to receive(:msearch).and_return(
+        {
+          "responses" => [
+            { "status" => 200, "hits" => { "hits" => [search_hit] } },
+            { "status" => 500, "error" => { "type" => "search_phase_execution_exception", "reason" => "boom" } },
+          ],
+        },
+      )
+
+      results = repository.msearch_by_embeddings(embeddings, max_chunks:)
+
+      expect(results[0]).to be_success
+      expect(results[1]).not_to be_success
+      expect(results[1]).to have_attributes(
+        status: 500,
+        error: { "type" => "search_phase_execution_exception", "reason" => "boom" },
+        results: [],
+      )
+    end
+
+    it "passes max_concurrent_searches when provided" do
+      allow(repository.client).to receive(:msearch).and_return({ "responses" => [] })
+
+      repository.msearch_by_embeddings(embeddings, max_chunks:, max_concurrent_searches: 4)
+
+      expect(repository.client).to have_received(:msearch).with(
+        body: an_instance_of(Array),
+        max_concurrent_searches: 4,
+      )
+    end
+
+    it "returns an empty array for empty embeddings without calling msearch" do
+      allow(repository.client).to receive(:msearch)
+
+      result = repository.msearch_by_embeddings([], max_chunks:)
+
+      expect(result).to eq([])
+      expect(repository.client).not_to have_received(:msearch)
+    end
+  end
+
   describe "#chunk" do
     let(:content_chunk) { build :chunked_content_record }
     let(:chunk_id) { "chunk_id" }
