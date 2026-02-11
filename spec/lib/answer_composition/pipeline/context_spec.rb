@@ -231,8 +231,19 @@ RSpec.describe AnswerComposition::Pipeline::Context do
             result.html_content,
             result.exact_path,
           ),
+          llm_instructions: result.llm_instructions,
         )
       end
+    end
+
+    it "omits elements where the value is nil" do
+      instance = described_class.new(build(:question))
+      instance.search_results = [build(:weighted_search_result, llm_instructions: nil)]
+      link_token_mapper = AnswerComposition::LinkTokenMapper.new
+
+      formatted = instance.search_results_prompt_formatted(link_token_mapper)
+
+      expect(formatted[0].key?(:llm_instructions)).to be false
     end
   end
 end

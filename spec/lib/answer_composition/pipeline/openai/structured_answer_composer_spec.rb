@@ -67,7 +67,7 @@ RSpec.describe AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer, :c
                               "page_title: \"Title\", " \
                               "page_description: \"Description\", " \
                               "context_headings: [\"Heading 1\", \"Heading 2\"], " \
-                              "context_content: \"<p>Some content</p><a href=\\\"link_2\\\">What is a tax?</a>\"}]"
+                              "context_content: \"<p>Some content</p><a href=\\\"link_2\\\">What is a tax?</a>\", llm_instructions: \"Some instructions\"}]"
       expected_message_history = [
         { role: "system", content: "System prompt. #{system_prompt_context}" },
         { role: "user", content: question.message },
