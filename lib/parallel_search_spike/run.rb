@@ -20,7 +20,7 @@ module ParallelSearchSpike
       @pool_size = pool_size.to_i
       @strategies = Array(strategies).map(&:to_sym)
       @top_n = top_n.to_i
-      @fail_fast = !!fail_fast
+      @fail_fast = !fail_fast.nil?
       @io = io
     end
 
@@ -53,7 +53,7 @@ module ParallelSearchSpike
 
       {
         strategy:,
-        pool_size: strategy == :parallel_per_phrase ? effective_pool_size : nil,
+        pool_size: %i[parallel_per_phrase hybrid].include?(strategy) ? effective_pool_size : nil,
         duration_s: Clock.monotonic_time - start_time,
         phrase_results:,
       }
@@ -191,15 +191,116 @@ module ParallelSearchSpike
     end
 
     def run_hybrid
-      raise NotImplementedError, <<~MESSAGE.strip
-        hybrid is not implemented in this harness yet.
+      return [] if phrases.empty?
 
-        TODO:
-          1) Build embeddings in parallel with a bounded pool
-          2) Execute one OpenSearch msearch request for all embeddings
-          3) Map and summarise responses in original phrase order
-          4) Optionally align reranking/threshold behaviour with ResultsForQuestion
-      MESSAGE
+      min_score = Rails.configuration.search.thresholds.minimum_score
+      max_results = Rails.configuration.search.thresholds.max_results
+      max_chunks = Rails.configuration.search.thresholds.retrieved_from_index
+
+      phrase_results = Array.new(phrases.length)
+      embeddings_by_index = Array.new(phrases.length)
+      embedding_durations = Array.new(phrases.length)
+
+      work_items = Queue.new
+      phrases.each_with_index do |phrase, phrase_index|
+        work_items << [phrase, phrase_index]
+      end
+
+      thread_count = effective_pool_size
+      thread_errors = Queue.new
+
+      threads = thread_count.times.map do
+        Thread.new do
+          wrap_in_executor do
+            loop do
+              phrase, phrase_index = work_items.pop(true)
+              embedding_start_time = Clock.monotonic_time
+
+              begin
+                embeddings_by_index[phrase_index] = Search::TextToEmbedding.call(phrase)
+                embedding_durations[phrase_index] = Clock.monotonic_time - embedding_start_time
+              rescue StandardError => e
+                phrase_results[phrase_index] = phrase_error(phrase, e).merge(
+                  metrics: {
+                    embedding_provider: "titan",
+                    embedding_duration: Clock.monotonic_time - embedding_start_time,
+                  },
+                )
+              end
+            rescue ThreadError
+              break
+            end
+          end
+        rescue StandardError => e
+          thread_errors << e
+        end
+      end
+
+      threads.each(&:join)
+      raise thread_errors.pop unless thread_errors.empty?
+
+      embeddings = []
+      phrase_indexes_by_embedding = []
+      phrases.each_index do |phrase_index|
+        embedding = embeddings_by_index[phrase_index]
+        next unless embedding
+
+        embeddings << embedding
+        phrase_indexes_by_embedding << phrase_index
+      end
+
+      return phrase_results if embeddings.empty?
+
+      search_start_time = Clock.monotonic_time
+      msearch_results = Search::ChunkedContentRepository.new.msearch_by_embeddings(
+        embeddings,
+        max_chunks:,
+        max_concurrent_searches: msearch_concurrency,
+      )
+      search_duration = Clock.monotonic_time - search_start_time
+
+      msearch_results.each_with_index do |msearch_result, msearch_index|
+        phrase_index = phrase_indexes_by_embedding[msearch_index]
+        phrase = phrases[phrase_index]
+
+        if msearch_result.error
+          phrase_results[phrase_index] = {
+            phrase:,
+            result_count: 0,
+            top_titles: [],
+            metrics: {
+              embedding_provider: "titan",
+              embedding_duration: embedding_durations[phrase_index],
+              search_duration:,
+              search_strategy: "hybrid",
+            },
+            error: msearch_error_to_hash(msearch_result.error),
+          }
+          next
+        end
+
+        reranking_start_time = Clock.monotonic_time
+        accepted_results = rerank_and_filter(msearch_result.results, min_score:, max_results:)
+        reranking_duration = Clock.monotonic_time - reranking_start_time
+
+        phrase_results[phrase_index] = {
+          phrase:,
+          result_count: accepted_results.size,
+          top_titles: accepted_results.first(top_n).map(&:title),
+          metrics: {
+            embedding_provider: "titan",
+            embedding_duration: embedding_durations[phrase_index],
+            search_duration:,
+            reranking_duration:,
+            search_strategy: "hybrid",
+          },
+          error: nil,
+        }
+      end
+
+      phrase_results
+    rescue StandardError => e
+      phrases.map { |phrase| phrase_error(phrase, e) }
     end
 
     def run_one_phrase(phrase)
@@ -232,18 +333,18 @@ module ParallelSearchSpike
       io.puts
 
       runs.each do |run|
-        io.puts "== #{run[:strategy]} (#{format('%.3fs', run[:duration_s])}) =="
+        io.puts "== #{run[:strategy]} (#{sprintf('%.3fs', run[:duration_s])}) =="
 
         run[:phrase_results].each_with_index do |phrase_result, index|
           if phrase_result[:error]
-            io.puts format(
+            io.puts sprintf(
               "[%02d] ERROR %s - %s",
               index,
               phrase_result.dig(:error, :class),
               phrase_result.dig(:error, :message),
             )
           else
-            io.puts format(
+            io.puts sprintf(
               "[%02d] %s => %d results | top: %s",
               index,
               phrase_result[:phrase].inspect,
