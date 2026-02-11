@@ -17,6 +17,7 @@ FactoryBot.define do
     description { "Description" }
     plain_content { "Some content" }
     schema_name { "guide" }
+    llm_instructions { "Some instructions" }
     _id { "#{content_id}_#{locale}_#{chunk_index}" }
 
     initialize_with { new(**attributes) }
