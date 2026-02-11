@@ -122,14 +122,22 @@ RSpec.describe Chunking::ContentItemParsing::TravelGuideParser do
 
     describe "setting the llm_instructions field" do
       it "sets the llm_instructions field to the travel alert status warnings" do
-        chunk_1, chunk_2, chunk_3 = described_class.call(content_item)
+        chunks = described_class.call(content_item)
 
-        prefix = described_class::LLM_INSTRUCTIONS_PREFIX
+        prefix = GovukChatPrivate.config.llm_prompts.dig(
+          :common, :chunking_parser_instructions, :travel_guide_parser
+        )
         instructions = "#{prefix} FCDO advises against all but essential travel to Thailand. FCDO advises against all travel to parts of Thailand."
 
-        expect(chunk_1.llm_instructions).to eq(instructions)
-        expect(chunk_2.llm_instructions).to eq(instructions)
-        expect(chunk_3.llm_instructions).to eq(instructions)
+        chunks.each do |chunk|
+          expect(chunk.llm_instructions == instructions).to be(true), lambda {
+            if ENV["CI"]
+              "Chunk llm_instructions do not match. Suppressing output on CI; run this test locally to see the full diff."
+            else
+              "Expected: #{instructions}\nGot: #{chunk.llm_instructions}"
+            end
+          }
+        end
       end
 
       context "when there are no alert statuses" do

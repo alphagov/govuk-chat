@@ -75,7 +75,8 @@ module AnswerComposition::Pipeline
             result.html_content,
             result.exact_path,
           ),
-        }
+          llm_instructions: result.llm_instructions,
+        }.compact
       end
     end
   end
