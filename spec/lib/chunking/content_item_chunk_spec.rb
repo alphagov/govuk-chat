@@ -63,7 +63,8 @@ RSpec.describe Chunking::ContentItemChunk do
                        heading_hierarchy: ["Heading 1", "Heading 2"],
                        chunk_index: 0,
                        exact_path: "/exact-path",
-                       parent_document_type: "guide")
+                       parent_document_type: "guide",
+                       llm_instructions: "Some instructions")
 
       expect(instance.to_opensearch_hash)
         .to eq({
@@ -81,6 +82,7 @@ RSpec.describe Chunking::ContentItemChunk do
           html_content: "<p>Content</p>",
           plain_content: instance.plain_content,
           digest: instance.digest,
+          llm_instructions: "Some instructions",
         })
     end
   end
@@ -92,7 +94,8 @@ RSpec.describe Chunking::ContentItemChunk do
                        heading_hierarchy: ["Heading 1", "Heading 2"],
                        chunk_index: 0,
                        description: "Description",
-                       parent_document_type: "parent")
+                       parent_document_type: "parent",
+                       llm_instructions: "Some instructions")
 
       # rstrip to remove the HEREDOC's trailing new line
       expect(instance.inspect).to eq(<<~HEREDOC.rstrip)
@@ -109,6 +112,7 @@ RSpec.describe Chunking::ContentItemChunk do
         document_type: "#{instance.content_item['document_type']}"
         parent_document_type: "parent"
         schema_name: "#{instance.content_item['schema_name']}"
+        llm_instructions: "Some instructions"
         )
       HEREDOC
     end

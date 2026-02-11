@@ -1,6 +1,8 @@
 module Chunking
   module ContentItemParsing
     class TravelGuideParser < PartsContentParser
+      LLM_INSTRUCTIONS_PREFIX = "THERE IS CRITICAL INFORMATION FOR THIS CONTENT! USE THIS INFORMATION IN YOUR ANSWER WHEN IT IS RELEVANT TO THE QUESTION:".freeze
+
       include ActionView::Helpers
 
       def initialize(content_item)
@@ -62,6 +64,12 @@ module Chunking
         end
 
         content_tag(:ul, safe_join(items))
+      end
+
+      def llm_instructions
+        return nil if alert_status.empty?
+
+        "#{LLM_INSTRUCTIONS_PREFIX} #{alert_status_warnings.join(' ')}"
       end
     end
   end

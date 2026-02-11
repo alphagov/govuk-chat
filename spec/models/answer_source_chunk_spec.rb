@@ -18,7 +18,7 @@ RSpec.describe AnswerSourceChunk do
         search_result = build(:weighted_search_result)
         chunk = described_class.find_or_create_from_search_result(search_result)
 
-        expected_attributes = search_result.to_h.except(:_id, :score, :schema_name)
+        expected_attributes = search_result.to_h.except(:_id, :score, :schema_name, :llm_instructions)
 
         expect(chunk).to be_a(described_class)
         expect(chunk).to have_attributes(expected_attributes)

@@ -17,6 +17,7 @@ module Search
       :description,
       :plain_content,
       :schema_name,
+      :llm_instructions,
     ) do
       def initialize(**kwargs)
         defaults = members.index_with(nil)

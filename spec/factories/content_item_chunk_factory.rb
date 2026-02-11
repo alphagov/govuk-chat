@@ -27,13 +27,15 @@ FactoryBot.define do
     heading_hierarchy { ["Heading 1", "Heading 2"] }
     chunk_index { 0 }
     exact_path { nil }
+    llm_instructions { nil }
 
     initialize_with do
       new(content_item:,
           html_content:,
           heading_hierarchy:,
           chunk_index:,
-          exact_path:)
+          exact_path:,
+          llm_instructions:)
     end
   end
 end
