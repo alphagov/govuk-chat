@@ -6,7 +6,7 @@ module ParallelSearchSpike
   class Run
     DEFAULT_POOL_SIZE = Integer(ENV.fetch("PARALLEL_SEARCH_POOL_SIZE", 5))
     DEFAULT_RUNS = Integer(ENV.fetch("PARALLEL_SEARCH_RUNS", 10))
-    DEFAULT_STRATEGIES = %i[sequential parallel_per_phrase msearch_only].freeze
+    DEFAULT_STRATEGIES = %i[sequential parallel_per_phrase msearch_only hybrid].freeze
     STOCK_PHRASES = [
       "pay vat",
       "need a visa",
@@ -63,6 +63,8 @@ module ParallelSearchSpike
           run_parallel_per_phrase
         when :msearch_only
           run_msearch_only
+        when :hybrid
+          run_hybrid
         else
           raise ArgumentError, "Unknown strategy: #{strategy.inspect}"
         end
@@ -108,6 +110,45 @@ module ParallelSearchSpike
           failures += 1
         end
       end
+
+      return failures if embeddings.empty?
+
+      thresholds = Rails.configuration.search.thresholds
+      min_score = thresholds.minimum_score
+      max_results = thresholds.max_results
+      max_chunks = thresholds.retrieved_from_index
+
+      msearch_results = Search::ChunkedContentRepository.new.msearch_by_embeddings(
+        embeddings,
+        max_chunks:,
+      )
+
+      msearch_results.each do |msearch_result|
+        if msearch_result.error
+          failures += 1
+          next
+        end
+
+        rerank_and_filter(msearch_result.results, min_score:, max_results:)
+      rescue StandardError
+        failures += 1
+      end
+
+      failures
+    end
+
+    def run_hybrid
+      return 0 if phrases.empty?
+
+      embeddings = []
+      embeddings_mutex = Mutex.new
+      embedding_runner = lambda do |phrase|
+        embedding = Search::TextToEmbedding.call(phrase)
+        embeddings_mutex.synchronize { embeddings << embedding }
+        true
+      end
+
+      failures = run_parallel_failures(thread_count: effective_pool_size, phrase_runner: embedding_runner)
 
       return failures if embeddings.empty?
 
