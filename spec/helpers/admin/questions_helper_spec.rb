@@ -48,6 +48,7 @@ RSpec.describe Admin::QuestionsHelper do
       result = helper.question_show_summary_list_rows(question, nil, 1, 1)
       expected_keys = [
         "Conversation id",
+        "Conversation session id",
         "Question number",
         "Question id",
         "Question created at",
@@ -66,6 +67,7 @@ RSpec.describe Admin::QuestionsHelper do
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
       expected_keys = [
         "Conversation id",
+        "Conversation session id",
         "Question number",
         "Question id",
         "Question created at",
@@ -108,6 +110,17 @@ RSpec.describe Admin::QuestionsHelper do
       result = helper.question_show_summary_list_rows(question, answer, 1, 1)
 
       expect(returned_keys(result)).to include("Error message")
+    end
+
+    it "returns a row with a link to filter the questions table by the conversation session id" do
+      result = helper.question_show_summary_list_rows(question, nil, 1, 1)
+
+      expect(returned_value(result, "Conversation session id"))
+        .to include(question.conversation_session_id)
+        .and have_link(
+          "View all questions for this conversation session",
+          href: admin_questions_path(conversation_session_id: question.conversation_session_id),
+        )
     end
 
     it "returns a used sources row when the answer has sources" do
