@@ -6,7 +6,7 @@ module ParallelSearchSpike
   class Run
     DEFAULT_POOL_SIZE = Integer(ENV.fetch("PARALLEL_SEARCH_POOL_SIZE", 5))
     DEFAULT_RUNS = Integer(ENV.fetch("PARALLEL_SEARCH_RUNS", 10))
-    DEFAULT_STRATEGIES = %i[sequential parallel_per_phrase msearch_only hybrid].freeze
+    DEFAULT_STRATEGIES = %i[sequential parallel_per_phrase bounded_pool msearch_only hybrid].freeze
     STOCK_PHRASES = [
       "pay vat",
       "need a visa",
@@ -61,6 +61,8 @@ module ParallelSearchSpike
           run_sequential
         when :parallel_per_phrase
           run_parallel_per_phrase
+        when :bounded_pool
+          run_bounded_pool
         when :msearch_only
           run_msearch_only
         when :hybrid
@@ -85,6 +87,13 @@ module ParallelSearchSpike
       )
     end
 
+    def run_bounded_pool
+      run_bounded_pool_failures(
+        thread_count: effective_pool_size,
+        phrase_runner: method(:run_one_phrase_pipeline),
+      )
+    end
+
     def run_parallel_failures(thread_count:, phrase_runner:)
       return 0 if phrases.empty?
 
@@ -95,6 +104,29 @@ module ParallelSearchSpike
       worker = build_worker(work:, failures:, phrase_runner:)
       threads = thread_count.times.map { Thread.new { worker.call } }
       threads.each(&:join)
+
+      failures.value
+    end
+
+    def run_bounded_pool_failures(thread_count:, phrase_runner:)
+      return 0 if phrases.empty?
+
+      failures = Concurrent::AtomicFixnum.new(0)
+      work = Queue.new
+      phrases.each { |phrase| work << phrase }
+
+      worker = build_worker(work:, failures:, phrase_runner:)
+      pool = Concurrent::FixedThreadPool.new(
+        thread_count,
+        name: "parallel-search-spike",
+      )
+
+      begin
+        thread_count.times { pool.post { worker.call } }
+      ensure
+        pool.shutdown
+        pool.wait_for_termination
+      end
 
       failures.value
     end
