@@ -1,0 +1,1949 @@
+{
+  "mode": "benchmark",
+  "benchmark_trials": 20,
+  "benchmark_seed": null,
+  "randomized_order": true,
+  "trials": [
+    {
+      "trial": 1,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 1.7670420003123581,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.7267760001122952,
+                "search_duration": 0.6344770002178848,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.00394000019878149
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 1.1212359997443855,
+                "search_duration": 0.5616790000349283,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.018602000083774328
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.8556009996682405,
+                "search_duration": 0.9067319999448955,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0017550000920891762
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.6998939998447895,
+                "search_duration": 0.7300309999845922,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001210000365972519
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.7821740000508726,
+                "search_duration": 0.6147409998811781,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001194000244140625
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 2,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.9848559997044504,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.41709399968385696,
+                "search_duration": 0.205959000159055,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0016300003044307232
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.24398500006645918,
+                "search_duration": 0.2284409999847412,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0014319997280836105
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.3957050000317395,
+                "search_duration": 0.16507599968463182,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001319000031799078
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.5845289998687804,
+                "search_duration": 0.1734029999934137,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.002386000007390976
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.8114709998480976,
+                "search_duration": 0.16672900039702654,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001563000027090311
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 3,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.926188999786973,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.3190369997173548,
+                "search_duration": 0.2292330004274845,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0013589998707175255
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.6192900002934039,
+                "search_duration": 0.19967999961227179,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011680000461637974
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.308895000256598,
+                "search_duration": 0.1893770000897348,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011080000549554825
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.6194640002213418,
+                "search_duration": 0.3017469998449087,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011740000918507576
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.6092139999382198,
+                "search_duration": 0.16174199990928173,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011450001038610935
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 4,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.8365739998407662,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.35668399976566434,
+                "search_duration": 0.20218000002205372,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011309999972581863
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.4372819997370243,
+                "search_duration": 0.2864020001143217,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001487999688833952
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.44294199999421835,
+                "search_duration": 0.389206999912858,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0019150003790855408
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.3867239998653531,
+                "search_duration": 0.22779199993237853,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011939997784793377
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.4072230001911521,
+                "search_duration": 0.25924399960786104,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0013090004213154316
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 5,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 1.0857449998147786,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.38111700024455786,
+                "search_duration": 0.27559000020846725,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0026710000820457935
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.6113970000296831,
+                "search_duration": 0.22344399988651276,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.00177100021392107
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.8966500000096858,
+                "search_duration": 0.1790439998731017,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0048050000332295895
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.5857740002684295,
+                "search_duration": 0.19564600009471178,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001500999554991722
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.680439000017941,
+                "search_duration": 0.2865959997288883,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.00773000018671155
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 6,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.8670080001465976,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.4678569999523461,
+                "search_duration": 0.29645400028675795,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0015229997225105762
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.5075180004350841,
+                "search_duration": 0.23838899983093143,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0016370001249015331
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.42169500002637506,
+                "search_duration": 0.1941639999859035,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0014780000783503056
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.5244469996541739,
+                "search_duration": 0.26564000034704804,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.002319000195711851
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.6261860001832247,
+                "search_duration": 0.2188579998910427,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0017129997722804546
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 7,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.8121659997850657,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.3430940001271665,
+                "search_duration": 0.20575599977746606,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0013219998218119144
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.3671610001474619,
+                "search_duration": 0.23224000027403235,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0013219998218119144
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.5029899999499321,
+                "search_duration": 0.26806600019335747,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011599999852478504
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.6014239997602999,
+                "search_duration": 0.20494099985808134,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0012940000742673874
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.5530629996210337,
+                "search_duration": 0.20368800032883883,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0013069999404251575
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 8,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.8189769997261465,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.6037570000626147,
+                "search_duration": 0.21374700032174587,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0010799998417496681
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.3100910000503063,
+                "search_duration": 0.20710499957203865,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0013159997761249542
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.46905899979174137,
+                "search_duration": 0.19492200016975403,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011909999884665012
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.3667049999348819,
+                "search_duration": 0.26623200019821525,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0012700003571808338
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.5324909999035299,
+                "search_duration": 0.1923670000396669,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0010619997046887875
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 9,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.817809000145644,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.4332820000126958,
+                "search_duration": 0.2534860000014305,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0012370003387331963
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.4217759999446571,
+                "search_duration": 0.21455600019544363,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0012759999372065067
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.382232999894768,
+                "search_duration": 0.19231600034981966,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001157000195235014
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.4554110001772642,
+                "search_duration": 0.3578010001219809,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0014140000566840172
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.4356090002693236,
+                "search_duration": 0.32987499982118607,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0014120000414550304
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 10,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.80464500002563,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.2835360001772642,
+                "search_duration": 0.2340029999613762,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0017459997907280922
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.4618400000035763,
+                "search_duration": 0.22591199958696961,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0031880000606179237
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.37852799985557795,
+                "search_duration": 0.2365620001219213,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.018059000372886658
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.4987129997462034,
+                "search_duration": 0.2432669997215271,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.002082000020891428
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.5516310003586113,
+                "search_duration": 0.24688900029286742,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0015170001424849033
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 11,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 1.149633999913931,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.3061669999733567,
+                "search_duration": 0.22406800044700503,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0018040002323687077
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.48571399971842766,
+                "search_duration": 0.21477900026366115,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0013939999043941498
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.5714380000717938,
+                "search_duration": 0.23914700001478195,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001453000120818615
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.7590729999355972,
+                "search_duration": 0.22441700007766485,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0016269995830953121
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.9276600000448525,
+                "search_duration": 0.2150510000064969,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0013949996791779995
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 12,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.9873420000076294,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.45736899971961975,
+                "search_duration": 0.21283699991181493,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.004894999787211418
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.7838820000179112,
+                "search_duration": 0.19988999981433153,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0012870002537965775
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.516582999844104,
+                "search_duration": 0.2986150002107024,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0012199999764561653
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.5032680002041161,
+                "search_duration": 0.2567720003426075,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0012550000101327896
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.4973520003259182,
+                "search_duration": 0.2097640000283718,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0010790000669658184
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 13,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 1.3111339998431504,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 1.0170209999196231,
+                "search_duration": 0.23767399974167347,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011299997568130493
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 1.0224529998376966,
+                "search_duration": 0.28585699992254376,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011550001800060272
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.9660490001551807,
+                "search_duration": 0.22703900001943111,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011320002377033234
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.847798999864608,
+                "search_duration": 0.21053600031882524,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0014510001055896282
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.9426610004156828,
+                "search_duration": 0.32787400018423796,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011450001038610935
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 14,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 1.2696239999495447,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.911031000316143,
+                "search_duration": 0.20201400015503168,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001044000033289194
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.945435999892652,
+                "search_duration": 0.3213490000925958,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001118999905884266
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.5416709999553859,
+                "search_duration": 0.2123819999396801,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011160001158714294
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.9134879997000098,
+                "search_duration": 0.3224769998341799,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0012269997969269753
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.9202929995954037,
+                "search_duration": 0.29130699997767806,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0010799998417496681
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 15,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.9022039999254048,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.45482000010088086,
+                "search_duration": 0.23521199962124228,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0016220002435147762
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.49251600028946996,
+                "search_duration": 0.2491229996085167,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0022100000642240047
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.4445349997840822,
+                "search_duration": 0.18843800015747547,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001710999757051468
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.518439999781549,
+                "search_duration": 0.28385400027036667,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0015980000607669353
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.649611999746412,
+                "search_duration": 0.24130600038915873,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0015639998018741608
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 16,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.9814800000749528,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.7391669997014105,
+                "search_duration": 0.24087200034409761,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0010339999571442604
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.5638749999925494,
+                "search_duration": 0.21996999997645617,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0013199998065829277
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.655282000079751,
+                "search_duration": 0.2058950001373887,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001370999962091446
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.6944190002977848,
+                "search_duration": 0.2234820001758635,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0013660001568496227
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.464756999630481,
+                "search_duration": 0.21581199998036027,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001076000276952982
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 17,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.9359570001251996,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.42566700000315905,
+                "search_duration": 0.194560999982059,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001614999957382679
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.4280849997885525,
+                "search_duration": 0.2421539998613298,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0015879999846220016
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.7001869999803603,
+                "search_duration": 0.1669850000180304,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0012929998338222504
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.7417079997248948,
+                "search_duration": 0.1892560003325343,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0014550001360476017
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.457973999902606,
+                "search_duration": 0.2702680001966655,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0017920001409947872
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 18,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.8422669996507466,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.3578119999729097,
+                "search_duration": 0.22649900009855628,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0010159998200833797
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.38203899981454015,
+                "search_duration": 0.261483000125736,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.001095999963581562
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.3387699997983873,
+                "search_duration": 0.19934900011867285,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0010490003041923046
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.6095320000313222,
+                "search_duration": 0.17261300003156066,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011160001158714294
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.6106139998883009,
+                "search_duration": 0.22543900040909648,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011030002497136593
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 19,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.7488790000788867,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.2811329998075962,
+                "search_duration": 0.20271100010722876,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0012850002385675907
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.3161120000295341,
+                "search_duration": 0.23186599975451827,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.002613999880850315
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.41682300018146634,
+                "search_duration": 0.21620399970561266,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0015879999846220016
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.49707800010219216,
+                "search_duration": 0.19646400026977062,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0016490002162754536
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.5080109997652471,
+                "search_duration": 0.23473799973726273,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0017450000159442425
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial": 20,
+      "strategy_order": [
+        "parallel_per_phrase"
+      ],
+      "runs": [
+        {
+          "strategy": "parallel_per_phrase",
+          "pool_size": 5,
+          "duration_s": 0.6859650001861155,
+          "phrase_results": [
+            {
+              "phrase": "pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.218299999833107,
+                "search_duration": 0.2058240002952516,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0014960002154111862
+              },
+              "error": null
+            },
+            {
+              "phrase": "need a visa",
+              "result_count": 20,
+              "top_titles": [
+                "Travelling to the EU and Schengen area",
+                "Get an exempt vignette",
+                "How to apply for a visa to come to the UK"
+              ],
+              "metrics": {
+                "embedding_duration": 0.30180699983611703,
+                "search_duration": 0.20821100007742643,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011970000341534615
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i pay vat",
+              "result_count": 20,
+              "top_titles": [
+                "Pay your VAT bill",
+                "Pay your VAT bill",
+                "Pay your VAT bill"
+              ],
+              "metrics": {
+                "embedding_duration": 0.394505999982357,
+                "search_duration": 0.28736199997365475,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0009459997527301311
+              },
+              "error": null
+            },
+            {
+              "phrase": "vat registration threshold",
+              "result_count": 20,
+              "top_titles": [
+                "How VAT works",
+                "How VAT works",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.32522299978882074,
+                "search_duration": 0.23684700019657612,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0011950000189244747
+              },
+              "error": null
+            },
+            {
+              "phrase": "how do i register a business for vat",
+              "result_count": 20,
+              "top_titles": [
+                "Register for VAT",
+                "Register for VAT",
+                "Register for VAT"
+              ],
+              "metrics": {
+                "embedding_duration": 0.3341789999976754,
+                "search_duration": 0.27484000008553267,
+                "embedding_provider": "titan",
+                "reranking_duration": 0.0012050000950694084
+              },
+              "error": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "averages": [
+    {
+      "strategy": "parallel_per_phrase",
+      "trial_count": 20,
+      "average_duration_s": 0.9767748499521985,
+      "p50_duration_s": 0.9141964998561889,
+      "p95_duration_s": 1.333929399866611,
+      "p99_duration_s": 1.680419480223208,
+      "min_duration_s": 0.6859650001861155,
+      "max_duration_s": 1.7670420003123581,
+      "stage_metrics": {
+        "embedding_duration": {
+          "sample_count": 100,
+          "average_s": 0.5496008499665186,
+          "p50_s": 0.5008514998480678,
+          "p95_s": 0.9427997503895312,
+          "p99_s": 1.0234408298367639,
+          "min_s": 0.218299999833107,
+          "max_s": 1.1212359997443855
+        },
+        "search_duration": {
+          "sample_count": 100,
+          "average_s": 0.25612915004137904,
+          "p50_s": 0.2267690000589937,
+          "p95_s": 0.397830599918961,
+          "p99_s": 0.7317980099841961,
+          "min_s": 0.16174199990928173,
+          "max_s": 0.9067319999448955
+        },
+        "reranking_duration": {
+          "sample_count": 100,
+          "average_s": 0.0019250500248745085,
+          "p50_s": 0.00134049984626472,
+          "p95_s": 0.003983250190503893,
+          "p99_s": 0.018064430369995537,
+          "min_s": 0.0009459997527301311,
+          "max_s": 0.018602000083774328
+        }
+      }
+    }
+  ]
+}
