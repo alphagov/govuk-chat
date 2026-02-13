@@ -1,8 +1,6 @@
 module Chunking
   module ContentItemParsing
     class TravelGuideParser < PartsContentParser
-      LLM_INSTRUCTIONS_PREFIX = "THERE IS CRITICAL INFORMATION FOR THIS CONTENT! USE THIS INFORMATION IN YOUR ANSWER WHEN IT IS RELEVANT TO THE QUESTION:".freeze
-
       include ActionView::Helpers
 
       def initialize(content_item)
@@ -69,7 +67,11 @@ module Chunking
       def llm_instructions
         return nil if alert_status.empty?
 
-        "#{LLM_INSTRUCTIONS_PREFIX} #{alert_status_warnings.join(' ')}"
+        prefix = GovukChatPrivate.config.llm_prompts.dig(
+          :common, :chunking_parser_instructions, :travel_guide_parser
+        )
+
+        "#{prefix} #{alert_status_warnings.join(' ')}"
       end
     end
   end
