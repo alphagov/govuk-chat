@@ -243,12 +243,20 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([bob_question])
     end
 
-    it "filters out results assoicated with an end_user_id that weren't created via the API" do
+    it "filters out results associated with an end_user_id that weren't created via the API" do
       create(:question, conversation: create(:conversation, end_user_id: "alice"))
 
       filter = described_class.new(end_user_id: "alice")
 
       expect(filter.results).to eq([])
+    end
+
+    it "filters the results by conversation_session_id" do
+      alice_question = create(:question)
+      create(:question)
+
+      filter = described_class.new(conversation_session_id: alice_question.conversation_session_id)
+      expect(filter.results).to eq([alice_question])
     end
 
     it "filters the results by question routing label" do
@@ -396,8 +404,9 @@ RSpec.describe Admin::Filters::QuestionsFilter do
   def create_paginatable_filter(attrs = {})
     signon_user = create(:signon_user)
     conversation = create(:conversation, signon_user_id: signon_user.id, end_user_id: "end-user-id", source: :api)
+    conversation_session_id = SecureRandom.uuid
     26.times do
-      question = create(:question, conversation:)
+      question = create(:question, conversation:, conversation_session_id:)
       answer = create(
         :answer,
         :with_feedback,
@@ -427,6 +436,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       primary_topic: "business",
       secondary_topic: "tax",
       completeness: "complete",
+      conversation_session_id:,
     }.merge(attrs)
 
     described_class.new(**filter_params)

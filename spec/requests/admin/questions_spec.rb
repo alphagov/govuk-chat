@@ -102,6 +102,14 @@ RSpec.describe "Admin::QuestionsController" do
         expect(response.body.squish)
           .to have_content('Filtering by end user: "alice"')
       end
+
+      it "renders the conversation_session_id when filtering by conversation_session_id" do
+        question = create(:question)
+        get admin_questions_path(conversation_session_id: question.conversation_session_id)
+
+        expect(response.body.squish)
+          .to have_content("Filtering by conversation session ID: #{question.conversation_session_id}")
+      end
     end
 
     context "when the sort param is not the default value" do

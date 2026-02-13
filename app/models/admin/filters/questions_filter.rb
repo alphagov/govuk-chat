@@ -12,6 +12,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :primary_topic
   attribute :secondary_topic
   attribute :completeness
+  attribute :conversation_session_id
 
   validate :validate_dates
 
@@ -43,6 +44,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
       scope = ordering_scope(scope)
       scope = signon_user_scope(scope)
       scope = end_user_id_scope(scope)
+      scope = conversation_session_id_scope(scope)
       scope = primary_topic_scope(scope)
       scope = secondary_topic_scope(scope)
       scope = completeness_scope(scope)
@@ -81,6 +83,7 @@ private
     filters[:primary_topic] = primary_topic if primary_topic.present?
     filters[:secondary_topic] = secondary_topic if secondary_topic.present?
     filters[:completeness] = completeness if completeness.present?
+    filters[:conversation_session_id] = conversation_session_id if conversation_session_id.present?
 
     filters
   end
@@ -141,6 +144,12 @@ private
     return scope if end_user_id.blank?
 
     scope.joins(:conversation).where("end_user_id = ? AND conversations.source = ?", end_user_id, "api")
+  end
+
+  def conversation_session_id_scope(scope)
+    return scope if conversation_session_id.blank?
+
+    scope.where(conversation_session_id: conversation_session_id)
   end
 
   def question_routing_label_scope(scope)

@@ -27,6 +27,7 @@ class Form::CreateQuestion
       message: @sanitised_user_question,
       unsanitised_message: (@unsanitised_user_question if @sanitised_user_question != @unsanitised_user_question),
       conversation:,
+      conversation_session_id:,
     )
 
     ComposeAnswerJob.perform_later(question.id)
@@ -57,5 +58,14 @@ private
     if PiiValidator.invalid?(user_question)
       errors.add(:user_question, USER_QUESTION_PII_ERROR_MESSAGE)
     end
+  end
+
+  def conversation_session_id
+    return SecureRandom.uuid if conversation.new_record?
+
+    latest_questions_session_id = Question.where(conversation:, created_at: 30.minutes.ago...)
+                                          .order(created_at: :desc)
+                                          .pick(:conversation_session_id)
+    latest_questions_session_id || SecureRandom.uuid
   end
 end
