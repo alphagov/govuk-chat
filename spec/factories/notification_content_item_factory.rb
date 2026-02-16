@@ -142,6 +142,18 @@ FactoryBot.define do
       parent_document_type { "form" }
     end
 
+    trait :local_transaction do
+      schema_name { "local_transaction" }
+      document_type { "local_transaction" }
+      details_merge do
+        {
+          "introduction" => [{ "content_type" => "text/html", "content" => "<p>Intro</p>" }],
+          "need_to_know" => [{ "content_type" => "text/html", "content" => "<p>More info</p>" }],
+          "more_information" => [{ "content_type" => "text/html", "content" => "<p>More info</p>" }],
+        }
+      end
+    end
+
     trait :manual do
       schema_name { "manual" }
       document_type { "manual" }
@@ -155,6 +167,18 @@ FactoryBot.define do
       document_type { "manual_section" }
       body do
         [{ "content_type" => "text/html", "content" => "<p>Some content</p>" }]
+      end
+    end
+
+    trait :place do
+      schema_name { "place" }
+      document_type { "place" }
+      details_merge do
+        {
+          "introduction" => [{ "content_type" => "text/html", "content" => "<p>Intro</p>" }],
+          "need_to_know" => [{ "content_type" => "text/html", "content" => "<p>More info</p>" }],
+          "more_information" => [{ "content_type" => "text/html", "content" => "<p>More info</p>" }],
+        }
       end
     end
 

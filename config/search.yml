@@ -55,10 +55,21 @@ document_types_by_schema:
       html_publication:
         requires_parent_document_type: *publication_document_types
 
+  local_transaction:
+    parser: Chunking::ContentItemParsing::TransactionParser
+    document_types:
+      local_transaction:
+        weight: 1.5
+
   manual:
     parser: Chunking::ContentItemParsing::BodyContentArrayParser
     document_types:
       manual:
+
+  place:
+    parser: Chunking::ContentItemParsing::TransactionParser
+    document_types:
+      place:
 
   manual_section:
     parser: Chunking::ContentItemParsing::BodyContentArrayParser
@@ -89,6 +100,7 @@ document_types_by_schema:
         weight: 2.0
       export_health_certificate:
         weight: 0.5
+      hmrc_contact:
       international_development_fund:
       licence_transaction:
         weight: 2.0
