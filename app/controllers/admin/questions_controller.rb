@@ -36,6 +36,7 @@ private
       :primary_topic,
       :secondary_topic,
       :completeness,
+      :conversation_session_id,
     )
   end
 end

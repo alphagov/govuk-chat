@@ -112,7 +112,7 @@ RSpec.describe Form::CreateQuestion do
     end
 
     context "when the conversation passed in on initialisation is persisted" do
-      let(:conversation) { create(:conversation, questions: [create(:question, :with_answer, created_at: 1.second.ago)]) }
+      let(:conversation) { create(:conversation, questions: [create(:question, :with_answer, created_at: 31.minutes.ago)]) }
 
       it "adds a new question with the correct attributes to the conversation" do
         described_class.new(user_question:, conversation:).submit
@@ -123,7 +123,17 @@ RSpec.describe Form::CreateQuestion do
             message: user_question,
             unsanitised_message: nil,
             answer_strategy: Rails.configuration.answer_strategy,
+            conversation_session_id: an_instance_of(String),
           )
+      end
+
+      it "uses the previous questions conversation_session_id if it was created within the last 30 minutes" do
+        conversation.questions.last.update!(created_at: 29.minutes.ago)
+
+        described_class.new(user_question:, conversation:).submit
+
+        questions = Question.where(conversation:)
+        expect(questions.last.conversation_session_id).to eq(questions.first.conversation_session_id)
       end
 
       it "enqueues a ComposeAnswerJob" do
@@ -166,6 +176,7 @@ RSpec.describe Form::CreateQuestion do
           .to have_attributes(
             message: user_question,
             answer_strategy: Rails.configuration.answer_strategy,
+            conversation_session_id: an_instance_of(String),
           )
       end
     end

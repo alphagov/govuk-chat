@@ -31,6 +31,15 @@ module Admin
             class: "govuk-link",
           ),
         },
+        {
+          field: "Conversation session id",
+          value: link_to(
+            question.conversation_session_id,
+            admin_questions_path(conversation_session_id: question.conversation_session_id),
+            title: "View all questions for this conversation session",
+            class: "govuk-link",
+          ),
+        },
         (
           if conversation.end_user_id.present?
             {
@@ -38,7 +47,7 @@ module Admin
               value: link_to(
                 conversation.end_user_id,
                 admin_questions_path(end_user_id: conversation.end_user_id),
-                title: "View whole conversation",
+                title: "View all questions for this end user",
                 class: "govuk-link",
               ),
             }

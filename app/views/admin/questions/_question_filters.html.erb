@@ -28,6 +28,13 @@
     <%= hidden_field_tag(:conversation_id, params[:conversation_id]) %>
   <% end %>
 
+  <% if filter.conversation_session_id.present? %>
+    <p class="govuk-body">
+      Filtering by conversation session ID: <%= filter.conversation_session_id %>
+    </p>
+    <%= hidden_field_tag(:conversation_session_id, params[:conversation_session_id]) %>
+  <% end %>
+
   <%= render "govuk_publishing_components/components/input", {
     label: {
       text: "Search",
