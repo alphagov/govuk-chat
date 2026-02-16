@@ -59,6 +59,7 @@ document_types_by_schema:
     parser: Chunking::ContentItemParsing::TransactionParser
     document_types:
       local_transaction:
+        weight: 1.5
 
   manual:
     parser: Chunking::ContentItemParsing::BodyContentArrayParser
