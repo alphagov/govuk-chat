@@ -1,6 +1,16 @@
 module AnswerComposition::Pipeline
   module Claude
     class QuestionRouter
+      SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_haiku_4_5].freeze
+      DEFAULT_MODEL = :claude_sonnet_4_0
+
+      def self.bedrock_model
+        model = ENV.fetch("BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL", DEFAULT_MODEL).to_sym
+        raise "Unsupported model for #{self}: #{model}" if SUPPORTED_MODELS.exclude?(model)
+
+        model
+      end
+
       def self.call(...) = new(...).call
 
       def initialize(context)
@@ -84,7 +94,7 @@ module AnswerComposition::Pipeline
           system: [
             { type: "text", text: prompt_config[:system_prompt], cache_control: { type: "ephemeral" } },
           ],
-          model: BedrockModels.model_id(:claude_sonnet_4_0),
+          model: BedrockModels.model_id(self.class.bedrock_model),
           messages:,
           tools:,
           tool_choice: { type: "any", disable_parallel_tool_use: true },

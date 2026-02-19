@@ -1,6 +1,7 @@
 RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :aws_credentials_stubbed, :chunked_content_index do
   describe ".call" do
     let(:question) { build :question }
+    let(:answer) { "VAT (Value Added Tax) is a tax applied to most goods and services in the UK." }
     let(:context) { build(:answer_pipeline_context, question:) }
     let(:search_result) do
       build(
@@ -96,6 +97,17 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
       end
     end
 
+    it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_STRUCTURED_ANSWER_COMPOSER_MODEL" do
+      let(:pipeline_step) { described_class.new(context) }
+      let(:stubbed_request) do
+        stub_claude_structured_answer(
+          question.message,
+          answer,
+          chat_options: { bedrock_model: described_class.bedrock_model },
+        )
+      end
+    end
+
     it "uses Claude via Anthropic to assign the correct values to the context's answer" do
       answer = "VAT (Value Added Tax) is a tax applied to most goods and services in the UK."
       stub_claude_structured_answer(question.message, answer)
@@ -108,7 +120,6 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
     end
 
     it "stores the LLM response" do
-      answer = "answer"
       stub_claude_structured_answer(question.message, answer)
 
       described_class.call(context)
@@ -133,7 +144,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
 
     it "assigns metrics to the answer" do
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
-      stub_claude_structured_answer(question.message, "answer")
+      stub_claude_structured_answer(question.message, answer)
 
       described_class.call(context)
 
@@ -149,7 +160,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
     it "uses an overridden AWS region if set" do
       ClimateControl.modify(CLAUDE_AWS_REGION: "my-region") do
         allow(Anthropic::BedrockClient).to receive(:new).and_call_original
-        anthropic_request = stub_claude_structured_answer(question.message, "answer")
+        anthropic_request = stub_claude_structured_answer(question.message, answer)
 
         described_class.call(context)
 
@@ -160,7 +171,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
 
     it "sets the 'used' boolean to false for unused sources" do
       context.search_results = [search_result, unused_search_result]
-      stub_claude_structured_answer(question.message, "answer")
+      stub_claude_structured_answer(question.message, answer)
 
       described_class.call(context)
 

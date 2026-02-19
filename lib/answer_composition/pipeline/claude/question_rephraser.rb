@@ -1,6 +1,16 @@
 module AnswerComposition::Pipeline
   module Claude
     class QuestionRephraser
+      SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_haiku_4_5].freeze
+      DEFAULT_MODEL = :claude_sonnet_4_0
+
+      def self.bedrock_model
+        model = ENV.fetch("BEDROCK_CLAUDE_QUESTION_REPHRASER_MODEL", DEFAULT_MODEL).to_sym
+        raise "Unsupported model for #{self}: #{model}" if SUPPORTED_MODELS.exclude?(model)
+
+        model
+      end
+
       def self.call(...) = new(...).call
 
       def initialize(question_message, message_records)
@@ -11,7 +21,7 @@ module AnswerComposition::Pipeline
       def call
         response = anthropic_bedrock_client.messages.create(
           system: [{ type: "text", text: config[:system_prompt] }],
-          model: BedrockModels.model_id(:claude_sonnet_4_0),
+          model: BedrockModels.model_id(self.class.bedrock_model),
           messages:,
           **inference_config,
         )

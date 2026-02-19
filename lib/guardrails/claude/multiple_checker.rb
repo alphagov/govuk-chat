@@ -2,6 +2,15 @@ module Guardrails
   module Claude
     class MultipleChecker
       MAX_TOKENS = 100
+      SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_haiku_4_5].freeze
+      DEFAULT_MODEL = :claude_sonnet_4_0
+
+      def self.bedrock_model
+        model = ENV.fetch("BEDROCK_CLAUDE_GUARDRAILS_MODEL", DEFAULT_MODEL).to_sym
+        raise "Unsupported model for #{self}: #{model}" if SUPPORTED_MODELS.exclude?(model)
+
+        model
+      end
 
       def self.call(...) = new(...).call
 
@@ -16,7 +25,7 @@ module Guardrails
       def call
         claude_response = anthropic_bedrock_client.messages.create(
           system: [{ type: "text", text: prompt.system_prompt, cache_control: { type: "ephemeral" } }],
-          model: BedrockModels.model_id(:claude_sonnet_4_0),
+          model: BedrockModels.model_id(self.class.bedrock_model),
           messages: [{ role: "user", content: prompt.user_prompt(input) }],
           max_tokens: MAX_TOKENS,
         )

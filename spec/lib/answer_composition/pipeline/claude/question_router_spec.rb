@@ -44,6 +44,8 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credent
       { role: "user", content: question.message },
     ]
   end
+  let(:question) { build :question }
+  let(:context) { build(:answer_pipeline_context, question:) }
 
   before do
     config = Rails.configuration.govuk_chat_private.llm_prompts.claude
@@ -58,10 +60,20 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credent
     )
   end
 
-  describe ".call" do
-    let(:question) { build :question }
-    let(:context) { build(:answer_pipeline_context, question:) }
+  it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL" do
+    let(:pipeline_step) { described_class.new(context) }
+    let(:stubbed_request) do
+      stub_claude_question_routing(
+        question.message,
+        tools:,
+        tool_name: "greetings",
+        tool_input: classification_response,
+        chat_options: { bedrock_model: described_class.bedrock_model },
+      )
+    end
+  end
 
+  describe ".call" do
     it "calls Bedrock with with the right prompt and tool config" do
       request = stub_claude_question_routing(
         question.message,

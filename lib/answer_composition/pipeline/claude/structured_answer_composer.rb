@@ -1,6 +1,16 @@
 module AnswerComposition::Pipeline
   module Claude
     class StructuredAnswerComposer
+      SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_sonnet_4_6].freeze
+      DEFAULT_MODEL = :claude_sonnet_4_0
+
+      def self.bedrock_model
+        model = ENV.fetch("BEDROCK_CLAUDE_STRUCTURED_ANSWER_COMPOSER_MODEL", DEFAULT_MODEL).to_sym
+        raise "Unsupported model for #{self}: #{model}" if SUPPORTED_MODELS.exclude?(model)
+
+        model
+      end
+
       def self.call(...) = new(...).call
 
       def initialize(context)
@@ -15,7 +25,7 @@ module AnswerComposition::Pipeline
             { type: "text", text: cached_system_prompt, cache_control: { type: "ephemeral" } },
             { type: "text", text: context_system_prompt },
           ],
-          model: BedrockModels.model_id(:claude_sonnet_4_0),
+          model: BedrockModels.model_id(self.class.bedrock_model),
           messages:,
           tools: tools,
           tool_choice: { type: "tool", name: "output_schema" },

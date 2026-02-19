@@ -1,5 +1,15 @@
 module Guardrails::Claude
   class JailbreakChecker
+    SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_haiku_4_5].freeze
+    DEFAULT_MODEL = :claude_sonnet_4_0
+
+    def self.bedrock_model
+      model = ENV.fetch("BEDROCK_CLAUDE_JAILBREAK_GUARDRAILS_MODEL", DEFAULT_MODEL).to_sym
+      raise "Unsupported model for #{self}: #{model}" if SUPPORTED_MODELS.exclude?(model)
+
+      model
+    end
+
     def self.call(...) = new(...).call
 
     def initialize(input)
@@ -9,7 +19,7 @@ module Guardrails::Claude
     def call
       response = anthropic_bedrock_client.messages.create(
         system: [{ type: "text", text: system_prompt }],
-        model: BedrockModels.model_id(:claude_sonnet),
+        model: BedrockModels.model_id(self.class.bedrock_model),
         messages:,
         **inference_config,
       )
