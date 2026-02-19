@@ -1,6 +1,10 @@
 module AnswerComposition::Pipeline
   module Claude
     class QuestionRouter
+      def self.bedrock_model
+        ENV["BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL"] || :claude_sonnet_4_0
+      end
+
       def self.call(...) = new(...).call
 
       def initialize(context)
@@ -84,7 +88,7 @@ module AnswerComposition::Pipeline
           system: [
             { type: "text", text: prompt_config[:system_prompt], cache_control: { type: "ephemeral" } },
           ],
-          model: BedrockModels.model_id(:claude_sonnet_4),
+          model: BedrockModels.model_id(self.class.bedrock_model.to_sym),
           messages:,
           tools:,
           tool_choice: { type: "any", disable_parallel_tool_use: true },

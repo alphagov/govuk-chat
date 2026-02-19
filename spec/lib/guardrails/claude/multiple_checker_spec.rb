@@ -43,6 +43,18 @@ RSpec.describe Guardrails::Claude::MultipleChecker, :aws_credentials_stubbed do
         allow(prompt).to receive(:user_prompt).with(input).and_return(input)
       end
 
+      it_behaves_like "a pipeline step with a configurable model",
+                      :claude_sonnet_4_0, %i[claude_haiku_4_5], "BEDROCK_CLAUDE_GUARDRAILS_MODEL" do
+        let(:pipeline_step) { described_class.new(input, prompt) }
+        let(:stubbed_request) do
+          stub_claude_output_guardrails(
+            input,
+            'True | "1, 2"',
+            chat_options: { bedrock_model: described_class.bedrock_model.to_sym },
+          )
+        end
+      end
+
       it "calls Claude to check for guardrail violations with correct user input" do
         anthropic_request = stub_claude_output_guardrails(input, 'True | "1, 2"')
 
