@@ -21,7 +21,7 @@ RSpec.describe Guardrails::Claude::JailbreakChecker, :aws_credentials_stubbed do
     it "returns the model used" do
       stub_claude_jailbreak_guardrails(input, triggered: false)
       result = described_class.call(input)
-      expect(result[:model]).to eq(BedrockModels.model_id(:claude_sonnet))
+      expect(result[:model]).to eq(BedrockModels.model_id(:claude_sonnet_4_0))
     end
 
     it "returns the LLM response" do

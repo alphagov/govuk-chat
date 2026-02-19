@@ -101,7 +101,7 @@ RSpec.describe AnswerComposition::PipelineRunner do
     context "when the step raises an Anthropic::Errors::APIError" do
       let(:error) do
         Anthropic::Errors::APIError.new(
-          url: "https://bedrock-runtime.eu-west-1.amazonaws.com/model/#{BedrockModels.model_id(:claude_sonnet)}:0/invoke",
+          url: "https://bedrock-runtime.eu-west-1.amazonaws.com/model/#{BedrockModels.model_id(:claude_sonnet_4_0)}:0/invoke",
         )
       end
       let(:pipeline_step) { ->(_context) { raise error } }
