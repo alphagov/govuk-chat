@@ -4,15 +4,13 @@ require "concurrent"
 
 module ParallelSearchSpike
   class Run
-    DEFAULT_POOL_SIZE = Integer(ENV.fetch("PARALLEL_SEARCH_POOL_SIZE", 5))
-    DEFAULT_RUNS = Integer(ENV.fetch("PARALLEL_SEARCH_RUNS", 10))
+    DEFAULT_POOL_SIZE = Integer(ENV.fetch("PARALLEL_SEARCH_POOL_SIZE", 2))
+    DEFAULT_RUNS = Integer(ENV.fetch("PARALLEL_SEARCH_RUNS", 30))
     DEFAULT_STRATEGIES = %i[sequential parallel_per_phrase bounded_pool msearch_only hybrid].freeze
     STOCK_PHRASES = [
       "pay vat",
       "need a visa",
       "how do i pay vat",
-      "vat registration threshold",
-      "how do i register a business for vat",
     ].freeze
 
     def self.call(...) = new(...).call
@@ -32,8 +30,8 @@ module ParallelSearchSpike
     end
 
     def call
-      durations_by_strategy = strategies.each_with_object({}) { |strategy, hash| hash[strategy] = [] }
-      failures_by_strategy = strategies.each_with_object({}) { |strategy, hash| hash[strategy] = 0 }
+      durations_by_strategy = strategies.index_with { |_strategy| [] }
+      failures_by_strategy = strategies.index_with { |_strategy| 0 }
 
       runs.times do
         strategies.shuffle.each do |strategy|
@@ -136,11 +134,9 @@ module ParallelSearchSpike
       failures = 0
 
       phrases.each do |phrase|
-        begin
-          embeddings << Search::TextToEmbedding.call(phrase)
-        rescue StandardError
-          failures += 1
-        end
+        embeddings << Search::TextToEmbedding.call(phrase)
+      rescue StandardError
+        failures += 1
       end
 
       return failures if embeddings.empty?
@@ -247,33 +243,38 @@ module ParallelSearchSpike
     end
 
     def summarize(durations_by_strategy, failures_by_strategy)
-      sequential_avg = average(durations_by_strategy.fetch(:sequential, []))
+      sequential_p50 = median(durations_by_strategy.fetch(:sequential, []))
 
       strategies.map do |strategy|
         durations = durations_by_strategy.fetch(strategy)
-        avg_duration = average(durations)
+        p50_duration = median(durations)
 
         {
           strategy:,
-          avg_s: avg_duration,
+          p50_s: p50_duration,
           min_s: durations.min || 0.0,
           max_s: durations.max || 0.0,
           failures: failures_by_strategy.fetch(strategy),
-          speedup_vs_sequential: speedup(sequential_avg, avg_duration),
+          speedup_vs_sequential: speedup(sequential_p50, p50_duration),
         }
       end
     end
 
-    def average(values)
+    def median(values)
       return 0.0 if values.empty?
 
-      values.sum(0.0) / values.length
+      sorted_values = values.sort
+      middle_index = sorted_values.length / 2
+
+      return sorted_values.fetch(middle_index) if sorted_values.length.odd?
+
+      (sorted_values.fetch(middle_index - 1) + sorted_values.fetch(middle_index)) / 2.0
     end
 
-    def speedup(sequential_avg, avg_duration)
-      return nil if sequential_avg.zero? || avg_duration.zero?
+    def speedup(sequential_p50, p50_duration)
+      return nil if sequential_p50.zero? || p50_duration.zero?
 
-      sequential_avg / avg_duration
+      sequential_p50 / p50_duration
     end
 
     def print_report(summary)
@@ -281,11 +282,11 @@ module ParallelSearchSpike
       io.puts "phrases=#{phrases.length} strategies=#{strategies.inspect} pool_size=#{effective_pool_size} runs=#{runs}"
 
       summary.each do |row|
-        speedup_text = row[:speedup_vs_sequential] ? format("x%.2f", row[:speedup_vs_sequential]) : "n/a"
+        speedup_text = row[:speedup_vs_sequential] ? sprintf("x%.2f", row[:speedup_vs_sequential]) : "n/a"
         io.puts(
-          "#{row[:strategy]} avg=#{format('%.3f', row[:avg_s])}s " \
-          "min=#{format('%.3f', row[:min_s])}s " \
-          "max=#{format('%.3f', row[:max_s])}s " \
+          "#{row[:strategy]} p50=#{sprintf('%.3f', row[:p50_s])}s " \
+          "min=#{sprintf('%.3f', row[:min_s])}s " \
+          "max=#{sprintf('%.3f', row[:max_s])}s " \
           "failures=#{row[:failures]} speedup=#{speedup_text}",
         )
       end
