@@ -39,7 +39,7 @@ RSpec.describe AutoEvaluation::TopicTagger, :aws_credentials_stubbed do
           llm_prompt_tokens: 30,
           llm_completion_tokens: 20,
           llm_cached_tokens: 20,
-          model: BedrockModels.model_id(:claude_sonnet),
+          model: BedrockModels.model_id(:claude_sonnet_4_0),
         })
     end
   end

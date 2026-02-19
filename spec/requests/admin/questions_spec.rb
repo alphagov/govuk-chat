@@ -366,7 +366,7 @@ RSpec.describe "Admin::QuestionsController" do
               llm_prompt_tokens: 30,
               llm_completion_tokens: 20,
               llm_cached_tokens: 20,
-              model: BedrockModels.model_id(:claude_sonnet),
+              model: BedrockModels.model_id(:claude_sonnet_4_0),
             },
           },
           llm_responses: {
@@ -397,7 +397,7 @@ RSpec.describe "Admin::QuestionsController" do
           .and have_content(/llm_prompt_tokens.*30/)
           .and have_content(/llm_completion_tokens.*20/)
           .and have_content(/llm_cached_tokens.*20/)
-          .and have_content(/model.*#{BedrockModels.model_id(:claude_sonnet)}/)
+          .and have_content(/model.*#{BedrockModels.model_id(:claude_sonnet_4_0)}/)
       end
 
       it "renders the topics LLM responses" do
