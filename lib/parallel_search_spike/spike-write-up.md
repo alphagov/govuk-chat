@@ -37,15 +37,27 @@ Titan's `invoke_model` accepts a single `inputText` per request - there is no se
 
 ## 3) Strategies tested
 
-Threaded spike results (5 phrases, 10 runs each):
+Threaded spike results
 
-| Strategy | Avg | Speedup |
+5 phrases, 30 runs each, pool size 5:
+
+| Strategy | P50 | Speedup |
 |---|---|---|
-| sequential | 0.959s | x1.00 |
-| `bounded_pool` | 0.254s | x3.78 |
-| `parallel_per_phrase` | 0.298s | x3.22 |
-| `hybrid` | 0.354s | x2.71 |
-| `msearch_only` | 0.693s | x1.38 |
+| sequential | 0.926s | x1.00 |
+| `bounded_pool` | 0.248s | x3.73 |
+| `parallel_per_phrase` | 0.247s | x3.75 |
+| `hybrid` | 0.321s | x2.89 |
+| `msearch_only` | 0.652s | x1.42 |
+
+3 phrases, 30 runs each, pool size 2:
+
+| Strategy | P50 | Speedup |
+|---|---|---|
+| sequential | 0.543s | x1.00 |
+| `bounded_pool` | 0.371s | x1.46 |
+| `parallel_per_phrase` | 0.371s | x1.46 |
+| `hybrid` | 0.319s | x1.70 |
+| `msearch_only` | 0.402s | x1.35 |
 
 Async HTTP signed Bedrock embedding spike (5 phrases, 5 runs):
 
@@ -54,10 +66,11 @@ Async HTTP signed Bedrock embedding spike (5 phrases, 5 runs):
 
 Interpretation:
 
-- Embedding latency dominates. `msearch_only` shows batching OpenSearch alone barely helps; the speedup comes from parallelising the Bedrock embedding calls.
+- Batching OpenSearch alone (`msearch_only`) is a meaningful improvement, but the biggest win comes from parallelising the Bedrock embedding calls.
 - Full pipeline parallelism is fastest (`bounded_pool`, `parallel_per_phrase`) because it pipelines embedding and OpenSearch I/O across phrases - while phrase A is searching OpenSearch, phrase B is still embedding.
-- Hybrid is consistently slower than full pipeline because it introduces a phase barrier: all embeddings must complete before the single `_msearch` fires, eliminating that cross-phrase overlap.
-- Hybrid is still a strong improvement (x2.71 over sequential) and trades some latency for operational simplicity (one OpenSearch request, no parallel OpenSearch calls).
+- Pool size changes the trade-off. At pool size 5, full pipeline parallelism is fastest. At pool size 2, hybrid is the fastest in this spike run (0.319s vs 0.371s/0.371s), while still keeping concurrency low.
+- Hybrid is still a strong improvement (x1.70 over sequential at pool size 2) and trades some latency for operational simplicity (one OpenSearch request, no parallel OpenSearch calls).
+- The async HTTP numbers are embeddings-only, so they are not directly comparable to the end-to-end threaded strategies.
 
 ---
 
@@ -111,7 +124,9 @@ Why this is safer
 
 Known trade-off
 
-- Hybrid loses the cross-phrase pipelining that makes `bounded_pool`/`parallel_per_phrase` faster. We're trading ~25-30% latency (hybrid x2.71 vs bounded_pool x3.78) for simplicity. Do we want to talk to product/DS about whether this is reasonable?
+- Hybrid loses the cross-phrase pipelining that makes `bounded_pool`/`parallel_per_phrase` faster at higher parallelism (pool size 5: hybrid x2.89 vs bounded_pool x3.73). At lower parallelism (pool size 2), hybrid was fastest in this spike run (x1.70 vs x1.46/x1.46).
+- Hybrid can be more sensitive to "stragglers" because it waits for all embeddings before it starts `_msearch`, so p95/p99 needs checking.
+- `bounded_pool` is simpler (it mostly reuses `ResultsForQuestion` per phrase) and is close in p50 at pool size 2, so it's a potential alternative.
 
 ---
 
