@@ -1,6 +1,10 @@
 module AnswerComposition::Pipeline
   module Claude
     class QuestionRephraser
+      def self.bedrock_model
+        ENV["BEDROCK_CLAUDE_QUESTION_REPHRASER_MODEL"] || :claude_sonnet_4_0
+      end
+
       def self.call(...) = new(...).call
 
       def initialize(question_message, message_records)
@@ -11,7 +15,7 @@ module AnswerComposition::Pipeline
       def call
         response = anthropic_bedrock_client.messages.create(
           system: [{ type: "text", text: config[:system_prompt] }],
-          model: BedrockModels.model_id(:claude_sonnet),
+          model: BedrockModels.model_id(self.class.bedrock_model.to_sym),
           messages:,
           **inference_config,
         )
@@ -43,7 +47,7 @@ module AnswerComposition::Pipeline
       end
 
       def config
-        Claude.prompt_config[:question_rephraser]
+        Claude.prompt_config(:question_rephraser, self.class.bedrock_model)
       end
 
       def inference_config

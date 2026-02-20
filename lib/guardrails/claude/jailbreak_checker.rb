@@ -1,5 +1,9 @@
 module Guardrails::Claude
   class JailbreakChecker
+    def self.bedrock_model
+      ENV["BEDROCK_CLAUDE_JAILBREAK_GUARDRAILS_MODEL"] || :claude_sonnet_4_0
+    end
+
     def self.call(...) = new(...).call
 
     def initialize(input)
@@ -9,7 +13,7 @@ module Guardrails::Claude
     def call
       response = anthropic_bedrock_client.messages.create(
         system: [{ type: "text", text: system_prompt }],
-        model: BedrockModels.model_id(:claude_sonnet),
+        model: BedrockModels.model_id(self.class.bedrock_model.to_sym),
         messages:,
         **inference_config,
       )
@@ -33,7 +37,7 @@ module Guardrails::Claude
     end
 
     def guardrails_llm_prompts
-      Rails.configuration.govuk_chat_private.llm_prompts.claude.jailbreak_guardrails
+      AnswerComposition::Pipeline::Claude.prompt_config(:jailbreak_guardrails, self.class.bedrock_model)
     end
 
     def anthropic_bedrock_client

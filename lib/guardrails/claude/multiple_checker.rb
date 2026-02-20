@@ -3,6 +3,10 @@ module Guardrails
     class MultipleChecker
       MAX_TOKENS = 100
 
+      def self.bedrock_model
+        ENV["BEDROCK_CLAUDE_GUARDRAILS_MODEL"] || :claude_sonnet_4_0
+      end
+
       def self.call(...) = new(...).call
 
       def initialize(input, prompt)
@@ -16,7 +20,7 @@ module Guardrails
       def call
         claude_response = anthropic_bedrock_client.messages.create(
           system: [{ type: "text", text: prompt.system_prompt, cache_control: { type: "ephemeral" } }],
-          model: BedrockModels.model_id(:claude_sonnet),
+          model: BedrockModels.model_id(self.class.bedrock_model.to_sym),
           messages: [{ role: "user", content: prompt.user_prompt(input) }],
           max_tokens: MAX_TOKENS,
         )

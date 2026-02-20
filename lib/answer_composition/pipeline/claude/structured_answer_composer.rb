@@ -1,6 +1,10 @@
 module AnswerComposition::Pipeline
   module Claude
     class StructuredAnswerComposer
+      def self.bedrock_model
+        ENV["BEDROCK_CLAUDE_STRUCTURED_ANSWER_COMPOSER_MODEL"] || :claude_sonnet_4_0
+      end
+
       def self.call(...) = new(...).call
 
       def initialize(context)
@@ -15,7 +19,7 @@ module AnswerComposition::Pipeline
             { type: "text", text: cached_system_prompt, cache_control: { type: "ephemeral" } },
             { type: "text", text: context_system_prompt },
           ],
-          model: BedrockModels.model_id(:claude_sonnet),
+          model: BedrockModels.model_id(self.class.bedrock_model.to_sym),
           messages:,
           tools: tools,
           tool_choice: { type: "tool", name: "output_schema" },
@@ -71,7 +75,7 @@ module AnswerComposition::Pipeline
       end
 
       def prompt_config
-        Claude.prompt_config.structured_answer
+        Claude.prompt_config(:structured_answer, self.class.bedrock_model.to_sym)
       end
 
       def anthropic_bedrock_client
