@@ -61,17 +61,15 @@ module StubClaudeMessages
   def stub_claude_jailbreak_guardrails(input, triggered: false, chat_options: {})
     llm_prompts_config = Rails.configuration.govuk_chat_private.llm_prompts
     allow(llm_prompts_config.common).to receive(:jailbreak_guardrails).and_return(pass_value: "PassValue")
-    allow(llm_prompts_config.claude.jailbreak_guardrails)
-      .to receive(:fetch)
-      .with(:max_tokens)
-      .and_return(20)
+    model = chat_options[:bedrock_model] || :claude_sonnet_4_0
+    jailbreak_guardrails_config = llm_prompts_config.claude.jailbreak_guardrails[model]
 
     answer = triggered ? "FailValue" : "PassValue"
 
     stub_claude_messages_response(
       input,
       content: [claude_messages_text_block(answer)],
-      chat_options: { max_tokens: 20 }.merge(chat_options),
+      chat_options: { max_tokens: jailbreak_guardrails_config.fetch(:max_tokens) }.merge(chat_options),
     )
   end
 
@@ -116,13 +114,15 @@ module StubClaudeMessages
                                     sources_used: %w[link_1],
                                     answer_completeness: "complete",
                                     chat_options: {})
+    model = chat_options[:bedrock_model] || :claude_sonnet_4_0
     tools = Rails.configuration
                  .govuk_chat_private
                  .llm_prompts
-                 .claude[:structured_answer][:tool_spec]
+                 .claude[:structured_answer][model][:tool_spec]
 
-    allow(Rails.configuration.govuk_chat_private.llm_prompts.claude)
-      .to receive(:structured_answer)
+    allow(Rails.configuration.govuk_chat_private.llm_prompts.claude.structured_answer)
+      .to receive(:fetch)
+      .with(model)
       .and_return(
         {
           cached_system_prompt: "Static portion",

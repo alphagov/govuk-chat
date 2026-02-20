@@ -47,7 +47,7 @@ module AnswerComposition::Pipeline
       end
 
       def config
-        Claude.prompt_config[:question_rephraser]
+        Claude.prompt_config(:question_rephraser, self.class.bedrock_model)
       end
 
       def inference_config

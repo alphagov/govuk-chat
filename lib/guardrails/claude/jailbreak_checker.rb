@@ -37,7 +37,7 @@ module Guardrails::Claude
     end
 
     def guardrails_llm_prompts
-      Claude.prompt_config(jailbreak_checker, self.class.bedrock_model)
+      AnswerComposition::Pipeline::Claude.prompt_config(:jailbreak_guardrails, self.class.bedrock_model)
     end
 
     def anthropic_bedrock_client
