@@ -1,79 +1,73 @@
 RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credentials_stubbed do
-  let(:classification_attributes) do
-    {
-      name: "greetings",
-      description: "A classification description",
-      properties: {
-        answer: {
-          type: "string",
-          description: "Answer the question.",
-        },
-      },
-      required: %w[answer],
-    }
-  end
-  let(:classification) do
-    classification_attributes
-  end
-
-  let(:tools) do
-    properties = classification[:properties] || {}
-    confidence_property = Rails.configuration.govuk_chat_private.llm_prompts.claude.question_routing[:confidence_property]
-
-    [
-      {
-        name: "greetings",
-        description: "A classification description",
-        input_schema: {
-          type: "object",
-          properties: properties.merge({
-            confidence: confidence_property,
-          }),
-          required: %w[confidence] + properties.keys.map(&:to_s),
-        },
-      },
-    ]
-  end
-
-  let(:classification_response) do
-    { "answer" => "Hello!", "confidence" => 0.85 }
-  end
-
-  let(:expected_message_history) do
-    [
-      { role: "user", content: question.message },
-    ]
-  end
   let(:question) { build :question }
   let(:context) { build(:answer_pipeline_context, question:) }
-
-  before do
-    config = Rails.configuration.govuk_chat_private.llm_prompts.claude
-    allow(config).to receive(:question_routing).and_return(
-      classifications: [classification],
-      system_prompt: "The system prompt",
-      confidence_property: {
-        title: "Confidence",
-        type: "number",
-        description: "The confidence that you have correctly identified the user's request",
-      },
-    )
-  end
 
   it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL" do
     let(:pipeline_step) { described_class.new(context) }
     let(:stubbed_request) do
       stub_claude_question_routing(
         question.message,
-        tools:,
-        tool_name: "greetings",
-        tool_input: classification_response,
         chat_options: { bedrock_model: described_class.bedrock_model },
       )
     end
+    before { allow(AnswerComposition::Pipeline::Claude).to receive(:prompt_config).and_call_original }
   end
 
   describe ".call" do
+    let(:classification_attributes) do
+      {
+        name: "greetings",
+        description: "A classification description",
+        properties: {
+          answer: {
+            type: "string",
+            description: "Answer the question.",
+          },
+        },
+        required: %w[answer],
+      }
+    end
+    let(:classification) do
+      classification_attributes
+    end
+
+    let(:tools) do
+      properties = classification[:properties] || {}
+      confidence_property = AnswerComposition::Pipeline::Claude.prompt_config(
+        :question_routing, :claude_sonnet_4_0
+      )[:confidence_property]
+
+      [
+        {
+          name: "greetings",
+          description: "A classification description",
+          input_schema: {
+            type: "object",
+            properties: properties.merge({
+              confidence: confidence_property,
+            }),
+            required: %w[confidence] + properties.keys.map(&:to_s),
+          },
+        },
+      ]
+    end
+
+    let(:classification_response) do
+      { "answer" => "Hello!", "confidence" => 0.85 }
+    end
+
+    before do
+      allow(AnswerComposition::Pipeline::Claude).to receive(:prompt_config).with(:question_routing, :claude_sonnet_4_0).and_return(
+        classifications: [classification],
+        system_prompt: "The system prompt",
+        confidence_property: {
+          title: "Confidence",
+          type: "number",
+          description: "The confidence that you have correctly identified the user's request",
+        },
+      )
+    end
+
     it "calls Bedrock with with the right prompt and tool config" do
       request = stub_claude_question_routing(
         question.message,

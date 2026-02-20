@@ -116,7 +116,7 @@ module AnswerComposition::Pipeline
       end
 
       def prompt_config
-        Claude.prompt_config.question_routing
+        Claude.prompt_config(:question_routing, self.class.bedrock_model)
       end
 
       def tool_config

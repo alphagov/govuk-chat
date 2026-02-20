@@ -35,8 +35,12 @@ module Guardrails
 
       Guardrail = Data.define(:key, :name, :content)
 
-      def initialize(prompt_name, llm_provider = :openai)
-        prompts = Rails.configuration.govuk_chat_private.llm_prompts[llm_provider][prompt_name]
+      def initialize(prompt_name, llm_provider = :claude)
+        prompts = if llm_provider == :claude
+                    AnswerComposition::Pipeline::Claude.prompt_config(prompt_name, Claude::MultipleChecker.bedrock_model)
+                  else
+                    Rails.configuration.govuk_chat_private.llm_prompts[llm_provider][prompt_name]
+                  end
 
         raise "No LLM prompts found for #{prompt_name}" unless prompts
 

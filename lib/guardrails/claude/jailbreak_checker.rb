@@ -43,7 +43,7 @@ module Guardrails::Claude
     end
 
     def guardrails_llm_prompts
-      Rails.configuration.govuk_chat_private.llm_prompts.claude.jailbreak_guardrails
+      AnswerComposition::Pipeline::Claude.prompt_config(:jailbreak_guardrails, self.class.bedrock_model)
     end
 
     def anthropic_bedrock_client
