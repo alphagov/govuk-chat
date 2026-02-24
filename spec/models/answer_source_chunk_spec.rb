@@ -48,10 +48,13 @@ RSpec.describe AnswerSourceChunk do
     end
   end
 
-  describe "#serialize for export" do
-    it "returns the model data as json" do
+  describe "#serialize_for_export" do
+    it "returns the model data as json with a chunk_uid" do
       chunk = build(:answer_source_chunk)
-      expect(chunk.serialize_for_export).to eq(chunk.as_json)
+      expected_json = chunk.as_json.merge(
+        "chunk_uid" => "#{chunk.content_id}_#{chunk.locale}_#{chunk.chunk_index}_#{chunk.digest}",
+      )
+      expect(chunk.serialize_for_export).to eq(expected_json)
     end
   end
 end
