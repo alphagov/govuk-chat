@@ -4,17 +4,15 @@ module AnswerComposition::Pipeline
       SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_haiku_4_5].freeze
       DEFAULT_MODEL = :claude_sonnet_4_0
 
-      def self.bedrock_model
-        model = ENV.fetch("BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL", DEFAULT_MODEL).to_sym
-        raise "Unsupported model for #{self}: #{model}" if SUPPORTED_MODELS.exclude?(model)
-
-        model
-      end
-
       def self.call(...) = new(...).call
 
       def initialize(context)
         @context = context
+        @model_id, @model_name = BedrockModels.determine_model(
+          ENV["BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL"],
+          DEFAULT_MODEL,
+          SUPPORTED_MODELS,
+        )
       end
 
       def call
@@ -43,7 +41,7 @@ module AnswerComposition::Pipeline
 
     private
 
-      attr_reader :context
+      attr_reader :context, :model_id, :model_name
 
       def label_config
         Rails.configuration.question_routing_labels.fetch(question_routing_label)
@@ -94,7 +92,7 @@ module AnswerComposition::Pipeline
           system: [
             { type: "text", text: prompt_config[:system_prompt], cache_control: { type: "ephemeral" } },
           ],
-          model: BedrockModels.model_id(self.class.bedrock_model),
+          model: model_id,
           messages:,
           tools:,
           tool_choice: { type: "any", disable_parallel_tool_use: true },
@@ -116,7 +114,7 @@ module AnswerComposition::Pipeline
       end
 
       def prompt_config
-        Claude.prompt_config(:question_routing, self.class.bedrock_model)
+        Claude.prompt_config(:question_routing, model_name)
       end
 
       def tool_config

@@ -4,24 +4,22 @@ module AnswerComposition::Pipeline
       SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_haiku_4_5].freeze
       DEFAULT_MODEL = :claude_sonnet_4_0
 
-      def self.bedrock_model
-        model = ENV.fetch("BEDROCK_CLAUDE_QUESTION_REPHRASER_MODEL", DEFAULT_MODEL).to_sym
-        raise "Unsupported model for #{self}: #{model}" if SUPPORTED_MODELS.exclude?(model)
-
-        model
-      end
-
       def self.call(...) = new(...).call
 
       def initialize(question_message, message_records)
         @question_message = question_message
         @message_records = message_records
+        @model_id, @model_name = BedrockModels.determine_model(
+          ENV["BEDROCK_CLAUDE_QUESTION_REPHRASER_MODEL"],
+          DEFAULT_MODEL,
+          SUPPORTED_MODELS,
+        )
       end
 
       def call
         response = anthropic_bedrock_client.messages.create(
           system: [{ type: "text", text: config[:system_prompt] }],
-          model: BedrockModels.model_id(self.class.bedrock_model),
+          model: model_id,
           messages:,
           **inference_config,
         )
@@ -35,7 +33,7 @@ module AnswerComposition::Pipeline
 
     private
 
-      attr_reader :question_message, :message_records
+      attr_reader :question_message, :message_records, :model_id, :model_name
 
       def anthropic_bedrock_client
         @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(
@@ -53,7 +51,7 @@ module AnswerComposition::Pipeline
       end
 
       def config
-        Claude.prompt_config(:question_rephraser, self.class.bedrock_model)
+        Claude.prompt_config(:question_rephraser, model_name)
       end
 
       def inference_config

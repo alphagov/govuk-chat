@@ -4,18 +4,16 @@ module AnswerComposition::Pipeline
       SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_sonnet_4_6].freeze
       DEFAULT_MODEL = :claude_sonnet_4_0
 
-      def self.bedrock_model
-        model = ENV.fetch("BEDROCK_CLAUDE_STRUCTURED_ANSWER_COMPOSER_MODEL", DEFAULT_MODEL).to_sym
-        raise "Unsupported model for #{self}: #{model}" if SUPPORTED_MODELS.exclude?(model)
-
-        model
-      end
-
       def self.call(...) = new(...).call
 
       def initialize(context)
         @context = context
         @link_token_mapper = AnswerComposition::LinkTokenMapper.new
+        @model_id, @model_name = BedrockModels.determine_model(
+          ENV["BEDROCK_CLAUDE_STRUCTURED_ANSWER_COMPOSER_MODEL"],
+          DEFAULT_MODEL,
+          SUPPORTED_MODELS,
+        )
       end
 
       def call
@@ -25,7 +23,7 @@ module AnswerComposition::Pipeline
             { type: "text", text: cached_system_prompt, cache_control: { type: "ephemeral" } },
             { type: "text", text: context_system_prompt },
           ],
-          model: BedrockModels.model_id(self.class.bedrock_model),
+          model: model_id,
           messages:,
           tools: tools,
           tool_choice: { type: "tool", name: "output_schema" },
@@ -51,7 +49,7 @@ module AnswerComposition::Pipeline
 
     private
 
-      attr_reader :context, :link_token_mapper
+      attr_reader :context, :link_token_mapper, :model_id, :model_name
 
       def messages
         [
@@ -81,7 +79,7 @@ module AnswerComposition::Pipeline
       end
 
       def prompt_config
-        Claude.prompt_config(:structured_answer, self.class.bedrock_model)
+        Claude.prompt_config(:structured_answer, model_name)
       end
 
       def anthropic_bedrock_client

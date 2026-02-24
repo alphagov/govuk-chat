@@ -4,11 +4,13 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credent
 
   it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL" do
     let(:pipeline_step) { described_class.new(context) }
-    let(:stubbed_request) do
-      stub_claude_question_routing(
-        question.message,
-        chat_options: { bedrock_model: described_class.bedrock_model },
-      )
+    let(:stubbed_request_lambda) do
+      lambda { |bedrock_model|
+        stub_claude_question_routing(
+          question.message,
+          chat_options: { bedrock_model: },
+        )
+      }
     end
     before { allow(AnswerComposition::Pipeline::Claude).to receive(:prompt_config).and_call_original }
   end

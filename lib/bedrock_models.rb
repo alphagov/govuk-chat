@@ -11,6 +11,14 @@ module BedrockModels
     MODEL_IDS.fetch(model_name) { raise "Unknown Bedrock model name: #{model_name}" }
   end
 
+  def self.determine_model(requested_model, default_model, supported_models)
+    model_name = (requested_model.presence || default_model).to_sym
+    model_id = self.model_id(model_name)
+    raise "Unsupported model: #{model_name}" unless supported_models.include?(model_name)
+
+    [model_id, model_name]
+  end
+
   def self.expected_foundation_models
     # Strip the "eu." prefix from the model name we use if it exists. We
     # sometimes use this prefix in our model names if we're using cross-region

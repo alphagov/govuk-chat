@@ -3,23 +3,21 @@ module Guardrails::Claude
     SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_haiku_4_5].freeze
     DEFAULT_MODEL = :claude_sonnet_4_0
 
-    def self.bedrock_model
-      model = ENV.fetch("BEDROCK_CLAUDE_JAILBREAK_GUARDRAILS_MODEL", DEFAULT_MODEL).to_sym
-      raise "Unsupported model for #{self}: #{model}" if SUPPORTED_MODELS.exclude?(model)
-
-      model
-    end
-
     def self.call(...) = new(...).call
 
     def initialize(input)
       @input = input
+      @model_id, @model_name = BedrockModels.determine_model(
+        ENV["BEDROCK_CLAUDE_JAILBREAK_GUARDRAILS_MODEL"],
+        DEFAULT_MODEL,
+        SUPPORTED_MODELS,
+      )
     end
 
     def call
       response = anthropic_bedrock_client.messages.create(
         system: [{ type: "text", text: system_prompt }],
-        model: BedrockModels.model_id(self.class.bedrock_model),
+        model: model_id,
         messages:,
         **inference_config,
       )
@@ -36,14 +34,14 @@ module Guardrails::Claude
 
   private
 
-    attr_reader :input
+    attr_reader :input, :model_id, :model_name
 
     def max_tokens
       guardrails_llm_prompts.fetch(:max_tokens)
     end
 
     def guardrails_llm_prompts
-      AnswerComposition::Pipeline::Claude.prompt_config(:jailbreak_guardrails, self.class.bedrock_model)
+      AnswerComposition::Pipeline::Claude.prompt_config(:jailbreak_guardrails, model_name)
     end
 
     def anthropic_bedrock_client

@@ -36,6 +36,31 @@ RSpec.describe BedrockModels do
     end
   end
 
+  describe ".determine_model" do
+    let(:default_model) { :claude_sonnet_4_0 }
+    let(:supported_models) { %i[claude_sonnet_4_0 claude_sonnet_4_6 claude_haiku_4_5] }
+
+    it "returns the default model and model name when requested model is not provided" do
+      expect(described_class.determine_model(nil, default_model, supported_models))
+        .to eq([described_class.model_id(default_model), default_model])
+    end
+
+    it "returns the requested model and corresponding model name when requested model is provided" do
+      expect(described_class.determine_model("claude_sonnet_4_6", default_model, supported_models))
+        .to eq([described_class.model_id(:claude_sonnet_4_6), :claude_sonnet_4_6])
+    end
+
+    it "raises an error if the requested model is set to an unknown model" do
+      expect { described_class.determine_model("unknown_model", default_model, supported_models) }
+        .to raise_error("Unknown Bedrock model name: unknown_model")
+    end
+
+    it "raises an error if the requested model is set to an unsupported model" do
+      expect { described_class.determine_model("openai_gpt_oss_120b", default_model, supported_models) }
+        .to raise_error("Unsupported model: openai_gpt_oss_120b")
+    end
+  end
+
   describe ".expected_foundation_models" do
     it "returns the expected foundation models without the 'eu.' prefix" do
       allow(described_class).to receive(:MODEL_IDS).and_return({

@@ -99,12 +99,14 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
 
     it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_STRUCTURED_ANSWER_COMPOSER_MODEL" do
       let(:pipeline_step) { described_class.new(context) }
-      let(:stubbed_request) do
-        stub_claude_structured_answer(
-          question.message,
-          answer,
-          chat_options: { bedrock_model: described_class.bedrock_model },
-        )
+      let(:stubbed_request_lambda) do
+        lambda { |bedrock_model|
+          stub_claude_structured_answer(
+            question.message,
+            answer,
+            chat_options: { bedrock_model: },
+          )
+        }
       end
     end
 

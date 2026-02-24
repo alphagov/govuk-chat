@@ -6,10 +6,7 @@ module Guardrails
       DEFAULT_MODEL = :claude_sonnet_4_0
 
       def self.bedrock_model
-        model = ENV.fetch("BEDROCK_CLAUDE_GUARDRAILS_MODEL", DEFAULT_MODEL).to_sym
-        raise "Unsupported model for #{self}: #{model}" if SUPPORTED_MODELS.exclude?(model)
-
-        model
+        BedrockModels.determine_model(ENV["BEDROCK_CLAUDE_GUARDRAILS_MODEL"], DEFAULT_MODEL, SUPPORTED_MODELS).last
       end
 
       def self.call(...) = new(...).call

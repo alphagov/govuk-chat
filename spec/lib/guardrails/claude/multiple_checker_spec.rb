@@ -45,12 +45,14 @@ RSpec.describe Guardrails::Claude::MultipleChecker, :aws_credentials_stubbed do
 
       it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_GUARDRAILS_MODEL" do
         let(:pipeline_step) { described_class.new(input, prompt) }
-        let(:stubbed_request) do
-          stub_claude_output_guardrails(
-            input,
-            'True | "1, 2"',
-            chat_options: { bedrock_model: described_class.bedrock_model },
-          )
+        let(:stubbed_request_lambda) do
+          lambda { |bedrock_model|
+            stub_claude_output_guardrails(
+              input,
+              'True | "1, 2"',
+              chat_options: { bedrock_model: },
+            )
+          }
         end
       end
 
