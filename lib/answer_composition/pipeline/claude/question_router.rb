@@ -84,7 +84,7 @@ module AnswerComposition::Pipeline
           system: [
             { type: "text", text: prompt_config[:system_prompt], cache_control: { type: "ephemeral" } },
           ],
-          model: BedrockModels.model_id(:claude_sonnet),
+          model: BedrockModels.model_id(:claude_haiku),
           messages:,
           tools:,
           tool_choice: { type: "any", disable_parallel_tool_use: true },
@@ -135,7 +135,9 @@ module AnswerComposition::Pipeline
               type: "object",
               properties:,
               required:,
+              additionalProperties: false,
             },
+            strict: true,
           }
         end
       end

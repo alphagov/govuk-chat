@@ -16,7 +16,7 @@ module Guardrails
       def call
         claude_response = anthropic_bedrock_client.messages.create(
           system: [{ type: "text", text: prompt.system_prompt, cache_control: { type: "ephemeral" } }],
-          model: BedrockModels.model_id(:claude_sonnet),
+          model: BedrockModels.model_id(:claude_haiku),
           messages: [{ role: "user", content: prompt.user_prompt(input) }],
           max_tokens: MAX_TOKENS,
         )

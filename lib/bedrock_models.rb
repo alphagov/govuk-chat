@@ -1,6 +1,7 @@
 module BedrockModels
   MODEL_IDS = {
     claude_sonnet: ENV.fetch("CLAUDE_SONNET_MODEL_ID", "eu.anthropic.claude-sonnet-4-20250514-v1:0").freeze,
+    claude_haiku: ENV.fetch("CLAUDE_HAIKU_MODEL_ID", "eu.anthropic.claude-haiku-4-5-20251001-v1:0").freeze,
     titan_embed_v2: "amazon.titan-embed-text-v2:0",
     openai_gpt_oss_120b: "openai.gpt-oss-120b-1:0",
   }.freeze

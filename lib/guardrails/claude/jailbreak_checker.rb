@@ -9,7 +9,7 @@ module Guardrails::Claude
     def call
       response = anthropic_bedrock_client.messages.create(
         system: [{ type: "text", text: system_prompt }],
-        model: BedrockModels.model_id(:claude_sonnet),
+        model: BedrockModels.model_id(:claude_haiku),
         messages:,
         **inference_config,
       )
