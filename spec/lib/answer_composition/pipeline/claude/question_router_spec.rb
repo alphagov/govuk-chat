@@ -30,7 +30,9 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credent
             confidence: confidence_property,
           }),
           required: %w[confidence] + properties.keys.map(&:to_s),
+          additionalProperties: false,
         },
+        strict: true,
       },
     ]
   end

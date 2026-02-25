@@ -135,7 +135,9 @@ module AnswerComposition::Pipeline
               type: "object",
               properties:,
               required:,
+              additionalProperties: false,
             },
+            strict: true,
           }
         end
       end
