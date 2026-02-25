@@ -1,5 +1,5 @@
 default: &default
-  chunked_content_index: govuk_chat_chunked_content
+  chunked_content_index: <%= ENV.fetch("OPENSEARCH_INDEX", "govuk_chat_chunked_content") %>
   chunked_content_default_index: govuk_chat_chunked_content_default
   url: <%= ENV.fetch("OPENSEARCH_URL", "http://localhost:9200") %>
   user: <%= ENV["OPENSEARCH_USERNAME"] %>
@@ -11,7 +11,7 @@ development:
 
 test:
   <<: *default
-  chunked_content_index: govuk_chat_chunked_content_test
+  chunked_content_index: <%= ENV.fetch("OPENSEARCH_TEST_INDEX", "govuk_chat_chunked_content_test") %>
   chunked_content_default_index: govuk_chat_chunked_content_default_test
   refresh_writes: true
 
