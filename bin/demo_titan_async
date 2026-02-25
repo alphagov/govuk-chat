@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+require_relative "../config/environment"
+
+phrases = ["What is universal credit?", "How do I renew my passport?", "Council tax bands explained"]
+
+puts "Testing TitanAsync with #{phrases.length} phrases..."
+puts
+
+start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+embeddings = Search::TextToEmbedding::TitanAsync.call(phrases)
+duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
+
+embeddings.each_with_index do |embedding, i|
+  puts "Phrase: #{phrases[i]}"
+  puts "  Embedding length: #{embedding.length}"
+  puts "  First 5 values: #{embedding.first(5).map { |v| v.round(6) }}"
+  puts
+end
+
+puts "Completed in #{duration.round(3)}s"
