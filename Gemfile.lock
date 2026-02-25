@@ -906,6 +906,7 @@ DEPENDENCIES
   anthropic
   aws-sdk-bedrock
   aws-sdk-bedrockruntime
+  aws-sigv4
   blueprinter
   bootsnap
   brakeman
