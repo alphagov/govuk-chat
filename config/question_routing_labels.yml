@@ -78,7 +78,7 @@ non_english:
   use_answer: false
   answer_status: unanswerable_question_routing
   canned_responses:
-    - Sorry, I cannot answer that. Please translate your question into English and try again.
+    - I'm sorry, currently I can only respond in English, but I'm happy to help. Please feel free to ask again.
 
 personal_info:
   label: "Personal information"
