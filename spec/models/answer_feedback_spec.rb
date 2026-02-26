@@ -1,12 +1,9 @@
 RSpec.describe AnswerFeedback do
   it_behaves_like "exportable by start and end date" do
-    let(:conversation) { create(:conversation, end_user_id: "opted-out-id") }
+    let(:conversation) { create(:conversation) }
     let(:question) { create(:question, conversation:) }
     let(:answer) { create(:answer, question:) }
     let(:create_record_lambda) { ->(time) { create(:answer_feedback, created_at: time) } }
-    let(:create_excluded_record_lambda) { ->(time) { create(:answer_feedback, answer:, created_at: time) } }
-
-    before { allow(Rails.configuration.govuk_chat_private).to receive(:opted_out_end_user_ids).and_return(%w[opted-out-id]) }
   end
 
   describe ".group_useful_by_label" do
