@@ -30,22 +30,6 @@ RSpec.describe Conversation do
     end
   end
 
-  describe ".exclude_opted_out_end_user_ids" do
-    it "excludes conversations with opted-out end users" do
-      opted_out_end_user_id = "opted-out-id"
-      allow(Rails.configuration.govuk_chat_private)
-        .to receive(:opted_out_end_user_ids)
-        .and_return([opted_out_end_user_id])
-
-      create(:conversation, end_user_id: opted_out_end_user_id)
-      conversation = create(:conversation, end_user_id: "included-id")
-      conversation_with_no_end_user = create(:conversation, end_user_id: nil)
-
-      result = described_class.exclude_opted_out_end_user_ids
-      expect(result).to eq([conversation, conversation_with_no_end_user])
-    end
-  end
-
   describe ".questions_for_showing_conversation" do
     let(:conversation) { create(:conversation) }
 

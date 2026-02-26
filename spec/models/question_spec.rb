@@ -84,19 +84,6 @@ RSpec.describe Question do
           )
         }
       end
-
-      let(:create_excluded_record_lambda) do
-        lambda { |time|
-          create(
-            :question,
-            created_at: time,
-            answer: create(:answer, created_at: time),
-            conversation: create(:conversation, end_user_id: "opted-out-id"),
-          )
-        }
-      end
-
-      before { allow(Rails.configuration.govuk_chat_private).to receive(:opted_out_end_user_ids).and_return(%w[opted-out-id]) }
     end
 
     it "includes the conversation a question belongs to" do

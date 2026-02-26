@@ -11,15 +11,6 @@ module ExportableModelExamples
       expect(exportable_records).to eq([new_record])
     end
 
-    it "excludes records with opted-out end users" do
-      new_record = create_record_lambda.call(last_export + 1.day)
-      create_excluded_record_lambda.call(last_export + 1.day)
-
-      exportable_records = described_class.exportable(last_export, Time.current)
-
-      expect(exportable_records).to eq([new_record])
-    end
-
     it "returns an empty array if no records have been created since the last export" do
       exportable_records = described_class.exportable(last_export, Time.current)
 

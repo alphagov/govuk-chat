@@ -5,13 +5,6 @@ class Conversation < ApplicationRecord
 
   scope :active, -> { where(Question.active.where("questions.conversation_id = conversations.id").arel.exists) }
 
-  scope :exclude_opted_out_end_user_ids, lambda {
-    ids = Rails.configuration.govuk_chat_private&.opted_out_end_user_ids || []
-
-    where(end_user_id: nil)
-    .or(where.not(end_user_id: ids))
-  }
-
   enum :source,
        {
          api: "api",

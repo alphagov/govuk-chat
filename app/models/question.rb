@@ -32,7 +32,6 @@ class Question < ApplicationRecord
                        joins(:conversation, :answer)
                        .preload(:conversation, answer: { sources: :chunk })
                        .where("answer.created_at": start_date...end_date)
-                       .merge(Conversation.exclude_opted_out_end_user_ids)
                      }
 
   scope :active, lambda {
