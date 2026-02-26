@@ -1,5 +1,7 @@
 module StubClaudeMessages
-  CLAUDE_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*anthropic\.claude.*?/invoke}
+  CLAUDE_SONNET_4_0_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*anthropic\.claude-sonnet-4-20250514-v1:0.*?/invoke}
+  CLAUDE_SONNET_4_6_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*anthropic\.claude-sonnet-4-6.*?/invoke}
+  CLAUDE_HAIKU_4_5_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*anthropic\.claude-haiku-4-5-20251001-v1:0.*?/invoke}
 
   def stub_claude_messages_response(question_or_history,
                                     content:,
@@ -13,6 +15,7 @@ module StubClaudeMessages
                 question_or_history
               end
 
+    bedrock_model = chat_options.delete(:bedrock_model) || :claude_sonnet_4_0
     chat_options = { temperature: 0.0, max_tokens: 4096 }.merge(chat_options).compact
 
     matchers = {
@@ -37,7 +40,16 @@ module StubClaudeMessages
       stop_reason:,
     )
 
-    stub_request(:post, CLAUDE_ENDPOINT_REGEX)
+    endpoint_regex = case bedrock_model
+                     when :claude_sonnet_4_0
+                       CLAUDE_SONNET_4_0_ENDPOINT_REGEX
+                     when :claude_sonnet_4_6
+                       CLAUDE_SONNET_4_6_ENDPOINT_REGEX
+                     when :claude_haiku_4_5
+                       CLAUDE_HAIKU_4_5_ENDPOINT_REGEX
+                     end
+
+    stub_request(:post, endpoint_regex)
       .with(body: hash_including(matchers))
       .to_return_json(
         status: 200,
@@ -46,27 +58,26 @@ module StubClaudeMessages
       )
   end
 
-  def stub_claude_jailbreak_guardrails(input, triggered: false)
+  def stub_claude_jailbreak_guardrails(input, triggered: false, chat_options: {})
     llm_prompts_config = Rails.configuration.govuk_chat_private.llm_prompts
     allow(llm_prompts_config.common).to receive(:jailbreak_guardrails).and_return(pass_value: "PassValue")
-    allow(llm_prompts_config.claude.jailbreak_guardrails)
-      .to receive(:fetch)
-      .with(:max_tokens)
-      .and_return(20)
+    model = chat_options[:bedrock_model] || :claude_sonnet_4_0
+    jailbreak_guardrails_config = llm_prompts_config.claude.jailbreak_guardrails[model]
 
     answer = triggered ? "FailValue" : "PassValue"
 
     stub_claude_messages_response(
       input,
       content: [claude_messages_text_block(answer)],
-      chat_options: { max_tokens: 20 },
+      chat_options: { max_tokens: jailbreak_guardrails_config.fetch(:max_tokens) }.merge(chat_options),
     )
   end
 
-  def stub_claude_question_rephrasing(original_question, rephrased_question)
+  def stub_claude_question_rephrasing(original_question, rephrased_question, chat_options: {})
     stub_claude_messages_response(
       array_including({ "role" => "user", "content" => a_string_including(original_question) }),
       content: [claude_messages_text_block(rephrased_question)],
+      chat_options: chat_options,
     )
   end
 
@@ -101,14 +112,17 @@ module StubClaudeMessages
                                     answer,
                                     answered: true,
                                     sources_used: %w[link_1],
-                                    answer_completeness: "complete")
+                                    answer_completeness: "complete",
+                                    chat_options: {})
+    model = chat_options[:bedrock_model] || :claude_sonnet_4_0
     tools = Rails.configuration
                  .govuk_chat_private
                  .llm_prompts
-                 .claude[:structured_answer][:tool_spec]
+                 .claude[:structured_answer][model][:tool_spec]
 
-    allow(Rails.configuration.govuk_chat_private.llm_prompts.claude)
-      .to receive(:structured_answer)
+    allow(Rails.configuration.govuk_chat_private.llm_prompts.claude.structured_answer)
+      .to receive(:fetch)
+      .with(model)
       .and_return(
         {
           cached_system_prompt: "Static portion",
@@ -120,7 +134,7 @@ module StubClaudeMessages
     chat_options = {
       tools: [tools],
       tool_choice: { type: "tool", name: "output_schema" },
-    }
+    }.merge(chat_options)
 
     system = array_including(
       { "type" => "text", "text" => "Static portion", "cache_control" => { "type" => "ephemeral" } },
@@ -140,7 +154,7 @@ module StubClaudeMessages
     )
   end
 
-  def stub_claude_output_guardrails(to_check, response = "False | None")
+  def stub_claude_output_guardrails(to_check, response = "False | None", chat_options: {})
     system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))
 
     stub_claude_messages_response(
@@ -148,7 +162,7 @@ module StubClaudeMessages
       content: [claude_messages_text_block(response)],
       system:,
       usage: { cache_read_input_tokens: 20 },
-      chat_options: { temperature: nil, max_tokens: Guardrails::Claude::MultipleChecker::MAX_TOKENS },
+      chat_options: { temperature: nil, max_tokens: Guardrails::Claude::MultipleChecker::MAX_TOKENS }.merge(chat_options),
     )
   end
 
@@ -207,7 +221,7 @@ module StubClaudeMessages
   def claude_messages_response(content:, usage: {}, stop_reason: :end_turn)
     Anthropic::Models::Message.new(
       id: "msg-id",
-      model: BedrockModels.model_id(:claude_sonnet),
+      model: BedrockModels.model_id(:claude_sonnet_4_0),
       role: :assistant,
       content:,
       stop_reason:,

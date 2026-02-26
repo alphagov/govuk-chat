@@ -1,6 +1,19 @@
 RSpec.describe Guardrails::Claude::JailbreakChecker, :aws_credentials_stubbed do
   let(:input) { "User question" }
 
+  it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_JAILBREAK_GUARDRAILS_MODEL" do
+    let(:pipeline_step) { described_class.new(input) }
+    let(:stubbed_request_lambda) do
+      lambda { |bedrock_model|
+        stub_claude_jailbreak_guardrails(
+          input,
+          triggered: false,
+          chat_options: { bedrock_model: },
+        )
+      }
+    end
+  end
+
   describe ".call" do
     it "calls Claude to check for jailbreak attempts and returns the expected result" do
       stub_claude_jailbreak_guardrails(input, triggered: false)
@@ -21,7 +34,7 @@ RSpec.describe Guardrails::Claude::JailbreakChecker, :aws_credentials_stubbed do
     it "returns the model used" do
       stub_claude_jailbreak_guardrails(input, triggered: false)
       result = described_class.call(input)
-      expect(result[:model]).to eq(BedrockModels.model_id(:claude_sonnet))
+      expect(result[:model]).to eq(BedrockModels.model_id(:claude_sonnet_4_0))
     end
 
     it "returns the LLM response" do

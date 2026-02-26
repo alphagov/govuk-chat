@@ -71,7 +71,9 @@ RSpec.describe Guardrails::MultipleChecker do
           },
         }.with_indifferent_access
 
-        allow(Rails.configuration.govuk_chat_private.llm_prompts.claude).to receive(:[]).with(llm_prompt_name).and_return(guardrails_config)
+        allow(AnswerComposition::Pipeline::Claude).to receive(:prompt_config)
+                                                  .with(llm_prompt_name, Guardrails::Claude::MultipleChecker.bedrock_model)
+                                                  .and_return(guardrails_config)
         allow(Guardrails::Claude::MultipleChecker).to receive(:call).and_return(guardrail_response_hash)
       end
 
@@ -141,7 +143,9 @@ RSpec.describe Guardrails::MultipleChecker do
 
     before do
       guardrails_config = { system_prompt:, user_prompt:, guardrails:, guardrail_definitions: }.with_indifferent_access
-      allow(Rails.configuration.govuk_chat_private.llm_prompts.openai).to receive(:[]).with(llm_prompt_name).and_return(guardrails_config)
+      allow(AnswerComposition::Pipeline::Claude).to receive(:prompt_config)
+                                          .with(llm_prompt_name, Guardrails::Claude::MultipleChecker.bedrock_model)
+                                          .and_return(guardrails_config)
     end
 
     context "when the llm_prompt_name is :answer_guardrails" do
@@ -177,7 +181,7 @@ RSpec.describe Guardrails::MultipleChecker do
 
         PROMPT
 
-        expect(described_class.collated_prompts(llm_prompt_name, :openai)).to eq(expected_prompt)
+        expect(described_class.collated_prompts(llm_prompt_name, :claude)).to eq(expected_prompt)
       end
     end
 
@@ -210,7 +214,7 @@ RSpec.describe Guardrails::MultipleChecker do
 
         PROMPT
 
-        expect(described_class.collated_prompts(llm_prompt_name, :openai)).to eq(expected_prompt)
+        expect(described_class.collated_prompts(llm_prompt_name, :claude)).to eq(expected_prompt)
       end
     end
   end

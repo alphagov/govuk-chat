@@ -1,15 +1,23 @@
 module Guardrails::Claude
   class JailbreakChecker
+    SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_haiku_4_5].freeze
+    DEFAULT_MODEL = :claude_sonnet_4_0
+
     def self.call(...) = new(...).call
 
     def initialize(input)
       @input = input
+      @model_id, @model_name = BedrockModels.determine_model(
+        ENV["BEDROCK_CLAUDE_JAILBREAK_GUARDRAILS_MODEL"],
+        DEFAULT_MODEL,
+        SUPPORTED_MODELS,
+      )
     end
 
     def call
       response = anthropic_bedrock_client.messages.create(
         system: [{ type: "text", text: system_prompt }],
-        model: BedrockModels.model_id(:claude_sonnet),
+        model: model_id,
         messages:,
         **inference_config,
       )
@@ -26,14 +34,14 @@ module Guardrails::Claude
 
   private
 
-    attr_reader :input
+    attr_reader :input, :model_id, :model_name
 
     def max_tokens
       guardrails_llm_prompts.fetch(:max_tokens)
     end
 
     def guardrails_llm_prompts
-      Rails.configuration.govuk_chat_private.llm_prompts.claude.jailbreak_guardrails
+      AnswerComposition::Pipeline::Claude.prompt_config(:jailbreak_guardrails, model_name)
     end
 
     def anthropic_bedrock_client

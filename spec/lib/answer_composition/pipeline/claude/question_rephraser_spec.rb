@@ -5,6 +5,19 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser, :aws_cred
   let(:question_records) { conversation.questions.joins(:answer).order(created_at: :asc) }
   let(:rephrased) { "How do I pay my corporation tax" }
 
+  it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_QUESTION_REPHRASER_MODEL" do
+    let(:pipeline_step) { described_class.new(question.message, question_records) }
+    let(:stubbed_request_lambda) do
+      lambda { |bedrock_model|
+        stub_claude_question_rephrasing(
+          question.message,
+          rephrased,
+          chat_options: { bedrock_model: },
+        )
+      }
+    end
+  end
+
   context "when there is a valid response from Claude" do
     it "includes the current question in the user prompt" do
       anthropic_request = stub_claude_question_rephrasing(question.message, rephrased)
@@ -55,7 +68,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRephraser, :aws_cred
         llm_prompt_tokens: 10,
         llm_completion_tokens: 20,
         llm_cached_tokens: nil,
-        model: BedrockModels.model_id(:claude_sonnet),
+        model: BedrockModels.model_id(:claude_sonnet_4_0),
       })
     end
   end

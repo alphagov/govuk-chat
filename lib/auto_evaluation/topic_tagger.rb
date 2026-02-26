@@ -18,7 +18,7 @@ module AutoEvaluation
         system: [
           { type: "text", text: system_prompt, cache_control: { type: "ephemeral" } },
         ],
-        model: BedrockModels.model_id(:claude_sonnet),
+        model: BedrockModels.model_id(:claude_sonnet_4_0),
         tools:,
         tool_choice: { type: "tool", name: tools.first[:name] },
         **inference_config,

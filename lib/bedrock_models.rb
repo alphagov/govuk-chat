@@ -1,12 +1,22 @@
 module BedrockModels
   MODEL_IDS = {
-    claude_sonnet: ENV.fetch("CLAUDE_SONNET_MODEL_ID", "eu.anthropic.claude-sonnet-4-20250514-v1:0").freeze,
+    claude_sonnet_4_0: "eu.anthropic.claude-sonnet-4-20250514-v1:0",
+    claude_sonnet_4_6: "eu.anthropic.claude-sonnet-4-6",
+    claude_haiku_4_5: "eu.anthropic.claude-haiku-4-5-20251001-v1:0",
     titan_embed_v2: "amazon.titan-embed-text-v2:0",
     openai_gpt_oss_120b: "openai.gpt-oss-120b-1:0",
   }.freeze
 
   def self.model_id(model_name)
     MODEL_IDS.fetch(model_name) { raise "Unknown Bedrock model name: #{model_name}" }
+  end
+
+  def self.determine_model(requested_model, default_model, supported_models)
+    model_name = (requested_model.presence || default_model).to_sym
+    model_id = self.model_id(model_name)
+    raise "Unsupported model: #{model_name}" unless supported_models.include?(model_name)
+
+    [model_id, model_name]
   end
 
   def self.expected_foundation_models

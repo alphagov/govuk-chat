@@ -43,6 +43,19 @@ RSpec.describe Guardrails::Claude::MultipleChecker, :aws_credentials_stubbed do
         allow(prompt).to receive(:user_prompt).with(input).and_return(input)
       end
 
+      it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_GUARDRAILS_MODEL" do
+        let(:pipeline_step) { described_class.new(input, prompt) }
+        let(:stubbed_request_lambda) do
+          lambda { |bedrock_model|
+            stub_claude_output_guardrails(
+              input,
+              'True | "1, 2"',
+              chat_options: { bedrock_model: },
+            )
+          }
+        end
+      end
+
       it "calls Claude to check for guardrail violations with correct user input" do
         anthropic_request = stub_claude_output_guardrails(input, 'True | "1, 2"')
 
@@ -75,7 +88,7 @@ RSpec.describe Guardrails::Claude::MultipleChecker, :aws_credentials_stubbed do
         expect(result[:llm_prompt_tokens]).to eq(30)
         expect(result[:llm_completion_tokens]).to eq(20)
         expect(result[:llm_cached_tokens]).to eq(20)
-        expect(result[:model]).to eq(BedrockModels.model_id(:claude_sonnet))
+        expect(result[:model]).to eq(BedrockModels.model_id(:claude_sonnet_4_0))
       end
 
       it "returns the model used" do
@@ -83,7 +96,7 @@ RSpec.describe Guardrails::Claude::MultipleChecker, :aws_credentials_stubbed do
 
         result = described_class.call(input, prompt)
 
-        expect(result[:model]).to eq(BedrockModels.model_id(:claude_sonnet))
+        expect(result[:model]).to eq(BedrockModels.model_id(:claude_sonnet_4_0))
       end
 
       it "uses an overridden AWS region if set" do
