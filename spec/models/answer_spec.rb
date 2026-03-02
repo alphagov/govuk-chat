@@ -221,12 +221,26 @@ RSpec.describe Answer do
   end
 
   it "ensures the question routing labels enum values and prompt config are in sync" do
-    claude_question_routing_prompt_config = Rails.configuration.govuk_chat_private.llm_prompts.claude.question_routing
-    openai_question_routing_prompt_config = Rails.configuration.govuk_chat_private.llm_prompts.openai.question_routing
+    claude_supported_models = AnswerComposition::Pipeline::Claude::QuestionRouter::SUPPORTED_MODELS.map(&:to_s)
+    claude_question_routing_prompt_configs = Rails.configuration
+                                                  .govuk_chat_private
+                                                  .llm_prompts
+                                                  .claude
+                                                  .question_routing
+                                                  .select { |key, _| key.in?(claude_supported_models) }
+                                                  .values
 
-    [claude_question_routing_prompt_config, openai_question_routing_prompt_config].each do |prompt_config|
+    openai_question_routing_prompt_config = Rails.configuration
+                                                 .govuk_chat_private
+                                                 .llm_prompts
+                                                 .openai
+                                                 .question_routing
+
+    prompt_configs = claude_question_routing_prompt_configs + [openai_question_routing_prompt_config]
+    enum_values = described_class.question_routing_labels.values
+
+    prompt_configs.each do |prompt_config|
       classification_names = prompt_config[:classifications].map { |classification| classification[:name] }
-      enum_values = described_class.question_routing_labels.values
 
       classification_names.each do |classification_name|
         expect(enum_values).to include(classification_name)
