@@ -108,6 +108,7 @@ namespace :evaluation do
         exact_path: result.exact_path,
         chunk_uid: result.chunk_uid,
         weighted_score: result.weighted_score,
+        semantic_score: result.score,
       }
     end
 
