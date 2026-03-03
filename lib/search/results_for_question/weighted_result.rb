@@ -12,6 +12,10 @@ module Search
       def score_calculation
         "#{score} * #{weighting} = #{weighted_score}"
       end
+
+      def chunk_uid
+        "#{content_id}_#{locale}_#{chunk_index}_#{digest}"
+      end
     end
   end
 end

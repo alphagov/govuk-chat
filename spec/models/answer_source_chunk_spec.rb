@@ -52,9 +52,22 @@ RSpec.describe AnswerSourceChunk do
     it "returns the model data as json with a chunk_uid" do
       chunk = build(:answer_source_chunk)
       expected_json = chunk.as_json.merge(
-        "chunk_uid" => "#{chunk.content_id}_#{chunk.locale}_#{chunk.chunk_index}_#{chunk.digest}",
+        "chunk_uid" => chunk.uid,
       )
       expect(chunk.serialize_for_export).to eq(expected_json)
+    end
+  end
+
+  describe "#uid" do
+    it "returns a unique identifier for the chunk by combining content_id, locale, chunk_index and digest" do
+      chunk = build(:answer_source_chunk,
+                    content_id: SecureRandom.uuid,
+                    locale: "en",
+                    chunk_index: 2,
+                    digest: "def456")
+
+      expect(chunk.uid)
+        .to eq("#{chunk.content_id}_#{chunk.locale}_#{chunk.chunk_index}_#{chunk.digest}")
     end
   end
 end

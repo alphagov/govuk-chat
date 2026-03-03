@@ -30,6 +30,10 @@ class AnswerSourceChunk < ApplicationRecord
   end
 
   def serialize_for_export
-    as_json.merge("chunk_uid" => "#{content_id}_#{locale}_#{chunk_index}_#{digest}")
+    as_json.merge("chunk_uid" => uid)
+  end
+
+  def uid
+    "#{content_id}_#{locale}_#{chunk_index}_#{digest}"
   end
 end
