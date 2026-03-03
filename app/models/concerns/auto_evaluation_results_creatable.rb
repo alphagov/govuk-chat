@@ -2,13 +2,15 @@ module AutoEvaluationResultsCreatable
   extend ActiveSupport::Concern
 
   class_methods do
-    def create_runs_from_score_results(answer, results, association)
+    def create_runs_from_auto_evaluation_results(answer, results, association)
       transaction do
         results.each do |result|
           run = answer.public_send(association).build(
             answer:,
+            status: result.status,
             score: result.score,
             reason: result.reason,
+            error_message: result.error_message,
           )
 
           result.llm_responses.stringify_keys.each do |name, llm_response|
