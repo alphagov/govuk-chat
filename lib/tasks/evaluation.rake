@@ -106,9 +106,8 @@ namespace :evaluation do
     items = search_results.map do |result|
       {
         exact_path: result.exact_path,
-        plain_content: result.plain_content,
+        chunk_uid: result.chunk_uid,
         weighted_score: result.weighted_score,
-        original_score: result.score,
       }
     end
 

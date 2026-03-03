@@ -387,14 +387,12 @@ RSpec.describe "rake evaluation tasks" do
           build(
             :weighted_search_result,
             exact_path: "/path1",
-            plain_content: "Content 1",
             score: 1.5,
             weighted_score: 1.0,
           ),
           build(
             :weighted_search_result,
             exact_path: "/path2",
-            plain_content: "Content 2",
             score: 0.9,
             weighted_score: 0.9,
           ),
@@ -405,19 +403,16 @@ RSpec.describe "rake evaluation tasks" do
           metrics: {},
         )
         allow(Search::ResultsForQuestion).to receive(:call).with(input).and_return(result_set)
-
         expected_output = [
           {
             exact_path: "/path1",
-            plain_content: "Content 1",
+            chunk_uid: search_results.first.chunk_uid,
             weighted_score: 1.0,
-            original_score: 1.5,
           },
           {
             exact_path: "/path2",
-            plain_content: "Content 2",
+            chunk_uid: search_results.second.chunk_uid,
             weighted_score: 0.9,
-            original_score: 0.9,
           },
         ].to_json
 
