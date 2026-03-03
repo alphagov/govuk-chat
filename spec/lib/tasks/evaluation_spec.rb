@@ -408,11 +408,13 @@ RSpec.describe "rake evaluation tasks" do
             exact_path: "/path1",
             chunk_uid: search_results.first.chunk_uid,
             weighted_score: 1.0,
+            semantic_score: 1.5,
           },
           {
             exact_path: "/path2",
             chunk_uid: search_results.second.chunk_uid,
             weighted_score: 0.9,
+            semantic_score: 0.9,
           },
         ].to_json
 
