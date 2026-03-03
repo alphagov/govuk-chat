@@ -31,6 +31,10 @@ module Search
     class NotFound < StandardError
     end
 
+    MsearchItem = Data.define(:results, :error, :status) do
+      def success? = error.nil?
+    end
+
     attr_reader :index, :default_index_name, :client, :default_refresh_writes
 
     def initialize
@@ -159,24 +163,37 @@ module Search
     def search_by_embedding(embedding, max_chunks:)
       response = client.search(
         index:,
-        body: {
-          size: max_chunks,
-          query: {
-            knn: {
-              titan_embedding: {
-                vector: embedding,
-                k: max_chunks,
-              },
-            },
-          },
-          _source: { exclude: %w[titan_embedding] },
-        },
+        body: knn_search_body(embedding, max_chunks:),
       )
 
-      results = response.dig("hits", "hits")
-      results.map do |result|
-        data = { "_id" => result["_id"], "score" => result["_score"] }.merge(result["_source"])
-        Result.new(**data.symbolize_keys)
+      build_search_results(response.dig("hits", "hits"))
+    end
+
+    def msearch_by_embeddings(embeddings, max_chunks:, max_concurrent_searches: nil)
+      return [] if embeddings.empty?
+
+      actions = embeddings.flat_map do |embedding|
+        [
+          { index: },
+          knn_search_body(embedding, max_chunks:),
+        ]
+      end
+
+      request = { body: actions }
+      request[:max_concurrent_searches] = max_concurrent_searches if max_concurrent_searches
+
+      response = client.msearch(**request)
+
+      response.fetch("responses").map do |item_response|
+        if item_response["error"]
+          MsearchItem.new(results: [], error: item_response["error"], status: item_response["status"])
+        else
+          MsearchItem.new(
+            results: build_search_results(item_response.dig("hits", "hits")),
+            error: nil,
+            status: item_response["status"],
+          )
+        end
       end
     end
 
@@ -185,6 +202,32 @@ module Search
       Result.new(**response["_source"].symbolize_keys.merge(_id: id))
     rescue OpenSearch::Transport::Transport::Errors::NotFound
       raise NotFound, "_id: '#{id}' is not in the '#{index}' index"
+    end
+
+  private
+
+    def knn_search_body(embedding, max_chunks:)
+      {
+        size: max_chunks,
+        query: {
+          knn: {
+            titan_embedding: {
+              vector: embedding,
+              k: max_chunks,
+            },
+          },
+        },
+        _source: { exclude: %w[titan_embedding] },
+      }
+    end
+
+    def build_search_results(search_hits)
+      Array(search_hits).map { |search_hit| result_from_search_hit(search_hit) }
+    end
+
+    def result_from_search_hit(search_hit)
+      data = { "_id" => search_hit["_id"], "score" => search_hit["_score"] }.merge(search_hit["_source"].to_h)
+      Result.new(**data.symbolize_keys)
     end
   end
 end
