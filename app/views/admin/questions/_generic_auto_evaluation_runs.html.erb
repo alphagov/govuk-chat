@@ -1,17 +1,42 @@
 <%
-  mean_score = runs.map(&:score).sum / runs.count
+  runs_with_scores = runs.reject(&:error?)
+  mean_score = runs_with_scores.map(&:score).sum / runs_with_scores.count
   items = [
     {
       field: "Mean score",
       value: mean_score,
     },
+    {
+      field: "Successful run count",
+      value: runs.count(&:success?),
+    },
+    {
+      field: "Failure run count",
+      value: runs.count(&:failure?),
+    },
+    {
+      field: "Errored run count",
+      value: runs.count(&:error?),
+    },
   ]
 
   items += runs.flat_map.with_index(1) do |run, index|
-    [
-      { field: "Run #{index} score", value: run.score },
-      { field: "Run #{index} reason", value: run.reason },
+    run_items = [
+      {
+        field: "Run #{index} status",
+        value: run.status.humanize,
+      },
     ]
+    if run.error?
+      run_items += [
+        { field: "Run #{index} error message", value: run.error_message },
+      ]
+    else
+      run_items += [
+        { field: "Run #{index} score", value: run.score },
+        { field: "Run #{index} reason", value: run.reason },
+      ]
+    end
   end
 %>
 
