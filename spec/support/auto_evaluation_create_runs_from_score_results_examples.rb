@@ -1,7 +1,7 @@
 shared_examples "auto_evaluation create runs from score results" do |run_association|
   describe ".create_runs_from_score_results" do
-    let(:first_run_result) { build(:auto_evaluation_score_result, score: 0.8) }
-    let(:second_run_result) { build(:auto_evaluation_score_result, score: 0.9) }
+    let(:first_run_result) { build(:auto_evaluation_result, score: 0.8) }
+    let(:second_run_result) { build(:auto_evaluation_result, score: 0.9) }
     let(:results) { [first_run_result, second_run_result] }
     let(:answer) { create(:answer) }
     let(:answer_id) { answer.id }

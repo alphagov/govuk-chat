@@ -94,9 +94,9 @@ module JobExamples
 
     let(:results) do
       [
-        build(:auto_evaluation_score_result, score: 0.8),
-        build(:auto_evaluation_score_result, score: 0.7),
-        build(:auto_evaluation_score_result, score: 0.9),
+        build(:auto_evaluation_result, score: 0.8),
+        build(:auto_evaluation_result, score: 0.7),
+        build(:auto_evaluation_result, score: 0.9),
       ]
     end
 

@@ -58,10 +58,12 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
         reason: shared_expected_metrics_attributes,
       }
       expect(result)
-        .to be_a(AutoEvaluation::ScoreResult)
+        .to be_a(AutoEvaluation::Result)
         .and have_attributes(
+          status: "success",
           score: 0.5,
           reason:,
+          error_message: nil,
           llm_responses: expected_llm_responses,
           metrics: expected_metrics,
         )
@@ -85,16 +87,18 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
     context "when no truths are extracted from the retrieval context" do
       let(:truths) { [] }
 
-      it "returns early with score 1.0 and skips claims, verdicts and reason LLM calls" do
+      it "returns a result object with an error status and skips claims, verdicts and reason LLM calls" do
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0)
 
         result = described_class.call(answer)
 
         expect(result)
-          .to be_a(AutoEvaluation::ScoreResult)
+          .to be_a(AutoEvaluation::Result)
           .and have_attributes(
-            score: 1.0,
-            reason: "No truths were extracted from the retrieval context.",
+            status: "error",
+            score: nil,
+            reason: nil,
+            error_message: "No truths were extracted from the retrieval context.",
           )
         expect(result.llm_responses.keys).to contain_exactly(:truths)
         expect(result.metrics.keys).to contain_exactly(:truths)
@@ -104,16 +108,18 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
     context "when no claims are extracted from the answer" do
       let(:claims) { [] }
 
-      it "returns early with score 1.0 and skips verdicts and reason LLM calls" do
+      it "returns a result object with an error status and skips verdicts and reason LLM calls" do
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0, 204.0, 206.0)
 
         result = described_class.call(answer)
 
         expect(result)
-          .to be_a(AutoEvaluation::ScoreResult)
+          .to be_a(AutoEvaluation::Result)
           .and have_attributes(
-            score: 1.0,
-            reason: "No claims were extracted from the answer.",
+            status: "error",
+            score: nil,
+            reason: nil,
+            error_message: "No claims were extracted from the answer.",
           )
         expect(result.llm_responses.keys).to contain_exactly(:truths, :claims)
         expect(result.metrics.keys).to contain_exactly(:truths, :claims)
@@ -123,16 +129,18 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
     context "when all verdicts are faithful (no 'no' verdicts)" do
       let(:verdicts) { [{ verdict: "yes" }, { verdict: "idk" }] }
 
-      it "returns early with score 1.0 and skips reason LLM call" do
+      it "returns a result object with with score 1.0 and skips reason LLM call" do
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0, 204.0, 206.0, 208.0, 210.0)
 
         result = described_class.call(answer)
 
         expect(result)
-          .to be_a(AutoEvaluation::ScoreResult)
+          .to be_a(AutoEvaluation::Result)
           .and have_attributes(
+            status: "success",
             score: 1.0,
             reason: "The response is fully supported by the retrieval context.",
+            error_message: nil,
           )
         expect(result.llm_responses.keys).to contain_exactly(:truths, :claims, :verdicts)
         expect(result.metrics.keys).to contain_exactly(:truths, :claims, :verdicts)
@@ -148,10 +156,11 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
         ]
       end
 
-      it "returns the correct score" do
+      it "returns a result with a failure status" do
         result = described_class.call(answer)
 
         expect(result.score).to be_within(0.01).of(0.33)
+        expect(result.status).to eq("failure")
       end
     end
   end

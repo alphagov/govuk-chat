@@ -12,31 +12,18 @@ class AutoEvaluation::AnswerRelevancy
   def call
     statements, llm_responses[:statements], metrics[:statements] = StatementGenerator.call(answer_message: answer.message)
 
-    if statements.empty?
-      return build_maximum_score_result(
-        reason: "No statements were extracted from the answer.",
-        llm_responses:,
-        metrics:,
-      )
-    end
+    return build_error_result("No statements were extracted from the answer.") if statements.empty?
 
     verdicts, llm_responses[:verdicts], metrics[:verdicts] = VerdictsGenerator.call(
       question_message:, statements: statements,
     )
 
-    if verdicts.empty?
-      return build_maximum_score_result(
-        reason: "No verdicts were generated for the extracted statements.",
-        llm_responses:,
-        metrics:,
-      )
-    end
+    return build_error_result("No verdicts were generated for the extracted statements.") if verdicts.empty?
 
     if verdicts.none? { |verdict| verdict["verdict"].strip.downcase == "no" }
-      return build_maximum_score_result(
-        reason: "The response fully addressed the input with no irrelevant statements.",
-        llm_responses:,
-        metrics:,
+      return build_result_with_score(
+        1.0,
+        "The response fully addressed the input with no irrelevant statements.",
       )
     end
 
@@ -46,12 +33,7 @@ class AutoEvaluation::AnswerRelevancy
       question_message:, verdicts:, score:,
     )
 
-    AutoEvaluation::ScoreResult.new(
-      score:,
-      reason:,
-      llm_responses:,
-      metrics:,
-    )
+    build_result_with_score(score, reason)
   end
 
 private
@@ -65,15 +47,23 @@ private
 
   def calculate_score(verdicts)
     verdict_count = verdicts.count
-    return 1.0 if verdict_count.zero?
-
     relevant_count = verdicts.count { |verdict| verdict["verdict"].strip.downcase != "no" }
     relevant_count.to_d / verdict_count
   end
 
-  def build_maximum_score_result(reason:, llm_responses:, metrics:)
-    AutoEvaluation::ScoreResult.new(
-      score: 1.0,
+  def build_error_result(error_message)
+    AutoEvaluation::Result.new(
+      status: "error",
+      error_message:,
+      llm_responses:,
+      metrics:,
+    )
+  end
+
+  def build_result_with_score(score, reason)
+    AutoEvaluation::Result.new(
+      status: score >= THRESHOLD ? "success" : "failure",
+      score:,
       reason:,
       llm_responses:,
       metrics:,

@@ -1,7 +1,7 @@
 RSpec.describe AnswerAnalysis::FaithfulnessJob do
   include ActiveJob::TestHelper
 
-  let(:results) { [build(:auto_evaluation_score_result)] }
+  let(:results) { [build(:auto_evaluation_result)] }
 
   before do
     allow(AutoEvaluation::Faithfulness)
