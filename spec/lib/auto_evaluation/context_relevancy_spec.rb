@@ -21,23 +21,21 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
     let(:truths) do
       [
         {
-          "context" => "Home energy grant application process",
-          "facts" => [
+          context: "Home energy grant application process",
+          facts: [
             "Application processes for energy grants may vary by region.",
             "You should always use official channels to submit your application to avoid scams.",
           ],
         },
         {
-          "context" => "Home energy grant eligibility",
-          "facts" => [
+          context: "Home energy grant eligibility",
+          facts: [
             "Government grants for home energy improvements can help reduce your bills.",
             "Government grants for home energy improvements can increase your property's value.",
           ],
         },
       ]
     end
-    let(:truths_json) { { truths: }.to_json }
-
     let(:information_needs) do
       [
         "The government schemes available to help with heating or energy bills.",
@@ -45,45 +43,41 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
         "How to apply for heating bill support.",
       ]
     end
-    let(:information_needs_json) { { information_needs: }.to_json }
 
     let(:verdicts) do
       [
         {
-          "verdict" => "yes",
-          "reason" => "The facts mention Government grants for home energy improvements can help reduce your bills, indicating that such government schemes exist.",
+          verdict: "yes",
+          reason: "The facts mention Government grants for home energy improvements can help reduce your bills, indicating that such government schemes exist.",
         },
         {
-          "verdict" => "no",
-          "reason" => "The provided facts only state that eligibility criteria can be checked on the official website.",
+          verdict: "no",
+          reason: "The provided facts only state that eligibility criteria can be checked on the official website.",
         },
         {
-          "verdict" => "yes",
-          "reason" => "Positive reason.",
+          verdict: "yes",
+          reason: "Positive reason.",
         },
         {
-          "verdict" => "yes",
-          "reason" => "Positive reason.",
+          verdict: "yes",
+          reason: "Positive reason.",
         },
         {
-          "verdict" => "yes",
-          "reason" => "Positive reason.",
+          verdict: "yes",
+          reason: "Positive reason.",
         },
       ]
     end
-    let(:verdicts_json) { { verdicts: }.to_json }
-
     let(:reason) { "The score is #{score} because of some reason." }
-    let(:reason_json) { { reason: }.to_json }
 
     let!(:context_relevancy_stubs) do
       stub_bedrock_invoke_model_openai_oss_context_relevancy(
         answer_sources:,
         question_message: question.message,
-        truths_json:,
-        information_needs_json:,
-        verdicts_json:,
-        reason_json:,
+        truths:,
+        information_needs:,
+        verdicts:,
+        reason:,
       )
     end
 
@@ -126,8 +120,8 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
     context "when 'idk' verdicts are present" do
       let(:verdicts) do
         [
-          { "verdict" => "idk", "reason" => "Cannot determine if correct." },
-          { "verdict" => "no", "reason" => "The provided facts only state that eligibility criteria can be checked on the official website." },
+          { verdict: "idk", reason: "Cannot determine if correct." },
+          { verdict: "no", reason: "The provided facts only state that eligibility criteria can be checked on the official website." },
         ]
       end
 
@@ -213,10 +207,10 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
     context "when score is below threshold" do
       let(:verdicts) do
         [
-          { "verdict" => "no", "reason" => "Reason 1" },
-          { "verdict" => "no", "reason" => "Reason 2" },
-          { "verdict" => "yes", "reason" => "Reason 3" },
-          { "verdict" => "no", "reason" => "Reason 4" },
+          { verdict: "no", reason: "Reason 1" },
+          { verdict: "no", reason: "Reason 2" },
+          { verdict: "yes", reason: "Reason 3" },
+          { verdict: "no", reason: "Reason 4" },
         ]
       end
       let(:score) { 0.25 }

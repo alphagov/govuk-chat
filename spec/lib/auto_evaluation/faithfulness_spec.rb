@@ -8,27 +8,23 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
     let(:answer) { build(:answer, question:, message: answer_message, sources: [used_source]) }
 
     let(:truths) { ["Einstein won the Nobel Prize in 1921.", "Einstein won the Nobel Prize for the photoelectric effect."] }
-    let(:truths_json) { { truths: }.to_json }
     let(:claims) { ["Einstein won the Nobel Prize in 1968.", "Einstein won the Nobel Prize for the photoelectric effect."] }
-    let(:claims_json) { { claims: }.to_json }
     let(:verdicts) do
       [
-        { "verdict" => "no", "reason" => "The retrieval context states Einstein won in 1921, not 1968." },
-        { "verdict" => "yes" },
+        { verdict: "no", reason: "The retrieval context states Einstein won in 1921, not 1968." },
+        { verdict: "yes" },
       ]
     end
-    let(:verdicts_json) { { verdicts: }.to_json }
     let(:reason) { "The score is 0.5 because the answer incorrectly stated the year Einstein won the Nobel Prize." }
-    let(:reason_json) { { reason: }.to_json }
 
     let!(:faithfulness_stubs) do
       stub_bedrock_invoke_model_openai_oss_faithfulness(
         retrieval_context:,
         answer_message:,
-        truths_json:,
-        claims_json:,
-        verdicts_json:,
-        reason_json:,
+        truths:,
+        claims:,
+        verdicts:,
+        reason:,
       )
     end
     let(:truths_stub) { faithfulness_stubs[:truths] }
@@ -75,8 +71,8 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
     context "when 'idk' verdicts are present alongside 'no' verdicts" do
       let(:verdicts) do
         [
-          { "verdict" => "idk", "reason" => "Cannot determine if correct." },
-          { "verdict" => "no", "reason" => "The retrieval context states Einstein won in 1921, not 1968." },
+          { verdict: "idk", reason: "Cannot determine if correct." },
+          { verdict: "no", reason: "The retrieval context states Einstein won in 1921, not 1968." },
         ]
       end
 
@@ -88,7 +84,7 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
     end
 
     context "when no truths are extracted from the retrieval context" do
-      let(:truths_json) { { truths: [] }.to_json }
+      let(:truths) { [] }
 
       it "returns early with score 1.0 and skips claims, verdicts and reason LLM calls" do
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0)
@@ -108,7 +104,7 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
     end
 
     context "when no claims are extracted from the answer" do
-      let(:claims_json) { { claims: [] }.to_json }
+      let(:claims) { [] }
 
       it "returns early with score 1.0 and skips verdicts and reason LLM calls" do
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0, 204.0, 206.0)
@@ -128,7 +124,7 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
     end
 
     context "when all verdicts are faithful (no 'no' verdicts)" do
-      let(:verdicts_json) { { verdicts: [{ "verdict" => "yes" }, { "verdict" => "idk" }] }.to_json }
+      let(:verdicts) { [{ verdict: "yes" }, { verdict: "idk" }] }
 
       it "returns early with score 1.0 and skips reason LLM call" do
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0, 204.0, 206.0, 208.0, 210.0)
@@ -150,9 +146,9 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
     context "when score is below threshold" do
       let(:verdicts) do
         [
-          { "verdict" => "no", "reason" => "Contradiction 1" },
-          { "verdict" => "no", "reason" => "Contradiction 2" },
-          { "verdict" => "yes" },
+          { verdict: "no", reason: "Contradiction 1" },
+          { verdict: "no", reason: "Contradiction 2" },
+          { verdict: "yes" },
         ]
       end
 
