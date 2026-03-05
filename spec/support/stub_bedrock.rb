@@ -94,6 +94,16 @@ module StubBedrock
                                                             reason: ["This is the reason for the score."])
     prompts = AutoEvaluation::Prompts.config.answer_relevancy
 
+    score = if verdicts.empty?
+              1.0
+            else
+              verdicts_count = verdicts.count { |v| v[:verdict].strip.downcase != "no" }
+              (verdicts_count.to_d / verdicts.count).round(2).to_f
+            end
+
+    unsuccessful_verdicts_reasons = verdicts.select { |v| v[:verdict].strip.downcase == "no" }
+                                            .map { |v| v[:reason] }
+
     statements_user_prompt = sprintf(
       prompts.fetch(:statements).fetch(:user_prompt),
       answer: answer_message,
@@ -105,8 +115,8 @@ module StubBedrock
     )
     reason_user_prompt = sprintf(
       prompts.fetch(:reason).fetch(:user_prompt),
-      score: 0.5,
-      unsuccessful_verdicts_reasons: ["The statement is irrelevant."],
+      score:,
+      unsuccessful_verdicts_reasons:,
       question: question_message,
     )
 

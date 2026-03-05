@@ -147,5 +147,24 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
           )
       end
     end
+
+    context "when the score is below threshold" do
+      let(:verdicts) do
+        [
+          { verdict: "no", reason: "Reason 1" },
+          { verdict: "no", reason: "Reason 2" },
+          { verdict: "yes" },
+          { verdict: "no", reason: "Reason 3" },
+        ]
+      end
+      let(:score) { 0.25 }
+
+      it "returns success: false" do
+        result = described_class.call(answer)
+
+        expect(result.success).to be false
+        expect(result.score).to eq(score)
+      end
+    end
   end
 end
