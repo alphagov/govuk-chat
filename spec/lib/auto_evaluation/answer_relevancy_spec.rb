@@ -54,7 +54,6 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         .and have_attributes(
           score: 0.5,
           reason:,
-          success: true,
           llm_responses: expected_llm_responses,
           metrics: expected_metrics,
         )
@@ -88,7 +87,6 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
           .and have_attributes(
             score: 1.0,
             reason: "No statements were extracted from the answer.",
-            success: true,
             llm_responses: hash_including(statements: anything),
             metrics: hash_including(statements: anything),
           )
@@ -109,7 +107,6 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
           .and have_attributes(
             score: 1.0,
             reason: "No verdicts were generated for the extracted statements.",
-            success: true,
             llm_responses: hash_including(
               statements: anything,
               verdicts: anything,
@@ -135,7 +132,6 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
           .and have_attributes(
             score: 1.0,
             reason: "The response fully addressed the input with no irrelevant statements.",
-            success: true,
             llm_responses: hash_including(
               statements: anything,
               verdicts: anything,
@@ -159,10 +155,9 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
       end
       let(:score) { 0.25 }
 
-      it "returns success: false" do
+      it "returns the correct score" do
         result = described_class.call(answer)
 
-        expect(result.success).to be false
         expect(result.score).to eq(score)
       end
     end

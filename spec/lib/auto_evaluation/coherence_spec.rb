@@ -32,13 +32,12 @@ RSpec.describe AutoEvaluation::Coherence, :aws_credentials_stubbed do
         .and have_attributes(
           score: 0.5,
           reason:,
-          success: false,
           llm_responses: { coherence: JSON.parse(stub.response.body) },
           metrics: expected_metrics,
         )
     end
 
-    it "returns the correct score and success for each rubric score" do
+    it "returns the correct score for each rubric score" do
       {
         1 => 0.0,
         2 => 0.25,
@@ -56,7 +55,6 @@ RSpec.describe AutoEvaluation::Coherence, :aws_credentials_stubbed do
         result = described_class.call(answer)
 
         expect(result.score).to eq(expected_score)
-        expect(result.success).to eq(expected_score >= described_class::THRESHOLD)
       end
     end
   end

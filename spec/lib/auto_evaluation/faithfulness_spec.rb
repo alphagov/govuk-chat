@@ -62,7 +62,6 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
         .and have_attributes(
           score: 0.5,
           reason:,
-          success: true,
           llm_responses: expected_llm_responses,
           metrics: expected_metrics,
         )
@@ -96,7 +95,6 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
           .and have_attributes(
             score: 1.0,
             reason: "No truths were extracted from the retrieval context.",
-            success: true,
           )
         expect(result.llm_responses.keys).to contain_exactly(:truths)
         expect(result.metrics.keys).to contain_exactly(:truths)
@@ -116,7 +114,6 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
           .and have_attributes(
             score: 1.0,
             reason: "No claims were extracted from the answer.",
-            success: true,
           )
         expect(result.llm_responses.keys).to contain_exactly(:truths, :claims)
         expect(result.metrics.keys).to contain_exactly(:truths, :claims)
@@ -136,7 +133,6 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
           .and have_attributes(
             score: 1.0,
             reason: "The response is fully supported by the retrieval context.",
-            success: true,
           )
         expect(result.llm_responses.keys).to contain_exactly(:truths, :claims, :verdicts)
         expect(result.metrics.keys).to contain_exactly(:truths, :claims, :verdicts)
@@ -152,10 +148,9 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
         ]
       end
 
-      it "returns success: false" do
+      it "returns the correct score" do
         result = described_class.call(answer)
 
-        expect(result.success).to be false
         expect(result.score).to be_within(0.01).of(0.33)
       end
     end

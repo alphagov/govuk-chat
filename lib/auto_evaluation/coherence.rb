@@ -15,7 +15,6 @@ module AutoEvaluation
       AutoEvaluation::ScoreResult.new(
         score:,
         reason: result.evaluation_data.fetch("reason").strip,
-        success: score >= THRESHOLD,
         llm_responses: { coherence: result.llm_response },
         metrics: { coherence: result.metrics },
       )

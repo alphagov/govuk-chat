@@ -49,7 +49,6 @@ class AutoEvaluation::AnswerRelevancy
     AutoEvaluation::ScoreResult.new(
       score:,
       reason:,
-      success: score >= THRESHOLD,
       llm_responses:,
       metrics:,
     )
@@ -76,7 +75,6 @@ private
     AutoEvaluation::ScoreResult.new(
       score: 1.0,
       reason:,
-      success: true,
       llm_responses:,
       metrics:,
     )

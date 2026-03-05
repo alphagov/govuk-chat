@@ -111,7 +111,6 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
         .and have_attributes(
           score:,
           reason:,
-          success: true,
           llm_responses: expected_llm_responses,
           metrics: expected_metrics,
         )
@@ -143,7 +142,6 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
           .and have_attributes(
             score: 1.0,
             reason: "No sources were retrieved when generating the answer.",
-            success: true,
           )
         expect(result.llm_responses.keys).to eq([])
         expect(result.metrics.keys).to eq([])
@@ -161,7 +159,6 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
           .and have_attributes(
             score: 1.0,
             reason: "No information needs were generated.",
-            success: true,
           )
         expect(result.llm_responses.keys).to contain_exactly(:information_needs)
         expect(result.metrics.keys).to contain_exactly(:information_needs)
@@ -179,7 +176,6 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
           .and have_attributes(
             score: 1.0,
             reason: "No truths were generated.",
-            success: true,
           )
         expect(result.llm_responses.keys).to contain_exactly(:information_needs, :truths)
         expect(result.metrics.keys).to contain_exactly(:information_needs, :truths)
@@ -197,7 +193,6 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
           .and have_attributes(
             score: 1.0,
             reason: "No verdicts were generated.",
-            success: true,
           )
         expect(result.llm_responses.keys).to contain_exactly(:truths, :information_needs, :verdicts)
         expect(result.metrics.keys).to contain_exactly(:truths, :information_needs, :verdicts)
@@ -215,10 +210,9 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
       end
       let(:score) { 0.25 }
 
-      it "returns success: false" do
+      it "returns the correct score" do
         result = described_class.call(answer)
 
-        expect(result.success).to be false
         expect(result.score).to eq(score)
       end
     end

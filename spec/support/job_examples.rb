@@ -122,7 +122,7 @@ module JobExamples
 
         results.each_with_index do |result, index|
           expect(answer.public_send(association)[index])
-            .to have_attributes(result.to_h.except(:success))
+            .to have_attributes(result.to_h)
         end
       end
 

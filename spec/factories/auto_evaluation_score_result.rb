@@ -4,7 +4,6 @@ FactoryBot.define do
 
     score { 0.85.to_d }
     sequence(:reason) { |n| "Reason #{n}" }
-    success { true }
     sequence(:llm_responses) { |n| { "llm_response" => { "reason" => "Reason #{n}" } } }
     sequence(:metrics) { |n| { "llm_response" => { "duration" => n } } }
 

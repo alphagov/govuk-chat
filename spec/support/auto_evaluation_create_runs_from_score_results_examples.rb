@@ -16,8 +16,8 @@ shared_examples "auto_evaluation create runs from score results" do |run_associa
 
       first_run, second_run = answer.reload.public_send(run_association)
 
-      expect(first_run).to have_attributes(first_run_result.to_h.except(:success))
-      expect(second_run).to have_attributes(second_run_result.to_h.except(:success))
+      expect(first_run).to have_attributes(first_run_result.to_h)
+      expect(second_run).to have_attributes(second_run_result.to_h)
     end
   end
 end
