@@ -6,14 +6,14 @@ RSpec.describe AutoEvaluation::Coherence, :aws_credentials_stubbed do
     let(:question_message) { "This is a test question message." }
     let(:answer_message) { "This is a test answer message." }
     let(:reason) { "This is the reason for the score." }
-    let(:response_json) { { score: 3, reason: }.to_json }
+    let(:llm_response) { { score: 3, reason: } }
 
     it "returns a results object with the expected attributes" do
       allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0)
       stub = stub_bedrock_invoke_model_openai_oss_coherence(
         answer_message:,
         question_message:,
-        response_json:,
+        llm_response:,
       )
 
       result = described_class.call(answer)
@@ -46,11 +46,11 @@ RSpec.describe AutoEvaluation::Coherence, :aws_credentials_stubbed do
         4 => 0.75,
         5 => 1.0,
       }.each do |rubric_score, expected_score|
-        response_json = { score: rubric_score, reason: }.to_json
+        llm_response = { score: rubric_score, reason: }
         stub_bedrock_invoke_model_openai_oss_coherence(
           answer_message:,
           question_message:,
-          response_json:,
+          llm_response:,
         )
 
         result = described_class.call(answer)

@@ -89,9 +89,9 @@ module StubBedrock
 
   def stub_bedrock_invoke_model_openai_oss_answer_relevancy(question_message:,
                                                             answer_message:,
-                                                            statements_json: { statements: ["Statement."] }.to_json,
-                                                            verdicts_json: { verdicts: [{ "verdict" => "yes" }] }.to_json,
-                                                            reason_json: { reason: "This is the reason for the score." }.to_json)
+                                                            statements: ["Statement."],
+                                                            verdicts: [{ verdict: "yes" }],
+                                                            reason: ["This is the reason for the score."])
     prompts = AutoEvaluation::Prompts.config.answer_relevancy
 
     statements_user_prompt = sprintf(
@@ -101,7 +101,7 @@ module StubBedrock
     verdicts_user_prompt = sprintf(
       prompts.fetch(:verdicts).fetch(:user_prompt),
       question: question_message,
-      statements: JSON.parse(statements_json).fetch("statements"),
+      statements:,
     )
     reason_user_prompt = sprintf(
       prompts.fetch(:reason).fetch(:user_prompt),
@@ -118,19 +118,19 @@ module StubBedrock
     stubs[:statements] = stub_bedrock_invoke_model_openai_oss_tool_call(
       statements_user_prompt,
       statements_tools,
-      statements_json,
+      { statements: }.to_json,
     )
 
     stubs[:verdicts] = stub_bedrock_invoke_model_openai_oss_tool_call(
       verdicts_user_prompt,
       verdicts_tools,
-      verdicts_json,
+      { verdicts: }.to_json,
     )
 
     stubs[:reason] = stub_bedrock_invoke_model_openai_oss_tool_call(
       reason_user_prompt,
       reason_tools,
-      reason_json,
+      { reason: }.to_json,
     )
 
     stubs
@@ -138,25 +138,21 @@ module StubBedrock
 
   def stub_bedrock_invoke_model_openai_oss_faithfulness(retrieval_context:,
                                                         answer_message:,
-                                                        truths_json: { truths: ["Truth."] }.to_json,
-                                                        claims_json: { claims: ["Claim."] }.to_json,
-                                                        verdicts_json: { verdicts: [{ "verdict" => "yes" }] }.to_json,
-                                                        reason_json: { reason: "This is the reason for the score." }.to_json)
+                                                        truths: ["Truth."],
+                                                        claims: ["Claim."],
+                                                        verdicts: [{ verdict: "yes" }],
+                                                        reason: ["This is the reason for the score."])
     prompts = AutoEvaluation::Prompts.config.faithfulness
-
-    truths = JSON.parse(truths_json).fetch("truths")
-    claims = JSON.parse(claims_json).fetch("claims")
-    verdicts = JSON.parse(verdicts_json).fetch("verdicts")
 
     score = if verdicts.empty?
               1.0
             else
-              faithful_count = verdicts.count { |v| v["verdict"].strip.downcase != "no" }
+              faithful_count = verdicts.count { |v| v[:verdict].strip.downcase != "no" }
               (faithful_count.to_d / verdicts.count).round(2).to_f
             end
 
-    contradictions = verdicts.select { |v| v["verdict"].strip.downcase == "no" }
-                             .map { |v| v["reason"] }
+    contradictions = verdicts.select { |v| v[:verdict].strip.downcase == "no" }
+                             .map { |v| v[:reason] }
 
     truths_user_prompt = sprintf(
       prompts.fetch(:truths).fetch(:user_prompt),
@@ -186,25 +182,25 @@ module StubBedrock
     stubs[:truths] = stub_bedrock_invoke_model_openai_oss_tool_call(
       truths_user_prompt,
       truths_tools,
-      truths_json,
+      { truths: }.to_json,
     )
 
     stubs[:claims] = stub_bedrock_invoke_model_openai_oss_tool_call(
       claims_user_prompt,
       claims_tools,
-      claims_json,
+      { claims: }.to_json,
     )
 
     stubs[:verdicts] = stub_bedrock_invoke_model_openai_oss_tool_call(
       verdicts_user_prompt,
       verdicts_tools,
-      verdicts_json,
+      { verdicts: }.to_json,
     )
 
     stubs[:reason] = stub_bedrock_invoke_model_openai_oss_tool_call(
       reason_user_prompt,
       reason_tools,
-      reason_json,
+      { reason: }.to_json,
     )
 
     stubs
@@ -213,10 +209,10 @@ module StubBedrock
   def stub_bedrock_invoke_model_openai_oss_context_relevancy(
     question_message:,
     answer_sources: [build(:answer_source)],
-    truths_json: { truths: [{ "context" => "Context", "facts" => ["Fact."] }] }.to_json,
-    information_needs_json: { information_needs: ["Information need."] }.to_json,
-    verdicts_json: { verdicts: [{ "verdict" => "yes", "reason" => "Some reason" }] }.to_json,
-    reason_json: { reason: "This is the reason for the score." }.to_json
+    truths: [{ context: "Context", facts: ["Fact."] }],
+    information_needs: ["Information need."],
+    verdicts: [{ verdict: "yes", reason: "Some reason" }],
+    reason: "This is the reason for the score."
   )
     prompts = AutoEvaluation::Prompts.config.context_relevancy
 
@@ -231,18 +227,15 @@ module StubBedrock
       CONTEXT
     end
 
-    truths = JSON.parse(truths_json).fetch("truths")
-    information_needs = JSON.parse(information_needs_json).fetch("information_needs")
-    verdicts = JSON.parse(verdicts_json).fetch("verdicts")
-
     score = if verdicts.empty?
               1.0
             else
-              verdicts_count = verdicts.count { |v| v["verdict"].strip.downcase != "no" }
+              verdicts_count = verdicts.count { |v| v[:verdict].strip.downcase != "no" }
               (verdicts_count.to_d / verdicts.count).round(2).to_f
             end
 
-    unmet_needs = verdicts.select { |v| v["verdict"].strip.downcase == "no" }.map { |v| v["reason"] }
+    unmet_needs = verdicts.select { |v| v[:verdict].strip.downcase == "no" }
+                          .map { |v| v[:reason] }
 
     truths_user_prompt = sprintf(
       prompts.fetch(:truths).fetch(:user_prompt),
@@ -255,9 +248,9 @@ module StubBedrock
 
     formatted_truths = truths.map do |truth|
       <<~TRUTH
-        Context: #{truth['context']}
+        Context: #{truth[:context]}
         Facts:
-        #{truth['facts'].join("\n")}
+        #{truth[:facts].join("\n")}
       TRUTH
     end
 
@@ -282,25 +275,25 @@ module StubBedrock
     stubs[:truths] = stub_bedrock_invoke_model_openai_oss_tool_call(
       truths_user_prompt,
       truths_tools,
-      truths_json,
+      { truths: }.to_json,
     )
 
     stubs[:information_needs] = stub_bedrock_invoke_model_openai_oss_tool_call(
       information_needs_user_prompt,
       information_needs_tools,
-      information_needs_json,
+      { information_needs: }.to_json,
     )
 
     stubs[:verdicts] = stub_bedrock_invoke_model_openai_oss_tool_call(
       verdicts_user_prompt,
       verdicts_tools,
-      verdicts_json,
+      { verdicts: }.to_json,
     )
 
     stubs[:reason] = stub_bedrock_invoke_model_openai_oss_tool_call(
       reason_user_prompt,
       reason_tools,
-      reason_json,
+      { reason: }.to_json,
     )
 
     stubs
@@ -308,7 +301,7 @@ module StubBedrock
 
   def stub_bedrock_invoke_model_openai_oss_coherence(answer_message:,
                                                      question_message:,
-                                                     response_json: { score: 3, reason: "The reason" }.to_json)
+                                                     llm_response: { score: 3, reason: "The reason" })
     prompts = AutoEvaluation::Prompts.config.coherence
 
     user_prompt = sprintf(
@@ -321,7 +314,7 @@ module StubBedrock
     stub_bedrock_invoke_model_openai_oss_tool_call(
       user_prompt,
       tools,
-      response_json,
+      llm_response.to_json,
     )
   end
 end

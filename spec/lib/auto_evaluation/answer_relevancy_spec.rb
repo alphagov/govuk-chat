@@ -6,23 +6,20 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
     let(:answer) { build(:answer, question:, message: answer_message) }
 
     let(:statements) { ["This is the first statement.", "This is the second statement."] }
-    let(:statements_json) { { statements: }.to_json }
     let(:verdicts) do
       [
-        { "verdict" => "yes" },
-        { "verdict" => "no", "reason" => "The statement is irrelevant." },
+        { verdict: "yes" },
+        { verdict: "no", reason: "The statement is irrelevant." },
       ]
     end
-    let(:verdicts_json) { { verdicts: }.to_json }
     let(:reason) { "This is the reason for the score." }
-    let(:reason_json) { { reason: }.to_json }
     let!(:answer_relevancy_stubs) do
       stub_bedrock_invoke_model_openai_oss_answer_relevancy(
         question_message:,
         answer_message:,
-        statements_json:,
-        verdicts_json:,
-        reason_json:,
+        statements:,
+        verdicts:,
+        reason:,
       )
     end
     let(:statements_stub) { answer_relevancy_stubs[:statements] }
@@ -66,8 +63,8 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
     context "when 'idk' verdicts are present" do
       let(:verdicts) do
         [
-          { "verdict" => "idk", "reason" => "Cannot determine relevance." },
-          { "verdict" => "no", "reason" => "The statement is irrelevant." },
+          { verdict: "idk", reason: "Cannot determine relevance." },
+          { verdict: "no", reason: "The statement is irrelevant." },
         ]
       end
 
@@ -79,7 +76,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
     end
 
     context "when no statements are extracted from the answer" do
-      let(:statements_json) { { statements: [] }.to_json }
+      let(:statements) { [] }
 
       it "returns a result object with the expected attributes" do
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0)
@@ -99,7 +96,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
     end
 
     context "when no verdicts are generated for the extracted statements" do
-      let(:verdicts_json) { { verdicts: [] }.to_json }
+      let(:verdicts) { [] }
 
       it "returns a result object with the expected attributes" do
         allow(Clock).to receive(:monotonic_time)
@@ -126,7 +123,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
     end
 
     context "when verdicts are generated and none have a 'no' verdict" do
-      let(:verdicts_json) { { verdicts: [{ "verdict" => "yes" }, { "verdict" => "yes" }] }.to_json }
+      let(:verdicts) { [{ verdict: "yes" }, { verdict: "yes" }] }
 
       it "returns a result object with the expected attributes" do
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0, 204.0, 206.0)
