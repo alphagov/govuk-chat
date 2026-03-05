@@ -58,11 +58,12 @@ module AutoEvaluation
     attr_reader :user_message, :tools, :system_prompt
 
     def build_metrics(start_time, response)
+      usage = response["usage"]
       {
         duration: Clock.monotonic_time - start_time,
-        llm_prompt_tokens: response["usage"]["prompt_tokens"],
-        llm_completion_tokens: response["usage"]["completion_tokens"],
-        llm_cached_tokens: nil,
+        llm_prompt_tokens: usage["prompt_tokens"],
+        llm_completion_tokens: usage["completion_tokens"],
+        llm_cached_tokens: usage.dig("prompt_tokens_details", "cached_tokens"),
         model: response["model"],
       }
     end

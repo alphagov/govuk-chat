@@ -12,23 +12,12 @@ module AutoEvaluation
     end
 
     def call
-      start_time = Clock.monotonic_time
-      response = anthropic_bedrock_client.messages.create(
-        messages:,
-        system: [
-          { type: "text", text: system_prompt, cache_control: { type: "ephemeral" } },
-        ],
-        model: BedrockModels.model_id(:claude_sonnet_4_0),
-        tools:,
-        tool_choice: { type: "tool", name: tools.first[:name] },
-        **inference_config,
-      )
-
+      result = BedrockOpenAIOssInvoke.call(user_question, tools, system_prompt)
       Result.new(
-        primary_topic: response[:content][0][:input][:primary_topic],
-        secondary_topic: response[:content][0][:input][:secondary_topic],
-        metrics: build_metrics(response, start_time),
-        llm_response: response.to_h,
+        primary_topic: result.evaluation_data.fetch("primary_topic"),
+        secondary_topic: result.evaluation_data.fetch("secondary_topic"),
+        metrics: result.metrics,
+        llm_response: result.llm_response,
       )
     end
 
@@ -42,42 +31,16 @@ module AutoEvaluation
       )
     end
 
-    def build_metrics(response, start_time)
-      {
-        duration: Clock.monotonic_time - start_time,
-        llm_prompt_tokens: BedrockModels.claude_total_prompt_tokens(response[:usage]),
-        llm_completion_tokens: response[:usage][:output_tokens],
-        llm_cached_tokens: response[:usage][:cache_read_input_tokens],
-        model: response[:model],
-      }
+    def topic_tagger_config
+      Prompts.config.topic_tagger
     end
 
     def system_prompt
-      topic_tagger_config["system_prompt"]
-    end
-
-    def messages
-      [
-        {
-          role: "user",
-          content: user_question,
-        },
-      ]
-    end
-
-    def topic_tagger_config
-      Rails.configuration.govuk_chat_private.llm_prompts.claude.topic_tagger
-    end
-
-    def inference_config
-      {
-        max_tokens: 4096,
-        temperature: 0.0,
-      }
+      topic_tagger_config.fetch("system_prompt")
     end
 
     def tools
-      [topic_tagger_config["tool_spec"]]
+      [topic_tagger_config.fetch("tool_spec")]
     end
   end
 end

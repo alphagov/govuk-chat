@@ -84,6 +84,26 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
       }.to raise_error(described_class::LengthLimitExceededError)
     end
 
+    context "when cached tokens are included in the response" do
+      let!(:stub) do
+        stub_bedrock_invoke_model_openai_oss_tool_call(
+          user_message,
+          tools,
+          { "response" => "Expected response." }.to_json,
+          usage: {
+            completion_tokens: 35,
+            prompt_tokens: 25,
+            prompt_tokens_details: { cached_tokens: 10, total_tokens: 60 },
+          },
+        )
+      end
+
+      it "records the cached tokens in the metrics" do
+        result = described_class.call(user_message, tools)
+        expect(result.metrics[:llm_cached_tokens]).to eq(10)
+      end
+    end
+
     context "when a system prompt is provided" do
       let(:system_prompt) { "This is a system prompt." }
       let!(:stub) do

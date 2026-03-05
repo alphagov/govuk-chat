@@ -51,7 +51,14 @@ module StubBedrock
                                                      tools,
                                                      content,
                                                      finish_reason: "tool_calls",
-                                                     system_prompt: nil)
+                                                     system_prompt: nil,
+                                                     usage: {
+                                                       completion_tokens: 35,
+                                                       prompt_tokens: 25,
+                                                       prompt_tokens_details: {
+                                                         cached_tokens: nil, total_tokens: 60
+                                                       },
+                                                     })
     messages = []
     messages << { role: "system", content: [{ type: "text", text: system_prompt }] } if system_prompt
     messages << { role: "user", content: [{ type: "text", text: user_message }] }
@@ -83,7 +90,7 @@ module StubBedrock
         },
       ],
       model: "openai.gpt-oss-120b-1:0",
-      usage: { completion_tokens: 35, prompt_tokens: 25, total_tokens: 60 },
+      usage:,
     }.to_json
 
     stub_bedrock_invoke_model_response(
@@ -320,6 +327,30 @@ module StubBedrock
       user_prompt,
       tools,
       llm_response.to_json,
+    )
+  end
+
+  def stub_bedrock_invoke_model_openai_oss_topic_tagger(user_question,
+                                                        llm_response: {
+                                                          primary_topic: "business",
+                                                          secondary_topic: "benefits",
+                                                          reasoning: "reason",
+                                                        })
+    prompts = AutoEvaluation::Prompts.config.topic_tagger
+
+    system_prompt = prompts.fetch(:system_prompt)
+    tools = [prompts.fetch(:tool_spec)]
+
+    stub_bedrock_invoke_model_openai_oss_tool_call(
+      user_question,
+      tools,
+      llm_response.to_json,
+      system_prompt:,
+      usage: {
+        completion_tokens: 35,
+        prompt_tokens: 25,
+        prompt_tokens_details: { cached_tokens: 10, total_tokens: 60 },
+      },
     )
   end
 end
