@@ -76,7 +76,7 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
         user_message,
         tools,
         nil,
-        "length",
+        finish_reason: "length",
       )
 
       expect {

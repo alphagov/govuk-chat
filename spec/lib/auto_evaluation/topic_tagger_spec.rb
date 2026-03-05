@@ -1,8 +1,7 @@
 RSpec.describe AutoEvaluation::TopicTagger, :aws_credentials_stubbed do
   describe ".call" do
     let(:message) { "This is a test message." }
-
-    before { stub_claude_messages_topic_tagger(message) }
+    let!(:topic_tagger_stub) { stub_bedrock_invoke_model_openai_oss_topic_tagger(message) }
 
     it "returns a results object with the expected topics" do
       result = described_class.call(message)
@@ -16,16 +15,7 @@ RSpec.describe AutoEvaluation::TopicTagger, :aws_credentials_stubbed do
 
     it "returns a results object with the LLM response" do
       result = described_class.call(message)
-
-      expected_content = claude_messages_tool_use_block(
-        input: { primary_topic: "business", reasoning: "reason", secondary_topic: "benefits" },
-        name: "tagger_reasoning",
-      )
-      expected_llm_response = claude_messages_response(
-        content: [expected_content],
-        usage: { cache_read_input_tokens: 20 },
-        stop_reason: :tool_use,
-      ).to_h
+      expected_llm_response = JSON.parse(topic_tagger_stub.response.body)
       expect(result.llm_response).to eq(expected_llm_response.to_h)
     end
 
@@ -36,10 +26,10 @@ RSpec.describe AutoEvaluation::TopicTagger, :aws_credentials_stubbed do
       expect(result.metrics)
         .to eq({
           duration: 1.5,
-          llm_prompt_tokens: 30,
-          llm_completion_tokens: 20,
-          llm_cached_tokens: 20,
-          model: BedrockModels.model_id(:claude_sonnet_4_0),
+          llm_prompt_tokens: 25,
+          llm_completion_tokens: 35,
+          llm_cached_tokens: 10,
+          model: BedrockModels.model_id(:openai_gpt_oss_120b),
         })
     end
   end
