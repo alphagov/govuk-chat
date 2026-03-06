@@ -1,6 +1,7 @@
 GIT
   remote: https://github.com/alphagov/govuk_chat_private.git
-  revision: b3167e36072c6ac07c6bbeadf83ba5d50a114b15
+  revision: 396666ebae7649c59a0699c0a5d3b797f09b44f2
+  branch: add-topic-tagger-openai-oss-prompts
   specs:
     govuk_chat_private (0.0.1)
       activesupport (>= 8)

@@ -285,7 +285,7 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
     stub_claude_structured_answer(question, answer, answered:, sources_used:)
 
     stub_claude_output_guardrails(answer)
-    stub_claude_messages_topic_tagger(question)
+    stub_bedrock_invoke_model_openai_oss_topic_tagger(question)
     stub_bedrock_invoke_model_openai_oss_answer_relevancy(
       question_message: question,
       answer_message: answer,
