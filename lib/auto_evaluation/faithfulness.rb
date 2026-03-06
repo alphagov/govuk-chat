@@ -12,42 +12,20 @@ class AutoEvaluation::Faithfulness
   def call
     truths, llm_responses[:truths], metrics[:truths] = TruthsGenerator.call(retrieval_context:)
 
-    if truths.empty?
-      return build_maximum_score_result(
-        reason: "No truths were extracted from the retrieval context.",
-        llm_responses:,
-        metrics:,
-      )
-    end
+    return build_error_result("No truths were extracted from the retrieval context.") if truths.empty?
 
     claims, llm_responses[:claims], metrics[:claims] = ClaimsGenerator.call(answer_message:)
 
-    if claims.empty?
-      return build_maximum_score_result(
-        reason: "No claims were extracted from the answer.",
-        llm_responses:,
-        metrics:,
-      )
-    end
+    return build_error_result("No claims were extracted from the answer.") if claims.empty?
 
     verdicts, llm_responses[:verdicts], metrics[:verdicts] = VerdictsGenerator.call(
       claims:, truths:,
     )
 
-    if verdicts.empty?
-      return build_maximum_score_result(
-        reason: "No verdicts were generated for the extracted claims.",
-        llm_responses:,
-        metrics:,
-      )
-    end
+    return build_error_result("No verdicts were generated for the extracted claims.") if verdicts.empty?
 
     if verdicts.none? { |verdict| verdict["verdict"].strip.downcase == "no" }
-      return build_maximum_score_result(
-        reason: "The response is fully supported by the retrieval context.",
-        llm_responses:,
-        metrics:,
-      )
+      return build_result_with_score(1.0, "The response is fully supported by the retrieval context.")
     end
 
     score = calculate_score(verdicts)
@@ -56,13 +34,7 @@ class AutoEvaluation::Faithfulness
       score: score.round(2), verdicts:,
     )
 
-    AutoEvaluation::ScoreResult.new(
-      score:,
-      reason:,
-      success: score >= THRESHOLD,
-      llm_responses:,
-      metrics:,
-    )
+    build_result_with_score(score, reason)
   end
 
 private
@@ -79,8 +51,6 @@ private
   end
 
   def calculate_score(verdicts)
-    return 1.0 if verdicts.empty?
-
     faithful_count = verdicts.count { |verdict| verdict["verdict"].strip.downcase != "no" }
     faithful_count.to_d / verdicts.count
   end
@@ -89,11 +59,20 @@ private
     answer.sources.select(&:used)
   end
 
-  def build_maximum_score_result(reason:, llm_responses:, metrics:)
-    AutoEvaluation::ScoreResult.new(
-      score: 1.0,
+  def build_error_result(error_message)
+    AutoEvaluation::Result.new(
+      status: "error",
+      error_message:,
+      llm_responses:,
+      metrics:,
+    )
+  end
+
+  def build_result_with_score(score, reason)
+    AutoEvaluation::Result.new(
+      status: score >= THRESHOLD ? "success" : "failure",
+      score:,
       reason:,
-      success: true,
       llm_responses:,
       metrics:,
     )

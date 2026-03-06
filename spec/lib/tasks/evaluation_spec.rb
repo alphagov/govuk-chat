@@ -32,7 +32,7 @@ RSpec.describe "rake evaluation tasks" do
   shared_examples "a task that returns a ScoreResult" do
     let(:question_message) { "What is the current VAT rate?" }
     let(:answer) { build(:answer) }
-    let(:score_result) { build(:auto_evaluation_score_result) }
+    let(:score_result) { build(:auto_evaluation_result) }
 
     before do
       Rake::Task[task_name].reenable

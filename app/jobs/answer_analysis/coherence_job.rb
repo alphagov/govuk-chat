@@ -13,7 +13,7 @@ module AnswerAnalysis
 
       results = NUMBER_OF_RUNS.times.map { AutoEvaluation::Coherence.call(answer) }
 
-      AnswerAnalysis::CoherenceRun.create_runs_from_score_results(
+      AnswerAnalysis::CoherenceRun.create_runs_from_auto_evaluation_results(
         answer, results, :coherence_runs
       )
     end

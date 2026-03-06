@@ -13,7 +13,7 @@ module AnswerAnalysis
 
       results = NUMBER_OF_RUNS.times.map { AutoEvaluation::AnswerRelevancy.call(answer) }
 
-      AnswerAnalysis::AnswerRelevancyRun.create_runs_from_score_results(
+      AnswerAnalysis::AnswerRelevancyRun.create_runs_from_auto_evaluation_results(
         answer, results, :answer_relevancy_runs
       )
     end

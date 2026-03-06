@@ -50,11 +50,10 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         reason: shared_expected_metrics_attributes,
       }
       expect(result)
-        .to be_a(AutoEvaluation::ScoreResult)
+        .to be_a(AutoEvaluation::Result)
         .and have_attributes(
           score: 0.5,
           reason:,
-          success: true,
           llm_responses: expected_llm_responses,
           metrics: expected_metrics,
         )
@@ -84,11 +83,12 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         result = described_class.call(answer)
 
         expect(result)
-          .to be_a(AutoEvaluation::ScoreResult)
+          .to be_a(AutoEvaluation::Result)
           .and have_attributes(
-            score: 1.0,
-            reason: "No statements were extracted from the answer.",
-            success: true,
+            status: "error",
+            score: nil,
+            reason: nil,
+            error_message: "No statements were extracted from the answer.",
             llm_responses: hash_including(statements: anything),
             metrics: hash_including(statements: anything),
           )
@@ -105,11 +105,12 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         result = described_class.call(answer)
 
         expect(result)
-          .to be_a(AutoEvaluation::ScoreResult)
+          .to be_a(AutoEvaluation::Result)
           .and have_attributes(
-            score: 1.0,
-            reason: "No verdicts were generated for the extracted statements.",
-            success: true,
+            status: "error",
+            score: nil,
+            reason: nil,
+            error_message: "No verdicts were generated for the extracted statements.",
             llm_responses: hash_including(
               statements: anything,
               verdicts: anything,
@@ -131,11 +132,11 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
         result = described_class.call(answer)
 
         expect(result)
-          .to be_a(AutoEvaluation::ScoreResult)
+          .to be_a(AutoEvaluation::Result)
           .and have_attributes(
+            status: "success",
             score: 1.0,
             reason: "The response fully addressed the input with no irrelevant statements.",
-            success: true,
             llm_responses: hash_including(
               statements: anything,
               verdicts: anything,
@@ -159,11 +160,11 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
       end
       let(:score) { 0.25 }
 
-      it "returns success: false" do
+      it "returns a result with a failure status" do
         result = described_class.call(answer)
 
-        expect(result.success).to be false
         expect(result.score).to eq(score)
+        expect(result.status).to eq("failure")
       end
     end
   end

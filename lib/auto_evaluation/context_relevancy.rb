@@ -10,34 +10,26 @@ class AutoEvaluation::ContextRelevancy
   end
 
   def call
-    if answer.sources.empty?
-      return build_maximum_score_result("No sources were retrieved when generating the answer.")
-    end
+    return build_error_result("No sources were retrieved when generating the answer.") if answer.sources.empty?
 
     information_needs, llm_responses[:information_needs], metrics[:information_needs] = InformationNeedsGenerator.call(
       question: answer.question_used,
     )
 
-    if information_needs.empty?
-      return build_maximum_score_result("No information needs were generated.")
-    end
+    return build_error_result("No information needs were generated.") if information_needs.empty?
 
     truths, llm_responses[:truths], metrics[:truths] = TruthsGenerator.call(
       answer_sources: answer.sources,
     )
 
-    if truths.empty?
-      return build_maximum_score_result("No truths were generated.")
-    end
+    return build_error_result("No truths were generated.") if truths.empty?
 
     verdicts, llm_responses[:verdicts], metrics[:verdicts] = VerdictsGenerator.call(
       truths:,
       information_needs:,
     )
 
-    if verdicts.empty?
-      return build_maximum_score_result("No verdicts were generated.")
-    end
+    return build_error_result("No verdicts were generated.") if verdicts.empty?
 
     score = calculate_score(verdicts)
 
@@ -47,10 +39,10 @@ class AutoEvaluation::ContextRelevancy
       verdicts:,
     )
 
-    AutoEvaluation::ScoreResult.new(
+    AutoEvaluation::Result.new(
+      status: score >= THRESHOLD ? "success" : "failure",
       score:,
       reason:,
-      success: score >= THRESHOLD,
       llm_responses:,
       metrics:,
     )
@@ -66,11 +58,10 @@ private
     verdicts_count.to_d / verdicts.count
   end
 
-  def build_maximum_score_result(reason)
-    AutoEvaluation::ScoreResult.new(
-      score: 1.0,
-      reason:,
-      success: true,
+  def build_error_result(error_message)
+    AutoEvaluation::Result.new(
+      status: "error",
+      error_message:,
       llm_responses:,
       metrics:,
     )

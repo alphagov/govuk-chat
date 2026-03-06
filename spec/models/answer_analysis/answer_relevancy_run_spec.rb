@@ -3,6 +3,6 @@ RSpec.describe AnswerAnalysis::AnswerRelevancyRun do
     let(:model) { build(:answer_relevancy_run) }
   end
 
-  include_examples "auto_evaluation create runs from score results", :answer_relevancy_runs
+  include_examples "auto_evaluation create runs from auto evaluation results", :answer_relevancy_runs
   include_examples "auto evaluation exportable runs"
 end

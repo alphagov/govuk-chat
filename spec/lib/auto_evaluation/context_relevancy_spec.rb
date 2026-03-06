@@ -107,11 +107,12 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
         reason: shared_expected_metrics_attributes,
       }
       expect(result)
-        .to be_a(AutoEvaluation::ScoreResult)
+        .to be_a(AutoEvaluation::Result)
         .and have_attributes(
+          status: "success",
           score:,
           reason:,
-          success: true,
+          error_message: nil,
           llm_responses: expected_llm_responses,
           metrics: expected_metrics,
         )
@@ -135,15 +136,16 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
     context "when no sources are used in the answer generation" do
       let(:answer_sources) { [] }
 
-      it "returns a early with a maxiumum score" do
+      it "returns a result object with an error status and skips subsequent LLM calls" do
         result = described_class.call(answer)
 
         expect(result)
-          .to be_a(AutoEvaluation::ScoreResult)
+          .to be_a(AutoEvaluation::Result)
           .and have_attributes(
-            score: 1.0,
-            reason: "No sources were retrieved when generating the answer.",
-            success: true,
+            status: "error",
+            score: nil,
+            reason: nil,
+            error_message: "No sources were retrieved when generating the answer.",
           )
         expect(result.llm_responses.keys).to eq([])
         expect(result.metrics.keys).to eq([])
@@ -153,15 +155,16 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
     context "when no information needs are extracted" do
       let(:information_needs) { [] }
 
-      it "returns a early with a maxiumum score" do
+      it "returns a result object with an error status and skips subsequent LLM calls" do
         result = described_class.call(answer)
 
         expect(result)
-          .to be_a(AutoEvaluation::ScoreResult)
+          .to be_a(AutoEvaluation::Result)
           .and have_attributes(
-            score: 1.0,
-            reason: "No information needs were generated.",
-            success: true,
+            status: "error",
+            score: nil,
+            reason: nil,
+            error_message: "No information needs were generated.",
           )
         expect(result.llm_responses.keys).to contain_exactly(:information_needs)
         expect(result.metrics.keys).to contain_exactly(:information_needs)
@@ -171,15 +174,16 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
     context "when no truths are extracted" do
       let(:truths) { [] }
 
-      it "returns a early with a maxiumum score" do
+      it "returns a result object with an error status and skips subsequent LLM calls" do
         result = described_class.call(answer)
 
         expect(result)
-          .to be_a(AutoEvaluation::ScoreResult)
+          .to be_a(AutoEvaluation::Result)
           .and have_attributes(
-            score: 1.0,
-            reason: "No truths were generated.",
-            success: true,
+            status: "error",
+            score: nil,
+            reason: nil,
+            error_message: "No truths were generated.",
           )
         expect(result.llm_responses.keys).to contain_exactly(:information_needs, :truths)
         expect(result.metrics.keys).to contain_exactly(:information_needs, :truths)
@@ -189,15 +193,16 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
     context "when no verdicts are generated" do
       let(:verdicts) { [] }
 
-      it "returns early with score 1.0 and skips the reason LLM call" do
+      it "returns an error status and skips the reason LLM call" do
         result = described_class.call(answer)
 
         expect(result)
-          .to be_a(AutoEvaluation::ScoreResult)
+          .to be_a(AutoEvaluation::Result)
           .and have_attributes(
-            score: 1.0,
-            reason: "No verdicts were generated.",
-            success: true,
+            status: "error",
+            score: nil,
+            reason: nil,
+            error_message: "No verdicts were generated.",
           )
         expect(result.llm_responses.keys).to contain_exactly(:truths, :information_needs, :verdicts)
         expect(result.metrics.keys).to contain_exactly(:truths, :information_needs, :verdicts)
@@ -215,11 +220,11 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
       end
       let(:score) { 0.25 }
 
-      it "returns success: false" do
+      it "returns a result with a failure status" do
         result = described_class.call(answer)
 
-        expect(result.success).to be false
         expect(result.score).to eq(score)
+        expect(result.status).to eq("failure")
       end
     end
   end

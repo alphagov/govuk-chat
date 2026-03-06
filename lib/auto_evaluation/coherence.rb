@@ -12,10 +12,10 @@ module AutoEvaluation
       result = BedrockOpenAIOssInvoke.call(user_prompt, tools)
       score = normalise_rubric_score(result.evaluation_data.fetch("score"))
 
-      AutoEvaluation::ScoreResult.new(
+      AutoEvaluation::Result.new(
+        status: score >= self.class::THRESHOLD ? "success" : "failure",
         score:,
         reason: result.evaluation_data.fetch("reason").strip,
-        success: score >= THRESHOLD,
         llm_responses: { coherence: result.llm_response },
         metrics: { coherence: result.metrics },
       )

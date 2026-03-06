@@ -94,9 +94,9 @@ module JobExamples
 
     let(:results) do
       [
-        build(:auto_evaluation_score_result, score: 0.8),
-        build(:auto_evaluation_score_result, score: 0.7),
-        build(:auto_evaluation_score_result, score: 0.9),
+        build(:auto_evaluation_result, score: 0.8),
+        build(:auto_evaluation_result, score: 0.7),
+        build(:auto_evaluation_result, score: 0.9),
       ]
     end
 
@@ -122,7 +122,7 @@ module JobExamples
 
         results.each_with_index do |result, index|
           expect(answer.public_send(association)[index])
-            .to have_attributes(result.to_h.except(:success))
+            .to have_attributes(result.to_h)
         end
       end
 

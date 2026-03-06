@@ -204,13 +204,37 @@ RSpec.describe "Admin::QuestionsController" do
         let(:question) { run.answer.question }
 
         it "renders #{run_association} details in the analysis tab" do
+          create(
+            run_association,
+            status: :failure,
+            score: 0.25,
+            reason: "The answer was not very good.",
+            answer: run.answer,
+          )
+          create(
+            run_association,
+            status: :error,
+            error_message: "No statements found.",
+            reason: nil,
+            score: nil,
+            answer: run.answer,
+          )
           get admin_show_question_path(question)
 
           expect(response.body)
             .to have_selector("#analysis-tab", text: title)
-            .and have_selector("#analysis-tab", text: /Mean score\s*0\.85/)
+            .and have_selector("#analysis-tab", text: /Mean score\s*0\.55/)
+            .and have_selector("#analysis-tab", text: /Successful run count\s*1/)
+            .and have_selector("#analysis-tab", text: /Failure run count\s*1/)
+            .and have_selector("#analysis-tab", text: /Errored run count\s*1/)
+            .and have_selector("#analysis-tab", text: /Run 1 status\s*Success/)
             .and have_selector("#analysis-tab", text: /Run 1 score\s*0\.85/)
             .and have_selector("#analysis-tab", text: /Run 1 reason\s*The answer was acceptable\./)
+            .and have_selector("#analysis-tab", text: /Run 2 status\s*Failure/)
+            .and have_selector("#analysis-tab", text: /Run 2 score\s*0\.25/)
+            .and have_selector("#analysis-tab", text: /Run 2 reason\s*The answer was not very good\./)
+            .and have_selector("#analysis-tab", text: /Run 3 status\s*Error/)
+            .and have_selector("#analysis-tab", text: /Run 3 error message\s*No statements found\./)
         end
 
         it "renders the runs llm responses" do
