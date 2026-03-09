@@ -13,7 +13,6 @@ class AmendAnswerAnalysisRunTables < ActiveRecord::Migration[8.0]
       add_column model, :error_message, :string
       change_column_null model, :score, true
       change_column_null model, :reason, true
-      remove_column model, :success, :boolean, null: false, default: true
     end
   end
 end
