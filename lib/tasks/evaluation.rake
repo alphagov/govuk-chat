@@ -101,18 +101,8 @@ namespace :evaluation do
   task search_results_for_question: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
 
-    search_results = Search::ResultsForQuestion.call(ENV["INPUT"]).results
-
-    items = search_results.map do |result|
-      {
-        exact_path: result.exact_path,
-        chunk_uid: result.chunk_uid,
-        weighted_score: result.weighted_score,
-        semantic_score: result.score,
-      }
-    end
-
-    puts(items.to_json)
+    search_results = Search::ResultsForQuestion.call(ENV["INPUT"])
+    puts(search_results.to_json)
   end
 
   desc "Produce topics for a user question"

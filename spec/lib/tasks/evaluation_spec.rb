@@ -398,28 +398,14 @@ RSpec.describe "rake evaluation tasks" do
           ),
         ]
         result_set = Search::ResultsForQuestion::ResultSet.new(
+          opensearch_index: "test-index",
           results: search_results,
           rejected_results: [],
           metrics: {},
         )
         allow(Search::ResultsForQuestion).to receive(:call).with(input).and_return(result_set)
-        expected_output = [
-          {
-            exact_path: "/path1",
-            chunk_uid: search_results.first.chunk_uid,
-            weighted_score: 1.0,
-            semantic_score: 1.5,
-          },
-          {
-            exact_path: "/path2",
-            chunk_uid: search_results.second.chunk_uid,
-            weighted_score: 0.9,
-            semantic_score: 0.9,
-          },
-        ].to_json
-
         expect { Rake::Task[task_name].invoke }
-          .to output("#{expected_output}\n").to_stdout
+          .to output("#{result_set.to_json}\n").to_stdout
       end
     end
   end

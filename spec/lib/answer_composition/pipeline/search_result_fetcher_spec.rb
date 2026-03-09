@@ -6,6 +6,7 @@ RSpec.describe AnswerComposition::Pipeline::SearchResultFetcher, :chunked_conten
       results: [search_result],
       rejected_results: [],
       metrics: { embedding_duration: 1.5, search_duration: 2.0, reranking_duration: 1.0 },
+      opensearch_index: "test-index",
     )
   end
 
@@ -40,6 +41,7 @@ RSpec.describe AnswerComposition::Pipeline::SearchResultFetcher, :chunked_conten
         results: [],
         rejected_results: [],
         metrics: { embedding_duration: 1.5, search_duration: 2, reranking_duration: 0.0 },
+        opensearch_index: "test-index",
       )
     end
 

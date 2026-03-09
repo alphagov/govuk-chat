@@ -13,7 +13,8 @@ module Search
       metrics[:embedding_duration] = Clock.monotonic_time - embedding_start_time
 
       search_start_time = Clock.monotonic_time
-      results = ChunkedContentRepository.new.search_by_embedding(
+      repository = ChunkedContentRepository.new
+      results = repository.search_by_embedding(
         embedding,
         max_chunks:,
       )
@@ -25,8 +26,9 @@ module Search
       results = weighted_results.select { |r| r.weighted_score >= min_score }.take(max_results)
       rejected_results = weighted_results - results
       metrics[:reranking_duration] = Clock.monotonic_time - reranking_start_time
-
-      Search::ResultsForQuestion::ResultSet.new(results:, rejected_results:, metrics:)
+      Search::ResultsForQuestion::ResultSet.new(
+        results:, rejected_results:, metrics:, opensearch_index: repository.index,
+      )
     end
   end
 end

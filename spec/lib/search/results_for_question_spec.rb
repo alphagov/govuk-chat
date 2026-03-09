@@ -54,6 +54,11 @@ RSpec.describe Search::ResultsForQuestion, :chunked_content_index do
       expect(result.metrics).to eq({ embedding_duration: 1.5, search_duration: 2.0, reranking_duration: 1.0, embedding_provider: "titan" })
     end
 
+    it "includes the opensearch index in the result set" do
+      result = described_class.call(question_message)
+      expect(result.opensearch_index).to eq(Rails.configuration.opensearch.chunked_content_index)
+    end
+
     context "when then are more results than the configured max_results" do
       let(:min_score) { 0.1 }
       let(:max_results) { 2 }
