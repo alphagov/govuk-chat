@@ -16,6 +16,14 @@ module Search
       def chunk_uid
         "#{content_id}_#{locale}_#{chunk_index}_#{digest}"
       end
+
+      def as_json(...)
+        to_h.merge(
+          "weighted_score" => weighted_score,
+          "weighting" => weighting,
+          "chunk_uid" => chunk_uid,
+        ).as_json(...)
+      end
     end
   end
 end
