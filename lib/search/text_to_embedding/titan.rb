@@ -25,7 +25,7 @@ class Search::TextToEmbedding
     attr_reader :string_input, :text_collection
 
     def bedrock_client
-      @bedrock_client ||= Aws::BedrockRuntime::Client.new
+      @bedrock_client ||= Aws::BedrockRuntime::Client.new(region: Rails.configuration.titan_aws_region)
     end
 
     def convert_text_to_embeddings(text)
