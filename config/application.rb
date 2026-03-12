@@ -93,5 +93,7 @@ module GovukChat
                                              .sort
 
     config.max_auto_evaluations_per_hour = 300
+
+    config.titan_aws_region = ENV["TITAN_AWS_REGION"] || ENV.fetch("AWS_REGION", "eu-west-1")
   end
 end

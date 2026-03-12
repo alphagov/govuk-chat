@@ -1,5 +1,15 @@
 RSpec.describe Search::TextToEmbedding::Titan, :aws_credentials_stubbed do
   describe ".call" do
+    it "configures the Bedrock clients AWS region based on the titan_aws_region application config" do
+      allow(Rails.configuration).to receive(:titan_aws_region).and_return("eu-west-2")
+      stub_bedrock_titan_embedding("text")
+      expect(Aws::BedrockRuntime::Client).to receive(:new)
+                                         .with(hash_including(region: "eu-west-2"))
+                                         .and_call_original
+
+      described_class.call("text")
+    end
+
     it "returns a single embedding array for a string input" do
       request = stub_bedrock_titan_embedding("text")
 
