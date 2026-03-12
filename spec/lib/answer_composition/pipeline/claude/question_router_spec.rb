@@ -1,6 +1,7 @@
 RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credentials_stubbed do
   let(:question) { build :question }
   let(:context) { build(:answer_pipeline_context, question:) }
+  let(:model_name) { :claude_sonnet_4_0 }
 
   it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL" do
     let(:pipeline_step) { described_class.new(context) }
@@ -36,7 +37,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credent
     let(:tools) do
       properties = classification[:properties] || {}
       confidence_property = AnswerComposition::Pipeline::Claude.prompt_config(
-        :question_routing, :claude_sonnet_4_0
+        :question_routing, model_name
       )[:confidence_property]
 
       [
@@ -49,6 +50,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credent
               confidence: confidence_property,
             }),
             required: %w[confidence] + properties.keys.map(&:to_s),
+            additionalProperties: false,
           },
         },
       ]
@@ -59,7 +61,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credent
     end
 
     before do
-      allow(AnswerComposition::Pipeline::Claude).to receive(:prompt_config).with(:question_routing, :claude_sonnet_4_0).and_return(
+      allow(AnswerComposition::Pipeline::Claude).to receive(:prompt_config).with(:question_routing, model_name).and_return(
         classifications: [classification],
         system_prompt: "The system prompt",
         confidence_property: {
@@ -234,6 +236,50 @@ RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credent
       it "doesn't abort the pipeline" do
         expect { described_class.call(context) }
           .not_to change(context, :aborted?).from(false)
+      end
+    end
+
+    context "when using a model newer than Claude Sonnet 4" do
+      let(:model_name) { :claude_haiku_4_5 }
+
+      let(:tools) do
+        properties = classification[:properties] || {}
+        confidence_property = AnswerComposition::Pipeline::Claude.prompt_config(
+          :question_routing, model_name
+        )[:confidence_property]
+
+        [
+          {
+            name: "greetings",
+            description: "A classification description",
+            strict: true,
+            input_schema: {
+              type: "object",
+              properties: properties.merge({
+                confidence: confidence_property,
+              }),
+              required: %w[confidence] + properties.keys.map(&:to_s),
+              additionalProperties: false,
+            },
+          },
+        ]
+      end
+
+      it "sets `strict: true` in the tool config" do
+        ClimateControl.modify(BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL: model_name.to_s) do
+          request = stub_claude_question_routing(
+            question.message,
+            tools:,
+            tool_name: "greetings",
+            tool_input: classification_response,
+            chat_options: {
+              bedrock_model: model_name,
+            },
+          )
+
+          described_class.call(context)
+          expect(request).to have_been_made
+        end
       end
     end
 
