@@ -309,7 +309,7 @@ GEM
       sprockets-rails
     govuk_schemas (6.2.3)
       json-schema (>= 2.8, < 6.3)
-    govuk_sidekiq (11.0.0)
+    govuk_sidekiq (11.0.1)
       gds-api-adapters (>= 19.1.0)
       govuk_app_config (>= 1.1)
       redis-client (>= 0.22.2)
@@ -1060,7 +1060,7 @@ CHECKSUMS
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
   govuk_publishing_components (64.2.0) sha256=f2456372a4d220e456e71a6802eb80f06e8be514184384114053a4c4757fb085
   govuk_schemas (6.2.3) sha256=ad0311968ab411bf175d7f933ff9ea378cda06a14813a37a4916cc627f353d52
-  govuk_sidekiq (11.0.0) sha256=33c95c056d8d4e363ec960c422f7277503d276cde1ce09f17da82fac847d3b12
+  govuk_sidekiq (11.0.1) sha256=491f907d2972342c62b322c454bd11cdadf1f2b325e7af017eb947ef6bde07c7
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
   groupdate (6.7.0) sha256=beaa8d5bf3856814681914a1d4a20e77436a2214b85d0017dc2ea5c355fb6777
   hashdiff (1.2.1) sha256=9c079dbc513dfc8833ab59c0c2d8f230fa28499cc5efb4b8dd276cf931457cd1
