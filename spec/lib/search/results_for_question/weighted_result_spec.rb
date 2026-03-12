@@ -37,4 +37,20 @@ RSpec.describe Search::ResultsForQuestion::WeightedResult do
         .to eq("#{result.content_id}_#{result.locale}_#{result.chunk_index}_#{result.digest}")
     end
   end
+
+  describe "#as_json" do
+    it "includes the weighted_score and weighting in the JSON representation" do
+      result_json = reranked_result.as_json
+      expect(result_json).to include(
+        "weighted_score" => weighted_score,
+        "weighting" => weighting,
+        "chunk_uid" => reranked_result.chunk_uid,
+      )
+    end
+
+    it "respects as_json options" do
+      result_json = reranked_result.as_json(only: [:score])
+      expect(result_json).to eq("score" => reranked_result.score)
+    end
+  end
 end

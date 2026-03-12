@@ -1,8 +1,8 @@
 module Search
   class ResultsForQuestion
-    ResultSet = Data.define(:results, :rejected_results, :metrics) do
+    ResultSet = Data.define(:opensearch_index, :results, :rejected_results, :metrics) do
       def self.empty
-        new(results: [], rejected_results: [], metrics: {})
+        new(opensearch_index: nil, results: [], rejected_results: [], metrics: {})
       end
 
       def empty?
