@@ -139,12 +139,14 @@ module AnswerComposition::Pipeline
           {
             name: classification[:name],
             description: build_description(classification),
+            strict: model_id == BedrockModels.model_id(:claude_sonnet_4_0) ? nil : true,
             input_schema: {
               type: "object",
               properties:,
               required:,
+              additionalProperties: false,
             },
-          }
+          }.compact
         end
       end
 
