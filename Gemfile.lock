@@ -297,7 +297,7 @@ GEM
     govuk_personalisation (1.1.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
-    govuk_publishing_components (64.2.0)
+    govuk_publishing_components (65.1.0)
       govuk_app_config
       govuk_personalisation (>= 0.7.0)
       kramdown
@@ -866,7 +866,7 @@ GEM
     tiktoken_ruby (0.0.15.1-arm64-darwin)
     tiktoken_ruby (0.0.15.1-x86_64-darwin)
     tiktoken_ruby (0.0.15.1-x86_64-linux)
-    timeout (0.6.0)
+    timeout (0.6.1)
     trailblazer-option (0.1.2)
     tsort (0.2.0)
     typhoeus (1.4.1)
@@ -1058,7 +1058,7 @@ CHECKSUMS
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
-  govuk_publishing_components (64.2.0) sha256=f2456372a4d220e456e71a6802eb80f06e8be514184384114053a4c4757fb085
+  govuk_publishing_components (65.1.0) sha256=6cf78ee0c2ea738f27fc55a70f88d164e41a79270b53f03d4927ac44aa770dad
   govuk_schemas (6.2.3) sha256=ad0311968ab411bf175d7f933ff9ea378cda06a14813a37a4916cc627f353d52
   govuk_sidekiq (11.0.1) sha256=491f907d2972342c62b322c454bd11cdadf1f2b325e7af017eb947ef6bde07c7
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
@@ -1273,7 +1273,7 @@ CHECKSUMS
   tiktoken_ruby (0.0.15.1-arm64-darwin) sha256=942d15acdaa6de172e9c72644c8acb115f601152b81dc765957e10c526204a48
   tiktoken_ruby (0.0.15.1-x86_64-darwin) sha256=e7978a186e548c7c81ac5183f5ed2b57c69924aeec5d0a1ce2222892628fdab1
   tiktoken_ruby (0.0.15.1-x86_64-linux) sha256=cc53f9c43e8a4d434831b5a5b10d94d4eb07ad15d0582d568e0e9c8293447dfc
-  timeout (0.6.0) sha256=6d722ad619f96ee383a0c557ec6eb8c4ecb08af3af62098a0be5057bf00de1af
+  timeout (0.6.1) sha256=78f57368a7e7bbadec56971f78a3f5ecbcfb59b7fcbb0a3ed6ddc08a5094accb
   trailblazer-option (0.1.2) sha256=20e4f12ea4e1f718c8007e7944ca21a329eee4eed9e0fa5dde6e8ad8ac4344a3
   tsort (0.2.0) sha256=9650a793f6859a43b6641671278f79cfead60ac714148aabe4e3f0060480089f
   typhoeus (1.4.1) sha256=1c17db8364bd45ab302dc61e460173c3e69835896be88a3df07c206d5c55ef7c
