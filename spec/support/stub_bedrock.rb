@@ -67,7 +67,7 @@ module StubBedrock
       include_reasoning: false,
       messages:,
       tools:,
-      tool_choice: "required",
+      tool_choice: { type: "function", function: { name: tools.first.dig("function", "name") } },
       parallel_tool_calls: false,
       max_tokens: 15_000,
       temperature: 0.0,
