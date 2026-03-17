@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_04_104013) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_17_144601) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -19,6 +19,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_04_104013) do
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "answer_analysis_run_status", ["success", "failure", "error"]
+  create_enum "answer_analysis_topics_status", ["success", "error"]
   create_enum "answer_completeness", ["complete", "partial", "no_information"]
   create_enum "answer_status", ["answered", "clarification", "error_answer_guardrails", "error_answer_service_error", "error_jailbreak_guardrails", "error_non_specific", "error_question_routing_guardrails", "error_timeout", "guardrails_answer", "guardrails_forbidden_terms", "guardrails_jailbreak", "guardrails_question_routing", "unanswerable_llm_cannot_answer", "unanswerable_no_govuk_content", "unanswerable_question_routing"]
   create_enum "conversation_source", ["web", "api"]
@@ -85,6 +86,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_04_104013) do
     t.uuid "answer_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.enum "status", default: "success", null: false, enum_type: "answer_analysis_topics_status"
+    t.string "error_message"
     t.index ["answer_id"], name: "index_answer_analysis_topics_on_answer_id", unique: true
   end
 

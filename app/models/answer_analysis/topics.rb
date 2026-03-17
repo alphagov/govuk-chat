@@ -5,4 +5,6 @@ class AnswerAnalysis::Topics < ApplicationRecord
   self.table_name = "answer_analysis_topics"
 
   belongs_to :answer
+
+  enum :status, { success: "success", error: "error" }
 end
