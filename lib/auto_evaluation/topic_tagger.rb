@@ -1,9 +1,22 @@
 module AutoEvaluation
   class TopicTagger
-    Result = Data.define(:primary_topic,
-                         :secondary_topic,
-                         :metrics,
-                         :llm_response)
+    Result = Data.define(
+      :status,
+      :primary_topic,
+      :secondary_topic,
+      :metrics,
+      :llm_response,
+      :error_message,
+    ) do
+      def initialize(status:,
+                     primary_topic:,
+                     secondary_topic:,
+                     metrics:,
+                     llm_response:,
+                     error_message: nil)
+        super
+      end
+    end
 
     def self.call(...) = new(...).call
 
@@ -14,10 +27,20 @@ module AutoEvaluation
     def call
       result = BedrockOpenAIOssInvoke.call(user_message: user_question, tool:, system_prompt:)
       Result.new(
+        status: "success",
         primary_topic: result.evaluation_data.fetch("primary_topic"),
         secondary_topic: result.evaluation_data.fetch("secondary_topic"),
         metrics: result.metrics,
         llm_response: result.llm_response,
+      )
+    rescue AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError => e
+      Result.new(
+        status: "error",
+        primary_topic: nil,
+        secondary_topic: nil,
+        metrics: {},
+        llm_response: {},
+        error_message: e.message,
       )
     end
 

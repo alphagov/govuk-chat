@@ -421,6 +421,7 @@ RSpec.describe "rake evaluation tasks" do
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input) do
         result = AutoEvaluation::TopicTagger::Result.new(
+          status: "success",
           primary_topic: "tax",
           secondary_topic: "benefits",
           metrics: {},
@@ -445,6 +446,7 @@ RSpec.describe "rake evaluation tasks" do
                                             )
 
           expected_result = {
+            status: "error",
             primary_topic: "invalid_tool_output",
             secondary_topics: nil,
             metrics: {},
