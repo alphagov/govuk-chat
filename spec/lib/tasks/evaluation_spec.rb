@@ -432,6 +432,26 @@ RSpec.describe "rake evaluation tasks" do
           .to output("#{result.to_json}\n").to_stdout
       end
     end
+
+    context "when an InvalidToolCallSchemaError is raised" do
+      it "catches the error and outputs a result with nil topics and empty metrics and llm_response" do
+        ClimateControl.modify(INPUT: input) do
+          allow(AutoEvaluation::TopicTagger).to receive(:call)
+                                            .with(input)
+                                            .and_raise(AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallSchemaError)
+
+          expected_result = {
+            primary_topic: "schema_validation_error",
+            secondary_topics: nil,
+            metrics: {},
+            llm_response: {},
+          }.to_json
+
+          expect { Rake::Task[task_name].invoke }
+            .to output("#{expected_result}\n").to_stdout
+        end
+      end
+    end
   end
 
   describe "batch_process" do

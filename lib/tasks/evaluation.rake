@@ -112,6 +112,16 @@ namespace :evaluation do
     result = AutoEvaluation::TopicTagger.call(ENV["INPUT"])
 
     puts(result.to_json)
+  rescue AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallSchemaError
+    # We're going to add state to the AutoEvaluation::Topics model soon to capture schema validation errors occuring.
+    # In the meantime we need to ensure that we don't break evaluation runs when the schema validation fails, so this rescue
+    # block has been added to catch the error and return a JSON response that won't break the GenerateInput class.
+    puts({
+      primary_topic: "schema_validation_error",
+      secondary_topics: nil,
+      metrics: {},
+      llm_response: {},
+    }.to_json)
   end
 
   desc "Batch process a YAML file of questions using any single-input rake task"
