@@ -47,12 +47,18 @@ module StubBedrock
     dimensions.times.map { random_generator.rand }
   end
 
-  def stub_bedrock_invoke_model_openai_oss_tool_call(user_message, tools, content, finish_reason = "tool_calls")
+  def stub_bedrock_invoke_model_openai_oss_tool_call(user_message,
+                                                     tools,
+                                                     content,
+                                                     finish_reason: "tool_calls",
+                                                     system_prompt: nil)
+    messages = []
+    messages << { role: "system", content: [{ type: "text", text: system_prompt }] } if system_prompt
+    messages << { role: "user", content: [{ type: "text", text: user_message }] }
+
     request_body = {
       include_reasoning: false,
-      messages: [
-        { role: "user", content: [{ type: "text", text: user_message }] },
-      ],
+      messages:,
       tools:,
       tool_choice: "required",
       parallel_tool_calls: false,

@@ -13,9 +13,10 @@ module AutoEvaluation
 
     def self.call(...) = new(...).call
 
-    def initialize(user_message, tools)
+    def initialize(user_message, tools, system_prompt = nil)
       @user_message = user_message
       @tools = tools
+      @system_prompt = system_prompt
     end
 
     def call
@@ -25,9 +26,7 @@ module AutoEvaluation
         model_id: MODEL,
         body: {
           include_reasoning: false,
-          messages: [
-            { role: "user", content: [{ type: "text", text: user_message }] },
-          ],
+          messages:,
           tools:,
           tool_choice: "required",
           parallel_tool_calls: false,
@@ -56,7 +55,7 @@ module AutoEvaluation
 
   private
 
-    attr_reader :user_message, :tools
+    attr_reader :user_message, :tools, :system_prompt
 
     def build_metrics(start_time, response)
       {
@@ -73,6 +72,15 @@ module AutoEvaluation
       JSON::Validator.validate!(schema, tool_output)
     rescue JSON::Schema::ValidationError => e
       raise InvalidToolCallSchemaError, "Tool call response does not match schema: #{e.message}"
+    end
+
+    def messages
+      return [{ role: "user", content: [{ type: "text", text: user_message }] }] unless system_prompt
+
+      [
+        { role: "system", content: [{ type: "text", text: system_prompt }] },
+        { role: "user", content: [{ type: "text", text: user_message }] },
+      ]
     end
   end
 end

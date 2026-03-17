@@ -76,12 +76,30 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
         user_message,
         tools,
         nil,
-        "length",
+        finish_reason: "length",
       )
 
       expect {
         described_class.call(user_message, tools)
       }.to raise_error(described_class::LengthLimitExceededError)
+    end
+
+    context "when a system prompt is provided" do
+      let(:system_prompt) { "This is a system prompt." }
+      let!(:stub) do
+        stub_bedrock_invoke_model_openai_oss_tool_call(
+          user_message,
+          tools,
+          { "response" => "Expected response." }.to_json,
+          system_prompt:,
+        )
+      end
+
+      it "includes the system prompt in the messages sent to Bedrock" do
+        described_class.call(user_message, tools, system_prompt)
+
+        expect(stub).to have_been_requested
+      end
     end
   end
 end
