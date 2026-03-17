@@ -4,6 +4,7 @@ RSpec.describe AnswerAnalysis::TagTopicsJob do
   let(:question) { answer.question }
   let(:topic_tagger_result) do
     AutoEvaluation::TopicTagger::Result.new(
+      status: status,
       primary_topic: "business",
       secondary_topic: "benefits",
       metrics: {
@@ -13,8 +14,11 @@ RSpec.describe AnswerAnalysis::TagTopicsJob do
       llm_response: {
         "model" => "some-model",
       },
+      error_message:,
     )
   end
+  let(:status) { "success" }
+  let(:error_message) { nil }
 
   before do
     allow(AutoEvaluation::TopicTagger).to receive(:call).and_return(topic_tagger_result)
@@ -43,11 +47,27 @@ RSpec.describe AnswerAnalysis::TagTopicsJob do
       }.to change(AnswerAnalysis::Topics, :count).by(1)
       expect(answer.reload.topics)
         .to have_attributes(
+          status: topic_tagger_result.status,
           primary_topic: topic_tagger_result.primary_topic,
           secondary_topic: topic_tagger_result.secondary_topic,
           metrics: { "topic_tagger" => topic_tagger_result.metrics },
           llm_responses: { "topic_tagger" => topic_tagger_result.llm_response },
+          error_message: nil,
         )
+    end
+
+    context "when the AutoEvaluation::TopicTagger returns an error status and error message" do
+      let(:status) { "error" }
+      let(:error_message) { "An error occurred during topic tagging" }
+
+      it "creates topics with the error status and error message" do
+        described_class.new.perform(answer.id)
+        expect(answer.reload.topics)
+          .to have_attributes(
+            status: status,
+            error_message: error_message,
+          )
+      end
     end
 
     context "when the answer does not exist" do

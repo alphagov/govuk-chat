@@ -117,6 +117,7 @@ namespace :evaluation do
     # In the meantime we need to ensure that we don't break evaluation runs when the schema validation fails, so this rescue
     # block has been added to catch the error and return a JSON response that won't break the GenerateInput class.
     puts({
+      status: "error",
       primary_topic: "invalid_tool_output",
       secondary_topics: nil,
       metrics: {},
