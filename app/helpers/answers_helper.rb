@@ -1,6 +1,10 @@
 module AnswersHelper
   def render_answer_message(message, skip_sanitize: false)
-    message_to_html = Kramdown::Document.new(message).to_html
+    message_to_html = Commonmarker.to_html(message, options: {
+      extension: { autolink: false },
+      render: { hardbreaks: false },
+    })
+
     render "govuk_publishing_components/components/govspeak" do
       if skip_sanitize
         message_to_html.html_safe

@@ -91,7 +91,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
       })
 
       expect(rendered)
-        .to have_selector(".app-c-conversation-message__answer .govuk-govspeak", text: "alert('hackerman')")
+        .not_to have_selector(".app-c-conversation-message__answer .govuk-govspeak", text: "alert")
     end
 
     context "and is_loading is true" do
