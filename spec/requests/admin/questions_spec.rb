@@ -404,12 +404,26 @@ RSpec.describe "Admin::QuestionsController" do
       end
       let(:question) { topics.answer.question }
 
-      it "renders the topics" do
+      it "renders the topics and status" do
         get admin_show_question_path(question)
 
         expect(response.body)
           .to have_content("Business")
           .and have_content("Tax")
+          .and have_content(topics.status.humanize)
+      end
+
+      it "renders the error message and error status when the topic analysis errored" do
+        topics.update!(
+          status: :error,
+          error_message: "An error occurred while analysing the topics.",
+        )
+
+        get admin_show_question_path(question)
+
+        expect(response.body)
+          .to have_content("Error")
+          .and have_content("An error occurred while analysing the topics.")
       end
 
       it "renders the topic metrics" do
