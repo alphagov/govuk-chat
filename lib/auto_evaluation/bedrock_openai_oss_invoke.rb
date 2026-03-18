@@ -1,7 +1,12 @@
 module AutoEvaluation
   class BedrockOpenAIOssInvoke
     class InvalidToolCallError < StandardError; end
+    class MissingToolCallArgumentsError < StandardError; end
     class LengthLimitExceededError < StandardError; end
+
+    delegate :logger, to: Rails
+
+    MAX_ATTEMPTS = 3
 
     Result = Data.define(
       :evaluation_data,
@@ -23,38 +28,51 @@ module AutoEvaluation
       start_time = Clock.monotonic_time
       client = Aws::BedrockRuntime::Client.new
 
-      begin
-        response = client.invoke_model(
-          model_id: MODEL,
-          body: {
-            include_reasoning: false,
-            messages:,
-            tools: [tool],
-            tool_choice: { type: "function", function: { name: tool.dig("function", "name") } },
-            parallel_tool_calls: false,
-            max_tokens: 15_000,
-            temperature: 0.0,
-          }.to_json,
-        )
-        parsed_response = JSON.parse(response.body.read)
+      attempts = 0
 
-        choice = parsed_response["choices"][0]
+      while attempts <= MAX_ATTEMPTS
+        attempts += 1
+        begin
+          response = client.invoke_model(
+            model_id: MODEL,
+            body: {
+              include_reasoning: false,
+              messages: messages,
+              tools: [tool],
+              tool_choice: { type: "function", function: { name: tool.dig("function", "name") } },
+              parallel_tool_calls: false,
+              max_tokens: 15_000,
+              temperature: 0.0,
+            }.to_json,
+          )
+          parsed_response = JSON.parse(response.body.read)
 
-        raise LengthLimitExceededError if choice["finish_reason"] == "length"
+          choice = parsed_response["choices"][0]
 
-        tool_call = choice.dig("message", "tool_calls", 0, "function", "arguments")
-        raise InvalidToolCallError, "No tool call arguments returned in the LLM response" unless tool_call
+          raise LengthLimitExceededError if choice["finish_reason"] == "length"
 
-        parsed_tool_output = JSON.parse(tool_call)
-        validate_tool_output_against_schema(parsed_tool_output)
+          tool_call = choice.dig("message", "tool_calls", 0, "function", "arguments")
+          raise MissingToolCallArgumentsError, "No tool call arguments returned in the LLM response." unless tool_call
 
-        Result.new(
-          evaluation_data: parsed_tool_output,
-          llm_response: parsed_response,
-          metrics: build_metrics(start_time, parsed_response),
-        )
-      rescue JSON::ParserError, JSON::Schema::ValidationError => e
-        raise InvalidToolCallError, "LLM did not return valid JSON that conformed to the schema. Error: #{e.message}"
+          parsed_tool_output = JSON.parse(tool_call)
+          validate_tool_output_against_schema(parsed_tool_output)
+
+          return Result.new(
+            evaluation_data: parsed_tool_output,
+            llm_response: parsed_response,
+            metrics: build_metrics(start_time, parsed_response),
+          )
+        rescue JSON::ParserError, JSON::Schema::ValidationError, MissingToolCallArgumentsError => e
+          logger.warn("LLM did not return valid JSON that conformed to the schema. " \
+            "Attempt #{attempts}/#{MAX_ATTEMPTS}. Error: #{e.class}, #{e.message}")
+
+          if attempts >= MAX_ATTEMPTS
+            raise InvalidToolCallError, "LLM did not return valid JSON that conformed to the schema " \
+                                        "after #{MAX_ATTEMPTS} attempts. Error: #{e.class}, #{e.message}"
+          end
+
+          next
+        end
       end
     end
 
