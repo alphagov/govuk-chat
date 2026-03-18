@@ -7,7 +7,7 @@ module AutoEvaluation
     end
 
     def call
-      result = BedrockOpenAIOssInvoke.call(user_prompt, tools)
+      result = BedrockOpenAIOssInvoke.call(user_message:, tool:)
       [result.evaluation_data.fetch("information_needs"), result.llm_response, result.metrics]
     end
 
@@ -19,15 +19,15 @@ module AutoEvaluation
       Prompts.config.context_relevancy.fetch(:information_needs)
     end
 
-    def user_prompt
+    def user_message
       sprintf(
         llm_prompts.fetch(:user_prompt),
         question:,
       )
     end
 
-    def tools
-      [llm_prompts.fetch(:tool_spec)]
+    def tool
+      llm_prompts.fetch(:tool_spec)
     end
   end
 end

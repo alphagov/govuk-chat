@@ -21,11 +21,11 @@ RSpec.describe AutoEvaluation::AnswerRelevancy::ReasonGenerator, :aws_credential
         question: question_message,
       )
     end
-    let(:tools) { [prompts.fetch(:tool_spec)] }
+    let(:tool) { prompts.fetch(:tool_spec) }
     let!(:stub_bedrock) do
       stub_bedrock_invoke_model_openai_oss_tool_call(
         user_prompt,
-        tools,
+        tool,
         reason_json,
       )
     end

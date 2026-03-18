@@ -9,7 +9,7 @@ module AutoEvaluation
     end
 
     def call
-      result = BedrockOpenAIOssInvoke.call(user_prompt, tools)
+      result = BedrockOpenAIOssInvoke.call(user_message:, tool:)
       score = normalise_rubric_score(result.evaluation_data.fetch("score"))
 
       AutoEvaluation::Result.new(
@@ -29,7 +29,7 @@ module AutoEvaluation
       Prompts.config.coherence
     end
 
-    def user_prompt
+    def user_message
       sprintf(
         llm_prompts.fetch(:user_prompt),
         answer: answer.message,
@@ -37,8 +37,8 @@ module AutoEvaluation
       )
     end
 
-    def tools
-      [llm_prompts.fetch(:tool_spec)]
+    def tool
+      llm_prompts.fetch(:tool_spec)
     end
 
     def normalise_rubric_score(rubric_score)

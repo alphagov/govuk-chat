@@ -12,7 +12,7 @@ module AutoEvaluation
     end
 
     def call
-      result = BedrockOpenAIOssInvoke.call(user_question, tools, system_prompt)
+      result = BedrockOpenAIOssInvoke.call(user_message: user_question, tool:, system_prompt:)
       Result.new(
         primary_topic: result.evaluation_data.fetch("primary_topic"),
         secondary_topic: result.evaluation_data.fetch("secondary_topic"),
@@ -39,8 +39,8 @@ module AutoEvaluation
       topic_tagger_config.fetch("system_prompt")
     end
 
-    def tools
-      [topic_tagger_config.fetch("tool_spec")]
+    def tool
+      topic_tagger_config.fetch("tool_spec")
     end
   end
 end

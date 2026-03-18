@@ -13,9 +13,9 @@ module AutoEvaluation
 
     def self.call(...) = new(...).call
 
-    def initialize(user_message, tools, system_prompt = nil)
+    def initialize(user_message:, tool:, system_prompt: nil)
       @user_message = user_message
-      @tools = tools
+      @tool = tool
       @system_prompt = system_prompt
     end
 
@@ -29,8 +29,8 @@ module AutoEvaluation
           body: {
             include_reasoning: false,
             messages:,
-            tools:,
-            tool_choice: { type: "function", function: { name: tools.first.dig("function", "name") } },
+            tools: [tool],
+            tool_choice: { type: "function", function: { name: tool.dig("function", "name") } },
             parallel_tool_calls: false,
             max_tokens: 15_000,
             temperature: 0.0,
@@ -60,7 +60,7 @@ module AutoEvaluation
 
   private
 
-    attr_reader :user_message, :tools, :system_prompt
+    attr_reader :user_message, :tool, :system_prompt
 
     def build_metrics(start_time, response)
       usage = response["usage"]
@@ -74,7 +74,7 @@ module AutoEvaluation
     end
 
     def validate_tool_output_against_schema(tool_output)
-      schema = tools.dig(0, "function", "parameters")
+      schema = tool.dig("function", "parameters")
       JSON::Validator.validate!(schema, tool_output)
     end
 

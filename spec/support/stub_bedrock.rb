@@ -48,7 +48,7 @@ module StubBedrock
   end
 
   def stub_bedrock_invoke_model_openai_oss_tool_call(user_message,
-                                                     tools,
+                                                     tool,
                                                      content,
                                                      finish_reason: "tool_calls",
                                                      system_prompt: nil,
@@ -62,12 +62,11 @@ module StubBedrock
     messages = []
     messages << { role: "system", content: [{ type: "text", text: system_prompt }] } if system_prompt
     messages << { role: "user", content: [{ type: "text", text: user_message }] }
-
     request_body = {
       include_reasoning: false,
       messages:,
-      tools:,
-      tool_choice: { type: "function", function: { name: tools.first.dig("function", "name") } },
+      tools: [tool],
+      tool_choice: { type: "function", function: { name: tool.dig("function", "name") } },
       parallel_tool_calls: false,
       max_tokens: 15_000,
       temperature: 0.0,
@@ -112,10 +111,10 @@ module StubBedrock
       prompts.fetch(:statements).fetch(:user_prompt),
       answer: answer_message,
     )
-    statements_tools = [prompts.fetch(:statements).fetch(:tool_spec)]
+    statements_tool = prompts.fetch(:statements).fetch(:tool_spec)
     stubs[:statements] = stub_bedrock_invoke_model_openai_oss_tool_call(
       statements_user_prompt,
-      statements_tools,
+      statements_tool,
       { statements: }.to_json,
     )
     return stubs if statements.empty?
@@ -125,10 +124,10 @@ module StubBedrock
       question: question_message,
       statements:,
     )
-    verdicts_tools = [prompts.fetch(:verdicts).fetch(:tool_spec)]
+    verdicts_tool = prompts.fetch(:verdicts).fetch(:tool_spec)
     stubs[:verdicts] = stub_bedrock_invoke_model_openai_oss_tool_call(
       verdicts_user_prompt,
-      verdicts_tools,
+      verdicts_tool,
       { verdicts: }.to_json,
     )
     return stubs if verdicts.empty?
@@ -144,10 +143,10 @@ module StubBedrock
       unsuccessful_verdicts_reasons:,
       question: question_message,
     )
-    reason_tools = [prompts.fetch(:reason).fetch(:tool_spec)]
+    reason_tool = prompts.fetch(:reason).fetch(:tool_spec)
     stubs[:reason] = stub_bedrock_invoke_model_openai_oss_tool_call(
       reason_user_prompt,
-      reason_tools,
+      reason_tool,
       { reason: }.to_json,
     )
 
@@ -167,10 +166,10 @@ module StubBedrock
       prompts.fetch(:truths).fetch(:user_prompt),
       retrieval_context:,
     )
-    truths_tools = [prompts.fetch(:truths).fetch(:tool_spec)]
+    truths_tool = prompts.fetch(:truths).fetch(:tool_spec)
     stubs[:truths] = stub_bedrock_invoke_model_openai_oss_tool_call(
       truths_user_prompt,
-      truths_tools,
+      truths_tool,
       { truths: }.to_json,
     )
     return stubs if truths.empty?
@@ -179,10 +178,10 @@ module StubBedrock
       prompts.fetch(:claims).fetch(:user_prompt),
       answer: answer_message,
     )
-    claims_tools = [prompts.fetch(:claims).fetch(:tool_spec)]
+    claims_tool = prompts.fetch(:claims).fetch(:tool_spec)
     stubs[:claims] = stub_bedrock_invoke_model_openai_oss_tool_call(
       claims_user_prompt,
-      claims_tools,
+      claims_tool,
       { claims: }.to_json,
     )
     return stubs if claims.empty?
@@ -192,10 +191,10 @@ module StubBedrock
       claims:,
       retrieval_context: truths.join("\n\n"),
     )
-    verdicts_tools = [prompts.fetch(:verdicts).fetch(:tool_spec)]
+    verdicts_tool = prompts.fetch(:verdicts).fetch(:tool_spec)
     stubs[:verdicts] = stub_bedrock_invoke_model_openai_oss_tool_call(
       verdicts_user_prompt,
-      verdicts_tools,
+      verdicts_tool,
       { verdicts: }.to_json,
     )
     return stubs if verdicts.empty?
@@ -211,11 +210,11 @@ module StubBedrock
       contradictions:,
     )
 
-    reason_tools = [prompts.fetch(:reason).fetch(:tool_spec)]
+    reason_tool = prompts.fetch(:reason).fetch(:tool_spec)
 
     stubs[:reason] = stub_bedrock_invoke_model_openai_oss_tool_call(
       reason_user_prompt,
-      reason_tools,
+      reason_tool,
       { reason: }.to_json,
     )
 
@@ -237,10 +236,10 @@ module StubBedrock
       prompts.fetch(:information_needs).fetch(:user_prompt),
       question: question_message,
     )
-    information_needs_tools = [prompts.fetch(:information_needs).fetch(:tool_spec)]
+    information_needs_tool = prompts.fetch(:information_needs).fetch(:tool_spec)
     stubs[:information_needs] = stub_bedrock_invoke_model_openai_oss_tool_call(
       information_needs_user_prompt,
-      information_needs_tools,
+      information_needs_tool,
       { information_needs: }.to_json,
     )
 
@@ -261,10 +260,10 @@ module StubBedrock
       prompts.fetch(:truths).fetch(:user_prompt),
       retrieval_context: retrieval_context.join("\n\n"),
     )
-    truths_tools = [prompts.fetch(:truths).fetch(:tool_spec)]
+    truths_tool = prompts.fetch(:truths).fetch(:tool_spec)
     stubs[:truths] = stub_bedrock_invoke_model_openai_oss_tool_call(
       truths_user_prompt,
-      truths_tools,
+      truths_tool,
       { truths: }.to_json,
     )
     return stubs if truths.empty?
@@ -282,10 +281,10 @@ module StubBedrock
       truths: formatted_truths,
       information_needs: information_needs.join("\n"),
     )
-    verdicts_tools = [prompts.fetch(:verdicts).fetch(:tool_spec)]
+    verdicts_tool = prompts.fetch(:verdicts).fetch(:tool_spec)
     stubs[:verdicts] = stub_bedrock_invoke_model_openai_oss_tool_call(
       verdicts_user_prompt,
-      verdicts_tools,
+      verdicts_tool,
       { verdicts: }.to_json,
     )
     return stubs if verdicts.empty?
@@ -301,10 +300,10 @@ module StubBedrock
       question: question_message,
       unmet_needs: unmet_needs.join("\n"),
     )
-    reason_tools = [prompts.fetch(:reason).fetch(:tool_spec)]
+    reason_tool = prompts.fetch(:reason).fetch(:tool_spec)
     stubs[:reason] = stub_bedrock_invoke_model_openai_oss_tool_call(
       reason_user_prompt,
-      reason_tools,
+      reason_tool,
       { reason: }.to_json,
     )
 
@@ -321,11 +320,11 @@ module StubBedrock
       answer: answer_message,
       question: question_message,
     )
-    tools = [prompts.fetch(:tool_spec)]
+    tool = prompts.fetch(:tool_spec)
 
     stub_bedrock_invoke_model_openai_oss_tool_call(
       user_prompt,
-      tools,
+      tool,
       llm_response.to_json,
     )
   end
@@ -339,11 +338,11 @@ module StubBedrock
     prompts = AutoEvaluation::Prompts.config.topic_tagger
 
     system_prompt = prompts.fetch(:system_prompt)
-    tools = [prompts.fetch(:tool_spec)]
+    tool = prompts.fetch(:tool_spec)
 
     stub_bedrock_invoke_model_openai_oss_tool_call(
       user_question,
-      tools,
+      tool,
       llm_response.to_json,
       system_prompt:,
       usage: {
