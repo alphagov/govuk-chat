@@ -111,19 +111,16 @@ namespace :evaluation do
 
     result = AutoEvaluation::TopicTagger.call(ENV["INPUT"])
 
+    # This is a temporary solution to ensure that the evaluation repo topic tagger evaluations continue to work
+    # since primary_topic is a required field on the GenerateInput class. This will be addressed in a follow up bit
+    # of work.
+    if result.status == "error"
+      result = result.to_h.merge(
+        primary_topic: "invalid_tool_output",
+      )
+    end
+
     puts(result.to_json)
-  rescue AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError => e
-    # We're going to add state to the AutoEvaluation::Topics model soon to capture schema validation errors occuring.
-    # In the meantime we need to ensure that we don't break evaluation runs when the schema validation fails, so this rescue
-    # block has been added to catch the error and return a JSON response that won't break the GenerateInput class.
-    puts({
-      status: "error",
-      primary_topic: "invalid_tool_output",
-      secondary_topics: nil,
-      metrics: {},
-      llm_response: {},
-      error_message: e.message,
-    }.to_json)
   end
 
   desc "Batch process a YAML file of questions using any single-input rake task"
