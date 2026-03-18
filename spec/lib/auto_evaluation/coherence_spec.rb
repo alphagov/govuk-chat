@@ -59,5 +59,29 @@ RSpec.describe AutoEvaluation::Coherence, :aws_credentials_stubbed do
         expect(result.status).to eq(expected_status)
       end
     end
+
+    context "when a BedrockOpenAIOssInvoke::InvalidToolCallError is raised" do
+      let(:error_message) { "Some error message" }
+
+      it "returns a result object with the expected attributes" do
+        allow(AutoEvaluation::BedrockOpenAIOssInvoke).to receive(:call)
+                                             .and_raise(
+                                               AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError.new(error_message),
+                                             )
+
+        result = described_class.call(answer)
+
+        expect(result)
+          .to be_a(AutoEvaluation::Result)
+          .and have_attributes(
+            status: "error",
+            score: nil,
+            reason: nil,
+            error_message: error_message,
+            llm_responses: {},
+            metrics: {},
+          )
+      end
+    end
   end
 end
