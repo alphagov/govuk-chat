@@ -112,15 +112,16 @@ namespace :evaluation do
     result = AutoEvaluation::TopicTagger.call(ENV["INPUT"])
 
     puts(result.to_json)
-  rescue AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallSchemaError
+  rescue AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError => e
     # We're going to add state to the AutoEvaluation::Topics model soon to capture schema validation errors occuring.
     # In the meantime we need to ensure that we don't break evaluation runs when the schema validation fails, so this rescue
     # block has been added to catch the error and return a JSON response that won't break the GenerateInput class.
     puts({
-      primary_topic: "schema_validation_error",
+      primary_topic: "invalid_tool_output",
       secondary_topics: nil,
       metrics: {},
       llm_response: {},
+      error_message: e.message,
     }.to_json)
   end
 

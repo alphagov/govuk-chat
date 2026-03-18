@@ -1,6 +1,6 @@
 module AutoEvaluation
   class BedrockOpenAIOssInvoke
-    class InvalidToolCallSchemaError < StandardError; end
+    class InvalidToolCallError < StandardError; end
     class LengthLimitExceededError < StandardError; end
 
     Result = Data.define(
@@ -22,35 +22,40 @@ module AutoEvaluation
     def call
       start_time = Clock.monotonic_time
       client = Aws::BedrockRuntime::Client.new
-      response = client.invoke_model(
-        model_id: MODEL,
-        body: {
-          include_reasoning: false,
-          messages:,
-          tools:,
-          tool_choice: { type: "function", function: { name: tools.first.dig("function", "name") } },
-          parallel_tool_calls: false,
-          max_tokens: 15_000,
-          temperature: 0.0,
-        }.to_json,
-      )
-      parsed_response = JSON.parse(response.body.read)
 
-      choice = parsed_response["choices"][0]
+      begin
+        response = client.invoke_model(
+          model_id: MODEL,
+          body: {
+            include_reasoning: false,
+            messages:,
+            tools:,
+            tool_choice: { type: "function", function: { name: tools.first.dig("function", "name") } },
+            parallel_tool_calls: false,
+            max_tokens: 15_000,
+            temperature: 0.0,
+          }.to_json,
+        )
+        parsed_response = JSON.parse(response.body.read)
 
-      raise LengthLimitExceededError if choice["finish_reason"] == "length"
+        choice = parsed_response["choices"][0]
 
-      parsed_tool_output = JSON.parse(
-        choice["message"]["tool_calls"][0]["function"]["arguments"],
-      )
+        raise LengthLimitExceededError if choice["finish_reason"] == "length"
 
-      validate_tool_output_against_schema(parsed_tool_output)
+        tool_call = choice.dig("message", "tool_calls", 0, "function", "arguments")
+        raise InvalidToolCallError, "No tool call arguments returned in the LLM response" unless tool_call
 
-      Result.new(
-        evaluation_data: parsed_tool_output,
-        llm_response: parsed_response,
-        metrics: build_metrics(start_time, parsed_response),
-      )
+        parsed_tool_output = JSON.parse(tool_call)
+        validate_tool_output_against_schema(parsed_tool_output)
+
+        Result.new(
+          evaluation_data: parsed_tool_output,
+          llm_response: parsed_response,
+          metrics: build_metrics(start_time, parsed_response),
+        )
+      rescue JSON::ParserError, JSON::Schema::ValidationError => e
+        raise InvalidToolCallError, "LLM did not return valid JSON that conformed to the schema. Error: #{e.message}"
+      end
     end
 
   private
@@ -71,8 +76,6 @@ module AutoEvaluation
     def validate_tool_output_against_schema(tool_output)
       schema = tools.dig(0, "function", "parameters")
       JSON::Validator.validate!(schema, tool_output)
-    rescue JSON::Schema::ValidationError => e
-      raise InvalidToolCallSchemaError, "Tool call response does not match schema: #{e.message}"
     end
 
     def messages

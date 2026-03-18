@@ -66,7 +66,7 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
       expect {
         described_class.call(user_message, tools)
       }.to raise_error(
-        described_class::InvalidToolCallSchemaError,
+        described_class::InvalidToolCallError,
         /The property '#\/' did not contain a required property of 'response'/,
       )
     end
@@ -119,6 +119,62 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
         described_class.call(user_message, tools, system_prompt)
 
         expect(stub).to have_been_requested
+      end
+    end
+
+    context "when the llm returns invalid JSON" do
+      it "raises an InvalidToolCallError" do
+        stub_bedrock_invoke_model_openai_oss_tool_call(
+          user_message,
+          tools,
+          "invalid_json",
+        )
+
+        expected_error_message = "LLM did not return valid JSON that conformed to the schema. Error: unexpected character: 'invalid_json'"
+
+        expect { described_class.call(user_message, tools) }.to raise_error(
+          described_class::InvalidToolCallError,
+          /#{expected_error_message}/,
+        )
+      end
+    end
+
+    context "when the llm returns JSON that does not conform to the schema" do
+      it "raises an InvalidToolCallError" do
+        stub_bedrock_invoke_model_openai_oss_tool_call(
+          user_message,
+          tools,
+          { "invalid_key" => "This does not conform to the schema." }.to_json,
+        )
+
+        expected_error_message = /The property '#\/' did not contain a required property of 'response'/
+
+        expect { described_class.call(user_message, tools) }.to raise_error(
+          described_class::InvalidToolCallError,
+          /#{expected_error_message}/,
+        )
+      end
+    end
+
+    context "when the llm response does not include a tool call" do
+      it "raises an InvalidToolCallError" do
+        body = {
+          choices: [
+            content: "This is a response without a tool call.",
+            finish_reason: "stop",
+          ],
+        }
+        stub_request(:post, StubBedrock::OPENAI_GPT_OSS_ENDPOINT_REGEX)
+                .to_return_json(
+                  status: 200,
+                  body: body.to_json,
+                  headers: { "Content-Type" => "application/json" },
+                )
+
+        expect { described_class.call(user_message, tools) }.to raise_error(
+          described_class::InvalidToolCallError,
+          "No tool call arguments returned in the LLM response",
+        )
       end
     end
   end
