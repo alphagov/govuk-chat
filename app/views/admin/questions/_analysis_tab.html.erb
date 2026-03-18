@@ -1,19 +1,38 @@
 <% if topics.present? %>
+  <%
+    items = [
+      {
+        field: "Status",
+        value: topics.status.humanize,
+      },
+    ]
+    items +=  if topics.success?
+                [
+                  {
+                    field: "Primary topic",
+                    value: topics.primary_topic.humanize,
+                  },
+                  {
+                    field: "Secondary topic",
+                    value: topics.secondary_topic&.humanize,
+                  },
+                ]
+              else
+                [
+                  {
+                    field: "Error",
+                    value: topics.error_message,
+                  },
+                ]
+              end
+  %>
+
   <%= render "govuk_publishing_components/components/summary_list", {
     title: "Topics",
     heading_size: "l",
     heading_level: 2,
     margin_bottom: 4,
-    items: [
-      {
-        field: "Primary topic",
-        value: topics.primary_topic.humanize,
-      },
-      {
-        field: "Secondary topic",
-        value: topics.secondary_topic&.humanize,
-      },
-    ],
+    items: items,
   } %>
 
   <% if topics.llm_responses.present? %>
