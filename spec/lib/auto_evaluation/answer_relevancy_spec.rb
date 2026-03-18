@@ -26,6 +26,9 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
     let(:verdicts_stub) { answer_relevancy_stubs[:verdicts] }
     let(:reason_stub) { answer_relevancy_stubs[:reason] }
 
+    it_behaves_like "an auto evaluation class that rescues BedrockOpenAIOssInvoke::InvalidToolCallError",
+                    %i[statements verdicts]
+
     it "returns a results object with the expected attributes" do
       allow(Clock).to receive(:monotonic_time)
                   .and_return(200.0, 202.0, 204.0, 206.0, 208.0, 210.0)
@@ -165,46 +168,6 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
 
         expect(result.score).to eq(score)
         expect(result.status).to eq("failure")
-      end
-    end
-
-    context "when a BedrockOpenAIOssInvoke::InvalidToolCallError is raised" do
-      let(:error_message) { "Some error message" }
-
-      it "returns a result object with the expected attributes" do
-        allow(AutoEvaluation::BedrockOpenAIOssInvoke).to receive(:call)
-                                             .and_raise(
-                                               AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError.new(error_message),
-                                             )
-
-        result = described_class.call(answer)
-
-        expect(result)
-          .to be_a(AutoEvaluation::Result)
-          .and have_attributes(
-            status: "error",
-            score: nil,
-            reason: nil,
-            error_message: error_message,
-            llm_responses: {},
-            metrics: {},
-          )
-      end
-
-      it "retains the llm_responses and metrics from any successful calls before the error is raised" do
-        allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0, 204.0, 206.0)
-        allow(described_class::ReasonGenerator).to receive(:call)
-                                               .and_raise(
-                                                 AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError.new(
-                                                   error_message,
-                                                 ),
-                                               )
-
-        result = described_class.call(answer)
-
-        expected_keys = %i[statements verdicts]
-        expect(result.llm_responses.keys).to eq(expected_keys)
-        expect(result.metrics.keys).to eq(expected_keys)
       end
     end
   end
