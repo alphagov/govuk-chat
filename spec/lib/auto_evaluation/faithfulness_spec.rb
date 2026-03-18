@@ -32,6 +32,9 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
     let(:verdicts_stub) { faithfulness_stubs[:verdicts] }
     let(:reason_stub) { faithfulness_stubs[:reason] }
 
+    it_behaves_like "an auto evaluation class that rescues BedrockOpenAIOssInvoke::InvalidToolCallError",
+                    %i[truths claims verdicts]
+
     it "returns a results object with the expected attributes" do
       allow(Clock).to receive(:monotonic_time)
                   .and_return(200.0, 202.0, 204.0, 206.0, 208.0, 210.0, 212.0, 214.0)
