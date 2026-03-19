@@ -42,44 +42,51 @@ module AnswerComposition
     end
 
     def replace_tokens_with_links(markdown)
-      doc = Kramdown::Document.new(markdown)
-      rewrite_links(doc.root)
+      doc = Commonmarker.parse(markdown)
+      rewrite_links(doc)
 
-      # `to_kramdown` adds 2 trailing newlines, so let's strip those
-      doc.to_kramdown.strip
+      # Strip any trailing newlines
+      doc.to_commonmark.strip
     end
 
   private
 
     def rewrite_links(element)
-      if element.type == :a
-        rewrite_link(element)
-      else
-        element.children.map!(&method(:rewrite_links))
-        element
+      element.walk do |child|
+        rewrite_link(child) if child.type == :link
       end
     end
 
     def rewrite_link(link_element)
-      token = link_element.attr["href"]
+      token = link_element.url
 
       if (url = link_for_token(token))
-        link_element.tap do |el|
-          el.attr["href"] = url
+        link_element.url = url
 
-          # If we have a link where the text is e.g. "link_1" then we should replace
-          # it with "source". Showing "link_1" to the user makes it seem like something
-          # is broken
-          el.children.each do |child|
-            child.value = "source" if child.value =~ /#{TOKEN_PREFIX}\d+/
-          end
+        # If we have a link where the text is e.g. "link_1" then we should replace
+        # it with "source". Showing "link_1" to the user makes it seem like something
+        # is broken
+        link_text = link_element.each.map(&:string_content).join
+        if link_text =~ /#{TOKEN_PREFIX}\d+/
+          # We need to delete all of the children, because a link with text of "link_1"
+          # actually contains three child text nodes: "link", "_", and "1"
+          link_element.each(&:delete)
+
+          # Create a new text node with the text "source" and make it the link node's
+          # only child
+          text_node = Commonmarker::Node.new(:text)
+          text_node.string_content = "source"
+          link_element.append_child(text_node)
         end
+
       else
         # We don't have the link mapping stored, so we want to strip out the link
-        # We can do this by just returning the first child of the link node, as that's
-        # everything that comes between the <a> tags, which might just be one text
-        # node or it might be a whole sub-tree of nodes
-        link_element.children.first
+        # We can do this by getting all of the link's children and moving them
+        # before the link, then deleting the link
+        link_element.each do |child|
+          link_element.insert_before(child)
+        end
+        link_element.delete
       end
     end
 

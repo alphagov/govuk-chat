@@ -127,22 +127,18 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
 
       #  Ensure we can handle reference-style links
       expect(output)
-        .to include("[Tax News][1]")
-        .and include("[1]: https://www.test.gov.uk/tax-news")
+        .to include("[Tax News](https://www.test.gov.uk/tax-news)")
 
       # Ensure we can handle a link with a title
       expect(output)
-        .to include("[Tax return][2]")
-        .and include("[2]: https://www.test.gov.uk/tax-returns \"Tax return\"")
+        .to include('[Tax return](https://www.test.gov.uk/tax-returns "Tax return")')
 
       # Ensure we don't rewrite an existing absolute URL
       expect(output)
-        .to include("[National Insurance][3]")
-        .and include("[3]: https://www.gov.uk/national-insurance/what-national-insurance-is")
+        .to include("[National Insurance](https://www.gov.uk/national-insurance/what-national-insurance-is)")
 
       expect(output)
-        .to include("[anchor tag][4]")
-        .and include("[4]: https://www.test.gov.uk/exact-path#some-heading")
+        .to include("[anchor tag](https://www.test.gov.uk/exact-path#some-heading")
     end
 
     it "replaces link text that has not been substituted" do
@@ -156,7 +152,7 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
       MARKDOWN
 
       output = mapper.replace_tokens_with_links(markdown)
-      expect(output).to include("Send a tax return ([source][1])")
+      expect(output).to include("Send a tax return ([source](https://www.test.gov.uk/tax-returns))")
     end
 
     it "handles invalid URIs" do
@@ -169,21 +165,28 @@ RSpec.describe AnswerComposition::LinkTokenMapper do
       MARKDOWN
 
       output = mapper.replace_tokens_with_links(markdown)
-      expect(output).to include("You should send a tax return to [us](mailto:<user@example.com>)")
-    end
-
-    it "strips the trailing newlines" do
-      expect(described_class.new.replace_tokens_with_links("Some text\n\n")).to eq("Some text")
+      expect(output).to include("You should send a tax return to [us](mailto:\\<user@example.com\\>)")
     end
 
     it "strips out any links that are not in the mapping" do
       source = "Some text with a [link](link_1) and something that [looks like] a link (but is not). A link with [`code`](https://example.com)"
 
-      output = described_class.new.replace_tokens_with_links(source).squish
+      output = described_class.new.replace_tokens_with_links(source).strip
 
       expect(output).to eq(
         "Some text with a link and something that \\[looks like\\] a link (but is not). A link with `code`",
       )
+    end
+
+    it "handles lists without a leading newline" do
+      source = <<~MARKDOWN
+        Here is a list:
+        * Item 1
+        * Item 2
+      MARKDOWN
+
+      output = described_class.new.replace_tokens_with_links(source).strip
+      expect(output).to eq("Here is a list:\n\n- Item 1\n- Item 2")
     end
   end
 

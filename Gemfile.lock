@@ -916,6 +916,7 @@ DEPENDENCIES
   chartkick
   climate_control
   committee
+  commonmarker
   csv
   dalli
   dartsass-rails
@@ -939,7 +940,6 @@ DEPENDENCIES
   inline_svg
   json-schema
   kaminari
-  kramdown
   nokogiri
   openapi3_parser
   opensearch-ruby
