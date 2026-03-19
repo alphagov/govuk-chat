@@ -66,7 +66,8 @@ namespace :evaluation do
 
     raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/
 
-    puts(answer.serialize_for_evaluation.to_json)
+    index = Search::ChunkedContentRepository.new.index
+    puts(answer.serialize_for_evaluation.merge("opensearch_index" => index).to_json)
   end
 
   desc "Produce the output of question routing for a user input"
