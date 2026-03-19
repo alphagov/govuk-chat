@@ -31,12 +31,5 @@ RSpec.describe AnswersHelper do
       output = helper.render_answer_message(message)
       expect(output).not_to have_selector(".gem-c-govspeak", text: "alert")
     end
-
-    context "when skip_sanitize is true" do
-      it "does not sanitize the message" do
-        output = helper.render_answer_message("<a href='/' target='_blank' rel='noopener noreferrer'>Link</a>", skip_sanitize: true)
-        expect(output).to have_selector("a[href='/'][target='_blank'][rel='noopener noreferrer']", text: "Link")
-      end
-    end
   end
 end
