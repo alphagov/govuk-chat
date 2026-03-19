@@ -12,11 +12,11 @@ RSpec.describe AutoEvaluation::Faithfulness::TruthsGenerator, :aws_credentials_s
         retrieval_context:,
       )
     end
-    let(:tools) { [prompts.fetch(:tool_spec)] }
+    let(:tool) { prompts.fetch(:tool_spec) }
     let!(:stub_bedrock) do
       stub_bedrock_invoke_model_openai_oss_tool_call(
         user_prompt,
-        tools,
+        tool,
         truths_json,
       )
     end

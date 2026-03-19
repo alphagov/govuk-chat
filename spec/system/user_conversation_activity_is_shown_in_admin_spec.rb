@@ -52,7 +52,7 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
     stub_claude_question_routing(@question)
     stub_claude_structured_answer(@question, @answer)
     stub_claude_output_guardrails(@answer, "False | None")
-    stub_claude_messages_topic_tagger(@question)
+    stub_bedrock_invoke_model_openai_oss_topic_tagger(@question)
     stub_bedrock_invoke_model_openai_oss_answer_relevancy(
       question_message: @question,
       answer_message: @answer,

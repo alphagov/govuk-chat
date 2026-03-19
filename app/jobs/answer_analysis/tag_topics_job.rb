@@ -1,7 +1,5 @@
 module AnswerAnalysis
   class TagTopicsJob < BaseJob
-    retry_on Anthropic::Errors::APIError, wait: 1.minute, attempts: MAX_RETRIES
-
     def perform(answer_id)
       answer = Answer.includes(:topics, question: :conversation).find_by(id: answer_id)
 

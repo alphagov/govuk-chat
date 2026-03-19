@@ -432,6 +432,31 @@ RSpec.describe "rake evaluation tasks" do
           .to output("#{result.to_json}\n").to_stdout
       end
     end
+
+    context "when an InvalidToolCallError is raised" do
+      it "catches the error and outputs the correct json" do
+        ClimateControl.modify(INPUT: input) do
+          allow(AutoEvaluation::TopicTagger).to receive(:call)
+                                            .with(input)
+                                            .and_raise(
+                                              AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError.new(
+                                                "LLM did not return valid JSON that conformed to the schema.",
+                                              ),
+                                            )
+
+          expected_result = {
+            primary_topic: "invalid_tool_output",
+            secondary_topics: nil,
+            metrics: {},
+            llm_response: {},
+            error_message: "LLM did not return valid JSON that conformed to the schema.",
+          }.to_json
+
+          expect { Rake::Task[task_name].invoke }
+            .to output("#{expected_result}\n").to_stdout
+        end
+      end
+    end
   end
 
   describe "batch_process" do

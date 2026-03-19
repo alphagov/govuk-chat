@@ -9,7 +9,7 @@ module AutoEvaluation
     end
 
     def call
-      result = BedrockOpenAIOssInvoke.call(user_prompt, tools)
+      result = BedrockOpenAIOssInvoke.call(user_message:, tool:)
       [result.evaluation_data.fetch("reason"), result.llm_response, result.metrics]
     end
 
@@ -23,7 +23,7 @@ module AutoEvaluation
              .fetch(:reason)
     end
 
-    def user_prompt
+    def user_message
       sprintf(
         llm_prompts.fetch(:user_prompt),
         score:,
@@ -32,8 +32,8 @@ module AutoEvaluation
       )
     end
 
-    def tools
-      [llm_prompts.fetch(:tool_spec)]
+    def tool
+      llm_prompts.fetch(:tool_spec)
     end
 
     def unsuccessful_verdicts_reasons
