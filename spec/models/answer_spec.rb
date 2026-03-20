@@ -220,31 +220,39 @@ RSpec.describe Answer do
     expect(label_config.keys).to match_array(enum_values)
   end
 
-  it "ensures the question routing labels enum values and prompt config are in sync" do
+  it "ensures that each question_routing_label enum value used by Claude has prompt configuration" do
     claude_supported_models = AnswerComposition::Pipeline::Claude::QuestionRouter::SUPPORTED_MODELS.map(&:to_s)
-    claude_question_routing_prompt_configs = Rails.configuration
-                                                  .govuk_chat_private
-                                                  .llm_prompts
-                                                  .claude
-                                                  .question_routing
-                                                  .select { |key, _| key.in?(claude_supported_models) }
-                                                  .values
+    prompt_configs = Rails.configuration
+                          .govuk_chat_private
+                          .llm_prompts
+                          .claude
+                          .question_routing
+                          .select { |key, _| key.in?(claude_supported_models) }
+                          .values
 
-    openai_question_routing_prompt_config = Rails.configuration
-                                                 .govuk_chat_private
-                                                 .llm_prompts
-                                                 .openai
-                                                 .question_routing
-
-    prompt_configs = claude_question_routing_prompt_configs + [openai_question_routing_prompt_config]
-    enum_values = described_class.question_routing_labels.values
+    enum_values = described_class.question_routing_labels.except(:multi_questions, :personal_info, :vague_acronym_grammar).values
 
     prompt_configs.each do |prompt_config|
       classification_names = prompt_config[:classifications].map { |classification| classification[:name] }
 
-      classification_names.each do |classification_name|
-        expect(enum_values).to include(classification_name)
+      enum_values.each do |enum_value|
+        expect(classification_names).to include(enum_value)
       end
+    end
+  end
+
+  it "ensures that each question_routing_label enum value used by OpenAI has prompt configuration" do
+    prompt_config = Rails.configuration
+                         .govuk_chat_private
+                         .llm_prompts
+                         .openai
+                         .question_routing
+
+    enum_values = described_class.question_routing_labels.except(:about_chat, :requires_account_data, :unclear_intent).values
+    classification_names = prompt_config[:classifications].map { |classification| classification[:name] }
+
+    enum_values.each do |enum_value|
+      expect(classification_names).to include(enum_value)
     end
   end
 
