@@ -151,6 +151,39 @@ RSpec.describe Search::ChunkedContentRepository, :chunked_content_index do
     end
   end
 
+  describe "#delete_by_content_id" do
+    let(:record_a) { build(:chunked_content_record, content_id: "00000000-0000-0000-0000-000000000000") }
+    let(:record_b) { build(:chunked_content_record, content_id: "00000000-0000-0000-0000-000000000000") }
+    let(:record_c) { build(:chunked_content_record, content_id: "11111111-1111-1111-1111-111111111111") }
+
+    before do
+      populate_chunked_content_index([record_a, record_b, record_c])
+    end
+
+    it "can delete a single document by content_id" do
+      expect { repository.delete_by_content_id(record_c[:content_id]) }
+        .to change { repository.count(term: { content_id: record_c[:content_id] }) }
+        .by(-1)
+    end
+
+    it "can delete a multiple documents by content_id" do
+      expect { repository.delete_by_content_id(record_a[:content_id]) }
+        .to change { repository.count(term: { content_id: record_a[:content_id] }) }
+        .by(-2)
+    end
+
+    it "returns the number of documents deleted" do
+      expect(repository.delete_by_content_id(record_a[:content_id])).to eq(2)
+    end
+
+    it "doesn't raise an error if there are no documents to delete" do
+      result = nil
+      expect { result = repository.delete_by_content_id(SecureRandom.uuid) }
+        .not_to raise_error
+      expect(result).to eq(0)
+    end
+  end
+
   describe "#index_document" do
     it "can add a new document to the index" do
       expect { repository.index_document("id1", { base_path: "/a" }) }
