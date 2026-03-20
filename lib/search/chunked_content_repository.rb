@@ -109,6 +109,16 @@ module Search
       result["deleted"]
     end
 
+    def delete_by_content_id(content_id)
+      result = client.delete_by_query(
+        index:,
+        body: { query: { term: { content_id: } } },
+        refresh: default_refresh_writes,
+      )
+
+      result["deleted"]
+    end
+
     def index_document(id, document)
       result = client.index(index:, id:, body: document, refresh: default_refresh_writes)
       result["result"].to_sym
