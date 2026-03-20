@@ -5,7 +5,7 @@ namespace :slack do
   end
 
   desc "Post the Chat activity for the previous day to the Slack channel"
-  task :send_previous_days_activity, [:message] => :environment do
+  task send_previous_days_activity: :environment do
     SlackPoster.previous_days_api_activity
   end
 end
