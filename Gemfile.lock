@@ -140,7 +140,7 @@ GEM
     chartkick (5.2.1)
     climate_control (1.2.0)
     coderay (1.1.3)
-    committee (5.6.1)
+    committee (5.6.2)
       json_schema (~> 0.14, >= 0.14.3)
       openapi_parser (~> 2.0)
       rack (>= 1.5)
@@ -443,7 +443,7 @@ GEM
       omniauth (~> 2.0)
     openapi3_parser (0.10.1)
       commonmarker (>= 1.0)
-    openapi_parser (2.3.0)
+    openapi_parser (2.3.1)
     opensearch-ruby (3.4.0)
       faraday (>= 1.0, < 3)
       multi_json (>= 1.0)
@@ -999,7 +999,7 @@ CHECKSUMS
   chartkick (5.2.1) sha256=2848d7de87189f30f28d077eb0bbdebc8a1f0f6f81de1ded95008fe564369949
   climate_control (1.2.0) sha256=36b21896193fa8c8536fa1cd843a07cf8ddbd03aaba43665e26c53ec1bd70aa5
   coderay (1.1.3) sha256=dc530018a4684512f8f38143cd2a096c9f02a1fc2459edcfe534787a7fc77d4b
-  committee (5.6.1) sha256=464d99be2efdddfbce4f7658899b84b92c5ac790bc66971397c94acccff06a50
+  committee (5.6.2) sha256=4a0a7250962a4178878b48c33a2400822906f502f86b8a3cd82fe6c413a20341
   commonmarker (2.7.0) sha256=191d11b43d285314b696fb1debf2e3fbe5d02e481dec956ef49ba590a9d86014
   commonmarker (2.7.0-aarch64-linux) sha256=a15a47bb901f4cfcb3b4fe54d0daf91ec46e70b6e9704c67abec0ba30064b2dc
   commonmarker (2.7.0-arm-linux) sha256=85274d47feca40bd574ac49c2959a015464936f7f830c1e2918ee147d5be1a13
@@ -1122,7 +1122,7 @@ CHECKSUMS
   omniauth (2.1.3) sha256=8d24e2e55c41926c96e4a93fd566bc026dfd6f2c850408748e89945a565956c2
   omniauth-oauth2 (1.8.0) sha256=b2f8e9559cc7e2d4efba57607691d6d2b634b879fc5b5b6ccfefa3da85089e78
   openapi3_parser (0.10.1) sha256=e373bfcec1f183252a51fbe28787b52c4052e045697bae1778258bb9b3296a19
-  openapi_parser (2.3.0) sha256=5273a92984ed596474b625293eb1879a41c2f72da18948c03d2c40ecb65dca55
+  openapi_parser (2.3.1) sha256=c5415a8123c148692617a607a086f71e26d843339aa0bfa10c24e18d446d5e8b
   opensearch-ruby (3.4.0) sha256=0a8621686bed3c59b4c23e08cbaef873685a3fe4568e9d2703155ca92b8ca05d
   opentelemetry-api (1.8.0) sha256=3af51183daf0f56a164bc1579782245be70a40678566b9a393cbe5af28ea87c6
   opentelemetry-common (0.23.0) sha256=da721190479d57bae0ad2207468f47f3e2c3b9a91024b5bc32c9d280183eb32c
