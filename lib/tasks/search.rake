@@ -81,4 +81,16 @@ namespace :search do
 
     puts "#{indexed} chunks indexed"
   end
+
+  desc "Remove all chunks configured to be excluded from the index"
+  task delete_all_excluded_chunks: :environment do
+    count = 0
+
+    content_ids = Rails.configuration.govuk_chat_private.indexing_excluded_content_ids
+    content_ids.each do |content_id|
+      count += Search::ChunkedContentRepository.new.delete_by_content_id(content_id)
+    end
+
+    puts "#{count} chunks deleted"
+  end
 end

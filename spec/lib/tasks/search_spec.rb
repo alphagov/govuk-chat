@@ -130,4 +130,29 @@ RSpec.describe "rake search tasks" do
       .to output("Adding missing content mappings\nNo mappings were added\n").to_stdout
     end
   end
+
+  describe "search:delete_all_excluded_chunks" do
+    let(:task_name) { "search:delete_all_excluded_chunks" }
+    let(:repo) { instance_double(Search::ChunkedContentRepository) }
+
+    before do
+      Rake::Task[task_name].reenable
+      allow(Rails.configuration.govuk_chat_private).to receive(:indexing_excluded_content_ids).and_return(
+        Set.new([SecureRandom.uuid, SecureRandom.uuid]),
+      )
+      allow(repo).to receive(:delete_by_content_id).and_return(5, 10)
+      allow(Search::ChunkedContentRepository).to receive(:new).and_return(repo)
+    end
+
+    it "delegates the task to Search::ChunkedContentRepository" do
+      expect { Rake::Task[task_name].invoke }.to output.to_stdout
+
+      expect(repo).to have_received(:delete_by_content_id).twice
+    end
+
+    it "outputs the number of deleted chunks to stdout" do
+      expect { Rake::Task[task_name].invoke }
+        .to output("15 chunks deleted\n").to_stdout
+    end
+  end
 end
