@@ -13,6 +13,9 @@ module Chunking
     end
 
     def self.non_indexable_content_item_reason(content_item)
+      excluded = Rails.configuration.govuk_chat_private.indexing_excluded_content_ids.include?(content_item["content_id"])
+      return "content_id: #{content_item['content_id']} is excluded from indexing" if excluded
+
       schema_name = content_item["schema_name"]
       schema_config = Rails.configuration.search.document_types_by_schema[schema_name]
       return "#{schema_name} is not a supported schema" unless schema_config
