@@ -46,6 +46,8 @@ class AutoEvaluation::ContextRelevancy
       llm_responses:,
       metrics:,
     )
+  rescue AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError => e
+    build_error_result(e.message)
   end
 
 private

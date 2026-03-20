@@ -26,6 +26,9 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
     let(:verdicts_stub) { answer_relevancy_stubs[:verdicts] }
     let(:reason_stub) { answer_relevancy_stubs[:reason] }
 
+    it_behaves_like "an auto evaluation class that rescues BedrockOpenAIOssInvoke::InvalidToolCallError",
+                    %i[statements verdicts]
+
     it "returns a results object with the expected attributes" do
       allow(Clock).to receive(:monotonic_time)
                   .and_return(200.0, 202.0, 204.0, 206.0, 208.0, 210.0)

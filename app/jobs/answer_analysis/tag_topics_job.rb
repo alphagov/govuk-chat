@@ -13,8 +13,10 @@ module AnswerAnalysis
       result = AutoEvaluation::TopicTagger.call(answer.question_used)
 
       topics = answer.build_topics(
+        status: result.status,
         primary_topic: result.primary_topic,
         secondary_topic: result.secondary_topic,
+        error_message: result.error_message,
       )
       topics.assign_metrics("topic_tagger", result.metrics)
       topics.assign_llm_response("topic_tagger", result.llm_response)

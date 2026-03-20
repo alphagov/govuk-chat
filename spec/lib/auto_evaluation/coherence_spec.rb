@@ -8,6 +8,7 @@ RSpec.describe AutoEvaluation::Coherence, :aws_credentials_stubbed do
     let(:reason) { "This is the reason for the score." }
     let(:llm_response) { { score: 3, reason: } }
 
+    it_behaves_like "an auto evaluation class that rescues BedrockOpenAIOssInvoke::InvalidToolCallError"
     it "returns a results object with the expected attributes" do
       allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0)
       stub = stub_bedrock_invoke_model_openai_oss_coherence(
@@ -57,6 +58,30 @@ RSpec.describe AutoEvaluation::Coherence, :aws_credentials_stubbed do
         expected_status = expected_score >= described_class::THRESHOLD ? "success" : "failure"
         expect(result.score).to eq(expected_score)
         expect(result.status).to eq(expected_status)
+      end
+    end
+
+    context "when a BedrockOpenAIOssInvoke::InvalidToolCallError is raised" do
+      let(:error_message) { "Some error message" }
+
+      it "returns a result object with the expected attributes" do
+        allow(AutoEvaluation::BedrockOpenAIOssInvoke).to receive(:call)
+                                             .and_raise(
+                                               AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError.new(error_message),
+                                             )
+
+        result = described_class.call(answer)
+
+        expect(result)
+          .to be_a(AutoEvaluation::Result)
+          .and have_attributes(
+            status: "error",
+            score: nil,
+            reason: nil,
+            error_message: error_message,
+            llm_responses: {},
+            metrics: {},
+          )
       end
     end
   end

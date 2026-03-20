@@ -423,6 +423,7 @@ RSpec.describe "rake evaluation tasks" do
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input) do
         result = AutoEvaluation::TopicTagger::Result.new(
+          status: "success",
           primary_topic: "tax",
           secondary_topic: "benefits",
           metrics: {},
@@ -435,20 +436,26 @@ RSpec.describe "rake evaluation tasks" do
       end
     end
 
-    context "when an InvalidToolCallError is raised" do
-      it "catches the error and outputs the correct json" do
+    context "when the result has an error status" do
+      it "sets the primary_topic to 'invalid_tool_output'" do
         ClimateControl.modify(INPUT: input) do
           allow(AutoEvaluation::TopicTagger).to receive(:call)
                                             .with(input)
-                                            .and_raise(
-                                              AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError.new(
-                                                "LLM did not return valid JSON that conformed to the schema.",
+                                            .and_return(
+                                              AutoEvaluation::TopicTagger::Result.new(
+                                                status: "error",
+                                                primary_topic: nil,
+                                                secondary_topic: nil,
+                                                metrics: {},
+                                                llm_response: {},
+                                                error_message: "LLM did not return valid JSON that conformed to the schema.",
                                               ),
                                             )
 
           expected_result = {
+            status: "error",
             primary_topic: "invalid_tool_output",
-            secondary_topics: nil,
+            secondary_topic: nil,
             metrics: {},
             llm_response: {},
             error_message: "LLM did not return valid JSON that conformed to the schema.",

@@ -34,6 +34,8 @@ class AutoEvaluation::AnswerRelevancy
     )
 
     build_result_with_score(score, reason)
+  rescue AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError => e
+    build_error_result(e.message)
   end
 
 private

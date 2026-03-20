@@ -8,6 +8,7 @@ RSpec.describe AutoEvaluation::TopicTagger, :aws_credentials_stubbed do
       expect(result)
         .to be_a(AutoEvaluation::TopicTagger::Result)
         .and have_attributes(
+          status: "success",
           primary_topic: "business",
           secondary_topic: "benefits",
         )
@@ -31,6 +32,23 @@ RSpec.describe AutoEvaluation::TopicTagger, :aws_credentials_stubbed do
           llm_cached_tokens: 10,
           model: BedrockModels.model_id(:openai_gpt_oss_120b),
         })
+    end
+
+    it "returns an error result if an InvalidToolCallError is raised" do
+      allow(AutoEvaluation::BedrockOpenAIOssInvoke)
+        .to receive(:call)
+        .and_raise(AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError.new("invalid tool output"))
+
+      result = described_class.call(user_question)
+
+      expect(result).to have_attributes(
+        status: "error",
+        error_message: "invalid tool output",
+        primary_topic: nil,
+        secondary_topic: nil,
+        metrics: {},
+        llm_response: {},
+      )
     end
   end
 end
