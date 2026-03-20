@@ -107,6 +107,7 @@ class Answer < ApplicationRecord
          positive_acknowledgement: "positive_acknowledgement",
          vague_acronym_grammar: "vague_acronym_grammar",
          unclear_intent: "unclear_intent",
+         mental_health_crisis_signposting: "mental_health_crisis_signposting",
        },
        prefix: true
 

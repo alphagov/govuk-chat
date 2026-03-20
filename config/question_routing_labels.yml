@@ -118,3 +118,18 @@ unclear_intent:
   answer_status: clarification
   canned_responses:
     - "Sorry, I experienced a technical error while trying to answer your question. Please try again."
+
+mental_health_crisis_signposting:
+  label: "Mental health crisis signposting"
+  use_answer: false
+  answer_status: unanswerable_question_routing
+  canned_responses:
+    - |
+      It sounds like you may be in a difficult situation. Please contact one of these organisations for free help and support:
+
+      + Samaritans: call 116 123 to speak to someone
+      + Give Us A Shout crisis textline: text SHOUT to 85258
+      + NHS 111: call 111 for non-emergency medical support
+      + 999: call if you or someone else is in immediate danger
+
+      You can also [find support services in your local area](https://www.gov.uk/guidance/district-provision-tool/suicide-and-self-harm).
