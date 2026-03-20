@@ -1,4 +1,6 @@
 class DailyApiActivityMessage
+  MONITORING_DOC_URL = "https://docs.google.com/document/d/157tV576o_wtT1cpLfrTrmi69iEpDF3RHMIV0gZ4kXyQ/edit?tab=t.1lz7ego30e03#heading=h.eup61djfwacw".freeze
+
   def initialize(date)
     @date = date
   end
@@ -57,7 +59,7 @@ private
     <<~MSG.strip
       #{monitoring_users.join("\n")}
 
-      Guidance on the daily monitoring of Chat can be found <https://docs.google.com/document/d/1OijsFLKh7azOmOFMWlyZWoqW4PNmE-gffXlPE-qito8/edit?tab=t.0|here>.
+      Guidance on the daily monitoring of Chat can be found <#{MONITORING_DOC_URL}|here>.
     MSG
   end
 

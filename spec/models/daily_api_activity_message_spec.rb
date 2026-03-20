@@ -74,7 +74,7 @@ RSpec.describe DailyApiActivityMessage do
             Alice (@alice) - it's your turn to be responsible for monitoring Chat.
             Bob (@bob) - it's your turn tomorrow. Let us know if you're unavailable for your slot so we can find a backup person.
 
-            Guidance on the daily monitoring of Chat can be found <https://docs.google.com/document/d/1OijsFLKh7azOmOFMWlyZWoqW4PNmE-gffXlPE-qito8/edit?tab=t.0|here>.
+            Guidance on the daily monitoring of Chat can be found <#{described_class::MONITORING_DOC_URL}|here>.
           MSG
 
           expect(message).to eq(expected_message)
@@ -101,7 +101,7 @@ RSpec.describe DailyApiActivityMessage do
 
             Alice (@alice) - it's your turn to be responsible for monitoring Chat.
 
-            Guidance on the daily monitoring of Chat can be found <https://docs.google.com/document/d/1OijsFLKh7azOmOFMWlyZWoqW4PNmE-gffXlPE-qito8/edit?tab=t.0|here>.
+            Guidance on the daily monitoring of Chat can be found <#{described_class::MONITORING_DOC_URL}|here>.
           MSG
 
           expect(message).to eq(expected_message)
