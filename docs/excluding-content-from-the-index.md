@@ -2,7 +2,7 @@
 
 Sometimes we might want to exclude content from being indexed, for example if the content contains PII.
 
-To exclude a content item by its `content_id`, you need to add the content ID to the `indexing_excluded_content_ids.yml` file in the `govuk_chat_private` repo.
+To exclude a content item by its `content_id`, you need to add the content ID to the [indexing_excluded_content_ids.yml](https://github.com/alphagov/govuk_chat_private/blob/main/config/indexing_excluded_content_ids.yml) file in the [govuk_chat_private](https://github.com/alphagov/govuk_chat_private) repo.
 
 ## Manually deleting content from the index
 
