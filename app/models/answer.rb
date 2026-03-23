@@ -99,15 +99,15 @@ class Answer < ApplicationRecord
          gov_transparency: "gov_transparency",
          greetings: "greetings",
          harmful_vulgar_controversy: "harmful_vulgar_controversy",
+         mental_health_crisis_signposting: "mental_health_crisis_signposting",
          multi_questions: "multi_questions",
          negative_acknowledgement: "negative_acknowledgement",
          non_english: "non_english",
          personal_info: "personal_info",
-         requires_account_data: "requires_account_data",
          positive_acknowledgement: "positive_acknowledgement",
+         requires_account_data: "requires_account_data",
          vague_acronym_grammar: "vague_acronym_grammar",
          unclear_intent: "unclear_intent",
-         mental_health_crisis_signposting: "mental_health_crisis_signposting",
        },
        prefix: true
 
