@@ -24,7 +24,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
     before { context.search_results = [search_result] }
 
     shared_examples "llm cannot answer the question" do |options|
-      it "aborts the pipeline and sets the answer's status and message correctly" do
+      it "aborts the pipeline and sets the answer's attributes correctly" do
         stub_claude_structured_answer(
           question.message,
           "Sorry I cannot answer that question.",
@@ -34,6 +34,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
         expect { described_class.call(context) }.to throw_symbol(:abort)
           .and change { context.answer.status }.to("unanswerable_llm_cannot_answer")
           .and change { context.answer.message }.to(Answer::CannedResponses::LLM_CANNOT_ANSWER_MESSAGE)
+          .and change { context.answer.completeness }.to(options[:answer_completeness])
       end
 
       it "sets sources used to false for all sources" do
@@ -110,15 +111,19 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
       end
     end
 
-    it "uses Claude via Anthropic to assign the correct values to the context's answer" do
-      answer = "VAT (Value Added Tax) is a tax applied to most goods and services in the UK."
-      stub_claude_structured_answer(question.message, answer)
+    describe "with valid answer_completeness values" do
+      %w[complete partial].each do |answer_completeness|
+        it "uses Claude via Anthropic to assign the correct values to the context's answer" do
+          answer = "VAT (Value Added Tax) is a tax applied to most goods and services in the UK."
+          stub_claude_structured_answer(question.message, answer, answer_completeness: answer_completeness)
 
-      described_class.call(context)
+          described_class.call(context)
 
-      expect(context.answer.message.squish).to eq(answer)
-      expect(context.answer)
-        .to have_attributes(status: "answered", completeness: "complete")
+          expect(context.answer.message.squish).to eq(answer)
+          expect(context.answer)
+            .to have_attributes(status: "answered", completeness: answer_completeness)
+        end
+      end
     end
 
     it "stores the LLM response" do
@@ -194,11 +199,11 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
         .and change { context.answer.sources.first.used }.to(false)
     end
 
-    context "when answered is false" do
+    context "when answer_completeness is not a successful value" do
       include_examples "llm cannot answer the question", {
         answered: false,
         sources_used: [],
-        answer_completeness: "incomplete",
+        answer_completeness: "no_information",
       }
     end
 
