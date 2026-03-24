@@ -1,11 +1,16 @@
 <%
+  items = []
+
   runs_with_scores = runs.reject(&:error?)
-  mean_score = runs_with_scores.any? ? runs_with_scores.map(&:score).sum / runs_with_scores.count : nil
-  items = [
-    {
+  unless runs_with_scores.empty?
+    mean_score = runs_with_scores.sum(&:score) / runs_with_scores.size.to_f
+    items += [{
       field: "Mean score",
       value: mean_score,
-    },
+    }]
+  end
+
+  items += [
     {
       field: "Successful run count",
       value: runs.count(&:success?),
@@ -48,54 +53,62 @@
   items: items,
 } %>
 
-<%= render "govuk_publishing_components/components/details", {
-  title: "LLM responses",
-} do %>
-  <% runs.each.with_index(1) do |run, index| %>
-    <%= render "govuk_publishing_components/components/heading", {
-      text: "Run #{index}",
-      font_size: "m",
-      heading_level: 2,
-      margin_bottom: 4,
-    } %>
+<% unless runs.all? { |run| run.llm_responses.empty? } %>
+  <%= render "govuk_publishing_components/components/details", {
+    title: "LLM responses",
+  } do %>
+    <% runs.each.with_index(1) do |run, index| %>
+      <% if run.llm_responses.present? %>
+        <%= render "govuk_publishing_components/components/heading", {
+          text: "Run #{index}",
+          font_size: "m",
+          heading_level: 2,
+          margin_bottom: 4,
+        } %>
 
-    <% (run.llm_responses || {}).each do |namespace, response| %>
-      <%= render "govuk_publishing_components/components/heading", {
-        text: namespace.capitalize,
-        font_size: "s",
-        heading_level: 3,
-      } %>
+        <% run.llm_responses.each do |namespace, response| %>
+          <%= render "govuk_publishing_components/components/heading", {
+            text: namespace.capitalize,
+            font_size: "s",
+            heading_level: 3,
+          } %>
 
-      <p class="govuk-body">
-        <%= render("components/code_snippet", content: JSON.pretty_generate(response)) %>
-      </p>
+          <p class="govuk-body">
+            <%= render("components/code_snippet", content: JSON.pretty_generate(response)) %>
+          </p>
+        <% end %>
+      <% end %>
     <% end %>
   <% end %>
 <% end %>
 
-<%= render "govuk_publishing_components/components/details", {
-  title: "Metrics",
-} do %>
-  <% runs.each.with_index(1) do |run, index| %>
-    <%= render "govuk_publishing_components/components/heading", {
-      text: "Run #{index}",
-      font_size: "m",
-      heading_level: 2,
-    } %>
+<% unless runs.all? { |run| run.metrics.empty? } %>
+  <%= render "govuk_publishing_components/components/details", {
+    title: "Metrics",
+  } do %>
+    <% runs.each.with_index(1) do |run, index| %>
+      <% if run.metrics.present? %>
+        <%= render "govuk_publishing_components/components/heading", {
+          text: "Run #{index}",
+          font_size: "m",
+          heading_level: 2,
+        } %>
 
-    <% (run.metrics || {}).sort.each do |namespace, metrics| %>
-      <%= render "govuk_publishing_components/components/summary_list", {
-        title: namespace.capitalize,
-        items: metrics.map do |metric, value|
-          {
-            field: metric,
-            value: value,
-          }
-        end,
-        borderless: true,
-        heading_size: "s",
-        margin_bottom: 6,
-      } %>
+        <% run.metrics.sort.each do |namespace, metrics| %>
+          <%= render "govuk_publishing_components/components/summary_list", {
+            title: namespace.capitalize,
+            items: metrics.map do |metric, value|
+              {
+                field: metric,
+                value: value,
+              }
+            end,
+            borderless: true,
+            heading_size: "s",
+            margin_bottom: 6,
+          } %>
+        <% end %>
+      <% end %>
     <% end %>
   <% end %>
 <% end %>
