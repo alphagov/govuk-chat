@@ -1,6 +1,6 @@
 <%
   runs_with_scores = runs.reject(&:error?)
-  mean_score = runs_with_scores.map(&:score).sum / runs_with_scores.count
+  mean_score = runs_with_scores.any? ? runs_with_scores.map(&:score).sum / runs_with_scores.count : nil
   items = [
     {
       field: "Mean score",
@@ -83,7 +83,7 @@
       heading_level: 2,
     } %>
 
-    <% run.metrics.sort.each do |namespace, metrics| %>
+    <% (run.metrics || {}).sort.each do |namespace, metrics| %>
       <%= render "govuk_publishing_components/components/summary_list", {
         title: namespace.capitalize,
         items: metrics.map do |metric, value|
