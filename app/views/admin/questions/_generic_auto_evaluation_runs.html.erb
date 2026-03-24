@@ -59,7 +59,7 @@
       margin_bottom: 4,
     } %>
 
-    <% run.llm_responses.each do |namespace, response| %>
+    <% (run.llm_responses || {}).each do |namespace, response| %>
       <%= render "govuk_publishing_components/components/heading", {
         text: namespace.capitalize,
         font_size: "s",
