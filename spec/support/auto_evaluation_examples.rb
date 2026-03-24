@@ -3,6 +3,11 @@ shared_examples "auto evaluation exportable runs" do
 
   describe "#serialize_for_export" do
     it "returns a serialized object for export" do
+      record = build(run_factory_name)
+      expect(record.serialize_for_export).to eq(record.as_json)
+    end
+
+    it "converts the llm_responses to unparsed JSON when present" do
       record = build(
         run_factory_name,
         llm_responses: {

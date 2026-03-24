@@ -9,6 +9,8 @@ module AutoEvaluationResultsExportable
   end
 
   def serialize_for_export
+    return as_json if llm_responses.empty?
+
     as_json(except: :llm_responses).merge(
       "llm_responses" => llm_responses.to_json,
     )
