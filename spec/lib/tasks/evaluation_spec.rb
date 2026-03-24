@@ -317,14 +317,10 @@ RSpec.describe "rake evaluation tasks" do
                        question_routing_label: "unclear_intent",
                        question_routing_confidence_score: 0.2,
                        message: "Sorry, can you say that again?")
+        answer_json = answer.serialize_for_evaluation.to_json
         allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
-        expected_output = {
-          classification: "unclear_intent",
-          confidence_score: 0.2,
-          answer: "Sorry, can you say that again?",
-        }
         expect { Rake::Task[task_name].invoke("openai") }
-          .to output("#{expected_output.to_json}\n").to_stdout
+          .to output("#{answer_json}\n").to_stdout
       end
     end
 

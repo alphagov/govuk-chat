@@ -89,13 +89,7 @@ namespace :evaluation do
 
     raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/
 
-    result = {
-      classification: answer.question_routing_label,
-      confidence_score: answer.question_routing_confidence_score,
-      answer: answer.message,
-    }
-
-    puts(result.to_json)
+    puts(answer.serialize_for_evaluation.to_json)
   end
 
   desc "Query the index for results matching a user input"
