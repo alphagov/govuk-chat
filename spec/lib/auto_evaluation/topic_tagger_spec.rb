@@ -34,10 +34,10 @@ RSpec.describe AutoEvaluation::TopicTagger, :aws_credentials_stubbed do
         })
     end
 
-    it "returns an error result if an InvalidToolCallError is raised" do
+    it "returns an error result if an InvalidLlmResponseError is raised" do
       allow(AutoEvaluation::BedrockOpenAIOssInvoke)
         .to receive(:call)
-        .and_raise(AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError.new("invalid tool output"))
+        .and_raise(AutoEvaluation::BedrockOpenAIOssInvoke::InvalidLlmResponseError.new("invalid tool output"))
 
       result = described_class.call(user_question)
 

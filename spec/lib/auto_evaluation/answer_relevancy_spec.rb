@@ -26,7 +26,7 @@ RSpec.describe AutoEvaluation::AnswerRelevancy, :aws_credentials_stubbed do
     let(:verdicts_stub) { answer_relevancy_stubs[:verdicts] }
     let(:reason_stub) { answer_relevancy_stubs[:reason] }
 
-    it_behaves_like "an auto evaluation class that rescues BedrockOpenAIOssInvoke::InvalidToolCallError",
+    it_behaves_like "an auto evaluation class that rescues BedrockOpenAIOssInvoke::InvalidLlmResponseError",
                     %i[statements verdicts]
 
     it "returns a results object with the expected attributes" do

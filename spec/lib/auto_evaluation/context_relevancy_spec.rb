@@ -81,7 +81,7 @@ RSpec.describe AutoEvaluation::ContextRelevancy, :aws_credentials_stubbed do
       )
     end
 
-    it_behaves_like "an auto evaluation class that rescues BedrockOpenAIOssInvoke::InvalidToolCallError",
+    it_behaves_like "an auto evaluation class that rescues BedrockOpenAIOssInvoke::InvalidLlmResponseError",
                     %i[information_needs truths verdicts]
 
     it "returns a results object with the expected attributes" do

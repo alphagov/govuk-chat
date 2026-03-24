@@ -33,7 +33,7 @@ module AutoEvaluation
         metrics: result.metrics,
         llm_response: result.llm_response,
       )
-    rescue AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError => e
+    rescue AutoEvaluation::BedrockOpenAIOssInvoke::InvalidLlmResponseError => e
       Result.new(
         status: "error",
         primary_topic: nil,

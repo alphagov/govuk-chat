@@ -33,7 +33,7 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
                              "Error: #{error_class}, #{error_message}"
 
         expect { described_class.call(user_message:, tool:) }.to raise_error(
-          described_class::InvalidToolCallError,
+          described_class::InvalidLlmResponseError,
           /#{full_error_message}/,
         )
         expect(stub).to have_been_requested.times(described_class::MAX_ATTEMPTS)
@@ -53,7 +53,7 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
 
         expect {
           described_class.call(user_message:, tool:)
-        }.to raise_error(described_class::InvalidToolCallError)
+        }.to raise_error(described_class::InvalidLlmResponseError)
       end
 
       it "logs additional information when the error message (or class) changes between retries" do
@@ -95,7 +95,7 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
 
         expect {
           described_class.call(user_message: user_message, tool: tool)
-        }.to raise_error(described_class::InvalidToolCallError)
+        }.to raise_error(described_class::InvalidLlmResponseError)
       end
     end
 

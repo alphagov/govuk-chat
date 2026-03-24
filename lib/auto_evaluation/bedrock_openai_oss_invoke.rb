@@ -1,12 +1,17 @@
 module AutoEvaluation
   class BedrockOpenAIOssInvoke
-    class InvalidToolCallError < StandardError; end
+    class InvalidLlmResponseError < StandardError; end
     class MissingToolCallArgumentsError < StandardError; end
     class LengthLimitExceededError < StandardError; end
 
     delegate :logger, to: Rails
 
     MAX_ATTEMPTS = 3
+    RESCUABLE_ERRORS = [
+      JSON::ParserError,
+      JSON::Schema::ValidationError,
+      MissingToolCallArgumentsError,
+    ].freeze
 
     Result = Data.define(
       :evaluation_data,
@@ -63,7 +68,7 @@ module AutoEvaluation
             llm_response: parsed_response,
             metrics: build_metrics(start_time, parsed_response),
           )
-        rescue JSON::ParserError, JSON::Schema::ValidationError, MissingToolCallArgumentsError => e
+        rescue *RESCUABLE_ERRORS => e
           error_string = "#{e.class}, #{e.message}"
           full_error_message = "LLM did not return valid JSON that conformed to the schema. " \
                           "Attempt #{attempts}/#{MAX_ATTEMPTS}. Error: #{error_string}."
@@ -75,8 +80,9 @@ module AutoEvaluation
           logger.warn(full_error_message)
 
           if attempts >= MAX_ATTEMPTS
-            raise InvalidToolCallError, "LLM did not return valid JSON that conformed to the schema " \
-                                        "after #{MAX_ATTEMPTS} attempts. Error: #{error_string}"
+            raise InvalidLlmResponseError, "LLM did not return valid JSON that conformed to the schema " \
+                                           "after #{MAX_ATTEMPTS} attempts. Error: #{error_string}"
+
           end
 
           last_error = error_string
