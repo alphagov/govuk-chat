@@ -53,14 +53,14 @@ shared_examples "auto_evaluation create runs from auto evaluation results" do |r
   end
 end
 
-shared_examples "an auto evaluation class that rescues BedrockOpenAIOssInvoke::InvalidToolCallError" do |expected_llm_and_metric_keys = nil|
-  context "when a BedrockOpenAIOssInvoke::InvalidToolCallError is raised" do
+shared_examples "an auto evaluation class that rescues BedrockOpenAIOssInvoke::InvalidLlmResponseError" do |expected_llm_and_metric_keys = nil|
+  context "when a BedrockOpenAIOssInvoke::InvalidLlmResponseError is raised" do
     let(:error_message) { "Some error message" }
 
     it "returns a result object with the expected attributes" do
       allow(AutoEvaluation::BedrockOpenAIOssInvoke).to receive(:call)
                                            .and_raise(
-                                             AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError.new(error_message),
+                                             AutoEvaluation::BedrockOpenAIOssInvoke::InvalidLlmResponseError.new(error_message),
                                            )
 
       result = described_class.call(answer)
@@ -82,7 +82,7 @@ shared_examples "an auto evaluation class that rescues BedrockOpenAIOssInvoke::I
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0, 204.0, 206.0)
         allow(described_class::ReasonGenerator).to receive(:call)
                                               .and_raise(
-                                                AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError.new(
+                                                AutoEvaluation::BedrockOpenAIOssInvoke::InvalidLlmResponseError.new(
                                                   error_message,
                                                 ),
                                               )

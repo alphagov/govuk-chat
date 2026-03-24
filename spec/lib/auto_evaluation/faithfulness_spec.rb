@@ -32,7 +32,7 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
     let(:verdicts_stub) { faithfulness_stubs[:verdicts] }
     let(:reason_stub) { faithfulness_stubs[:reason] }
 
-    it_behaves_like "an auto evaluation class that rescues BedrockOpenAIOssInvoke::InvalidToolCallError",
+    it_behaves_like "an auto evaluation class that rescues BedrockOpenAIOssInvoke::InvalidLlmResponseError",
                     %i[truths claims verdicts]
 
     it "returns a results object with the expected attributes" do

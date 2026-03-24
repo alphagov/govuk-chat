@@ -19,7 +19,7 @@ module AutoEvaluation
         llm_responses: { coherence: result.llm_response },
         metrics: { coherence: result.metrics },
       )
-    rescue AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError => e
+    rescue AutoEvaluation::BedrockOpenAIOssInvoke::InvalidLlmResponseError => e
       AutoEvaluation::Result.new(
         status: "error",
         error_message: e.message,

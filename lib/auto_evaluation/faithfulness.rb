@@ -35,7 +35,7 @@ class AutoEvaluation::Faithfulness
     )
 
     build_result_with_score(score, reason)
-  rescue AutoEvaluation::BedrockOpenAIOssInvoke::InvalidToolCallError => e
+  rescue AutoEvaluation::BedrockOpenAIOssInvoke::InvalidLlmResponseError => e
     build_error_result(e.message)
   end
 
