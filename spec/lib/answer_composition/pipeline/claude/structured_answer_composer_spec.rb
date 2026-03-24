@@ -132,7 +132,7 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
       described_class.call(context)
 
       expected_content = claude_messages_tool_use_block(
-        input: { answer:, answered: true, sources_used: %w[link_1], answer_completeness: "complete" },
+        input: { answer:, sources_used: %w[link_1], answer_completeness: "complete" },
         name: "output_schema",
       )
       expected_llm_response = {
@@ -187,7 +187,6 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
 
     it "aborts the pipeline when only an unknown source is used" do
       structured_response = {
-        answered: true,
         sources_used: %w[unknown_link_token],
         answer_completeness: "complete",
       }
@@ -201,7 +200,6 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
 
     context "when answer_completeness is not a successful value" do
       include_examples "llm cannot answer the question", {
-        answered: false,
         sources_used: [],
         answer_completeness: "no_information",
       }
@@ -209,7 +207,6 @@ RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :a
 
     context "when sources_used is empty" do
       include_examples "llm cannot answer the question", {
-        answered: true,
         sources_used: [],
         answer_completeness: "complete",
       }

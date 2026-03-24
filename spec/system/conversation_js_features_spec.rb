@@ -168,7 +168,6 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
     @first_answer = "You can use a simple service on GOV.UK"
     stubs_for_mock_answer(@first_question,
                           @first_answer,
-                          answered: true,
                           sources_used: %w[link_1])
 
     execute_queued_sidekiq_jobs
@@ -197,7 +196,6 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
     stubs_for_mock_answer(@second_question,
                           @second_answer,
                           rephrase_question: true,
-                          answered: true,
                           sources_used: %w[link_1],
                           create_content_chunk: false)
 
@@ -260,7 +258,6 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
   def stubs_for_mock_answer(question,
                             answer,
                             rephrase_question: false,
-                            answered: true,
                             sources_used: [],
                             create_content_chunk: true)
     stub_claude_jailbreak_guardrails(question, triggered: false)
@@ -282,7 +279,7 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
     end
 
     stub_claude_question_routing(question)
-    stub_claude_structured_answer(question, answer, answered:, sources_used:)
+    stub_claude_structured_answer(question, answer, sources_used:)
 
     stub_claude_output_guardrails(answer)
     stub_bedrock_invoke_model_openai_oss_topic_tagger(question)
