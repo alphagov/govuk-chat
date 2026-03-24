@@ -127,19 +127,6 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
       )
     end
 
-    it "raises an error if the response exceeds the maximum token count" do
-      stub_bedrock_invoke_model_openai_oss_tool_call(
-        user_message,
-        tool,
-        nil,
-        finish_reason: "length",
-      )
-
-      expect {
-        described_class.call(user_message:, tool:)
-      }.to raise_error(described_class::LengthLimitExceededError)
-    end
-
     context "when cached tokens are included in the response" do
       let!(:stub) do
         stub_bedrock_invoke_model_openai_oss_tool_call(
@@ -224,6 +211,21 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
               }.to_json,
               headers: { "Content-Type" => "application/json" },
             )
+        end
+      end
+    end
+
+    context "when the llm response exceeds the maximum token count" do
+      it_behaves_like "a retryable error",
+                      described_class::LengthLimitExceededError,
+                      "Finish reason: length" do
+        let!(:stub) do
+          stub_bedrock_invoke_model_openai_oss_tool_call(
+            user_message,
+            tool,
+            nil,
+            finish_reason: "length",
+          )
         end
       end
     end

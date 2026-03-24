@@ -11,6 +11,7 @@ module AutoEvaluation
       JSON::ParserError,
       JSON::Schema::ValidationError,
       MissingToolCallArgumentsError,
+      LengthLimitExceededError,
     ].freeze
 
     Result = Data.define(
@@ -55,7 +56,7 @@ module AutoEvaluation
 
           choice = parsed_response["choices"][0]
 
-          raise LengthLimitExceededError if choice["finish_reason"] == "length"
+          raise LengthLimitExceededError, "Finish reason: length" if choice["finish_reason"] == "length"
 
           tool_call = choice.dig("message", "tool_calls", 0, "function", "arguments")
           raise MissingToolCallArgumentsError, "No tool call arguments returned in the LLM response." unless tool_call
