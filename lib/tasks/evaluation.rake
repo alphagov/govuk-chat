@@ -105,16 +105,6 @@ namespace :evaluation do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
 
     result = AutoEvaluation::TopicTagger.call(ENV["INPUT"])
-
-    # This is a temporary solution to ensure that the evaluation repo topic tagger evaluations continue to work
-    # since primary_topic is a required field on the GenerateInput class. This will be addressed in a follow up bit
-    # of work.
-    if result.status == "error"
-      result = result.to_h.merge(
-        primary_topic: "invalid_tool_output",
-      )
-    end
-
     puts(result.to_json)
   end
 

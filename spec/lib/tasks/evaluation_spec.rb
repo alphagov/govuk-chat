@@ -431,37 +431,6 @@ RSpec.describe "rake evaluation tasks" do
           .to output("#{result.to_json}\n").to_stdout
       end
     end
-
-    context "when the result has an error status" do
-      it "sets the primary_topic to 'invalid_tool_output'" do
-        ClimateControl.modify(INPUT: input) do
-          allow(AutoEvaluation::TopicTagger).to receive(:call)
-                                            .with(input)
-                                            .and_return(
-                                              AutoEvaluation::TopicTagger::Result.new(
-                                                status: "error",
-                                                primary_topic: nil,
-                                                secondary_topic: nil,
-                                                metrics: {},
-                                                llm_response: {},
-                                                error_message: "LLM did not return valid JSON that conformed to the schema.",
-                                              ),
-                                            )
-
-          expected_result = {
-            status: "error",
-            primary_topic: "invalid_tool_output",
-            secondary_topic: nil,
-            metrics: {},
-            llm_response: {},
-            error_message: "LLM did not return valid JSON that conformed to the schema.",
-          }.to_json
-
-          expect { Rake::Task[task_name].invoke }
-            .to output("#{expected_result}\n").to_stdout
-        end
-      end
-    end
   end
 
   describe "batch_process" do
