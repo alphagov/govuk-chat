@@ -11,13 +11,8 @@ RSpec.describe AnswerAnalysis::CoherenceJob do
 
   it_behaves_like "a job in queue", "default"
   it_behaves_like "a job that adheres to the auto_evaluation quota", AutoEvaluation::Coherence
-  it_behaves_like "a job that retries on errors", Aws::Errors::ServiceError do
-    before do
-      allow(AutoEvaluation::Coherence)
-        .to receive(:call)
-        .and_raise(Aws::Errors::ServiceError.new(nil, "error"))
-    end
-  end
+  it_behaves_like "a job that retries on aws sdk errors", AutoEvaluation::Coherence
+
   it_behaves_like "a job that creates runs from score results",
                   AutoEvaluation::Coherence,
                   AnswerAnalysis::CoherenceRun,
