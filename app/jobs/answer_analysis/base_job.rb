@@ -2,7 +2,7 @@ module AnswerAnalysis
   class BaseJob < ApplicationJob
     NUMBER_OF_RUNS = 3
     MAX_RETRIES = 5
-    retry_on Aws::Errors::ServiceError, wait: 1.minute, attempts: MAX_RETRIES
+    retry_on Aws::Errors::ServiceError, Seahorse::Client::NetworkingError, wait: 1.minute, attempts: MAX_RETRIES
 
   private
 

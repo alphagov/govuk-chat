@@ -76,14 +76,25 @@ module JobExamples
     end
   end
 
-  shared_examples "a job that retries on errors" do |error_class|
+  shared_examples "a job that retries on aws sdk errors" do |evaluation_class|
     let(:answer) { create(:answer) }
-    it "retries the job the max number of times on #{error_class}" do
-      described_class.perform_later(answer.id)
+    errors = [
+      Aws::Errors::ServiceError.new(nil, "error"),
+      Seahorse::Client::NetworkingError.new(StandardError.new),
+    ]
 
-      assert_performed_jobs described_class::MAX_RETRIES do
-        expect { perform_enqueued_jobs }
-          .to raise_error(error_class)
+    errors.each do |error|
+      it "retries the job #{described_class::MAX_RETRIES} times on #{error.class}" do
+        allow(evaluation_class)
+          .to receive(:call)
+          .and_raise(error)
+
+        described_class.perform_later(answer.id)
+
+        assert_performed_jobs described_class::MAX_RETRIES do
+          expect { perform_enqueued_jobs }
+            .to raise_error(error)
+        end
       end
     end
   end

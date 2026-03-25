@@ -27,13 +27,7 @@ RSpec.describe AnswerAnalysis::TagTopicsJob do
 
   it_behaves_like "a job in queue", "default"
   it_behaves_like "a job that adheres to the auto_evaluation quota", AutoEvaluation::TopicTagger
-  it_behaves_like "a job that retries on errors", Aws::Errors::ServiceError do
-    before do
-      allow(AutoEvaluation::TopicTagger)
-        .to receive(:call)
-        .and_raise(Aws::Errors::ServiceError.new(nil, "error"))
-    end
-  end
+  it_behaves_like "a job that retries on aws sdk errors", AutoEvaluation::TopicTagger
 
   describe "#perform" do
     it "calls the AutoEvaluation::TopicTagger with the answer message" do
