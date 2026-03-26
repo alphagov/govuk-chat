@@ -13,8 +13,7 @@ RSpec.describe AnswerAnalysis::Topics do
   describe "#serialize for export" do
     it "returns a topic serialized as json" do
       topics = create(:answer_analysis_topics)
-      expected_result = topics.as_json.merge("llm_responses" => "null")
-      expect(topics.serialize_for_export).to eq(expected_result)
+      expect(topics.serialize_for_export).to eq(topics.as_json)
     end
 
     it "converts the llm_responses to unparsed JSON" do

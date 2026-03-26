@@ -184,8 +184,7 @@ RSpec.describe Answer do
       serialized_answer = answer.serialize_for_export
 
       expect(serialized_answer)
-        .to include(answer.as_json.except("llm_responses"))
-        .and include("llm_responses" => "null")
+        .to include(answer.as_json)
         .and include("sources" => answer.sources.map(&:serialize_for_export))
     end
 

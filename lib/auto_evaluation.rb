@@ -9,8 +9,8 @@ module AutoEvaluation
   ) do
     def initialize(
       status:,
-      llm_responses:,
-      metrics:,
+      llm_responses: {},
+      metrics: {},
       score: nil,
       reason: nil,
       error_message: nil

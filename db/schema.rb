@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_19_171709) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_24_105142) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -29,8 +29,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_19_171709) do
   create_table "answer_analysis_answer_relevancy_runs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.decimal "score"
     t.string "reason"
-    t.jsonb "llm_responses"
-    t.jsonb "metrics"
+    t.jsonb "llm_responses", default: {}
+    t.jsonb "metrics", default: {}
     t.uuid "answer_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -42,8 +42,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_19_171709) do
   create_table "answer_analysis_coherence_runs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.decimal "score"
     t.string "reason"
-    t.jsonb "llm_responses"
-    t.jsonb "metrics"
+    t.jsonb "llm_responses", default: {}
+    t.jsonb "metrics", default: {}
     t.uuid "answer_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -55,8 +55,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_19_171709) do
   create_table "answer_analysis_context_relevancy_runs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.decimal "score"
     t.string "reason"
-    t.jsonb "llm_responses"
-    t.jsonb "metrics"
+    t.jsonb "llm_responses", default: {}
+    t.jsonb "metrics", default: {}
     t.uuid "answer_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -68,8 +68,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_19_171709) do
   create_table "answer_analysis_faithfulness_runs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.decimal "score"
     t.string "reason"
-    t.jsonb "llm_responses"
-    t.jsonb "metrics"
+    t.jsonb "llm_responses", default: {}
+    t.jsonb "metrics", default: {}
     t.uuid "answer_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -81,8 +81,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_19_171709) do
   create_table "answer_analysis_topics", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "primary_topic"
     t.string "secondary_topic"
-    t.jsonb "metrics"
-    t.jsonb "llm_responses"
+    t.jsonb "metrics", default: {}
+    t.jsonb "llm_responses", default: {}
     t.uuid "answer_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -146,8 +146,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_19_171709) do
     t.string "answer_guardrails_failures", default: [], array: true
     t.enum "question_routing_label", enum_type: "question_routing_label"
     t.float "question_routing_confidence_score"
-    t.jsonb "metrics"
-    t.jsonb "llm_responses"
+    t.jsonb "metrics", default: {}
+    t.jsonb "llm_responses", default: {}
     t.enum "jailbreak_guardrails_status", enum_type: "guardrails_status"
     t.enum "question_routing_guardrails_status", enum_type: "guardrails_status"
     t.string "question_routing_guardrails_failures", default: [], array: true

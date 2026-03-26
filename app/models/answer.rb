@@ -175,8 +175,11 @@ class Answer < ApplicationRecord
   end
 
   def serialize_for_export
+    sources = self.sources.map(&:serialize_for_export)
+    return as_json.merge("sources" => sources) if llm_responses.blank?
+
     as_json(except: :llm_responses).merge(
-      "sources" => sources.map(&:serialize_for_export),
+      "sources" => sources,
       "llm_responses" => llm_responses.to_json,
     )
   end

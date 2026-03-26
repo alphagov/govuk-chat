@@ -4,7 +4,5 @@ FactoryBot.define do
     score { 0.5 }
     status { "success" }
     reason { "The answer was okay." }
-    llm_responses { {} }
-    metrics { {} }
   end
 end
