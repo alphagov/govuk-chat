@@ -213,10 +213,8 @@ RSpec.describe "Admin::QuestionsController" do
           )
           create(
             run_association,
-            status: :error,
+            :with_error,
             error_message: "No statements found.",
-            reason: nil,
-            score: nil,
             answer: run.answer,
           )
           get admin_show_question_path(question)
@@ -237,22 +235,65 @@ RSpec.describe "Admin::QuestionsController" do
             .and have_selector("#analysis-tab", text: /Run 3 error message\s*No statements found\./)
         end
 
-        it "renders the runs llm responses" do
+        it "renders the runs llm responses when present" do
+          create(
+            run_association,
+            :with_error,
+            answer: run.answer,
+          )
+
           get admin_show_question_path(question)
 
           expect(response.body.squish)
-            .to have_content('{ "verdicts": [ { "verdict": "yes" } ] }')
+            .to have_selector("#analysis-tab details", text: "Run 1")
+            .and have_content('{ "verdicts": [ { "verdict": "yes" } ] }')
             .and have_content('{ "reason": [ "The answer was acceptable." ] }')
+          expect(response.body).not_to have_selector("#analysis-tab details", text: "Run 2")
         end
 
-        it "renders the runs metrics" do
+        it "renders the runs metrics when present" do
+          create(
+            run_association,
+            :with_error,
+            answer: run.answer,
+          )
+
           get admin_show_question_path(question)
 
           expect(response.body.squish)
-            .to have_content("Verdicts")
+            .to have_selector("#analysis-tab details", text: "Run 1")
+            .and have_content("Verdicts")
             .and have_content(/duration.*1\.44445/)
             .and have_content("Reason")
             .and have_content(/duration.*1\.55556/)
+          expect(response.body).not_to have_selector("#analysis-tab details", text: "Run 2")
+        end
+
+        context "when all the runs have errored" do
+          let(:run) { create(run_association, :with_error) }
+
+          it "doesn't render the mean score" do
+            get admin_show_question_path(question)
+            expect(response.body).not_to have_content("Mean score")
+          end
+        end
+
+        context "when all the runs have no llm responses" do
+          let(:run) { create(run_association, llm_responses: {}) }
+
+          it "doesn't render the llm responses" do
+            get admin_show_question_path(question)
+            expect(response.body).not_to have_selector("#analysis-tab details", text: "LLM responses")
+          end
+        end
+
+        context "when all the runs have no metrics" do
+          let(:run) { create(run_association, metrics: {}) }
+
+          it "doesn't render the metrics" do
+            get admin_show_question_path(question)
+            expect(response.body).not_to have_selector("#analysis-tab details", text: "Metrics")
+          end
         end
       end
     end
