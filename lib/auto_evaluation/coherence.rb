@@ -23,8 +23,6 @@ module AutoEvaluation
       AutoEvaluation::Result.new(
         status: "error",
         error_message: e.message,
-        llm_responses: {},
-        metrics: {},
       )
     end
 
