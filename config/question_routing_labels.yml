@@ -10,7 +10,10 @@ about_mps:
   use_answer: false
   answer_status: unanswerable_question_routing
   canned_responses:
-    - Sorry, I cannot answer that question. You may be able to find your answer on [the UK Parliament website](https://www.parliament.uk/).<br /><br />If you have questions that can be answered using GOV.UK guidance, I'd be happy to help.
+    - |
+      Sorry, I cannot answer that question. You may be able to find your answer on [the UK Parliament website](https://www.parliament.uk/). 
+    
+      If you have questions that can be answered using GOV.UK guidance, I'd be happy to help.
 
 advice_opinions_predictions:
   label: "Advice, opinions, predictions"
@@ -35,7 +38,10 @@ gov_transparency:
   use_answer: false
   answer_status: unanswerable_question_routing
   canned_responses:
-    - Sorry, I cannot answer your question. You may be able to find the information by [searching on GOV.UK](https://www.gov.uk/).<br /><br />If not, check [Freedom of Information (FOI) responses](https://www.gov.uk/search/transparency-and-freedom-of-information-releases?content_store_document_type=foi_release) to find out if your question has already been answered. You can also [make your own FOI request](https://www.gov.uk/make-a-freedom-of-information-request).
+    - | 
+      Sorry, I cannot answer your question. You may be able to find the information by [searching on GOV.UK](https://www.gov.uk/).
+      
+      If not, check [Freedom of Information (FOI) responses](https://www.gov.uk/search/transparency-and-freedom-of-information-releases?content_store_document_type=foi_release) to find out if your question has already been answered. You can also [make your own FOI request](https://www.gov.uk/make-a-freedom-of-information-request).
 
 greetings:
   label: "Greetings"
