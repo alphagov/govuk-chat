@@ -54,6 +54,10 @@ protected
   def ordering_scope(scope)
     column = sort.delete_prefix("-")
     direction = sort.start_with?("-") ? :desc : :asc
-    scope.order("#{column}": direction)
+    if column == "created_at"
+      scope.order("#{column}": direction)
+    else
+      scope.order("#{column}": direction).order(created_at: :desc)
+    end
   end
 end

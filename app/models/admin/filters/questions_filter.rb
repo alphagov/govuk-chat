@@ -21,7 +21,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   end
 
   def self.valid_sort_values
-    ["created_at", "-created_at", "message", "-message"]
+    ["created_at", "-created_at", "message", "-message", "conversation.end_user_id", "-conversation.end_user_id"]
   end
 
   def initialize(...)
@@ -31,7 +31,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
 
   def results
     @results ||= begin
-      scope = Question.includes(answer: %i[feedback topics])
+      scope = Question.includes(:conversation, answer: %i[feedback topics])
                       .left_outer_joins(:answer)
       scope = search_scope(scope)
       scope = status_scope(scope)
@@ -63,6 +63,10 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
     return @conversation if defined?(@conversation)
 
     @conversation = Conversation.find_by_id(conversation_id)
+  end
+
+  def end_user_id_columnn_pagination_params(end_user_id)
+    pagination_query_params.merge(end_user_id:)
   end
 
 private
@@ -143,7 +147,7 @@ private
   def end_user_id_scope(scope)
     return scope if end_user_id.blank?
 
-    scope.joins(:conversation).where("end_user_id = ? AND conversations.source = ?", end_user_id, "api")
+    scope.joins(:conversation).where(conversation: { end_user_id: end_user_id, source: "api" })
   end
 
   def conversation_session_id_scope(scope)
