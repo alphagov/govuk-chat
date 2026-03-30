@@ -252,22 +252,22 @@ GEM
       faraday (>= 1.0, < 3.a)
     google-cloud-errors (1.5.0)
     google-logging-utils (0.2.0)
-    google-protobuf (4.34.0)
+    google-protobuf (4.34.1)
       bigdecimal
       rake (~> 13.3)
-    google-protobuf (4.34.0-aarch64-linux-gnu)
+    google-protobuf (4.34.1-aarch64-linux-gnu)
       bigdecimal
       rake (~> 13.3)
-    google-protobuf (4.34.0-arm64-darwin)
+    google-protobuf (4.34.1-arm64-darwin)
       bigdecimal
       rake (~> 13.3)
-    google-protobuf (4.34.0-x86-linux-gnu)
+    google-protobuf (4.34.1-x86-linux-gnu)
       bigdecimal
       rake (~> 13.3)
-    google-protobuf (4.34.0-x86_64-darwin)
+    google-protobuf (4.34.1-x86_64-darwin)
       bigdecimal
       rake (~> 13.3)
-    google-protobuf (4.34.0-x86_64-linux-gnu)
+    google-protobuf (4.34.1-x86_64-linux-gnu)
       bigdecimal
       rake (~> 13.3)
     googleapis-common-protos-types (1.22.0)
@@ -299,7 +299,7 @@ GEM
     govuk_personalisation (1.1.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
-    govuk_publishing_components (65.1.0)
+    govuk_publishing_components (65.1.1)
       govuk_app_config
       govuk_personalisation (>= 0.7.0)
       kramdown
@@ -562,7 +562,7 @@ GEM
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-lmdb (0.25.0)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-mongo (0.25.0)
+    opentelemetry-instrumentation-mongo (0.25.1)
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-mysql2 (0.33.0)
       opentelemetry-helpers-mysql
@@ -1049,19 +1049,19 @@ CHECKSUMS
   google-cloud-env (2.3.1) sha256=0faac01eb27be78c2591d64433663b1a114f8f7af55a4f819755426cac9178e7
   google-cloud-errors (1.5.0) sha256=b56be28b8c10628125214dde571b925cfcebdbc58619e598250c37a2114f7b4b
   google-logging-utils (0.2.0) sha256=675462b4ea5affa825a3442694ca2d75d0069455a1d0956127207498fca3df7b
-  google-protobuf (4.34.0) sha256=bffaea30fbe2807c80667a78953b15645b3bef62b25c10ca187e4418119be531
-  google-protobuf (4.34.0-aarch64-linux-gnu) sha256=0ab8a8a97976a2265d647e69b3ff1980c89184abdaf06d36091856c5ab37cc55
-  google-protobuf (4.34.0-arm64-darwin) sha256=f83967a8095a9da676b79ba372c58fef2ca3878428bd40febfce65b3752c90d1
-  google-protobuf (4.34.0-x86-linux-gnu) sha256=21108e5cee407cb46c38f96fa93ea1ea8e463a45c8031261df3f9131458db4e3
-  google-protobuf (4.34.0-x86_64-darwin) sha256=4a5b67281993345adca54bb32947f25a289597eafaa240e5b714d0a740f99321
-  google-protobuf (4.34.0-x86_64-linux-gnu) sha256=bbb333fbe79c16f35a2e2154cf29f3ce26f60390dba286b339861206d5435ef9
+  google-protobuf (4.34.1) sha256=347181542b8d659c60f028fa3791c9cccce651a91ad27782dbc5c5e374796cdc
+  google-protobuf (4.34.1-aarch64-linux-gnu) sha256=f9c07607dc139c895f2792a7740fcd01cd94d4d7b0e0a939045b50d7999f0b1d
+  google-protobuf (4.34.1-arm64-darwin) sha256=2745061f973119e6e7f3c81a0c77025d291a3caa6585a2cd24a25bbc7bedb267
+  google-protobuf (4.34.1-x86-linux-gnu) sha256=b6da7891fe96b13038e5435d8ac8b8a84d78a468147a48a377fe8da40aba1c88
+  google-protobuf (4.34.1-x86_64-darwin) sha256=4dc498376e218871613589c4d872400d42ad9ae0c700bdb2606fe1c77a593075
+  google-protobuf (4.34.1-x86_64-linux-gnu) sha256=87088c9fd8e47b5b40ca498fc1195add6149e941ff7e81c532a5b0b8876d4cc9
   googleapis-common-protos-types (1.22.0) sha256=f97492b77bd6da0018c860d5004f512fe7cd165554d7019a8f4df6a56fbfc4c7
   googleauth (1.16.0) sha256=1e7b5c2ee7edc6a0f5a4a4312c579b3822dc0be2679d6d09ca19d8c7ca5bd5f1
   govuk_app_config (9.23.7) sha256=5b33ebdfd4ff04f50265aaef46fed488cf29e0905d4988c112d34fdd0b2fd5ba
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
-  govuk_publishing_components (65.1.0) sha256=6cf78ee0c2ea738f27fc55a70f88d164e41a79270b53f03d4927ac44aa770dad
+  govuk_publishing_components (65.1.1) sha256=5be85215b7384d1fda93e24c0329c0ab02dcd2c31ed914ceb1d2630d292c568f
   govuk_schemas (6.2.3) sha256=ad0311968ab411bf175d7f933ff9ea378cda06a14813a37a4916cc627f353d52
   govuk_sidekiq (11.0.1) sha256=491f907d2972342c62b322c454bd11cdadf1f2b325e7af017eb947ef6bde07c7
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
@@ -1159,7 +1159,7 @@ CHECKSUMS
   opentelemetry-instrumentation-httpx (0.6.1) sha256=9050801826bb0f148f603b39b119c4f49591955ee53d3d0b2a8fb1eb8f558022
   opentelemetry-instrumentation-koala (0.23.0) sha256=8f324b50a2a64fd4994bb2b105a4cb0c80b64ec05cf5487d2daa906c650bc6f9
   opentelemetry-instrumentation-lmdb (0.25.0) sha256=1e4d66d583ea242d4f72051062971f5af1ea353484d224abbd0aabdd1ce5f5cb
-  opentelemetry-instrumentation-mongo (0.25.0) sha256=d04585669f928ea82e7c469f996061d39d8ff184278d57cf4fc77a6d607f9c7a
+  opentelemetry-instrumentation-mongo (0.25.1) sha256=b66a8544bb0c60ab032ecd224333d50138f2b280d2d394c508d2ff8ca3fb94b9
   opentelemetry-instrumentation-mysql2 (0.33.0) sha256=b49b7957d5eef59e046e73be3ca370518965d61495745b4cb7ece3ef5470bcf9
   opentelemetry-instrumentation-net_http (0.27.0) sha256=f7ad7c5887646a09043b5f4e73717d9a897272f8032b883b0fadffbcc27f8990
   opentelemetry-instrumentation-pg (0.35.0) sha256=65a6e78bd45282b56021f1ee1b88b9fd318abf6812c32bd740465e6b9997aad4
