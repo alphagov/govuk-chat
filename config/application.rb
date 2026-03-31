@@ -14,6 +14,12 @@ require "action_view/railtie"
 require "action_cable/engine"
 # require "rails/test_unit/railtie"
 
+# If we don't require this here then it will not be added to the middleware stack by
+# the time we add our own custom middleware that depends on it. It will blow up when
+# we try to insert the Api::AuthMiddleware before it, and even if it didn't blow up there,
+# when the Api::RateLimit::Middleware runs the throttles wouldn't be defined.
+require "rack/attack"
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
