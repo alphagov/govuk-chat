@@ -83,7 +83,7 @@ GEM
       uri (>= 0.13.1)
     addressable (2.8.9)
       public_suffix (>= 2.0.2, < 8.0)
-    amq-protocol (2.3.3)
+    amq-protocol (2.7.0)
     anthropic (1.25.0)
       cgi
       connection_pool
@@ -293,7 +293,7 @@ GEM
       sentry-rails (>= 5.3, < 7.0)
       sentry-ruby (>= 5.3, < 7.0)
       statsd-ruby (~> 1.5)
-    govuk_message_queue_consumer (6.0.0)
+    govuk_message_queue_consumer (6.1.0)
       bunny (~> 2.17)
       ostruct
     govuk_personalisation (1.1.0)
@@ -821,7 +821,6 @@ GEM
     sentry-sidekiq (6.5.0)
       sentry-ruby (~> 6.5.0)
       sidekiq (>= 5.0)
-    set (1.1.1)
     sidekiq (7.3.10)
       base64
       connection_pool (>= 2.3.0, < 3)
@@ -845,9 +844,8 @@ GEM
     snaky_hash (2.0.3)
       hashie (>= 0.1.0, < 6)
       version_gem (>= 1.1.8, < 3)
-    sorted_set (1.0.3)
+    sorted_set (1.1.0)
       rbtree
-      set (~> 1.0)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -975,7 +973,7 @@ CHECKSUMS
   activestorage (8.0.5) sha256=25898a3f8f8aced15ea6a8578cb56955acf3a96ad931e000b2e77e9c8db43df3
   activesupport (8.0.5) sha256=37f213ff6a37cf3fadfa1a28c1a9678e2cb73b59bb9ebd0eeeca653cccadcb23
   addressable (2.8.9) sha256=cc154fcbe689711808a43601dee7b980238ce54368d23e127421753e46895485
-  amq-protocol (2.3.3) sha256=85b42738290913a35dcc487a2ca0dd260a4150b40ed1954c9c1932df466abc1f
+  amq-protocol (2.7.0) sha256=a798da91f076cf8225193739d09785201f72acbc5293282a3592ad3eda5b3afc
   anthropic (1.25.0) sha256=263ec37d38e2de51e056eb1ce2e17f80fa6a329865432cc82e1efff25e71d17b
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
@@ -1059,7 +1057,7 @@ CHECKSUMS
   googleauth (1.16.0) sha256=1e7b5c2ee7edc6a0f5a4a4312c579b3822dc0be2679d6d09ca19d8c7ca5bd5f1
   govuk_app_config (9.23.7) sha256=5b33ebdfd4ff04f50265aaef46fed488cf29e0905d4988c112d34fdd0b2fd5ba
   govuk_chat_private (0.0.1)
-  govuk_message_queue_consumer (6.0.0) sha256=0fd749fa458910e4983fdc307f790311cffe91fa912aebb2e2f5094110864848
+  govuk_message_queue_consumer (6.1.0) sha256=42e0be6caad19ccde78b6eba40ee9ea3af6e8c3b5a6d1543b5d077870f157b19
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
   govuk_publishing_components (65.2.0) sha256=5d066c3b8e6ebe28de543e73aa75269e9b313705326a06987c49ebbff1450f72
   govuk_schemas (6.2.3) sha256=ad0311968ab411bf175d7f933ff9ea378cda06a14813a37a4916cc627f353d52
@@ -1254,7 +1252,6 @@ CHECKSUMS
   sentry-rails (6.5.0) sha256=ebf9d4d82c740c3e0e4a0840f11f7bbd0cf648a30afd9c67e5b50bb07018a0e4
   sentry-ruby (6.5.0) sha256=3c57ae0d6a017aafcd9ac37114e38149a58534679dec5d4e9e8fc010b85f3a6b
   sentry-sidekiq (6.5.0) sha256=462a1eff79a61a9545cde107ffdb5f9a63db7ea544639337be976ca20747f4a7
-  set (1.1.1) sha256=6c7ac6c06d5907216395a4d5dae3ffe52ca5ee8a372befe6d4dea794383f98f0
   sidekiq (7.3.10) sha256=781eb4f65ef36042534ad73d72f211283afb7fee82eec786ada4ed1972ef8e3c
   signet (0.21.0) sha256=d617e9fbf24928280d39dcfefba9a0372d1c38187ffffd0a9283957a10a8cd5b
   simplecov (0.22.0) sha256=fe2622c7834ff23b98066bb0a854284b2729a569ac659f82621fc22ef36213a5
@@ -1263,7 +1260,7 @@ CHECKSUMS
   slack-poster (2.2.2) sha256=37c4c0d65259599813ef75d4da0ed7512d2e8e93ca942c53ebf898ff1c81214e
   smart_properties (1.17.0) sha256=f9323f8122e932341756ddec8e0ac9ec6e238408a7661508be99439ca6d6384b
   snaky_hash (2.0.3) sha256=25a3d299566e8153fb02fa23fd9a9358845950f7a523ddbbe1fa1e0d79a6d456
-  sorted_set (1.0.3) sha256=4f2b8bee6e8c59cbd296228c0f1f81679357177a8b6859dcc2a99e86cce6372f
+  sorted_set (1.1.0) sha256=bac01eb16b6bcfcdb7d732a28e87422be8b5c9fdcfeadbe9072682407524ee83
   sprockets (4.2.2) sha256=761e5a49f1c288704763f73139763564c845a8f856d52fba013458f8af1b59b1
   sprockets-rails (3.5.2) sha256=a9e88e6ce9f8c912d349aa5401509165ec42326baf9e942a85de4b76dbc4119e
   statsd-ruby (1.5.0) sha256=369ddf09537408e273849e09b84d4edbdac24ac461f5c9b6cacb0e4398190109
