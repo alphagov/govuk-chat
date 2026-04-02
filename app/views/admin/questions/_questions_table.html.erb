@@ -13,6 +13,11 @@
         text: "Answer status",
       },
       {
+        text: "End user id",
+        sort_direction: filter.sort_direction("conversation.end_user_id"),
+        href: admin_questions_path(filter.toggleable_sort_params("conversation.end_user_id")),
+      },
+      {
         text: "Created at",
         sort_direction: filter.sort_direction("created_at"),
         href: admin_questions_path(filter.toggleable_sort_params("-created_at")),
@@ -29,6 +34,17 @@
         },
         {
           text: format_answer_status_as_tag(question.answer_status),
+        },
+        {
+          text: if question.conversation&.end_user_id.present?
+                  link_to(
+                    question.conversation.end_user_id,
+                    admin_questions_path(filter.end_user_id_columnn_pagination_params(question.conversation.end_user_id)),
+                    class: "govuk-link",
+                  )
+                else
+                  ""
+                end,
         },
         {
           text: question.created_at.to_fs(:time_and_date),
