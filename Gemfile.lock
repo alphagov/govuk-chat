@@ -309,7 +309,7 @@ GEM
       rouge
       sprockets (>= 3)
       sprockets-rails
-    govuk_schemas (6.2.3)
+    govuk_schemas (6.3.0)
       json-schema (>= 2.8, < 6.3)
     govuk_sidekiq (11.1.2)
       gds-api-adapters (>= 19.1.0)
@@ -1061,7 +1061,7 @@ CHECKSUMS
   govuk_message_queue_consumer (6.1.0) sha256=42e0be6caad19ccde78b6eba40ee9ea3af6e8c3b5a6d1543b5d077870f157b19
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
   govuk_publishing_components (65.2.0) sha256=5d066c3b8e6ebe28de543e73aa75269e9b313705326a06987c49ebbff1450f72
-  govuk_schemas (6.2.3) sha256=ad0311968ab411bf175d7f933ff9ea378cda06a14813a37a4916cc627f353d52
+  govuk_schemas (6.3.0) sha256=e8e79a745a118229dc97b2d9e6f4f7354259647bec1b66ec2f78474e1a98701b
   govuk_sidekiq (11.1.2) sha256=abc8488bf8493a01325b7519c110da19dfc1b2fd32dcc57256f59007aab3c351
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
   groupdate (6.7.0) sha256=beaa8d5bf3856814681914a1d4a20e77436a2214b85d0017dc2ea5c355fb6777
