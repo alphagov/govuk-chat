@@ -208,7 +208,7 @@ GEM
     ffi (1.17.4-x86-linux-gnu)
     ffi (1.17.4-x86_64-darwin)
     ffi (1.17.4-x86_64-linux-gnu)
-    gds-api-adapters (103.1.1)
+    gds-api-adapters (103.2.0)
       addressable
       link_header
       null_logger
@@ -1038,7 +1038,7 @@ CHECKSUMS
   ffi (1.17.4-x86-linux-gnu) sha256=38e150df5f4ca555e25beca4090823ae09657bceded154e3c52f8631c1ed72cf
   ffi (1.17.4-x86_64-darwin) sha256=aa70390523cf3235096cf64962b709b4cfbd5c082a2cb2ae714eb0fe2ccda496
   ffi (1.17.4-x86_64-linux-gnu) sha256=9d3db14c2eae074b382fa9c083fe95aec6e0a1451da249eab096c34002bc752d
-  gds-api-adapters (103.1.1) sha256=9b0b26fad55ff502dfbe41a4830cb793e14f39a1d379a6db6d4efc845ca8e092
+  gds-api-adapters (103.2.0) sha256=61837e2a3b5c2fd781dc82a291f94a07805f2668b51a923e052a5d8cb39eecf2
   gds-sso (22.2.0) sha256=2d74f13b36437b49b706674e79e998cb882d54161ba44437abe43f3cc8d8f619
   globalid (1.3.0) sha256=05c639ad6eb4594522a0b07983022f04aa7254626ab69445a0e493aa3786ff11
   google-apis-bigquery_v2 (0.96.0) sha256=8eb277bff73b1622d1e5a6253386938c15f296306507cf84a783980f932302cd
