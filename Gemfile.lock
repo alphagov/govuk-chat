@@ -321,8 +321,8 @@ GEM
       capybara (>= 3.36)
       puma
       selenium-webdriver (>= 4.0)
-    groupdate (6.7.0)
-      activesupport (>= 7.1)
+    groupdate (6.8.0)
+      activesupport (>= 7.2)
     hashdiff (1.2.1)
     hashie (5.1.0)
       logger
@@ -1064,7 +1064,7 @@ CHECKSUMS
   govuk_schemas (6.3.0) sha256=e8e79a745a118229dc97b2d9e6f4f7354259647bec1b66ec2f78474e1a98701b
   govuk_sidekiq (11.1.2) sha256=abc8488bf8493a01325b7519c110da19dfc1b2fd32dcc57256f59007aab3c351
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
-  groupdate (6.7.0) sha256=beaa8d5bf3856814681914a1d4a20e77436a2214b85d0017dc2ea5c355fb6777
+  groupdate (6.8.0) sha256=16f90ea18ca981c38e41e592416480b28353aa5e5cc3e7cb13a68b8fb5d40510
   hashdiff (1.2.1) sha256=9c079dbc513dfc8833ab59c0c2d8f230fa28499cc5efb4b8dd276cf931457cd1
   hashie (5.1.0) sha256=c266471896f323c446ea8207f8ffac985d2718df0a0ba98651a3057096ca3870
   http-accept (1.7.0) sha256=c626860682bfbb3b46462f8c39cd470fd7b0584f61b3cc9df5b2e9eb9972a126
