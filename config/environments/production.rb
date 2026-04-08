@@ -41,7 +41,7 @@ Rails.application.configure do
   config.log_tags = [:request_id]
   config.logger   = ActiveSupport::TaggedLogging.logger($stdout)
 
-  # Change to "debug" to log everything (including potentially personally-identifiable information!)
+  # Change to "debug" to log everything (including potentially personally-identifiable information!).
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
   # Don't log any deprecations.
@@ -66,14 +66,6 @@ Rails.application.configure do
   # Send log notifications to the Sidekiq logger rather than using the Rails
   # default
   config.active_job.logger = Sidekiq.logger
-
-  # Disable caching for Action Mailer templates even if Action Controller
-  # caching is enabled.
-  # config.action_mailer.perform_caching = false
-
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

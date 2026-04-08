@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_26_123210) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_26_123210) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -27,106 +27,106 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_26_123210) do
   create_enum "question_routing_label", ["about_mps", "advice_opinions_predictions", "character_fun", "genuine_rag", "gov_transparency", "greetings", "harmful_vulgar_controversy", "multi_questions", "negative_acknowledgement", "non_english", "personal_info", "positive_acknowledgement", "vague_acronym_grammar", "unclear_intent", "requires_account_data", "about_chat", "mental_health_crisis_signposting"]
 
   create_table "answer_analysis_answer_relevancy_runs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.decimal "score"
-    t.string "reason"
-    t.jsonb "llm_responses", default: {}, null: false
-    t.jsonb "metrics", default: {}, null: false
     t.uuid "answer_id", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.enum "status", default: "success", null: false, enum_type: "answer_analysis_run_status"
     t.string "error_message"
+    t.jsonb "llm_responses", default: {}, null: false
+    t.jsonb "metrics", default: {}, null: false
+    t.string "reason"
+    t.decimal "score"
+    t.enum "status", default: "success", null: false, enum_type: "answer_analysis_run_status"
+    t.datetime "updated_at", null: false
     t.index ["answer_id"], name: "index_answer_analysis_answer_relevancy_runs_on_answer_id"
   end
 
   create_table "answer_analysis_coherence_runs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.decimal "score"
-    t.string "reason"
-    t.jsonb "llm_responses", default: {}, null: false
-    t.jsonb "metrics", default: {}, null: false
     t.uuid "answer_id", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.enum "status", default: "success", null: false, enum_type: "answer_analysis_run_status"
     t.string "error_message"
+    t.jsonb "llm_responses", default: {}, null: false
+    t.jsonb "metrics", default: {}, null: false
+    t.string "reason"
+    t.decimal "score"
+    t.enum "status", default: "success", null: false, enum_type: "answer_analysis_run_status"
+    t.datetime "updated_at", null: false
     t.index ["answer_id"], name: "index_answer_analysis_coherence_runs_on_answer_id"
   end
 
   create_table "answer_analysis_context_relevancy_runs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.decimal "score"
-    t.string "reason"
-    t.jsonb "llm_responses", default: {}, null: false
-    t.jsonb "metrics", default: {}, null: false
     t.uuid "answer_id", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.enum "status", default: "success", null: false, enum_type: "answer_analysis_run_status"
     t.string "error_message"
+    t.jsonb "llm_responses", default: {}, null: false
+    t.jsonb "metrics", default: {}, null: false
+    t.string "reason"
+    t.decimal "score"
+    t.enum "status", default: "success", null: false, enum_type: "answer_analysis_run_status"
+    t.datetime "updated_at", null: false
     t.index ["answer_id"], name: "index_answer_analysis_context_relevancy_runs_on_answer_id"
   end
 
   create_table "answer_analysis_faithfulness_runs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.decimal "score"
-    t.string "reason"
-    t.jsonb "llm_responses", default: {}, null: false
-    t.jsonb "metrics", default: {}, null: false
     t.uuid "answer_id", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.enum "status", default: "success", null: false, enum_type: "answer_analysis_run_status"
     t.string "error_message"
+    t.jsonb "llm_responses", default: {}, null: false
+    t.jsonb "metrics", default: {}, null: false
+    t.string "reason"
+    t.decimal "score"
+    t.enum "status", default: "success", null: false, enum_type: "answer_analysis_run_status"
+    t.datetime "updated_at", null: false
     t.index ["answer_id"], name: "index_answer_analysis_faithfulness_runs_on_answer_id"
   end
 
   create_table "answer_analysis_topics", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "primary_topic"
-    t.string "secondary_topic"
-    t.jsonb "metrics", default: {}, null: false
-    t.jsonb "llm_responses", default: {}, null: false
     t.uuid "answer_id", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.enum "status", default: "success", null: false, enum_type: "answer_analysis_topics_status"
     t.string "error_message"
+    t.jsonb "llm_responses", default: {}, null: false
+    t.jsonb "metrics", default: {}, null: false
+    t.string "primary_topic"
+    t.string "secondary_topic"
+    t.enum "status", default: "success", null: false, enum_type: "answer_analysis_topics_status"
+    t.datetime "updated_at", null: false
     t.index ["answer_id"], name: "index_answer_analysis_topics_on_answer_id", unique: true
   end
 
   create_table "answer_feedback", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
-    t.boolean "useful", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "useful", null: false
     t.index ["answer_id"], name: "index_answer_feedback_on_answer_id", unique: true
     t.index ["created_at"], name: "index_answer_feedback_on_created_at"
   end
 
   create_table "answer_source_chunks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "content_id", null: false
-    t.string "locale", null: false
-    t.integer "chunk_index", null: false
-    t.string "digest", null: false
-    t.string "title", null: false
-    t.string "description"
-    t.string "heading_hierarchy", default: [], null: false, array: true
     t.string "base_path", null: false
-    t.string "exact_path", null: false
-    t.string "document_type", null: false
-    t.string "parent_document_type"
-    t.string "html_content", null: false
-    t.string "plain_content", null: false
+    t.integer "chunk_index", null: false
+    t.uuid "content_id", null: false
     t.datetime "created_at", null: false
+    t.string "description"
+    t.string "digest", null: false
+    t.string "document_type", null: false
+    t.string "exact_path", null: false
+    t.string "heading_hierarchy", default: [], null: false, array: true
+    t.string "html_content", null: false
+    t.string "locale", null: false
+    t.string "parent_document_type"
+    t.string "plain_content", null: false
+    t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["content_id", "locale", "chunk_index", "digest"], name: "idx_on_content_id_locale_chunk_index_digest_e75f64674c", unique: true
   end
 
   create_table "answer_sources", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "answer_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "relevancy", null: false
-    t.boolean "used", default: true
     t.uuid "answer_source_chunk_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "relevancy", null: false
     t.float "search_score"
+    t.datetime "updated_at", null: false
+    t.boolean "used", default: true
     t.float "weighted_score"
     t.index ["answer_id", "relevancy"], name: "index_answer_sources_on_answer_id_and_relevancy", unique: true
     t.index ["answer_id"], name: "index_answer_sources_on_answer_id"
@@ -135,95 +135,95 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_26_123210) do
   end
 
   create_table "answers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "question_id", null: false
-    t.string "message", null: false
-    t.string "rephrased_question"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.enum "status", null: false, enum_type: "answer_status"
-    t.string "error_message"
-    t.enum "answer_guardrails_status", enum_type: "guardrails_status"
     t.string "answer_guardrails_failures", default: [], array: true
-    t.enum "question_routing_label", enum_type: "question_routing_label"
-    t.float "question_routing_confidence_score"
-    t.jsonb "metrics", default: {}, null: false
-    t.jsonb "llm_responses", default: {}, null: false
-    t.enum "jailbreak_guardrails_status", enum_type: "guardrails_status"
-    t.enum "question_routing_guardrails_status", enum_type: "guardrails_status"
-    t.string "question_routing_guardrails_failures", default: [], array: true
+    t.enum "answer_guardrails_status", enum_type: "guardrails_status"
     t.enum "completeness", enum_type: "answer_completeness"
+    t.datetime "created_at", null: false
+    t.string "error_message"
     t.string "forbidden_terms_detected", default: [], null: false, array: true
+    t.enum "jailbreak_guardrails_status", enum_type: "guardrails_status"
+    t.jsonb "llm_responses", default: {}, null: false
+    t.string "message", null: false
+    t.jsonb "metrics", default: {}, null: false
+    t.uuid "question_id", null: false
+    t.float "question_routing_confidence_score"
+    t.string "question_routing_guardrails_failures", default: [], array: true
+    t.enum "question_routing_guardrails_status", enum_type: "guardrails_status"
+    t.enum "question_routing_label", enum_type: "question_routing_label"
+    t.string "rephrased_question"
+    t.enum "status", null: false, enum_type: "answer_status"
+    t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_answers_on_created_at"
     t.index ["question_id"], name: "index_answers_on_question_id", unique: true
   end
 
   create_table "base_path_versions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "base_path", null: false
-    t.bigint "payload_version", default: 0, null: false
     t.datetime "created_at", null: false
+    t.bigint "payload_version", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["base_path"], name: "index_base_path_versions_on_base_path", unique: true
   end
 
   create_table "bigquery_exports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.datetime "exported_until", null: false
     t.datetime "created_at", null: false
+    t.datetime "exported_until", null: false
     t.datetime "updated_at", null: false
     t.index ["exported_until"], name: "index_bigquery_exports_on_exported_until", unique: true
   end
 
   create_table "conversations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "end_user_id"
     t.uuid "signon_user_id"
     t.enum "source", default: "web", null: false, enum_type: "conversation_source"
-    t.string "end_user_id"
+    t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_conversations_on_created_at"
     t.index ["signon_user_id"], name: "index_conversations_on_signon_user_id"
   end
 
   create_table "questions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "conversation_id", null: false
-    t.string "message", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "answer_strategy", null: false
-    t.string "unsanitised_message"
+    t.uuid "conversation_id", null: false
     t.uuid "conversation_session_id", null: false
+    t.datetime "created_at", null: false
+    t.string "message", null: false
+    t.string "unsanitised_message"
+    t.datetime "updated_at", null: false
     t.index ["conversation_id"], name: "index_questions_on_conversation_id"
     t.index ["created_at"], name: "index_questions_on_created_at"
   end
 
   create_table "settings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "singleton_guard", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.boolean "api_access_enabled", default: true
+    t.datetime "created_at", null: false
+    t.integer "singleton_guard", default: 0
+    t.datetime "updated_at", null: false
     t.boolean "web_access_enabled", default: true
     t.index ["singleton_guard"], name: "index_settings_on_singleton_guard", unique: true
   end
 
   create_table "settings_audits", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "user_id"
     t.string "action", null: false
     t.string "author_comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "user_id"
     t.index ["created_at"], name: "index_settings_audits_on_created_at"
     t.index ["user_id"], name: "index_settings_audits_on_user_id"
   end
 
   create_table "signon_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.string "uid"
-    t.string "organisation_slug"
-    t.string "organisation_content_id"
     t.string "app_name"
+    t.datetime "created_at", null: false
+    t.boolean "disabled", default: false
+    t.string "email"
+    t.string "name"
+    t.string "organisation_content_id"
+    t.string "organisation_slug"
     t.string "permissions", default: [], array: true
     t.boolean "remotely_signed_out", default: false
-    t.boolean "disabled", default: false
-    t.datetime "created_at", null: false
+    t.string "uid"
     t.datetime "updated_at", null: false
   end
 
