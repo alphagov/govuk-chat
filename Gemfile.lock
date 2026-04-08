@@ -299,7 +299,7 @@ GEM
     govuk_personalisation (1.1.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
-    govuk_publishing_components (65.2.0)
+    govuk_publishing_components (65.2.1)
       govuk_app_config
       govuk_personalisation (>= 0.7.0)
       kramdown
@@ -448,9 +448,9 @@ GEM
     opensearch-ruby (3.4.0)
       faraday (>= 1.0, < 3)
       multi_json (>= 1.0)
-    opentelemetry-api (1.8.0)
+    opentelemetry-api (1.9.0)
       logger
-    opentelemetry-common (0.23.0)
+    opentelemetry-common (0.24.0)
       opentelemetry-api (~> 1.0)
     opentelemetry-exporter-otlp (0.31.1)
       google-protobuf (>= 3.18)
@@ -613,14 +613,15 @@ GEM
       opentelemetry-helpers-sql-processor
       opentelemetry-instrumentation-base (~> 0.25)
       opentelemetry-semantic_conventions (>= 1.8.0)
-    opentelemetry-registry (0.4.0)
+    opentelemetry-registry (0.5.0)
       opentelemetry-api (~> 1.1)
-    opentelemetry-sdk (1.10.0)
+    opentelemetry-sdk (1.11.0)
+      logger
       opentelemetry-api (~> 1.1)
       opentelemetry-common (~> 0.20)
       opentelemetry-registry (~> 0.2)
       opentelemetry-semantic_conventions
-    opentelemetry-semantic_conventions (1.36.0)
+    opentelemetry-semantic_conventions (1.37.0)
       opentelemetry-api (~> 1.0)
     os (1.1.4)
     ostruct (0.6.3)
@@ -665,7 +666,7 @@ GEM
       rack (>= 3.0.0, < 4)
     rack-proxy (0.7.7)
       rack
-    rack-session (2.1.1)
+    rack-session (2.1.2)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
     rack-test (2.2.0)
@@ -1060,7 +1061,7 @@ CHECKSUMS
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.1.0) sha256=42e0be6caad19ccde78b6eba40ee9ea3af6e8c3b5a6d1543b5d077870f157b19
   govuk_personalisation (1.1.0) sha256=6e7a0dcfaec11570d95490160a95aff85150df5b667a586ecd7d5de04feac5dd
-  govuk_publishing_components (65.2.0) sha256=5d066c3b8e6ebe28de543e73aa75269e9b313705326a06987c49ebbff1450f72
+  govuk_publishing_components (65.2.1) sha256=8e48c3a104635ffcbe87278905baa8044c3ba5f38c6819e4508036fab80841f3
   govuk_schemas (6.3.0) sha256=e8e79a745a118229dc97b2d9e6f4f7354259647bec1b66ec2f78474e1a98701b
   govuk_sidekiq (11.1.2) sha256=abc8488bf8493a01325b7519c110da19dfc1b2fd32dcc57256f59007aab3c351
   govuk_test (4.1.2) sha256=ab0318c625d0e4b9358092bb7add4c852dd1bc69a3ff2edcfe4bfa1d156c9bb9
@@ -1123,8 +1124,8 @@ CHECKSUMS
   openapi3_parser (0.10.1) sha256=e373bfcec1f183252a51fbe28787b52c4052e045697bae1778258bb9b3296a19
   openapi_parser (2.3.1) sha256=c5415a8123c148692617a607a086f71e26d843339aa0bfa10c24e18d446d5e8b
   opensearch-ruby (3.4.0) sha256=0a8621686bed3c59b4c23e08cbaef873685a3fe4568e9d2703155ca92b8ca05d
-  opentelemetry-api (1.8.0) sha256=3af51183daf0f56a164bc1579782245be70a40678566b9a393cbe5af28ea87c6
-  opentelemetry-common (0.23.0) sha256=da721190479d57bae0ad2207468f47f3e2c3b9a91024b5bc32c9d280183eb32c
+  opentelemetry-api (1.9.0) sha256=d24065dd26583babd8d498d38ea35f74dfa193fb7102512e6e161649440079fb
+  opentelemetry-common (0.24.0) sha256=f1647b233b8ac667feeb74d66a65b702008d9ab55aae825c220b4fe2c14fa773
   opentelemetry-exporter-otlp (0.31.1) sha256=5358be17d7849cbcc4f49e1fc24105edc780a6f96c8e57b64192ab9a8e47474a
   opentelemetry-helpers-mysql (0.5.0) sha256=8c2a5d5428aec271a7d2e25c158d06d4d8a914143b5004305964d1fcbc176eca
   opentelemetry-helpers-sql (0.3.0) sha256=4bb08017d6a16dd41c4d1c53c7fd30f9c5bb691195d8b458933724627b3f37f9
@@ -1175,9 +1176,9 @@ CHECKSUMS
   opentelemetry-instrumentation-sidekiq (0.28.1) sha256=abc85d62996a5362e7a9fd7af9f6c709d01ce04795514d12fee5126335ae97ae
   opentelemetry-instrumentation-sinatra (0.28.0) sha256=9f11d68c580a421cadd633aca1f8f92707d6b6995d48fffa045a48c187347f26
   opentelemetry-instrumentation-trilogy (0.66.0) sha256=f09dead2fc09b84e5f84a9e39bdd351486549724f47471766230774831ecbe70
-  opentelemetry-registry (0.4.0) sha256=903fa6bfaa29eac1c1d73a4fdd29b850977b5353b84b8cdff11222c00ad2968f
-  opentelemetry-sdk (1.10.0) sha256=43719949be8df24dcaeb86ebbf75636cda87d51a01af2729499b92a48b80521a
-  opentelemetry-semantic_conventions (1.36.0) sha256=c1b1607dbc7853aac7f9e23f6e8b76969c45b07f2b812a4aa4383c19a3b0f617
+  opentelemetry-registry (0.5.0) sha256=726ca58ada93a23efaa5f7bb81b8ab7a8a1e14602935c9c65dfa2e597a19fb4f
+  opentelemetry-sdk (1.11.0) sha256=427c6708f4732105ffa46c11afecb91807085c59e92538eaa6cf46b97b1850c6
+  opentelemetry-semantic_conventions (1.37.0) sha256=1e2dc5ad649e19ba2fb0fa7c6f9303e5cdd8d3952511415cb07efe28a0f8f4c3
   os (1.1.4) sha256=57816d6a334e7bd6aed048f4b0308226c5fb027433b67d90a9ab435f35108d3f
   ostruct (0.6.3) sha256=95a2ed4a4bd1d190784e666b47b2d3f078e4a9efda2fccf18f84ddc6538ed912
   parallel (1.27.0) sha256=4ac151e1806b755fb4e2dc2332cbf0e54f2e24ba821ff2d3dcf86bf6dc4ae130
@@ -1203,7 +1204,7 @@ CHECKSUMS
   rack-attack (6.8.0) sha256=f2499fdebf85bcc05573a22dff57d24305ac14ec2e4156cd3c28d47cafeeecf2
   rack-protection (4.2.1) sha256=cf6e2842df8c55f5e4d1a4be015e603e19e9bc3a7178bae58949ccbb58558bac
   rack-proxy (0.7.7) sha256=446a4b57001022145d5c3ba73b775f66a2260eaf7420c6907483141900395c8a
-  rack-session (2.1.1) sha256=0b6dc07dea7e4b583f58a48e8b806d4c9f1c6c9214ebc202ec94562cbea2e4e9
+  rack-session (2.1.2) sha256=595434f8c0c3473ae7d7ac56ecda6cc6dfd9d37c0b2b5255330aa1576967ffe8
   rack-test (2.2.0) sha256=005a36692c306ac0b4a9350355ee080fd09ddef1148a5f8b2ac636c720f5c463
   rackup (2.3.1) sha256=6c79c26753778e90983761d677a48937ee3192b3ffef6bc963c0950f94688868
   rails (8.0.5) sha256=4cb40f90948be292fa15cc7cb37757b97266585145c6e76957464b40edfd5be6
