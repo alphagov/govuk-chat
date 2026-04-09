@@ -34,9 +34,9 @@ RSpec.describe PrometheusMetrics do
     it "updates the gauge if a gauge with that name exists" do
       allow(PrometheusExporter::Client.default).to receive(:find_registered_metric).and_return(metric)
 
-      described_class.gauge("openai_remaining_tokens", 90_000_000, { object: "chat.completion", model: "gpt-4o-mini" })
+      described_class.gauge(PrometheusMetrics::GAUGES.first[:name], 90_000_000, { object: "contrived", model: "model" })
 
-      expect(metric).to have_received(:observe).with(90_000_000, { object: "chat.completion", model: "gpt-4o-mini" })
+      expect(metric).to have_received(:observe).with(90_000_000, { object: "contrived", model: "model" })
     end
 
     context "when in a production environment" do
@@ -44,7 +44,7 @@ RSpec.describe PrometheusMetrics do
         allow(GovukError).to receive(:notify)
         allow(Rails.env).to receive(:production?).and_return(true)
 
-        described_class.gauge("non_existant_gauge", 90_000_000, { object: "chat.completion", model: "gpt-4o-mini" })
+        described_class.gauge("non_existant_gauge", 90_000_000, { object: "contrived", model: "model" })
 
         expect(GovukError)
           .to have_received(:notify)
@@ -55,7 +55,7 @@ RSpec.describe PrometheusMetrics do
 
     context "when in a non production environment" do
       it "raises an error if the gauge does not exist" do
-        expect { described_class.gauge("non_existant_gauge", 90_000_000, { object: "chat.completion", model: "gpt-4o-mini" }) }
+        expect { described_class.gauge("non_existant_gauge", 90_000_000, { object: "contrived", model: "model" }) }
           .to raise_error("non_existant_gauge is not defined in PrometheusMetrics::GAUGES")
       end
     end
