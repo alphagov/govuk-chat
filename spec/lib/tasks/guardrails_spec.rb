@@ -22,13 +22,12 @@ RSpec.describe "rake guardrails tasks" do
     shared_examples "prints prompts" do |provider|
       it "calls MultipleChecker.collated_prompts with the correct args and outputs to stdout" do
         expect { Rake::Task[task_name].invoke("answer_guardrails", provider) }.to output(/# System prompt/).to_stdout
-        expected_provider = provider&.to_sym || :openai
+        expected_provider = provider&.to_sym || :claude
         expect(Guardrails::MultipleChecker).to have_received(:collated_prompts).with(:answer_guardrails, expected_provider)
       end
     end
 
-    it_behaves_like "prints prompts", nil # Test default OpenAI provider
-    it_behaves_like "prints prompts", "openai"
+    it_behaves_like "prints prompts", nil # Test default Claude provider
     it_behaves_like "prints prompts", "claude"
   end
 end

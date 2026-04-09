@@ -7,16 +7,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
     allow(Guardrails::MultipleChecker).to receive(:call).and_return(guardrail_response)
   end
 
-  context "when the llm_provider is :openai" do
-    let(:llm_provider) { :openai }
-    let(:guardrail_response) { build(:guardrails_multiple_checker_result, :pass) }
-
-    it "initializes the calls Guardrails::MultipleChecker with OpenAI as the provider" do
-      described_class.new(llm_provider: llm_provider).call(context)
-      expect(Guardrails::MultipleChecker).to have_received(:call).with(message, "question_routing_guardrails", llm_provider)
-    end
-  end
-
   context "when the llm_provider is :claude" do
     let(:llm_provider) { :claude }
     let(:guardrail_response) { build(:guardrails_multiple_checker_result, :pass) }
@@ -37,11 +27,11 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
 
       context.answer.question_routing_label = "genuine_rag"
 
-      described_class.new(llm_provider: :openai).call(context)
+      described_class.new(llm_provider: :claude).call(context)
     end
 
     it "aborts the pipeline" do
-      described_class.new(llm_provider: :openai).call(context)
+      described_class.new(llm_provider: :claude).call(context)
       expect(context.aborted?).to be true
     end
   end
@@ -50,7 +40,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
     let(:guardrail_response) { build(:guardrails_multiple_checker_result, :fail) }
 
     it "sets the attributes on the answer" do
-      described_class.new(llm_provider: :openai).call(context)
+      described_class.new(llm_provider: :claude).call(context)
 
       expect(context.answer).to have_attributes({
         message: Answer::CannedResponses::QUESTION_ROUTING_GUARDRAILS_FAILED_MESSAGE,
@@ -60,7 +50,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
     end
 
     it "aborts the pipeline and assigns the right attributes" do
-      described_class.new(llm_provider: :openai).call(context)
+      described_class.new(llm_provider: :claude).call(context)
 
       expect(context.aborted?).to be true
       expect(context.answer.question_routing_guardrails_status).to eq("fail")

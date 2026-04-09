@@ -7,8 +7,8 @@ namespace "guardrails" do
       abort("Invalid guardrail type. Valid guardrail types are #{valid_guardrail_types.to_sentence}")
     end
 
-    llm_provider = (args[:llm_provider] || :openai).to_sym
-    valid_providers = %i[openai claude]
+    llm_provider = (args[:llm_provider] || :claude).to_sym
+    valid_providers = %i[claude]
     if valid_providers.exclude?(llm_provider)
       abort("Invalid LLM provider. Valid providers are #{valid_providers.to_sentence}")
     end

@@ -20,37 +20,6 @@ RSpec.describe AnswerComposition::Composer do
       })
     end
 
-    context "when the question is for the 'openai_structured_answer' strategy" do
-      let(:question) { create :question, answer_strategy: :openai_structured_answer }
-
-      it "calls PipelineRunner with the correct pipeline" do
-        stub_pipeline_initialize(AnswerComposition::Pipeline::QuestionRephraser, llm_provider: :openai)
-        stub_pipeline_initialize(AnswerComposition::Pipeline::QuestionRoutingGuardrails, llm_provider: :openai)
-        stub_pipeline_initialize(AnswerComposition::Pipeline::AnswerGuardrails, llm_provider: :openai)
-        stub_pipeline_initialize(AnswerComposition::Pipeline::JailbreakGuardrails, llm_provider: :openai)
-
-        expected_pipeline = [
-          AnswerComposition::Pipeline::JailbreakGuardrails.new(llm_provider: :openai),
-          AnswerComposition::Pipeline::QuestionRephraser.new(llm_provider: :openai),
-          AnswerComposition::Pipeline::OpenAI::QuestionRouter,
-          AnswerComposition::Pipeline::QuestionRoutingGuardrails.new(llm_provider: :openai),
-          AnswerComposition::Pipeline::SearchResultFetcher,
-          AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer,
-          AnswerComposition::Pipeline::AnswerGuardrails.new(llm_provider: :openai),
-        ]
-        expected_pipeline.each do |pipeline|
-          allow(pipeline).to receive(:call) { |context| context }
-        end
-        expect(AnswerComposition::PipelineRunner).to receive(:call).and_call_original
-        result = described_class.call(question)
-
-        expect(result)
-          .to be_an_instance_of(Answer)
-          .and have_attributes(question:)
-        expect(expected_pipeline).to all(have_received(:call))
-      end
-    end
-
     context "when the question is for the 'claude_structured_answer' strategy" do
       let(:question) { create :question, answer_strategy: :claude_structured_answer }
 
@@ -106,7 +75,7 @@ RSpec.describe AnswerComposition::Composer do
     end
 
     context "when an error is returned during answer generation" do
-      let(:question) { create :question, answer_strategy: :openai_structured_answer }
+      let(:question) { create :question, answer_strategy: :claude_structured_answer }
       let(:result) { described_class.call(question) }
 
       before do

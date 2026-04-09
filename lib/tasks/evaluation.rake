@@ -50,11 +50,6 @@ namespace :evaluation do
     question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
 
     answer = case args[:llm_provider]
-             when "openai"
-               AnswerComposition::PipelineRunner.call(question:, pipeline: [
-                 AnswerComposition::Pipeline::SearchResultFetcher,
-                 AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer,
-               ])
              when "claude"
                AnswerComposition::PipelineRunner.call(question:, pipeline: [
                  AnswerComposition::Pipeline::SearchResultFetcher,
@@ -76,8 +71,6 @@ namespace :evaluation do
     raise "Requires a provider" if args[:provider].blank?
 
     klass = case args[:provider]
-            when "openai"
-              AnswerComposition::Pipeline::OpenAI::QuestionRouter
             when "claude"
               AnswerComposition::Pipeline::Claude::QuestionRouter
             else

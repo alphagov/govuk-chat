@@ -1,4 +1,4 @@
-RSpec.describe Guardrails::JailbreakChecker do
+RSpec.describe Guardrails::JailbreakChecker, :aws_credentials_stubbed do
   let(:input) { "User question" }
   let(:pass_value) { "PassValue" }
 
@@ -6,27 +6,7 @@ RSpec.describe Guardrails::JailbreakChecker do
     allow(described_class).to receive_messages(pass_value:)
   end
 
-  it "calls the OpenAI jailbreak checker by default" do
-    result = {
-      llm_guardrail_result: pass_value,
-      llm_response: {
-        "message" => { "content" => pass_value },
-        "finish_reason" => "stop",
-        "index" => 0,
-      },
-      llm_token_usage: {
-        "prompt_tokens" => 100,
-        "completion_tokens" => 2,
-        "total_tokens" => 102,
-      },
-    }
-
-    allow(Guardrails::OpenAI::JailbreakChecker).to receive(:call).and_return(result)
-    described_class.call(input)
-    expect(Guardrails::OpenAI::JailbreakChecker).to have_received(:call).with(input)
-  end
-
-  it "calls the Claude jailbreak checker when the provider is specified as :claude" do
+  it "calls the Claude jailbreak checker by default" do
     result = {
       llm_guardrail_result: pass_value,
       llm_response: {
@@ -42,30 +22,32 @@ RSpec.describe Guardrails::JailbreakChecker do
     }
 
     allow(Guardrails::Claude::JailbreakChecker).to receive(:call).and_return(result)
-    described_class.call(input, :claude)
+    described_class.call(input)
     expect(Guardrails::Claude::JailbreakChecker).to have_received(:call).with(input)
   end
 
   it "returns a result object" do
-    stub_openai_jailbreak_guardrails(input)
+    stub_claude_jailbreak_guardrails(input)
 
     result = described_class.call(input)
+
     expect(result)
       .to be_an_instance_of(described_class::Result)
       .and have_attributes(
         triggered: boolean,
-        llm_response: hash_including("message", "finish_reason", "index"),
+        llm_response: hash_including(:content, :stop_reason),
         llm_prompt_tokens: be_a(Integer),
         llm_completion_tokens: be_a(Integer),
         llm_cached_tokens: be_a(Integer).or(be_nil),
+        model: be_a(String),
       )
   end
 
   it "returns a result object with triggered true when guardrails fail" do
-    allow(Guardrails::OpenAI::JailbreakChecker).to receive(:call).with(input).and_call_original
-    stub_openai_jailbreak_guardrails(input, triggered: true)
+    allow(Guardrails::Claude::JailbreakChecker).to receive(:call).with(input).and_call_original
+    stub_claude_jailbreak_guardrails(input, triggered: true)
     second_input = "Second user question"
-    allow(Guardrails::OpenAI::JailbreakChecker)
+    allow(Guardrails::Claude::JailbreakChecker)
       .to receive(:call)
       .with(second_input)
       .and_return({
@@ -88,7 +70,7 @@ RSpec.describe Guardrails::JailbreakChecker do
   end
 
   it "returns a result object with triggered false when guardrails pass" do
-    stub_openai_jailbreak_guardrails(input, triggered: false)
+    stub_claude_jailbreak_guardrails(input, triggered: false)
     expect(described_class.call(input)).to have_attributes(triggered: false)
   end
 end

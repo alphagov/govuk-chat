@@ -50,15 +50,13 @@ module Guardrails
 
     def self.call(...) = new(...).call
 
-    def initialize(input, llm_provider = :openai)
+    def initialize(input, llm_provider = :claude)
       @input = input
       @llm_provider = llm_provider
     end
 
     def call
       case llm_provider
-      when :openai
-        result = OpenAI::JailbreakChecker.call(input)
       when :claude
         result = Claude::JailbreakChecker.call(input)
       else
