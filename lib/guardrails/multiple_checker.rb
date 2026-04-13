@@ -93,8 +93,6 @@ module Guardrails
 
     def call
       case llm_provider
-      when :openai
-        response = OpenAI::MultipleChecker.call(input, prompt)
       when :claude
         response = Claude::MultipleChecker.call(input, prompt)
       else

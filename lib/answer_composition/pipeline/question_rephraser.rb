@@ -14,8 +14,6 @@ module AnswerComposition
 
         start_time = Clock.monotonic_time
         klass = case llm_provider
-                when :openai
-                  Pipeline::OpenAI::QuestionRephraser
                 when :claude
                   Pipeline::Claude::QuestionRephraser
                 else
