@@ -106,7 +106,7 @@ RSpec.describe AnswerComposition::Composer do
     end
 
     context "when an error is returned during answer generation" do
-      let(:question) { create :question, answer_strategy: :openai_structured_answer }
+      let(:question) { create :question, answer_strategy: :claude_structured_answer }
       let(:result) { described_class.call(question) }
 
       before do

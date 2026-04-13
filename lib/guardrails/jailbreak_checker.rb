@@ -50,7 +50,7 @@ module Guardrails
 
     def self.call(...) = new(...).call
 
-    def initialize(input, llm_provider = :openai)
+    def initialize(input, llm_provider = :claude)
       @input = input
       @llm_provider = llm_provider
     end
