@@ -7,18 +7,12 @@ RSpec.describe Guardrails::MultipleChecker do
     let(:llm_prompt_name) { :answer_guardrails }
     let(:guardrail_response_hash) do
       {
-        llm_response: {
-          message: {
-            role: "assistant",
-            content: "False | None",
-          },
-          finish_reason: "stop",
-        },
+        llm_response: guardrail_result.llm_response,
         llm_guardrail_result: "False | None",
         llm_prompt_tokens: 13,
         llm_completion_tokens: 7,
         llm_cached_tokens: 10,
-        model: "gpt-4o-mini-2024-07-18",
+        model: BedrockModels.model_id(Guardrails::Claude::MultipleChecker::DEFAULT_MODEL),
       }
     end
     let(:guardrail_result) { build(:guardrails_multiple_checker_result, :pass) }

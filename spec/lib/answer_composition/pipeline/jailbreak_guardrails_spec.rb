@@ -1,6 +1,6 @@
 RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
   let(:context) { build(:answer_pipeline_context) }
-  let(:default_provider) { :openai }
+  let(:default_provider) { :claude }
 
   let(:llm_response) do
     {
@@ -17,7 +17,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
   let(:llm_prompt_tokens) { 10 }
   let(:llm_completion_tokens) { 5 }
   let(:llm_cached_tokens) { 0 }
-  let(:model) { Guardrails::OpenAI::JailbreakChecker::OPENAI_MODEL }
+  let(:model) { Guardrails::Claude::MultipleChecker.bedrock_model }
 
   context "when the guardrails are not triggered" do
     before do

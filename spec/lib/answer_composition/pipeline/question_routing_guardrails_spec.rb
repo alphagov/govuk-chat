@@ -37,11 +37,11 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
 
       context.answer.question_routing_label = "genuine_rag"
 
-      described_class.new(llm_provider: :openai).call(context)
+      described_class.new(llm_provider: :claude).call(context)
     end
 
     it "aborts the pipeline" do
-      described_class.new(llm_provider: :openai).call(context)
+      described_class.new(llm_provider: :claude).call(context)
       expect(context.aborted?).to be true
     end
   end
@@ -50,7 +50,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
     let(:guardrail_response) { build(:guardrails_multiple_checker_result, :fail) }
 
     it "sets the attributes on the answer" do
-      described_class.new(llm_provider: :openai).call(context)
+      described_class.new(llm_provider: :claude).call(context)
 
       expect(context.answer).to have_attributes({
         message: Answer::CannedResponses::QUESTION_ROUTING_GUARDRAILS_FAILED_MESSAGE,
@@ -60,7 +60,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
     end
 
     it "aborts the pipeline and assigns the right attributes" do
-      described_class.new(llm_provider: :openai).call(context)
+      described_class.new(llm_provider: :claude).call(context)
 
       expect(context.aborted?).to be true
       expect(context.answer.question_routing_guardrails_status).to eq("fail")
