@@ -11,7 +11,7 @@ RSpec.describe AutoEvaluation::EvaluateAnswerFromQuestionMessage, :aws_credentia
         question: an_instance_of(Question),
         pipeline: [
           AnswerComposition::Pipeline::SearchResultFetcher,
-          AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
+          AnswerComposition::Pipeline::StructuredAnswerComposer,
         ],
       )
       .and_return(answer)

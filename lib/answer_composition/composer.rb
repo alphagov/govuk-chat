@@ -39,10 +39,10 @@ module AnswerComposition
         PipelineRunner.call(question:, pipeline: [
           Pipeline::JailbreakGuardrails.new(llm_provider: :claude),
           Pipeline::QuestionRephraser,
-          Pipeline::Claude::QuestionRouter,
+          Pipeline::QuestionRouter,
           Pipeline::QuestionRoutingGuardrails.new(llm_provider: :claude),
           Pipeline::SearchResultFetcher,
-          Pipeline::Claude::StructuredAnswerComposer,
+          Pipeline::StructuredAnswerComposer,
           Pipeline::AnswerGuardrails.new(llm_provider: :claude),
         ])
       else

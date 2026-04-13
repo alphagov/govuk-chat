@@ -31,10 +31,10 @@ RSpec.describe AnswerComposition::Composer do
         expected_pipeline = [
           AnswerComposition::Pipeline::JailbreakGuardrails.new(llm_provider: :claude),
           AnswerComposition::Pipeline::QuestionRephraser,
-          AnswerComposition::Pipeline::Claude::QuestionRouter,
+          AnswerComposition::Pipeline::QuestionRouter,
           AnswerComposition::Pipeline::QuestionRoutingGuardrails.new(llm_provider: :claude),
           AnswerComposition::Pipeline::SearchResultFetcher,
-          AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
+          AnswerComposition::Pipeline::StructuredAnswerComposer,
           AnswerComposition::Pipeline::AnswerGuardrails.new(llm_provider: :claude),
         ]
         expected_pipeline.each do |pipeline|

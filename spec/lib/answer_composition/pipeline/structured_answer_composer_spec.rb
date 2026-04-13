@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition::Pipeline::Claude::StructuredAnswerComposer, :aws_credentials_stubbed, :chunked_content_index do
+RSpec.describe AnswerComposition::Pipeline::StructuredAnswerComposer, :aws_credentials_stubbed, :chunked_content_index do
   describe ".call" do
     let(:question) { build :question }
     let(:answer) { "VAT (Value Added Tax) is a tax applied to most goods and services in the UK." }

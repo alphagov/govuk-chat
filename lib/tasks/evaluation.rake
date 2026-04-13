@@ -48,7 +48,7 @@ namespace :evaluation do
 
     answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [
       AnswerComposition::Pipeline::SearchResultFetcher,
-      AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
+      AnswerComposition::Pipeline::StructuredAnswerComposer,
     ])
 
     raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/
@@ -62,7 +62,7 @@ namespace :evaluation do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
 
     question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
-    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [AnswerComposition::Pipeline::Claude::QuestionRouter])
+    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [AnswerComposition::Pipeline::QuestionRouter])
 
     raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/
 

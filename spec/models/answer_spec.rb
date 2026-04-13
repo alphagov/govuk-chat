@@ -220,7 +220,7 @@ RSpec.describe Answer do
   end
 
   it "ensures the question routing labels enum values and prompt config are in sync" do
-    claude_supported_models = AnswerComposition::Pipeline::Claude::QuestionRouter::SUPPORTED_MODELS.map(&:to_s)
+    claude_supported_models = AnswerComposition::Pipeline::QuestionRouter::SUPPORTED_MODELS.map(&:to_s)
     question_routing_prompt_configs = Rails.configuration
                                            .govuk_chat_private
                                            .llm_prompts
