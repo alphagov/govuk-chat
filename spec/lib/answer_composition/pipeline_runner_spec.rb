@@ -47,57 +47,6 @@ RSpec.describe AnswerComposition::PipelineRunner do
       end
     end
 
-    context "when the step raises an OpenAIClient::RequestError" do
-      let(:error) do
-        OpenAIClient::RequestError.new(
-          "error message",
-          body: { "error" => { "message" => "nested error message" } },
-        )
-      end
-      let(:pipeline_step) { ->(_context) { raise error } }
-
-      it "notifies sentry" do
-        expect(GovukError).to receive(:notify).with(error)
-        described_class.call(question:, pipeline: [pipeline_step])
-      end
-
-      it "returns the context's answer with the correct message, status and error_message" do
-        result = described_class.call(question:, pipeline: [pipeline_step])
-
-        expect(result)
-          .to be_a(Answer)
-          .and have_attributes(
-            question:,
-            status: "error_answer_service_error",
-            message: Answer::CannedResponses::ANSWER_SERVICE_ERROR_RESPONSE,
-            error_message: "class: OpenAIClient::RequestError message: nested error message",
-          )
-      end
-
-      context "when the errors response body is a string" do
-        let(:error) { OpenAIClient::RequestError.new("error message") }
-
-        it "returns the nested error message from the respond body" do
-          result = described_class.call(question:, pipeline: [pipeline_step])
-          expect(result.error_message).to eq "class: OpenAIClient::RequestError message: error message"
-        end
-      end
-
-      context "when the errors response body is a hash in an unexpected format" do
-        let(:error) do
-          OpenAIClient::RequestError.new(
-            "default error message",
-            body: { "error" => { "random_key" => "won't be found" } },
-          )
-        end
-
-        it "defaults to using the error message" do
-          result = described_class.call(question:, pipeline: [pipeline_step])
-          expect(result.error_message).to eq "class: OpenAIClient::RequestError message: default error message"
-        end
-      end
-    end
-
     context "when the step raises an Anthropic::Errors::APIError" do
       let(:error) do
         Anthropic::Errors::APIError.new(

@@ -5,16 +5,29 @@ FactoryBot.define do
     llm_prompt_tokens { 13 }
     llm_completion_tokens { 7 }
     llm_cached_tokens { 10 }
-    model { "gpt-4o-mini-2024-07-18" }
+    model { BedrockModels.model_id(Guardrails::Claude::MultipleChecker::DEFAULT_MODEL) }
 
     llm_response do
-      {
-        "message": {
-          "role": "assistant",
-          "content": llm_guardrail_result,
-        },
-        "finish_reason": "stop",
-      }
+      content = Anthropic::Models::TextBlock.new(
+        type: :text,
+        text: llm_guardrail_result,
+      )
+
+      usage = Anthropic::Models::Usage.new(
+        input_tokens: llm_prompt_tokens,
+        output_tokens: llm_completion_tokens,
+        cache_read_input_tokens: llm_cached_tokens,
+      )
+
+      Anthropic::Models::Message.new(
+        id: "msg-id",
+        model:,
+        role: :assistant,
+        content:,
+        stop_reason: :end_turn,
+        usage:,
+        type: :message,
+      ).to_h
     end
 
     trait :pass do

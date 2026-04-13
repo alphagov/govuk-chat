@@ -10,7 +10,6 @@ Rails.application.routes.draw do
     GovukHealthcheck::ActiveRecord,
     GovukHealthcheck::SidekiqRedis,
     GovukHealthcheck::RailsCache,
-    Healthcheck::OpenAI,
     Healthcheck::Opensearch,
     Healthcheck::Bedrock,
   )

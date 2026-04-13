@@ -16,13 +16,6 @@ module AnswerComposition
       end
 
       context.answer
-    rescue OpenAIClient::RequestError => e
-      GovukError.notify(e)
-      context.abort_pipeline(
-        message: Answer::CannedResponses::ANSWER_SERVICE_ERROR_RESPONSE,
-        status: "error_answer_service_error",
-        error_message: error_message(e),
-      )
     rescue Anthropic::Errors::APIError => e
       GovukError.notify(e)
       context.abort_pipeline(

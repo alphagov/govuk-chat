@@ -7,18 +7,12 @@ RSpec.describe Guardrails::MultipleChecker do
     let(:llm_prompt_name) { :answer_guardrails }
     let(:guardrail_response_hash) do
       {
-        llm_response: {
-          message: {
-            role: "assistant",
-            content: "False | None",
-          },
-          finish_reason: "stop",
-        },
+        llm_response: guardrail_result.llm_response,
         llm_guardrail_result: "False | None",
         llm_prompt_tokens: 13,
         llm_completion_tokens: 7,
         llm_cached_tokens: 10,
-        model: "gpt-4o-mini-2024-07-18",
+        model: BedrockModels.model_id(Guardrails::Claude::MultipleChecker::DEFAULT_MODEL),
       }
     end
     let(:guardrail_result) { build(:guardrails_multiple_checker_result, :pass) }
@@ -26,35 +20,6 @@ RSpec.describe Guardrails::MultipleChecker do
     it "raises an error if the llm_provider is unknown" do
       expect { described_class.call(input, llm_prompt_name, :unknown_provider) }
         .to raise_error(RuntimeError, "Unexpected provider unknown_provider")
-    end
-
-    context "when the llm_provider is :openai" do
-      let(:llm_provider) { :openai }
-
-      before do
-        guardrails_config = {
-          system_prompt: "{guardrails} {date}",
-          user_prompt: "{input}",
-          guardrails: %w[political appropriate_language],
-          guardrail_definitions: {
-            "political" => "This is a political guardrail",
-            "appropriate_language" => "This is an appropriate language guardrail",
-          },
-        }.with_indifferent_access
-
-        allow(Rails.configuration.govuk_chat_private.llm_prompts.openai).to receive(:[]).with(llm_prompt_name).and_return(guardrails_config)
-        allow(Guardrails::OpenAI::MultipleChecker).to receive(:call).and_return(guardrail_response_hash)
-      end
-
-      it "calls the OpenAI multiple checker" do
-        described_class.call(input, llm_prompt_name, llm_provider)
-        expect(Guardrails::OpenAI::MultipleChecker).to have_received(:call).with(input, instance_of(Guardrails::MultipleChecker::Prompt))
-      end
-
-      it "returns the guardrail result" do
-        result = described_class.call(input, llm_prompt_name, llm_provider)
-        expect(result).to eq(guardrail_result)
-      end
     end
 
     context "when the llm_provider is :claude" do

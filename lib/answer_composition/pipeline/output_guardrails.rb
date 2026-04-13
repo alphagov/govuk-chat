@@ -1,7 +1,7 @@
 module AnswerComposition
   module Pipeline
     class OutputGuardrails
-      def initialize(llm_provider: :openai)
+      def initialize(llm_provider: :claude)
         @llm_provider = llm_provider
       end
 
