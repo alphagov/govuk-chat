@@ -25,13 +25,13 @@ RSpec.describe MessageQueue::ContentSynchroniser::IndexContentItem, :aws_credent
     end
 
     it "applies Titan embedding to the data going into the search index" do
-      allow(Search::TextToEmbedding::Titan).to receive(:call).and_call_original
+      allow(Search::TextToEmbedding).to receive(:call).and_call_original
 
       expect { described_class.call(content_item, repository) }
         .to change { repository.count(exists: { field: :titan_embedding }) }
         .by(chunks.length)
 
-      expect(Search::TextToEmbedding::Titan).to have_received(:call)
+      expect(Search::TextToEmbedding).to have_received(:call)
     end
 
     it "returns a Result object" do
