@@ -4,7 +4,7 @@ module GuardrailsExamples
       described_class.new.call(context)
       expect(Guardrails::MultipleChecker)
         .to have_received(:call)
-        .with(context.answer.message, guardrail_name, :openai)
+        .with(context.answer.message, guardrail_name, :claude)
     end
 
     it "does not change the message" do
@@ -33,7 +33,7 @@ module GuardrailsExamples
         llm_prompt_tokens: 13,
         llm_completion_tokens: 7,
         llm_cached_tokens: 10,
-        model: "gpt-4o-mini-2024-07-18",
+        model: BedrockModels.model_id(Guardrails::Claude::MultipleChecker::DEFAULT_MODEL),
       })
     end
   end
@@ -42,13 +42,9 @@ module GuardrailsExamples
     context "when a ResponseError occurs during the call" do
       let(:guardrail_response) { nil }
       let(:llm_response) do
-        {
-          message: {
-            role: "assistant",
-            content: 'False | "1, 2"',
-          },
-          finish_reason: "stop",
-        }
+        claude_messages_response(
+          content: "PassValue",
+        ).to_h
       end
 
       before do
@@ -62,7 +58,7 @@ module GuardrailsExamples
               13,
               7,
               10,
-              "gpt-4o-mini-2024-07-18",
+              BedrockModels.model_id(Guardrails::Claude::MultipleChecker::DEFAULT_MODEL),
             ),
           )
       end
@@ -91,7 +87,7 @@ module GuardrailsExamples
           llm_prompt_tokens: 13,
           llm_completion_tokens: 7,
           llm_cached_tokens: 10,
-          model: "gpt-4o-mini-2024-07-18",
+          model: BedrockModels.model_id(Guardrails::Claude::MultipleChecker::DEFAULT_MODEL),
         })
       end
     end
