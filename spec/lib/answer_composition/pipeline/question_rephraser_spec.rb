@@ -50,14 +50,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
         .to raise_error("Unknown llm provider: unknown")
     end
 
-    it "calls the OpenAI rephraser" do
-      expect(AnswerComposition::Pipeline::OpenAI::QuestionRephraser).to(
-        receive(:call).with(question.message, question_records_for_rephrasing),
-      ).and_return(rephrasing_result)
-
-      described_class.new(llm_provider: :openai).call(context)
-    end
-
     it "calls the Claude rephraser" do
       expect(AnswerComposition::Pipeline::Claude::QuestionRephraser).to(
         receive(:call).with(question.message, question_records_for_rephrasing),

@@ -26,26 +26,6 @@ RSpec.describe Guardrails::JailbreakChecker, :aws_credentials_stubbed do
     expect(Guardrails::Claude::JailbreakChecker).to have_received(:call).with(input)
   end
 
-  it "calls the OpenAI jailbreak checker when the provider is specified as :openai" do
-    result = {
-      llm_guardrail_result: pass_value,
-      llm_response: {
-        "message" => { "content" => pass_value },
-        "finish_reason" => "stop",
-        "index" => 0,
-      },
-      llm_token_usage: {
-        "prompt_tokens" => 100,
-        "completion_tokens" => 2,
-        "total_tokens" => 102,
-      },
-    }
-
-    allow(Guardrails::OpenAI::JailbreakChecker).to receive(:call).and_return(result)
-    described_class.call(input, :openai)
-    expect(Guardrails::OpenAI::JailbreakChecker).to have_received(:call).with(input)
-  end
-
   it "returns a result object" do
     stub_claude_jailbreak_guardrails(input)
 

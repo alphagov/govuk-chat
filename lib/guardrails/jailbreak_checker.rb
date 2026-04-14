@@ -57,8 +57,6 @@ module Guardrails
 
     def call
       case llm_provider
-      when :openai
-        result = OpenAI::JailbreakChecker.call(input)
       when :claude
         result = Claude::JailbreakChecker.call(input)
       else

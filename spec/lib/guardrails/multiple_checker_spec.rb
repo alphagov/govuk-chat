@@ -22,35 +22,6 @@ RSpec.describe Guardrails::MultipleChecker do
         .to raise_error(RuntimeError, "Unexpected provider unknown_provider")
     end
 
-    context "when the llm_provider is :openai" do
-      let(:llm_provider) { :openai }
-
-      before do
-        guardrails_config = {
-          system_prompt: "{guardrails} {date}",
-          user_prompt: "{input}",
-          guardrails: %w[political appropriate_language],
-          guardrail_definitions: {
-            "political" => "This is a political guardrail",
-            "appropriate_language" => "This is an appropriate language guardrail",
-          },
-        }.with_indifferent_access
-
-        allow(Rails.configuration.govuk_chat_private.llm_prompts.openai).to receive(:[]).with(llm_prompt_name).and_return(guardrails_config)
-        allow(Guardrails::OpenAI::MultipleChecker).to receive(:call).and_return(guardrail_response_hash)
-      end
-
-      it "calls the OpenAI multiple checker" do
-        described_class.call(input, llm_prompt_name, llm_provider)
-        expect(Guardrails::OpenAI::MultipleChecker).to have_received(:call).with(input, instance_of(Guardrails::MultipleChecker::Prompt))
-      end
-
-      it "returns the guardrail result" do
-        result = described_class.call(input, llm_prompt_name, llm_provider)
-        expect(result).to eq(guardrail_result)
-      end
-    end
-
     context "when the llm_provider is :claude" do
       let(:llm_provider) { :claude }
 
