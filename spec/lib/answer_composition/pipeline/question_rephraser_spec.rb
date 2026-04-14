@@ -1,24 +1,40 @@
-RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
-  let(:instance) { described_class.new(llm_provider: :claude) }
-  let(:rephrasing_result) do
-    described_class::Result.new(
-      llm_response: { stop_reason: "end_turn" },
-      rephrased_question: "Rephrased question",
-      metrics: { llm_prompt_tokens: 10, llm_completion_tokens: 20 },
-    )
+RSpec.describe AnswerComposition::Pipeline::QuestionRephraser, :aws_credentials_stubbed do
+  let(:conversation) { create :conversation, :with_history }
+  let(:question) { conversation.questions.strict_loading(false).last }
+  let(:context) { build(:answer_pipeline_context, question:) }
+  let(:question_records) { conversation.questions.joins(:answer).order(created_at: :asc) }
+  let(:rephrased) { "How do I pay my corporation tax" }
+  let!(:stub) { stub_claude_question_rephrasing(question.message, rephrased) }
+
+  it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_QUESTION_REPHRASER_MODEL" do
+    let(:pipeline_step) { described_class.new(context) }
+    let(:stubbed_request_lambda) do
+      lambda { |bedrock_model|
+        stub_claude_question_rephrasing(
+          question.message,
+          rephrased,
+          chat_options: { bedrock_model: },
+        )
+      }
+    end
   end
 
-  before do
-    allow(AnswerComposition::Pipeline::Claude::QuestionRephraser).to(
-      receive(:call).and_return(rephrasing_result),
-    )
+  it "uses an overridden AWS region if set" do
+    ClimateControl.modify(CLAUDE_AWS_REGION: "my-region") do
+      allow(Anthropic::BedrockClient).to receive(:new).and_call_original
+
+      described_class.call(context)
+
+      expect(Anthropic::BedrockClient).to have_received(:new).with(hash_including(aws_region: "my-region"))
+      expect(stub).to have_been_requested
+    end
   end
 
   context "when the question is the beginning of the conversation" do
     let(:context) { build(:answer_pipeline_context) }
 
     it "returns nil" do
-      expect(instance.call(context)).to be_nil
+      expect(described_class.call(context)).to be_nil
     end
   end
 
@@ -33,50 +49,76 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
       latest_question = create(:question, conversation:)
       context = build(:answer_pipeline_context, question: latest_question)
 
-      expect(instance.call(context)).to be_nil
+      expect(described_class.call(context)).to be_nil
     end
   end
 
   context "when the question is part of an ongoing chat" do
-    let(:conversation) { create :conversation, :with_history }
-    let(:context) { build(:answer_pipeline_context, question:) }
-    let(:question) { conversation.questions.strict_loading(false).last }
-    let(:question_records_for_rephrasing) do
-      conversation.questions.joins(:answer).order("answers.created_at")
+    it "includes the current question in the user prompt" do
+      described_class.call(context)
+      expect(stub).to have_been_requested
     end
 
-    it "raises an error if the llm_provider is unknown" do
-      expect { described_class.new(llm_provider: :unknown).call(context) }
-        .to raise_error("Unknown llm provider: unknown")
-    end
+    it "includes the message_history in the user prompt" do
+      message_history = <<~HISTORY.strip
+        user:
+        """
+        How do I pay my tax
+        """
+        assistant:
+        """
+        What type of tax
+        """
+        user:
+        """
+        What types are there
+        """
+        assistant:
+        """
+        Self-assessment, PAYE, Corporation tax
+        """
+      HISTORY
 
-    it "calls the Claude rephraser" do
-      expect(AnswerComposition::Pipeline::Claude::QuestionRephraser).to(
-        receive(:call).with(question.message, question_records_for_rephrasing),
+      anthropic_request = stub_claude_question_rephrasing(
+        Regexp.new(message_history),
+        rephrased,
       )
 
-      instance.call(context)
+      described_class.call(context)
+
+      expect(anthropic_request).to have_been_made
     end
 
     it "updates the context's question_message with the rephrased question" do
-      instance.call(context)
-      expect(context.question_message).to eq("Rephrased question")
+      described_class.call(context)
+      expect(context.question_message).to eq(rephrased)
     end
 
     it "assigns metrics to the answer" do
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
-      instance.call(context)
+      described_class.call(context)
 
       expect(context.answer.metrics["question_rephrasing"])
-        .to eq(rephrasing_result.metrics.merge(duration: 1.5))
+        .to eq({
+          duration: 1.5,
+          llm_prompt_tokens: 10,
+          llm_completion_tokens: 20,
+          llm_cached_tokens: nil,
+          model: BedrockModels.model_id(:claude_sonnet_4_0),
+        })
     end
 
     it "assigns the llm response to the answer" do
-      instance.call(context)
+      described_class.call(context)
+
+      expected_llm_response = claude_messages_response(
+        content: [claude_messages_text_block(rephrased)],
+        usage: claude_messages_usage_block(input_tokens: 10, output_tokens: 20),
+      ).to_h
 
       expect(context.answer.llm_responses["question_rephrasing"])
-        .to eq(rephrasing_result.llm_response)
+        .to eq(expected_llm_response)
     end
   end
 
@@ -93,23 +135,93 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser do
           answer:,
           conversation:,
           message: "Question #{n}",
-          created_at: rand(0..10).days.ago,
         )
       end
     end
 
     it "truncates the history to the last 5 Q/A pairs" do
-      question_records_for_rephrasing = conversation
-                                        .questions
-                                        .joins(:answer)
-                                        .sort_by(&:created_at)
-                                        .last(5)
+      message_history = <<~HISTORY.strip
+        user:
+        """
+        Question 2
+        """
+        assistant:
+        """
+        Answer 2
+        """
+        user:
+        """
+        Question 3
+        """
+        assistant:
+        """
+        Answer 3
+        """
+        user:
+        """
+        Question 4
+        """
+        assistant:
+        """
+        Answer 4
+        """
+        user:
+        """
+        Question 5
+        """
+        assistant:
+        """
+        Answer 5
+        """
+        user:
+        """
+        Question 6
+        """
+        assistant:
+        """
+        Answer 6
+        """
+      HISTORY
 
-      expect(AnswerComposition::Pipeline::Claude::QuestionRephraser).to(
-        receive(:call).with("Question 7", question_records_for_rephrasing),
+      anthropic_request = stub_claude_question_rephrasing(
+        Regexp.new(message_history),
+        rephrased,
       )
 
-      instance.call(context)
+      described_class.call(context)
+
+      expect(anthropic_request).to have_been_made
+    end
+  end
+
+  context "when a question has been rephrased" do
+    let(:previously_rephrased) { "A previously rephrased question" }
+    let(:conversation) { create(:conversation) }
+    let(:previous_question) { create(:question, conversation:) }
+    let!(:answer) { create(:answer, question: previous_question, rephrased_question: previously_rephrased) }
+    let(:question) { create(:question, conversation:) }
+
+    it "includes the rephrased question in the history" do
+      create(:question, conversation:)
+      message_history = <<~HISTORY.strip
+        user:
+        """
+        #{previously_rephrased}
+        """
+        assistant:
+        """
+        #{answer.message}
+        """
+      HISTORY
+
+      anthropic_request = stub_claude_question_rephrasing(
+        Regexp.new(message_history),
+        rephrased,
+      )
+
+      described_class.call(context)
+
+      expect(anthropic_request).to have_been_made
     end
   end
 end
