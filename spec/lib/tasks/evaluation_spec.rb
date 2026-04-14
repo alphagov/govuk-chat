@@ -174,7 +174,7 @@ RSpec.describe "rake evaluation tasks" do
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input) do
         result = build(:guardrails_multiple_checker_result, :pass)
-        allow(Guardrails::MultipleChecker).to receive(:call).with(input, :answer_guardrails, :claude).and_return(result)
+        allow(Guardrails::MultipleChecker).to receive(:call).with(input, :answer_guardrails).and_return(result)
         expect { Rake::Task[task_name].invoke("answer_guardrails") }
           .to output("#{result.to_json}\n").to_stdout
       end

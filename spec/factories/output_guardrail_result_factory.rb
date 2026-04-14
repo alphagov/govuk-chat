@@ -5,7 +5,7 @@ FactoryBot.define do
     llm_prompt_tokens { 13 }
     llm_completion_tokens { 7 }
     llm_cached_tokens { 10 }
-    model { BedrockModels.model_id(Guardrails::Claude::MultipleChecker::DEFAULT_MODEL) }
+    model { BedrockModels.model_id(Guardrails::MultipleChecker::DEFAULT_MODEL) }
 
     llm_response do
       content = Anthropic::Models::TextBlock.new(

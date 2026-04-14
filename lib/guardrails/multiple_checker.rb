@@ -9,6 +9,10 @@ module Guardrails
       end
     end
 
+    MAX_TOKENS = 100
+    SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_haiku_4_5].freeze
+    DEFAULT_MODEL = :claude_sonnet_4_0
+
     class ResponseError < StandardError
       attr_reader :llm_response, :llm_guardrail_result, :llm_prompt_tokens,
                   :llm_completion_tokens, :llm_cached_tokens, :model
@@ -35,12 +39,10 @@ module Guardrails
 
       Guardrail = Data.define(:key, :name, :content)
 
-      def initialize(prompt_name, llm_provider = :claude)
-        prompts = if llm_provider == :claude
-                    AnswerComposition::Pipeline::Prompts.config(prompt_name, Claude::MultipleChecker.bedrock_model)
-                  else
-                    Rails.configuration.govuk_chat_private.llm_prompts[llm_provider][prompt_name]
-                  end
+      def initialize(prompt_name)
+        prompts = AnswerComposition::Pipeline::Prompts.config(
+          prompt_name, Guardrails::MultipleChecker.bedrock_model
+        )
 
         raise "No LLM prompts found for #{prompt_name}" unless prompts
 
@@ -72,8 +74,12 @@ module Guardrails
 
     def self.call(...) = new(...).call
 
-    def self.collated_prompts(llm_prompt_name, llm_provider)
-      prompt = Prompt.new(llm_prompt_name, llm_provider)
+    def self.bedrock_model
+      BedrockModels.determine_model(ENV["BEDROCK_CLAUDE_GUARDRAILS_MODEL"], DEFAULT_MODEL, SUPPORTED_MODELS).last
+    end
+
+    def self.collated_prompts(llm_prompt_name)
+      prompt = Prompt.new(llm_prompt_name)
 
       <<~PROMPT
         # System prompt
@@ -85,38 +91,46 @@ module Guardrails
       PROMPT
     end
 
-    def initialize(input, llm_prompt_name, llm_provider)
+    def initialize(input, llm_prompt_name)
       @input = input
       @llm_prompt_name = llm_prompt_name
-      @llm_provider = llm_provider
     end
 
     def call
-      case llm_provider
-      when :claude
-        response = Claude::MultipleChecker.call(input, prompt)
-      else
-        raise "Unexpected provider #{llm_provider}"
-      end
-      parse_response(**response)
+      response = anthropic_bedrock_client.messages.create(
+        system: [{ type: "text", text: prompt.system_prompt, cache_control: { type: "ephemeral" } }],
+        model: BedrockModels.model_id(self.class.bedrock_model),
+        messages: [{ role: "user", content: prompt.user_prompt(input) }],
+        max_tokens: MAX_TOKENS,
+      )
+
+      parse_response(response)
     end
 
   private
 
-    def parse_response(llm_response:,
-                       llm_guardrail_result:,
-                       llm_prompt_tokens:,
-                       llm_completion_tokens:,
-                       llm_cached_tokens:,
-                       model:)
+    def anthropic_bedrock_client
+      @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(
+        aws_region: ENV["CLAUDE_AWS_REGION"],
+      )
+    end
+
+    def parse_response(response)
+      llm_response = response.to_h
+      llm_guardrail_result = response[:content][0][:text]
+      input_tokens = response[:usage][:input_tokens]
+      output_tokens = response[:usage][:output_tokens]
+      cache_read_input_tokens = response[:usage][:cache_read_input_tokens]
+      model = response[:model]
+
       unless response_pattern =~ llm_guardrail_result
         raise ResponseError.new(
           "Error parsing guardrail response",
           llm_response,
           llm_guardrail_result,
-          llm_prompt_tokens,
-          llm_completion_tokens,
-          llm_cached_tokens,
+          input_tokens,
+          output_tokens,
+          cache_read_input_tokens,
           model,
         )
       end
@@ -126,19 +140,19 @@ module Guardrails
       guardrails = to_guardrail_hash(parts.second)
 
       Result.new(
-        llm_response: llm_response,
-        llm_guardrail_result: llm_guardrail_result,
-        triggered: triggered,
-        guardrails: guardrails,
-        llm_prompt_tokens: llm_prompt_tokens,
-        llm_completion_tokens: llm_completion_tokens,
-        llm_cached_tokens: llm_cached_tokens,
+        llm_response:,
+        llm_guardrail_result:,
+        triggered:,
+        guardrails:,
+        llm_prompt_tokens: input_tokens,
+        llm_completion_tokens: output_tokens,
+        llm_cached_tokens: cache_read_input_tokens,
         model:,
       )
     end
 
     def prompt
-      @prompt ||= Prompt.new(llm_prompt_name, llm_provider)
+      @prompt ||= Prompt.new(llm_prompt_name)
     end
 
     def guardrail_numbers
