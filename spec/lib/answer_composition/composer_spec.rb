@@ -26,10 +26,9 @@ RSpec.describe AnswerComposition::Composer do
       it "calls PipelineRunner with the correct pipeline" do
         stub_pipeline_initialize(AnswerComposition::Pipeline::QuestionRoutingGuardrails, llm_provider: :claude)
         stub_pipeline_initialize(AnswerComposition::Pipeline::AnswerGuardrails, llm_provider: :claude)
-        stub_pipeline_initialize(AnswerComposition::Pipeline::JailbreakGuardrails, llm_provider: :claude)
 
         expected_pipeline = [
-          AnswerComposition::Pipeline::JailbreakGuardrails.new(llm_provider: :claude),
+          AnswerComposition::Pipeline::JailbreakGuardrails,
           AnswerComposition::Pipeline::QuestionRephraser,
           AnswerComposition::Pipeline::QuestionRouter,
           AnswerComposition::Pipeline::QuestionRoutingGuardrails.new(llm_provider: :claude),

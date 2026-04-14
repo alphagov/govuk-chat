@@ -21,13 +21,10 @@ namespace :evaluation do
   task generate_jailbreak_guardrail_response: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
 
-    begin
-      response = Guardrails::JailbreakChecker.call(ENV["INPUT"], :claude)
+    question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
+    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [AnswerComposition::Pipeline::JailbreakGuardrails])
 
-      puts({ success: response }.to_json)
-    rescue Guardrails::JailbreakChecker::ResponseError => e
-      puts({ response_error: e }.to_json)
-    end
+    puts(answer.serialize_for_evaluation.to_json)
   end
 
   desc "Produce the output guardrails response for a user input"
