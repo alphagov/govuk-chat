@@ -18,12 +18,11 @@ namespace :evaluation do
   end
 
   desc "Produce the output of the jailbreak response for a user input"
-  task :generate_jailbreak_guardrail_response, %i[provider] => :environment do |_, args|
+  task generate_jailbreak_guardrail_response: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
-    raise "Requires a provider" if args[:provider].blank?
 
     begin
-      response = Guardrails::JailbreakChecker.call(ENV["INPUT"], args[:provider].to_sym)
+      response = Guardrails::JailbreakChecker.call(ENV["INPUT"], :claude)
 
       puts({ success: response }.to_json)
     rescue Guardrails::JailbreakChecker::ResponseError => e
@@ -32,37 +31,25 @@ namespace :evaluation do
   end
 
   desc "Produce the output guardrails response for a user input"
-  task :generate_output_guardrail_response, %i[provider guardrail_type] => :environment do |_, args|
+  task :generate_output_guardrail_response, %i[guardrail_type] => :environment do |_, args|
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
-    raise "Requires a provider" if args[:provider].blank?
     raise "Requires a guardrail type" if args[:guardrail_type].blank?
 
-    response = Guardrails::MultipleChecker.call(ENV["INPUT"], args[:guardrail_type].to_sym, args[:provider].to_sym)
+    response = Guardrails::MultipleChecker.call(ENV["INPUT"], args[:guardrail_type].to_sym, :claude)
 
     puts(response.to_json)
   end
 
   desc "Produce the output of a RAG response for a user input"
-  task :generate_rag_structured_answer_response, %i[llm_provider] => :environment do |_, args|
+  task generate_rag_structured_answer_response: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
-    raise "Requires an llm provider" if args[:llm_provider].blank?
 
     question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
 
-    answer = case args[:llm_provider]
-             when "openai"
-               AnswerComposition::PipelineRunner.call(question:, pipeline: [
-                 AnswerComposition::Pipeline::SearchResultFetcher,
-                 AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer,
-               ])
-             when "claude"
-               AnswerComposition::PipelineRunner.call(question:, pipeline: [
-                 AnswerComposition::Pipeline::SearchResultFetcher,
-                 AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
-               ])
-             else
-               raise "Unexpected llm provider #{args[:llm_provider]}"
-             end
+    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [
+      AnswerComposition::Pipeline::SearchResultFetcher,
+      AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
+    ])
 
     raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/
 
@@ -71,21 +58,11 @@ namespace :evaluation do
   end
 
   desc "Produce the output of question routing for a user input"
-  task :generate_question_routing_response, %i[provider] => :environment do |_, args|
+  task generate_question_routing_response: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
-    raise "Requires a provider" if args[:provider].blank?
-
-    klass = case args[:provider]
-            when "openai"
-              AnswerComposition::Pipeline::OpenAI::QuestionRouter
-            when "claude"
-              AnswerComposition::Pipeline::Claude::QuestionRouter
-            else
-              raise "Unexpected provider #{args[:provider]}"
-            end
 
     question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
-    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [klass])
+    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [AnswerComposition::Pipeline::Claude::QuestionRouter])
 
     raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/
 

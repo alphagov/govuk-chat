@@ -1,27 +1,4 @@
 RSpec.describe "rake evaluation tasks" do
-  shared_examples "a task requiring input and provider" do
-    it "requires an INPUT env var" do
-      expect { Rake::Task[task_name].invoke("openai") }
-        .to raise_error("Requires an INPUT env var")
-    end
-
-    it "requires a provider" do
-      ClimateControl.modify(INPUT: input) do
-        expect { Rake::Task[task_name].invoke }
-          .to raise_error("Requires a provider")
-      end
-    end
-  end
-
-  shared_examples "a task requiring a known provider" do
-    it "raises an error when given an unknown provider" do
-      ClimateControl.modify(INPUT: input) do
-        expect { Rake::Task[task_name].invoke("super-duper-ai") }
-          .to raise_error("Unexpected provider super-duper-ai")
-      end
-    end
-  end
-
   shared_examples "a task requiring an input" do
     it "requires an INPUT env var" do
       expect { Rake::Task[task_name].invoke }
@@ -160,8 +137,7 @@ RSpec.describe "rake evaluation tasks" do
 
     before { Rake::Task[task_name].reenable }
 
-    it_behaves_like "a task requiring input and provider"
-    it_behaves_like "a task requiring a known provider"
+    it_behaves_like "a task requiring an input"
 
     context "when a successful check occurs" do
       it "outputs the response as JSON to stdout with a success key" do
@@ -172,11 +148,11 @@ RSpec.describe "rake evaluation tasks" do
             llm_prompt_tokens: 100,
             llm_completion_tokens: 100,
             llm_cached_tokens: 0,
-            model: Guardrails::OpenAI::JailbreakChecker::OPENAI_MODEL,
+            model: Guardrails::Claude::MultipleChecker.bedrock_model,
           )
-          allow(Guardrails::JailbreakChecker).to receive(:call).with(input, :openai).and_return(result)
+          allow(Guardrails::JailbreakChecker).to receive(:call).with(input, :claude).and_return(result)
           expected = { success: result }.to_json
-          expect { Rake::Task[task_name].invoke("openai") }
+          expect { Rake::Task[task_name].invoke }
             .to output("#{expected}\n").to_stdout
         end
       end
@@ -192,12 +168,12 @@ RSpec.describe "rake evaluation tasks" do
             llm_prompt_tokens: 100,
             llm_completion_tokens: 100,
             llm_cached_tokens: 0,
-            model: Guardrails::OpenAI::JailbreakChecker::OPENAI_MODEL,
+            model: Guardrails::Claude::MultipleChecker.bedrock_model,
           )
-          allow(Guardrails::JailbreakChecker).to receive(:call).with(input, :openai).and_raise(error)
+          allow(Guardrails::JailbreakChecker).to receive(:call).with(input, :claude).and_raise(error)
 
           expected = { response_error: error }.to_json
-          expect { Rake::Task[task_name].invoke("openai") }
+          expect { Rake::Task[task_name].invoke }
             .to output("#{expected}\n").to_stdout
         end
       end
@@ -210,11 +186,11 @@ RSpec.describe "rake evaluation tasks" do
 
     before { Rake::Task[task_name].reenable }
 
-    it_behaves_like "a task requiring input and provider"
+    it_behaves_like "a task requiring an input"
 
     it "requires a guardrail type" do
       ClimateControl.modify(INPUT: input) do
-        expect { Rake::Task[task_name].invoke("openai") }
+        expect { Rake::Task[task_name].invoke }
           .to raise_error("Requires a guardrail type")
       end
     end
@@ -222,8 +198,8 @@ RSpec.describe "rake evaluation tasks" do
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input) do
         result = build(:guardrails_multiple_checker_result, :pass)
-        allow(Guardrails::MultipleChecker).to receive(:call).with(input, :answer_guardrails, :openai).and_return(result)
-        expect { Rake::Task[task_name].invoke("openai", "answer_guardrails") }
+        allow(Guardrails::MultipleChecker).to receive(:call).with(input, :answer_guardrails, :claude).and_return(result)
+        expect { Rake::Task[task_name].invoke("answer_guardrails") }
           .to output("#{result.to_json}\n").to_stdout
       end
     end
@@ -237,17 +213,20 @@ RSpec.describe "rake evaluation tasks" do
 
     it_behaves_like "a task requiring an input"
 
-    it "requires an llm_provider" do
+    it "calls the pipeline runner with the tasks to generate a structured answer" do
       ClimateControl.modify(INPUT: input) do
-        expect { Rake::Task[task_name].invoke }
-          .to raise_error("Requires an llm provider")
-      end
-    end
+        answer = build(:answer)
+        allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
 
-    it "raises if given an unknown llm provider" do
-      ClimateControl.modify(INPUT: input) do
-        expect { Rake::Task[task_name].invoke("super-ai") }
-          .to raise_error("Unexpected llm provider super-ai")
+        expect { Rake::Task[task_name].invoke }
+          .to output.to_stdout
+
+        expect(AnswerComposition::PipelineRunner)
+          .to have_received(:call)
+          .with(question: instance_of(Question), pipeline: [
+            AnswerComposition::Pipeline::SearchResultFetcher,
+            AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
+          ])
       end
     end
 
@@ -258,46 +237,8 @@ RSpec.describe "rake evaluation tasks" do
                               .merge("opensearch_index" => Search::ChunkedContentRepository.new.index)
                               .to_json
         allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
-        expect { Rake::Task[task_name].invoke("openai") }
+        expect { Rake::Task[task_name].invoke }
           .to output("#{expected_json}\n").to_stdout
-      end
-    end
-
-    context "when provider is openai" do
-      it "calls the pipeline runner with the tasks to generate an OpenAI structured answer" do
-        ClimateControl.modify(INPUT: input) do
-          answer = build(:answer)
-          allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
-
-          expect { Rake::Task[task_name].invoke("openai") }
-            .to output.to_stdout
-
-          expect(AnswerComposition::PipelineRunner)
-            .to have_received(:call)
-            .with(question: instance_of(Question), pipeline: [
-              AnswerComposition::Pipeline::SearchResultFetcher,
-              AnswerComposition::Pipeline::OpenAI::StructuredAnswerComposer,
-            ])
-        end
-      end
-    end
-
-    context "when provider is claude" do
-      it "calls the pipeline runner with the tasks to generate a Claude structured answer" do
-        ClimateControl.modify(INPUT: input) do
-          answer = build(:answer)
-          allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
-
-          expect { Rake::Task[task_name].invoke("claude") }
-            .to output.to_stdout
-
-          expect(AnswerComposition::PipelineRunner)
-            .to have_received(:call)
-            .with(question: instance_of(Question), pipeline: [
-              AnswerComposition::Pipeline::SearchResultFetcher,
-              AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
-            ])
-        end
       end
     end
   end
@@ -308,8 +249,23 @@ RSpec.describe "rake evaluation tasks" do
 
     before { Rake::Task[task_name].reenable }
 
-    it_behaves_like "a task requiring input and provider"
-    it_behaves_like "a task requiring a known provider"
+    it_behaves_like "a task requiring an input"
+
+    it "calls the pipeline runner with the tasks to generate a question routing response" do
+      ClimateControl.modify(INPUT: input) do
+        answer = build(:answer)
+        allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
+
+        expect { Rake::Task[task_name].invoke }
+          .to output.to_stdout
+
+        expect(AnswerComposition::PipelineRunner)
+          .to have_received(:call)
+          .with(question: instance_of(Question), pipeline: [
+            AnswerComposition::Pipeline::Claude::QuestionRouter,
+          ])
+      end
+    end
 
     it "outputs the response as JSON to stdout" do
       ClimateControl.modify(INPUT: input) do
@@ -319,7 +275,7 @@ RSpec.describe "rake evaluation tasks" do
                        message: "Sorry, can you say that again?")
         answer_json = answer.serialize_for_evaluation.to_json
         allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
-        expect { Rake::Task[task_name].invoke("openai") }
+        expect { Rake::Task[task_name].invoke }
           .to output("#{answer_json}\n").to_stdout
       end
     end
@@ -329,44 +285,8 @@ RSpec.describe "rake evaluation tasks" do
         error_message = "Oh no!"
         answer = build(:answer, status: :error_answer_service_error, error_message:)
         allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
-        expect { Rake::Task[task_name].invoke("openai") }
+        expect { Rake::Task[task_name].invoke }
           .to raise_error("Error occurred generating answer: Oh no!")
-      end
-    end
-
-    context "when provider is openai" do
-      it "calls the pipeline runner with the tasks to generate an OpenAI question routing response" do
-        ClimateControl.modify(INPUT: input) do
-          answer = build(:answer)
-          allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
-
-          expect { Rake::Task[task_name].invoke("openai") }
-            .to output.to_stdout
-
-          expect(AnswerComposition::PipelineRunner)
-            .to have_received(:call)
-            .with(question: instance_of(Question), pipeline: [
-              AnswerComposition::Pipeline::OpenAI::QuestionRouter,
-            ])
-        end
-      end
-    end
-
-    context "when provider is claude" do
-      it "calls the pipeline runner with the tasks to generate a Claude question routing response" do
-        ClimateControl.modify(INPUT: input) do
-          answer = build(:answer)
-          allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
-
-          expect { Rake::Task[task_name].invoke("claude") }
-            .to output.to_stdout
-
-          expect(AnswerComposition::PipelineRunner)
-            .to have_received(:call)
-            .with(question: instance_of(Question), pipeline: [
-              AnswerComposition::Pipeline::Claude::QuestionRouter,
-            ])
-        end
       end
     end
   end
