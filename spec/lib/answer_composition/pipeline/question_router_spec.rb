@@ -1,4 +1,4 @@
-RSpec.describe AnswerComposition::Pipeline::Claude::QuestionRouter, :aws_credentials_stubbed do
+RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stubbed do
   let(:question) { build :question }
   let(:context) { build(:answer_pipeline_context, question:) }
   let(:model_name) { :claude_sonnet_4_0 }

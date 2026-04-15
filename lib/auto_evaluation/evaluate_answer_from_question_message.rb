@@ -13,7 +13,7 @@ module AutoEvaluation
       question = Question.new(message: question_message, conversation: Conversation.new)
       answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [
         AnswerComposition::Pipeline::SearchResultFetcher,
-        AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
+        AnswerComposition::Pipeline::StructuredAnswerComposer,
       ])
 
       if answer.status =~ /^error/

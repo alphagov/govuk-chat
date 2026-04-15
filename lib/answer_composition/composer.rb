@@ -38,11 +38,11 @@ module AnswerComposition
       when "claude_structured_answer"
         PipelineRunner.call(question:, pipeline: [
           Pipeline::JailbreakGuardrails.new(llm_provider: :claude),
-          Pipeline::QuestionRephraser.new(llm_provider: :claude),
-          Pipeline::Claude::QuestionRouter,
+          Pipeline::QuestionRephraser,
+          Pipeline::QuestionRouter,
           Pipeline::QuestionRoutingGuardrails.new(llm_provider: :claude),
           Pipeline::SearchResultFetcher,
-          Pipeline::Claude::StructuredAnswerComposer,
+          Pipeline::StructuredAnswerComposer,
           Pipeline::AnswerGuardrails.new(llm_provider: :claude),
         ])
       else

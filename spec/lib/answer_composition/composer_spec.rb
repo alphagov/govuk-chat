@@ -24,18 +24,17 @@ RSpec.describe AnswerComposition::Composer do
       let(:question) { create :question, answer_strategy: :claude_structured_answer }
 
       it "calls PipelineRunner with the correct pipeline" do
-        stub_pipeline_initialize(AnswerComposition::Pipeline::QuestionRephraser, llm_provider: :claude)
         stub_pipeline_initialize(AnswerComposition::Pipeline::QuestionRoutingGuardrails, llm_provider: :claude)
         stub_pipeline_initialize(AnswerComposition::Pipeline::AnswerGuardrails, llm_provider: :claude)
         stub_pipeline_initialize(AnswerComposition::Pipeline::JailbreakGuardrails, llm_provider: :claude)
 
         expected_pipeline = [
           AnswerComposition::Pipeline::JailbreakGuardrails.new(llm_provider: :claude),
-          AnswerComposition::Pipeline::QuestionRephraser.new(llm_provider: :claude),
-          AnswerComposition::Pipeline::Claude::QuestionRouter,
+          AnswerComposition::Pipeline::QuestionRephraser,
+          AnswerComposition::Pipeline::QuestionRouter,
           AnswerComposition::Pipeline::QuestionRoutingGuardrails.new(llm_provider: :claude),
           AnswerComposition::Pipeline::SearchResultFetcher,
-          AnswerComposition::Pipeline::Claude::StructuredAnswerComposer,
+          AnswerComposition::Pipeline::StructuredAnswerComposer,
           AnswerComposition::Pipeline::AnswerGuardrails.new(llm_provider: :claude),
         ]
         expected_pipeline.each do |pipeline|
