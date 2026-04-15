@@ -1,11 +1,20 @@
 RSpec.describe "Question routing labels" do
   it "has a human-readable label for each question routing label in the LLM config" do
-    llm_config = Rails.configuration.govuk_chat_private.llm_prompts.openai.question_routing
-    llm_labels = llm_config[:classifications].map { |classification| classification[:name] }
-
+    supported_models = AnswerComposition::Pipeline::QuestionRouter::SUPPORTED_MODELS.map(&:to_s)
     label_config = Rails.configuration.question_routing_labels
+    question_routing_prompt_configs = Rails.configuration
+                                           .govuk_chat_private
+                                           .llm_prompts
+                                           .claude
+                                           .question_routing
+                                           .select { |key, _| key.in?(supported_models) }
+                                           .values
 
-    expect(llm_labels - label_config.keys).to be_empty
+    llm_classification_names = question_routing_prompt_configs.flat_map do |config|
+      config[:classifications].pluck(:name)
+    end
+
+    expect(llm_classification_names.uniq - label_config.keys).to be_empty
   end
 
   it "defines a use_answer property for each question routing label" do
