@@ -28,9 +28,6 @@
     "AVAILABLE_WITHOUT_SIGNON_AUTHENTICATION": {
       "value": "true"
     },
-    "OPENAI_ACCESS_TOKEN": {
-      "required": true
-    },
     "OPENSEARCH_URL": {
       "required": true
     },

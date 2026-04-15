@@ -1,8 +1,6 @@
 class Question < ApplicationRecord
   enum :answer_strategy,
        {
-         open_ai_rag_completion: "open_ai_rag_completion", # legacy strategy - no longer used
-         openai_structured_answer: "openai_structured_answer", # legacy strategy - no longer used
          claude_structured_answer: "claude_structured_answer",
          non_llm_answer: "non_llm_answer", # only used during load testing, but can be present on records created during testing
        },
