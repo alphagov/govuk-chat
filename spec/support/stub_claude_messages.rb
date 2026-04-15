@@ -1,5 +1,6 @@
 module StubClaudeMessages
   CLAUDE_SONNET_4_0_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*anthropic\.claude-sonnet-4-20250514-v1:0.*?/invoke}
+  CLAUDE_SONNET_4_5_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*eu.anthropic.claude-sonnet-4-5-20250929-v1:0.*?/invoke}
   CLAUDE_SONNET_4_6_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*anthropic\.claude-sonnet-4-6.*?/invoke}
   CLAUDE_HAIKU_4_5_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*anthropic\.claude-haiku-4-5-20251001-v1:0.*?/invoke}
 
@@ -43,6 +44,8 @@ module StubClaudeMessages
     endpoint_regex = case bedrock_model
                      when :claude_sonnet_4_0
                        CLAUDE_SONNET_4_0_ENDPOINT_REGEX
+                     when :claude_sonnet_4_5
+                       CLAUDE_SONNET_4_5_ENDPOINT_REGEX
                      when :claude_sonnet_4_6
                        CLAUDE_SONNET_4_6_ENDPOINT_REGEX
                      when :claude_haiku_4_5

@@ -65,6 +65,7 @@ RSpec.describe BedrockModels do
     it "returns the expected foundation models without the 'eu.' prefix" do
       allow(described_class).to receive(:MODEL_IDS).and_return({
         claude_sonnet_4_0: "eu.anthropic.claude-sonnet-4-20250514-v1:0",
+        claude_sonnet_4_5: "eu.anthropic.claude-sonnet-4-5-20250929-v1:0",
         claude_sonnet_4_6: "eu.anthropic.claude-sonnet-4-6",
         claude_haiku_4_5: "eu.anthropic.claude-haiku-4-5-20251001-v1:0",
         titan_embed_v2: "amazon.titan-embed-text-v2:0",
@@ -74,6 +75,7 @@ RSpec.describe BedrockModels do
       expect(described_class.expected_foundation_models).to contain_exactly(
         "amazon.titan-embed-text-v2:0",
         "anthropic.claude-sonnet-4-20250514-v1:0",
+        "anthropic.claude-sonnet-4-5-20250929-v1:0",
         "anthropic.claude-sonnet-4-6",
         "anthropic.claude-haiku-4-5-20251001-v1:0",
         "openai.gpt-oss-120b-1:0",
