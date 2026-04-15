@@ -1,6 +1,7 @@
 module BedrockModels
   MODEL_IDS = {
     claude_sonnet_4_0: "eu.anthropic.claude-sonnet-4-20250514-v1:0",
+    claude_sonnet_4_5: "eu.anthropic.claude-sonnet-4-5-20250929-v1:0",
     claude_sonnet_4_6: "eu.anthropic.claude-sonnet-4-6",
     claude_haiku_4_5: "eu.anthropic.claude-haiku-4-5-20251001-v1:0",
     titan_embed_v2: "amazon.titan-embed-text-v2:0",
