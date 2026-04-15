@@ -1,13 +1,15 @@
 module AnswerComposition
   module Pipeline
     class OutputGuardrails
-      def initialize(llm_provider: :claude)
-        @llm_provider = llm_provider
+      attr_reader :context
+
+      def self.call(...) = new(...).call
+
+      def initialize(context)
+        @context = context
       end
 
     protected
-
-      attr_reader :llm_provider
 
       def build_metrics(start_time, response_or_error)
         {

@@ -1,7 +1,7 @@
 module AnswerComposition
   module Pipeline
     class AnswerGuardrails < OutputGuardrails
-      def call(context)
+      def call
         start_time = Clock.monotonic_time
         response = generate_response(context)
 

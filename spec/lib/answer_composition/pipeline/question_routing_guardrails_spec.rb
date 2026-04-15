@@ -1,20 +1,16 @@
 RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
   let(:context) { build(:answer_pipeline_context) }
   let(:message) { "sample answer message" }
+  let(:guardrail_response) { build(:guardrails_multiple_checker_result, :pass) }
 
   before do
     context.answer.message = message
     allow(Guardrails::MultipleChecker).to receive(:call).and_return(guardrail_response)
   end
 
-  context "when the llm_provider is :claude" do
-    let(:llm_provider) { :claude }
-    let(:guardrail_response) { build(:guardrails_multiple_checker_result, :pass) }
-
-    it "initializes the calls Guardrails::MultipleChecker with Claude as the provider" do
-      described_class.new(llm_provider: llm_provider).call(context)
-      expect(Guardrails::MultipleChecker).to have_received(:call).with(message, "question_routing_guardrails", llm_provider)
-    end
+  it "calls the Guardrails::MultipleChecker with the correct parameters" do
+    described_class.call(context)
+    expect(Guardrails::MultipleChecker).to have_received(:call).with(message, "question_routing_guardrails")
   end
 
   context "when the guardrails are not triggered" do
@@ -27,11 +23,11 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
 
       context.answer.question_routing_label = "genuine_rag"
 
-      described_class.new(llm_provider: :claude).call(context)
+      described_class.call(context)
     end
 
     it "aborts the pipeline" do
-      described_class.new(llm_provider: :claude).call(context)
+      described_class.call(context)
       expect(context.aborted?).to be true
     end
   end
@@ -40,7 +36,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
     let(:guardrail_response) { build(:guardrails_multiple_checker_result, :fail) }
 
     it "sets the attributes on the answer" do
-      described_class.new(llm_provider: :claude).call(context)
+      described_class.call(context)
 
       expect(context.answer).to have_attributes({
         message: Answer::CannedResponses::QUESTION_ROUTING_GUARDRAILS_FAILED_MESSAGE,
@@ -50,7 +46,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
     end
 
     it "aborts the pipeline and assigns the right attributes" do
-      described_class.new(llm_provider: :claude).call(context)
+      described_class.call(context)
 
       expect(context.aborted?).to be true
       expect(context.answer.question_routing_guardrails_status).to eq("fail")
