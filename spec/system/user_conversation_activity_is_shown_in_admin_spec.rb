@@ -48,7 +48,7 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
 
     @answer = "Maybe. You could get some benefits."
 
-    stub_claude_jailbreak_guardrails(@question, triggered: false)
+    stub_claude_jailbreak_guardrails(@question)
     stub_claude_question_routing(@question)
     stub_claude_structured_answer(@question, @answer)
     stub_claude_output_guardrails(@answer, "False | None")

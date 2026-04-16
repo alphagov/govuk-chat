@@ -61,17 +61,17 @@ module StubClaudeMessages
       )
   end
 
-  def stub_claude_jailbreak_guardrails(input, triggered: false, chat_options: {})
+  def stub_claude_jailbreak_guardrails(input, response = "PassValue", chat_options: {})
     llm_prompts_config = Rails.configuration.govuk_chat_private.llm_prompts
-    allow(llm_prompts_config.common).to receive(:jailbreak_guardrails).and_return(pass_value: "PassValue")
+    allow(llm_prompts_config.common).to receive(:jailbreak_guardrails)
+                                     .and_return(pass_value: "PassValue", fail_value: "FailValue")
+
     model = chat_options[:bedrock_model] || :claude_sonnet_4_0
     jailbreak_guardrails_config = llm_prompts_config.claude.jailbreak_guardrails[model]
 
-    answer = triggered ? "FailValue" : "PassValue"
-
     stub_claude_messages_response(
       input,
-      content: [claude_messages_text_block(answer)],
+      content: [claude_messages_text_block(response)],
       chat_options: { max_tokens: jailbreak_guardrails_config.fetch(:max_tokens) }.merge(chat_options),
     )
   end

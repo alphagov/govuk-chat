@@ -1,7 +1,7 @@
 RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credentials_stubbed do
   let(:context) { build(:answer_pipeline_context) }
   let(:input) { context.question.message }
-  let!(:stub) { stub_claude_jailbreak_guardrails(input, triggered: false) }
+  let!(:stub) { stub_claude_jailbreak_guardrails(input) }
   let(:pass_value) { "PassValue" }
 
   it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_JAILBREAK_GUARDRAILS_MODEL" do
@@ -10,7 +10,6 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credential
       lambda { |bedrock_model|
         stub_claude_jailbreak_guardrails(
           input,
-          triggered: false,
           chat_options: { bedrock_model: },
         )
       }
@@ -48,7 +47,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credential
     end
 
     it "assigns metrics to the answer" do
-      stub_claude_jailbreak_guardrails(input, triggered: false)
+      stub_claude_jailbreak_guardrails(input)
 
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
@@ -65,7 +64,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credential
   end
 
   context "when the guardrails are triggered" do
-    let!(:stub) { stub_claude_jailbreak_guardrails(input, triggered: true) }
+    let!(:stub) { stub_claude_jailbreak_guardrails(input, "FailValue") }
     let(:fail_value) { "FailValue" }
 
     it "aborts the pipeline and updates the answer's status and message attributes" do

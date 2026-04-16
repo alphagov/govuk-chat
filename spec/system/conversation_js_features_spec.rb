@@ -260,7 +260,7 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
                             rephrase_question: false,
                             sources_used: [],
                             create_content_chunk: true)
-    stub_claude_jailbreak_guardrails(question, triggered: false)
+    stub_claude_jailbreak_guardrails(question)
 
     if rephrase_question
       rephrased_question = "Rephrased #{question}"
