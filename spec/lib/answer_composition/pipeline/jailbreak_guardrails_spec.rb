@@ -1,93 +1,75 @@
-RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
+RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credentials_stubbed do
   let(:context) { build(:answer_pipeline_context) }
-  let(:default_provider) { :claude }
+  let(:input) { context.question.message }
+  let!(:stub) { stub_claude_jailbreak_guardrails(input) }
+  let(:pass_value) { "PassValue" }
 
-  let(:llm_response) do
-    {
-      "index" => 0,
-      "message" => {
-        "role" => "assistant",
-        "content" => "?",
-      },
-      "logprobs" => nil,
-      "finish_reason" => "stop",
-    }
+  it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_JAILBREAK_GUARDRAILS_MODEL" do
+    let(:pipeline_step) { described_class.new(context) }
+    let(:stubbed_request_lambda) do
+      lambda { |bedrock_model|
+        stub_claude_jailbreak_guardrails(
+          input,
+          chat_options: { bedrock_model: },
+        )
+      }
+    end
   end
 
-  let(:llm_prompt_tokens) { 10 }
-  let(:llm_completion_tokens) { 5 }
-  let(:llm_cached_tokens) { 0 }
-  let(:model) { Guardrails::Claude::MultipleChecker.bedrock_model }
+  it "uses an overridden AWS region if set" do
+    ClimateControl.modify(CLAUDE_AWS_REGION: "my-region") do
+      allow(Anthropic::BedrockClient).to receive(:new).and_call_original
+
+      described_class.call(context)
+
+      expect(Anthropic::BedrockClient)
+        .to have_received(:new).with(hash_including(aws_region: "my-region"))
+      expect(stub).to have_been_requested
+    end
+  end
 
   context "when the guardrails are not triggered" do
-    before do
-      allow(Guardrails::JailbreakChecker)
-        .to receive(:call)
-        .and_return(Guardrails::JailbreakChecker::Result.new(
-                      triggered: false,
-                      llm_response:,
-                      llm_prompt_tokens:,
-                      llm_completion_tokens:,
-                      llm_cached_tokens:,
-                      model:,
-                    ))
-    end
-
-    it "calls the guardrails with the question message" do
-      described_class.new.call(context)
-      expect(Guardrails::JailbreakChecker).to have_received(:call).with(context.question.message, default_provider)
-    end
-
-    it "does not abort the pipeline" do
-      expect { described_class.new.call(context) }.not_to change(context, :aborted?).from(false)
-    end
-
     it "does not change the message" do
-      expect { described_class.new.call(context) }.not_to change(context.answer, :message)
+      expect { described_class.call(context) }.not_to change(context.answer, :message)
     end
 
     it "sets the jailbreak_guardrails_status" do
-      expect { described_class.new.call(context) }.to change(context.answer, :jailbreak_guardrails_status).to("pass")
+      expect { described_class.call(context) }.to change(context.answer, :jailbreak_guardrails_status).to("pass")
     end
 
     it "assigns the llm response to the answer" do
-      described_class.new.call(context)
+      described_class.call(context)
 
-      expect(context.answer.llm_responses["jailbreak_guardrails"]).to eq(llm_response)
+      expected_llm_response = claude_messages_response(
+        content: [claude_messages_text_block(pass_value)],
+      ).to_h
+      expect(context.answer.llm_responses["jailbreak_guardrails"]).to eq(expected_llm_response)
     end
 
     it "assigns metrics to the answer" do
+      stub_claude_jailbreak_guardrails(input)
+
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
-      described_class.new.call(context)
+      described_class.call(context)
 
       expect(context.answer.metrics["jailbreak_guardrails"]).to eq({
         duration: 1.5,
         llm_prompt_tokens: 10,
-        llm_completion_tokens: 5,
-        llm_cached_tokens: 0,
-        model:,
+        llm_completion_tokens: 20,
+        llm_cached_tokens: nil,
+        model: BedrockModels.model_id(described_class::DEFAULT_MODEL),
       })
     end
   end
 
   context "when the guardrails are triggered" do
-    before do
-      allow(Guardrails::JailbreakChecker)
-        .to receive(:call)
-        .and_return(Guardrails::JailbreakChecker::Result.new(
-                      triggered: true,
-                      llm_response:,
-                      llm_prompt_tokens:,
-                      llm_completion_tokens:,
-                      llm_cached_tokens:,
-                      model:,
-                    ))
-    end
+    let!(:stub) { stub_claude_jailbreak_guardrails(input, "FailValue") }
+    let(:fail_value) { "FailValue" }
 
     it "aborts the pipeline and updates the answer's status and message attributes" do
       expect {
-        described_class.new.call(context)
+        described_class.call(context)
       }.to throw_symbol(:abort)
 
       expect(context.answer).to have_attributes(
@@ -98,64 +80,63 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails do
     end
 
     it "assigns the llm response to the answer" do
-      expect { described_class.new.call(context) }.to throw_symbol(:abort)
-      expect(context.answer.llm_responses["jailbreak_guardrails"]).to eq(llm_response)
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+      expected_llm_response = claude_messages_response(
+        content: [claude_messages_text_block(fail_value)],
+      ).to_h
+      expect(context.answer.llm_responses["jailbreak_guardrails"]).to eq(expected_llm_response)
     end
 
     it "assigns metrics to the answer" do
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
-      expect { described_class.new.call(context) }.to throw_symbol(:abort)
+      expect { described_class.call(context) }.to throw_symbol(:abort)
 
       expect(context.answer.metrics["jailbreak_guardrails"]).to eq({
         duration: 1.5,
         llm_prompt_tokens: 10,
-        llm_completion_tokens: 5,
-        llm_cached_tokens: 0,
-        model:,
+        llm_completion_tokens: 20,
+        llm_cached_tokens: nil,
+        model: BedrockModels.model_id(described_class::DEFAULT_MODEL),
       })
     end
   end
 
-  context "when a Jailbreak::ResponseError occurs" do
-    before do
-      error = Guardrails::JailbreakChecker::ResponseError.new(
-        "An error occurred",
-        llm_guardrail_result: "?",
-        llm_response:,
-        llm_prompt_tokens:,
-        llm_completion_tokens:,
-        llm_cached_tokens:,
-        model:,
-      )
-      allow(Guardrails::JailbreakChecker).to receive(:call).and_raise(error)
-    end
+  context "when the LLM response is in an unexpected format" do
+    let(:response) { "UnexpectedFormat" }
+    let!(:stub) { stub_claude_jailbreak_guardrails(input, response) }
 
-    it "aborts the pipeline and updates the answer's status with an error message" do
-      expect { described_class.new.call(context) }.to throw_symbol(:abort)
+    it "aborts the pipeline and updates the answer's status and message attributes" do
+      expect {
+        described_class.call(context)
+      }.to throw_symbol(:abort)
+
       expect(context.answer).to have_attributes(
         status: "error_jailbreak_guardrails",
-        message: Answer::CannedResponses::JAILBREAK_GUARDRAILS_FAILED_MESSAGE,
         jailbreak_guardrails_status: "error",
+        message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
       )
     end
 
     it "assigns the llm response to the answer" do
-      expect { described_class.new.call(context) }.to throw_symbol(:abort)
-      expect(context.answer.llm_responses["jailbreak_guardrails"]).to eq(llm_response)
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+      expected_llm_response = claude_messages_response(
+        content: [claude_messages_text_block(response)],
+      ).to_h
+      expect(context.answer.llm_responses["jailbreak_guardrails"]).to eq(expected_llm_response)
     end
 
     it "assigns metrics to the answer" do
       allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
 
-      expect { described_class.new.call(context) }.to throw_symbol(:abort)
+      expect { described_class.call(context) }.to throw_symbol(:abort)
 
       expect(context.answer.metrics["jailbreak_guardrails"]).to eq({
         duration: 1.5,
         llm_prompt_tokens: 10,
-        llm_completion_tokens: 5,
-        llm_cached_tokens: 0,
-        model:,
+        llm_completion_tokens: 20,
+        llm_cached_tokens: nil,
+        model: BedrockModels.model_id(described_class::DEFAULT_MODEL),
       })
     end
   end

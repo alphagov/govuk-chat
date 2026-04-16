@@ -139,43 +139,19 @@ RSpec.describe "rake evaluation tasks" do
 
     it_behaves_like "a task requiring an input"
 
-    context "when a successful check occurs" do
-      it "outputs the response as JSON to stdout with a success key" do
-        ClimateControl.modify(INPUT: input) do
-          result = Guardrails::JailbreakChecker::Result.new(
-            triggered: true,
-            llm_response: {},
-            llm_prompt_tokens: 100,
-            llm_completion_tokens: 100,
-            llm_cached_tokens: 0,
-            model: Guardrails::Claude::MultipleChecker.bedrock_model,
-          )
-          allow(Guardrails::JailbreakChecker).to receive(:call).with(input, :claude).and_return(result)
-          expected = { success: result }.to_json
-          expect { Rake::Task[task_name].invoke }
-            .to output("#{expected}\n").to_stdout
-        end
-      end
-    end
+    it "outputs the response as JSON to stdout with a success key" do
+      ClimateControl.modify(INPUT: input) do
+        answer = build(:answer, jailbreak_guardrails_status: :pass)
+        allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
 
-    context "when a response error is returned" do
-      it "outputs the error as JSON to stdout with a response_error key" do
-        ClimateControl.modify(INPUT: input) do
-          error = Guardrails::JailbreakChecker::ResponseError.new(
-            "Error parsing jailbreak guardrails response",
-            llm_guardrail_result: "Unexpected",
-            llm_response: {},
-            llm_prompt_tokens: 100,
-            llm_completion_tokens: 100,
-            llm_cached_tokens: 0,
-            model: Guardrails::Claude::MultipleChecker.bedrock_model,
-          )
-          allow(Guardrails::JailbreakChecker).to receive(:call).with(input, :claude).and_raise(error)
-
-          expected = { response_error: error }.to_json
-          expect { Rake::Task[task_name].invoke }
-            .to output("#{expected}\n").to_stdout
-        end
+        expected = answer.serialize_for_evaluation.to_json
+        expect { Rake::Task[task_name].invoke }
+          .to output("#{expected}\n").to_stdout
+        expect(AnswerComposition::PipelineRunner)
+          .to have_received(:call)
+          .with(question: instance_of(Question), pipeline: [
+            AnswerComposition::Pipeline::JailbreakGuardrails,
+          ])
       end
     end
   end

@@ -46,7 +46,7 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
 
     @first_answer = "Lots of tax."
 
-    stub_claude_jailbreak_guardrails(@first_question, triggered: false)
+    stub_claude_jailbreak_guardrails(@first_question)
     stub_claude_question_routing(@first_question)
     stub_claude_structured_answer(@first_question, @first_answer)
     stub_claude_output_guardrails(@first_answer, "False | None")
@@ -92,7 +92,7 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
     rephrased_question = "Rephrased #{@second_question}"
     @second_answer = "Even more tax."
 
-    stub_claude_jailbreak_guardrails(@second_question, triggered: false)
+    stub_claude_jailbreak_guardrails(@second_question)
     stub_claude_question_rephrasing(@second_question, rephrased_question)
     stub_claude_question_routing(rephrased_question)
     stub_claude_structured_answer(rephrased_question, @second_answer)

@@ -37,7 +37,7 @@ module AnswerComposition
       case answer_strategy
       when "claude_structured_answer"
         PipelineRunner.call(question:, pipeline: [
-          Pipeline::JailbreakGuardrails.new(llm_provider: :claude),
+          Pipeline::JailbreakGuardrails,
           Pipeline::QuestionRephraser,
           Pipeline::QuestionRouter,
           Pipeline::QuestionRoutingGuardrails.new(llm_provider: :claude),
