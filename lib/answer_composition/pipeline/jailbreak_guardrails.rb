@@ -64,7 +64,7 @@ module AnswerComposition
       end
 
       def guardrails_llm_prompts
-        AnswerComposition::Pipeline::Claude.prompt_config(:jailbreak_guardrails, model_name)
+        AnswerComposition::Pipeline::Prompts.config(:jailbreak_guardrails, model_name)
       end
 
       # TODO: Move the common prompts into the claude config and use one set of prompts here.

@@ -13,7 +13,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
         )
       }
     end
-    before { allow(AnswerComposition::Pipeline::Claude).to receive(:prompt_config).and_call_original }
+    before { allow(AnswerComposition::Pipeline::Prompts).to receive(:config).and_call_original }
   end
 
   describe ".call" do
@@ -36,7 +36,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
 
     let(:tools) do
       properties = classification[:properties] || {}
-      confidence_property = AnswerComposition::Pipeline::Claude.prompt_config(
+      confidence_property = AnswerComposition::Pipeline::Prompts.config(
         :question_routing, model_name
       )[:confidence_property]
 
@@ -61,7 +61,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
     end
 
     before do
-      allow(AnswerComposition::Pipeline::Claude).to receive(:prompt_config).with(:question_routing, model_name).and_return(
+      allow(AnswerComposition::Pipeline::Prompts).to receive(:config).with(:question_routing, model_name).and_return(
         classifications: [classification],
         system_prompt: "The system prompt",
         confidence_property: {
@@ -244,7 +244,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
 
       let(:tools) do
         properties = classification[:properties] || {}
-        confidence_property = AnswerComposition::Pipeline::Claude.prompt_config(
+        confidence_property = AnswerComposition::Pipeline::Prompts.config(
           :question_routing, model_name
         )[:confidence_property]
 

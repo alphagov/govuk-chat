@@ -37,7 +37,7 @@ module Guardrails
 
       def initialize(prompt_name, llm_provider = :claude)
         prompts = if llm_provider == :claude
-                    AnswerComposition::Pipeline::Claude.prompt_config(prompt_name, Claude::MultipleChecker.bedrock_model)
+                    AnswerComposition::Pipeline::Prompts.config(prompt_name, Claude::MultipleChecker.bedrock_model)
                   else
                     Rails.configuration.govuk_chat_private.llm_prompts[llm_provider][prompt_name]
                   end

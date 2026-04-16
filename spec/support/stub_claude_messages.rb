@@ -122,7 +122,7 @@ module StubClaudeMessages
                  .llm_prompts
                  .claude[:structured_answer][model][:tool_spec]
 
-    allow(Rails.configuration.govuk_chat_private.llm_prompts.claude.structured_answer)
+    allow(Rails.configuration.govuk_chat_private.llm_prompts.answer_composition.structured_answer)
       .to receive(:fetch)
       .with(model)
       .and_return(

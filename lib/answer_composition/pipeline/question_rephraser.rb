@@ -68,7 +68,7 @@ module AnswerComposition
       end
 
       def config
-        Claude.prompt_config(:question_rephraser, model_name)
+        Prompts.config(:question_rephraser, model_name)
       end
 
       def inference_config

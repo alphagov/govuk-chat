@@ -5,7 +5,7 @@ RSpec.describe "Question routing labels" do
     question_routing_prompt_configs = Rails.configuration
                                            .govuk_chat_private
                                            .llm_prompts
-                                           .claude
+                                           .answer_composition
                                            .question_routing
                                            .select { |key, _| key.in?(supported_models) }
                                            .values

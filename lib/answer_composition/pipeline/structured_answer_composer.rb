@@ -84,7 +84,7 @@ module AnswerComposition::Pipeline
     end
 
     def prompt_config
-      Claude.prompt_config(:structured_answer, model_name)
+      Prompts.config(:structured_answer, model_name)
     end
 
     def anthropic_bedrock_client
