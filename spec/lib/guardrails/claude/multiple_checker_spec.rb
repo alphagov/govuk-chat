@@ -5,7 +5,7 @@ RSpec.describe Guardrails::Claude::MultipleChecker, :aws_credentials_stubbed do
   describe ".call" do
     context "when the request is successful" do
       let(:llm_prompt_name) { :answer_guardrails }
-      let(:guardrails_config) { Rails.configuration.govuk_chat_private.llm_prompts.claude }
+      let(:guardrails_config) { Rails.configuration.govuk_chat_private.llm_prompts.answer_composition }
       let(:guardrail_definitions) do
         {
           "costs" => "This is a costs guardrail",

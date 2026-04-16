@@ -36,9 +36,9 @@ RSpec.describe Guardrails::MultipleChecker do
           },
         }.with_indifferent_access
 
-        allow(AnswerComposition::Pipeline::Claude).to receive(:prompt_config)
-                                                  .with(llm_prompt_name, Guardrails::Claude::MultipleChecker.bedrock_model)
-                                                  .and_return(guardrails_config)
+        allow(AnswerComposition::Pipeline::Prompts).to receive(:config)
+                                                   .with(llm_prompt_name, Guardrails::Claude::MultipleChecker.bedrock_model)
+                                                   .and_return(guardrails_config)
         allow(Guardrails::Claude::MultipleChecker).to receive(:call).and_return(guardrail_response_hash)
       end
 
@@ -108,9 +108,9 @@ RSpec.describe Guardrails::MultipleChecker do
 
     before do
       guardrails_config = { system_prompt:, user_prompt:, guardrails:, guardrail_definitions: }.with_indifferent_access
-      allow(AnswerComposition::Pipeline::Claude).to receive(:prompt_config)
-                                          .with(llm_prompt_name, Guardrails::Claude::MultipleChecker.bedrock_model)
-                                          .and_return(guardrails_config)
+      allow(AnswerComposition::Pipeline::Prompts).to receive(:config)
+                                                 .with(llm_prompt_name, Guardrails::Claude::MultipleChecker.bedrock_model)
+                                                 .and_return(guardrails_config)
     end
 
     context "when the llm_prompt_name is :answer_guardrails" do

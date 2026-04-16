@@ -113,7 +113,7 @@ module AnswerComposition::Pipeline
     end
 
     def prompt_config
-      Claude.prompt_config(:question_routing, model_name)
+      Prompts.config(:question_routing, model_name)
     end
 
     def tool_config

@@ -125,7 +125,7 @@ RSpec.describe Chunking::ContentItemParsing::TravelGuideParser do
         chunks = described_class.call(content_item)
 
         prefix = GovukChatPrivate.config.llm_prompts.dig(
-          :common, :chunking_parser_instructions, :travel_guide_parser
+          :chunking, :parser_instructions, :travel_guide_parser
         )
         instructions = "#{prefix} FCDO advises against all but essential travel to Thailand. FCDO advises against all travel to parts of Thailand."
 
