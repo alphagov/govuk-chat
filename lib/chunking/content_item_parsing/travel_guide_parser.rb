@@ -68,7 +68,7 @@ module Chunking
         return nil if alert_status.empty?
 
         prefix = GovukChatPrivate.config.llm_prompts.dig(
-          :common, :chunking_parser_instructions, :travel_guide_parser
+          :chunking, :parser_instructions, :travel_guide_parser
         )
 
         "#{prefix} #{alert_status_warnings.join(' ')}"

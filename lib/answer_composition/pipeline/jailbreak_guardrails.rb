@@ -67,17 +67,12 @@ module AnswerComposition
         AnswerComposition::Pipeline::Prompts.config(:jailbreak_guardrails, model_name)
       end
 
-      # TODO: Move the common prompts into the claude config and use one set of prompts here.
-      def common_guardrails_llm_prompts
-        Rails.configuration.govuk_chat_private.llm_prompts.common.jailbreak_guardrails
-      end
-
       def pass_value
-        common_guardrails_llm_prompts.fetch(:pass_value)
+        guardrails_llm_prompts.fetch(:pass_value)
       end
 
       def fail_value
-        common_guardrails_llm_prompts.fetch(:fail_value)
+        guardrails_llm_prompts.fetch(:fail_value)
       end
 
       def max_tokens
