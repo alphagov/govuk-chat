@@ -4,7 +4,7 @@ RSpec.describe "rake guardrails tasks" do
 
     before do
       Rake::Task[task_name].reenable
-      allow(Guardrails::MultipleChecker).to receive(:collated_prompts).and_call_original
+      allow(AnswerComposition::MultipleGuardrail::Prompt).to receive(:collated).and_call_original
     end
 
     it "aborts if an invalid guardrail type is provided" do
@@ -13,9 +13,9 @@ RSpec.describe "rake guardrails tasks" do
         .and raise_error(SystemExit)
     end
 
-    it "calls MultipleChecker.collated_prompts with the correct args and outputs to stdout" do
+    it "calls MultipleChecker.collated with the correct args and outputs to stdout" do
       expect { Rake::Task[task_name].invoke("answer_guardrails") }.to output(/# System prompt/).to_stdout
-      expect(Guardrails::MultipleChecker).to have_received(:collated_prompts).with(:answer_guardrails)
+      expect(AnswerComposition::MultipleGuardrail::Prompt).to have_received(:collated).with(:answer_guardrails)
     end
   end
 end

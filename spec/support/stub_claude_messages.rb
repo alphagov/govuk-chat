@@ -170,7 +170,10 @@ module StubClaudeMessages
       content: [claude_messages_text_block(response)],
       system:,
       usage: { cache_read_input_tokens: 20 },
-      chat_options: { temperature: nil, max_tokens: Guardrails::MultipleChecker::MAX_TOKENS }.merge(chat_options),
+      chat_options: {
+        temperature: nil,
+        max_tokens: AnswerComposition::MultipleGuardrail::Checker::MAX_TOKENS,
+      }.merge(chat_options),
     )
   end
 

@@ -1,7 +1,7 @@
-RSpec.describe Guardrails::MultipleChecker, :aws_credentials_stubbed do
+RSpec.describe AnswerComposition::MultipleGuardrail::Checker, :aws_credentials_stubbed do
   let(:input) { "This is a test input." }
   let(:formatted_date) { Date.current.strftime("%A %d %B %Y") }
-  let(:prompt) { instance_double(Guardrails::MultipleChecker::Prompt) }
+  let(:prompt) { instance_double(AnswerComposition::MultipleGuardrail::Prompt) }
   let(:llm_prompt_name) { :answer_guardrails }
 
   it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_GUARDRAILS_MODEL" do
@@ -69,10 +69,10 @@ RSpec.describe Guardrails::MultipleChecker, :aws_credentials_stubbed do
 
       before do
         allow(Rails.logger).to receive(:error)
-        allow(Guardrails::MultipleChecker::Prompt).to receive(:new).with(llm_prompt_name).and_return(prompt)
+        allow(AnswerComposition::MultipleGuardrail::Prompt).to receive(:new).with(llm_prompt_name).and_return(prompt)
 
         guardrail_objects = guardrails.map.with_index(1) do |name, key|
-          Guardrails::MultipleChecker::Prompt::Guardrail.new(
+          AnswerComposition::MultipleGuardrail::Prompt::Guardrail.new(
             key: key,
             name: name,
             content: guardrail_definitions[name],
@@ -151,154 +151,31 @@ RSpec.describe Guardrails::MultipleChecker, :aws_credentials_stubbed do
         ).to_h
         expect { described_class.call(input, llm_prompt_name) }
           .to raise_error(
-            an_instance_of(::Guardrails::MultipleChecker::ResponseError)
+            an_instance_of(AnswerComposition::MultipleGuardrail::ResponseError)
               .and(having_attributes(message: "Error parsing guardrail response",
                                      llm_guardrail_result:,
                                      llm_response: expected_llm_response)),
           )
       end
-
-      context "when the response contains an unknown guardrail number" do
-        let(:llm_guardrail_result) { 'False | "1, 8"' }
-
-        it "throws a ResponseError" do
-          stub_claude_output_guardrails(input, llm_guardrail_result)
-
-          expected_llm_response = claude_messages_response(
-            content: [claude_messages_text_block(llm_guardrail_result)],
-            usage: { cache_read_input_tokens: 20 },
-          ).to_h
-          expect { described_class.call(input, llm_prompt_name) }
-            .to raise_error(
-              an_instance_of(::Guardrails::MultipleChecker::ResponseError)
-                .and(having_attributes(message: "Error parsing guardrail response",
-                                       llm_guardrail_result:,
-                                       llm_response: expected_llm_response)),
-            )
-        end
-      end
-    end
-  end
-
-  describe ".collated_prompts" do
-    let(:system_prompt) do
-      <<~PROMPT
-        This is the date:
-
-        {date}
-
-        These are the guardrails:
-
-        {guardrails}
-      PROMPT
-    end
-    let(:user_prompt) do
-      <<~PROMPT
-        This is the user prompt:
-
-        {input}
-      PROMPT
-    end
-    let(:guardrails_config) do
-      {
-        system_prompt:,
-        user_prompt:,
-        guardrails:,
-        guardrail_definitions:,
-      }.with_indifferent_access
     end
 
-    context "when the llm_prompt_name is :answer_guardrails" do
-      let(:llm_prompt_name) { :answer_guardrails }
-      let(:guardrail_definitions) do
-        {
-          "costs" => "This is a costs guardrail",
-          "personal" => "This is a personal guardrail",
-          "unique_answer_guardrail" => "This is a unique answer guardrail",
-        }
-      end
-      let(:guardrails) { %w[costs personal unique_answer_guardrail] }
+    context "when the response contains an unknown guardrail number" do
+      let(:llm_guardrail_result) { 'False | "1, 8"' }
 
-      before do
-        allow(AnswerComposition::Pipeline::Prompts).to receive(:config)
-                                                   .with(llm_prompt_name, described_class::DEFAULT_MODEL)
-                                                   .and_return(guardrails_config)
-      end
+      it "throws a ResponseError" do
+        stub_claude_output_guardrails(input, llm_guardrail_result)
 
-      it "returns the correct prompt template" do
-        expected_prompt = <<~PROMPT
-          # System prompt
-
-          This is the date:
-
-          #{formatted_date}
-
-          These are the guardrails:
-
-          1. This is a costs guardrail
-          2. This is a personal guardrail
-          3. This is a unique answer guardrail
-
-          # User prompt
-
-          This is the user prompt:
-
-          <insert answer to check>
-
-        PROMPT
-
-        expect(described_class.collated_prompts(llm_prompt_name)).to eq(expected_prompt)
-      end
-    end
-
-    context "when the llm_prompt_name is :question_routing_guardrails" do
-      let(:llm_prompt_name) { :question_routing_guardrails }
-      let(:guardrail_definitions) do
-        {
-          "unique_question_routing_guardrail" => "This is a unique question routing guardrail",
-        }
-      end
-      let(:guardrails) { %w[unique_question_routing_guardrail] }
-
-      before do
-        allow(AnswerComposition::Pipeline::Prompts).to receive(:config)
-                                                   .with(llm_prompt_name, described_class::DEFAULT_MODEL)
-                                                   .and_return(guardrails_config)
-      end
-
-      it "returns the correct prompt template" do
-        expected_prompt = <<~PROMPT
-          # System prompt
-
-          This is the date:
-
-          #{formatted_date}
-
-          These are the guardrails:
-
-          1. This is a unique question routing guardrail
-
-          # User prompt
-
-          This is the user prompt:
-
-          <insert answer to check>
-
-        PROMPT
-
-        expect(described_class.collated_prompts(llm_prompt_name)).to eq(expected_prompt)
-      end
-    end
-
-    context "with a non-existent llm_prompt_name" do
-      let(:llm_prompt_name) { "non_existent_llm_prompt_name" }
-
-      it "raises an error" do
-        stub_claude_output_guardrails(input)
-
-        expect {
-          Guardrails::MultipleChecker::Prompt.new(llm_prompt_name)
-        }.to raise_error("No LLM prompts found for #{llm_prompt_name}")
+        expected_llm_response = claude_messages_response(
+          content: [claude_messages_text_block(llm_guardrail_result)],
+          usage: { cache_read_input_tokens: 20 },
+        ).to_h
+        expect { described_class.call(input, llm_prompt_name) }
+          .to raise_error(
+            an_instance_of(AnswerComposition::MultipleGuardrail::ResponseError)
+              .and(having_attributes(message: "Error parsing guardrail response",
+                                     llm_guardrail_result:,
+                                     llm_response: expected_llm_response)),
+          )
       end
     end
   end

@@ -24,7 +24,7 @@ This checks the user's question to determine if it is a jailbreak attempt.
 
 The output of the LLM is either a `1` or a `0`.
 
-### MultipleChecker
+### MultipleGuardrail::Checker
 
 This checks the response from the LLM against a set of guardrails.
 
@@ -34,7 +34,7 @@ The output of the LLM is as follows:
 
 We map these to meaningful names using the mappings from a config file, e.g. [here](../config/llm_prompts/answer_guardrails.yml).
 
-The file also contains the prompts we use to run the guardrails. Copy/paste these into the [Anthropic workbench](https://platform.claude.com/workbench) to investigate any issues.
+The MultipleGuardrail::Prompt class contains the prompts we use to run the guardrails. Copy/paste these into the [Anthropic workbench](https://platform.claude.com/workbench) to investigate any issues.
 
 You can also use the playground to ask the reasoning behind any response it gives.
 

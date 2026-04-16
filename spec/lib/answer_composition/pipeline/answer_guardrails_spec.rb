@@ -5,12 +5,12 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
 
   before do
     context.answer.message = message
-    allow(Guardrails::MultipleChecker).to receive(:call).and_return(guardrail_response)
+    allow(AnswerComposition::MultipleGuardrail::Checker).to receive(:call).and_return(guardrail_response)
   end
 
-  it "calls the Guardrails::MultipleChecker with the correct parameters" do
+  it "calls the MultipleGuardrail::Checker with the correct parameters" do
     described_class.call(context)
-    expect(Guardrails::MultipleChecker).to have_received(:call).with(message, "answer_guardrails")
+    expect(AnswerComposition::MultipleGuardrail::Checker).to have_received(:call).with(message, "answer_guardrails")
   end
 
   context "when the guardrails are not triggered" do
@@ -55,7 +55,7 @@ RSpec.describe AnswerComposition::Pipeline::AnswerGuardrails do
         llm_prompt_tokens: 13,
         llm_completion_tokens: 7,
         llm_cached_tokens: 10,
-        model: BedrockModels.model_id(Guardrails::MultipleChecker::DEFAULT_MODEL),
+        model: BedrockModels.model_id(AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL),
       })
     end
   end

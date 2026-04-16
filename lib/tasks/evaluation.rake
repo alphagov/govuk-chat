@@ -32,7 +32,7 @@ namespace :evaluation do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
     raise "Requires a guardrail type" if args[:guardrail_type].blank?
 
-    response = Guardrails::MultipleChecker.call(ENV["INPUT"], args[:guardrail_type].to_sym)
+    response = AnswerComposition::MultipleGuardrail::Checker.call(ENV["INPUT"], args[:guardrail_type].to_sym)
 
     puts(response.to_json)
   end
