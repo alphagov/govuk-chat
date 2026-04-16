@@ -24,11 +24,26 @@ module AnswerComposition
           **inference_config,
         )
 
-        jailbreak_guardrails_status = response[:content][0][:text] == pass_value ? :pass : :fail
+        text_response = response[:content][0][:text]
+        jailbreak_guardrails_status = case text_response
+                                      when pass_value
+                                        :pass
+                                      when fail_value
+                                        :fail
+                                      else
+                                        :error
+                                      end
 
         context.answer.assign_attributes(jailbreak_guardrails_status:)
         context.answer.assign_llm_response("jailbreak_guardrails", response.to_h)
         context.answer.assign_metrics("jailbreak_guardrails", build_metrics(start_time, response))
+
+        if jailbreak_guardrails_status == :error
+          context.abort_pipeline!(
+            message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
+            status: "error_jailbreak_guardrails",
+          )
+        end
 
         if jailbreak_guardrails_status == :fail
           context.abort_pipeline!(
@@ -59,6 +74,10 @@ module AnswerComposition
 
       def pass_value
         common_guardrails_llm_prompts.fetch(:pass_value)
+      end
+
+      def fail_value
+        common_guardrails_llm_prompts.fetch(:fail_value)
       end
 
       def max_tokens

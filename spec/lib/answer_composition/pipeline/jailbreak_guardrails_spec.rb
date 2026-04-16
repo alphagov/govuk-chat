@@ -101,4 +101,43 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credential
       })
     end
   end
+
+  context "when the LLM response is in an unexpected format" do
+    let(:response) { "UnexpectedFormat" }
+    let!(:stub) { stub_claude_jailbreak_guardrails(input, response) }
+
+    it "aborts the pipeline and updates the answer's status and message attributes" do
+      expect {
+        described_class.call(context)
+      }.to throw_symbol(:abort)
+
+      expect(context.answer).to have_attributes(
+        status: "error_jailbreak_guardrails",
+        jailbreak_guardrails_status: "error",
+        message: Answer::CannedResponses::UNSUCCESSFUL_REQUEST_MESSAGE,
+      )
+    end
+
+    it "assigns the llm response to the answer" do
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+      expected_llm_response = claude_messages_response(
+        content: [claude_messages_text_block(response)],
+      ).to_h
+      expect(context.answer.llm_responses["jailbreak_guardrails"]).to eq(expected_llm_response)
+    end
+
+    it "assigns metrics to the answer" do
+      allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
+
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+
+      expect(context.answer.metrics["jailbreak_guardrails"]).to eq({
+        duration: 1.5,
+        llm_prompt_tokens: 10,
+        llm_completion_tokens: 20,
+        llm_cached_tokens: nil,
+        model: BedrockModels.model_id(described_class::DEFAULT_MODEL),
+      })
+    end
+  end
 end
