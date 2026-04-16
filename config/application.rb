@@ -90,11 +90,11 @@ module GovukChat
     config.answer_strategy = ENV.fetch("ANSWER_STRATEGY", "claude_structured_answer")
 
     config.question_topics = GovukChatPrivate.config
-                                             .llm_prompts.claude
+                                             .llm_prompts
+                                             .auto_evaluation
                                              .topic_tagger
-                                             .dig("tool_spec", "input_schema", "$defs", "govuk_topic_tags", "enum")
+                                             .dig("tool_spec", "function", "parameters", "properties", "primary_topic", "enum")
                                              .sort
-
     config.max_auto_evaluations_per_hour = 300
 
     config.titan_aws_region = ENV["TITAN_AWS_REGION"] || ENV.fetch("AWS_REGION", "eu-west-1")
