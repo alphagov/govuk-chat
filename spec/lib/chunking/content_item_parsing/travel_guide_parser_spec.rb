@@ -123,7 +123,6 @@ RSpec.describe Chunking::ContentItemParsing::TravelGuideParser do
     describe "setting the llm_instructions field" do
       it "sets the llm_instructions field to the travel alert status warnings" do
         chunks = described_class.call(content_item)
-
         prefix = GovukChatPrivate.config.llm_prompts.dig(
           :chunking, :parser_instructions, :travel_guide_parser
         )
@@ -137,6 +136,15 @@ RSpec.describe Chunking::ContentItemParsing::TravelGuideParser do
               "Expected: #{instructions}\nGot: #{chunk.llm_instructions}"
             end
           }
+        end
+
+        it "raises an error if the parser instructions prompt is missing" do
+          allow(GovukChatPrivate.config.llm_prompts).to receive(:dig).with(
+            :chunking, :parser_instructions, :travel_guide_parser
+          ).and_return(nil)
+
+          expect { described_class.call(content_item) }
+            .to raise_error("No LLM prompts found for travel guide parser instructions")
         end
       end
 

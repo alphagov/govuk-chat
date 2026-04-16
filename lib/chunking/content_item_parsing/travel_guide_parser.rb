@@ -71,6 +71,8 @@ module Chunking
           :chunking, :parser_instructions, :travel_guide_parser
         )
 
+        raise "No LLM prompts found for travel guide parser instructions" unless prefix
+
         "#{prefix} #{alert_status_warnings.join(' ')}"
       end
     end
