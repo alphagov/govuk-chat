@@ -411,7 +411,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
         :answer,
         :with_feedback,
         question:,
-        question_routing_label: "vague_acronym_grammar",
+        question_routing_label: Answer.question_routing_labels.keys.first,
         completeness: "complete",
       )
       create(:answer_analysis_topics, answer:, primary_topic: "business", secondary_topic: "tax")
@@ -432,7 +432,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       conversation_id: conversation.id,
       signon_user_id: signon_user.id,
       end_user_id: "end-user-id",
-      question_routing_label: "vague_acronym_grammar",
+      question_routing_label: Answer.question_routing_labels.keys.first,
       primary_topic: "business",
       secondary_topic: "tax",
       completeness: "complete",

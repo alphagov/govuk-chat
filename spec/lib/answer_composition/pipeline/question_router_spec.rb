@@ -181,7 +181,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
         stub_claude_question_routing(
           question.message,
           tools:,
-          tool_name: "vague_acronym_grammar",
+          tool_name: "unclear_intent",
           tool_input: classification_response,
           stop_reason: :max_tokens,
         )
@@ -192,7 +192,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
 
         allow(Answer::CannedResponses)
           .to receive(:response_for_question_routing_label)
-          .with("vague_acronym_grammar")
+          .with("unclear_intent")
           .and_return(canned_response)
 
         described_class.call(context)
@@ -200,7 +200,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
         expect(context.answer).to have_attributes(
           message: canned_response,
           status: "clarification",
-          question_routing_label: "vague_acronym_grammar",
+          question_routing_label: "unclear_intent",
         )
       end
 
@@ -217,7 +217,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
         stub_claude_question_routing(
           question.message,
           tools:,
-          tool_name: "multi_questions",
+          tool_name: "unclear_intent",
           tool_input: { "answer" => answer_message, "confidence" => 0.9 },
         )
       end
@@ -228,7 +228,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
         expect(context.answer).to have_attributes(
           message: answer_message,
           status: "clarification",
-          question_routing_label: "multi_questions",
+          question_routing_label: "unclear_intent",
           question_routing_confidence_score: 0.9,
         )
       end
