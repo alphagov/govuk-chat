@@ -11,8 +11,8 @@ about_mps:
   answer_status: unanswerable_question_routing
   canned_responses:
     - |
-      Sorry, I cannot answer that question. You may be able to find your answer on [the UK Parliament website](https://www.parliament.uk/). 
-    
+      Sorry, I cannot answer that question. You may be able to find your answer on [the UK Parliament website](https://www.parliament.uk/).
+
       If you have questions that can be answered using GOV.UK guidance, I'd be happy to help.
 
 advice_opinions_predictions:
@@ -38,9 +38,9 @@ gov_transparency:
   use_answer: false
   answer_status: unanswerable_question_routing
   canned_responses:
-    - | 
+    - |
       Sorry, I cannot answer your question. You may be able to find the information by [searching on GOV.UK](https://www.gov.uk/).
-      
+
       If not, check [Freedom of Information (FOI) responses](https://www.gov.uk/search/transparency-and-freedom-of-information-releases?content_store_document_type=foi_release) to find out if your question has already been answered. You can also [make your own FOI request](https://www.gov.uk/make-a-freedom-of-information-request).
 
 greetings:
@@ -61,13 +61,6 @@ harmful_vulgar_controversy:
   canned_responses:
     - I can only provide information based on GOV.UK guidance, so I cannot answer that. If you have a different question, I’d be happy to help.
 
-multi_questions:
-  label: "Multi-questions"
-  use_answer: true
-  answer_status: clarification
-  canned_responses:
-    - "Sorry, I experienced a technical error while trying to answer your question. Please try again."
-
 negative_acknowledgement:
   label: "Negative acknowledgement"
   use_answer: false
@@ -86,13 +79,6 @@ non_english:
   canned_responses:
     - Sorry, I cannot answer that. Please translate your question into English and try again.
 
-personal_info:
-  label: "Personal information"
-  use_answer: false
-  answer_status: unanswerable_question_routing
-  canned_responses:
-    - I do not have access to any personal or confidential information. You can try searching for the [service you need on GOV.UK](https://www.gov.uk/search/services). Or ask me another question, if you need more help.
-
 requires_account_data:
   label: "Requires account data"
   use_answer: true
@@ -110,13 +96,6 @@ positive_acknowledgement:
     - If you’ve got more questions, I’m here to help.
     - If you’ve got any follow-up questions or would like to ask about something else, I’m happy to keep chatting.
     - Feel free to ask me another question.
-
-vague_acronym_grammar:
-  label: "Vague, acronym, grammar"
-  use_answer: true
-  answer_status: clarification
-  canned_responses:
-    - "Sorry, I experienced a technical error while trying to answer your question. Please try again."
 
 unclear_intent:
   label: "Unclear intent"
