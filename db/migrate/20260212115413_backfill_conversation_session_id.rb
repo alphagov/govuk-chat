@@ -6,18 +6,18 @@ class BackfillConversationSessionId < ActiveRecord::Migration[8.0]
                 .where(questions: { conversation_session_id: nil })
                 .distinct
                 .find_each do |conversation|
-                  last_session_id = nil
-                  last_created_at = nil
+      last_session_id = nil
+      last_created_at = nil
 
-                  Question.where(conversation:).order(:created_at).each do |question|
-                    if last_created_at.nil? || last_created_at < question.created_at - 30.minutes
-                      last_session_id = SecureRandom.uuid
-                    end
+      Question.where(conversation:).order(:created_at).each do |question|
+        if last_created_at.nil? || last_created_at < question.created_at - 30.minutes
+          last_session_id = SecureRandom.uuid
+        end
 
-                    question.update_columns(conversation_session_id: last_session_id)
+        question.update_columns(conversation_session_id: last_session_id)
 
-                    last_created_at = question.created_at
-                  end
+        last_created_at = question.created_at
+      end
     end
   end
 
