@@ -240,7 +240,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
     end
 
     context "when using a model newer than Claude Sonnet 4" do
-      let(:model_name) { :claude_haiku_4_5 }
+      let(:model_name) { (described_class::SUPPORTED_MODELS - %i[claude_sonnet_4_0]).sample }
 
       let(:tools) do
         properties = classification[:properties] || {}
