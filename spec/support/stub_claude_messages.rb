@@ -163,9 +163,13 @@ module StubClaudeMessages
   end
 
   def stub_claude_output_guardrails(to_check,
-                                    response = "False | None",
+                                    response = [].to_json,
                                     chat_options: { bedrock_model: :claude_haiku_4_5 })
     system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))
+
+    if chat_options[:bedrock_model] != :claude_sonnet_4_0
+      chat_options[:output_config] = a_hash_including("format" => a_hash_including("type" => "json_schema"))
+    end
 
     stub_claude_messages_response(
       array_including({ "role" => "user", "content" => a_string_including(to_check) }),
