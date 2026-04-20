@@ -1,6 +1,7 @@
 GIT
   remote: https://github.com/alphagov/govuk_chat_private.git
-  revision: e76551b563b7de80cad62e7f10ce02b64da9136b
+  revision: fbb4af8336e03b0ea3eaf92baca4ad1469489cba
+  branch: 473-update-structured-response-config-for-guardrails
   specs:
     govuk_chat_private (0.0.1)
       activesupport (>= 8)
