@@ -16,7 +16,13 @@ module AnswerComposition::MultipleGuardrail
       guardrails_content = guardrails.map { |g| "#{g.key}. #{g.content}" }
                                      .join("\n")
 
-      prompts.fetch(:system_prompt)
+      system_prompt_key = if Checker.bedrock_model == :claude_sonnet_4_0
+                            :system_prompt
+                          else
+                            :system_prompt_structured
+                          end
+
+      prompts.fetch(system_prompt_key)
              .sub("{guardrails}", guardrails_content)
              .sub("{date}", Date.current.strftime("%A %d %B %Y"))
     end
