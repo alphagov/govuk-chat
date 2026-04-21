@@ -40,10 +40,10 @@ module AnswerComposition
           Pipeline::JailbreakGuardrails,
           Pipeline::QuestionRephraser,
           Pipeline::QuestionRouter,
-          Pipeline::QuestionRoutingGuardrails.new(llm_provider: :claude),
+          Pipeline::QuestionRoutingGuardrails,
           Pipeline::SearchResultFetcher,
           Pipeline::StructuredAnswerComposer,
-          Pipeline::AnswerGuardrails.new(llm_provider: :claude),
+          Pipeline::AnswerGuardrails,
         ])
       else
         raise "Answer strategy #{answer_strategy} not configured"
