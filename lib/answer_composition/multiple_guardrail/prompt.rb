@@ -2,19 +2,6 @@ module AnswerComposition::MultipleGuardrail
   class Prompt
     Guardrail = Data.define(:key, :name, :content)
 
-    def self.collated(llm_prompt_name)
-      prompt = Prompt.new(llm_prompt_name)
-
-      <<~PROMPT
-        # System prompt
-
-        #{prompt.system_prompt}
-        # User prompt
-
-        #{prompt.user_prompt('<insert answer to check>')}
-      PROMPT
-    end
-
     def initialize(prompt_name)
       prompts = AnswerComposition::Pipeline::Prompts.config(
         prompt_name, Checker.bedrock_model
