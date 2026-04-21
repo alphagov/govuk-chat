@@ -32,9 +32,23 @@ namespace :evaluation do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
     raise "Requires a guardrail type" if args[:guardrail_type].blank?
 
-    response = AnswerComposition::MultipleGuardrail::Checker.call(ENV["INPUT"], args[:guardrail_type].to_sym)
+    guardrail_class = case args[:guardrail_type]
+                      when "question_routing_guardrails"
+                        AnswerComposition::Pipeline::QuestionRoutingGuardrails
+                      when "answer_guardrails"
+                        AnswerComposition::Pipeline::AnswerGuardrails
+                      else
+                        raise "Invalid guardrail type #{args[:guardrail_type]}"
+                      end
 
-    puts(response.to_json)
+    answer = Answer.new(message: ENV["INPUT"])
+    question = Question.new(conversation: Conversation.new, answer:)
+
+    result = AnswerComposition::PipelineRunner.call(question:, pipeline: [
+      guardrail_class,
+    ])
+
+    puts(result.serialize_for_evaluation.to_json)
   end
 
   desc "Produce the output of a RAG response for a user input"

@@ -4,7 +4,7 @@ module AnswerComposition::Pipeline
 
     def initialize(question)
       @question = question
-      @answer = question.build_answer
+      @answer = question.answer || question.build_answer
       @question_message = question.message
       @aborted = false
     end

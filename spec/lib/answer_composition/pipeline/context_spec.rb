@@ -19,6 +19,15 @@ RSpec.describe AnswerComposition::Pipeline::Context do
       instance = described_class.new(build(:question))
       expect(instance).not_to be_aborted
     end
+
+    it "does not overwrite an existing answer on the question" do
+      answer = build(:answer)
+      question = build(:question, answer:)
+
+      instance = described_class.new(question)
+
+      expect(instance.answer).to eq(answer)
+    end
   end
 
   describe "#abort_pipeline" do
