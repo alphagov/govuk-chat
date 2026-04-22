@@ -22,7 +22,7 @@ module AnswerComposition
       end
 
       def generate_response(context)
-        result = ::Guardrails::MultipleChecker.call(context.answer.message, guardrail_name)
+        result = MultipleGuardrail::Checker.call(context.answer.message, guardrail_name)
         context.answer.assign_llm_response(guardrail_name, result.llm_response)
         result
       end

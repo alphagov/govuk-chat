@@ -2,7 +2,7 @@ module GuardrailsExamples
   shared_examples "a passing guardrail pipeline step" do |guardrail_name|
     it "calls the guardrails with the answer message" do
       described_class.call(context)
-      expect(Guardrails::MultipleChecker)
+      expect(AnswerComposition::MultipleGuardrail::Checker)
         .to have_received(:call)
         .with(context.answer.message, guardrail_name)
     end
@@ -33,7 +33,7 @@ module GuardrailsExamples
         llm_prompt_tokens: 13,
         llm_completion_tokens: 7,
         llm_cached_tokens: 10,
-        model: BedrockModels.model_id(Guardrails::MultipleChecker::DEFAULT_MODEL),
+        model: BedrockModels.model_id(AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL),
       })
     end
   end
@@ -48,17 +48,17 @@ module GuardrailsExamples
       end
 
       before do
-        allow(Guardrails::MultipleChecker)
+        allow(AnswerComposition::MultipleGuardrail::Checker)
           .to receive(:call)
           .and_raise(
-            Guardrails::MultipleChecker::ResponseError.new(
+            AnswerComposition::MultipleGuardrail::ResponseError.new(
               "An error occurred",
               llm_response,
               'False | "1, 2"',
               13,
               7,
               10,
-              BedrockModels.model_id(Guardrails::MultipleChecker::DEFAULT_MODEL),
+              BedrockModels.model_id(AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL),
             ),
           )
       end
@@ -87,7 +87,7 @@ module GuardrailsExamples
           llm_prompt_tokens: 13,
           llm_completion_tokens: 7,
           llm_cached_tokens: 10,
-          model: BedrockModels.model_id(Guardrails::MultipleChecker::DEFAULT_MODEL),
+          model: BedrockModels.model_id(AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL),
         })
       end
     end

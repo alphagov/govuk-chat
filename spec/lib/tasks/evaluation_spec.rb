@@ -159,8 +159,12 @@ RSpec.describe "rake evaluation tasks" do
   describe "generate_output_guardrail_response" do
     let(:task_name) { "evaluation:generate_output_guardrail_response" }
     let(:input) { "input" }
+    let(:answer) { build(:answer) }
 
-    before { Rake::Task[task_name].reenable }
+    before do
+      Rake::Task[task_name].reenable
+      allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
+    end
 
     it_behaves_like "a task requiring an input"
 
@@ -171,12 +175,62 @@ RSpec.describe "rake evaluation tasks" do
       end
     end
 
-    it "outputs the response as JSON to stdout" do
+    it "requires a valid guardrail type" do
       ClimateControl.modify(INPUT: input) do
-        result = build(:guardrails_multiple_checker_result, :pass)
-        allow(Guardrails::MultipleChecker).to receive(:call).with(input, :answer_guardrails).and_return(result)
+        expect { Rake::Task[task_name].invoke("invalid_guardrail") }
+          .to raise_error("Invalid guardrail type invalid_guardrail")
+      end
+    end
+
+    it "passes an answer with the input as its message to the pipeline runner" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke("answer_guardrails") }.to output.to_stdout
+
+        expect(AnswerComposition::PipelineRunner)
+          .to have_received(:call) do |args|
+            expect(args[:question].answer.message).to eq(input)
+          end
+      end
+    end
+
+    it "calls the pipeline runner with the correct steps for answer guardrails" do
+      ClimateControl.modify(INPUT: input) do
         expect { Rake::Task[task_name].invoke("answer_guardrails") }
-          .to output("#{result.to_json}\n").to_stdout
+          .to output.to_stdout
+
+        expect(AnswerComposition::PipelineRunner)
+          .to have_received(:call)
+          .with(question: instance_of(Question), pipeline: [
+            AnswerComposition::Pipeline::AnswerGuardrails,
+          ])
+      end
+    end
+
+    it "calls the pipeline runner with the correct steps for question routing guardrails" do
+      ClimateControl.modify(INPUT: input) do
+        expect { Rake::Task[task_name].invoke("question_routing_guardrails") }
+          .to output.to_stdout
+
+        expect(AnswerComposition::PipelineRunner)
+          .to have_received(:call)
+          .with(
+            question: instance_of(Question),
+            pipeline: [
+              AnswerComposition::Pipeline::QuestionRoutingGuardrails,
+            ],
+          )
+      end
+    end
+
+    it "outputs the serialised answer as JSON to stdout" do
+      ClimateControl.modify(INPUT: input) do
+        answer = build(:answer)
+        allow(AnswerComposition::PipelineRunner).to receive(:call)
+                                                .and_return(answer)
+
+        expected_output = answer.serialize_for_evaluation.to_json
+        expect { Rake::Task[task_name].invoke("answer_guardrails") }
+          .to output("#{expected_output}\n").to_stdout
       end
     end
   end

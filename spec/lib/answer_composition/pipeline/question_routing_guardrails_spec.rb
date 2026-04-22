@@ -5,12 +5,12 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
 
   before do
     context.answer.message = message
-    allow(Guardrails::MultipleChecker).to receive(:call).and_return(guardrail_response)
+    allow(AnswerComposition::MultipleGuardrail::Checker).to receive(:call).and_return(guardrail_response)
   end
 
-  it "calls the Guardrails::MultipleChecker with the correct parameters" do
+  it "calls the MultipleGuardrail::Checker with the correct parameters" do
     described_class.call(context)
-    expect(Guardrails::MultipleChecker).to have_received(:call).with(message, "question_routing_guardrails")
+    expect(AnswerComposition::MultipleGuardrail::Checker).to have_received(:call).with(message, "question_routing_guardrails")
   end
 
   context "when the guardrails are not triggered" do
@@ -19,7 +19,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
     it_behaves_like "a passing guardrail pipeline step", "question_routing_guardrails"
 
     it "does nothing if the question routing label is 'geniune_rag'" do
-      expect(Guardrails::MultipleChecker).not_to receive(:call)
+      expect(AnswerComposition::MultipleGuardrail::Checker).not_to receive(:call)
 
       context.answer.question_routing_label = "genuine_rag"
 

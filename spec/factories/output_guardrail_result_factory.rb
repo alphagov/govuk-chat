@@ -1,11 +1,11 @@
 FactoryBot.define do
-  factory :guardrails_multiple_checker_result, class: "Guardrails::MultipleChecker::Result" do
+  factory :guardrails_multiple_checker_result, class: "AnswerComposition::MultipleGuardrail::Checker::Result" do
     initialize_with { new(**attributes) }
 
     llm_prompt_tokens { 13 }
     llm_completion_tokens { 7 }
     llm_cached_tokens { 10 }
-    model { BedrockModels.model_id(Guardrails::MultipleChecker::DEFAULT_MODEL) }
+    model { BedrockModels.model_id(AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL) }
 
     llm_response do
       content = Anthropic::Models::TextBlock.new(

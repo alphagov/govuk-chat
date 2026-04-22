@@ -1,5 +1,5 @@
-module Guardrails
-  class MultipleChecker
+module AnswerComposition::MultipleGuardrail
+  class Checker
     Result = Data.define(:triggered, :guardrails, :llm_response, :llm_guardrail_result,
                          :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens, :model) do
       def triggered_guardrails
@@ -13,82 +13,12 @@ module Guardrails
     SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_haiku_4_5].freeze
     DEFAULT_MODEL = :claude_sonnet_4_0
 
-    class ResponseError < StandardError
-      attr_reader :llm_response, :llm_guardrail_result, :llm_prompt_tokens,
-                  :llm_completion_tokens, :llm_cached_tokens, :model
-
-      def initialize(message,
-                     llm_response,
-                     llm_guardrail_result,
-                     llm_prompt_tokens,
-                     llm_completion_tokens,
-                     llm_cached_tokens,
-                     model)
-        super(message)
-        @llm_response = llm_response
-        @llm_guardrail_result = llm_guardrail_result
-        @llm_prompt_tokens = llm_prompt_tokens
-        @llm_completion_tokens = llm_completion_tokens
-        @llm_cached_tokens = llm_cached_tokens
-        @model = model
-      end
-    end
-
-    class Prompt
-      attr_reader :prompts
-
-      Guardrail = Data.define(:key, :name, :content)
-
-      def initialize(prompt_name)
-        prompts = AnswerComposition::Pipeline::Prompts.config(
-          prompt_name, Guardrails::MultipleChecker.bedrock_model
-        )
-
-        raise "No LLM prompts found for #{prompt_name}" unless prompts
-
-        @prompts = prompts
-      end
-
-      def system_prompt
-        guardrails_content = guardrails.map { |g| "#{g.key}. #{g.content}" }
-                                       .join("\n")
-
-        prompts.fetch(:system_prompt)
-               .sub("{guardrails}", guardrails_content)
-               .sub("{date}", Date.current.strftime("%A %d %B %Y"))
-      end
-
-      def user_prompt(input)
-        prompts.fetch(:user_prompt).sub("{input}", input)
-      end
-
-      def guardrails
-        @guardrails ||= prompts.fetch(:guardrails).map.with_index(1) do |name, key|
-          content = prompts.fetch(:guardrail_definitions).fetch(name)
-          Guardrail.new(key:, name:, content:)
-        end
-      end
-    end
-
     attr_reader :input, :llm_provider, :llm_prompt_name
 
     def self.call(...) = new(...).call
 
     def self.bedrock_model
       BedrockModels.determine_model(ENV["BEDROCK_CLAUDE_GUARDRAILS_MODEL"], DEFAULT_MODEL, SUPPORTED_MODELS).last
-    end
-
-    def self.collated_prompts(llm_prompt_name)
-      prompt = Prompt.new(llm_prompt_name)
-
-      <<~PROMPT
-        # System prompt
-
-        #{prompt.system_prompt}
-        # User prompt
-
-        #{prompt.user_prompt('<insert answer to check>')}
-      PROMPT
     end
 
     def initialize(input, llm_prompt_name)
