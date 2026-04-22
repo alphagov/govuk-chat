@@ -22,7 +22,7 @@ Guardrails are another call to the LLM, with the response to be checked against 
 
 This checks the user's question to determine if it is a jailbreak attempt.
 
-The output of the LLM is either a `1` or a `0`.
+The LLM will output a pass or fail value. These values can be found in our [jailbreak guardrails config](https://github.com/alphagov/govuk_chat_private/blob/main/config/llm_prompts/answer_composition/jailbreak_guardrails.yml).
 
 ### MultipleGuardrail::Checker
 
@@ -32,19 +32,16 @@ The output of the LLM is as follows:
 * `False | None` - the response is OK.
 * `True | "3, 4"` - guardrails 3 and 4 were triggered
 
-We map these to meaningful names using the mappings from a config file, e.g. [here](../config/llm_prompts/answer_guardrails.yml).
+We map these to meaningful names using the [MultipleGuardrail::Prompt class](https://github.com/alphagov/govuk-chat/blob/261a88d9e06b9c103fda193cea89d50ead8c62e9/lib/answer_composition/multiple_guardrail/prompt.rb). The Guardrail dataclass instances are populated using configuration pulled through from the [guardrails config file](https://github.com/alphagov/govuk_chat_private/blob/main/config/llm_prompts/answer_composition/guardrails.yml) in our private repository.
 
-The MultipleGuardrail::Prompt class contains the prompts we use to run the guardrails. Copy/paste these into the [Anthropic workbench](https://platform.claude.com/workbench) to investigate any issues.
-
-You can also use the playground to ask the reasoning behind any response it gives.
-
-## Printing prompts
-
-The `guardrails:print_prompts` rake task outputs the combined system and user prompt for the answer or question routing guardrails. It takes one argument
-`guardrail_type` which is the type of guardrail prompt you want to output. It must be either `answer_guardrails` or `question_routing_guardrails`.
-
-The rake task outputs to stdout. Here is an example that outputs the answer guardrails prompt:
+The MultipleGuardrail::Prompt class constructs the prompts we use to run the guardrails. You can access these prompts buy accessing a rails terminal and running:
 
 ```
-rake guardrails:print_prompts["answer_guardrails"]
+prompts = AnswerComposition::MultipleGuardrail::Prompt.new(<guardrail-type>)
+system_prompt = prompts.system_prompt
+user_prompt = prompts.user_prompt(<your-question>)
 ```
+
+Copy/paste these into the [Anthropic workbench](https://platform.claude.com/workbench) to investigate any issues.
+
+You can also use the workbench to ask the reasoning behind any response it gives.
