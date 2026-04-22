@@ -11,7 +11,7 @@ module AnswerComposition::MultipleGuardrail
 
     MAX_TOKENS = 100
     SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_haiku_4_5].freeze
-    DEFAULT_MODEL = :claude_sonnet_4_0
+    DEFAULT_MODEL = :claude_haiku_4_5
 
     attr_reader :input, :llm_provider, :llm_prompt_name
 

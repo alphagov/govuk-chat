@@ -2,7 +2,7 @@ module AnswerComposition
   module Pipeline
     class JailbreakGuardrails
       SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_haiku_4_5].freeze
-      DEFAULT_MODEL = :claude_sonnet_4_0
+      DEFAULT_MODEL = :claude_haiku_4_5
 
       def self.call(...) = new(...).call
 
