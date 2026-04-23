@@ -39,6 +39,7 @@ module StubClaudeMessages
       content:,
       usage:,
       stop_reason:,
+      bedrock_model:,
     )
 
     endpoint_regex = case bedrock_model
@@ -61,15 +62,14 @@ module StubClaudeMessages
       )
   end
 
-  def stub_claude_jailbreak_guardrails(input, response = "PassValue", chat_options: {})
+  def stub_claude_jailbreak_guardrails(input, response = "PassValue", chat_options: { bedrock_model: :claude_haiku_4_5 })
     jailbreak_guardrails_config = Rails.configuration
                                        .govuk_chat_private
                                        .llm_prompts
                                        .answer_composition
                                        .jailbreak_guardrails
 
-    model = chat_options[:bedrock_model] || :claude_sonnet_4_0
-    model_config = jailbreak_guardrails_config[model]
+    model_config = jailbreak_guardrails_config[chat_options[:bedrock_model]]
 
     allow(model_config).to receive(:fetch).and_call_original
     allow(model_config).to receive(:fetch).with(:pass_value).and_return("PassValue")
@@ -162,7 +162,9 @@ module StubClaudeMessages
     )
   end
 
-  def stub_claude_output_guardrails(to_check, response = "False | None", chat_options: {})
+  def stub_claude_output_guardrails(to_check,
+                                    response = "False | None",
+                                    chat_options: { bedrock_model: :claude_haiku_4_5 })
     system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))
 
     stub_claude_messages_response(
@@ -201,10 +203,10 @@ module StubClaudeMessages
     )
   end
 
-  def claude_messages_response(content:, usage: {}, stop_reason: :end_turn)
+  def claude_messages_response(content:, usage: {}, stop_reason: :end_turn, bedrock_model: :claude_sonnet_4_0)
     Anthropic::Models::Message.new(
       id: "msg-id",
-      model: BedrockModels.model_id(:claude_sonnet_4_0),
+      model: BedrockModels.model_id(bedrock_model),
       role: :assistant,
       content:,
       stop_reason:,
