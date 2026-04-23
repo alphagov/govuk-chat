@@ -63,7 +63,7 @@ RSpec.describe AnswerComposition::Pipeline::StructuredAnswerComposer, :aws_crede
           llm_prompt_tokens: 30,
           llm_completion_tokens: 20,
           llm_cached_tokens: 20,
-          model: BedrockModels.model_id(:claude_sonnet_4_0),
+          model: BedrockModels.model_id(described_class::DEFAULT_MODEL),
         )
       end
 
@@ -88,6 +88,7 @@ RSpec.describe AnswerComposition::Pipeline::StructuredAnswerComposer, :aws_crede
             content: [expected_content],
             usage: { cache_read_input_tokens: 20 },
             stop_reason: :tool_use,
+            bedrock_model: described_class::DEFAULT_MODEL,
           ).to_h.stringify_keys,
           "link_token_mapping" => {
             "link_1" => "https://www.test.gov.uk/vat-rates#vat-basics",
@@ -140,6 +141,7 @@ RSpec.describe AnswerComposition::Pipeline::StructuredAnswerComposer, :aws_crede
           content: [expected_content],
           usage: { cache_read_input_tokens: 20 },
           stop_reason: :tool_use,
+          bedrock_model: described_class::DEFAULT_MODEL,
         ).to_h.stringify_keys,
         "link_token_mapping" => {
           "link_1" => "https://www.test.gov.uk/vat-rates#vat-basics",
@@ -160,7 +162,7 @@ RSpec.describe AnswerComposition::Pipeline::StructuredAnswerComposer, :aws_crede
         llm_prompt_tokens: 30,
         llm_completion_tokens: 20,
         llm_cached_tokens: 20,
-        model: BedrockModels.model_id(:claude_sonnet_4_0),
+        model: BedrockModels.model_id(described_class::DEFAULT_MODEL),
       )
     end
 
