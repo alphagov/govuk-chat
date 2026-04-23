@@ -1,7 +1,7 @@
 RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stubbed do
   let(:question) { build :question }
   let(:context) { build(:answer_pipeline_context, question:) }
-  let(:model_name) { :claude_sonnet_4_0 }
+  let(:model_name) { described_class::DEFAULT_MODEL }
 
   it_behaves_like "a claude answer composition component with a configurable model", "BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL" do
     let(:pipeline_step) { described_class.new(context) }
@@ -44,6 +44,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
         {
           name: "greetings",
           description: "A classification description",
+          strict: model_name != :claude_sonnet_4_0 ? true : nil,
           input_schema: {
             type: "object",
             properties: properties.merge({
@@ -52,7 +53,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
             required: %w[confidence] + properties.keys.map(&:to_s),
             additionalProperties: false,
           },
-        },
+        }.compact,
       ]
     end
 
@@ -61,15 +62,18 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
     end
 
     before do
-      allow(AnswerComposition::Pipeline::Prompts).to receive(:config).with(:question_routing, model_name).and_return(
-        classifications: [classification],
-        system_prompt: "The system prompt",
-        confidence_property: {
-          title: "Confidence",
-          type: "number",
-          description: "The confidence that you have correctly identified the user's request",
-        },
-      )
+      allow(AnswerComposition::Pipeline::Prompts)
+        .to receive(:config)
+        .with(:question_routing, model_name)
+        .and_return(
+          classifications: [classification],
+          system_prompt: "The system prompt",
+          confidence_property: {
+            title: "Confidence",
+            type: "number",
+            description: "The confidence that you have correctly identified the user's request",
+          },
+        )
     end
 
     it "calls Bedrock with with the right prompt and tool config" do
@@ -102,6 +106,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
         content: [expected_content],
         usage: { cache_read_input_tokens: 20 },
         stop_reason: :tool_use,
+        bedrock_model: model_name,
       ).to_h
       expect(context.answer.llm_responses["question_routing"])
         .to match(expected_llm_response)
@@ -124,7 +129,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
         llm_prompt_tokens: 30,
         llm_completion_tokens: 20,
         llm_cached_tokens: 20,
-        model: BedrockModels.model_id(:claude_sonnet_4_0),
+        model: BedrockModels.model_id(model_name),
       })
     end
 
@@ -266,6 +271,49 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
       end
 
       it "sets `strict: true` in the tool config" do
+        ClimateControl.modify(BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL: model_name.to_s) do
+          request = stub_claude_question_routing(
+            question.message,
+            tools:,
+            tool_name: "greetings",
+            tool_input: classification_response,
+            chat_options: {
+              bedrock_model: model_name,
+            },
+          )
+
+          described_class.call(context)
+          expect(request).to have_been_made
+        end
+      end
+    end
+
+    context "when using Claude Sonnet 4" do
+      let(:model_name) { :claude_sonnet_4_0 }
+
+      let(:tools) do
+        properties = classification[:properties] || {}
+        confidence_property = AnswerComposition::Pipeline::Prompts.config(
+          :question_routing, model_name
+        )[:confidence_property]
+
+        [
+          {
+            name: "greetings",
+            description: "A classification description",
+            input_schema: {
+              type: "object",
+              properties: properties.merge({
+                confidence: confidence_property,
+              }),
+              required: %w[confidence] + properties.keys.map(&:to_s),
+              additionalProperties: false,
+            },
+          },
+        ]
+      end
+
+      it "doesn't set `strict: true` in the tool config" do
         ClimateControl.modify(BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL: model_name.to_s) do
           request = stub_claude_question_routing(
             question.message,

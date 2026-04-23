@@ -95,7 +95,7 @@ module StubClaudeMessages
                                    tool_name: "genuine_rag",
                                    tool_input: { "answer": "This is RAG.", confidence: 1.0 },
                                    stop_reason: :tool_use,
-                                   chat_options: {})
+                                   chat_options: { bedrock_model: :claude_sonnet_4_5 })
     chat_options = {
       tools:,
       tool_choice: { type: "any", disable_parallel_tool_use: true },
