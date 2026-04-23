@@ -82,7 +82,9 @@ module StubClaudeMessages
     )
   end
 
-  def stub_claude_question_rephrasing(original_question, rephrased_question, chat_options: {})
+  def stub_claude_question_rephrasing(original_question,
+                                      rephrased_question,
+                                      chat_options: { bedrock_model: :claude_sonnet_4_5 })
     stub_claude_messages_response(
       array_including({ "role" => "user", "content" => a_string_including(original_question) }),
       content: [claude_messages_text_block(rephrased_question)],

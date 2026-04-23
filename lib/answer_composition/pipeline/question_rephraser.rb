@@ -4,7 +4,7 @@ module AnswerComposition
       Result = Data.define(:llm_response, :rephrased_question, :metrics)
 
       SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_sonnet_4_5].freeze
-      DEFAULT_MODEL = :claude_sonnet_4_0
+      DEFAULT_MODEL = :claude_sonnet_4_5
 
       def self.call(...) = new(...).call
 
