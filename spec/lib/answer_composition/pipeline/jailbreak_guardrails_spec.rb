@@ -42,6 +42,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credential
 
       expected_llm_response = claude_messages_response(
         content: [claude_messages_text_block(pass_value)],
+        bedrock_model: described_class::DEFAULT_MODEL,
       ).to_h
       expect(context.answer.llm_responses["jailbreak_guardrails"]).to eq(expected_llm_response)
     end
@@ -83,6 +84,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credential
       expect { described_class.call(context) }.to throw_symbol(:abort)
       expected_llm_response = claude_messages_response(
         content: [claude_messages_text_block(fail_value)],
+        bedrock_model: described_class::DEFAULT_MODEL,
       ).to_h
       expect(context.answer.llm_responses["jailbreak_guardrails"]).to eq(expected_llm_response)
     end
@@ -122,6 +124,7 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credential
       expect { described_class.call(context) }.to throw_symbol(:abort)
       expected_llm_response = claude_messages_response(
         content: [claude_messages_text_block(response)],
+        bedrock_model: described_class::DEFAULT_MODEL,
       ).to_h
       expect(context.answer.llm_responses["jailbreak_guardrails"]).to eq(expected_llm_response)
     end

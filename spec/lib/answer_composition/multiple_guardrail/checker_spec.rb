@@ -129,6 +129,7 @@ RSpec.describe AnswerComposition::MultipleGuardrail::Checker, :aws_credentials_s
         expected_llm_response = claude_messages_response(
           content: [claude_messages_text_block('True | "1, 2"')],
           usage: { cache_read_input_tokens: 20 },
+          bedrock_model: described_class::DEFAULT_MODEL,
         ).to_h
         expect(result.llm_response).to eq(expected_llm_response)
       end
@@ -148,6 +149,7 @@ RSpec.describe AnswerComposition::MultipleGuardrail::Checker, :aws_credentials_s
         expected_llm_response = claude_messages_response(
           content: [claude_messages_text_block(llm_guardrail_result)],
           usage: { cache_read_input_tokens: 20 },
+          bedrock_model: described_class::DEFAULT_MODEL,
         ).to_h
         expect { described_class.call(input, llm_prompt_name) }
           .to raise_error(
@@ -168,6 +170,7 @@ RSpec.describe AnswerComposition::MultipleGuardrail::Checker, :aws_credentials_s
         expected_llm_response = claude_messages_response(
           content: [claude_messages_text_block(llm_guardrail_result)],
           usage: { cache_read_input_tokens: 20 },
+          bedrock_model: described_class::DEFAULT_MODEL,
         ).to_h
         expect { described_class.call(input, llm_prompt_name) }
           .to raise_error(
