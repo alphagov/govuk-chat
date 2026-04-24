@@ -11,6 +11,16 @@ RSpec.describe AnswerComposition::MultipleGuardrail::Prompt do
       {guardrails}
     PROMPT
   end
+
+  let(:system_prompt_structured) do
+    <<~PROMPT
+      This is a structured system prompt and the date is {date}.:
+
+      The following guardrails must be followed:
+
+      {guardrails}
+    PROMPT
+  end
   let(:user_prompt) do
     <<~PROMPT
       This is the user prompt:
@@ -26,34 +36,69 @@ RSpec.describe AnswerComposition::MultipleGuardrail::Prompt do
       "unique_answer_guardrail" => "This is a unique answer guardrail",
     }
   end
+  let(:json_schema) do
+    {
+      "type" => "json_schema",
+      "schema" => {
+        "type" => "array",
+        "items" => { "type" => "integer" },
+      },
+    }
+  end
   let(:guardrails_config) do
     {
       system_prompt:,
+      system_prompt_structured:,
       user_prompt:,
       guardrails:,
       guardrail_definitions:,
+      json_schema:,
     }.with_indifferent_access
   end
 
   shared_examples "a prompt with guardrails" do |llm_prompt_name|
+    let(:model) { AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL }
+
     before do
       allow(AnswerComposition::Pipeline::Prompts)
         .to receive(:config)
-        .with(llm_prompt_name, AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL)
+        .with(llm_prompt_name, model)
         .and_return(guardrails_config)
     end
 
     describe "#system_prompt" do
-      it "returns the system prompt with guardrails and date interpolated" do
-        prompt = described_class.new(llm_prompt_name)
-        expected_guardrails_content = prompt.guardrails.map { |g| "#{g.key}. #{g.content}" }
-                                                       .join("\n")
+      context "when the model is not claude_sonnet_4_0" do
+        it "returns the structured system prompt with guardrails and date interpolated" do
+          prompt = described_class.new(llm_prompt_name)
+          expected_guardrails_content = prompt.guardrails.map { |g| "#{g.key}. #{g.content}" }
+                                                        .join("\n")
 
-        expected_system_prompt = system_prompt
-                                 .sub("{date}", formatted_date)
-                                 .sub("{guardrails}", expected_guardrails_content)
+          expected_system_prompt = system_prompt_structured
+                                  .sub("{date}", formatted_date)
+                                  .sub("{guardrails}", expected_guardrails_content)
 
-        expect(prompt.system_prompt).to eq(expected_system_prompt)
+          expect(prompt.system_prompt).to eq(expected_system_prompt)
+        end
+      end
+
+      context "when the model is claude_sonnet_4_0" do
+        let(:model) { :claude_sonnet_4_0 }
+
+        it "returns the system prompt with guardrails and date interpolated" do
+          allow(AnswerComposition::MultipleGuardrail::Checker)
+            .to receive(:bedrock_model)
+            .and_return(model)
+
+          prompt = described_class.new(llm_prompt_name)
+          expected_guardrails_content = prompt.guardrails.map { |g| "#{g.key}. #{g.content}" }
+                                                        .join("\n")
+
+          expected_system_prompt = system_prompt
+                                  .sub("{date}", formatted_date)
+                                  .sub("{guardrails}", expected_guardrails_content)
+
+          expect(prompt.system_prompt).to eq(expected_system_prompt)
+        end
       end
     end
 

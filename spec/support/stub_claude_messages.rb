@@ -163,9 +163,27 @@ module StubClaudeMessages
   end
 
   def stub_claude_output_guardrails(to_check,
-                                    response = "False | None",
+                                    response = [].to_json,
+                                    guardrail_type = :answer_guardrails,
                                     chat_options: { bedrock_model: :claude_haiku_4_5 })
     system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))
+
+    bedrock_model = chat_options[:bedrock_model]
+    guardrail_keys = AnswerComposition::MultipleGuardrail::Prompt.new(guardrail_type)
+                                                                 .guardrails
+                                                                 .map(&:key)
+
+    if bedrock_model != :claude_sonnet_4_0
+      json_schema = {
+        "type" => "json_schema",
+        "schema" => {
+          "description" => "Array of triggered guardrail numbers. Returns [] if none triggered.",
+          "type" => "array",
+          "items" => { "type" => "integer", "enum" => guardrail_keys },
+        },
+      }
+      chat_options[:output_config] = { format: json_schema }
+    end
 
     stub_claude_messages_response(
       array_including({ "role" => "user", "content" => a_string_including(to_check) }),
