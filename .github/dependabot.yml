@@ -6,14 +6,25 @@ updates:
     directory: /
     schedule:
       interval: daily
+    cooldown:
+      default-days: 3
+      exclude:
+        - gds-api-adapters
+        - gds-sso
+        - govuk_*
+        - rubocop-govuk
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: daily
+    cooldown:
+      default-days: 3
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 3
 registries:
   github:
     type: git
