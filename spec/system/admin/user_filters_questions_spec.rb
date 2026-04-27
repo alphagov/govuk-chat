@@ -33,10 +33,6 @@ RSpec.describe "Admin user filters questions" do
     then_i_see_the_old_question
 
     when_i_clear_the_filters
-    and_i_filter_by_questions_with_useful_answers
-    then_i_see_the_useful_question
-
-    when_i_clear_the_filters
     and_i_filter_by_questions_with_a_specific_question_routing_label
     then_i_see_the_question_with_that_routing_label
 
@@ -76,8 +72,7 @@ RSpec.describe "Admin user filters questions" do
     @question1 = create(:question, conversation:, message: "Hello world", created_at: 2.years.ago)
     @question2 = create(:question, message: "World", conversation:)
     @question3 = create(:question, conversation: api_conversation, message: "Greetings world", created_at: 1.minute.ago)
-    answer = create(:answer, question: @question2, question_routing_label: "non_english", completeness: :partial)
-    create(:answer_feedback, answer: answer, useful: true)
+    create(:answer, question: @question2, question_routing_label: "non_english", completeness: :partial)
     create(:answer, status: :clarification, question: @question3)
   end
 
@@ -232,17 +227,6 @@ RSpec.describe "Admin user filters questions" do
   def then_i_see_the_old_question
     expect(page).to have_content(@question1.message)
     expect(page).not_to have_content(@question2.message)
-    expect(page).not_to have_content(@question3.message)
-  end
-
-  def and_i_filter_by_questions_with_useful_answers
-    select "Useful"
-    click_button "Filter"
-  end
-
-  def then_i_see_the_useful_question
-    expect(page).to have_content(@question2.message)
-    expect(page).not_to have_content(@question1.message)
     expect(page).not_to have_content(@question3.message)
   end
 

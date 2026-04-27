@@ -354,18 +354,6 @@ RSpec.describe "Admin::QuestionsController" do
         .and have_link(unused_source.title, href: unused_source.govuk_url)
     end
 
-    it "renders the feedback for an answer when present" do
-      question = create(:question)
-      answer = create(:answer, question:)
-      create(:answer_feedback, answer:, useful: true)
-
-      get admin_show_question_path(question)
-
-      expect(response.body)
-        .to have_content("Feedback created at")
-        .and have_content("Useful")
-    end
-
     it "renders the answer metrics" do
       metrics = {
         "answer_composition" => { duration: 1.55556 },

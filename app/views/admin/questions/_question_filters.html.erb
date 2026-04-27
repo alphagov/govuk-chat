@@ -148,30 +148,6 @@
   <% end %>
 
   <%= render "govuk_publishing_components/components/select", {
-    id: "answer_feedback_useful",
-    name: "answer_feedback_useful",
-    label: "Answer useful",
-    heading_size: "s",
-    full_width: true,
-    options: [
-      {
-        text: "",
-        value: "",
-      },
-      {
-        text: "Useful",
-        value: "true",
-        selected: params[:answer_feedback_useful] == "true",
-      },
-      {
-        text: "Not useful",
-        value: "false",
-        selected: params[:answer_feedback_useful] == "false",
-      },
-    ],
-  } %>
-
-  <%= render "govuk_publishing_components/components/select", {
     id: "question_routing_label",
     name: "question_routing_label",
     label: "Question routing label",

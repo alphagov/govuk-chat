@@ -559,7 +559,7 @@ RSpec.describe "Admin::MetricsController" do
     end
 
     context "when period is last_7_days" do
-      it "returns data of answer feedback grouped by useful label by day" do
+      it "returns data of answer completeness grouped by completeness label by day" do
         create_list(:answer, 3, completeness: "complete", created_at: 3.days.ago)
         create_list(:answer, 2, completeness: "partial", created_at: 4.days.ago)
         create(:answer, completeness: "no_information", created_at: 6.days.ago)
