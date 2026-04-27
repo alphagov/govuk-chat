@@ -105,7 +105,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser, :aws_credentials_
           llm_prompt_tokens: 10,
           llm_completion_tokens: 20,
           llm_cached_tokens: nil,
-          model: BedrockModels.model_id(:claude_sonnet_4_0),
+          model: BedrockModels.model_id(described_class::DEFAULT_MODEL),
         })
     end
 
@@ -115,6 +115,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser, :aws_credentials_
       expected_llm_response = claude_messages_response(
         content: [claude_messages_text_block(rephrased)],
         usage: claude_messages_usage_block(input_tokens: 10, output_tokens: 20),
+        bedrock_model: described_class::DEFAULT_MODEL,
       ).to_h
 
       expect(context.answer.llm_responses["question_rephrasing"])
