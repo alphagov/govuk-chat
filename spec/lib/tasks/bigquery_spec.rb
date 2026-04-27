@@ -28,7 +28,6 @@ RSpec.describe "rake bigquery tasks" do
     it "prints what it has exported" do
       previous_export = create(:bigquery_export, exported_until: 2.hours.ago)
       answer = create(:answer, created_at: 1.hour.ago)
-      create(:answer_feedback, created_at: 1.hour.ago, answer:)
       create(:answer_analysis_topics, created_at: 1.hour.ago, answer:)
       %w[answer_relevancy_run coherence_run context_relevancy_run faithfulness_run].each do |run_type|
         create(run_type, created_at: 1.hour.ago, answer:)
@@ -36,7 +35,6 @@ RSpec.describe "rake bigquery tasks" do
 
       expected_counts = {
         "questions" => 1,
-        "answer_feedback" => 1,
         "answer_analysis_topics" => 1,
         "answer_analysis_answer_relevancy_runs" => 1,
         "answer_analysis_coherence_runs" => 1,
