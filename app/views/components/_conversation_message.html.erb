@@ -4,7 +4,6 @@
   sources ||= []
   is_question ||= false
   is_loading ||= false
-  feedback_url ||= false
   show_identifier ||= false
   message_classes = %w[app-c-conversation-message__message]
   message_classes << (is_question ? "app-c-conversation-message__message--user-message"
@@ -76,13 +75,4 @@
     <% end %>
   <% end %>
 
-  <% if feedback_url.present? %>
-    <div class="app-c-conversation-message__feedback govuk-!-display-none-print">
-
-      <%= render "components/answer_feedback", {
-        url: feedback_url,
-        question_message: question_message,
-      } %>
-    </div>
-  <% end %>
 <% end %>

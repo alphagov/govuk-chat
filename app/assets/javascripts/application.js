@@ -9,7 +9,6 @@
 //= require govuk_publishing_components/components/radio
 //= require govuk_publishing_components/components/skip-link
 
-//= require components/answer-feedback
 //= require components/chat-header
 //= require components/question-form
 //= require modules/chat-conversation

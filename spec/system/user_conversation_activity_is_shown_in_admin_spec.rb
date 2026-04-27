@@ -6,14 +6,11 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
     when_i_visit_the_conversation_page
     and_i_enter_a_question
     and_the_answer_is_generated
-    and_i_click_that_the_answer_was_useful
-    then_i_see_that_my_feedback_was_submitted
 
     when_i_visit_the_admin_area
     and_i_browse_to_the_questions_section
     and_i_click_on_my_question
     then_i_see_the_answer
-    and_i_see_the_answer_feedback
     and_i_dont_see_the_tagged_topics
 
     when_i_click_the_analysis_tab
@@ -72,14 +69,6 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
     execute_queued_sidekiq_jobs
   end
 
-  def and_i_click_that_the_answer_was_useful
-    click_on "Useful"
-  end
-
-  def then_i_see_that_my_feedback_was_submitted
-    expect(page).to have_content("Thanks for your feedback.")
-  end
-
   def when_i_visit_the_admin_area
     visit admin_homepage_path
   end
@@ -94,10 +83,6 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
 
   def then_i_see_the_answer
     expect(page).to have_content(@answer)
-  end
-
-  def and_i_see_the_answer_feedback
-    expect(page).to have_content("Useful")
   end
 
   def and_i_dont_see_the_tagged_topics

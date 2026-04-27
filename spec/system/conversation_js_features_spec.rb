@@ -54,19 +54,6 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
     then_i_can_see_the_first_answer
   end
 
-  scenario "User gives feedback on an answer" do
-    given_i_am_a_web_chat_user
-    and_i_have_dismissed_the_cookie_banner
-
-    when_i_visit_the_conversation_page
-    and_i_enter_a_first_question
-    then_i_see_the_first_question_was_accepted
-
-    when_the_first_answer_is_generated
-    and_i_click_that_the_answer_was_useful
-    then_i_am_thanked_for_my_feedback
-  end
-
   scenario "character limits" do
     given_i_am_a_web_chat_user
     and_i_have_dismissed_the_cookie_banner
@@ -227,14 +214,6 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
 
   def when_i_reload_the_page
     refresh
-  end
-
-  def and_i_click_that_the_answer_was_useful
-    click_on "Useful"
-  end
-
-  def then_i_am_thanked_for_my_feedback
-    expect(page).to have_content("Thanks for your feedback.")
   end
 
   def and_i_type_in_a_question_approaching_the_character_count_limit
