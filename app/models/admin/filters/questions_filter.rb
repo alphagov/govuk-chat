@@ -5,7 +5,6 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :start_date_params, default: {}
   attribute :end_date_params, default: {}
   attribute :conversation_id
-  attribute :answer_feedback_useful, :boolean
   attribute :question_routing_label
   attribute :signon_user_id
   attribute :end_user_id
@@ -31,14 +30,13 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
 
   def results
     @results ||= begin
-      scope = Question.includes(answer: %i[feedback topics])
+      scope = Question.includes(answer: :topics)
                       .left_outer_joins(:answer)
       scope = search_scope(scope)
       scope = status_scope(scope)
       scope = source_scope(scope)
       scope = start_date_scope(scope)
       scope = end_date_scope(scope)
-      scope = answer_feedback_useful_scope(scope)
       scope = conversation_scope(scope)
       scope = question_routing_label_scope(scope)
       scope = ordering_scope(scope)
@@ -75,7 +73,6 @@ private
     filters[:start_date_params] = start_date_params if start_date_params.values.any?(&:present?)
     filters[:end_date_params] = end_date_params if end_date_params.values.any?(&:present?)
     filters[:sort] = sort if sort != self.class.default_sort
-    filters[:answer_feedback_useful] = answer_feedback_useful unless answer_feedback_useful.nil?
     filters[:conversation_id] = conversation.id if conversation.present?
     filters[:signon_user_id] = signon_user_id if signon_user_id.present?
     filters[:end_user_id] = end_user_id if end_user_id.present?
@@ -120,12 +117,6 @@ private
     return scope if errors[:end_date_params].present? || end_date.nil?
 
     scope.where("questions.created_at <= ?", end_date)
-  end
-
-  def answer_feedback_useful_scope(scope)
-    return scope if answer_feedback_useful.nil?
-
-    scope.joins(answer: :feedback).where(feedback: { useful: answer_feedback_useful })
   end
 
   def conversation_scope(scope)

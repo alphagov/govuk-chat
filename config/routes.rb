@@ -31,10 +31,6 @@ Rails.application.routes.draw do
                                             as: :answer_question,
                                             constraints: html_json_constraint
 
-      post "/answers/:answer_id/feedback", to: "conversations#answer_feedback",
-                                           as: :answer_feedback,
-                                           constraints: html_json_constraint
-
       get "/clear", to: "conversations#clear", as: :clear_conversation
       post "/clear", to: "conversations#clear_confirm"
     end

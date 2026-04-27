@@ -145,14 +145,6 @@ RSpec.describe Admin::QuestionsHelper do
         .to have_link(source.title, href: source.govuk_url)
     end
 
-    it "returns feedback rows when the answer has feedback" do
-      answer = create(:answer, :with_feedback)
-      answer = answer_from_db(answer)
-      result = helper.question_show_summary_list_rows(question, answer, 1, 1)
-
-      expect(returned_keys(result)).to include("Feedback created at", "Feedback")
-    end
-
     it "returns the end_user_id when present" do
       answer = answer_from_db(create(:answer))
       conversation.update!(end_user_id: "12345")
@@ -269,6 +261,6 @@ RSpec.describe Admin::QuestionsHelper do
   end
 
   def answer_from_db(answer)
-    Answer.includes(:sources, :feedback, :topics).find(answer.id)
+    Answer.includes(:sources, :topics).find(answer.id)
   end
 end

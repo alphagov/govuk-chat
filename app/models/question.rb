@@ -51,7 +51,6 @@ class Question < ApplicationRecord
       create_answer(
         message: Answer::CannedResponses::TIMED_OUT_RESPONSE,
         status: :error_timeout,
-        feedback: nil,
       )
     end
   end

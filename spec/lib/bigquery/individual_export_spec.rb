@@ -75,7 +75,7 @@ RSpec.describe Bigquery::IndividualExport do
         # export timestamp is based on when answer is generated, hence easier to
         # create an answer and look up the question than a question with an
         # answer at a specific time.
-        question = create(:answer, :with_sources, :with_feedback, created_at: 2.hours.ago).question
+        question = create(:answer, :with_sources, created_at: 2.hours.ago).question
 
         result = described_class.call(model, export_from:, export_until:)
 

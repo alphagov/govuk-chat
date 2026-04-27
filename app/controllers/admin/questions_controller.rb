@@ -7,7 +7,7 @@ class Admin::QuestionsController < Admin::BaseController
   def show
     question_scope = Question.includes(
       conversation: :signon_user,
-      answer: [{ sources: :chunk }, :feedback, :topics, :answer_relevancy_runs, :coherence_runs, :faithfulness_runs, :context_relevancy_runs],
+      answer: [{ sources: :chunk }, :topics, :answer_relevancy_runs, :coherence_runs, :faithfulness_runs, :context_relevancy_runs],
     )
 
     @question = question_scope.find(params[:id])
@@ -26,7 +26,6 @@ private
       :status,
       :source,
       { start_date_params: %i[day month year], end_date_params: %i[day month year] },
-      :answer_feedback_useful,
       :question_routing_label,
       :page,
       :sort,

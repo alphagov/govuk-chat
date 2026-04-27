@@ -112,19 +112,6 @@ RSpec.describe "components/_conversation_message.html.erb" do
     end
   end
 
-  context "when a feedback url is passed" do
-    it "renders the answer feedback component" do
-      render("components/conversation_message", {
-        id: "answer-4",
-        message: "message 4",
-        question_message: "How do I apply for teacher training?",
-        feedback_url: "http://example.com",
-      })
-
-      expect(rendered).to have_selector(".app-c-answer-feedback__form[action='http://example.com']")
-    end
-  end
-
   context "when show_identifier is true" do
     it "omits the .govuk-visually-hidden class from the message identifier" do
       render("components/conversation_message", {

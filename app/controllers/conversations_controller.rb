@@ -1,7 +1,7 @@
 class ConversationsController < BaseController
   layout "conversation", except: %i[answer clear]
   before_action :find_conversation
-  before_action :require_conversation, only: %i[answer answer_feedback clear]
+  before_action :require_conversation, only: %i[answer clear]
 
   def show
     @conversation ||= Conversation.new
@@ -42,7 +42,7 @@ class ConversationsController < BaseController
 
   def answer
     @question = Question.where(conversation: @conversation)
-                        .includes(answer: [{ sources: :chunk }, :feedback])
+                        .includes(answer: { sources: :chunk })
                         .find(params[:question_id])
     answer = @question.check_or_create_timeout_answer
 
@@ -60,23 +60,6 @@ class ConversationsController < BaseController
       else
         format.html { render :pending, status: :accepted }
         format.json { render json: { answer_html: nil }, status: :accepted }
-      end
-    end
-  end
-
-  def answer_feedback
-    answer = @conversation.answers.includes(:feedback).find(params[:answer_id])
-    feedback_form = Form::CreateAnswerFeedback.new(answer_feedback_params.merge(answer:))
-
-    respond_to do |format|
-      if feedback_form.valid?
-        feedback_form.submit
-
-        format.html { redirect_to show_conversation_path, notice: "Feedback submitted successfully." }
-        format.json { render json: { error_messages: [] }, status: :created }
-      else
-        format.html { redirect_to show_conversation_path }
-        format.json { render json: { error_messages: feedback_form.errors.map(&:message) }, status: :unprocessable_content }
       end
     end
   end
@@ -139,10 +122,6 @@ private
       expires: Rails.configuration.conversations.max_question_age_days.days.from_now,
       secure: Rails.env.production?,
     }
-  end
-
-  def answer_feedback_params
-    params.require(:create_answer_feedback).permit(:useful)
   end
 
   def prepare_for_show_view(conversation)

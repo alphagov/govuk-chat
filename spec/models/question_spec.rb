@@ -148,7 +148,6 @@ RSpec.describe Question do
           message: Answer::CannedResponses::TIMED_OUT_RESPONSE,
           status: "error_timeout",
           question:,
-          feedback: nil,
         )
       end
     end

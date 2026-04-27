@@ -5,7 +5,6 @@ FactoryBot.define do
     status { :answered }
     completeness { :complete }
     sources { [] }
-    feedback { nil }
     topics { nil }
 
     trait :with_sources do
@@ -23,10 +22,6 @@ FactoryBot.define do
                              exact_path: "/vat-tax")),
         ]
       end
-    end
-
-    trait :with_feedback do
-      feedback { build(:answer_feedback) }
     end
 
     trait :with_topics do

@@ -203,21 +203,6 @@ module Admin
         end
       end
 
-      if answer&.feedback.present?
-        feedback = answer.feedback
-
-        rows << [
-          {
-            field: "Feedback created at",
-            value: feedback.created_at.to_fs(:time_and_date),
-          },
-          {
-            field: "Feedback",
-            value: feedback.useful == true ? "Useful" : "Not useful",
-          },
-        ]
-      end
-
       rows.flatten
     end
 

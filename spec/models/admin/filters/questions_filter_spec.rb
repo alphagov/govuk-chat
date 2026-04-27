@@ -202,22 +202,6 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([question])
     end
 
-    it "filters the results by answer feedback" do
-      useful_question = create(:question)
-      answer1 = create(:answer, question: useful_question)
-      create(:answer_feedback, answer: answer1, useful: true)
-
-      useless_question = create(:question)
-      answer2 = create(:answer, question: useless_question)
-      create(:answer_feedback, answer: answer2, useful: false)
-
-      filter = described_class.new(answer_feedback_useful: "true")
-      expect(filter.results).to eq([useful_question])
-
-      filter = described_class.new(answer_feedback_useful: "false")
-      expect(filter.results).to eq([useless_question])
-    end
-
     it "filters the results by signon user" do
       alice = create(:signon_user, email: "alice@example.com")
       bob = create(:signon_user, email: "bob@example.com")
@@ -379,8 +363,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
 
       expected_params = filter.attributes
                               .symbolize_keys
-                              .except(:page, :answer_feedback_useful)
-                              .merge(answer_feedback_useful: true)
+                              .except(:page)
       expect(filter.previous_page_params).to eq(expected_params)
     end
   end
@@ -395,8 +378,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
 
       expected_params = filter.attributes
                               .symbolize_keys
-                              .except(:answer_feedback_useful)
-                              .merge(answer_feedback_useful: true, page: 2)
+                              .merge(page: 2)
       expect(filter.next_page_params).to eq(expected_params)
     end
   end
@@ -409,7 +391,6 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       question = create(:question, conversation:, conversation_session_id:)
       answer = create(
         :answer,
-        :with_feedback,
         question:,
         question_routing_label: Answer.question_routing_labels.keys.first,
         completeness: "complete",
@@ -428,7 +409,6 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       source: "api",
       start_date_params:,
       end_date_params:,
-      answer_feedback_useful: "true",
       conversation_id: conversation.id,
       signon_user_id: signon_user.id,
       end_user_id: "end-user-id",

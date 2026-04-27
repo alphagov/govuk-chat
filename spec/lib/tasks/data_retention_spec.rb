@@ -14,7 +14,6 @@ RSpec.describe "rake data_retention tasks" do
         context_relevancy_run
         faithfulness_run
         answer_relevancy_run
-        answer_feedback
         answer_analysis_topics
       ].each do |model|
         create(model, answer:)
@@ -29,7 +28,6 @@ RSpec.describe "rake data_retention tasks" do
         .and change(AnswerAnalysis::ContextRelevancyRun, :count).by(-1)
         .and change(AnswerAnalysis::FaithfulnessRun, :count).by(-1)
         .and change(AnswerAnalysis::AnswerRelevancyRun, :count).by(-1)
-        .and change(AnswerFeedback, :count).by(-1)
         .and change(AnswerAnalysis::Topics, :count).by(-1)
         .and not_change(Conversation, :count)
         .and output("\"1 question and associated data deleted\"\n\"0 conversations deleted\"\n").to_stdout
