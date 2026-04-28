@@ -20,6 +20,8 @@ Rails.application.routes.draw do
                                     Mime::Type.lookup("text/html"),
                                     Mime::Type.lookup("application/json")] }
 
+  get "/signon-entry", to: "signon_entry#index", as: :signon_entry
+
   scope :chat, format: false, defaults: { format: "html" }, constraints: html_constraint do
     get "", to: "homepage#index", as: :homepage
 
