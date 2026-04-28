@@ -35,37 +35,10 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
   end
 
   def when_the_first_answer_is_generated
-    titan_embedding = mock_titan_embedding(@first_question)
-    allow(Search::TextToEmbedding)
-      .to receive(:call)
-      .and_return(titan_embedding)
-
-    populate_chunked_content_index([
-      build(:chunked_content_record, titan_embedding:, exact_path: "/pay-more-tax#yes-really"),
-    ])
-
-    @first_answer = "Lots of tax."
-
-    stub_claude_jailbreak_guardrails(@first_question)
-    stub_claude_question_routing(@first_question)
-    stub_claude_structured_answer(@first_question, @first_answer)
-    stub_claude_output_guardrails(@first_answer)
-    stub_bedrock_invoke_model_openai_oss_topic_tagger(@first_question)
-    stub_bedrock_invoke_model_openai_oss_answer_relevancy(
-      question_message: @first_question,
-      answer_message: @first_answer,
-    )
-    stub_bedrock_invoke_model_openai_oss_faithfulness(
-      retrieval_context: "Some content",
-      answer_message: @first_answer,
-    )
-    stub_bedrock_invoke_model_openai_oss_coherence(
-      question_message: @first_question,
-      answer_message: @first_answer,
-    )
-    stub_bedrock_invoke_model_openai_oss_context_relevancy(
-      question_message: @first_question,
-    )
+    @first_answer = "You can use a simple service on GOV.UK"
+    stubs_for_mock_answer(@first_question,
+                          @first_answer,
+                          sources_used: %w[link_1])
 
     execute_queued_sidekiq_jobs
   end
@@ -89,30 +62,13 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
   end
 
   def when_the_second_answer_is_generated
-    rephrased_question = "Rephrased #{@second_question}"
     @second_answer = "Even more tax."
 
-    stub_claude_jailbreak_guardrails(@second_question)
-    stub_claude_question_rephrasing(@second_question, rephrased_question)
-    stub_claude_question_routing(rephrased_question)
-    stub_claude_structured_answer(rephrased_question, @second_answer)
-    stub_claude_output_guardrails(@second_answer)
-    stub_bedrock_invoke_model_openai_oss_topic_tagger(rephrased_question)
-    stub_bedrock_invoke_model_openai_oss_answer_relevancy(
-      question_message: rephrased_question,
-      answer_message: @second_answer,
-    )
-    stub_bedrock_invoke_model_openai_oss_faithfulness(
-      retrieval_context: "Some content",
-      answer_message: @second_answer,
-    )
-    stub_bedrock_invoke_model_openai_oss_coherence(
-      question_message: rephrased_question,
-      answer_message: @second_answer,
-    )
-    stub_bedrock_invoke_model_openai_oss_context_relevancy(
-      question_message: rephrased_question,
-    )
+    stubs_for_mock_answer(@second_question,
+                          @second_answer,
+                          rephrase_question: true,
+                          sources_used: %w[link_1],
+                          create_content_chunk: false)
 
     execute_queued_sidekiq_jobs
   end

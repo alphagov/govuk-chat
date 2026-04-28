@@ -34,37 +34,10 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
   end
 
   def and_the_answer_is_generated
-    titan_embedding = mock_titan_embedding(@question)
-    allow(Search::TextToEmbedding)
-      .to receive(:call)
-      .and_return(titan_embedding)
-
-    populate_chunked_content_index([
-      build(:chunked_content_record, titan_embedding:, exact_path: "/pay-more-tax#yes-really"),
-    ])
-
     @answer = "Maybe. You could get some benefits."
-
-    stub_claude_jailbreak_guardrails(@question)
-    stub_claude_question_routing(@question)
-    stub_claude_structured_answer(@question, @answer)
-    stub_claude_output_guardrails(@answer)
-    stub_bedrock_invoke_model_openai_oss_topic_tagger(@question)
-    stub_bedrock_invoke_model_openai_oss_answer_relevancy(
-      question_message: @question,
-      answer_message: @answer,
-    )
-    stub_bedrock_invoke_model_openai_oss_faithfulness(
-      retrieval_context: "Some content",
-      answer_message: @answer,
-    )
-    stub_bedrock_invoke_model_openai_oss_coherence(
-      question_message: @question,
-      answer_message: @answer,
-    )
-    stub_bedrock_invoke_model_openai_oss_context_relevancy(
-      question_message: @question,
-    )
+    stubs_for_mock_answer(@question,
+                          @answer,
+                          sources_used: %w[link_1])
 
     execute_queued_sidekiq_jobs
   end

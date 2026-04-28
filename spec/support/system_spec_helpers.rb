@@ -42,4 +42,49 @@ module SystemSpecHelpers
   def ur_question_first_option_text(question_label)
     Rails.configuration.pilot_user_research_questions.dig(question_label, :options, 0, :text)
   end
+
+  def stubs_for_mock_answer(question,
+                            answer,
+                            rephrase_question: false,
+                            sources_used: [],
+                            create_content_chunk: true)
+    stub_claude_jailbreak_guardrails(question)
+
+    if rephrase_question
+      rephrased_question = "Rephrased #{question}"
+
+      stub_claude_question_rephrasing(question, rephrased_question)
+
+      question = rephrased_question
+    end
+
+    stub_bedrock_titan_embedding(question)
+
+    if create_content_chunk
+      populate_chunked_content_index([
+        build(:chunked_content_record, titan_embedding: mock_titan_embedding(question)),
+      ])
+    end
+
+    stub_claude_question_routing(question)
+    stub_claude_structured_answer(question, answer, sources_used:)
+
+    stub_claude_output_guardrails(answer)
+    stub_bedrock_invoke_model_openai_oss_topic_tagger(question)
+    stub_bedrock_invoke_model_openai_oss_answer_relevancy(
+      question_message: question,
+      answer_message: answer,
+    )
+    stub_bedrock_invoke_model_openai_oss_faithfulness(
+      retrieval_context: "Some content",
+      answer_message: answer,
+    )
+    stub_bedrock_invoke_model_openai_oss_coherence(
+      question_message: question,
+      answer_message: answer,
+    )
+    stub_bedrock_invoke_model_openai_oss_context_relevancy(
+      question_message: question,
+    )
+  end
 end
