@@ -18,11 +18,11 @@ module AnswerComposition
       end
 
       def call
-        return if message_records.blank?
+        return if message_records.blank? && model_name == :claude_sonnet_4_0
 
         start_time = Clock.monotonic_time
         response = anthropic_bedrock_client.messages.create(
-          system: [{ type: "text", text: config[:system_prompt] }],
+          system: [{ type: "text", text: system_prompt }],
           model: model_id,
           messages:,
           **inference_config,
@@ -78,10 +78,25 @@ module AnswerComposition
         }
       end
 
+      def system_prompt
+        return config[:system_prompt] if model_name == :claude_sonnet_4_0
+
+        config[:system_prompt_always_rephrase]
+      end
+
       def user_prompt
-        config[:user_prompt]
-          .sub("{question}", question_message)
-          .sub("{message_history}", message_history)
+        if model_name == :claude_sonnet_4_0
+          return config[:user_prompt].sub("{question}", question_message)
+                                     .sub("{message_history}", message_history)
+
+        end
+
+        if message_records.present?
+          config[:user_prompt_with_history].sub("{question}", question_message)
+                                           .sub("{message_history}", message_history)
+        else
+          config[:user_prompt_without_history].sub("{question}", question_message)
+        end
       end
 
       def messages
