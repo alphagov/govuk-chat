@@ -10,12 +10,6 @@ module SystemSpecHelpers
       .and_return("claude_structured_answer")
   end
 
-  def given_i_am_using_the_openai_structured_answer_strategy
-    allow(Rails.configuration)
-      .to receive(:answer_strategy)
-      .and_return("openai_structured_answer")
-  end
-
   def given_i_have_dismissed_the_cookie_banner
     visit homepage_path
 
@@ -37,10 +31,6 @@ module SystemSpecHelpers
 
   def given_i_am_an_admin_with_the_settings_permission
     login_as(create(:signon_user, :admin_area_settings))
-  end
-
-  def ur_question_first_option_text(question_label)
-    Rails.configuration.pilot_user_research_questions.dig(question_label, :options, 0, :text)
   end
 
   def stubs_for_mock_answer(question,
