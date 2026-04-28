@@ -24,7 +24,6 @@ RSpec.describe AnswerComposition::MultipleGuardrail::Checker, :aws_credentials_s
     let(:guardrails_config) do
       {
         system_prompt: "{guardrails} {date}",
-        system_prompt_structured: "Structured system prompt: {guardrails} {date}",
         user_prompt: "{input}",
         guardrails:,
         guardrail_definitions:,
