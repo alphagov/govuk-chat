@@ -25,9 +25,6 @@
     "BUNDLE_GITHUB__COM": {
       "required": true
     },
-    "AVAILABLE_WITHOUT_SIGNON_AUTHENTICATION": {
-      "value": "true"
-    },
     "OPENSEARCH_URL": {
       "required": true
     },

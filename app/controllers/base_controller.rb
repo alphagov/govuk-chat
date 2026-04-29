@@ -1,5 +1,5 @@
 class BaseController < ApplicationController
-  before_action :ensure_signon_user_if_required
+  before_action :authenticate_user!
   before_action :authorise_web_user
   before_action :check_chat_web_access
   helper_method :settings
@@ -18,12 +18,6 @@ private
 
   def settings
     Settings.instance
-  end
-
-  def ensure_signon_user_if_required
-    return if Rails.configuration.available_without_signon_authentication
-
-    authenticate_user!
   end
 
   def authorise_web_user
