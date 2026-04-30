@@ -121,8 +121,8 @@ module StubClaudeMessages
                                     answer,
                                     sources_used: %w[link_1],
                                     answer_completeness: "complete",
-                                    chat_options: {})
-    model = chat_options[:bedrock_model] || :claude_sonnet_4_0
+                                    chat_options: { bedrock_model: :claude_sonnet_4_5 })
+    model = chat_options[:bedrock_model]
     tools = Rails.configuration
                  .govuk_chat_private
                  .llm_prompts
