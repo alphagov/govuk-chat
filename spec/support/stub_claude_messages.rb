@@ -62,7 +62,9 @@ module StubClaudeMessages
       )
   end
 
-  def stub_claude_jailbreak_guardrails(input, response = "PassValue", chat_options: { bedrock_model: :claude_haiku_4_5 })
+  def stub_claude_jailbreak_guardrails(input,
+                                       response = "PassValue",
+                                       chat_options: { bedrock_model: AnswerComposition::Pipeline::JailbreakGuardrails::DEFAULT_MODEL })
     jailbreak_guardrails_config = Rails.configuration
                                        .govuk_chat_private
                                        .llm_prompts
@@ -84,7 +86,7 @@ module StubClaudeMessages
 
   def stub_claude_question_rephrasing(original_question,
                                       rephrased_question,
-                                      chat_options: { bedrock_model: :claude_sonnet_4_5 })
+                                      chat_options: { bedrock_model: AnswerComposition::Pipeline::QuestionRephraser::DEFAULT_MODEL })
     stub_claude_messages_response(
       array_including({ "role" => "user", "content" => a_string_including(original_question) }),
       content: [claude_messages_text_block(rephrased_question)],
@@ -97,7 +99,7 @@ module StubClaudeMessages
                                    tool_name: "genuine_rag",
                                    tool_input: { "answer": "This is RAG.", confidence: 1.0 },
                                    stop_reason: :tool_use,
-                                   chat_options: { bedrock_model: :claude_sonnet_4_5 })
+                                   chat_options: { bedrock_model: AnswerComposition::Pipeline::QuestionRouter::DEFAULT_MODEL })
     chat_options = {
       tools:,
       tool_choice: { type: "any", disable_parallel_tool_use: true },
@@ -123,7 +125,7 @@ module StubClaudeMessages
                                     answer,
                                     sources_used: %w[link_1],
                                     answer_completeness: "complete",
-                                    chat_options: { bedrock_model: :claude_sonnet_4_5 })
+                                    chat_options: { bedrock_model: AnswerComposition::Pipeline::StructuredAnswerComposer::DEFAULT_MODEL })
     model = chat_options[:bedrock_model]
     tools = Rails.configuration
                  .govuk_chat_private
@@ -166,7 +168,7 @@ module StubClaudeMessages
 
   def stub_claude_output_guardrails(to_check,
                                     response = [].to_json,
-                                    chat_options: { bedrock_model: :claude_haiku_4_5 })
+                                    chat_options: { bedrock_model: AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL })
     system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))
 
     if chat_options[:bedrock_model] != :claude_sonnet_4_0
