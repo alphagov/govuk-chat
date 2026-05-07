@@ -20,6 +20,10 @@ module Chunking
       schema_config = Rails.configuration.search.document_types_by_schema[schema_name]
       return "#{schema_name} is not a supported schema" unless schema_config
 
+      if schema_name == "person" && !allowed_person_base_paths.include?(content_item["base_path"])
+        return "person content item ingestion is only supported for ministers."
+      end
+
       document_type = content_item["document_type"]
       return "document type: #{document_type} not supported for schema: #{schema_name}" unless schema_config.document_types.key?(document_type)
 
@@ -39,6 +43,13 @@ module Chunking
 
     def self.parser_class(schema_name)
       Rails.configuration.search.document_types_by_schema.fetch(schema_name).parser.constantize
+    end
+
+    def self.allowed_person_base_paths
+      [
+        "/government/people/keir-starmer",
+        "/government/people/hilary-benn",
+      ]
     end
   end
 end

@@ -86,5 +86,28 @@ RSpec.describe Chunking::ContentItemToChunks do
         expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
       end
     end
+
+    context "when the content item is a person" do
+      it "returns an error when the base_path is not for a minister" do
+        content_item = build(
+          :notification_content_item,
+          :person,
+          base_path: "/government/people/someone-else",
+        )
+
+        expect(described_class.non_indexable_content_item_reason(content_item))
+          .to eq(
+            "person content item ingestion is only supported for ministers.",
+          )
+      end
+
+      it "returns nil when the base_path is for a minister" do
+        content_item = build(
+          :notification_content_item,
+          :person,
+        )
+        expect(described_class.non_indexable_content_item_reason(content_item)).to be_nil
+      end
+    end
   end
 end

@@ -274,5 +274,17 @@ FactoryBot.define do
       document_type { "worldwide_organisation" }
       body { "<p>Some content</p>" }
     end
+
+    trait :person do
+      schema_name { "person" }
+      document_type { "person" }
+      base_path { Chunking::ContentItemToChunks.allowed_person_base_paths.sample }
+
+      body do
+        [
+          { "content_type" => "text/html", "content" => "<p>Some content</p>" },
+        ]
+      end
+    end
   end
 end

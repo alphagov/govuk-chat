@@ -66,6 +66,11 @@ document_types_by_schema:
     document_types:
       manual:
 
+  person:
+    parser: Chunking::ContentItemParsing::BodyContentArrayParser
+    document_types:
+      person:
+
   place:
     parser: Chunking::ContentItemParsing::TransactionParser
     document_types:
