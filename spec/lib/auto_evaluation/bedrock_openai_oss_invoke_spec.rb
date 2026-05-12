@@ -44,8 +44,7 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
         allow(Rails).to receive(:logger).and_return(logger)
         (1..described_class::MAX_ATTEMPTS).each do |i|
           expected_log_message = "LLM did not return valid JSON that conformed to the schema. " \
-                                 "Attempt #{i}/#{described_class::MAX_ATTEMPTS}. " \
-                                 "Error: #{error_class}, #{error_message}"
+                                 "Attempt #{i}/#{described_class::MAX_ATTEMPTS}."
           expect(logger).to receive(:warn)
             .with(/#{expected_log_message}/)
             .ordered
@@ -53,48 +52,6 @@ RSpec.describe AutoEvaluation::BedrockOpenAIOssInvoke, :aws_credentials_stubbed 
 
         expect {
           described_class.call(user_message:, tool:)
-        }.to raise_error(described_class::InvalidLlmResponseError)
-      end
-
-      it "logs additional information when the error message (or class) changes between retries" do
-        logger = instance_double(Logger)
-        allow(Rails).to receive(:logger).and_return(logger)
-        allow(logger).to receive(:warn)
-
-        call_count = 0
-        original_response_body = stub.response.body
-
-        stub_request(:post, StubBedrock::OPENAI_GPT_OSS_ENDPOINT_REGEX).to_return do |_request|
-          call_count += 1
-          if call_count == 1
-            { status: 200, headers: { "Content-Type" => "application/json" }, body: original_response_body }
-          else
-            {
-              status: 200,
-              headers: { "Content-Type" => "application/json" },
-              body: {
-                choices: [{
-                  message: {
-                    tool_calls: [{ function: { arguments: "not_json" } }],
-                  },
-                  finish_reason: "stop",
-                }],
-                usage: { prompt_tokens: 10, completion_tokens: 10 },
-              }.to_json,
-            }
-          end
-        end
-
-        error = "#{error_class}, #{error_message}"
-        expect(logger).to receive(:warn)
-          .with(/#{error}/)
-          .ordered
-        expect(logger).to receive(:warn)
-          .with(/This error is different from the previous error: #{error}/)
-          .ordered
-
-        expect {
-          described_class.call(user_message: user_message, tool: tool)
         }.to raise_error(described_class::InvalidLlmResponseError)
       end
     end

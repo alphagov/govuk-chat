@@ -35,7 +35,6 @@ module AutoEvaluation
       client = Aws::BedrockRuntime::Client.new
 
       attempts = 0
-      last_error = nil
 
       while attempts <= MAX_ATTEMPTS
         attempts += 1
@@ -70,23 +69,17 @@ module AutoEvaluation
             metrics: build_metrics(start_time, parsed_response),
           )
         rescue *RESCUABLE_ERRORS => e
-          error_string = "#{e.class}, #{e.message}"
           full_error_message = "LLM did not return valid JSON that conformed to the schema. " \
-                          "Attempt #{attempts}/#{MAX_ATTEMPTS}. Error: #{error_string}."
-
-          if last_error.present? && error_string != last_error
-            full_error_message += " This error is different from the previous error: #{last_error}."
-          end
+                               "Attempt #{attempts}/#{MAX_ATTEMPTS}."
 
           logger.warn(full_error_message)
 
           if attempts >= MAX_ATTEMPTS
             raise InvalidLlmResponseError, "LLM did not return valid JSON that conformed to the schema " \
-                                           "after #{MAX_ATTEMPTS} attempts. Error: #{error_string}"
+                                           "after #{MAX_ATTEMPTS} attempts. Error: #{e.class}, #{e.message}"
 
           end
 
-          last_error = error_string
           next
         end
       end
