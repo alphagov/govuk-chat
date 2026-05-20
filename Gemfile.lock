@@ -93,9 +93,9 @@ GEM
       standardwebhooks
     ast (2.4.3)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1250.0)
-    aws-sdk-bedrock (1.81.0)
-      aws-sdk-core (~> 3, >= 3.244.0)
+    aws-partitions (1.1252.0)
+    aws-sdk-bedrock (1.83.0)
+      aws-sdk-core (~> 3, >= 3.247.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-bedrockruntime (1.76.0)
       aws-sdk-core (~> 3, >= 3.247.0)
@@ -975,8 +975,8 @@ CHECKSUMS
   anthropic (1.40.0) sha256=33a946176427d3ab0b8825d07683e4d38f645e1c9eb32303168a516e348b74d9
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
-  aws-partitions (1.1250.0) sha256=150a1cf3edfd260ff9f84707f4ee72b2977bbc4b43472431e0f3f6bdc3971537
-  aws-sdk-bedrock (1.81.0) sha256=05bef79b0bb97289cb86d46b930b73d49c61b3723d2513f2a04fbe58efcab8a2
+  aws-partitions (1.1252.0) sha256=b44c74136ebd634d35f3fb8fd37def5214db21b9375f22c6954dbe7a7f2a449d
+  aws-sdk-bedrock (1.83.0) sha256=abf79c585fcd9a01d195bb1bdb4592711cf70398b5d1986deca1ea0205ae4da7
   aws-sdk-bedrockruntime (1.76.0) sha256=c3eb755d60371605e765fcb20537e08c444c75193dc5431b362629e50cdcb588
   aws-sdk-core (3.247.0) sha256=789864594ce8cef05ee3d81fa8ed506099280bda6ea12a7612b8b7c5e5e62851
   aws-sigv4 (1.12.1) sha256=6973ff95cb0fd0dc58ba26e90e9510a2219525d07620c8babeb70ef831826c00
@@ -987,7 +987,7 @@ CHECKSUMS
   bootsnap (1.24.4) sha256=a4d939fc2cc5242a83d3a7cb4fb97743ac58475afe91e0600479a3df6f117541
   brakeman (8.0.4) sha256=7bf921fa9638544835df9aa7b3e720a9a72c0267f34f92135955edd80d4dcf6f
   builder (3.3.0) sha256=497918d2f9dca528fdca4b88d84e4ef4387256d984b8154e9d5d3fe5a9c8835f
-  bundler (4.0.11) sha256=5bcec0fb78302e48d02ee46f10ee6e6942be647ba5b44a6d1ddfda9a240ce785
+  bundler (4.0.12) sha256=7f8b757d28dfb636e7b24fba2344ac6dd13b5b24f4b46d62573d483f211825ac
   bunny (2.24.0) sha256=072fe4ae98eaa9c95a17e4d166204f710bba8a9a7070b73a8c3b023f439d1682
   byebug (13.0.0) sha256=d2263efe751941ca520fa29744b71972d39cbc41839496706f5d9b22e92ae05d
   capybara (3.40.0) sha256=42dba720578ea1ca65fd7a41d163dd368502c191804558f6e0f71b391054aeef
