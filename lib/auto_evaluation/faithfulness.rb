@@ -49,16 +49,12 @@ private
   end
 
   def retrieval_context
-    used_sources.map(&:plain_content).join("\n\n")
+    answer.sources.map(&:plain_content).join("\n\n")
   end
 
   def calculate_score(verdicts)
     faithful_count = verdicts.count { |verdict| verdict["verdict"].strip.downcase != "no" }
     faithful_count.to_d / verdicts.count
-  end
-
-  def used_sources
-    answer.sources.select(&:used)
   end
 
   def build_error_result(error_message)
