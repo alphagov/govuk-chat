@@ -49,7 +49,7 @@ private
   end
 
   def retrieval_context
-    answer.sources.map(&:plain_content).join("\n\n")
+    answer.sources.map { |source| format_chunk_for_evaluation(source.chunk) }.join("\n")
   end
 
   def calculate_score(verdicts)
@@ -74,5 +74,14 @@ private
       llm_responses:,
       metrics:,
     )
+  end
+
+  def format_chunk_for_evaluation(chunk)
+    <<~STRING
+      #{chunk.title}
+      #{chunk.heading_hierarchy.join(' > ')}
+      #{chunk.description}
+      #{chunk.html_content}
+    STRING
   end
 end

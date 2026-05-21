@@ -60,8 +60,16 @@ module SystemSpecHelpers
       question_message: question,
       answer_message: answer,
     )
+
+    retrieval_context = <<~STRING
+      Title
+      Heading 1 > Heading 2
+      Description
+      <p>Some content</p>
+    STRING
+
     stub_bedrock_invoke_model_openai_oss_faithfulness(
-      retrieval_context: "Some content",
+      retrieval_context: retrieval_context,
       answer_message: answer,
     )
     stub_bedrock_invoke_model_openai_oss_coherence(
