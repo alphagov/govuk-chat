@@ -16,7 +16,7 @@ Due to SteerCo's decision, we will go-live with a closed beta to a set number of
 
 
 ## Decision
-1. With this in mind, we will not automatically handle by way of the repsonse from OpenAI, how we submit questions. Instead, we will respond to any potential (though highly unlikely) rate limit by way of a crafted error message.
+1. With this in mind, we will not automatically handle by way of the response from OpenAI, how we submit questions. Instead, we will respond to any potential (though highly unlikely) rate limit by way of a crafted error message.
 2. In advance of the Go Live date (TBC) and pending us entering into an Enterprise Agreement with OpenAI, we will request of OpenAI to increase our rate limit. This is a belt and braces approach. Post-Go-Live, at a time to be decided, we will request to have our rate limit reduced to normal levels.
 
 
