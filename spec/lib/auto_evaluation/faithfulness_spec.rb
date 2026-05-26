@@ -1,12 +1,26 @@
 RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
   describe ".call" do
     let(:answer_message) { "Einstein won the Nobel Prize in 1968 for the photoelectric effect." }
-    let(:retrieval_context) { "Einstein won the Nobel Prize in 1921 for the photoelectric effect." }
+    let(:used_chunk_conext) { "Einstein won the Nobel Prize in 1921 for the photoelectric effect." }
     let(:question) { build(:question, message: "When did Einstein win the Nobel Prize?") }
-    let(:chunk) { build(:answer_source_chunk, plain_content: retrieval_context) }
-    let(:used_source) { build(:answer_source, used: true, chunk:) }
-    let(:answer) { build(:answer, question:, message: answer_message, sources: [used_source]) }
+    let(:used_chunk) { build(:answer_source_chunk, plain_content: used_chunk_conext) }
+    let(:unused_chunk) { build(:answer_source_chunk, plain_content: "Some other context.") }
+    let(:used_source) { build(:answer_source, used: true, chunk: used_chunk) }
+    let(:unused_source) { build(:answer_source, used: false, chunk: unused_chunk) }
+    let(:answer) { build(:answer, question:, message: answer_message, sources: [used_source, unused_source]) }
+    let(:retrieval_context) do
+      <<~STRING
+        #{used_chunk.title}
+        #{used_chunk.heading_hierarchy.join(' > ')}
+        #{used_chunk.description}
+        #{used_chunk.html_content}
 
+        #{unused_chunk.title}
+        #{unused_chunk.heading_hierarchy.join(' > ')}
+        #{unused_chunk.description}
+        #{unused_chunk.html_content}
+      STRING
+    end
     let(:truths) { ["Einstein won the Nobel Prize in 1921.", "Einstein won the Nobel Prize for the photoelectric effect."] }
     let(:claims) { ["Einstein won the Nobel Prize in 1968.", "Einstein won the Nobel Prize for the photoelectric effect."] }
     let(:verdicts) do
