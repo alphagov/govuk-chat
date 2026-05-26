@@ -30,100 +30,96 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser, :aws_credentials_
     end
   end
 
-  it "includes the current question in the user prompt" do
-    described_class.call(context)
-    expect(stub).to have_been_requested
+  context "when the question is the beginning of the conversation" do
+    let(:context) { build(:answer_pipeline_context) }
+
+    it "returns nil" do
+      expect(described_class.call(context)).to be_nil
+    end
   end
 
-  it "includes the message_history in the user prompt" do
-    message_history = <<~HISTORY.strip
-      user:
-      """
-      How do I pay my tax
-      """
-      assistant:
-      """
-      What type of tax
-      """
-      user:
-      """
-      What types are there
-      """
-      assistant:
-      """
-      Self-assessment, PAYE, Corporation tax
-      """
-    HISTORY
+  context "when all other recent answers have statuses in Answer::STATUSES_EXCLUDED_FROM_REPHRASING" do
+    it "returns nil" do
+      conversation = create(:conversation)
+      create(:question, conversation:)
+      Answer::STATUSES_EXCLUDED_FROM_REPHRASING.sample(4) do |status|
+        question = create(:question, conversation:)
+        create(:answer, question:, status:)
+      end
+      latest_question = create(:question, conversation:)
+      context = build(:answer_pipeline_context, question: latest_question)
 
-    anthropic_request = stub_claude_question_rephrasing(
-      Regexp.new(message_history),
-      rephrased,
-    )
-
-    described_class.call(context)
-
-    expect(anthropic_request).to have_been_made
+      expect(described_class.call(context)).to be_nil
+    end
   end
 
-  it "updates the context's question_message with the rephrased question" do
-    described_class.call(context)
-    expect(context.question_message).to eq(rephrased)
-  end
-
-  it "assigns metrics to the answer" do
-    allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
-
-    described_class.call(context)
-
-    expect(context.answer.metrics["question_rephrasing"])
-      .to eq({
-        duration: 1.5,
-        llm_prompt_tokens: 10,
-        llm_completion_tokens: 20,
-        llm_cached_tokens: nil,
-        model: BedrockModels.model_id(described_class::DEFAULT_MODEL),
-      })
-  end
-
-  it "assigns the llm response to the answer" do
-    described_class.call(context)
-
-    expected_llm_response = claude_messages_response(
-      content: [claude_messages_text_block(rephrased)],
-      usage: claude_messages_usage_block(input_tokens: 10, output_tokens: 20),
-      bedrock_model: described_class::DEFAULT_MODEL,
-    ).to_h
-
-    expect(context.answer.llm_responses["question_rephrasing"])
-      .to eq(expected_llm_response)
-  end
-
-  context "when the question is the first in the conversation" do
-    let(:question) { create(:question) }
-    let(:context) { build(:answer_pipeline_context, question:) }
-    let!(:stub) { stub_claude_question_rephrasing(question.message, rephrased) }
-
-    it "calls the llm and rephrases the question" do
+  context "when the question is part of an ongoing chat" do
+    it "includes the current question in the user prompt" do
       described_class.call(context)
-
       expect(stub).to have_been_requested
-      expect(context.question_message).to eq(rephrased)
     end
 
-    it "uses the user_prompt_without_history prompt" do
-      expected_prompt = AnswerComposition::Pipeline::Prompts.config(
-        :question_rephraser, described_class::DEFAULT_MODEL
-      )[:user_prompt_without_history]
-      .sub("{question}", question.message)
+    it "includes the message_history in the user prompt" do
+      message_history = <<~HISTORY.strip
+        user:
+        """
+        How do I pay my tax
+        """
+        assistant:
+        """
+        What type of tax
+        """
+        user:
+        """
+        What types are there
+        """
+        assistant:
+        """
+        Self-assessment, PAYE, Corporation tax
+        """
+      HISTORY
 
       anthropic_request = stub_claude_question_rephrasing(
-        expected_prompt,
+        Regexp.new(message_history),
         rephrased,
       )
 
       described_class.call(context)
 
       expect(anthropic_request).to have_been_made
+    end
+
+    it "updates the context's question_message with the rephrased question" do
+      described_class.call(context)
+      expect(context.question_message).to eq(rephrased)
+    end
+
+    it "assigns metrics to the answer" do
+      allow(Clock).to receive(:monotonic_time).and_return(100.0, 101.5)
+
+      described_class.call(context)
+
+      expect(context.answer.metrics["question_rephrasing"])
+        .to eq({
+          duration: 1.5,
+          llm_prompt_tokens: 10,
+          llm_completion_tokens: 20,
+          llm_cached_tokens: nil,
+          model: BedrockModels.model_id(described_class::DEFAULT_MODEL),
+        })
+    end
+
+    it "assigns the llm response to the answer" do
+      described_class.call(context)
+
+      expected_llm_response = claude_messages_response(
+        content: [claude_messages_text_block(rephrased)],
+        usage: claude_messages_usage_block(input_tokens: 10, output_tokens: 20),
+        bedrock_model: described_class::DEFAULT_MODEL,
+      ).to_h
+
+      expect(context.answer.llm_responses["question_rephrasing"])
+        .to eq(expected_llm_response)
     end
   end
 
@@ -227,62 +223,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser, :aws_credentials_
       described_class.call(context)
 
       expect(anthropic_request).to have_been_made
-    end
-  end
-
-  context "when the model is claude_sonnet_4_0" do
-    let!(:stub) do
-      stub_claude_question_rephrasing(
-        question.message, rephrased, chat_options: { bedrock_model: :claude_sonnet_4_0 }
-      )
-    end
-
-    before { stub_const("#{described_class}::DEFAULT_MODEL", :claude_sonnet_4_0) }
-
-    it "uses the system prompt configured for claude_sonnet_4_0" do
-      allow(AnswerComposition::Pipeline::Prompts.config(:question_rephraser, :claude_sonnet_4_0))
-        .to receive(:[]).and_call_original
-
-      described_class.call(context)
-
-      expect(AnswerComposition::Pipeline::Prompts.config(:question_rephraser, :claude_sonnet_4_0))
-        .to have_received(:[]).with(:system_prompt)
-    end
-
-    it "calls the llm when there is message history" do
-      described_class.call(context)
-
-      expect(stub).to have_been_requested
-      expect(context.question_message).to eq(rephrased)
-    end
-
-    context "and all other recent answers have statuses in Answer::STATUSES_EXCLUDED_FROM_REPHRASING" do
-      it "returns nil" do
-        conversation = create(:conversation)
-        create(:question, conversation:)
-        Answer::STATUSES_EXCLUDED_FROM_REPHRASING.sample(4) do |status|
-          question = create(:question, conversation:)
-          create(:answer, question:, status:)
-        end
-        latest_question = create(:question, conversation:)
-        context = build(:answer_pipeline_context, question: latest_question)
-
-        expect(described_class.call(context)).to be_nil
-        expect(stub).not_to have_been_requested
-      end
-    end
-
-    context "and there is no message history" do
-      let(:conversation) { create(:conversation) }
-      let(:question) { create(:question, conversation:) }
-      let(:context) { build(:answer_pipeline_context, question:) }
-
-      it "returns nil" do
-        result = described_class.call(context)
-
-        expect(stub).not_to have_been_requested
-        expect(result).to be_nil
-      end
     end
   end
 end

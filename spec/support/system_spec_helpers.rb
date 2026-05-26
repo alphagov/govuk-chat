@@ -35,13 +35,18 @@ module SystemSpecHelpers
 
   def stubs_for_mock_answer(question,
                             answer,
+                            rephrase_question: false,
                             sources_used: [],
                             create_content_chunk: true)
     stub_claude_jailbreak_guardrails(question)
-    rephrased_question = "Rephrased #{question}"
-    stub_claude_question_rephrasing(question, rephrased_question)
 
-    question = rephrased_question
+    if rephrase_question
+      rephrased_question = "Rephrased #{question}"
+
+      stub_claude_question_rephrasing(question, rephrased_question)
+
+      question = rephrased_question
+    end
 
     stub_bedrock_titan_embedding(question)
 
