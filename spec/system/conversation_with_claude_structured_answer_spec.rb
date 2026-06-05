@@ -66,7 +66,6 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
 
     stubs_for_mock_answer(@second_question,
                           @second_answer,
-                          rephrase_question: true,
                           sources_used: %w[link_1],
                           create_content_chunk: false)
 
