@@ -3,7 +3,7 @@ module AnswerComposition
     class QuestionRephraser
       Result = Data.define(:llm_response, :rephrased_question, :metrics)
 
-      SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_sonnet_4_5].freeze
+      SUPPORTED_MODELS = %i[claude_sonnet_4_5].freeze
       DEFAULT_MODEL = :claude_sonnet_4_5
 
       def self.call(...) = new(...).call
@@ -18,8 +18,6 @@ module AnswerComposition
       end
 
       def call
-        return if message_records.blank? && model_name == :claude_sonnet_4_0
-
         start_time = Clock.monotonic_time
         response = anthropic_bedrock_client.messages.create(
           system: [{ type: "text", text: system_prompt }],
@@ -79,18 +77,10 @@ module AnswerComposition
       end
 
       def system_prompt
-        return config[:system_prompt] if model_name == :claude_sonnet_4_0
-
         config[:system_prompt_always_rephrase]
       end
 
       def user_prompt
-        if model_name == :claude_sonnet_4_0
-          return config[:user_prompt].sub("{question}", question_message)
-                                     .sub("{message_history}", message_history)
-
-        end
-
         if message_records.present?
           config[:user_prompt_with_history].sub("{question}", question_message)
                                            .sub("{message_history}", message_history)
