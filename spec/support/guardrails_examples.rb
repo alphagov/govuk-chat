@@ -44,6 +44,7 @@ module GuardrailsExamples
       let(:llm_response) do
         claude_messages_response(
           content: "PassValue",
+          bedrock_model: AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL,
         ).to_h
       end
 

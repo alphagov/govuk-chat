@@ -1,7 +1,5 @@
 module StubClaudeMessages
-  CLAUDE_SONNET_4_0_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*anthropic\.claude-sonnet-4-20250514-v1:0.*?/invoke}
   CLAUDE_SONNET_4_5_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*eu.anthropic.claude-sonnet-4-5-20250929-v1:0.*?/invoke}
-  CLAUDE_SONNET_4_6_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*anthropic\.claude-sonnet-4-6.*?/invoke}
   CLAUDE_HAIKU_4_5_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*anthropic\.claude-haiku-4-5-20251001-v1:0.*?/invoke}
 
   def stub_claude_messages_response(question_or_history,
@@ -16,7 +14,7 @@ module StubClaudeMessages
                 question_or_history
               end
 
-    bedrock_model = chat_options.delete(:bedrock_model) || :claude_sonnet_4_0
+    bedrock_model = chat_options.delete(:bedrock_model) || :claude_sonnet_4_5
     chat_options = { temperature: 0.0, max_tokens: 4096 }.merge(chat_options).compact
 
     matchers = {
@@ -43,12 +41,8 @@ module StubClaudeMessages
     )
 
     endpoint_regex = case bedrock_model
-                     when :claude_sonnet_4_0
-                       CLAUDE_SONNET_4_0_ENDPOINT_REGEX
                      when :claude_sonnet_4_5
                        CLAUDE_SONNET_4_5_ENDPOINT_REGEX
-                     when :claude_sonnet_4_6
-                       CLAUDE_SONNET_4_6_ENDPOINT_REGEX
                      when :claude_haiku_4_5
                        CLAUDE_HAIKU_4_5_ENDPOINT_REGEX
                      end
@@ -209,7 +203,7 @@ module StubClaudeMessages
     )
   end
 
-  def claude_messages_response(content:, usage: {}, stop_reason: :end_turn, bedrock_model: :claude_sonnet_4_0)
+  def claude_messages_response(content:, bedrock_model:, usage: {}, stop_reason: :end_turn)
     Anthropic::Models::Message.new(
       id: "msg-id",
       model: BedrockModels.model_id(bedrock_model),
