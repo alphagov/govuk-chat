@@ -3,5 +3,6 @@
   padding: govuk-spacing(2);
   background-color: govuk-colour("light-grey");
   white-space: pre-wrap;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: break-word;
 }
