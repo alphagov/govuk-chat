@@ -44,7 +44,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
         {
           name: "greetings",
           description: "A classification description",
-          strict: model_name != :claude_sonnet_4_0 ? true : nil,
+          strict: true,
           input_schema: {
             type: "object",
             properties: properties.merge({
@@ -241,93 +241,6 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
       it "doesn't abort the pipeline" do
         expect { described_class.call(context) }
           .not_to change(context, :aborted?).from(false)
-      end
-    end
-
-    context "when using a model newer than Claude Sonnet 4" do
-      let(:model_name) { (described_class::SUPPORTED_MODELS - %i[claude_sonnet_4_0]).sample }
-
-      let(:tools) do
-        properties = classification[:properties] || {}
-        confidence_property = AnswerComposition::Pipeline::Prompts.config(
-          :question_routing, model_name
-        )[:confidence_property]
-
-        [
-          {
-            name: "greetings",
-            description: "A classification description",
-            strict: true,
-            input_schema: {
-              type: "object",
-              properties: properties.merge({
-                confidence: confidence_property,
-              }),
-              required: %w[confidence] + properties.keys.map(&:to_s),
-              additionalProperties: false,
-            },
-          },
-        ]
-      end
-
-      it "sets `strict: true` in the tool config" do
-        ClimateControl.modify(BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL: model_name.to_s) do
-          request = stub_claude_question_routing(
-            question.message,
-            tools:,
-            tool_name: "greetings",
-            tool_input: classification_response,
-            chat_options: {
-              bedrock_model: model_name,
-            },
-          )
-
-          described_class.call(context)
-          expect(request).to have_been_made
-        end
-      end
-    end
-
-    context "when using Claude Sonnet 4" do
-      let(:model_name) { :claude_sonnet_4_0 }
-
-      let(:tools) do
-        properties = classification[:properties] || {}
-        confidence_property = AnswerComposition::Pipeline::Prompts.config(
-          :question_routing, model_name
-        )[:confidence_property]
-
-        [
-          {
-            name: "greetings",
-            description: "A classification description",
-            input_schema: {
-              type: "object",
-              properties: properties.merge({
-                confidence: confidence_property,
-              }),
-              required: %w[confidence] + properties.keys.map(&:to_s),
-              additionalProperties: false,
-            },
-          },
-        ]
-      end
-
-      it "doesn't set `strict: true` in the tool config" do
-        ClimateControl.modify(BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL: model_name.to_s) do
-          request = stub_claude_question_routing(
-            question.message,
-            tools:,
-            tool_name: "greetings",
-            tool_input: classification_response,
-            chat_options: {
-              bedrock_model: model_name,
-            },
-          )
-
-          described_class.call(context)
-          expect(request).to have_been_made
-        end
       end
     end
 

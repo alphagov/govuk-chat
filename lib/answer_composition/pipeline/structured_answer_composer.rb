@@ -1,6 +1,6 @@
 module AnswerComposition::Pipeline
   class StructuredAnswerComposer
-    SUPPORTED_MODELS = %i[claude_sonnet_4_0 claude_sonnet_4_5].freeze
+    SUPPORTED_MODELS = %i[claude_sonnet_4_5].freeze
     DEFAULT_MODEL = :claude_sonnet_4_5
 
     def self.call(...) = new(...).call

@@ -419,7 +419,7 @@ RSpec.describe "Admin::QuestionsController" do
               llm_prompt_tokens: 30,
               llm_completion_tokens: 20,
               llm_cached_tokens: 20,
-              model: BedrockModels.model_id(:claude_sonnet_4_0),
+              model: BedrockModels.model_id(:openai_gpt_oss_120b),
             },
           },
           llm_responses: {
@@ -464,7 +464,7 @@ RSpec.describe "Admin::QuestionsController" do
           .and have_content(/llm_prompt_tokens.*30/)
           .and have_content(/llm_completion_tokens.*20/)
           .and have_content(/llm_cached_tokens.*20/)
-          .and have_content(/model.*#{BedrockModels.model_id(:claude_sonnet_4_0)}/)
+          .and have_content(/model.*#{BedrockModels.model_id(:openai_gpt_oss_120b)}/)
       end
 
       it "renders the topics LLM responses" do
