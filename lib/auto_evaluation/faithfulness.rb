@@ -24,7 +24,7 @@ class AutoEvaluation::Faithfulness
 
     return build_error_result("No verdicts were generated for the extracted claims.") if verdicts.empty?
 
-    if verdicts.none? { |verdict| verdict["verdict"].strip.downcase == "no" }
+    if verdicts.all? { |verdict| verdict["verdict"].strip.downcase == "yes" }
       return build_result_with_score(1.0, "The response is fully supported by the retrieval context.")
     end
 
@@ -53,7 +53,7 @@ private
   end
 
   def calculate_score(verdicts)
-    faithful_count = verdicts.count { |verdict| verdict["verdict"].strip.downcase != "no" }
+    faithful_count = verdicts.count { |verdict| verdict["verdict"].strip.downcase == "yes" }
     faithful_count.to_d / verdicts.count
   end
 

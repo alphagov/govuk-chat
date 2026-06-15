@@ -199,7 +199,7 @@ module StubBedrock
     )
     return stubs if verdicts.empty?
 
-    faithful_count = verdicts.count { |v| v[:verdict].strip.downcase != "no" }
+    faithful_count = verdicts.count { |v| v[:verdict].strip.downcase == "yes" }
     score = (faithful_count.to_d / verdicts.count).round(2).to_f
     contradictions = verdicts.select { |v| v[:verdict].strip.downcase == "no" }
                              .map { |v| v[:reason] }
