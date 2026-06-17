@@ -209,12 +209,12 @@ module StubBedrock
     end
 
     reason_user_prompt = sprintf(
-      prompts.fetch(:reason).fetch(:new_user_prompt),
+      prompts.fetch(:reason).fetch(:user_prompt),
       score:,
       unfaithful_claims:,
     )
 
-    reason_tool = prompts.fetch(:reason).fetch(:new_tool_spec)
+    reason_tool = prompts.fetch(:reason).fetch(:tool_spec)
 
     stubs[:reason] = stub_bedrock_invoke_model_openai_oss_tool_call(
       reason_user_prompt,
