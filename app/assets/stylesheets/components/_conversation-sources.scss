@@ -48,7 +48,7 @@
   &:hover {
     cursor: pointer;
 
-    .app-c-conversation-sources__details-summary-text {  
+    .app-c-conversation-sources__details-summary-text {
       color: govuk-colour("dark-blue");
       text-decoration-thickness: max(3px, .1875rem, .12em);
       -webkit-text-decoration-skip-ink: none;
@@ -64,10 +64,10 @@
   }
 
   &:focus {
-    outline: 3px solid rgba(0, 0, 0, 0);
+    outline: 3px solid rgb(0, 0, 0, 0);
     background-color: $govuk-focus-colour;
     box-shadow: 0 -2px $govuk-focus-colour, 0 4px govuk-colour("black");
-    
+
     .app-c-conversation-sources__details-summary-text {
       color: govuk-colour("black");
       text-decoration: none;
