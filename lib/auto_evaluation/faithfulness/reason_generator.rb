@@ -24,14 +24,14 @@ module AutoEvaluation
 
     def user_message
       sprintf(
-        llm_prompts.fetch(:new_user_prompt),
+        llm_prompts.fetch(:user_prompt),
         score:,
         unfaithful_claims:,
       )
     end
 
     def tool
-      llm_prompts.fetch(:new_tool_spec)
+      llm_prompts.fetch(:tool_spec)
     end
 
     def unfaithful_claims
