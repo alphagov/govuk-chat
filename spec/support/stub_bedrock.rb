@@ -199,18 +199,22 @@ module StubBedrock
     )
     return stubs if verdicts.empty?
 
-    faithful_count = verdicts.count { |v| v[:verdict].strip.downcase != "no" }
+    faithful_count = verdicts.count { |v| v[:verdict].strip.downcase == "yes" }
     score = (faithful_count.to_d / verdicts.count).round(2).to_f
-    contradictions = verdicts.select { |v| v[:verdict].strip.downcase == "no" }
-                             .map { |v| v[:reason] }
+    unfaithful_claims = verdicts.filter_map do |verdict|
+      status = verdict[:verdict].strip.downcase
+      next if status == "yes"
+
+      status == "idk" ? "(Ambiguous) #{verdict[:reason]}" : "(Contradiction) #{verdict[:reason]}"
+    end
 
     reason_user_prompt = sprintf(
-      prompts.fetch(:reason).fetch(:user_prompt),
+      prompts.fetch(:reason).fetch(:new_user_prompt),
       score:,
-      contradictions:,
+      unfaithful_claims:,
     )
 
-    reason_tool = prompts.fetch(:reason).fetch(:tool_spec)
+    reason_tool = prompts.fetch(:reason).fetch(:new_tool_spec)
 
     stubs[:reason] = stub_bedrock_invoke_model_openai_oss_tool_call(
       reason_user_prompt,

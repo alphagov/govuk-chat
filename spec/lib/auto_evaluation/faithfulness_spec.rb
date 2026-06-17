@@ -86,15 +86,15 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
         )
     end
 
-    context "when 'idk' verdicts are present alongside 'no' verdicts" do
+    context "when 'idk' verdicts are present" do
       let(:verdicts) do
         [
+          { verdict: "yes", reason: "Einstein won the Nobel Prize for the photoelectric effect." },
           { verdict: "idk", reason: "Cannot determine if correct." },
-          { verdict: "no", reason: "The retrieval context states Einstein won in 1921, not 1968." },
         ]
       end
 
-      it "treats 'idk' verdicts as faithful (not contradictions)" do
+      it "treats 'idk' verdicts as unfaithful (contradictions)" do
         result = described_class.call(answer)
 
         expect(result.score).to eq(0.5)
@@ -143,8 +143,8 @@ RSpec.describe AutoEvaluation::Faithfulness, :aws_credentials_stubbed do
       end
     end
 
-    context "when all verdicts are faithful (no 'no' verdicts)" do
-      let(:verdicts) { [{ verdict: "yes" }, { verdict: "idk" }] }
+    context "when all verdicts are faithful (no 'no' or 'idk' verdicts)" do
+      let(:verdicts) { [{ verdict: "yes" }, { verdict: "yes" }] }
 
       it "returns a result object with with score 1.0 and skips reason LLM call" do
         allow(Clock).to receive(:monotonic_time).and_return(200.0, 202.0, 204.0, 206.0, 208.0, 210.0)

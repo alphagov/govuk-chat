@@ -1,26 +1,31 @@
 RSpec.describe AutoEvaluation::Faithfulness::ReasonGenerator, :aws_credentials_stubbed do
   describe ".call" do
-    let(:score) { 0.5 }
+    let(:score) { 0.0 }
     let(:verdicts) do
       [
         { "verdict" => "no", "reason" => "The retrieval context states Einstein won in 1921, not 1968." },
-        { "verdict" => "yes" },
+        { "verdict" => "idk", "reason" => "The retrieval context does not explicitly confirm or deny that Einstein won the Nobel Prize for the photoelectric effect." },
       ]
     end
-    let(:contradictions) { ["The retrieval context states Einstein won in 1921, not 1968."] }
-    let(:reason) { "The score is 0.5 because the answer incorrectly stated the year Einstein won the Nobel Prize." }
+    let(:unfaithful_claims) do
+      [
+        "(Contradiction) #{verdicts.first['reason']}",
+        "(Ambiguous) #{verdicts.second['reason']}",
+      ]
+    end
+    let(:reason) { "The score is 0.0 because the answer incorrectly stated the year Einstein won the Nobel Prize." }
     let(:reason_json) do
       { reason: }.to_json
     end
     let(:prompts) { AutoEvaluation::Prompts.config.faithfulness.fetch(:reason) }
     let(:user_prompt) do
       sprintf(
-        prompts.fetch(:user_prompt),
+        prompts.fetch(:new_user_prompt),
         score:,
-        contradictions:,
+        unfaithful_claims:,
       )
     end
-    let(:tool) { prompts.fetch(:tool_spec) }
+    let(:tool) { prompts.fetch(:new_tool_spec) }
     let!(:stub_bedrock) do
       stub_bedrock_invoke_model_openai_oss_tool_call(
         user_prompt,

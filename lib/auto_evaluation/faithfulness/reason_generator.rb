@@ -24,19 +24,23 @@ module AutoEvaluation
 
     def user_message
       sprintf(
-        llm_prompts.fetch(:user_prompt),
+        llm_prompts.fetch(:new_user_prompt),
         score:,
-        contradictions:,
+        unfaithful_claims:,
       )
     end
 
     def tool
-      llm_prompts.fetch(:tool_spec)
+      llm_prompts.fetch(:new_tool_spec)
     end
 
-    def contradictions
-      verdicts.select { |verdict| verdict["verdict"].strip.downcase == "no" }
-              .map { |verdict| verdict["reason"] }
+    def unfaithful_claims
+      verdicts.filter_map do |verdict|
+        status = verdict["verdict"].strip.downcase
+        next if status == "yes"
+
+        status == "idk" ? "(Ambiguous) #{verdict['reason']}" : "(Contradiction) #{verdict['reason']}"
+      end
     end
   end
 end
