@@ -61,8 +61,6 @@ module GovukChat
       answer_timeout_in_seconds: 120,
       max_question_age_days: 90,
       max_question_count: 500,
-      max_questions_per_user: 70,
-      question_warning_threshold: 20,
       api_questions_per_page: 50,
     )
 
