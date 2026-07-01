@@ -53,7 +53,7 @@ class Rack::Attack
   end
 
   def self.end_user_id(request)
-    request.get_header("HTTP_GOVUK_CHAT_END_USER_ID").presence
+    request.get_header("HTTP_GOVUK_CHAT_END_USER_ID")&.strip.presence
   end
 
   self.throttled_responder = lambda do |request|
