@@ -27,6 +27,16 @@ RSpec.describe ProductionHostConfig do
         expect(hosts.any? { host.match?(it) }).to be(true)
       end
     end
+
+    it "rejects domains with prefixes" do
+      host = "evil-chat.publishing.service.gov.uk"
+      expect(hosts.any? { host.match?(it) }).to be(false)
+    end
+
+    it "rejects domains with suffixes" do
+      host = "chat.publishing.service.gov.uk.evil.com"
+      expect(hosts.any? { host.match?(it) }).to be(false)
+    end
   end
 
   describe "HOST_AUTHORIZATION" do

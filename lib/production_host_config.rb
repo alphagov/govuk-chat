@@ -1,7 +1,7 @@
 module ProductionHostConfig
   HOSTS = [
-    /chat\.(integration\.|staging\.)?publishing\.service\.gov\.uk/,
-    /govuk-chat(.*)?\.herokuapp\.com/,
+    /\Achat\.(integration\.|staging\.)?publishing\.service\.gov\.uk\z/,
+    /\Agovuk-chat(.*)?\.herokuapp\.com\z/,
   ].freeze
 
   HOST_AUTHORIZATION = {
