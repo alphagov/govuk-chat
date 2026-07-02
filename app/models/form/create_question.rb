@@ -55,7 +55,7 @@ private
   end
 
   def no_pii_present?
-    if PiiValidator.invalid?(user_question)
+    if PiiValidator.invalid?(@sanitised_user_question)
       errors.add(:user_question, USER_QUESTION_PII_ERROR_MESSAGE)
     end
   end

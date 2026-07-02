@@ -23,4 +23,18 @@ RSpec.describe "components/_conversation_sources.html.erb" do
       .and have_link("Example 1", href: "http://example.com", visible: :hidden)
       .and have_link("Example 2", href: "http://example.gov.uk", visible: :hidden)
   end
+
+  it "renders the source title with HTML" do
+    render("components/conversation_sources", {
+      sources: [
+        {
+          title: '<script>alert("hi")</script>',
+          href: "http://example.com",
+        },
+      ],
+    })
+
+    expect(rendered).to include("&lt;script&gt;")
+    expect(rendered).not_to include("<script>")
+  end
 end

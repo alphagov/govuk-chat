@@ -71,6 +71,13 @@ RSpec.configure do |config|
     Rack::Attack.cache.store = old_store
   end
 
+  config.around(:each, :memory_cache) do |example|
+    original_cache = Rails.cache
+    Rails.cache = ActiveSupport::Cache::MemoryStore.new
+    example.run
+    Rails.cache = original_cache
+  end
+
   config.around do |example|
     if !example.metadata[:type].in?(%i[system request])
       original_queue_adapter = ActiveJob::Base.queue_adapter

@@ -6,6 +6,7 @@ class Api::RateLimit::Middleware
     Api::RateLimit::GOVUK_END_USER_WRITE_THROTTLE_NAME => "Govuk-End-User-Id-Write",
   }.freeze
   SLACK_NOTIFICATION_THRESHOLD_PERCENTAGE = 75
+  SLACK_NOTIFICATION_PERIOD = 15.minutes
 
   delegate :logger, to: Rails
 
@@ -47,9 +48,14 @@ class Api::RateLimit::Middleware
         )
 
         if percentage_used >= SLACK_NOTIFICATION_THRESHOLD_PERCENTAGE
-          NotifySlackApiUserRateLimitWarningJob.perform_later(
-            user_name, percentage_used, "read"
-          )
+          cache_key = "slack_rate_limit_warning:#{user_name}:read"
+
+          unless Rails.cache.exist?(cache_key)
+            Rails.cache.write(cache_key, true, expires_in: SLACK_NOTIFICATION_PERIOD)
+            NotifySlackApiUserRateLimitWarningJob.perform_later(
+              user_name, percentage_used, "read"
+            )
+          end
         end
       elsif header_name_prefix == "Govuk-Api-User-Write"
         PrometheusMetrics.gauge(
@@ -59,9 +65,14 @@ class Api::RateLimit::Middleware
         )
 
         if percentage_used >= SLACK_NOTIFICATION_THRESHOLD_PERCENTAGE
-          NotifySlackApiUserRateLimitWarningJob.perform_later(
-            user_name, percentage_used, "write"
-          )
+          cache_key = "slack_rate_limit_warning:#{user_name}:write"
+
+          unless Rails.cache.exist?(cache_key)
+            Rails.cache.write(cache_key, true, expires_in: SLACK_NOTIFICATION_PERIOD)
+            NotifySlackApiUserRateLimitWarningJob.perform_later(
+              user_name, percentage_used, "write"
+            )
+          end
         end
       end
     end

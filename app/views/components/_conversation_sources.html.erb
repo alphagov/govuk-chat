@@ -27,8 +27,7 @@
                 "type": "chat source",
               },
             } do %>
-            <%= source.fetch(:title).html_safe + tag.span("(opens in new tab)",
-              class: "govuk-visually-hidden") %>
+            <%= safe_join([source.fetch(:title), tag.span("(opens in new tab)", class: "govuk-visually-hidden") ]) %>
           <% end %>
         <% end %>
       <% end %>

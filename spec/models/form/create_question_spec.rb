@@ -69,6 +69,15 @@ RSpec.describe Form::CreateQuestion do
 
         expect(form).to be_valid
       end
+
+      it "detects pii in the content with hidden unicode tags" do
+        form = described_class.new(
+          conversation:,
+          user_question: "My email address is email@#{hidden_in_unicode_tags}gmail.com",
+        )
+        expect(form).not_to be_valid
+        expect(form.errors[:user_question]).to include(Form::CreateQuestion::USER_QUESTION_PII_ERROR_MESSAGE)
+      end
     end
 
     describe "unicode tags" do
