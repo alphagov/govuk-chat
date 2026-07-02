@@ -68,6 +68,25 @@ namespace :evaluation do
     puts(answer.serialize_for_evaluation.merge("opensearch_index" => index).to_json)
   end
 
+  desc "Produce cost latency results"
+  task generate_rag_structured_answer_response_cost_latencies: :environment do
+    raise "Requires an INPUT env var" if ENV["INPUT"].blank?
+
+    question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
+
+    answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [
+      AnswerComposition::Pipeline::QuestionRouter,
+      AnswerComposition::Pipeline::QuestionRephraser,
+      AnswerComposition::Pipeline::SearchResultFetcher,
+      AnswerComposition::Pipeline::StructuredAnswerComposer,
+    ])
+
+    raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/
+
+    index = Search::ChunkedContentRepository.new.index
+    puts(answer.serialize_for_evaluation.merge("opensearch_index" => index).to_json)
+  end
+
   desc "Produce the output of question routing for a user input"
   task generate_question_routing_response: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?
