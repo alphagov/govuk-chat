@@ -58,6 +58,7 @@ namespace :evaluation do
     question = Question.new(message: ENV["INPUT"], conversation: Conversation.new)
 
     answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [
+      AnswerComposition::Pipeline::QuestionRephraser,
       AnswerComposition::Pipeline::SearchResultFetcher,
       AnswerComposition::Pipeline::StructuredAnswerComposer,
     ])

@@ -254,6 +254,7 @@ RSpec.describe "rake evaluation tasks" do
         expect(AnswerComposition::PipelineRunner)
           .to have_received(:call)
           .with(question: instance_of(Question), pipeline: [
+            AnswerComposition::Pipeline::QuestionRephraser,
             AnswerComposition::Pipeline::SearchResultFetcher,
             AnswerComposition::Pipeline::StructuredAnswerComposer,
           ])
