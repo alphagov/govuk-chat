@@ -78,6 +78,7 @@ To test against the frozen OpenSearch instance, see the [govuk-chat-opensearch](
 - [Message queue consumption](docs/message-queue-consumption.md)
 - [Populating search](docs/populating-search.md)
 - [Guardrails](docs/guardrails.md)
+- [Which GOV.UK Content is used in the Chat Search Index?](docs/govuk-content-in-search.md)
 
 ## Licence
 
