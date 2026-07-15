@@ -185,7 +185,7 @@ GEM
     ethon (0.18.0)
       ffi (>= 1.15.0)
       logger
-    execjs (2.10.0)
+    execjs (2.10.1)
     factory_bot (6.5.5)
       activesupport (>= 6.1.0)
     factory_bot_rails (6.5.1)
@@ -858,7 +858,7 @@ GEM
     standardwebhooks (1.1.0)
     statsd-ruby (1.5.0)
     strscan (3.1.8)
-    terser (1.2.7)
+    terser (1.2.8)
       execjs (>= 0.3.0, < 3)
     thor (1.5.0)
     tiktoken_ruby (0.0.16)
@@ -1023,7 +1023,7 @@ CHECKSUMS
   erb_lint (0.9.0) sha256=dfb5e40ad839e8d1f0d56ca85ec9a7ac4c9cd966ec281138282f35b323ca7c31
   erubi (1.13.1) sha256=a082103b0885dbc5ecf1172fede897f9ebdb745a4b97a5e8dc63953db1ee4ad9
   ethon (0.18.0) sha256=b598afc9f30448cb068b850714b7d6948e941476095d04f90a4ac65b8d6efcb2
-  execjs (2.10.0) sha256=6bcb8be8f0052ff9d370b65d1c080f2406656e150452a0abdb185a133048450d
+  execjs (2.10.1) sha256=abe0ae028467eb8e30c10814eb934d07876a691aae7e803d813b7ce5a75e73f1
   factory_bot (6.5.5) sha256=ce59295daee1b4704dab8a2fee6816f513d467c6aa3bc587860767d74a66efbe
   factory_bot_rails (6.5.1) sha256=d3cc4851eae4dea8a665ec4a4516895045e710554d2b5ac9e68b94d351bc6d68
   faraday (2.14.3) sha256=1882247e6766615c8220b4392bf1d27f6ebb63d8e28267587cef1fb0bf37f278
@@ -1263,7 +1263,7 @@ CHECKSUMS
   standardwebhooks (1.1.0) sha256=356ba711c14def4fb27310e4163b26bd5cccf325212c3440cabadd825e4be11f
   statsd-ruby (1.5.0) sha256=369ddf09537408e273849e09b84d4edbdac24ac461f5c9b6cacb0e4398190109
   strscan (3.1.8) sha256=aae2db611a225559f21ffbb71765c9a4e60fd262534a9ea84f4f11c7f32f679e
-  terser (1.2.7) sha256=1b12eb49769dadac44caac3485b38928ff4ab435f1bbbacfe8048cff84c6aa1b
+  terser (1.2.8) sha256=64931851d173bc5be0a90bd4570d751be5e83b2b063ccb750dbdc11a7b1d14db
   thor (1.5.0) sha256=e3a9e55fe857e44859ce104a84675ab6e8cd59c650a49106a05f55f136425e73
   tiktoken_ruby (0.0.16) sha256=2bac3503f1830b11f5fbe64ea8b7696f0ba995a721fad2c75b3f76350ae1504d
   tiktoken_ruby (0.0.16-aarch64-linux) sha256=014e5ba44b99158916ff57db61d2cb3fdbc6d176644d3f6bbf36a7d36ef9467d
