@@ -155,4 +155,62 @@ RSpec.describe "rake search tasks" do
         .to output("15 chunks deleted\n").to_stdout
     end
   end
+
+  describe "search:print_document_types" do
+    let(:task_name) { "search:print_document_types" }
+
+    before do
+      Rake::Task[task_name].reenable
+
+      document_types_by_schema = Hashie::Mash.new(
+        "schema_b" => {
+          "document_types" => {
+            "type_c" => {
+              "requires_parent_document_type" => {
+                "parent_a" => { "weight" => 1.1 },
+                "parent_b" => nil,
+              },
+            },
+          },
+        },
+        "schema_a" => {
+          "document_types" => {
+            "type_a" => { "weight" => 2.0 },
+            "type_b" => nil,
+          },
+        },
+      )
+
+      allow(Rails.application.config.search).to receive(:document_types_by_schema)
+        .and_return(document_types_by_schema)
+    end
+
+    it "prints a unique, sorted list of document types when ANNOTATED is not 'true'" do
+      expected = <<~OUTPUT
+        Document types indexed by GOV.UK Chat:
+        - type_a
+        - type_b
+        - type_c
+      OUTPUT
+
+      ClimateControl.modify(ANNOTATED: nil) do
+        expect { Rake::Task[task_name].invoke }
+          .to output(expected).to_stdout
+      end
+    end
+
+    it "prints an annotated, sorted list of document types when ANNOTATED is 'true'" do
+      expected = <<~OUTPUT
+        Document types (annotated) indexed by GOV.UK Chat:
+        - type_a (schema name: schema_a, weighting: 2.0)
+        - type_b (schema name: schema_a)
+        - type_c (schema name: schema_b, required parent document_type: parent_a, weighting: 1.1)
+        - type_c (schema name: schema_b, required parent document_type: parent_b)
+      OUTPUT
+
+      ClimateControl.modify(ANNOTATED: "true") do
+        expect { Rake::Task[task_name].invoke }.to output(expected).to_stdout
+      end
+    end
+  end
 end

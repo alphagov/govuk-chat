@@ -93,4 +93,46 @@ namespace :search do
 
     puts "#{count} chunks deleted"
   end
+
+  desc "Print a list of document types that are indexed, use ANNOTATED=true for further details"
+  task print_document_types: :environment do
+    document_types_by_schema = Rails.application.config.search.document_types_by_schema
+    document_type_data = document_types_by_schema.inject([]) do |memo, (schema_name, schema_rules)|
+      memo += schema_rules["document_types"].flat_map do |(document_type, document_type_rules)|
+        document_type_weighting = document_type_rules && document_type_rules[:weight]
+        if document_type_rules && document_type_rules["requires_parent_document_type"]
+          document_type_rules["requires_parent_document_type"].map do |parent_name, parent_rules|
+            weighting = parent_rules && parent_rules[:weight] ? parent_rules[:weight] : document_type_weighting
+            { document_type:, schema_name:, requires_parent_document_type: parent_name, weighting: }
+          end
+        else
+          [{ document_type:, schema_name:, weighting: document_type_weighting }]
+        end
+      end
+
+      next memo
+    end
+
+    if ENV["ANNOTATED"] == "true"
+      puts "Document types (annotated) indexed by GOV.UK Chat:"
+      annotated = document_type_data.map do |rules|
+        annotation = "schema name: #{rules[:schema_name]}"
+
+        if rules[:requires_parent_document_type]
+          annotation += ", required parent document_type: #{rules[:requires_parent_document_type]}"
+        end
+
+        if rules[:weighting]
+          annotation += ", weighting: #{rules[:weighting]}"
+        end
+
+        "- #{rules[:document_type]} (#{annotation})"
+      end
+
+      puts annotated.sort.join("\n")
+    else
+      puts "Document types indexed by GOV.UK Chat:"
+      puts document_type_data.map { "- #{it[:document_type]}" }.uniq.sort.join("\n")
+    end
+  end
 end
