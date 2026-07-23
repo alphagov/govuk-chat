@@ -855,13 +855,13 @@ GEM
     terser (1.2.8)
       execjs (>= 0.3.0, < 3)
     thor (1.5.0)
-    tiktoken_ruby (0.0.16)
+    tiktoken_ruby (0.0.17)
       rb_sys (~> 0.9)
-    tiktoken_ruby (0.0.16-aarch64-linux)
-    tiktoken_ruby (0.0.16-arm-linux)
-    tiktoken_ruby (0.0.16-arm64-darwin)
-    tiktoken_ruby (0.0.16-x86_64-darwin)
-    tiktoken_ruby (0.0.16-x86_64-linux)
+    tiktoken_ruby (0.0.17-aarch64-linux)
+    tiktoken_ruby (0.0.17-arm-linux)
+    tiktoken_ruby (0.0.17-arm64-darwin)
+    tiktoken_ruby (0.0.17-x86_64-darwin)
+    tiktoken_ruby (0.0.17-x86_64-linux)
     timeout (0.6.1)
     trailblazer-option (0.1.2)
     tsort (0.2.0)
@@ -1256,12 +1256,12 @@ CHECKSUMS
   strscan (3.1.8) sha256=aae2db611a225559f21ffbb71765c9a4e60fd262534a9ea84f4f11c7f32f679e
   terser (1.2.8) sha256=64931851d173bc5be0a90bd4570d751be5e83b2b063ccb750dbdc11a7b1d14db
   thor (1.5.0) sha256=e3a9e55fe857e44859ce104a84675ab6e8cd59c650a49106a05f55f136425e73
-  tiktoken_ruby (0.0.16) sha256=2bac3503f1830b11f5fbe64ea8b7696f0ba995a721fad2c75b3f76350ae1504d
-  tiktoken_ruby (0.0.16-aarch64-linux) sha256=014e5ba44b99158916ff57db61d2cb3fdbc6d176644d3f6bbf36a7d36ef9467d
-  tiktoken_ruby (0.0.16-arm-linux) sha256=bce44f0e1882631748e59223be7cc529fe891304b7a044e58bc8f9bb3d56dd14
-  tiktoken_ruby (0.0.16-arm64-darwin) sha256=3da6fe850bf920d08c7eb736673f50bc9d08e8f2e17d34904ad3185a73fc9da7
-  tiktoken_ruby (0.0.16-x86_64-darwin) sha256=4776d9f6d2f00ec4386260f3ef379347fd2dc375361c750fef7e96b57364c5be
-  tiktoken_ruby (0.0.16-x86_64-linux) sha256=4d970b8e68a86972ec81799306116480b33a558c06bb4fe0092852280a4b76b2
+  tiktoken_ruby (0.0.17) sha256=9e2a8bcd9eab75d8ba5a9aa75234a6134970c13243132d8b46da7f5f36ea27c3
+  tiktoken_ruby (0.0.17-aarch64-linux) sha256=73c1b3065e3356274ff7f9f612b80531029d59c6474f6a73c8bae913cd3fd731
+  tiktoken_ruby (0.0.17-arm-linux) sha256=82d00547263b3a9ec3f3cb4c918fa0fe472e57ec0bdc65d17f60a52ad402ba2a
+  tiktoken_ruby (0.0.17-arm64-darwin) sha256=3e76e75218864f7315f83969533ddbe3eb0b927c357bd747acd156412ed6c2e9
+  tiktoken_ruby (0.0.17-x86_64-darwin) sha256=da7152cee74943f83d066a425f289db6e116ff05b347735fb2fc1035323f5381
+  tiktoken_ruby (0.0.17-x86_64-linux) sha256=c5bfe3067b0d0776028be2112a18f9031d69ed250427a575a4a0b51a0507906b
   timeout (0.6.1) sha256=78f57368a7e7bbadec56971f78a3f5ecbcfb59b7fcbb0a3ed6ddc08a5094accb
   trailblazer-option (0.1.2) sha256=20e4f12ea4e1f718c8007e7944ca21a329eee4eed9e0fa5dde6e8ad8ac4344a3
   tsort (0.2.0) sha256=9650a793f6859a43b6641671278f79cfead60ac714148aabe4e3f0060480089f
