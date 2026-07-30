@@ -92,6 +92,8 @@ GEM
       connection_pool
       standardwebhooks
     ast (2.4.3)
+    auth-sanitizer (0.2.3)
+      version_gem (~> 1.1, >= 1.1.14)
     aws-eventstream (1.4.0)
     aws-partitions (1.1269.0)
     aws-sdk-bedrock (1.90.0)
@@ -396,7 +398,7 @@ GEM
       prism (~> 1.5)
     msgpack (1.8.1)
     multi_json (1.21.1)
-    multi_xml (0.8.1)
+    multi_xml (0.9.1)
       bigdecimal (>= 3.1, < 5)
     net-http (0.9.1)
       uri (>= 0.11.1)
@@ -425,14 +427,15 @@ GEM
     nokogiri (1.19.4-x86_64-linux-gnu)
       racc (~> 1.4)
     null_logger (0.0.1)
-    oauth2 (2.0.18)
+    oauth2 (2.0.22)
+      auth-sanitizer (~> 0.2, >= 0.2.1)
       faraday (>= 0.17.3, < 4.0)
       jwt (>= 1.0, < 4.0)
       logger (~> 1.2)
       multi_xml (~> 0.5)
       rack (>= 1.2, < 4)
-      snaky_hash (~> 2.0, >= 2.0.3)
-      version_gem (~> 1.1, >= 1.1.9)
+      snaky_hash (~> 2.0, >= 2.0.5)
+      version_gem (~> 1.1, >= 1.1.11)
     omniauth (2.1.4)
       hashie (>= 3.4.6)
       logger
@@ -836,9 +839,9 @@ GEM
     slack-poster (2.2.2)
       faraday (>= 1.0.0)
     smart_properties (1.17.0)
-    snaky_hash (2.0.3)
+    snaky_hash (2.0.7)
       hashie (>= 0.1.0, < 6)
-      version_gem (>= 1.1.8, < 3)
+      version_gem (~> 1.1, >= 1.1.14)
     sorted_set (1.1.0)
       rbtree
     sprockets (4.2.2)
@@ -875,7 +878,7 @@ GEM
     unicode-emoji (4.2.0)
     uri (1.1.1)
     useragent (0.16.11)
-    version_gem (1.1.9)
+    version_gem (1.1.14)
     warden (1.2.9)
       rack (>= 2.0.9)
     warden-oauth2 (0.0.1)
@@ -972,6 +975,7 @@ CHECKSUMS
   amq-protocol (2.7.0) sha256=a798da91f076cf8225193739d09785201f72acbc5293282a3592ad3eda5b3afc
   anthropic (1.59.0) sha256=fe987f143226d78544bddc5d4a32bdcc0e9a70a996dfbcdbbaf2e4c296335cda
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
+  auth-sanitizer (0.2.3) sha256=db10aac92cfbe4c64ab637eebcbe1d67395d1694798041362173370f59933e3c
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
   aws-partitions (1.1269.0) sha256=80beca6c8a35ddfc11b0b529424ea6167ace3da92cd7368847ce694679dedea5
   aws-sdk-bedrock (1.90.0) sha256=54a5b664cdea2c7990b69d3e103b2c514ae5822054d42d55e4bebc13b1793852
@@ -1092,7 +1096,7 @@ CHECKSUMS
   minitest (6.0.6) sha256=153ea36d1d987a62942382b61075745042a2b3123b1cd48f4c3675af9cc7d6f1
   msgpack (1.8.1) sha256=3fef787cd3965fd119c08a22724a56a93ca25008c3421fc15039f603a8b7c86c
   multi_json (1.21.1) sha256=e6126a31808e3b4d19f483c775ceac34df190dffa62adfb63a165ee14ba68080
-  multi_xml (0.8.1) sha256=addba0290bac34e9088bfe73dc4878530297a82a7bbd66cb44dcd0a4b86edf5a
+  multi_xml (0.9.1) sha256=7ce766b59c17241ed62976caeae1fae9b2431b263398c35396239a68c4a64e57
   net-http (0.9.1) sha256=25ba0b67c63e89df626ed8fac771d0ad24ad151a858af2cc8e6a716ca4336996
   net-imap (0.6.6) sha256=96aa4ee50df3060203e649efc341f53480b791d49e150f2fdebf68beb141a8df
   net-pop (0.1.2) sha256=848b4e982013c15b2f0382792268763b748cce91c9e91e36b0f27ed26420dff3
@@ -1107,7 +1111,7 @@ CHECKSUMS
   nokogiri (1.19.4-x86_64-darwin) sha256=7fd17057d3e1f00e9954a74b3cd76595d3d4a5ef233b7ed9599047c204f70551
   nokogiri (1.19.4-x86_64-linux-gnu) sha256=379fae440b28915e3f19d752ce2dcf8465ed2b2fbefd2a7ca0dd497bc981a06a
   null_logger (0.0.1) sha256=5039c505a2e00f50111f266db62b8c9c5b57e9c8f28380944d79a55ec8a9f5a1
-  oauth2 (2.0.18) sha256=bacf11e470dfb963f17348666d0a75c7b29ca65bc48fd47be9057cf91a403287
+  oauth2 (2.0.22) sha256=8f4669f0c8de69f6db7ed786bda20996eaf0003966b886f1c519efb1a5682fa6
   omniauth (2.1.4) sha256=42a05b0496f0d22e1dd85d42aaf602f064e36bb47a6826a27ab55e5ba608763c
   omniauth-oauth2 (1.9.0) sha256=ed15f6d9d20991807ce114cc5b9c1453bce3645b64e51c68c90cff5ff153fee8
   openapi3_parser (0.10.1) sha256=e373bfcec1f183252a51fbe28787b52c4052e045697bae1778258bb9b3296a19
@@ -1247,7 +1251,7 @@ CHECKSUMS
   simplecov (1.0.2) sha256=c6459434efe4b948b46477cc2df2faa73ab365f83a33c7c17f81262f4f7f1244
   slack-poster (2.2.2) sha256=37c4c0d65259599813ef75d4da0ed7512d2e8e93ca942c53ebf898ff1c81214e
   smart_properties (1.17.0) sha256=f9323f8122e932341756ddec8e0ac9ec6e238408a7661508be99439ca6d6384b
-  snaky_hash (2.0.3) sha256=25a3d299566e8153fb02fa23fd9a9358845950f7a523ddbbe1fa1e0d79a6d456
+  snaky_hash (2.0.7) sha256=7d02c70012a3f932e48860cd024577908300c9aa615e0cb9b450aaa749cbcb4d
   sorted_set (1.1.0) sha256=bac01eb16b6bcfcdb7d732a28e87422be8b5c9fdcfeadbe9072682407524ee83
   sprockets (4.2.2) sha256=761e5a49f1c288704763f73139763564c845a8f856d52fba013458f8af1b59b1
   sprockets-rails (3.5.2) sha256=a9e88e6ce9f8c912d349aa5401509165ec42326baf9e942a85de4b76dbc4119e
@@ -1272,7 +1276,7 @@ CHECKSUMS
   unicode-emoji (4.2.0) sha256=519e69150f75652e40bf736106cfbc8f0f73aa3fb6a65afe62fefa7f80b0f80f
   uri (1.1.1) sha256=379fa58d27ffb1387eaada68c749d1426738bd0f654d812fcc07e7568f5c57c6
   useragent (0.16.11) sha256=700e6413ad4bb954bb63547fa098dddf7b0ebe75b40cc6f93b8d54255b173844
-  version_gem (1.1.9) sha256=0c1a0962ae543c84a00889bb018d9f14d8f8af6029d26b295d98774e3d2eb9a4
+  version_gem (1.1.14) sha256=6b7306c7e9416d06067561981ab3444e2cecb844f26cc325ae3c27b44cf85613
   warden (1.2.9) sha256=46684f885d35a69dbb883deabf85a222c8e427a957804719e143005df7a1efd0
   warden-oauth2 (0.0.1) sha256=9f8dfd89d23ef8936734ca897acd7dde86802c8139d6299774d6e6bf292921fd
   webmock (3.26.2) sha256=774556f2ea6371846cca68c01769b2eac0d134492d21f6d0ab5dd643965a4c90
