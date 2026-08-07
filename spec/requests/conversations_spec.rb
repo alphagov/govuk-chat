@@ -104,7 +104,7 @@ RSpec.describe "ConversationsController" do
           expect(response).to have_http_status(:success)
           expect(response.body)
             .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
-            .and have_selector("##{helpers.dom_id(answer)} .govuk-govspeak", text: answer.message)
+            .and have_selector("##{helpers.dom_id(answer)} .gem-c-govspeak", text: answer.message)
         end
       end
 

@@ -58,7 +58,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
       expect(rendered).to have_selector("li.app-c-conversation-message#answer-2") do |rendered_answer|
         expect(rendered_answer)
           .to have_selector(".app-c-conversation-message__message .govuk-visually-hidden", text: "GOV.UK Chat")
-          .and have_selector(".app-c-conversation-message__answer .govuk-govspeak", text: "message 3")
+          .and have_selector(".app-c-conversation-message__answer .gem-c-govspeak", text: "message 3")
           .and have_selector(".govuk-details", count: 0)
       end
     end
