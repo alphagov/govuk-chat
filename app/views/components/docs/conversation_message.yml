@@ -32,9 +32,9 @@ examples:
     data:
       id: message-html
       message: |
-        <h2>Heading</h2>
+        ## Heading
 
-        <p>Content</p>
+        Content
   with_ordered_list_html:
     embed: |
       <ul class="govuk-list">
@@ -44,18 +44,13 @@ examples:
     data:
       id: message-ordered-list
       message: |
-        <p>A parapraph before to demonstrate what the list markers should be aligning with.</p>
-        <ol>
-          <li>Item 1</li>
-          <li>
-            Item 2
-            <ol>
-              <li>Nested item 1</li>
-              <li>Nested item 2</li>
-            </ol>
-          </li>
-          <li>Item 3</li>
-        </ol>
+        A parapraph before to demonstrate what the list markers should be aligning with.
+
+        1. Item 1
+        2. Item 2
+           1. Nested item 1
+           2. Nested item 2
+        3. Item 3
   with_sources:
     embed: |
       <ul class="govuk-list">
