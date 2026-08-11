@@ -87,10 +87,11 @@ GEM
     addressable (2.9.0)
       public_suffix (>= 2.0.2, < 8.0)
     amq-protocol (2.7.0)
-    anthropic (1.59.0)
-      cgi
-      connection_pool
-      standardwebhooks
+    anthropic (1.61.0)
+      base64 (~> 0.1)
+      cgi (~> 0.1)
+      connection_pool (>= 2, < 4)
+      standardwebhooks (~> 1.0)
     ast (2.4.3)
     auth-sanitizer (0.2.3)
       version_gem (~> 1.1, >= 1.1.14)
@@ -973,7 +974,7 @@ CHECKSUMS
   activesupport (8.1.3.1) sha256=85458765f25ea48b9019c46b6bb3fa5683197bf4280d9f06710a6e8d7a831376
   addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
   amq-protocol (2.7.0) sha256=a798da91f076cf8225193739d09785201f72acbc5293282a3592ad3eda5b3afc
-  anthropic (1.59.0) sha256=fe987f143226d78544bddc5d4a32bdcc0e9a70a996dfbcdbbaf2e4c296335cda
+  anthropic (1.61.0) sha256=31c166279cdb33dd6835f583a265fff45b8263e8d895fabae2f4aaa370472e81
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   auth-sanitizer (0.2.3) sha256=db10aac92cfbe4c64ab637eebcbe1d67395d1694798041362173370f59933e3c
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
