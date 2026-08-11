@@ -45,8 +45,9 @@ $message-container-spacing-mobile: 40px;
   overflow: hidden;
   overflow-wrap: break-word;
 
-  // two classes used to increase specificity
-  .gem-c-govspeak.govuk-govspeak :last-child {
+  // Govspeak content typically has a hanging margin, this looks wrong within
+  // a container element with equal padding.
+  .gem-c-govspeak :last-child {
     margin-bottom: 0;
   }
 
