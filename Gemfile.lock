@@ -210,7 +210,7 @@ GEM
     ffi (1.17.4-x86-linux-gnu)
     ffi (1.17.4-x86_64-darwin)
     ffi (1.17.4-x86_64-linux-gnu)
-    gds-api-adapters (103.4.0)
+    gds-api-adapters (103.4.2)
       addressable
       link_header
       null_logger
@@ -657,7 +657,7 @@ GEM
     puma (8.0.2)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.2.6)
+    rack (3.2.7)
     rack-attack (6.8.0)
       rack (>= 1.0, < 4)
     rack-protection (4.2.1)
@@ -1034,7 +1034,7 @@ CHECKSUMS
   ffi (1.17.4-x86-linux-gnu) sha256=38e150df5f4ca555e25beca4090823ae09657bceded154e3c52f8631c1ed72cf
   ffi (1.17.4-x86_64-darwin) sha256=aa70390523cf3235096cf64962b709b4cfbd5c082a2cb2ae714eb0fe2ccda496
   ffi (1.17.4-x86_64-linux-gnu) sha256=9d3db14c2eae074b382fa9c083fe95aec6e0a1451da249eab096c34002bc752d
-  gds-api-adapters (103.4.0) sha256=38a634178f8636733f55d2f1e31b30b6b8760958ee1dd2f03c9875fe5e98fa5a
+  gds-api-adapters (103.4.2) sha256=63a6b250f73453f348720d40bd673be7ffa41ed7311f0b0ce12ac1814b65412d
   gds-sso (22.3.0) sha256=28e356090c6b577ebdcb17ac9d77c5473086bbb2c080153920089034521e766a
   globalid (1.4.0) sha256=037f12fbf1d9d7a014d501c2d5c77356fd4ddd96d7a7991d6700bba96706f427
   google-apis-bigquery_v2 (0.101.0) sha256=865d697c1d9d6dfcf18be4765d3a650e5fe0c81b2060f1bab054a74f463a8b01
@@ -1193,7 +1193,7 @@ CHECKSUMS
   public_suffix (7.0.5) sha256=1a8bb08f1bbea19228d3bed6e5ed908d1cb4f7c2726d18bd9cadf60bc676f623
   puma (8.0.2) sha256=c8ed871dfbbe66448ea9ffd46692342d9804d4071522b52b5331b7b6e7b686fb
   racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f
-  rack (3.2.6) sha256=5ed78e1f73b2e25679bec7d45ee2d4483cc4146eb1be0264fc4d94cb5ef212c2
+  rack (3.2.7) sha256=93e13e1c24f93556671d85d2d79fa228c3485815c50d7e2f265b5330c6528fb7
   rack-attack (6.8.0) sha256=f2499fdebf85bcc05573a22dff57d24305ac14ec2e4156cd3c28d47cafeeecf2
   rack-protection (4.2.1) sha256=cf6e2842df8c55f5e4d1a4be015e603e19e9bc3a7178bae58949ccbb58558bac
   rack-proxy (0.8.3) sha256=1e446a37be6d9c59647e710d2df7d23e3b0b4e1b982dab4f188a0354aa1fff0b
