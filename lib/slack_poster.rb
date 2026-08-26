@@ -32,7 +32,7 @@ private
       {
         icon_emoji: ":govukchat:",
         username: "GOV.UK Chat",
-        channel: "#private-ai-govuk",
+        channel: "#ai-govuk-chat-v1-squad",
         link_names: true,
       },
     )
