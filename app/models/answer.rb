@@ -54,6 +54,7 @@ class Answer < ApplicationRecord
   after_commit :send_answer_count_to_prometheus, on: :create
 
   belongs_to :question
+  has_one :feedback, class_name: "AnswerFeedback", dependent: :destroy, strict_loading: false
   has_many :sources, -> { order(relevancy: :asc) }, class_name: "AnswerSource"
   has_one :topics, class_name: "AnswerAnalysis::Topics"
   has_many :answer_relevancy_runs,
