@@ -764,6 +764,31 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AnswerSource"
+        feedback:
+          description: |
+            Feedback that has been given for this answer. Present only once
+            feedback has been given, in which case feedback_url is absent.
+          type: object
+          required:
+            - reaction
+            - created_at
+          properties:
+            reaction:
+              description: An end user's reaction to an answer
+              type: string
+              enum:
+                - positive
+                - negative
+            created_at:
+              type: string
+              format: date-time
+        feedback_url:
+          description: |
+            A relative URL that can be used to give feedback on this answer.
+            Absent once feedback has been given, in which case feedback is
+            provided instead.
+          type: string
+          format: uri
     AnswerSource:
       type: object
       required:
