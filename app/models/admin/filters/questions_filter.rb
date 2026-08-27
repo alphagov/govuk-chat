@@ -12,6 +12,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :secondary_topic
   attribute :completeness
   attribute :conversation_session_id
+  attribute :reaction
 
   validate :validate_dates
 
@@ -30,7 +31,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
 
   def results
     @results ||= begin
-      scope = Question.includes(answer: :topics)
+      scope = Question.includes(answer: %i[topics feedback])
                       .left_outer_joins(:answer)
       scope = search_scope(scope)
       scope = status_scope(scope)
@@ -46,6 +47,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
       scope = primary_topic_scope(scope)
       scope = secondary_topic_scope(scope)
       scope = completeness_scope(scope)
+      scope = reaction_scope(scope)
       scope.page(page)
            .per(25)
     end
@@ -81,6 +83,7 @@ private
     filters[:secondary_topic] = secondary_topic if secondary_topic.present?
     filters[:completeness] = completeness if completeness.present?
     filters[:conversation_session_id] = conversation_session_id if conversation_session_id.present?
+    filters[:reaction] = reaction if reaction.present?
 
     filters
   end
@@ -167,6 +170,12 @@ private
     return scope if completeness.blank?
 
     scope.where(answers: { completeness: })
+  end
+
+  def reaction_scope(scope)
+    return scope if reaction.blank?
+
+    scope.joins(answer: :feedback).where(answer_feedback: { reaction: })
   end
 
   def validate_dates

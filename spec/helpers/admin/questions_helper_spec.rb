@@ -78,6 +78,7 @@ RSpec.describe Admin::QuestionsHelper do
         "Status",
         "Answer created at",
         "Answer",
+        "Feedback",
         "Answer strategy",
         "Completeness",
         "Jailbreak guardrails status",

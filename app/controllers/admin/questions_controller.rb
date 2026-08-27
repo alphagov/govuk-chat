@@ -7,7 +7,15 @@ class Admin::QuestionsController < Admin::BaseController
   def show
     question_scope = Question.includes(
       conversation: :signon_user,
-      answer: [{ sources: :chunk }, :topics, :answer_relevancy_runs, :coherence_runs, :faithfulness_runs, :context_relevancy_runs],
+      answer: [
+        { sources: :chunk },
+        :topics,
+        :feedback,
+        :answer_relevancy_runs,
+        :coherence_runs,
+        :faithfulness_runs,
+        :context_relevancy_runs,
+      ],
     )
 
     @question = question_scope.find(params[:id])
@@ -36,6 +44,7 @@ private
       :secondary_topic,
       :completeness,
       :conversation_session_id,
+      :reaction,
     )
   end
 end
