@@ -107,6 +107,7 @@ RSpec.describe "Api::V1::ConversationsController" do
                      api_v1_answer_question_path: %i[get],
                      api_v1_create_conversation_path: %i[post],
                      api_v1_update_conversation_path: %i[put],
+                     api_v1_answer_feedback_path: %i[post],
                    } do
     let(:route_params) do
       {
@@ -666,6 +667,108 @@ RSpec.describe "Api::V1::ConversationsController" do
         answer = question.reload.answer
         expected_response = AnswerBlueprint.render_as_json(answer)
         expect(JSON.parse(response.body)).to eq(expected_response)
+      end
+    end
+  end
+
+  describe "POST :answer_feedback" do
+    let(:answer) { create(:answer, question:) }
+
+    it_behaves_like "limits access based on Signon and end user permissions" do
+      let(:method) { :post }
+      let(:url) { api_v1_answer_feedback_path(conversation, answer) }
+      let(:params) { { reaction: "positive" } }
+    end
+
+    it_behaves_like "limits access based on conversation source" do
+      let(:method) { :post }
+      let(:url) { api_v1_answer_feedback_path(conversation, answer) }
+      let(:params) { { reaction: "positive" } }
+    end
+
+    it "records the feedback and returns a created status" do
+      expect {
+        post api_v1_answer_feedback_path(conversation, answer),
+             params: { reaction: "positive" },
+             headers:,
+             as: :json
+      }.to change(AnswerFeedback, :count).by(1)
+
+      expect(response).to have_http_status(:created)
+      expect(response.parsed_body).to eq({})
+      expect(answer.reload.feedback).to be_reaction_positive
+    end
+
+    it "records a negative reaction" do
+      post api_v1_answer_feedback_path(conversation, answer),
+           params: { reaction: "negative" },
+           headers:,
+           as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(answer.reload.feedback).to be_reaction_negative
+    end
+
+    context "when the reaction is not recognised" do
+      it "returns an unprocessable content status with the validation error" do
+        expect {
+          post api_v1_answer_feedback_path(conversation, answer),
+               params: { reaction: "indifferent" },
+               headers:,
+               as: :json
+        }.not_to change(AnswerFeedback, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.parsed_body["errors"]).to eq(
+          { "reaction" => [Form::CreateAnswerFeedback::REACTION_INCLUSION_ERROR_MESSAGE] },
+        )
+      end
+    end
+
+    context "when the reaction is missing" do
+      it "returns an unprocessable content status with the validation error" do
+        post api_v1_answer_feedback_path(conversation, answer),
+             params: {},
+             headers:,
+             as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.parsed_body["errors"]).to eq(
+          { "reaction" => [Form::CreateAnswerFeedback::REACTION_INCLUSION_ERROR_MESSAGE] },
+        )
+      end
+    end
+
+    context "when the answer already has feedback" do
+      before { create(:answer_feedback, answer:, reaction: :positive) }
+
+      it "returns a conflict status and leaves the existing feedback unchanged" do
+        expect {
+          post api_v1_answer_feedback_path(conversation, answer),
+               params: { reaction: "negative" },
+               headers:,
+               as: :json
+        }.not_to change(AnswerFeedback, :count)
+
+        expect(response).to have_http_status(:conflict)
+        expect(response.parsed_body["message"])
+          .to eq(Api::V1::ConversationsController::FEEDBACK_ALREADY_PROVIDED_MESSAGE)
+        expect(answer.reload.feedback).to be_reaction_positive
+      end
+    end
+
+    context "when a conflicting record is inserted concurrently" do
+      it "returns a conflict status" do
+        form = instance_double(Form::CreateAnswerFeedback, valid?: true)
+        allow(form).to receive(:submit).and_raise(ActiveRecord::RecordNotUnique)
+        allow(Form::CreateAnswerFeedback).to receive(:new).and_return(form)
+
+        post api_v1_answer_feedback_path(conversation, answer),
+             params: { reaction: "positive" },
+             headers:,
+             as: :json
+
+        expect(response).to have_http_status(:conflict)
       end
     end
   end
