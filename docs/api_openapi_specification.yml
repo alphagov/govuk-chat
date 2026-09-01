@@ -14,16 +14,26 @@ info:
     Usage of this API is rate-limited on a requests per minute (RPM) basis.
     There are rate limits applied to individual clients (Signon users). A
     client may also send a header `Govuk-Chat-End-User-Id` for an
-    additional rate limit to be applied to an end user. There are distinct
-    rate limits for read requests (GET, HEAD) and write requests (POST, PATCH,
-    PUT, DELETE).
+    additional rate limit to be applied to an end user.
 
-    | User type | Write request limit | Read request limit |
-    |-----------|---------------------|--------------------|
-    | API User  | 900 RPM             | 10,800 RPM          |
-    | End User  | 15 RPM              | 180 RPM            |
+    Requests are split across two limits according to how expensive they are
+    to serve. Starting a conversation and adding a question an existing one
+    both trigger multiple model invocations while composing an answer.
+    This is expensive, so they are limited far more tightly under the conversation
+    write limit. Every other request, including reading conversations, questions and
+    answers and giving feedback on an answer, shares the more generous default limit.
 
-  version: "0.6.0"
+    | User type | Conversation write limit | Default limit |
+    |-----------|--------------------------|---------------|
+    | API User  | 900 RPM                  | 10,800 RPM    |
+    | End User  | 15 RPM                   | 180 RPM       |
+
+    The response headers reporting these limits keep the `Read` and `Write`
+    names they were given when the limits were split by HTTP method instead.
+    `Write` headers report the conversation write limit and `Read` headers
+    report the default limit, regardless of the HTTP method the request used.
+
+  version: "0.6.1"
 servers:
   - url: https://chat.publishing.service.gov.uk/api/v1
 paths:
@@ -81,7 +91,7 @@ paths:
               $ref: '#/components/headers/GovukEndUserIdWriteRateLimitReset'
         "429":
           description: |
-            Too many requests to write endpoints from an API User or End User ID
+            Too many requests against the conversation write limit from an API User or End User ID
           headers:
             Govuk-Api-User-Write-RateLimit-Limit:
               $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
@@ -155,10 +165,10 @@ paths:
               $ref: '#/components/headers/GovukEndUserIdReadRateLimitReset'
         "429":
           description: |
-            Too many requests to read endpoints from an API User or End User ID
+            Too many requests against the default limit from an API User or End User ID
           headers:
-            Govuk-Api-User-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
             Govuk-Api-User-Read-RateLimit-Remaining:
               $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
             Govuk-Api-User-Read-RateLimit-Reset:
@@ -232,7 +242,7 @@ paths:
               $ref: '#/components/headers/GovukEndUserIdWriteRateLimitReset'
         "429":
           description: |
-            Too many requests to write endpoints from an API User or End User ID
+            Too many requests against the conversation write limit from an API User or End User ID
           headers:
             Govuk-Api-User-Write-RateLimit-Limit:
               $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
@@ -320,10 +330,10 @@ paths:
               $ref: '#/components/headers/GovukEndUserIdReadRateLimitReset'
         "429":
           description: |
-            Too many requests to read endpoints from an API User or End User ID
+            Too many requests against the default limit from an API User or End User ID
           headers:
-            Govuk-Api-User-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
             Govuk-Api-User-Read-RateLimit-Remaining:
               $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
             Govuk-Api-User-Read-RateLimit-Reset:
@@ -411,10 +421,10 @@ paths:
               $ref: '#/components/headers/GovukEndUserIdReadRateLimitReset'
         "429":
           description: |
-            Too many requests to read endpoints from an API User or End User ID
+            Too many requests against the default limit from an API User or End User ID
           headers:
-            Govuk-Api-User-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
             Govuk-Api-User-Read-RateLimit-Remaining:
               $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
             Govuk-Api-User-Read-RateLimit-Reset:
@@ -465,18 +475,18 @@ paths:
         "201":
           description: Successfully recorded the feedback for the answer
           headers:
-            Govuk-Api-User-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
-            Govuk-Api-User-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
-            Govuk-Api-User-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
-            Govuk-End-User-Id-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitLimit'
-            Govuk-End-User-Id-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitRemaining'
-            Govuk-End-User-Id-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitReset'
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-End-User-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitLimit'
+            Govuk-End-User-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitRemaining'
+            Govuk-End-User-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitReset'
         "404":
           description: |
             Conversation or answer do not exist, or do not belong to this end user
@@ -485,18 +495,18 @@ paths:
               schema:
                 $ref: "#/components/schemas/GenericError"
           headers:
-            Govuk-Api-User-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
-            Govuk-Api-User-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
-            Govuk-Api-User-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
-            Govuk-End-User-Id-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitLimit'
-            Govuk-End-User-Id-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitRemaining'
-            Govuk-End-User-Id-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitReset'
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-End-User-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitLimit'
+            Govuk-End-User-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitRemaining'
+            Govuk-End-User-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitReset'
         "409":
           description: |
             Feedback has already been provided for this answer
@@ -505,18 +515,18 @@ paths:
               schema:
                 $ref: "#/components/schemas/GenericError"
           headers:
-            Govuk-Api-User-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
-            Govuk-Api-User-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
-            Govuk-Api-User-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
-            Govuk-End-User-Id-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitLimit'
-            Govuk-End-User-Id-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitRemaining'
-            Govuk-End-User-Id-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitReset'
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-End-User-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitLimit'
+            Govuk-End-User-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitRemaining'
+            Govuk-End-User-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitReset'
         "422":
           description: |
             Validation error on feedback submission (such as an unrecognised reaction)
@@ -525,34 +535,34 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidationError"
           headers:
-            Govuk-Api-User-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
-            Govuk-Api-User-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
-            Govuk-Api-User-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
-            Govuk-End-User-Id-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitLimit'
-            Govuk-End-User-Id-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitRemaining'
-            Govuk-End-User-Id-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitReset'
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-End-User-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitLimit'
+            Govuk-End-User-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitRemaining'
+            Govuk-End-User-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitReset'
         "429":
           description: |
-            Too many requests to write endpoints from an API User or End User ID
+            Too many requests against the default limit from an API User or End User ID
           headers:
-            Govuk-Api-User-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitLimit'
-            Govuk-Api-User-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitRemaining'
-            Govuk-Api-User-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukApiUserWriteRateLimitReset'
-            Govuk-End-User-Id-Write-RateLimit-Limit:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitLimit'
-            Govuk-End-User-Id-Write-RateLimit-Remaining:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitRemaining'
-            Govuk-End-User-Id-Write-RateLimit-Reset:
-              $ref: '#/components/headers/GovukEndUserIdWriteRateLimitReset'
+            Govuk-Api-User-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitLimit'
+            Govuk-Api-User-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitRemaining'
+            Govuk-Api-User-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukApiUserReadRateLimitReset'
+            Govuk-End-User-Id-Read-RateLimit-Limit:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitLimit'
+            Govuk-End-User-Id-Read-RateLimit-Remaining:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitRemaining'
+            Govuk-End-User-Id-Read-RateLimit-Reset:
+              $ref: '#/components/headers/GovukEndUserIdReadRateLimitReset'
 
 security:
   - bearerAuth: []
@@ -582,61 +592,61 @@ components:
         pattern: '\S'
   headers:
     GovukApiUserReadRateLimitLimit:
-      description: The request limit for the API user in the current period.
+      description: The default request limit for the API user in the current period.
       schema:
         type: string
     GovukApiUserReadRateLimitRemaining:
-      description: The number of remaining requests for the API user in the current period.
+      description: The number of remaining default requests for the API user in the current period.
       schema:
         type: string
     GovukApiUserReadRateLimitReset:
       description: |
-        Time remaining in seconds until the read request limit is reset for the API User.
+        Time remaining in seconds until the default request limit is reset for the API User.
         If the api user is currently at the limit, this is the time until next request can be made without returning
         a 429 Too Many Requests response.
       schema:
         type: string
     GovukEndUserIdReadRateLimitLimit:
-      description: The request limit for the User ID in the current period.
+      description: The default request limit for the User ID in the current period.
       schema:
         type: string
     GovukEndUserIdReadRateLimitRemaining:
-      description: The number of remaining requests for the User ID in the current period.
+      description: The number of remaining default requests for the User ID in the current period.
       schema:
         type: string
     GovukEndUserIdReadRateLimitReset:
       description: |
-        Time remaining in seconds until the read request limit is reset for the User ID.
+        Time remaining in seconds until the default request limit is reset for the User ID.
         If the User ID is currently at the limit, this is the time until next request can be made without returning
         a 429 Too Many Requests response.
       schema:
         type: string
     GovukApiUserWriteRateLimitLimit:
-      description: The request limit for API User writes in the current period.
+      description: The conversation write request limit for the API User in the current period.
       schema:
         type: string
     GovukApiUserWriteRateLimitRemaining:
-      description: The number of remaining API User write requests in the current period.
+      description: The number of remaining conversation write requests for the API User in the current period.
       schema:
         type: string
     GovukApiUserWriteRateLimitReset:
       description: |
-        Time remaining in seconds until the write request limit is reset for the API User.
+        Time remaining in seconds until the conversation write request limit is reset for the API User.
         If the api user is currently at the limit, this is the time until next request can be made without returning
         a 429 Too Many Requests response.
       schema:
         type: string
     GovukEndUserIdWriteRateLimitLimit:
-      description: The request limit for User ID writes in the current period.
+      description: The conversation write request limit for the User ID in the current period.
       schema:
         type: string
     GovukEndUserIdWriteRateLimitRemaining:
-      description: The number of remaining User ID write requests in the current period.
+      description: The number of remaining conversation write requests for the User ID in the current period.
       schema:
         type: string
     GovukEndUserIdWriteRateLimitReset:
       description: |
-        Time remaining in seconds until the write request limit is reset for the User ID.
+        Time remaining in seconds until the conversation write request limit is reset for the User ID.
         If the User ID is currently at the limit, this is the time until next request can be made without returning
         a 429 Too Many Requests response.
       schema:
