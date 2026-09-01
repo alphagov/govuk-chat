@@ -1,6 +1,8 @@
 class Api::V1::ConversationsController < Api::BaseController
   before_action { authorise_user!(SignonUser::Permissions::CONVERSATION_API) }
-  before_action :find_conversation, only: %i[show update answer questions]
+  before_action :find_conversation, only: %i[show update answer questions answer_feedback]
+
+  FEEDBACK_ALREADY_PROVIDED_MESSAGE = "Feedback already provided for this answer".freeze
 
   def create
     conversation = Conversation.new(
@@ -110,19 +112,40 @@ class Api::V1::ConversationsController < Api::BaseController
     render(json:, status: :ok)
   end
 
+  def answer_feedback
+    answer = @conversation.answers.includes(:feedback).find(params[:answer_id])
+    return render_feedback_already_provided if answer.feedback.present?
+
+    form = Form::CreateAnswerFeedback.new(answer_feedback_params.merge(answer:))
+
+    unless form.valid?
+      return render json: ValidationErrorBlueprint.render(
+        errors: form.errors.messages,
+      ), status: :unprocessable_content
+    end
+
+    form.submit
+
+    render json: {}, status: :created
+  rescue ActiveRecord::RecordNotUnique
+    render_feedback_already_provided
+  end
+
 private
 
   def find_conversation
-    where = { signon_user_id: current_user.id, source: :api, end_user_id: end_user_id_header }
-
     @conversation = Conversation
                     .active
-                    .where(where)
+                    .where(signon_user_id: current_user.id, source: :api, end_user_id: end_user_id_header)
                     .find(params[:conversation_id])
   end
 
   def question_params
     params.permit(:user_question)
+  end
+
+  def answer_feedback_params
+    params.permit(:reaction)
   end
 
   def answer_path(question)
@@ -134,5 +157,11 @@ private
 
   def end_user_id_header
     request.headers.fetch("HTTP_GOVUK_CHAT_END_USER_ID", "").strip.presence
+  end
+
+  def render_feedback_already_provided
+    render json: GenericErrorBlueprint.render(
+      message: FEEDBACK_ALREADY_PROVIDED_MESSAGE,
+    ), status: :conflict
   end
 end

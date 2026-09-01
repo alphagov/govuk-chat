@@ -46,6 +46,13 @@ RSpec.describe "Admin user filters questions" do
 
     when_i_filter_questions_by_partialy_complete_answers
     then_i_see_the_question_with_a_partially_complete_answer
+
+    when_i_clear_the_filters
+    and_i_filter_questions_by_positive_feedback
+    then_i_see_the_question_with_positive_feedback
+
+    when_i_filter_questions_by_negative_feedback
+    then_i_see_the_question_with_negative_feedback
   end
 
   scenario "filtered by a signon user" do
@@ -74,6 +81,8 @@ RSpec.describe "Admin user filters questions" do
     @question3 = create(:question, conversation: api_conversation, message: "Greetings world", created_at: 1.minute.ago)
     create(:answer, question: @question2, question_routing_label: "non_english", completeness: :partial)
     create(:answer, status: :clarification, question: @question3)
+    create(:answer_feedback, answer: @question2.answer, reaction: :positive)
+    create(:answer_feedback, answer: @question3.answer, reaction: :negative)
   end
 
   def and_there_are_questions_associated_with_signon_users
@@ -270,5 +279,25 @@ RSpec.describe "Admin user filters questions" do
     expect(page).to have_content(@question2.message)
     expect(page).not_to have_content(@question1.message)
     expect(page).not_to have_content(@question3.message)
+  end
+
+  def and_i_filter_questions_by_positive_feedback
+    select "Positive", from: "reaction"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_question_with_positive_feedback
+    expect(page).to have_content(@question2.message)
+    expect(page).not_to have_content(@question3.message)
+  end
+
+  def when_i_filter_questions_by_negative_feedback
+    select "Negative", from: "reaction"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_question_with_negative_feedback
+    expect(page).to have_content(@question3.message)
+    expect(page).not_to have_content(@question2.message)
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_27_093000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_27_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -21,6 +21,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_093000) do
   create_enum "answer_analysis_run_status", ["success", "failure", "error"]
   create_enum "answer_analysis_topics_status", ["success", "error"]
   create_enum "answer_completeness", ["complete", "partial", "no_information"]
+  create_enum "answer_feedback_reaction", ["positive", "negative"]
   create_enum "answer_status", ["answered", "clarification", "error_answer_guardrails", "error_answer_service_error", "error_jailbreak_guardrails", "error_non_specific", "error_question_routing_guardrails", "error_timeout", "guardrails_answer", "guardrails_forbidden_terms", "guardrails_jailbreak", "guardrails_question_routing", "unanswerable_llm_cannot_answer", "unanswerable_no_govuk_content", "unanswerable_question_routing"]
   create_enum "conversation_source", ["web", "api"]
   create_enum "guardrails_status", ["pass", "fail", "error"]
@@ -89,6 +90,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_093000) do
     t.enum "status", default: "success", null: false, enum_type: "answer_analysis_topics_status"
     t.datetime "updated_at", null: false
     t.index ["answer_id"], name: "index_answer_analysis_topics_on_answer_id", unique: true
+  end
+
+  create_table "answer_feedback", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "answer_id", null: false
+    t.datetime "created_at", null: false
+    t.enum "reaction", null: false, enum_type: "answer_feedback_reaction"
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_answer_feedback_on_answer_id", unique: true
+    t.index ["created_at"], name: "index_answer_feedback_on_created_at"
   end
 
   create_table "answer_source_chunks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -223,6 +233,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_093000) do
   add_foreign_key "answer_analysis_context_relevancy_runs", "answers", on_delete: :cascade
   add_foreign_key "answer_analysis_faithfulness_runs", "answers", on_delete: :cascade
   add_foreign_key "answer_analysis_topics", "answers", on_delete: :cascade
+  add_foreign_key "answer_feedback", "answers", on_delete: :cascade
   add_foreign_key "answer_sources", "answer_source_chunks", on_delete: :restrict
   add_foreign_key "answer_sources", "answers", on_delete: :cascade
   add_foreign_key "answers", "questions", on_delete: :cascade

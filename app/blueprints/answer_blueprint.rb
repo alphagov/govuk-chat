@@ -11,4 +11,18 @@ class AnswerBlueprint < Blueprinter::Base
       { url: source[:href], title: source[:title] }
     end
   end
+
+  field :feedback, if: ->(_field_name, answer, _options) { answer.feedback.present? } do |answer, _options|
+    {
+      reaction: answer.feedback.reaction,
+      created_at: answer.feedback.created_at.iso8601,
+    }
+  end
+
+  field :feedback_url, if: ->(_field_name, answer, _options) { answer.feedback.blank? } do |answer, _options|
+    Rails.application.routes.url_helpers.api_v1_answer_feedback_path(
+      answer.question.conversation_id,
+      answer.id,
+    )
+  end
 end

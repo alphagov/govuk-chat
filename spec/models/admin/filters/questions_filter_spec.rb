@@ -295,6 +295,19 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([no_info_question])
     end
 
+    it "filters the results by feedback reaction" do
+      positive_answer = create(:answer)
+      create(:answer_feedback, answer: positive_answer, reaction: :positive)
+      negative_answer = create(:answer)
+      create(:answer_feedback, answer: negative_answer, reaction: :negative)
+
+      filter = described_class.new(reaction: "positive")
+      expect(filter.results).to eq([positive_answer.question])
+
+      filter = described_class.new(reaction: "negative")
+      expect(filter.results).to eq([negative_answer.question])
+    end
+
     it "paginates the results" do
       create_list(:question, 26)
 
@@ -396,6 +409,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
         completeness: "complete",
       )
       create(:answer_analysis_topics, answer:, primary_topic: "business", secondary_topic: "tax")
+      create(:answer_feedback, answer:, reaction: :positive)
     end
 
     today = Date.current
@@ -417,6 +431,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       secondary_topic: "tax",
       completeness: "complete",
       conversation_session_id:,
+      reaction: "positive",
     }.merge(attrs)
 
     described_class.new(**filter_params)

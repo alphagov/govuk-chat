@@ -207,6 +207,21 @@
     end,
   } %>
 
+  <%= render "govuk_publishing_components/components/select", {
+    id: "reaction",
+    name: "reaction",
+    label: "Feedback",
+    heading_size: "s",
+    full_width: true,
+    options: [{ text: "", value: "" }] + AnswerFeedback::reactions.values.map do |value|
+      {
+       text: value.humanize,
+       value: value,
+       selected: params[:reaction] == value,
+      }
+    end,
+  } %>
+
   <%= render "govuk_publishing_components/components/button", {
     text: "Filter",
     margin_bottom: true,

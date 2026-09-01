@@ -126,6 +126,10 @@ module Admin
                       ),
                   },
                   {
+                    field: "Feedback",
+                    value: answer.feedback&.reaction&.humanize,
+                  },
+                  {
                     field: "Answer strategy",
                     value: question.answer_strategy.humanize,
                   },
