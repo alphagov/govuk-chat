@@ -6,22 +6,16 @@ Rails.application.config.middleware.insert_after ActionDispatch::Executor, Api::
 Rails.application.config.middleware.insert_before Rack::Attack, Api::AuthMiddleware
 
 class Rack::Attack
-  CONVERSATION_API_PATH_REGEX = /^\/api\/v\d+\/conversation/
-
-  throttle(Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME, limit: 10_800, period: 1.minute) do |request|
-    if request.path.match?(CONVERSATION_API_PATH_REGEX) && read_method?(request)
-      signon_uid(request)
-    end
+  throttle(Api::RateLimit::GOVUK_API_USER_DEFAULT_THROTTLE_NAME, limit: 10_800, period: 1.minute) do |request|
+    signon_uid(request) if Api::RateLimit.default?(request)
   end
 
-  throttle(Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME, limit: 900, period: 1.minute) do |request|
-    if request.path.match?(CONVERSATION_API_PATH_REGEX) && !read_method?(request)
-      signon_uid(request)
-    end
+  throttle(Api::RateLimit::GOVUK_API_USER_CONVERSATION_WRITE_THROTTLE_NAME, limit: 900, period: 1.minute) do |request|
+    signon_uid(request) if Api::RateLimit.conversation_write?(request)
   end
 
-  throttle(Api::RateLimit::GOVUK_END_USER_READ_THROTTLE_NAME, limit: 180, period: 1.minute) do |request|
-    if request.path.match?(CONVERSATION_API_PATH_REGEX) && read_method?(request)
+  throttle(Api::RateLimit::GOVUK_END_USER_DEFAULT_THROTTLE_NAME, limit: 180, period: 1.minute) do |request|
+    if Api::RateLimit.default?(request)
       user_id = end_user_id(request)
 
       next if user_id.nil?
@@ -30,18 +24,14 @@ class Rack::Attack
     end
   end
 
-  throttle(Api::RateLimit::GOVUK_END_USER_WRITE_THROTTLE_NAME, limit: 15, period: 1.minute) do |request|
-    if request.path.match?(CONVERSATION_API_PATH_REGEX) && !read_method?(request)
+  throttle(Api::RateLimit::GOVUK_END_USER_CONVERSATION_WRITE_THROTTLE_NAME, limit: 15, period: 1.minute) do |request|
+    if Api::RateLimit.conversation_write?(request)
       user_id = end_user_id(request)
 
       next if user_id.nil?
 
       "#{signon_uid(request)}-#{user_id}"
     end
-  end
-
-  def self.read_method?(request)
-    request.get? || request.head? || request.options?
   end
 
   def self.signon_uid(request)
