@@ -426,6 +426,11 @@ RSpec.describe Answer do
       expect(answer.has_analysis?).to be(true)
     end
 
+    it "returns true if request types are present" do
+      answer = build(:answer, :with_request_types)
+      expect(answer.has_analysis?).to be(true)
+    end
+
     %i[answer_relevancy_runs coherence_runs faithfulness_runs context_relevancy_runs].each do |run_association|
       it "returns true if #{run_association} are present" do
         answer = build(

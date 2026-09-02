@@ -10,6 +10,7 @@ class Admin::QuestionsController < Admin::BaseController
       answer: [
         { sources: :chunk },
         :topics,
+        :request_types,
         :feedback,
         :answer_relevancy_runs,
         :coherence_runs,
