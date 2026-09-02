@@ -43,6 +43,8 @@ private
       :end_user_id,
       :primary_topic,
       :secondary_topic,
+      :primary_request_type,
+      :secondary_request_type,
       :completeness,
       :conversation_session_id,
       :reaction,
