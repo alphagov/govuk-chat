@@ -7,6 +7,7 @@ FactoryBot.define do
     sources { [] }
     feedback { nil }
     topics { nil }
+    request_types { nil }
 
     trait :with_sources do
       sources do
@@ -31,6 +32,10 @@ FactoryBot.define do
 
     trait :with_topics do
       topics { build(:answer_analysis_topics) }
+    end
+
+    trait :with_request_types do
+      request_types { build(:answer_analysis_request_types) }
     end
   end
 end

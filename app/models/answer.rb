@@ -57,6 +57,7 @@ class Answer < ApplicationRecord
   has_one :feedback, class_name: "AnswerFeedback", dependent: :destroy, strict_loading: false
   has_many :sources, -> { order(relevancy: :asc) }, class_name: "AnswerSource"
   has_one :topics, class_name: "AnswerAnalysis::Topics"
+  has_one :request_types, class_name: "AnswerAnalysis::RequestTypes"
   has_many :answer_relevancy_runs,
            -> { order(:created_at) },
            class_name: "AnswerAnalysis::AnswerRelevancyRun"
