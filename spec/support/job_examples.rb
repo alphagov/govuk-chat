@@ -5,8 +5,8 @@ module JobExamples
     end
   end
 
-  shared_examples "a job that adheres to the auto_evaluation quota" do |evaluation_class|
-    let(:answer) { create(:answer) }
+  shared_examples "a job that adheres to the auto_evaluation quota" do |evaluation_class, answer_attributes = {}|
+    let(:answer) { create(:answer, **answer_attributes) }
     let(:beginning_of_current_hour) { Time.current.beginning_of_hour }
 
     it "writes the auto_evaluations_count cache key on the first evaluation" do
@@ -51,14 +51,14 @@ module JobExamples
       end
 
       travel_to(beginning_of_current_hour + 30.minutes) do
-        answer_in_same_hour = create(:answer)
+        answer_in_same_hour = create(:answer, **answer_attributes)
         described_class.new.perform(answer_in_same_hour.id)
         key = "auto_evaluations_count_#{beginning_of_current_hour.to_i}"
         expect(Rails.cache.read(key)).to eq(2)
       end
 
       travel_to(beginning_of_current_hour + 1.hour) do
-        answer_in_next_hour = create(:answer)
+        answer_in_next_hour = create(:answer, **answer_attributes)
         described_class.new.perform(answer_in_next_hour.id)
         key = "auto_evaluations_count_#{(beginning_of_current_hour + 1.hour).to_i}"
         expect(Rails.cache.read(key)).to eq(1)
@@ -76,8 +76,8 @@ module JobExamples
     end
   end
 
-  shared_examples "a job that retries on aws sdk errors" do |evaluation_class|
-    let(:answer) { create(:answer) }
+  shared_examples "a job that retries on aws sdk errors" do |evaluation_class, answer_attributes = {}|
+    let(:answer) { create(:answer, **answer_attributes) }
     errors = [
       Aws::Errors::ServiceError.new(nil, "error"),
       Seahorse::Client::NetworkingError.new(StandardError.new),

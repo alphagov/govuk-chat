@@ -396,6 +396,30 @@ RSpec.describe Answer do
     end
   end
 
+  describe "#eligible_for_request_type_analysis?" do
+    described_class::QUESTION_ROUTING_LABELS_FOR_REQUEST_TYPE_ANALYSIS.each do |label|
+      it "returns true for answers with the #{label} question routing label" do
+        answer = build(:answer, question_routing_label: label)
+        expect(answer.eligible_for_request_type_analysis?).to be(true)
+      end
+    end
+
+    ineligible_labels = described_class.question_routing_labels.keys -
+      described_class::QUESTION_ROUTING_LABELS_FOR_REQUEST_TYPE_ANALYSIS
+
+    ineligible_labels.each do |label|
+      it "returns false for answers with the #{label} question routing label" do
+        answer = build(:answer, question_routing_label: label)
+        expect(answer.eligible_for_request_type_analysis?).to be(false)
+      end
+    end
+
+    it "returns false for answers without a question routing label" do
+      answer = build(:answer, question_routing_label: nil)
+      expect(answer.eligible_for_request_type_analysis?).to be(false)
+    end
+  end
+
   describe "#has_analysis?" do
     it "returns true if topics are present" do
       answer = build(:answer, :with_topics)
