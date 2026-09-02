@@ -96,6 +96,14 @@ namespace :evaluation do
     puts(result.to_json)
   end
 
+  desc "Produce request types for a user question"
+  task generate_request_types_for_question: :environment do
+    raise "Requires an INPUT env var" if ENV["INPUT"].blank?
+
+    result = AutoEvaluation::RequestTypeTagger.call(ENV["INPUT"])
+    puts(result.to_json)
+  end
+
   desc "Batch process a YAML file of questions using any single-input rake task"
   task :batch_process, %i[task_name] => :environment do |task, args|
     input_path, output_path, concurrency = ENV.values_at("INPUT_PATH", "OUTPUT_PATH", "CONCURRENCY")
