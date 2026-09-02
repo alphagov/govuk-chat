@@ -188,20 +188,8 @@ RSpec.describe Answer do
         .and include("sources" => answer.sources.map(&:serialize_for_export))
     end
 
-    it "converts the llm_responses to unparsed JSON" do
-      answer = create(
-        :answer,
-        llm_responses: {
-          "question_routing" => { some: "hash" },
-          "structured_answer" => { another: "hash" },
-        },
-      )
-
-      expected_response = answer.as_json.merge(
-        "llm_responses" => answer.llm_responses.to_json,
-        "sources" => [],
-      )
-      expect(answer.serialize_for_export).to eq(expected_response)
+    it_behaves_like "serializes llm_responses as unparsed JSON" do
+      let(:factory_name) { :answer }
     end
   end
 

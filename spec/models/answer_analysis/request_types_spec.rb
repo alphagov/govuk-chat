@@ -16,11 +16,8 @@ RSpec.describe AnswerAnalysis::RequestTypes do
       expect(request_types.serialize_for_export).to eq(request_types.as_json)
     end
 
-    it "converts the llm_responses to unparsed JSON" do
-      llm_responses = { "some" => "response" }
-      request_types = create(:answer_analysis_request_types, llm_responses:)
-      expected_response = request_types.as_json.merge("llm_responses" => llm_responses.to_json)
-      expect(request_types.serialize_for_export).to eq(expected_response)
+    it_behaves_like "serializes llm_responses as unparsed JSON" do
+      let(:factory_name) { :answer_analysis_request_types }
     end
   end
 end
