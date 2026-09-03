@@ -8,19 +8,19 @@ RSpec.describe Api::RateLimit::Middleware do
     let(:env) do
       {
         "rack.attack.throttle_data" => {
-          Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME => {
+          Api::RateLimit::GOVUK_API_USER_DEFAULT_THROTTLE_NAME => {
             limit: 10,
             count: 3,
             period: 60,
             epoch_time: current_time,
           },
-          Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME => {
+          Api::RateLimit::GOVUK_API_USER_CONVERSATION_WRITE_THROTTLE_NAME => {
             limit: 6,
             count: 1,
             period: 60,
             epoch_time: current_time,
           },
-          Api::RateLimit::GOVUK_END_USER_READ_THROTTLE_NAME => {
+          Api::RateLimit::GOVUK_END_USER_DEFAULT_THROTTLE_NAME => {
             limit: 5,
             count: 5,
             period: 60,
@@ -57,14 +57,14 @@ RSpec.describe Api::RateLimit::Middleware do
     end
 
     it "does not allow negative remaining requests" do
-      env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME][:count] = 15
+      env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_DEFAULT_THROTTLE_NAME][:count] = 15
 
       _, headers = middleware.call(env)
 
       expect(headers["Govuk-Api-User-Read-RateLimit-Remaining"]).to eq("0")
     end
 
-    context "with read requests" do
+    context "with default requests" do
       it "sends the metrics to Prometheus for the requests used" do
         travel_to(Time.zone.local(2000, 1, 1)) do
           allow(PrometheusMetrics).to receive(:gauge)
@@ -80,8 +80,8 @@ RSpec.describe Api::RateLimit::Middleware do
 
       context "when notifying Slack" do
         it "notifies if the requests exceed the threshold" do
-          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME][:limit] = 50
-          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME][:count] = 49
+          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_DEFAULT_THROTTLE_NAME][:limit] = 50
+          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_DEFAULT_THROTTLE_NAME][:count] = 49
 
           travel_to(Time.zone.local(2000, 1, 1)) do
             expect(NotifySlackApiUserRateLimitWarningJob).to receive(:perform_later).with(
@@ -92,12 +92,12 @@ RSpec.describe Api::RateLimit::Middleware do
         end
 
         it "only enqueues one Slack notification per window", :memory_cache do
-          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME][:limit] = 50
-          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME][:count] = 48
+          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_DEFAULT_THROTTLE_NAME][:limit] = 50
+          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_DEFAULT_THROTTLE_NAME][:count] = 48
 
           travel_to(Time.zone.local(2000, 1, 1)) do
             3.times do
-              env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME][:count] += 1
+              env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_DEFAULT_THROTTLE_NAME][:count] += 1
               middleware.call(env)
             end
 
@@ -107,7 +107,7 @@ RSpec.describe Api::RateLimit::Middleware do
       end
     end
 
-    context "with write requests" do
+    context "with conversation write requests" do
       it "sends the metrics to Prometheur for the requests used" do
         travel_to(Time.zone.local(2000, 1, 1)) do
           allow(PrometheusMetrics).to receive(:gauge)
@@ -122,9 +122,9 @@ RSpec.describe Api::RateLimit::Middleware do
       end
 
       context "when notifying Slack" do
-        it "notifies if the write requests exceed the threshold" do
-          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME][:limit] = 50
-          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME][:count] = 49
+        it "notifies if the conversation write requests exceed the threshold" do
+          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_CONVERSATION_WRITE_THROTTLE_NAME][:limit] = 50
+          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_CONVERSATION_WRITE_THROTTLE_NAME][:count] = 49
 
           travel_to(Time.zone.local(2000, 1, 1)) do
             expect(NotifySlackApiUserRateLimitWarningJob).to receive(:perform_later).with(
@@ -135,12 +135,12 @@ RSpec.describe Api::RateLimit::Middleware do
         end
 
         it "only enqueues one Slack notification per window", :memory_cache do
-          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME][:limit] = 50
-          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME][:count] = 48
+          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_CONVERSATION_WRITE_THROTTLE_NAME][:limit] = 50
+          env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_CONVERSATION_WRITE_THROTTLE_NAME][:count] = 48
 
           travel_to(Time.zone.local(2000, 1, 1)) do
             3.times do
-              env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME][:count] += 1
+              env["rack.attack.throttle_data"][Api::RateLimit::GOVUK_API_USER_CONVERSATION_WRITE_THROTTLE_NAME][:count] += 1
               middleware.call(env)
             end
 

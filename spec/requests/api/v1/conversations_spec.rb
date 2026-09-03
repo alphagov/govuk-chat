@@ -10,9 +10,9 @@ RSpec.describe "Api::V1::ConversationsController" do
     let(:route_params) { {} }
 
     before do
-      read_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME]
+      read_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_API_USER_DEFAULT_THROTTLE_NAME]
       allow(read_throttle).to receive(:limit).and_return(1)
-      write_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME]
+      write_throttle = Rack::Attack.throttles[Api::RateLimit::GOVUK_API_USER_CONVERSATION_WRITE_THROTTLE_NAME]
       allow(write_throttle).to receive(:limit).and_return(1)
     end
 

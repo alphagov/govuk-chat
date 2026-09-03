@@ -1,9 +1,15 @@
 class Api::RateLimit::Middleware
+  # The "Read" and "Write" header prefixes, and the Prometheus and Slack names
+  # derived from them below, date from when these throttles were split by HTTP
+  # method. They're kept so API clients don't have to change update their integration.
+  # "Write" now means that a question is persisted and an answer is generated. Answer
+  # generation is expensive as it involves multiple model invocations.
+  # "Read" captures everything else including answer feedback being persisted.
   THROTTLE_TO_PREFIX_MAPPING = {
-    Api::RateLimit::GOVUK_API_USER_READ_THROTTLE_NAME => "Govuk-Api-User-Read",
-    Api::RateLimit::GOVUK_API_USER_WRITE_THROTTLE_NAME => "Govuk-Api-User-Write",
-    Api::RateLimit::GOVUK_END_USER_READ_THROTTLE_NAME => "Govuk-End-User-Id-Read",
-    Api::RateLimit::GOVUK_END_USER_WRITE_THROTTLE_NAME => "Govuk-End-User-Id-Write",
+    Api::RateLimit::GOVUK_API_USER_DEFAULT_THROTTLE_NAME => "Govuk-Api-User-Read",
+    Api::RateLimit::GOVUK_API_USER_CONVERSATION_WRITE_THROTTLE_NAME => "Govuk-Api-User-Write",
+    Api::RateLimit::GOVUK_END_USER_DEFAULT_THROTTLE_NAME => "Govuk-End-User-Id-Read",
+    Api::RateLimit::GOVUK_END_USER_CONVERSATION_WRITE_THROTTLE_NAME => "Govuk-End-User-Id-Write",
   }.freeze
   SLACK_NOTIFICATION_THRESHOLD_PERCENTAGE = 75
   SLACK_NOTIFICATION_PERIOD = 15.minutes
