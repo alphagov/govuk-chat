@@ -17,4 +17,14 @@ module ExportableModelExamples
       expect(exportable_records).to eq([])
     end
   end
+
+  shared_examples "serializes llm_responses as unparsed JSON" do
+    it "converts the llm_responses to unparsed JSON" do
+      llm_responses = { "some" => { "llm" => "response" } }
+      record = build(factory_name, llm_responses:)
+
+      expect(record.serialize_for_export)
+        .to include("llm_responses" => llm_responses.to_json)
+    end
+  end
 end

@@ -188,20 +188,8 @@ RSpec.describe Answer do
         .and include("sources" => answer.sources.map(&:serialize_for_export))
     end
 
-    it "converts the llm_responses to unparsed JSON" do
-      answer = create(
-        :answer,
-        llm_responses: {
-          "question_routing" => { some: "hash" },
-          "structured_answer" => { another: "hash" },
-        },
-      )
-
-      expected_response = answer.as_json.merge(
-        "llm_responses" => answer.llm_responses.to_json,
-        "sources" => [],
-      )
-      expect(answer.serialize_for_export).to eq(expected_response)
+    it_behaves_like "serializes llm_responses as unparsed JSON" do
+      let(:factory_name) { :answer }
     end
   end
 
@@ -405,6 +393,30 @@ RSpec.describe Answer do
         answer = build(:answer, status:)
         expect(answer.eligible_for_topic_analysis?).to be(false)
       end
+    end
+  end
+
+  describe "#eligible_for_request_type_analysis?" do
+    described_class::QUESTION_ROUTING_LABELS_FOR_REQUEST_TYPE_ANALYSIS.each do |label|
+      it "returns true for answers with the #{label} question routing label" do
+        answer = build(:answer, question_routing_label: label)
+        expect(answer.eligible_for_request_type_analysis?).to be(true)
+      end
+    end
+
+    ineligible_labels = described_class.question_routing_labels.keys -
+      described_class::QUESTION_ROUTING_LABELS_FOR_REQUEST_TYPE_ANALYSIS
+
+    ineligible_labels.each do |label|
+      it "returns false for answers with the #{label} question routing label" do
+        answer = build(:answer, question_routing_label: label)
+        expect(answer.eligible_for_request_type_analysis?).to be(false)
+      end
+    end
+
+    it "returns false for answers without a question routing label" do
+      answer = build(:answer, question_routing_label: nil)
+      expect(answer.eligible_for_request_type_analysis?).to be(false)
     end
   end
 

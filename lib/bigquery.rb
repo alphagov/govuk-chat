@@ -5,6 +5,7 @@ module Bigquery
     ExportTable.new(name: "questions", time_partitioning_field: "created_at", model: Question),
     ExportTable.new(name: "answer_feedback", time_partitioning_field: "created_at", model: AnswerFeedback),
     ExportTable.new(name: "answer_analysis_topics", time_partitioning_field: "created_at", model: AnswerAnalysis::Topics),
+    ExportTable.new(name: "answer_analysis_request_types", time_partitioning_field: "created_at", model: AnswerAnalysis::RequestTypes),
     ExportTable.new(name: "answer_analysis_answer_relevancy_runs", time_partitioning_field: "created_at", model: AnswerAnalysis::AnswerRelevancyRun),
     ExportTable.new(name: "answer_analysis_coherence_runs", time_partitioning_field: "created_at", model: AnswerAnalysis::CoherenceRun),
     ExportTable.new(name: "answer_analysis_context_relevancy_runs", time_partitioning_field: "created_at", model: AnswerAnalysis::ContextRelevancyRun),

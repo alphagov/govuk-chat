@@ -7,19 +7,8 @@ shared_examples "auto evaluation exportable runs" do
       expect(record.serialize_for_export).to eq(record.as_json)
     end
 
-    it "converts the llm_responses to unparsed JSON when present" do
-      record = build(
-        run_factory_name,
-        llm_responses: {
-          "verdicts" => { "verdicts" => [{ "verdict" => "yes" }] },
-          "reason" => { "reason" => "This is the reason for the score." },
-        },
-      )
-
-      expected = record.as_json.merge(
-        "llm_responses" => record.llm_responses.to_json,
-      )
-      expect(record.serialize_for_export).to eq(expected)
+    it_behaves_like "serializes llm_responses as unparsed JSON" do
+      let(:factory_name) { run_factory_name }
     end
   end
 

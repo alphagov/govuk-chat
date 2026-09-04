@@ -1,6 +1,7 @@
 module AnswerAnalysis
   def self.enqueue_async_analysis(answer)
     TagTopicsJob.perform_later(answer.id)
+    TagRequestTypesJob.perform_later(answer.id)
     AnswerRelevancyJob.perform_later(answer.id)
     CoherenceJob.perform_later(answer.id)
     FaithfulnessJob.perform_later(answer.id)

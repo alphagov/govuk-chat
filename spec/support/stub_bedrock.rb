@@ -333,6 +333,31 @@ module StubBedrock
     )
   end
 
+  def stub_bedrock_invoke_model_openai_oss_request_type_tagger(user_question,
+                                                               llm_response: {
+                                                                 primary_label: "FACTUAL_LOOKUP",
+                                                                 secondary_label: "DO_TASK",
+                                                                 confidence: 0.9,
+                                                                 reasoning: "reason",
+                                                               })
+    prompts = AutoEvaluation::Prompts.config.request_type
+
+    system_prompt = prompts.fetch(:system_prompt)
+    tool = prompts.fetch(:tool_spec)
+
+    stub_bedrock_invoke_model_openai_oss_tool_call(
+      user_question,
+      tool,
+      llm_response.to_json,
+      system_prompt:,
+      usage: {
+        completion_tokens: 35,
+        prompt_tokens: 25,
+        prompt_tokens_details: { cached_tokens: 10, total_tokens: 60 },
+      },
+    )
+  end
+
   def stub_bedrock_invoke_model_openai_oss_topic_tagger(user_question,
                                                         llm_response: {
                                                           primary_topic: "business",

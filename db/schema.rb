@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_27_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_02_102436) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -18,6 +18,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_27_090000) do
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "answer_analysis_request_types_status", ["success", "error"]
   create_enum "answer_analysis_run_status", ["success", "failure", "error"]
   create_enum "answer_analysis_topics_status", ["success", "error"]
   create_enum "answer_completeness", ["complete", "partial", "no_information"]
@@ -77,6 +78,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_27_090000) do
     t.enum "status", default: "success", null: false, enum_type: "answer_analysis_run_status"
     t.datetime "updated_at", null: false
     t.index ["answer_id"], name: "index_answer_analysis_faithfulness_runs_on_answer_id"
+  end
+
+  create_table "answer_analysis_request_types", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "answer_id", null: false
+    t.decimal "confidence"
+    t.datetime "created_at", null: false
+    t.string "error_message"
+    t.jsonb "llm_responses", default: {}, null: false
+    t.jsonb "metrics", default: {}, null: false
+    t.string "primary_request_type"
+    t.string "reasoning"
+    t.string "secondary_request_type"
+    t.enum "status", default: "success", null: false, enum_type: "answer_analysis_request_types_status"
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_answer_analysis_request_types_on_answer_id", unique: true
   end
 
   create_table "answer_analysis_topics", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -232,6 +248,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_27_090000) do
   add_foreign_key "answer_analysis_coherence_runs", "answers", on_delete: :cascade
   add_foreign_key "answer_analysis_context_relevancy_runs", "answers", on_delete: :cascade
   add_foreign_key "answer_analysis_faithfulness_runs", "answers", on_delete: :cascade
+  add_foreign_key "answer_analysis_request_types", "answers", on_delete: :cascade
   add_foreign_key "answer_analysis_topics", "answers", on_delete: :cascade
   add_foreign_key "answer_feedback", "answers", on_delete: :cascade
   add_foreign_key "answer_sources", "answer_source_chunks", on_delete: :restrict

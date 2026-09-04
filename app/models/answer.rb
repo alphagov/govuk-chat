@@ -49,6 +49,13 @@ class Answer < ApplicationRecord
     guardrails_jailbreak
   ].freeze
 
+  QUESTION_ROUTING_LABELS_FOR_REQUEST_TYPE_ANALYSIS = %w[
+    advice_opinions_predictions
+    genuine_rag
+    requires_account_data
+    unclear_intent
+  ].freeze
+
   scope :aggregate_status, ->(status) { where("SPLIT_PART(status::TEXT, '_', 1) = ?", status) }
 
   after_commit :send_answer_count_to_prometheus, on: :create
@@ -57,6 +64,7 @@ class Answer < ApplicationRecord
   has_one :feedback, class_name: "AnswerFeedback", dependent: :destroy, strict_loading: false
   has_many :sources, -> { order(relevancy: :asc) }, class_name: "AnswerSource"
   has_one :topics, class_name: "AnswerAnalysis::Topics"
+  has_one :request_types, class_name: "AnswerAnalysis::RequestTypes"
   has_many :answer_relevancy_runs,
            -> { order(:created_at) },
            class_name: "AnswerAnalysis::AnswerRelevancyRun"
@@ -188,6 +196,10 @@ class Answer < ApplicationRecord
 
   def eligible_for_topic_analysis?
     STATUSES_EXCLUDED_FROM_TOPIC_ANALYSIS.exclude?(status)
+  end
+
+  def eligible_for_request_type_analysis?
+    question_routing_label.in?(QUESTION_ROUTING_LABELS_FOR_REQUEST_TYPE_ANALYSIS)
   end
 
   def set_sources_as_unused

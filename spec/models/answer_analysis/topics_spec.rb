@@ -16,11 +16,8 @@ RSpec.describe AnswerAnalysis::Topics do
       expect(topics.serialize_for_export).to eq(topics.as_json)
     end
 
-    it "converts the llm_responses to unparsed JSON" do
-      llm_responses = { "some" => "response" }
-      topics = create(:answer_analysis_topics, llm_responses:)
-      expected_response = topics.as_json.merge("llm_responses" => llm_responses.to_json)
-      expect(topics.serialize_for_export).to eq(expected_response)
+    it_behaves_like "serializes llm_responses as unparsed JSON" do
+      let(:factory_name) { :answer_analysis_topics }
     end
   end
 end

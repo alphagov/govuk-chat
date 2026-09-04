@@ -383,6 +383,33 @@ RSpec.describe "rake evaluation tasks" do
     end
   end
 
+  describe "generate_request_types_for_question" do
+    let(:task_name) { "evaluation:generate_request_types_for_question" }
+    let(:input) { "User question" }
+
+    before { Rake::Task[task_name].reenable }
+
+    it_behaves_like "a task requiring an input"
+
+    it "outputs the response as JSON to stdout" do
+      ClimateControl.modify(INPUT: input) do
+        result = AutoEvaluation::RequestTypeTagger::Result.new(
+          status: "success",
+          primary_request_type: "factual_lookup",
+          secondary_request_type: "do_task",
+          confidence: 0.9,
+          reasoning: "The user is asking for a specific figure.",
+          metrics: {},
+          llm_response: {},
+        )
+        allow(AutoEvaluation::RequestTypeTagger).to receive(:call).with(input).and_return(result)
+
+        expect { Rake::Task[task_name].invoke }
+          .to output("#{result.to_json}\n").to_stdout
+      end
+    end
+  end
+
   describe "batch_process" do
     let(:task_name) { "evaluation:batch_process" }
     let(:usage_regex) { /#{Regexp.escape('Usage: evaluation:batch_process[task_name, *task_args]')}/ }

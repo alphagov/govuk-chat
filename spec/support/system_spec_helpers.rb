@@ -56,6 +56,7 @@ module SystemSpecHelpers
 
     stub_claude_output_guardrails(answer)
     stub_bedrock_invoke_model_openai_oss_topic_tagger(question)
+    stub_bedrock_invoke_model_openai_oss_request_type_tagger(question)
     stub_bedrock_invoke_model_openai_oss_answer_relevancy(
       question_message: question,
       answer_message: answer,
