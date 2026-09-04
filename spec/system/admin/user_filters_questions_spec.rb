@@ -36,6 +36,23 @@ RSpec.describe "Admin user filters questions" do
     and_i_filter_by_questions_with_a_specific_question_routing_label
     then_i_see_the_question_with_that_routing_label
 
+    when_i_clear_the_filters
+    and_i_filter_by_questions_with_a_specific_primary_topic
+    then_i_see_the_question_with_that_primary_topic
+
+    when_i_clear_the_filters
+    and_i_filter_by_questions_with_a_specific_secondary_topic
+    then_i_see_the_question_with_that_secondary_topic
+
+    when_i_clear_the_filters
+    and_i_filter_by_questions_with_a_specific_primary_request_type
+    then_i_see_the_question_with_that_primary_request_type
+
+    when_i_clear_the_filters
+    and_i_filter_by_questions_with_a_specific_secondary_request_type
+    then_i_see_the_question_with_that_secondary_request_type
+
+    when_i_clear_the_filters
     when_i_view_the_questions_conversation
     and_i_filter_on_the_pending_status
     then_i_see_the_pending_question
@@ -81,6 +98,10 @@ RSpec.describe "Admin user filters questions" do
     @question3 = create(:question, conversation: api_conversation, message: "Greetings world", created_at: 1.minute.ago)
     create(:answer, question: @question2, question_routing_label: "non_english", completeness: :partial)
     create(:answer, status: :clarification, question: @question3)
+    create(:answer_analysis_topics, answer: @question2.answer, primary_topic: "business", secondary_topic: "tax")
+    create(:answer_analysis_topics, answer: @question3.answer, primary_topic: "tax", secondary_topic: "business")
+    create(:answer_analysis_request_types, answer: @question2.answer, primary_request_type: "factual_lookup", secondary_request_type: "do_task")
+    create(:answer_analysis_request_types, answer: @question3.answer, primary_request_type: "do_task", secondary_request_type: "factual_lookup")
     create(:answer_feedback, answer: @question2.answer, reaction: :positive)
     create(:answer_feedback, answer: @question3.answer, reaction: :negative)
   end
@@ -248,6 +269,50 @@ RSpec.describe "Admin user filters questions" do
     expect(page).to have_content(@question2.message)
     expect(page).not_to have_content(@question1.message)
     expect(page).not_to have_content(@question3.message)
+  end
+
+  def and_i_filter_by_questions_with_a_specific_primary_topic
+    select "Business", from: "primary_topic"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_question_with_that_primary_topic
+    expect(page).to have_content(@question2.message)
+    expect(page).not_to have_content(@question1.message)
+    expect(page).not_to have_content(@question3.message)
+  end
+
+  def and_i_filter_by_questions_with_a_specific_secondary_topic
+    select "Business", from: "secondary_topic"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_question_with_that_secondary_topic
+    expect(page).to have_content(@question3.message)
+    expect(page).not_to have_content(@question1.message)
+    expect(page).not_to have_content(@question2.message)
+  end
+
+  def and_i_filter_by_questions_with_a_specific_primary_request_type
+    select "Factual lookup", from: "primary_request_type"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_question_with_that_primary_request_type
+    expect(page).to have_content(@question2.message)
+    expect(page).not_to have_content(@question1.message)
+    expect(page).not_to have_content(@question3.message)
+  end
+
+  def and_i_filter_by_questions_with_a_specific_secondary_request_type
+    select "Factual lookup", from: "secondary_request_type"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_question_with_that_secondary_request_type
+    expect(page).to have_content(@question3.message)
+    expect(page).not_to have_content(@question1.message)
+    expect(page).not_to have_content(@question2.message)
   end
 
   def when_i_view_the_questions_conversation

@@ -27,45 +27,47 @@
               end
   %>
 
-  <%= render "govuk_publishing_components/components/summary_list", {
-    title: "Topics",
-    heading_size: "l",
-    heading_level: 2,
-    margin_bottom: 4,
-    items: items,
-  } %>
+  <%= render "tagging_analysis", title: "Topics", tagging: topics, items: %>
+<% end %>
 
-  <% if topics.llm_responses.present? %>
-    <%= render "govuk_publishing_components/components/details", {
-      title: "LLM responses",
-    } do %>
-      <% topics.llm_responses.each do |namespace, response| %>
-        <h3 class="govuk-heading-m"><%= namespace %></h3>
-        <p class="govuk-body">
-          <%= render("components/code_snippet", content: JSON.pretty_generate(response)) %>
-        </p>
-      <% end %>
-    <% end %>
-  <% end %>
+<% if request_types.present? %>
+  <%
+    items = [
+      {
+        field: "Status",
+        value: request_types.status.humanize,
+      },
+    ]
+    items +=  if request_types.success?
+                [
+                  {
+                    field: "Primary request type",
+                    value: request_types.primary_request_type.humanize,
+                  },
+                  {
+                    field: "Secondary request type",
+                    value: request_types.secondary_request_type&.humanize,
+                  },
+                  {
+                    field: "Confidence",
+                    value: request_types.confidence,
+                  },
+                  {
+                    field: "Reasoning",
+                    value: request_types.reasoning,
+                  },
+                ]
+              else
+                [
+                  {
+                    field: "Error",
+                    value: request_types.error_message,
+                  },
+                ]
+              end
+  %>
 
-  <% if topics.metrics.present? %>
-    <%= render "govuk_publishing_components/components/details", {
-      title: "Metrics",
-    } do %>
-      <% topics.metrics.sort.each do |namespace, metrics| %>
-        <%= render "govuk_publishing_components/components/summary_list", {
-          title: namespace,
-          items: metrics.map do |metric, value|
-            {
-              field: metric,
-              value: value,
-            }
-          end,
-          borderless: true,
-        } %>
-      <% end %>
-    <% end %>
-  <% end %>
+  <%= render "tagging_analysis", title: "Request types", tagging: request_types, items: %>
 <% end %>
 
 <% if answer_relevancy_runs.present? %>
