@@ -301,7 +301,7 @@ GEM
     govuk_personalisation (1.2.0)
       plek (>= 1.9.0)
       rails (>= 6, < 9)
-    govuk_publishing_components (67.0.1)
+    govuk_publishing_components (68.3.0)
       chartkick
       govuk_app_config
       govuk_personalisation (>= 0.7.0)
@@ -408,7 +408,7 @@ GEM
       net-protocol
     net-pop (0.1.2)
       net-protocol
-    net-protocol (0.2.2)
+    net-protocol (0.3.0)
       timeout
     net-smtp (0.5.1)
       net-protocol
@@ -739,7 +739,7 @@ GEM
       netrc (~> 0.8)
     retriable (3.4.1)
     rexml (3.4.4)
-    rouge (5.0.0)
+    rouge (5.1.0)
       strscan (~> 3.1)
     rspec-core (3.13.6)
       rspec-support (~> 3.13.0)
@@ -845,8 +845,8 @@ GEM
       version_gem (~> 1.1, >= 1.1.14)
     sorted_set (1.1.0)
       rbtree
-    sprockets (4.2.2)
-      concurrent-ruby (~> 1.0)
+    sprockets (4.4.1)
+      concurrent-ruby (~> 1.1)
       logger
       rack (>= 2.2.4, < 4)
     sprockets-rails (3.5.2)
@@ -1056,7 +1056,7 @@ CHECKSUMS
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.1.0) sha256=42e0be6caad19ccde78b6eba40ee9ea3af6e8c3b5a6d1543b5d077870f157b19
   govuk_personalisation (1.2.0) sha256=8496e9e30c433846b87547b63ec65c98a64dd92fcf1b46b45e300150a24430b1
-  govuk_publishing_components (67.0.1) sha256=3888d35e7ea6028a3bef7aec8ecddd4264fb617d9001c8a772804ddc97c29178
+  govuk_publishing_components (68.3.0) sha256=868a78725ed543efa262f6399d5732d97ecd7810d84f5a40ef1cf7b9a759226d
   govuk_schemas (6.3.2) sha256=91ff2c17509e55ac799ac6cba883496300e7f35285e2013bcd80002d67c2b8ee
   govuk_sidekiq (12.0.0) sha256=378b0741330212d60c5bdd9787fd8122d71523ef9b61dfbf02d1f3ea666b85f2
   govuk_test (4.1.3) sha256=27334f70966fc52ebceff6b90f487ae294b577dd2b4e469ae6b2a32a44dd1bd5
@@ -1101,7 +1101,7 @@ CHECKSUMS
   net-http (0.9.1) sha256=25ba0b67c63e89df626ed8fac771d0ad24ad151a858af2cc8e6a716ca4336996
   net-imap (0.6.6) sha256=96aa4ee50df3060203e649efc341f53480b791d49e150f2fdebf68beb141a8df
   net-pop (0.1.2) sha256=848b4e982013c15b2f0382792268763b748cce91c9e91e36b0f27ed26420dff3
-  net-protocol (0.2.2) sha256=aa73e0cba6a125369de9837b8d8ef82a61849360eba0521900e2c3713aa162a8
+  net-protocol (0.3.0) sha256=ba310c3d4f1cad46bb1ab20336b06669b1ff8f7c568d9cb9342b32a718547472
   net-smtp (0.5.1) sha256=ed96a0af63c524fceb4b29b0d352195c30d82dd916a42f03c62a3a70e5b70736
   netrc (0.11.0) sha256=de1ce33da8c99ab1d97871726cba75151113f117146becbe45aa85cb3dabee3f
   nio4r (2.7.5) sha256=6c90168e48fb5f8e768419c93abb94ba2b892a1d0602cb06eef16d8b7df1dca1
@@ -1221,7 +1221,7 @@ CHECKSUMS
   rest-client (2.1.0) sha256=35a6400bdb14fae28596618e312776c158f7ebbb0ccad752ff4fa142bf2747e3
   retriable (3.4.1) sha256=fb3f114b7d492121c158c01f3d5152b5a615c5b70d5877d0bc08c7ec3725c3bc
   rexml (3.4.4) sha256=19e0a2c3425dfbf2d4fc1189747bdb2f849b6c5e74180401b15734bc97b5d142
-  rouge (5.0.0) sha256=e2de9bba2f9cb88f8a73bca3643b560b2b398f32f91bf716f584477bc0175ebc
+  rouge (5.1.0) sha256=b77c632842ab7f5147940212f0345808cccfbce864fd5b631d7d12a35ac85452
   rspec-core (3.13.6) sha256=a8823c6411667b60a8bca135364351dda34cd55e44ff94c4be4633b37d828b2d
   rspec-expectations (3.13.5) sha256=33a4d3a1d95060aea4c94e9f237030a8f9eae5615e9bd85718fe3a09e4b58836
   rspec-mocks (3.13.8) sha256=086ad3d3d17533f4237643de0b5c42f04b66348c28bf6b9c2d3f4a3b01af1d47
@@ -1254,7 +1254,7 @@ CHECKSUMS
   smart_properties (1.17.0) sha256=f9323f8122e932341756ddec8e0ac9ec6e238408a7661508be99439ca6d6384b
   snaky_hash (2.0.7) sha256=7d02c70012a3f932e48860cd024577908300c9aa615e0cb9b450aaa749cbcb4d
   sorted_set (1.1.0) sha256=bac01eb16b6bcfcdb7d732a28e87422be8b5c9fdcfeadbe9072682407524ee83
-  sprockets (4.2.2) sha256=761e5a49f1c288704763f73139763564c845a8f856d52fba013458f8af1b59b1
+  sprockets (4.4.1) sha256=fbd665edad0916de5c7abefef0fc616866a60c5e48ce2846f39ac3fc5df9e184
   sprockets-rails (3.5.2) sha256=a9e88e6ce9f8c912d349aa5401509165ec42326baf9e942a85de4b76dbc4119e
   standardwebhooks (1.1.0) sha256=356ba711c14def4fb27310e4163b26bd5cccf325212c3440cabadd825e4be11f
   statsd-ruby (1.5.0) sha256=369ddf09537408e273849e09b84d4edbdac24ac461f5c9b6cacb0e4398190109
