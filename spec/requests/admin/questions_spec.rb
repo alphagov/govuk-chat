@@ -491,6 +491,88 @@ RSpec.describe "Admin::QuestionsController" do
          .and have_selector("#analysis-tab", text: topics.secondary_topic.capitalize)
       end
     end
+
+    context "when request types are present" do
+      let!(:request_types) do
+        create(
+          :answer_analysis_request_types,
+          primary_request_type: "factual_lookup",
+          secondary_request_type: "do_task",
+          confidence: 0.9,
+          reasoning: "The user is asking for a specific figure.",
+          metrics: {
+            request_type_tagger: {
+              duration: 1.5,
+              llm_prompt_tokens: 30,
+              llm_completion_tokens: 20,
+              llm_cached_tokens: 20,
+              model: BedrockModels.model_id(:openai_gpt_oss_120b),
+            },
+          },
+          llm_responses: {
+            "request_type_tagger" => {
+              "tool_calls": [
+                { "id": "request_type_tool_call" },
+              ],
+            },
+          },
+        )
+      end
+      let(:question) { request_types.answer.question }
+
+      it "renders the request types, confidence, reasoning and status" do
+        get admin_show_question_path(question)
+
+        expect(response.body)
+          .to have_content("Factual lookup")
+          .and have_content("Do task")
+          .and have_content("0.9")
+          .and have_content("The user is asking for a specific figure.")
+          .and have_content(request_types.status.humanize)
+      end
+
+      it "renders the error message and error status when the request type analysis errored" do
+        request_types.update!(
+          status: :error,
+          error_message: "An error occurred while analysing the request types.",
+        )
+
+        get admin_show_question_path(question)
+
+        expect(response.body)
+          .to have_content("Error")
+          .and have_content("An error occurred while analysing the request types.")
+      end
+
+      it "renders the request type metrics" do
+        get admin_show_question_path(question)
+
+        expect(response.body.squish)
+          .to have_content("request_type_tagger")
+          .and have_content(/duration.*1\.5/)
+          .and have_content(/llm_prompt_tokens.*30/)
+          .and have_content(/llm_completion_tokens.*20/)
+          .and have_content(/llm_cached_tokens.*20/)
+          .and have_content(/model.*#{BedrockModels.model_id(:openai_gpt_oss_120b)}/)
+      end
+
+      it "renders the request types LLM responses" do
+        get admin_show_question_path(question)
+
+        expect(response.body.squish)
+          .to have_content("request_type_tagger")
+          .and have_content("tool_calls")
+          .and have_content('"id": "request_type_tool_call"')
+      end
+
+      it "renders the request types in the analysis tab" do
+        get admin_show_question_path(question)
+
+        expect(response.body)
+         .to have_selector("#analysis-tab", text: request_types.primary_request_type.humanize)
+         .and have_selector("#analysis-tab", text: request_types.secondary_request_type.humanize)
+      end
+    end
   end
 
   def expect_unprocessable_content_with_date_errors

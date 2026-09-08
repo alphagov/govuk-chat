@@ -15,6 +15,7 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
 
     when_i_click_the_analysis_tab
     then_i_see_the_topics_have_been_tagged
+    and_i_see_the_request_types_have_been_tagged
     and_i_see_the_answer_relevancy_statistics
     and_i_dont_see_the_answer
   end
@@ -70,6 +71,12 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
     expect(page)
       .to have_content("Business")
       .and have_content("Benefits")
+  end
+
+  def and_i_see_the_request_types_have_been_tagged
+    expect(page)
+      .to have_content("Factual lookup")
+      .and have_content("Do task")
   end
 
   def and_i_dont_see_the_answer

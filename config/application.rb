@@ -91,6 +91,15 @@ module GovukChat
                                              .topic_tagger
                                              .dig("tool_spec", "function", "parameters", "properties", "primary_topic", "enum")
                                              .sort
+
+    config.question_request_types = GovukChatPrivate.config
+                                                    .llm_prompts
+                                                    .auto_evaluation
+                                                    .request_type
+                                                    .dig("tool_spec", "function", "parameters", "properties", "primary_label", "enum")
+                                                    .map(&:downcase)
+                                                    .sort
+
     config.max_auto_evaluations_per_hour = 300
 
     config.titan_aws_region = ENV["TITAN_AWS_REGION"] || ENV.fetch("AWS_REGION", "eu-west-1")

@@ -10,6 +10,7 @@ class Admin::QuestionsController < Admin::BaseController
       answer: [
         { sources: :chunk },
         :topics,
+        :request_types,
         :feedback,
         :answer_relevancy_runs,
         :coherence_runs,
@@ -42,6 +43,8 @@ private
       :end_user_id,
       :primary_topic,
       :secondary_topic,
+      :primary_request_type,
+      :secondary_request_type,
       :completeness,
       :conversation_session_id,
       :reaction,

@@ -10,6 +10,8 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :end_user_id
   attribute :primary_topic
   attribute :secondary_topic
+  attribute :primary_request_type
+  attribute :secondary_request_type
   attribute :completeness
   attribute :conversation_session_id
   attribute :reaction
@@ -31,7 +33,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
 
   def results
     @results ||= begin
-      scope = Question.includes(answer: %i[topics feedback])
+      scope = Question.includes(answer: %i[topics request_types feedback])
                       .left_outer_joins(:answer)
       scope = search_scope(scope)
       scope = status_scope(scope)
@@ -46,6 +48,8 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
       scope = conversation_session_id_scope(scope)
       scope = primary_topic_scope(scope)
       scope = secondary_topic_scope(scope)
+      scope = primary_request_type_scope(scope)
+      scope = secondary_request_type_scope(scope)
       scope = completeness_scope(scope)
       scope = reaction_scope(scope)
       scope.page(page)
@@ -81,6 +85,8 @@ private
     filters[:question_routing_label] = question_routing_label if question_routing_label.present?
     filters[:primary_topic] = primary_topic if primary_topic.present?
     filters[:secondary_topic] = secondary_topic if secondary_topic.present?
+    filters[:primary_request_type] = primary_request_type if primary_request_type.present?
+    filters[:secondary_request_type] = secondary_request_type if secondary_request_type.present?
     filters[:completeness] = completeness if completeness.present?
     filters[:conversation_session_id] = conversation_session_id if conversation_session_id.present?
     filters[:reaction] = reaction if reaction.present?
@@ -164,6 +170,20 @@ private
 
     scope.joins(answer: :topics)
          .where(answer_analysis_topics: { secondary_topic: secondary_topic })
+  end
+
+  def primary_request_type_scope(scope)
+    return scope if primary_request_type.blank?
+
+    scope.joins(answer: :request_types)
+         .where(answer_analysis_request_types: { primary_request_type: primary_request_type })
+  end
+
+  def secondary_request_type_scope(scope)
+    return scope if secondary_request_type.blank?
+
+    scope.joins(answer: :request_types)
+         .where(answer_analysis_request_types: { secondary_request_type: secondary_request_type })
   end
 
   def completeness_scope(scope)

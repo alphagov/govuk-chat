@@ -16,7 +16,7 @@ RSpec.describe "Admin user views metrics", :js do
     create_list(:question, 2)
     api_conversation = build(:conversation, source: :api, end_user_id: SecureRandom.uuid)
     create(:question, conversation: api_conversation)
-    create_list(:answer, 2, :with_topics, created_at: 6.hours.ago, status: :unanswerable_llm_cannot_answer)
+    create_list(:answer, 2, :with_topics, :with_request_types, created_at: 6.hours.ago, status: :unanswerable_llm_cannot_answer)
     create_list(:answer, 3, created_at: 4.hours.ago, status: :error_timeout)
     create_list(:answer, 1, created_at: 20.hours.ago, question_routing_label: :genuine_rag)
     create_list(:answer,
@@ -51,6 +51,7 @@ RSpec.describe "Admin user views metrics", :js do
     expect(page).to have_selector("#answer-guardrails-failures canvas")
     expect(page).to have_selector("#question-routing-guardrails-failures canvas")
     expect(page).to have_selector("#topics canvas")
+    expect(page).to have_selector("#request-types canvas")
     expect(page).to have_selector("#answer-completeness canvas")
   end
 

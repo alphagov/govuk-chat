@@ -277,6 +277,32 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([tax_question])
     end
 
+    it "filters the results by primary request type" do
+      factual_lookup_answer = build(:answer, request_types: build(:answer_analysis_request_types, primary_request_type: "factual_lookup"))
+      factual_lookup_question = create(:question, answer: factual_lookup_answer)
+      do_task_answer = build(:answer, request_types: build(:answer_analysis_request_types, primary_request_type: "do_task"))
+      do_task_question = create(:question, answer: do_task_answer)
+
+      filter = described_class.new(primary_request_type: "factual_lookup")
+      expect(filter.results).to eq([factual_lookup_question])
+
+      filter = described_class.new(primary_request_type: "do_task")
+      expect(filter.results).to eq([do_task_question])
+    end
+
+    it "filters the results by secondary request type" do
+      factual_lookup_answer = build(:answer, request_types: build(:answer_analysis_request_types, secondary_request_type: "factual_lookup"))
+      factual_lookup_question = create(:question, answer: factual_lookup_answer)
+      do_task_answer = build(:answer, request_types: build(:answer_analysis_request_types, secondary_request_type: "do_task"))
+      do_task_question = create(:question, answer: do_task_answer)
+
+      filter = described_class.new(secondary_request_type: "factual_lookup")
+      expect(filter.results).to eq([factual_lookup_question])
+
+      filter = described_class.new(secondary_request_type: "do_task")
+      expect(filter.results).to eq([do_task_question])
+    end
+
     it "filters the results by completeness" do
       complete_answer = create(:answer, completeness: "complete")
       complete_question = create(:question, answer: complete_answer)
@@ -409,6 +435,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
         completeness: "complete",
       )
       create(:answer_analysis_topics, answer:, primary_topic: "business", secondary_topic: "tax")
+      create(:answer_analysis_request_types, answer:, primary_request_type: "factual_lookup", secondary_request_type: "do_task")
       create(:answer_feedback, answer:, reaction: :positive)
     end
 
@@ -429,6 +456,8 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       question_routing_label: Answer.question_routing_labels.keys.first,
       primary_topic: "business",
       secondary_topic: "tax",
+      primary_request_type: "factual_lookup",
+      secondary_request_type: "do_task",
       completeness: "complete",
       conversation_session_id:,
       reaction: "positive",

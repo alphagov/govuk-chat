@@ -535,6 +535,76 @@ RSpec.describe "Admin::MetricsController" do
     end
   end
 
+  describe "GET :request_types" do
+    it "renders a successful JSON response" do
+      get admin_metrics_request_types_path
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Content-Type"]).to match("application/json")
+      expect(JSON.parse(response.body)).to eq([])
+    end
+
+    it "returns data of tagged request types for answers generated over the last 24 hours" do
+      2.times do
+        create(:answer_analysis_request_types,
+               answer: create(:answer, created_at: 2.hours.ago),
+               primary_request_type: "factual_lookup",
+               secondary_request_type: "do_task")
+      end
+      2.times do
+        create(:answer_analysis_request_types,
+               answer: create(:answer, created_at: 10.hours.ago),
+               primary_request_type: "do_task",
+               secondary_request_type: "eligibility")
+      end
+
+      create(
+        :answer_analysis_request_types,
+        answer: create(:answer, created_at: 26.hours.ago),
+        primary_request_type: "factual_lookup",
+        secondary_request_type: "do_task",
+      )
+
+      get admin_metrics_request_types_path
+
+      expect(JSON.parse(response.body)).to contain_exactly(
+        ["factual_lookup", 2],
+        ["do_task", 4],
+        ["eligibility", 2],
+      )
+    end
+
+    context "when period is last_7_days" do
+      it "returns data of the tagged request types for answers by day" do
+        2.times do
+          create(:answer_analysis_request_types,
+                 answer: create(:answer, created_at: 3.days.ago),
+                 primary_request_type: "factual_lookup",
+                 secondary_request_type: "do_task")
+        end
+        2.times do
+          create(:answer_analysis_request_types,
+                 answer: create(:answer, created_at: 4.days.ago),
+                 primary_request_type: "do_task",
+                 secondary_request_type: "eligibility")
+        end
+        create(
+          :answer_analysis_request_types,
+          answer: create(:answer, created_at: 8.days.ago),
+          primary_request_type: "factual_lookup",
+          secondary_request_type: "do_task",
+        )
+
+        get admin_metrics_request_types_path(period: "last_7_days")
+
+        expect(JSON.parse(response.body)).to contain_exactly(
+          { "name" => "factual_lookup", "data" => counts_for_last_7_days(days_ago_3: 2) },
+          { "name" => "do_task", "data" => counts_for_last_7_days(days_ago_3: 2, days_ago_4: 2) },
+          { "name" => "eligibility", "data" => counts_for_last_7_days(days_ago_4: 2) },
+        )
+      end
+    end
+  end
+
   describe "GET :answer_completeness" do
     it "renders a successful JSON response" do
       get admin_metrics_answer_completeness_path

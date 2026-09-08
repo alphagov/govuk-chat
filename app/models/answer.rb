@@ -240,6 +240,7 @@ class Answer < ApplicationRecord
 
   def has_analysis?
     topics.present? ||
+      request_types.present? ||
       answer_relevancy_runs.present? ||
       faithfulness_runs.present? ||
       coherence_runs.present? ||

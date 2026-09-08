@@ -193,6 +193,36 @@
   } %>
 
   <%= render "govuk_publishing_components/components/select", {
+    id: "primary_request_type",
+    name: "primary_request_type",
+    label: "Primary request type",
+    heading_size: "s",
+    full_width: true,
+    options: [{text: "", value: ""}] + Rails.configuration.question_request_types.map do |request_type|
+      {
+       text: request_type.humanize,
+       value: request_type,
+       selected: params[:primary_request_type] == request_type,
+      }
+    end,
+  } %>
+
+  <%= render "govuk_publishing_components/components/select", {
+    id: "secondary_request_type",
+    name: "secondary_request_type",
+    label: "Secondary request type",
+    heading_size: "s",
+    full_width: true,
+    options: [{text: "", value: ""}] + Rails.configuration.question_request_types.map do |request_type|
+      {
+       text: request_type.humanize,
+       value: request_type,
+       selected: params[:secondary_request_type] == request_type,
+      }
+    end,
+  } %>
+
+  <%= render "govuk_publishing_components/components/select", {
     id: "completeness",
     name: "completeness",
     label: "Completeness",

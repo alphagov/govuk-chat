@@ -128,6 +128,31 @@ class Admin::MetricsController < Admin::BaseController
     render json: combined_counts.chart_json
   end
 
+  def request_types
+    scope = AnswerAnalysis::RequestTypes.joins(:answer)
+                                        .where(answer: { created_at: start_time.. })
+
+    primary_request_type_scope = scope.where.not(primary_request_type: nil)
+                                      .group(:primary_request_type)
+
+    secondary_request_type_scope = scope.where.not(secondary_request_type: nil)
+                                        .group(:secondary_request_type)
+
+    if @period == :last_7_days
+      primary_request_type_counts = group_by_period(primary_request_type_scope, "answer.created_at").count
+      secondary_request_type_counts = group_by_period(secondary_request_type_scope, "answer.created_at").count
+    else
+      primary_request_type_counts = primary_request_type_scope.count
+      secondary_request_type_counts = secondary_request_type_scope.count
+    end
+
+    combined_counts = primary_request_type_counts.merge(secondary_request_type_counts) do |_name, primary_count, secondary_count|
+      primary_count + secondary_count
+    end
+
+    render json: combined_counts.chart_json
+  end
+
   def answer_completeness
     scope = Answer.where(created_at: start_time..)
                   .where.not(completeness: nil)
