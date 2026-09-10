@@ -2,6 +2,8 @@ require "google/cloud/bigquery"
 
 module Bigquery
   class IndividualExport
+    BATCH_SIZE = 1_000
+
     Result = Data.define(:tempfile, :count)
 
     def self.remove_nil_values(json)
@@ -18,23 +20,21 @@ module Bigquery
     def self.call(...) = new.call(...)
 
     def call(model, export_from: nil, export_until: nil)
-      records_to_export = model.exportable(export_from, export_until)
-                                .map(&:serialize_for_export)
-      export_data = self.class.remove_nil_values(records_to_export)
+      tempfile = nil
+      count = 0
 
-      save_export_data_to_tempfile(export_data)
-    end
+      model.exportable(export_from, export_until).in_batches(of: BATCH_SIZE) do |batch|
+        export_data = self.class.remove_nil_values(batch.map(&:serialize_for_export))
+        next unless export_data
 
-  private
+        tempfile ||= Tempfile.new
+        export_data.each { |record| tempfile.puts(record.to_json) }
+        count += export_data.count
+      end
 
-    def save_export_data_to_tempfile(export_data)
-      return Result.new(tempfile: nil, count: 0) unless export_data
+      tempfile&.rewind
 
-      tempfile = Tempfile.new
-      export_data.each { |record| tempfile.puts(record.to_json) }
-      tempfile.rewind
-
-      Result.new(tempfile:, count: export_data.count)
+      Result.new(tempfile:, count:)
     end
   end
 end
