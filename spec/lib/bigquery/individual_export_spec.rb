@@ -71,6 +71,15 @@ RSpec.describe Bigquery::IndividualExport do
         expect(result.count).to eq(3)
       end
 
+      it "writes every record to a single tempfile when they span multiple batches" do
+        stub_const("#{described_class}::BATCH_SIZE", 2)
+        create_list(:answer, 5, created_at: 2.hours.ago)
+
+        result = described_class.call(model, export_from:, export_until:)
+
+        expect(result.count).to eq(5)
+      end
+
       it "has a tempfile containing JSON of the models serialized for export with nil values removed" do
         # export timestamp is based on when answer is generated, hence easier to
         # create an answer and look up the question than a question with an
