@@ -796,7 +796,7 @@ GEM
       lint_roller (~> 1.1)
       rubocop (~> 1.81)
     ruby-progressbar (1.13.0)
-    rubyzip (3.2.2)
+    rubyzip (3.4.0)
     sass-embedded (1.81.0-aarch64-linux-gnu)
       google-protobuf (~> 4.28)
     sass-embedded (1.81.0-arm-linux-gnueabihf)
@@ -1236,7 +1236,7 @@ CHECKSUMS
   rubocop-rake (0.7.1) sha256=3797f2b6810c3e9df7376c26d5f44f3475eda59eb1adc38e6f62ecf027cbae4d
   rubocop-rspec (3.9.0) sha256=8fa70a3619408237d789aeecfb9beef40576acc855173e60939d63332fdb55e2
   ruby-progressbar (1.13.0) sha256=80fc9c47a9b640d6834e0dc7b3c94c9df37f08cb072b7761e4a71e22cff29b33
-  rubyzip (3.2.2) sha256=c0ed99385f0625415c8f05bcae33fe649ed2952894a95ff8b08f26ca57ea5b3c
+  rubyzip (3.4.0) sha256=6de39bc9eba302b635a476d16c9e16b0872ad24517c2f98f2b3a7ea23caff57b
   sass-embedded (1.81.0-aarch64-linux-gnu) sha256=9087759cf2f16d0a9263eb97a812dce9882ce79353cfb416f5721835ba2d8706
   sass-embedded (1.81.0-arm-linux-gnueabihf) sha256=f5537ac4549a046d5c3387d8d216ab7bccf2c4c7e635299afb2d2100bdba973f
   sass-embedded (1.81.0-arm64-darwin) sha256=85a852fb2fc1cc644ff193b25b96e2fec1196b9c9a687344d1927e3f39135ec7
