@@ -757,6 +757,7 @@ components:
         - id
         - created_at
         - message
+        - status
       properties:
         id:
           type: string
@@ -770,6 +771,41 @@ components:
 
             Soft line breaks should not be treated as hard line breaks.
           type: string
+        status:
+          description: |
+            The outcome of the answer generation pipeline.
+
+            - `answered`: the question was answered successfully using
+              GOV.UK content.
+            - `clarification`: the question was a greeting or had unclear
+              intent, and the user has been asked to clarify.
+            - `guardrails_*`: the question or generated answer was
+              triggered guardrails (e.g. jailbreak guardrails)
+            - `unanswerable_*`: the question could not be answered
+              (e.g. no relevant GOV.UK content found, question routed as
+              out of scope).
+            - `error_*`: a system error occurred during answer generation
+              (e.g. LLM service failure, timeout, unparseable guardrails
+              response). These are system reliability issues, not answer
+              quality issues. Consumers may not want to solicit user
+              feedback for answers with these statuses.
+          type: string
+          enum:
+            - answered
+            - clarification
+            - error_answer_guardrails
+            - error_answer_service_error
+            - error_jailbreak_guardrails
+            - error_non_specific
+            - error_question_routing_guardrails
+            - error_timeout
+            - guardrails_answer
+            - guardrails_forbidden_terms
+            - guardrails_jailbreak
+            - guardrails_question_routing
+            - unanswerable_llm_cannot_answer
+            - unanswerable_no_govuk_content
+            - unanswerable_question_routing
         sources:
           type: array
           items:

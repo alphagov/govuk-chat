@@ -10,6 +10,7 @@ RSpec.describe AnswerBlueprint do
         id: answer.id,
         created_at: answer.created_at.iso8601,
         message: answer.message,
+        status: "answered",
         feedback_url:,
       }.as_json
       output_json = described_class.render_as_json(answer)
@@ -24,6 +25,7 @@ RSpec.describe AnswerBlueprint do
         id: answer.id,
         created_at: answer.created_at.iso8601,
         message: answer.message,
+        status: "answered",
         sources: [
           {
             title: "#{answer_source_chunk.title}: #{answer_source_chunk.heading}",
