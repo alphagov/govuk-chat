@@ -2,6 +2,7 @@ class AnswerBlueprint < Blueprinter::Base
   identifier :id
 
   field :message
+  field :status
   field :created_at do |answer, _options|
     answer.created_at.iso8601
   end
