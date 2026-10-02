@@ -147,7 +147,7 @@ GEM
     chartkick (5.2.1)
     climate_control (1.2.0)
     coderay (1.1.3)
-    committee (5.6.3)
+    committee (5.6.4)
       json_schema (~> 0.14, >= 0.14.3)
       openapi_parser (~> 2.0)
       rack (>= 1.5)
@@ -998,7 +998,7 @@ CHECKSUMS
   chartkick (5.2.1) sha256=2848d7de87189f30f28d077eb0bbdebc8a1f0f6f81de1ded95008fe564369949
   climate_control (1.2.0) sha256=36b21896193fa8c8536fa1cd843a07cf8ddbd03aaba43665e26c53ec1bd70aa5
   coderay (1.1.3) sha256=dc530018a4684512f8f38143cd2a096c9f02a1fc2459edcfe534787a7fc77d4b
-  committee (5.6.3) sha256=d6e65e2453c571b5605befe2edd83648aad03cb1515def82ae5fb1be635aaa97
+  committee (5.6.4) sha256=702aa5f0d1c535113ea08e2612cce7d3474db7907c145ff6a8adde63f71ebdb6
   commonmarker (2.10.0) sha256=1884529957bf59bcd4f19fcc29e931f2042760ced273353e8010a20fe4ae68cb
   commonmarker (2.10.0-aarch64-linux) sha256=eeb167dea203dee066eb0dd99b3fd2deb526c8b5e7297ad385f7a5d60f869478
   commonmarker (2.10.0-arm-linux-gnu) sha256=2165642969df6816625c5fa4470a8959345d715daf96dd063fc56913fdbb1b90
