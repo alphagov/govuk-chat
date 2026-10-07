@@ -59,14 +59,16 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
 
   def signon_user
     return @signon_user if defined?(@signon_user)
+    return if signon_user_id.blank?
 
-    @signon_user = SignonUser.includes(:conversations).find_by_id(signon_user_id)
+    @signon_user = SignonUser.includes(:conversations).find(signon_user_id)
   end
 
   def conversation
     return @conversation if defined?(@conversation)
+    return if conversation_id.blank?
 
-    @conversation = Conversation.find_by_id(conversation_id)
+    @conversation = Conversation.find(conversation_id)
   end
 
 private
