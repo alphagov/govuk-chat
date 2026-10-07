@@ -369,9 +369,9 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.signon_user).to be_nil
     end
 
-    it "returns nil if signon_user_id is passed in but the signon_user does not exist" do
+    it "raises an error if signon_user_id is passed in but the signon_user does not exist" do
       filter = described_class.new(signon_user_id: "invalid_id")
-      expect(filter.signon_user).to be_nil
+      expect { filter.signon_user }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
@@ -388,9 +388,9 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.conversation).to be_nil
     end
 
-    it "returns nil if conversation_id is passed in but the conversation does not exist" do
+    it "raises an error if conversation_id is passed in but the conversation does not exist" do
       filter = described_class.new(conversation_id: "invalid_id")
-      expect(filter.conversation).to be_nil
+      expect { filter.conversation }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
