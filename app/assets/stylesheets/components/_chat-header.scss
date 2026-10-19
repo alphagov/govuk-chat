@@ -2,7 +2,7 @@
 @import "mixins";
 
 .app-c-header {
-  .govuk-header__link--homepage {
+  .govuk-header__homepage-link {
     display: inline;
     border-bottom: 3px solid transparent;
 
@@ -36,6 +36,8 @@
   }
 
   .app-c-header__container {
+    @include govuk-clearfix;
+    position: relative;
     padding: govuk-spacing(2) 0;
   }
 }
