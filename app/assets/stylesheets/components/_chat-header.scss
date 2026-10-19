@@ -97,7 +97,7 @@
 }
 
 .app-c-header__tag {
-  background-color: govuk-tint(govuk-colour("yellow"), 75%);
+  background-color: govuk-colour("yellow", $variant: "tint-80");
   color: govuk-colour("black");
   text-transform: capitalize;
   letter-spacing: 0;

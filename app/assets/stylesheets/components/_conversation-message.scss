@@ -100,8 +100,8 @@ $message-container-spacing-mobile: 40px;
 }
 
 .app-c-conversation-message__body--user-message {
-  background-color: govuk-tint(govuk-colour("light-blue"), 75%);
-  outline: 1px solid govuk-tint(govuk-colour("light-blue"), 75%);
+  background-color: govuk-colour("blue", $variant: "tint-80");
+  outline: 1px solid govuk-colour("blue", $variant: "tint-80");
   outline-offset: -1px;
 }
 
