@@ -87,9 +87,10 @@ GEM
     addressable (2.9.0)
       public_suffix (>= 2.0.2, < 8.0)
     amq-protocol (2.7.0)
-    anthropic (1.78.0)
+    anthropic (1.80.0)
       base64 (~> 0.1)
       connection_pool (>= 2, < 4)
+      opentelemetry-api (>= 1.2.4, < 2)
       standardwebhooks (~> 1.0)
     ast (2.4.3)
     auth-sanitizer (0.2.3)
@@ -973,7 +974,7 @@ CHECKSUMS
   activesupport (8.1.4) sha256=891dd3fe43c4fc8391934b237b1189bb1f661c932a84a840043db9d46a4e80df
   addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
   amq-protocol (2.7.0) sha256=a798da91f076cf8225193739d09785201f72acbc5293282a3592ad3eda5b3afc
-  anthropic (1.78.0) sha256=c72f43c258fbc3fdd37f4fd3afb52ee9ccaa46513b4b62397f8ec543b90a4cfe
+  anthropic (1.80.0) sha256=d02c7d532726c195b83de4d7355aaa0462b127f74f74d0b9540b3113356d0ea1
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   auth-sanitizer (0.2.3) sha256=db10aac92cfbe4c64ab637eebcbe1d67395d1694798041362173370f59933e3c
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
