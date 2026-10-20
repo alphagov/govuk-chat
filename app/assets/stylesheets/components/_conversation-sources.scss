@@ -1,5 +1,5 @@
 .app-c-conversation-sources {
-  border-top: 1px solid govuk-colour("mid-grey");
+  border-top: 1px solid govuk-colour("black", $variant: "tint-80");
   margin-top: govuk-spacing(6);
   padding-top: govuk-spacing(4);
 }
@@ -49,7 +49,7 @@
     cursor: pointer;
 
     .app-c-conversation-sources__details-summary-text {
-      color: govuk-colour("dark-blue");
+      color: govuk-colour("blue", $variant: "shade-50");
       text-decoration-thickness: max(3px, .1875rem, .12em);
       -webkit-text-decoration-skip-ink: none;
       text-decoration-skip-ink: none;
@@ -58,15 +58,15 @@
     }
 
     &::after {
-      border-bottom: 2px solid govuk-colour("dark-blue");
-      border-right: 2px solid govuk-colour("dark-blue");
+      border-bottom: 2px solid govuk-colour("blue", $variant: "shade-50");
+      border-right: 2px solid govuk-colour("blue", $variant: "shade-50");
     }
   }
 
   &:focus {
     outline: 3px solid rgb(0, 0, 0, 0);
-    background-color: $govuk-focus-colour;
-    box-shadow: 0 -2px $govuk-focus-colour, 0 4px govuk-colour("black");
+    background-color: govuk-functional-colour(focus);
+    box-shadow: 0 -2px govuk-functional-colour(focus), 0 4px govuk-colour("black");
 
     .app-c-conversation-sources__details-summary-text {
       color: govuk-colour("black");

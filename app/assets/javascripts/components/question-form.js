@@ -114,8 +114,8 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.textarea.value = ''
       this.textareaWrapper.dataset.replicatedValue = ''
 
-      // Trigger keyup event so the character-count component resets and clears the count hint
-      this.textarea.dispatchEvent(new Event('keyup'))
+      // Trigger an input event so the character-count component resets and clears the count hint
+      this.textarea.dispatchEvent(new Event('input'))
     }
 
     replaceErrors (errors) {

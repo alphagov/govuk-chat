@@ -5,7 +5,6 @@
 //
 //= require govuk_publishing_components/components/cookie-banner
 //= require govuk_publishing_components/components/error-summary
-//= require govuk_publishing_components/components/layout-header
 //= require govuk_publishing_components/components/radio
 //= require govuk_publishing_components/components/skip-link
 

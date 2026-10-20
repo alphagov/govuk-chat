@@ -1,8 +1,8 @@
-@import "govuk/components/header/header";
+@import "govuk/components/header";
 @import "mixins";
 
 .app-c-header {
-  .govuk-header__link--homepage {
+  .govuk-header__homepage-link {
     display: inline;
     border-bottom: 3px solid transparent;
 
@@ -14,7 +14,7 @@
 
   .app-c-header__link, .app-c-header__clear-chat {
     &:focus-visible {
-      background-color: $govuk-focus-colour;
+      background-color: govuk-functional-colour(focus);
       color: govuk-colour("black");
       outline: none;
 
@@ -36,6 +36,8 @@
   }
 
   .app-c-header__container {
+    @include govuk-clearfix;
+    position: relative;
     padding: govuk-spacing(2) 0;
   }
 }
@@ -95,7 +97,7 @@
 }
 
 .app-c-header__tag {
-  background-color: govuk-tint(govuk-colour("yellow"), 75%);
+  background-color: govuk-colour("yellow", $variant: "tint-80");
   color: govuk-colour("black");
   text-transform: capitalize;
   letter-spacing: 0;

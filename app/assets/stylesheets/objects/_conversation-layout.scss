@@ -70,7 +70,7 @@ $slide-in-out-translation-px: 67px;
     position: absolute;
     left: 0;
     width: 100%;
-    border-top: 1px solid govuk-colour("mid-grey");
+    border-top: 1px solid govuk-colour("black", $variant: "tint-80");
   }
 }
 

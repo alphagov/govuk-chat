@@ -38,6 +38,13 @@ RSpec.describe Admin::QuestionsHelper do
         expect(tag).to eq(expected_output)
       end
     end
+
+    context "when the status passed in does not have a label colour" do
+      it "returns a tag without a colour modifier class" do
+        tag = helper.format_answer_status_as_tag("unanswerable_question_routing")
+        expect(tag).to eq('<span title="Unanswerable - question routing deemed unanswerable" class="govuk-tag">Unanswerable</span>')
+      end
+    end
   end
 
   describe "#question_show_summary_list_rows" do

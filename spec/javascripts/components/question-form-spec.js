@@ -239,7 +239,7 @@ describe('QuestionForm component', () => {
     it('hides the character count hint', () => {
       // Type in enough characters to make the hint show on screen
       textarea.value = 'A'.repeat(280)
-      textarea.dispatchEvent(new Event('keyup'))
+      textarea.dispatchEvent(new Event('input'))
       expect(form.innerHTML).toContain('You have 20 characters remaining')
 
       div.dispatchEvent(new Event('question-accepted'))
@@ -350,7 +350,7 @@ describe('QuestionForm component', () => {
     it('hides the character count hint', () => {
       // Type in enough characters to make the hint show on screen
       textarea.value = 'A'.repeat(280)
-      textarea.dispatchEvent(new Event('keyup'))
+      textarea.dispatchEvent(new Event('input'))
       expect(form.innerHTML).toContain('You have 20 characters remaining')
 
       div.dispatchEvent(new Event('answer-received'))
