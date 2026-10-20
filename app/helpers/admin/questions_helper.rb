@@ -9,7 +9,7 @@ module Admin
       description = statuses[status].description
 
       tag_title = description ? "#{label} - #{description}" : label.to_s
-      tag_el = tag.span(label, title: tag_title, class: "govuk-tag govuk-tag--#{colour}")
+      tag_el = tag.span(label, title: tag_title, class: token_list("govuk-tag", "govuk-tag--#{colour}" => colour.present?))
 
       if description && with_description_suffix
         safe_join([tag_el, " - #{description}"])

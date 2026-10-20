@@ -5,27 +5,24 @@ answered:
   label_and_description:
 pending:
   label: "Pending"
-  label_colour: "light-blue"
+  label_colour: "grey"
   description:
   label_and_description:
 clarification:
   label: "Clarification"
-  label_colour: "turquoise"
+  label_colour: "teal"
   description: "question routing requested more information"
   label_and_description: "Clarification - question routing requested more information"
 unanswerable_question_routing:
   label: "Unanswerable"
-  label_colour: "blue"
   description: "question routing deemed unanswerable"
   label_and_description: "Unanswerable - question routing deemed unanswerable"
 unanswerable_llm_cannot_answer:
   label: "Unanswerable"
-  label_colour: "blue"
   description: "LLM couldn't answer the question"
   label_and_description: "Unanswerable - LLM couldn't answer the question"
 unanswerable_no_govuk_content:
   label: "Unanswerable"
-  label_colour: "blue"
   description: "no GOV.UK content found"
   label_and_description: "Unanswerable - no GOV.UK content found"
 guardrails_answer:
