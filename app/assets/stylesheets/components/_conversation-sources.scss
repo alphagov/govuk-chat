@@ -65,8 +65,8 @@
 
   &:focus {
     outline: 3px solid rgb(0, 0, 0, 0);
-    background-color: $govuk-focus-colour;
-    box-shadow: 0 -2px $govuk-focus-colour, 0 4px govuk-colour("black");
+    background-color: govuk-functional-colour(focus);
+    box-shadow: 0 -2px govuk-functional-colour(focus), 0 4px govuk-colour("black");
 
     .app-c-conversation-sources__details-summary-text {
       color: govuk-colour("black");

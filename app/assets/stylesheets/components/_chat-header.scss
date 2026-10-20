@@ -14,7 +14,7 @@
 
   .app-c-header__link, .app-c-header__clear-chat {
     &:focus-visible {
-      background-color: $govuk-focus-colour;
+      background-color: govuk-functional-colour(focus);
       color: govuk-colour("black");
       outline: none;
 

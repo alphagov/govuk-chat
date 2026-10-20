@@ -25,12 +25,12 @@
 
 .app-c-question-form__form-group--error, .app-c-question-form__error-list {
   padding-left: govuk-spacing(3);
-  border-left: $govuk-border-width-form-group-error solid $govuk-error-colour;
+  border-left: $govuk-border-width-form-group-error solid govuk-functional-colour(error);
 }
 
 .app-c-question-form__error-message {
   @include govuk-typography-weight-bold($important: false);
-  color: $govuk-error-colour
+  color: govuk-functional-colour(error)
 }
 
 .app-c-question-form__textarea-wrapper {
@@ -58,7 +58,7 @@
   @include govuk-font($size: 19);
 
   &:focus {
-    outline: $govuk-focus-width solid $govuk-focus-colour;
+    outline: $govuk-focus-width solid govuk-functional-colour(focus);
     outline-offset: 0;
     box-shadow: inset 0 0 0 $govuk-border-width-form-element;
   }
