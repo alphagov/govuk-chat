@@ -24,6 +24,9 @@ FROM $base_image
 
 ENV GOVUK_APP_NAME=govuk-chat
 
+# faraday-typhoeus needs libcurl at runtime, which the base image doesn't include.
+RUN install_packages libcurl4t64
+
 WORKDIR $APP_HOME
 COPY --from=builder --link $BUNDLE_PATH $BUNDLE_PATH
 COPY --from=builder --link $BOOTSNAP_CACHE_DIR $BOOTSNAP_CACHE_DIR
