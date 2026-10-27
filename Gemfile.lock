@@ -917,7 +917,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  anthropic
+  anthropic (~> 1.81)
   aws-sdk-bedrock
   aws-sdk-bedrockruntime
   blueprinter
