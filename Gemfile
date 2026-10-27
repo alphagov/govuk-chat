@@ -6,7 +6,7 @@ ruby "~> #{File.read(File.join(__dir__, '.ruby-version')).strip}"
 
 gem "rails", "8.1.4"
 
-gem "anthropic"
+gem "anthropic", "~> 1.81" # 2.x uses API version 2026-10-21, which Bedrock only supports for Claude 4.7+
 gem "aws-sdk-bedrock"
 gem "aws-sdk-bedrockruntime"
 gem "blueprinter"

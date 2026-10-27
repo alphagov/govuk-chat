@@ -13,6 +13,10 @@ updates:
         - gds-sso
         - govuk_*
         - rubocop-govuk
+    ignore:
+      # anthropic 2.x needs Claude 4.7+ models on Bedrock, see Gemfile
+      - dependency-name: anthropic
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: npm
     directory: /
     schedule:
