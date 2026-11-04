@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_02_102436) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_04_142308) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -207,6 +207,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_102436) do
     t.string "message", null: false
     t.string "unsanitised_message"
     t.datetime "updated_at", null: false
+    t.boolean "suggested_prompt", default: false, null: false
     t.index ["conversation_id"], name: "index_questions_on_conversation_id"
     t.index ["created_at"], name: "index_questions_on_created_at"
   end
