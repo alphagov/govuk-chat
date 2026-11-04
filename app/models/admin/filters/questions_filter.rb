@@ -15,6 +15,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
   attribute :completeness
   attribute :conversation_session_id
   attribute :reaction
+  attribute :suggested_prompt
 
   validate :validate_dates
 
@@ -52,6 +53,7 @@ class Admin::Filters::QuestionsFilter < Admin::Filters::BaseFilter
       scope = secondary_request_type_scope(scope)
       scope = completeness_scope(scope)
       scope = reaction_scope(scope)
+      scope = suggested_prompt_scope(scope)
       scope.page(page)
            .per(25)
     end
@@ -92,6 +94,7 @@ private
     filters[:completeness] = completeness if completeness.present?
     filters[:conversation_session_id] = conversation_session_id if conversation_session_id.present?
     filters[:reaction] = reaction if reaction.present?
+    filters[:suggested_prompt] = suggested_prompt if suggested_prompt.present?
 
     filters
   end
@@ -198,6 +201,12 @@ private
     return scope if reaction.blank?
 
     scope.joins(answer: :feedback).where(answer_feedback: { reaction: })
+  end
+
+  def suggested_prompt_scope(scope)
+    return scope unless %w[true false].include?(suggested_prompt)
+
+    scope.where(suggested_prompt: suggested_prompt == "true")
   end
 
   def validate_dates

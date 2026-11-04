@@ -334,6 +334,20 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       expect(filter.results).to eq([negative_answer.question])
     end
 
+    it "filters the results by whether the question was a suggested prompt" do
+      suggested_prompt_question = create(:question, suggested_prompt: true)
+      user_written_question = create(:question, suggested_prompt: false)
+
+      filter = described_class.new(suggested_prompt: "true")
+      expect(filter.results).to eq([suggested_prompt_question])
+
+      filter = described_class.new(suggested_prompt: "false")
+      expect(filter.results).to eq([user_written_question])
+
+      filter = described_class.new(suggested_prompt: "yes")
+      expect(filter.results).to contain_exactly(suggested_prompt_question, user_written_question)
+    end
+
     it "paginates the results" do
       create_list(:question, 26)
 
@@ -427,7 +441,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
     conversation = create(:conversation, signon_user_id: signon_user.id, end_user_id: "end-user-id", source: :api)
     conversation_session_id = SecureRandom.uuid
     26.times do
-      question = create(:question, conversation:, conversation_session_id:)
+      question = create(:question, conversation:, conversation_session_id:, suggested_prompt: true)
       answer = create(
         :answer,
         question:,
@@ -461,6 +475,7 @@ RSpec.describe Admin::Filters::QuestionsFilter do
       completeness: "complete",
       conversation_session_id:,
       reaction: "positive",
+      suggested_prompt: "true",
     }.merge(attrs)
 
     described_class.new(**filter_params)
