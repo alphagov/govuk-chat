@@ -84,7 +84,7 @@ GEM
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
       uri (>= 0.13.1)
-    addressable (2.9.0)
+    addressable (2.9.2)
       public_suffix (>= 2.0.2, < 8.0)
     amq-protocol (2.7.0)
     anonymous_loader (0.1.5)
@@ -230,33 +230,33 @@ GEM
       warden-oauth2 (~> 0.0.1)
     globalid (1.4.0)
       activesupport (>= 6.1)
-    google-apis-bigquery_v2 (0.108.0)
+    google-apis-bigquery_v2 (0.109.0)
       google-apis-core (>= 0.15.0, < 2.a)
-    google-apis-core (1.4.0)
+    google-apis-core (1.4.1)
       addressable (~> 2.9)
       faraday (~> 2.13)
       faraday-follow_redirects (~> 0.3)
       googleauth (~> 1.14)
       mini_mime (~> 1.1)
-      multi_json (~> 1.11)
-      representable (~> 3.0)
+      multi_json (~> 1.21, >= 1.21.2)
+      representable (~> 3.3, >= 3.3.1)
       retriable (>= 3.1, < 5.0)
-    google-cloud-bigquery (1.64.1)
+    google-cloud-bigquery (1.64.2)
       bigdecimal (>= 3.0, < 5)
       concurrent-ruby (~> 1.0)
-      google-apis-bigquery_v2 (~> 0.71)
+      google-apis-bigquery_v2 (~> 0.88)
       google-apis-core (>= 0.18, < 2)
       google-cloud-core (~> 1.6)
       googleauth (~> 1.9)
       mini_mime (~> 1.0)
-    google-cloud-core (1.9.0)
+    google-cloud-core (1.9.1)
       google-cloud-env (>= 1.0, < 3.a)
       google-cloud-errors (~> 1.0)
     google-cloud-env (2.4.1)
       base64 (~> 0.2)
       faraday (>= 1.0, < 3.a)
-    google-cloud-errors (1.7.0)
-    google-logging-utils (0.2.1)
+    google-cloud-errors (1.7.1)
+    google-logging-utils (0.2.2)
     google-protobuf (4.36.2)
       bigdecimal
       rake (~> 13.3)
@@ -277,7 +277,7 @@ GEM
       rake (~> 13.3)
     googleapis-common-protos-types (1.24.0)
       google-protobuf (~> 4.26)
-    googleauth (1.17.6)
+    googleauth (1.17.7)
       faraday (>= 1.0, < 3.a)
       google-cloud-env (~> 2.2)
       google-logging-utils (~> 0.1)
@@ -843,7 +843,7 @@ GEM
       logger (>= 1.7.0)
       rack (>= 3.2.0)
       redis-client (>= 0.29.0)
-    signet (0.22.1)
+    signet (0.22.2)
       addressable (~> 2.8)
       faraday (>= 0.17.5, < 3.a)
       jwt (>= 1.5, < 4.0)
@@ -983,7 +983,7 @@ CHECKSUMS
   activerecord (8.1.4) sha256=3b4957ea7f246c9231bd7faa909312eac03a9101aaf87977b6c52733ff00b04f
   activestorage (8.1.4) sha256=f4956f3ec9ee63e5e0b332b57c877cb627f82b56f4cc902279310d2aa285c7a8
   activesupport (8.1.4) sha256=891dd3fe43c4fc8391934b237b1189bb1f661c932a84a840043db9d46a4e80df
-  addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
+  addressable (2.9.2) sha256=9117c7e7d6ee07230e75ce41fb9401ae55354dc654fcd0e862ba41d539e9a610
   amq-protocol (2.7.0) sha256=a798da91f076cf8225193739d09785201f72acbc5293282a3592ad3eda5b3afc
   anonymous_loader (0.1.5) sha256=c96a4a1b5f49f320037fae63e931ac15b3823686e4f0ee6f24f75a0ade4227cb
   anthropic (1.82.0) sha256=4226ee819e35373e18eeffd49d65fbd3cd5f1daceef0e8670254627ca3146fb0
@@ -1048,13 +1048,13 @@ CHECKSUMS
   gds-api-adapters (103.5.0) sha256=92988ac084ef720b0f03f6f678e291795278d8f06620dc59f9b0a42ee4daf14b
   gds-sso (23.1.0) sha256=3b466beabcca2a0fe480b9ede41fdf2a606071744962658114251277bb45011d
   globalid (1.4.0) sha256=037f12fbf1d9d7a014d501c2d5c77356fd4ddd96d7a7991d6700bba96706f427
-  google-apis-bigquery_v2 (0.108.0) sha256=1c72701035f911a6e349d8b1936a65f9d9b39da4f7a4b863ca571a5685068918
-  google-apis-core (1.4.0) sha256=74e838a334926e79ce685d3ff9f418956cc23e48c5fd7cade779fea933e96582
-  google-cloud-bigquery (1.64.1) sha256=b45eb3197323dc45983ac7753e0d6021b198420d1c5902cf5492a9352920148e
-  google-cloud-core (1.9.0) sha256=ab55409f51488e8deefb6edcc1ce4771dfb5da2fe7b3bc075709a030c2b682a4
+  google-apis-bigquery_v2 (0.109.0) sha256=c9d6f4f886f5153fbf8665bfeb23f77a3818c2973cbb2352680d1927afc1be56
+  google-apis-core (1.4.1) sha256=96b3ff67fbcebe13f90f600490f26c97eb9763ed9f92b1adf8cd33732009b494
+  google-cloud-bigquery (1.64.2) sha256=8ab5ea60bd31df541b84b6d6e2dc001dbbb23ee37e20a381f740d7e52e0a5522
+  google-cloud-core (1.9.1) sha256=6590e393cbeadf018e6880038e19348d2ccfc83000625c569a9b21ab3b450af0
   google-cloud-env (2.4.1) sha256=987cc58afc50ce2903128ab4dcd442159be4457246b8137e41d49d5c3fc590dd
-  google-cloud-errors (1.7.0) sha256=6e682f42d89aae08689f36f28495de629d756da076bafff0003bac7f8042ebb3
-  google-logging-utils (0.2.1) sha256=73945c3ac6800eba802c26b1744765d5057cc4d89182c7255ee1347b0ca96dc7
+  google-cloud-errors (1.7.1) sha256=818bcf30998d10f28f30532a2595b49438cb7abf42f6ac495843078839987207
+  google-logging-utils (0.2.2) sha256=ad2436ef22e918e2b1c3ad2bbaf5949f42f5389d49fd37e41b43bbdd3068e27c
   google-protobuf (4.36.2) sha256=2f8daff50ae14aad36ab0ccdcf284065fa71d726c444efe114e6db82ffe62494
   google-protobuf (4.36.2-aarch64-linux-gnu) sha256=c3279ec6eaa59f6ed6276eda2a33cffb4306471183ab79a332e698b8564f5169
   google-protobuf (4.36.2-arm64-darwin) sha256=f70d810e6bbab9d8ad9c1d5fd685a21de4c10ad3ad32efb9455e17e5b1286917
@@ -1062,7 +1062,7 @@ CHECKSUMS
   google-protobuf (4.36.2-x86_64-darwin) sha256=8d1bd2a344f7f589703b202ad2ee4cca8ef731b4ced45782ef92d385967384ba
   google-protobuf (4.36.2-x86_64-linux-gnu) sha256=d25a820873e423f1d209ae8c672a4a28b019e2429debd0901d26670a0b4e14db
   googleapis-common-protos-types (1.24.0) sha256=f76599ac6eeddf9ed1cc909c2ff6c9f028c50f69cb1696f43101df6a1fe9f106
-  googleauth (1.17.6) sha256=d4fd30f99aeb28ae46ef521cf8ac50927a453b8c6600f8940437ac11ad90bdfc
+  googleauth (1.17.7) sha256=9db21857ddbe055a8b0d44ddb75d4ceda97511167431e30121c77c25a9ce9fe5
   govuk_app_config (9.26.0) sha256=e2da4a2d26a704a35d632cc159ea6c8d29087d272a81b1ff03f7df2a0a126b2d
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.1.0) sha256=42e0be6caad19ccde78b6eba40ee9ea3af6e8c3b5a6d1543b5d077870f157b19
@@ -1262,7 +1262,7 @@ CHECKSUMS
   sentry-ruby (6.7.0) sha256=b4b915d79a0395ad02106d4012aa1914641456e042ce36393f15bd1630d8db42
   sentry-sidekiq (6.7.0) sha256=ed8eafd218f9730059a4d0550402a02e7a2f62f3fde50d41ecfab3cb59e6fc24
   sidekiq (8.1.6) sha256=be20cd051124b1a16cf97ea9157137abbd30a515c16a5ae9312d2eadd045e40f
-  signet (0.22.1) sha256=6e73e9f2bdc2f038a5fdc8a89d248792b1b55e9ca50ee1ba458d8f1d9f0a2151
+  signet (0.22.2) sha256=9c6861bb599845ea0cb05ffadd3d64c7a3b07a29bdee0f5352bcbe87b7ade21d
   simplecov (1.3.2) sha256=2a22ec1759f1b8db60881a2e038758956fc69ef93ed669be0bde0678de6d0e85
   slack-poster (2.2.2) sha256=37c4c0d65259599813ef75d4da0ed7512d2e8e93ca942c53ebf898ff1c81214e
   smart_properties (1.17.0) sha256=f9323f8122e932341756ddec8e0ac9ec6e238408a7661508be99439ca6d6384b
