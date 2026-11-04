@@ -275,7 +275,7 @@ GEM
     google-protobuf (4.36.2-x86_64-linux-gnu)
       bigdecimal
       rake (~> 13.3)
-    googleapis-common-protos-types (1.24.0)
+    googleapis-common-protos-types (1.25.0)
       google-protobuf (~> 4.26)
     googleauth (1.17.7)
       faraday (>= 1.0, < 3.a)
@@ -285,7 +285,7 @@ GEM
       os (>= 0.9, < 2.0)
       pstore (~> 0.1)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (9.26.0)
+    govuk_app_config (9.27.0)
       connection_pool (< 4)
       logstasher (>= 2.1, < 4.0)
       opentelemetry-exporter-otlp (>= 0.25, < 0.35)
@@ -295,8 +295,8 @@ GEM
       prometheus_exporter (~> 2.3)
       puma (>= 5.6, < 9.0)
       rack-proxy (>= 0.7, < 2.0)
-      sentry-rails (>= 5.3, < 7.0)
-      sentry-ruby (>= 5.3, < 7.0)
+      sentry-rails (>= 5.3, < 8.0, != 7.0.0)
+      sentry-ruby (>= 5.3, < 8.0, != 7.0.0)
       statsd-ruby (~> 1.5)
     govuk_message_queue_consumer (6.1.0)
       bunny (~> 2.17)
@@ -1061,9 +1061,9 @@ CHECKSUMS
   google-protobuf (4.36.2-x86-linux-gnu) sha256=ffcd06d49bffca24afff18c900dd61a51ea3028d43c47d0d9621d00bf38a5866
   google-protobuf (4.36.2-x86_64-darwin) sha256=8d1bd2a344f7f589703b202ad2ee4cca8ef731b4ced45782ef92d385967384ba
   google-protobuf (4.36.2-x86_64-linux-gnu) sha256=d25a820873e423f1d209ae8c672a4a28b019e2429debd0901d26670a0b4e14db
-  googleapis-common-protos-types (1.24.0) sha256=f76599ac6eeddf9ed1cc909c2ff6c9f028c50f69cb1696f43101df6a1fe9f106
+  googleapis-common-protos-types (1.25.0) sha256=3eac7998e9e52f506d5a68d944284b8d2f6d65d744ab92a0cdd269198a009d15
   googleauth (1.17.7) sha256=9db21857ddbe055a8b0d44ddb75d4ceda97511167431e30121c77c25a9ce9fe5
-  govuk_app_config (9.26.0) sha256=e2da4a2d26a704a35d632cc159ea6c8d29087d272a81b1ff03f7df2a0a126b2d
+  govuk_app_config (9.27.0) sha256=dda3c7638ad725bdb688a6399914dab93aee023228245104bea5c99e59619321
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.1.0) sha256=42e0be6caad19ccde78b6eba40ee9ea3af6e8c3b5a6d1543b5d077870f157b19
   govuk_personalisation (1.2.0) sha256=8496e9e30c433846b87547b63ec65c98a64dd92fcf1b46b45e300150a24430b1
