@@ -78,6 +78,10 @@ module Admin
           end
         ),
         {
+          field: "Suggested prompt",
+          value: question.suggested_prompt ? "Yes" : "No",
+        },
+        {
           field: "Show search results",
           value: link_to(search_text, admin_search_path(params: { search_text: }), class: "govuk-link"),
         },
