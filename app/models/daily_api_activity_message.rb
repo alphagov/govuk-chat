@@ -32,14 +32,28 @@ private
       status_config = Rails.configuration.answer_statuses[status]
       status_text = status_config&.label_and_description || status_config&.label
       url_text = "#{count} #{status_text}"
-      "- #{admin_url_slack_link(url_text, status)}"
+      "- #{admin_url_slack_link(url_text, status:)}"
     end
 
-    <<~MSG.strip
+    summary = <<~MSG.strip
       #{summary_prefix} #{question_link}#{end_user_summary}:
 
       #{list_items.join("\n")}
     MSG
+
+    [summary, suggested_prompt_summary].compact.join("\n\n")
+  end
+
+  def suggested_prompt_summary
+    return unless suggested_prompt_count.positive?
+
+    link = admin_url_slack_link(
+      "#{suggested_prompt_count} of these questions",
+      suggested_prompt: true,
+    )
+    source = suggested_prompt_count == 1 ? "a suggested prompt" : "suggested prompts"
+
+    "#{link} came from #{source}."
   end
 
   def rota_summary
@@ -94,11 +108,18 @@ private
                                 .count(:end_user_id)
   end
 
+  def suggested_prompt_count
+    @suggested_prompt_count ||= Question.joins(:conversation)
+                                        .where(created_at: date_range, suggested_prompt: true)
+                                        .where(conversations: { source: :api })
+                                        .count
+  end
+
   def date_range
     date.beginning_of_day..date.end_of_day
   end
 
-  def admin_url_slack_link(text, status = nil)
+  def admin_url_slack_link(text, status: nil, suggested_prompt: nil)
     start_date_params = {
       day: date.day,
       month: date.month,
@@ -115,6 +136,7 @@ private
       start_date_params:,
       end_date_params:,
       status:,
+      suggested_prompt:,
       host: Plek.external_url_for(:chat),
     )
 
