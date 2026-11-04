@@ -4,6 +4,7 @@ class Form::CreateQuestion
   include ActiveModel::Validations::Callbacks
 
   attribute :user_question
+  attribute :suggested_prompt, :boolean, default: false
   attribute :conversation
 
   USER_QUESTION_PRESENCE_ERROR_MESSAGE = "Ask a question. For example, 'how do I register for VAT?'".freeze
@@ -28,6 +29,7 @@ class Form::CreateQuestion
       unsanitised_message: (@unsanitised_user_question if @sanitised_user_question != @unsanitised_user_question),
       conversation:,
       conversation_session_id:,
+      suggested_prompt:,
     )
 
     ComposeAnswerJob.perform_later(question.id)

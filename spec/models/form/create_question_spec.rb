@@ -133,7 +133,14 @@ RSpec.describe Form::CreateQuestion do
             unsanitised_message: nil,
             answer_strategy: Rails.configuration.answer_strategy,
             conversation_session_id: an_instance_of(String),
+            suggested_prompt: false,
           )
+      end
+
+      it "sets suggested_prompt on the question when it is provided" do
+        described_class.new(user_question:, conversation:, suggested_prompt: true).submit
+
+        expect(Question.where(conversation:).last.suggested_prompt).to be(true)
       end
 
       it "uses the previous questions conversation_session_id if it was created within the last 30 minutes" do
