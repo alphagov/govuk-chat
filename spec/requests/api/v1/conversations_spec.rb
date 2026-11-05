@@ -149,6 +149,15 @@ RSpec.describe "Api::V1::ConversationsController" do
           { "message" => /user_question expected string, but received Integer/ },
         )
       end
+
+      it "returns a bad request status code when suggested_prompt is not a boolean" do
+        post api_v1_create_conversation_path,
+             params: { user_question: "question", suggested_prompt: "yes" },
+             headers:,
+             as: :json
+
+        expect(response).to have_http_status(:bad_request)
+      end
     end
   end
 
@@ -491,6 +500,21 @@ RSpec.describe "Api::V1::ConversationsController" do
         conversation = Conversation.last
         expect(conversation.end_user_id).to eq("test-user-123")
       end
+
+      it "defaults suggested_prompt to false on the question" do
+        post api_v1_create_conversation_path, params: payload, headers:, as: :json
+
+        expect(Question.last.suggested_prompt).to be(false)
+      end
+
+      it "sets suggested_prompt on the question when it is provided" do
+        post api_v1_create_conversation_path,
+             params: payload.merge(suggested_prompt: true),
+             headers:,
+             as: :json
+
+        expect(Question.last.suggested_prompt).to be(true)
+      end
     end
 
     context "when the question is invalid" do
@@ -554,6 +578,21 @@ RSpec.describe "Api::V1::ConversationsController" do
         }.to change(conversation.questions, :count).by(1)
         expect(conversation.questions.strict_loading(false).last.message)
           .to eq(user_question)
+      end
+
+      it "defaults suggested_prompt to false on the question" do
+        put api_v1_update_conversation_path(conversation), params:, headers:, as: :json
+
+        expect(conversation.questions.strict_loading(false).last.suggested_prompt).to be(false)
+      end
+
+      it "sets suggested_prompt on the question when it is provided" do
+        put api_v1_update_conversation_path(conversation),
+            params: params.merge(suggested_prompt: true),
+            headers:,
+            as: :json
+
+        expect(conversation.questions.strict_loading(false).last.suggested_prompt).to be(true)
       end
 
       it "returns the expected JSON" do

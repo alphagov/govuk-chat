@@ -4,12 +4,12 @@ RSpec.describe DailyApiActivityMessage do
     let(:api_conversation) { create(:conversation, source: :api) }
     let(:yesterday) { 1.day.ago }
 
-    def create_question(status, created_at, conversation)
+    def create_question(status, created_at, conversation, suggested_prompt: false)
       answer = status == :pending ? nil : build(:answer, status:)
-      create(:question, conversation:, created_at:, answer:)
+      create(:question, conversation:, created_at:, answer:, suggested_prompt:)
     end
 
-    def admin_url(status = nil)
+    def admin_url(status = nil, **filters)
       today = yesterday.to_date + 1
 
       url_params = {
@@ -20,7 +20,7 @@ RSpec.describe DailyApiActivityMessage do
       }
 
       Rails.application.routes.url_helpers.admin_questions_url(
-        url_params.merge(status:),
+        url_params.merge(status:, **filters),
       )
     end
 
@@ -204,6 +204,35 @@ RSpec.describe DailyApiActivityMessage do
 
           expected_message = "Yesterday GOV.UK Chat API received <#{admin_url}|4 questions> " \
                              "from 1 end user:"
+
+          message = described_class.new(Date.yesterday).message
+          expect(message).to include(expected_message)
+        end
+      end
+
+      context "when questions came from suggested prompts" do
+        it "includes the number of API questions that came from suggested prompts" do
+          create_question(:answered, yesterday, api_conversation)
+          2.times { create_question(:answered, yesterday, api_conversation, suggested_prompt: true) }
+          create_question(:answered, yesterday, web_conversation, suggested_prompt: true)
+
+          expected_message = <<~MSG.strip
+            Yesterday GOV.UK Chat API received <#{admin_url}|3 questions>:
+
+            - <#{admin_url(:answered)}|3 #{label_for_status(:answered)}>
+
+            <#{admin_url(suggested_prompt: true)}|2 of these questions> came from suggested prompts.
+          MSG
+
+          message = described_class.new(Date.yesterday).message
+          expect(message).to eq(expected_message)
+        end
+
+        it "has the correct wording for a single suggested prompt" do
+          create_question(:answered, yesterday, api_conversation, suggested_prompt: true)
+
+          expected_message = "<#{admin_url(suggested_prompt: true)}|1 of these questions> " \
+                             "came from a suggested prompt."
 
           message = described_class.new(Date.yesterday).message
           expect(message).to include(expected_message)

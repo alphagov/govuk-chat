@@ -141,7 +141,7 @@ private
   end
 
   def question_params
-    params.permit(:user_question)
+    params.permit(:user_question, :suggested_prompt)
   end
 
   def answer_feedback_params

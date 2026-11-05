@@ -33,7 +33,7 @@ info:
     `Write` headers report the conversation write limit and `Read` headers
     report the default limit, regardless of the HTTP method the request used.
 
-  version: "0.6.1"
+  version: "0.7.0"
 servers:
   - url: https://chat.publishing.service.gov.uk/api/v1
 paths:
@@ -659,6 +659,12 @@ components:
       properties:
         user_question:
           type: string
+        suggested_prompt:
+          description: |
+            Whether the user chose this question from a suggested prompt,
+            rather than writing it themselves. Defaults to false if absent.
+          type: boolean
+          default: false
     Conversation:
       type: object
       required:

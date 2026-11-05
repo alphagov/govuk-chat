@@ -48,6 +48,7 @@ private
       :completeness,
       :conversation_session_id,
       :reaction,
+      :suggested_prompt,
     )
   end
 end

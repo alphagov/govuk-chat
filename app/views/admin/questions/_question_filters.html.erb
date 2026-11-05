@@ -252,6 +252,19 @@
     end,
   } %>
 
+  <%= render "govuk_publishing_components/components/select", {
+    id: "suggested_prompt",
+    name: "suggested_prompt",
+    label: "Suggested prompt",
+    heading_size: "s",
+    full_width: true,
+    options: [
+      { text: "", value: "" },
+      { text: "Yes", value: "true", selected: params[:suggested_prompt] == "true" },
+      { text: "No", value: "false", selected: params[:suggested_prompt] == "false" },
+    ],
+  } %>
+
   <%= render "govuk_publishing_components/components/button", {
     text: "Filter",
     margin_bottom: true,

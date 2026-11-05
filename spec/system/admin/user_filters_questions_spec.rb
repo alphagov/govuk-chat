@@ -70,6 +70,13 @@ RSpec.describe "Admin user filters questions" do
 
     when_i_filter_questions_by_negative_feedback
     then_i_see_the_question_with_negative_feedback
+
+    when_i_clear_the_filters
+    and_i_filter_questions_by_suggested_prompts
+    then_i_see_the_suggested_prompt_question
+
+    when_i_filter_questions_excluding_suggested_prompts
+    then_i_see_the_questions_that_are_not_suggested_prompts
   end
 
   scenario "filtered by a signon user" do
@@ -94,7 +101,7 @@ RSpec.describe "Admin user filters questions" do
     conversation = build(:conversation)
     api_conversation = build(:conversation, source: :api)
     @question1 = create(:question, conversation:, message: "Hello world", created_at: 2.years.ago)
-    @question2 = create(:question, message: "World", conversation:)
+    @question2 = create(:question, message: "World", conversation:, suggested_prompt: true)
     @question3 = create(:question, conversation: api_conversation, message: "Greetings world", created_at: 1.minute.ago)
     create(:answer, question: @question2, question_routing_label: "non_english", completeness: :partial)
     create(:answer, status: :clarification, question: @question3)
@@ -362,6 +369,28 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_question_with_negative_feedback
+    expect(page).to have_content(@question3.message)
+    expect(page).not_to have_content(@question2.message)
+  end
+
+  def and_i_filter_questions_by_suggested_prompts
+    select "Yes", from: "suggested_prompt"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_suggested_prompt_question
+    expect(page).to have_content(@question2.message)
+    expect(page).not_to have_content(@question1.message)
+    expect(page).not_to have_content(@question3.message)
+  end
+
+  def when_i_filter_questions_excluding_suggested_prompts
+    select "No", from: "suggested_prompt"
+    click_button "Filter"
+  end
+
+  def then_i_see_the_questions_that_are_not_suggested_prompts
+    expect(page).to have_content(@question1.message)
     expect(page).to have_content(@question3.message)
     expect(page).not_to have_content(@question2.message)
   end
