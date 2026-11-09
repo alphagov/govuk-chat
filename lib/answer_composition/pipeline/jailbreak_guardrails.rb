@@ -24,7 +24,7 @@ module AnswerComposition
           **inference_config,
         )
 
-        text_response = response.content.find { it.type == :text }&.text
+        text_response = text_content(response)
         jailbreak_guardrails_status = case text_response
                                       when pass_value
                                         :pass
@@ -56,6 +56,12 @@ module AnswerComposition
     private
 
       attr_reader :context, :model_id, :model_name
+
+      def text_content(response)
+        ClaudeResponse.content_block(response, :text).text
+      rescue ClaudeResponse::UnexpectedResponseError
+        nil
+      end
 
       def anthropic_bedrock_client
         @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(

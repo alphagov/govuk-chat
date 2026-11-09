@@ -108,6 +108,21 @@ RSpec.describe AnswerComposition::MultipleGuardrail::Checker, :aws_credentials_s
       expect(result.guardrails).to eq({ political: true, appropriate_language: true })
     end
 
+    it "raises a ResponseError when Claude refuses to respond" do
+      stub_claude_output_guardrails(
+        input,
+        llm_guardrail_result,
+        stop_reason: :refusal,
+        chat_options: { bedrock_model: model },
+      )
+
+      expect { described_class.call(input, llm_prompt_name) }
+        .to raise_error(
+          an_instance_of(AnswerComposition::MultipleGuardrail::ResponseError)
+            .and(having_attributes(message: "Claude refused to respond", model: BedrockModels.model_id(model))),
+        )
+    end
+
     it "returns a false result with no matched guardrails" do
       stub_claude_output_guardrails(
         input,

@@ -110,6 +110,23 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credential
     end
   end
 
+  context "when the LLM response doesn't have the expected content" do
+    before do
+      allow(AnswerComposition::Pipeline::ClaudeResponse)
+        .to receive(:content_block)
+        .and_raise(AnswerComposition::Pipeline::ClaudeResponse::UnexpectedResponseError, "Claude refused to respond")
+    end
+
+    it "aborts the pipeline with an error status" do
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+
+      expect(context.answer).to have_attributes(
+        status: "error_jailbreak_guardrails",
+        jailbreak_guardrails_status: "error",
+      )
+    end
+  end
+
   context "when the LLM response is in an unexpected format" do
     let(:response) { "UnexpectedFormat" }
     let!(:stub) { stub_claude_jailbreak_guardrails(input, response) }

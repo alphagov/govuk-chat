@@ -27,7 +27,7 @@ module AnswerComposition
         )
 
         context.answer.assign_llm_response("question_rephrasing", response.to_h)
-        context.question_message = response.content.find { it.type == :text }.text
+        context.question_message = ClaudeResponse.content_block(response, :text).text
         context.answer.assign_metrics(
           "question_rephrasing",
           { duration: Clock.monotonic_time - start_time }.merge(build_metrics(response)),

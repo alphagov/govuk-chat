@@ -73,5 +73,25 @@ RSpec.describe AnswerComposition::PipelineRunner do
           )
       end
     end
+
+    context "when the step raises a ClaudeResponse::UnexpectedResponseError" do
+      let(:error) { AnswerComposition::Pipeline::ClaudeResponse::UnexpectedResponseError.new("Claude refused to respond") }
+      let(:pipeline_step) { ->(_context) { raise error } }
+
+      it "notifies sentry" do
+        expect(GovukError).to receive(:notify).with(error)
+        described_class.call(question:, pipeline: [pipeline_step])
+      end
+
+      it "returns the context's answer with the correct message, status and error_message" do
+        result = described_class.call(question:, pipeline: [pipeline_step])
+
+        expect(result).to have_attributes(
+          status: "error_answer_service_error",
+          message: Answer::CannedResponses::ANSWER_SERVICE_ERROR_RESPONSE,
+          error_message: "Claude refused to respond",
+        )
+      end
+    end
   end
 end

@@ -40,7 +40,7 @@ module AnswerComposition::MultipleGuardrail
         },
       ))
 
-      llm_guardrail_result = JSON.parse(response.content.find { it.type == :text }.text)
+      llm_guardrail_result = JSON.parse(text_content(response))
 
       Result.new(
         llm_response: response.to_h,
@@ -55,6 +55,20 @@ module AnswerComposition::MultipleGuardrail
     end
 
   private
+
+    def text_content(response)
+      AnswerComposition::Pipeline::ClaudeResponse.content_block(response, :text).text
+    rescue AnswerComposition::Pipeline::ClaudeResponse::UnexpectedResponseError => e
+      raise ResponseError.new(
+        e.message,
+        response.to_h,
+        nil,
+        response[:usage][:input_tokens],
+        response[:usage][:output_tokens],
+        response[:usage][:cache_read_input_tokens],
+        response.model,
+      )
+    end
 
     def anthropic_bedrock_client
       @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(

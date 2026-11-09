@@ -173,6 +173,7 @@ module StubClaudeMessages
 
   def stub_claude_output_guardrails(to_check,
                                     response = [].to_json,
+                                    stop_reason: :end_turn,
                                     with_thinking_block: false,
                                     chat_options: { bedrock_model: AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL })
     system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))
@@ -183,6 +184,7 @@ module StubClaudeMessages
       array_including({ "role" => "user", "content" => a_string_including(to_check) }),
       content: [claude_messages_text_block(response)],
       system:,
+      stop_reason:,
       usage: { cache_read_input_tokens: 20 },
       with_thinking_block:,
       chat_options: {

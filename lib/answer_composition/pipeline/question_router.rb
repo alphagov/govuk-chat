@@ -73,7 +73,7 @@ module AnswerComposition::Pipeline
     end
 
     def llm_classification_function
-      @llm_classification_function ||= claude_response.content.find { it.type == :tool_use }
+      @llm_classification_function ||= ClaudeResponse.content_block(claude_response, :tool_use)
     end
 
     def llm_classification_data
