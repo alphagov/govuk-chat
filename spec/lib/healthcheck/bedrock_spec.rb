@@ -18,6 +18,8 @@ RSpec.describe Healthcheck::Bedrock do
       allow(BedrockModels).to receive(:MODEL_IDS).and_return({
         claude_sonnet_4_5: "eu.anthropic.claude-sonnet-4-5-20250929-v1:0",
         claude_haiku_4_5: "eu.anthropic.claude-haiku-4-5-20251001-v1:0",
+        claude_sonnet_5_5: "eu.anthropic.claude-sonnet-5-5",
+        claude_haiku_5_5: "eu.anthropic.claude-haiku-5-5",
         titan_embed_v2: "amazon.titan-embed-text-v2:0",
         openai_gpt_oss_120b: "openai.gpt-oss-120b-1:0",
       })
@@ -34,6 +36,14 @@ RSpec.describe Healthcheck::Bedrock do
             Aws::Bedrock::Types::FoundationModelSummary.new(
               model_id: "anthropic.claude-haiku-4-5-20251001-v1:0",
               model_arn: "arn:claude-haiku-4-5",
+            ),
+            Aws::Bedrock::Types::FoundationModelSummary.new(
+              model_id: "anthropic.claude-sonnet-5-5",
+              model_arn: "arn:claude-sonnet-5-5",
+            ),
+            Aws::Bedrock::Types::FoundationModelSummary.new(
+              model_id: "anthropic.claude-haiku-5-5",
+              model_arn: "arn:claude-haiku-5-5",
             ),
             Aws::Bedrock::Types::FoundationModelSummary.new(
               model_id: "amazon.titan-embed-text-v2:0",
