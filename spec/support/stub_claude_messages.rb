@@ -1,6 +1,8 @@
 module StubClaudeMessages
   CLAUDE_SONNET_4_5_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*eu.anthropic.claude-sonnet-4-5-20250929-v1:0.*?/invoke}
   CLAUDE_HAIKU_4_5_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*anthropic\.claude-haiku-4-5-20251001-v1:0.*?/invoke}
+  CLAUDE_SONNET_5_5_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*eu\.anthropic\.claude-sonnet-5-5/invoke}
+  CLAUDE_HAIKU_5_5_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*eu\.anthropic\.claude-haiku-5-5/invoke}
 
   def stub_claude_messages_response(question_or_history,
                                     content:,
@@ -48,6 +50,10 @@ module StubClaudeMessages
                        CLAUDE_SONNET_4_5_ENDPOINT_REGEX
                      when :claude_haiku_4_5
                        CLAUDE_HAIKU_4_5_ENDPOINT_REGEX
+                     when :claude_sonnet_5_5
+                       CLAUDE_SONNET_5_5_ENDPOINT_REGEX
+                     when :claude_haiku_5_5
+                       CLAUDE_HAIKU_5_5_ENDPOINT_REGEX
                      end
 
     stub_request(:post, endpoint_regex)
