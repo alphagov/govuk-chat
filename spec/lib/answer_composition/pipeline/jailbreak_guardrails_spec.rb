@@ -28,6 +28,12 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credential
     end
   end
 
+  it "uses the text block when the response starts with a thinking block" do
+    stub_claude_jailbreak_guardrails(input, with_thinking_block: true)
+
+    expect { described_class.call(context) }.to change(context.answer, :jailbreak_guardrails_status).to("pass")
+  end
+
   context "when the guardrails are not triggered" do
     it "does not change the message" do
       expect { described_class.call(context) }.not_to change(context.answer, :message)

@@ -95,6 +95,19 @@ RSpec.describe AnswerComposition::MultipleGuardrail::Checker, :aws_credentials_s
       )
     end
 
+    it "uses the text block when the response starts with a thinking block" do
+      stub_claude_output_guardrails(
+        input,
+        llm_guardrail_result,
+        with_thinking_block: true,
+        chat_options: { bedrock_model: model },
+      )
+
+      result = described_class.call(input, llm_prompt_name)
+
+      expect(result.guardrails).to eq({ political: true, appropriate_language: true })
+    end
+
     it "returns a false result with no matched guardrails" do
       stub_claude_output_guardrails(
         input,

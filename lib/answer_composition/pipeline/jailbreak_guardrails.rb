@@ -24,7 +24,7 @@ module AnswerComposition
           **inference_config,
         )
 
-        text_response = response[:content][0][:text]
+        text_response = response.content.find { it.type == :text }&.text
         jailbreak_guardrails_status = case text_response
                                       when pass_value
                                         :pass

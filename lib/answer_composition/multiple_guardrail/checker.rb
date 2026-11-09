@@ -40,7 +40,7 @@ module AnswerComposition::MultipleGuardrail
         },
       ))
 
-      llm_guardrail_result = JSON.parse(response.content.first.text)
+      llm_guardrail_result = JSON.parse(response.content.find { it.type == :text }.text)
 
       Result.new(
         llm_response: response.to_h,
