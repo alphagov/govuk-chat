@@ -68,6 +68,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
         .and_return(
           classifications: [classification],
           system_prompt: "The system prompt",
+          request_options: claude_request_options(:question_routing, model_name),
           confidence_property: {
             title: "Confidence",
             type: "number",

@@ -26,6 +26,7 @@ RSpec.describe AnswerComposition::MultipleGuardrail::Checker, :aws_credentials_s
         user_prompt: "{input}",
         guardrails:,
         guardrail_definitions:,
+        request_options: claude_request_options(llm_prompt_name, model),
       }.with_indifferent_access
     end
     let(:guardrails) { %w[political appropriate_language] }

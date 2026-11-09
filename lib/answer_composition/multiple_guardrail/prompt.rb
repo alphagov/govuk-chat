@@ -25,6 +25,10 @@ module AnswerComposition::MultipleGuardrail
       prompts.fetch(:user_prompt).sub("{input}", input)
     end
 
+    def request_options
+      prompts.fetch(:request_options).deep_symbolize_keys
+    end
+
     def guardrails
       @guardrails ||= prompts.fetch(:guardrails).map.with_index(1) do |name, key|
         content = prompts.fetch(:guardrail_definitions).fetch(name)

@@ -16,7 +16,7 @@ module StubClaudeMessages
               end
 
     bedrock_model = chat_options.delete(:bedrock_model) || :claude_sonnet_4_5
-    chat_options = { temperature: 0.0, max_tokens: 4096 }.merge(chat_options).compact
+    chat_options = chat_options.compact
 
     matchers = {
       messages: history,
@@ -79,7 +79,7 @@ module StubClaudeMessages
       input,
       content: [claude_messages_text_block(response)],
       with_thinking_block:,
-      chat_options: { max_tokens: model_config.fetch(:max_tokens) }.merge(chat_options),
+      chat_options: claude_request_options(:jailbreak_guardrails, chat_options[:bedrock_model]).merge(chat_options),
     )
   end
 
@@ -91,7 +91,7 @@ module StubClaudeMessages
       array_including({ "role" => "user", "content" => a_string_including(original_question) }),
       content: [claude_messages_text_block(rephrased_question)],
       with_thinking_block:,
-      chat_options: chat_options,
+      chat_options: claude_request_options(:question_rephraser, chat_options[:bedrock_model]).merge(chat_options),
     )
   end
 
@@ -104,8 +104,7 @@ module StubClaudeMessages
                                    chat_options: { bedrock_model: AnswerComposition::Pipeline::QuestionRouter::DEFAULT_MODEL })
     chat_options = {
       tools:,
-      tool_choice: { type: "any", disable_parallel_tool_use: true },
-      max_tokens: 500,
+      **claude_request_options(:question_routing, chat_options[:bedrock_model]),
     }.merge(chat_options)
 
     system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))
@@ -131,6 +130,7 @@ module StubClaudeMessages
                                     with_thinking_block: false,
                                     chat_options: { bedrock_model: AnswerComposition::Pipeline::StructuredAnswerComposer::DEFAULT_MODEL })
     model = chat_options[:bedrock_model]
+    request_options = claude_request_options(:structured_answer, model)
     tools = Rails.configuration
                  .govuk_chat_private
                  .llm_prompts
@@ -144,12 +144,13 @@ module StubClaudeMessages
           cached_system_prompt: "Static portion",
           context_system_prompt: "Dynamic portion",
           tool_spec: tools,
+          request_options:,
         },
       )
 
     chat_options = {
       tools: [tools],
-      tool_choice: { type: "tool", name: "output_schema" },
+      **request_options,
     }.merge(chat_options)
 
     system = array_including(
@@ -173,12 +174,16 @@ module StubClaudeMessages
 
   def stub_claude_output_guardrails(to_check,
                                     response = [].to_json,
+                                    llm_prompt_name: :answer_guardrails,
                                     stop_reason: :end_turn,
                                     with_thinking_block: false,
                                     chat_options: { bedrock_model: AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL })
     system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))
 
-    chat_options[:output_config] = a_hash_including("format" => a_hash_including("type" => "json_schema"))
+    request_options = claude_request_options(llm_prompt_name, chat_options[:bedrock_model])
+    output_config = request_options.fetch(:output_config, {})
+                                   .deep_stringify_keys
+                                   .merge("format" => a_hash_including("type" => "json_schema"))
 
     stub_claude_messages_response(
       array_including({ "role" => "user", "content" => a_string_including(to_check) }),
@@ -187,11 +192,17 @@ module StubClaudeMessages
       stop_reason:,
       usage: { cache_read_input_tokens: 20 },
       with_thinking_block:,
-      chat_options: {
-        temperature: nil,
-        max_tokens: AnswerComposition::MultipleGuardrail::Checker::MAX_TOKENS,
-      }.merge(chat_options),
+      chat_options: request_options.merge(output_config: a_hash_including(output_config)).merge(chat_options),
     )
+  end
+
+  def claude_request_options(component, bedrock_model)
+    Rails.configuration
+         .govuk_chat_private
+         .llm_prompts
+         .answer_composition
+         .dig(component, bedrock_model, :request_options)
+         .deep_symbolize_keys
   end
 
   def claude_messages_tool_use_block(input:, name:, id: "tool-use-id")

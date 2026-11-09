@@ -25,8 +25,7 @@ module AnswerComposition::Pipeline
         model: model_id,
         messages:,
         tools: tools,
-        tool_choice: { type: "tool", name: "output_schema" },
-        **inference_config,
+        **request_options,
       )
       llm_response_with_link_token_mapping = {
         "response" => response.to_h.stringify_keys,
@@ -65,11 +64,8 @@ module AnswerComposition::Pipeline
       ]
     end
 
-    def inference_config
-      {
-        max_tokens: 4096,
-        temperature: 0.0,
-      }
+    def request_options
+      prompt_config.fetch(:request_options).deep_symbolize_keys
     end
 
     def cached_system_prompt
@@ -108,15 +104,6 @@ module AnswerComposition::Pipeline
         llm_completion_tokens: response[:usage][:output_tokens],
         llm_cached_tokens: response[:usage][:cache_read_input_tokens],
         model: response[:model],
-      }
-    end
-
-    def tool_config
-      {
-        tools: tools,
-        tool_choice: {
-          tool: { name: "output_schema" },
-        },
       }
     end
 

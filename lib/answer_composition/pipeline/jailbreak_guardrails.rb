@@ -21,7 +21,7 @@ module AnswerComposition
           system: [{ type: "text", text: system_prompt }],
           model: model_id,
           messages:,
-          **inference_config,
+          **request_options,
         )
 
         text_response = text_content(response)
@@ -81,15 +81,8 @@ module AnswerComposition
         guardrails_llm_prompts.fetch(:fail_value)
       end
 
-      def max_tokens
-        guardrails_llm_prompts.fetch(:max_tokens)
-      end
-
-      def inference_config
-        {
-          max_tokens: max_tokens,
-          temperature: 0.0,
-        }
+      def request_options
+        guardrails_llm_prompts.fetch(:request_options).deep_symbolize_keys
       end
 
       def messages

@@ -32,6 +32,7 @@ RSpec.describe AnswerComposition::MultipleGuardrail::Prompt do
       user_prompt:,
       guardrails:,
       guardrail_definitions:,
+      request_options: { max_tokens: 100, output_config: { effort: "medium" } },
     }.with_indifferent_access
   end
 
@@ -66,6 +67,14 @@ RSpec.describe AnswerComposition::MultipleGuardrail::Prompt do
         expected_user_prompt = user_prompt.sub("{input}", input)
 
         expect(prompt.user_prompt(input)).to eq(expected_user_prompt)
+      end
+    end
+
+    describe "#request_options" do
+      it "returns the request options with symbol keys" do
+        prompt = described_class.new(llm_prompt_name)
+
+        expect(prompt.request_options).to eq({ max_tokens: 100, output_config: { effort: "medium" } })
       end
     end
 

@@ -9,7 +9,6 @@ module AnswerComposition::MultipleGuardrail
       end
     end
 
-    MAX_TOKENS = 100
     SUPPORTED_MODELS = %i[claude_haiku_4_5].freeze
     DEFAULT_MODEL = :claude_haiku_4_5
 
@@ -27,18 +26,12 @@ module AnswerComposition::MultipleGuardrail
     end
 
     def call
-      shared_config = {
+      response = anthropic_bedrock_client.messages.create(
         system: [{ type: "text", text: prompt.system_prompt, cache_control: { type: "ephemeral" } }],
         model: BedrockModels.model_id(self.class.bedrock_model),
         messages: [{ role: "user", content: prompt.user_prompt(input) }],
-        max_tokens: MAX_TOKENS,
-      }
-
-      response = anthropic_bedrock_client.messages.create(**shared_config.merge(
-        output_config: {
-          format: json_schema,
-        },
-      ))
+        **prompt.request_options.deep_merge(output_config: { format: json_schema }),
+      )
 
       llm_guardrail_result = JSON.parse(text_content(response))
 

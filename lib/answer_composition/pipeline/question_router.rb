@@ -94,16 +94,12 @@ module AnswerComposition::Pipeline
         model: model_id,
         messages:,
         tools:,
-        tool_choice: { type: "any", disable_parallel_tool_use: true },
-        **inference_config,
+        **request_options,
       )
     end
 
-    def inference_config
-      {
-        max_tokens: 500, # A small limit here removes the risk of the LLM returning the whole prompt verbatim
-        temperature: 0.0,
-      }
+    def request_options
+      prompt_config.fetch(:request_options).deep_symbolize_keys
     end
 
     def messages
@@ -114,13 +110,6 @@ module AnswerComposition::Pipeline
 
     def prompt_config
       Prompts.config(:question_routing, model_name)
-    end
-
-    def tool_config
-      {
-        tools:,
-        tool_choice: { any: {} },
-      }
     end
 
     def tools

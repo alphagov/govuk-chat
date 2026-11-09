@@ -23,7 +23,7 @@ module AnswerComposition
           system: [{ type: "text", text: system_prompt }],
           model: model_id,
           messages:,
-          **inference_config,
+          **request_options,
         )
 
         context.answer.assign_llm_response("question_rephrasing", response.to_h)
@@ -69,11 +69,8 @@ module AnswerComposition
         Prompts.config(:question_rephraser, model_name)
       end
 
-      def inference_config
-        {
-          max_tokens: 4096,
-          temperature: 0.0,
-        }
+      def request_options
+        config.fetch(:request_options).deep_symbolize_keys
       end
 
       def system_prompt
