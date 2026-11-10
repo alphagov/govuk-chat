@@ -10,7 +10,7 @@ module AnswerComposition::MultipleGuardrail
     end
 
     MAX_TOKENS = 100
-    SUPPORTED_MODELS = %i[claude_haiku_4_5].freeze
+    SUPPORTED_MODELS = %i[claude_haiku_4_5 claude_haiku_5_5].freeze
     DEFAULT_MODEL = :claude_haiku_4_5
 
     attr_reader :input, :llm_provider, :llm_prompt_name
@@ -27,18 +27,12 @@ module AnswerComposition::MultipleGuardrail
     end
 
     def call
-      shared_config = {
+      response = anthropic_bedrock_client.messages.create(
         system: [{ type: "text", text: prompt.system_prompt, cache_control: { type: "ephemeral" } }],
-        model: BedrockModels.model_id(self.class.bedrock_model),
+        model: BedrockModels.model_id(model_name),
         messages: [{ role: "user", content: prompt.user_prompt(input) }],
-        max_tokens: MAX_TOKENS,
-      }
-
-      response = anthropic_bedrock_client.messages.create(**shared_config.merge(
-        output_config: {
-          format: json_schema,
-        },
-      ))
+        **inference_config,
+      )
 
       llm_guardrail_result = JSON.parse(text_content(response))
 
@@ -55,6 +49,27 @@ module AnswerComposition::MultipleGuardrail
     end
 
   private
+
+    def model_name
+      @model_name ||= self.class.bedrock_model
+    end
+
+    def inference_config
+      if model_name == :claude_haiku_4_5
+        {
+          max_tokens: MAX_TOKENS,
+          output_config: { format: json_schema },
+        }
+      else
+        # Haiku 5.5 thinks unless told not to. Turning thinking off needs an
+        # effort of `high` or below.
+        {
+          max_tokens: MAX_TOKENS,
+          thinking: { type: "disabled" },
+          output_config: { format: json_schema, effort: "low" },
+        }
+      end
+    end
 
     def text_content(response)
       AnswerComposition::Pipeline::ClaudeResponse.content_block(response, :text).text

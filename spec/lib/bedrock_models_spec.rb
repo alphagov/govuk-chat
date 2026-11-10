@@ -69,6 +69,8 @@ RSpec.describe BedrockModels do
       allow(described_class).to receive(:MODEL_IDS).and_return({
         claude_sonnet_4_5: "eu.anthropic.claude-sonnet-4-5-20250929-v1:0",
         claude_haiku_4_5: "eu.anthropic.claude-haiku-4-5-20251001-v1:0",
+        claude_sonnet_5_5: "eu.anthropic.claude-sonnet-5-5",
+        claude_haiku_5_5: "eu.anthropic.claude-haiku-5-5",
         titan_embed_v2: "amazon.titan-embed-text-v2:0",
         openai_gpt_oss_120b: "openai.gpt-oss-120b-1:0",
       })
@@ -77,6 +79,8 @@ RSpec.describe BedrockModels do
         "amazon.titan-embed-text-v2:0",
         "anthropic.claude-sonnet-4-5-20250929-v1:0",
         "anthropic.claude-haiku-4-5-20251001-v1:0",
+        "anthropic.claude-sonnet-5-5",
+        "anthropic.claude-haiku-5-5",
         "openai.gpt-oss-120b-1:0",
       )
     end

@@ -1,6 +1,6 @@
 module AnswerComposition::Pipeline
   class StructuredAnswerComposer
-    SUPPORTED_MODELS = %i[claude_sonnet_4_5].freeze
+    SUPPORTED_MODELS = %i[claude_sonnet_4_5 claude_sonnet_5_5].freeze
     DEFAULT_MODEL = :claude_sonnet_4_5
 
     def self.call(...) = new(...).call
@@ -24,8 +24,6 @@ module AnswerComposition::Pipeline
         ],
         model: model_id,
         messages:,
-        tools: tools,
-        tool_choice: { type: "tool", name: "output_schema" },
         **inference_config,
       )
       llm_response_with_link_token_mapping = {
@@ -34,20 +32,20 @@ module AnswerComposition::Pipeline
       }
 
       context.answer.assign_llm_response("structured_answer", llm_response_with_link_token_mapping)
-      tool_output = ClaudeResponse.content_block(response, :tool_use).input
-      answer_completeness = tool_output[:answer_completeness]
+      output = parse_output(response)
+      answer_completeness = output[:answer_completeness]
       answered = %w[complete partial].include?(answer_completeness.downcase)
 
       unless answered
         return abort_cannot_answer(start_time, response, answer_completeness)
       end
 
-      set_context_sources(tool_output[:sources_used])
+      set_context_sources(output[:sources_used])
       if context.answer.sources.none?(&:used)
         return abort_cannot_answer(start_time, response, answer_completeness)
       end
 
-      message = link_token_mapper.replace_tokens_with_links(tool_output[:answer])
+      message = link_token_mapper.replace_tokens_with_links(output[:answer])
       context.answer.assign_attributes(message:, status: "answered", completeness: answer_completeness)
       context.answer.assign_metrics("structured_answer", build_metrics(start_time, response))
     end
@@ -66,10 +64,37 @@ module AnswerComposition::Pipeline
     end
 
     def inference_config
-      {
-        max_tokens: 4096,
-        temperature: 0.0,
-      }
+      if model_name == :claude_sonnet_4_5
+        {
+          max_tokens: 4096,
+          temperature: 0.0,
+          tools:,
+          tool_choice: { type: "tool", name: "output_schema" },
+        }
+      else
+        # Sonnet 5.5 rejects `temperature` and forced tool use. We only forced
+        # the output_schema tool to get the answer back as JSON, so we use
+        # structured outputs with the tool's schema instead, which the API
+        # makes the reply match. Sonnet 5.5 also thinks unless told not to,
+        # and can't turn thinking off completely: `between_tools` is its
+        # lowest setting, and needs an effort of `high` or below.
+        {
+          max_tokens: 4096,
+          thinking: { type: "between_tools" },
+          output_config: {
+            effort: "low",
+            format: { type: "json_schema", schema: prompt_config[:tool_spec][:input_schema] },
+          },
+        }
+      end
+    end
+
+    def parse_output(response)
+      if model_name == :claude_sonnet_4_5
+        ClaudeResponse.content_block(response, :tool_use).input
+      else
+        JSON.parse(ClaudeResponse.content_block(response, :text).text, symbolize_names: true)
+      end
     end
 
     def cached_system_prompt
@@ -108,15 +133,6 @@ module AnswerComposition::Pipeline
         llm_completion_tokens: response[:usage][:output_tokens],
         llm_cached_tokens: response[:usage][:cache_read_input_tokens],
         model: response[:model],
-      }
-    end
-
-    def tool_config
-      {
-        tools: tools,
-        tool_choice: {
-          tool: { name: "output_schema" },
-        },
       }
     end
 

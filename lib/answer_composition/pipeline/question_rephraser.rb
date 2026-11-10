@@ -3,7 +3,7 @@ module AnswerComposition
     class QuestionRephraser
       Result = Data.define(:llm_response, :rephrased_question, :metrics)
 
-      SUPPORTED_MODELS = %i[claude_sonnet_4_5].freeze
+      SUPPORTED_MODELS = %i[claude_sonnet_4_5 claude_sonnet_5_5].freeze
       DEFAULT_MODEL = :claude_sonnet_4_5
 
       def self.call(...) = new(...).call
@@ -70,10 +70,21 @@ module AnswerComposition
       end
 
       def inference_config
-        {
-          max_tokens: 4096,
-          temperature: 0.0,
-        }
+        if model_name == :claude_sonnet_4_5
+          {
+            max_tokens: 4096,
+            temperature: 0.0,
+          }
+        else
+          # Sonnet 5.5 rejects `temperature`, and thinks unless told not to.
+          # It can't turn thinking off completely: `between_tools` is its
+          # lowest setting, and needs an effort of `high` or below.
+          {
+            max_tokens: 4096,
+            thinking: { type: "between_tools" },
+            output_config: { effort: "low" },
+          }
+        end
       end
 
       def system_prompt

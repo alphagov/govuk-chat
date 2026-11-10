@@ -136,6 +136,31 @@ RSpec.describe AnswerComposition::Pipeline::StructuredAnswerComposer, :aws_crede
       expect(context.answer.status).to eq("answered")
     end
 
+    context "when the model is Sonnet 5.5" do
+      let!(:request) do
+        stub_claude_structured_answer(question.message, answer, chat_options: { bedrock_model: :claude_sonnet_5_5 })
+      end
+
+      around do |example|
+        ClimateControl.modify(BEDROCK_CLAUDE_STRUCTURED_ANSWER_COMPOSER_MODEL: "claude_sonnet_5_5") { example.run }
+      end
+
+      it "requests a structured output with the tool's schema instead of the tool" do
+        described_class.call(context)
+
+        expect(request).to have_been_made
+        expect(a_request(:post, /bedrock-runtime/).with { |req| JSON.parse(req.body).key?("tools") })
+          .not_to have_been_made
+      end
+
+      it "assigns the answer from the structured output" do
+        described_class.call(context)
+
+        expect(context.answer.message.squish).to eq(answer)
+        expect(context.answer).to have_attributes(status: "answered", completeness: "complete")
+      end
+    end
+
     it "stores the LLM response" do
       stub_claude_structured_answer(question.message, answer)
 
