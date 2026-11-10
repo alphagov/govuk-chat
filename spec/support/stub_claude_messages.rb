@@ -157,10 +157,25 @@ module StubClaudeMessages
         },
       )
 
-    chat_options = {
-      tools: [tools],
-      tool_choice: { type: "tool", name: "output_schema" },
-    }.merge(chat_options)
+    output = { answer:, sources_used:, answer_completeness: }
+
+    if model == :claude_sonnet_4_5
+      chat_options = {
+        tools: [tools],
+        tool_choice: { type: "tool", name: "output_schema" },
+      }.merge(chat_options)
+      content = [claude_messages_tool_use_block(input: output, name: "output_schema")]
+      stop_reason = :tool_use
+    else
+      chat_options = {
+        output_config: {
+          effort: "low",
+          format: { type: "json_schema", schema: tools[:input_schema] },
+        },
+      }.merge(chat_options)
+      content = [claude_messages_text_block(output.to_json)]
+      stop_reason = :end_turn
+    end
 
     system = array_including(
       { "type" => "text", "text" => "Static portion", "cache_control" => { "type" => "ephemeral" } },
@@ -169,12 +184,9 @@ module StubClaudeMessages
 
     stub_claude_messages_response(
       question_or_history,
-      content: [claude_messages_tool_use_block(
-        input: { answer:, sources_used:, answer_completeness: },
-        name: "output_schema",
-      )],
+      content:,
       system:,
-      stop_reason: :tool_use,
+      stop_reason:,
       usage: { cache_read_input_tokens: 20 },
       with_thinking_block:,
       chat_options:,
