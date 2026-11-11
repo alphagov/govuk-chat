@@ -4,8 +4,9 @@ RSpec.describe DailyApiActivityMessage do
     let(:api_conversation) { create(:conversation, source: :api) }
     let(:yesterday) { 1.day.ago }
 
-    def create_question(status, created_at, conversation, suggested_prompt: false)
+    def create_question(status, created_at, conversation, suggested_prompt: false, feedback: nil)
       answer = status == :pending ? nil : build(:answer, status:)
+      answer.feedback = build(:answer_feedback, reaction: feedback) if feedback
       create(:question, conversation:, created_at:, answer:, suggested_prompt:)
     end
 
@@ -236,6 +237,54 @@ RSpec.describe DailyApiActivityMessage do
 
           message = described_class.new(Date.yesterday).message
           expect(message).to include(expected_message)
+        end
+      end
+
+      context "when questions have feedback" do
+        it "includes the number of API questions with positive and negative feedback" do
+          create_question(:answered, yesterday, api_conversation)
+          2.times { create_question(:answered, yesterday, api_conversation, feedback: :positive) }
+          create_question(:answered, yesterday, api_conversation, feedback: :negative)
+          create_question(:answered, yesterday, web_conversation, feedback: :negative)
+
+          expected_message = <<~MSG.strip
+            Yesterday GOV.UK Chat API received <#{admin_url}|4 questions>:
+
+            - <#{admin_url(:answered)}|4 #{label_for_status(:answered)}>
+
+            <#{admin_url(reaction: :positive)}|2 of these questions> received positive feedback.
+            <#{admin_url(reaction: :negative)}|1 of these questions> received negative feedback.
+          MSG
+
+          message = described_class.new(Date.yesterday).message
+          expect(message).to eq(expected_message)
+        end
+
+        it "omits a reaction when no questions have that feedback" do
+          create_question(:answered, yesterday, api_conversation, feedback: :negative)
+
+          message = described_class.new(Date.yesterday).message
+          expect(message).to include("<#{admin_url(reaction: :negative)}|1 of these questions> received negative feedback.")
+          expect(message).not_to include("positive feedback")
+        end
+
+        it "omits the feedback summary when no questions have feedback" do
+          create_question(:answered, yesterday, api_conversation)
+
+          message = described_class.new(Date.yesterday).message
+          expect(message).not_to include("feedback")
+        end
+
+        it "counts feedback based on when the question was asked rather than when the feedback was given" do
+          old_question = create_question(:answered, 2.days.ago, api_conversation, feedback: :positive)
+          old_question.answer.feedback.update!(created_at: yesterday)
+
+          recent_question = create_question(:answered, yesterday, api_conversation, feedback: :negative)
+          recent_question.answer.feedback.update!(created_at: Time.current)
+
+          message = described_class.new(Date.yesterday).message
+          expect(message).to include("<#{admin_url(reaction: :negative)}|1 of these questions> received negative feedback.")
+          expect(message).not_to include("positive feedback")
         end
       end
     end
