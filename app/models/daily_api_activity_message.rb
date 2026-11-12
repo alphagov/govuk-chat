@@ -41,7 +41,7 @@ private
       #{list_items.join("\n")}
     MSG
 
-    [summary, suggested_prompt_summary].compact.join("\n\n")
+    [summary, suggested_prompt_summary, feedback_summary].compact.join("\n\n")
   end
 
   def suggested_prompt_summary
@@ -54,6 +54,18 @@ private
     source = suggested_prompt_count == 1 ? "a suggested prompt" : "suggested prompts"
 
     "#{link} came from #{source}."
+  end
+
+  def feedback_summary
+    lines = %i[positive negative].filter_map do |reaction|
+      count = feedback_count(reaction)
+      next unless count.positive?
+
+      link = admin_url_slack_link("#{count} of these questions", reaction:)
+      "#{link} received #{reaction} feedback."
+    end
+
+    lines.join("\n").presence
   end
 
   def rota_summary
@@ -115,11 +127,19 @@ private
                                         .count
   end
 
+  def feedback_count(reaction)
+    Question.joins(:conversation, answer: :feedback)
+            .where(created_at: date_range)
+            .where(conversations: { source: :api })
+            .where(answer_feedback: { reaction: })
+            .count
+  end
+
   def date_range
     date.beginning_of_day..date.end_of_day
   end
 
-  def admin_url_slack_link(text, status: nil, suggested_prompt: nil)
+  def admin_url_slack_link(text, status: nil, suggested_prompt: nil, reaction: nil)
     start_date_params = {
       day: date.day,
       month: date.month,
@@ -137,6 +157,7 @@ private
       end_date_params:,
       status:,
       suggested_prompt:,
+      reaction:,
       host: Plek.external_url_for(:chat),
     )
 
