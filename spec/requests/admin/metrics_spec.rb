@@ -646,6 +646,52 @@ RSpec.describe "Admin::MetricsController" do
     end
   end
 
+  describe "GET :feedback" do
+    it "renders a successful JSON response" do
+      get admin_metrics_feedback_path
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Content-Type"]).to match("application/json")
+      expect(JSON.parse(response.body)).to eq([])
+    end
+
+    it "returns data of feedback reactions for questions asked over the last 24 hours" do
+      create_feedback(3, reaction: :positive, question_created_at: 3.hours.ago)
+      create_feedback(2, reaction: :negative, question_created_at: 5.hours.ago)
+      create_feedback(1, reaction: :negative, question_created_at: 26.hours.ago)
+
+      get admin_metrics_feedback_path
+
+      expect(JSON.parse(response.body)).to contain_exactly(
+        ["positive", 3],
+        ["negative", 2],
+      )
+    end
+
+    context "when period is last_7_days" do
+      it "returns data of feedback reactions grouped by reaction by the day the question was asked" do
+        create_feedback(3, reaction: :positive, question_created_at: 3.days.ago)
+        create_feedback(2, reaction: :negative, question_created_at: 4.days.ago)
+        create_feedback(1, reaction: :negative, question_created_at: 8.days.ago)
+
+        get admin_metrics_feedback_path(period: "last_7_days")
+
+        expect(JSON.parse(response.body)).to contain_exactly(
+          { "name" => "positive", "data" => counts_for_last_7_days(days_ago_3: 3) },
+          { "name" => "negative", "data" => counts_for_last_7_days(days_ago_4: 2) },
+        )
+      end
+    end
+
+    def create_feedback(count, reaction:, question_created_at:)
+      count.times do
+        question = create(:question, created_at: question_created_at)
+        answer = create(:answer, question:)
+        # feedback is always created now to ensure we filter on question time
+        create(:answer_feedback, answer:, reaction:)
+      end
+    end
+  end
+
   def counts_for_last_24_hours(options)
     invalid_keys = options.keys.reject { |key| key.to_s =~ /^hours_ago_(1?\d|2[0-3])$/ }
     if invalid_keys.any?

@@ -29,6 +29,8 @@ RSpec.describe "Admin user views metrics", :js do
                 created_at: 5.hours.ago,
                 question_routing_guardrails_status: :fail,
                 question_routing_guardrails_failures: %w[guardrail_1 guardrail_2])
+    create(:answer_feedback, reaction: :positive, created_at: 2.hours.ago)
+    create(:answer_feedback, reaction: :negative, created_at: 3.hours.ago)
   end
 
   def when_i_visit_the_admin_area
@@ -43,6 +45,7 @@ RSpec.describe "Admin user views metrics", :js do
     # We're relying on the rendering of a successful chart results in a canvas
     # element, unclear how to assert correct chart
     expect(page).to have_selector("#questions canvas")
+    expect(page).to have_selector("#feedback canvas")
     expect(page).to have_selector("#conversations canvas")
     expect(page).to have_selector("#api-end-users canvas")
     expect(page).to have_selector("#answers-with-unanswerable-status canvas")
