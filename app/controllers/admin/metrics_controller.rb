@@ -18,6 +18,18 @@ class Admin::MetricsController < Admin::BaseController
     render json: count_by_period(scope).chart_json
   end
 
+  def feedback
+    scope = AnswerFeedback.joins(answer: :question)
+                          .where(questions: { created_at: start_time.. })
+                          .group(:reaction)
+
+    if @period == :last_7_days
+      render json: count_by_period(scope, group_field: "questions.created_at").chart_json
+    else
+      render json: scope.count.chart_json
+    end
+  end
+
   def api_end_users
     scope = Question.joins(:conversation)
                     .distinct
