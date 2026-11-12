@@ -16,7 +16,7 @@ module AnswerComposition
       end
 
       context.answer
-    rescue Anthropic::Errors::APIError => e
+    rescue Anthropic::Errors::APIError, Pipeline::ClaudeResponse::UnexpectedResponseError => e
       GovukError.notify(e)
       context.abort_pipeline(
         message: Answer::CannedResponses::ANSWER_SERVICE_ERROR_RESPONSE,

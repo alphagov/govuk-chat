@@ -28,6 +28,12 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credential
     end
   end
 
+  it "uses the text block when the response starts with a thinking block" do
+    stub_claude_jailbreak_guardrails(input, with_thinking_block: true)
+
+    expect { described_class.call(context) }.to change(context.answer, :jailbreak_guardrails_status).to("pass")
+  end
+
   context "when the guardrails are not triggered" do
     it "does not change the message" do
       expect { described_class.call(context) }.not_to change(context.answer, :message)
@@ -101,6 +107,23 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credential
         llm_cached_tokens: nil,
         model: BedrockModels.model_id(described_class::DEFAULT_MODEL),
       })
+    end
+  end
+
+  context "when the LLM response doesn't have the expected content" do
+    before do
+      allow(AnswerComposition::Pipeline::ClaudeResponse)
+        .to receive(:content_block)
+        .and_raise(AnswerComposition::Pipeline::ClaudeResponse::UnexpectedResponseError, "Claude refused to respond")
+    end
+
+    it "aborts the pipeline with an error status" do
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+
+      expect(context.answer).to have_attributes(
+        status: "error_jailbreak_guardrails",
+        jailbreak_guardrails_status: "error",
+      )
     end
   end
 

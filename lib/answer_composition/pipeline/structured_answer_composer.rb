@@ -34,7 +34,7 @@ module AnswerComposition::Pipeline
       }
 
       context.answer.assign_llm_response("structured_answer", llm_response_with_link_token_mapping)
-      tool_output = response[:content][0][:input]
+      tool_output = ClaudeResponse.content_block(response, :tool_use).input
       answer_completeness = tool_output[:answer_completeness]
       answered = %w[complete partial].include?(answer_completeness.downcase)
 
