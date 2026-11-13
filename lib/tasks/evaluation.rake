@@ -80,6 +80,49 @@ namespace :evaluation do
     puts(answer.serialize_for_evaluation.to_json)
   end
 
+  desc "Produce the output of question rephrasing for a user input and its conversation history"
+  task generate_question_rephraser_response: :environment do
+    raise "Requires an INPUT env var" if ENV["INPUT"].blank?
+
+    # Earlier turns of the conversation as a JSON array, for example
+    # [{"question": "Do I need a visa?", "answer": "You may need a visa if…"}]
+    history = JSON.parse(ENV.fetch("HISTORY", "[]"))
+    answer = nil
+
+    # The rephraser reads the earlier turns from the database, so they're
+    # saved for the call and rolled back afterwards. requires_new makes this a
+    # savepoint when it's already inside a transaction, as it is in the specs,
+    # so the rollback still happens
+    ActiveRecord::Base.transaction(requires_new: true) do
+      conversation = Conversation.create!
+      conversation_session_id = SecureRandom.uuid
+
+      history.each do |turn|
+        earlier_question = Question.create!(
+          conversation:,
+          conversation_session_id:,
+          message: turn.fetch("question"),
+          answer_strategy: :claude_structured_answer,
+        )
+        earlier_question.create_answer!(message: turn.fetch("answer"), status: :answered)
+      end
+
+      question = Question.new(
+        conversation:,
+        conversation_session_id:,
+        message: ENV["INPUT"],
+        answer_strategy: :claude_structured_answer,
+      )
+      answer = AnswerComposition::PipelineRunner.call(question:, pipeline: [AnswerComposition::Pipeline::QuestionRephraser])
+
+      raise ActiveRecord::Rollback
+    end
+
+    raise "Error occurred generating answer: #{answer.error_message}" if answer.status =~ /^error/
+
+    puts(answer.serialize_for_evaluation.to_json)
+  end
+
   desc "Query the index for results matching a user input"
   task search_results_for_question: :environment do
     raise "Requires an INPUT env var" if ENV["INPUT"].blank?

@@ -321,6 +321,69 @@ RSpec.describe "rake evaluation tasks" do
     end
   end
 
+  describe "generate_question_rephraser_response" do
+    let(:task_name) { "evaluation:generate_question_rephraser_response" }
+    let(:input) { "What about for a car?" }
+    let(:history) do
+      [
+        { question: "How do I tax a motorbike?", answer: "You can tax a motorbike online." },
+        { question: "How much does it cost?", answer: "It depends on the engine size." },
+      ].to_json
+    end
+
+    before { Rake::Task[task_name].reenable }
+
+    it_behaves_like "a task requiring an input"
+
+    it "calls the pipeline runner with the question rephraser and outputs the response as JSON" do
+      ClimateControl.modify(INPUT: input, HISTORY: history) do
+        answer = build(:answer, rephrased_question: "How do I tax a car?")
+        allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
+
+        expect { Rake::Task[task_name].invoke }
+          .to output("#{answer.serialize_for_evaluation.to_json}\n").to_stdout
+
+        expect(AnswerComposition::PipelineRunner)
+          .to have_received(:call)
+          .with(question: having_attributes(message: input), pipeline: [
+            AnswerComposition::Pipeline::QuestionRephraser,
+          ])
+      end
+    end
+
+    it "makes the history available to the rephraser and then removes it" do
+      earlier_turns = nil
+      allow(AnswerComposition::PipelineRunner).to receive(:call) do |question:, **|
+        earlier_turns = Question.where(conversation: question.conversation)
+                                .includes(:answer)
+                                .map { |earlier_question| [earlier_question.message, earlier_question.answer.message] }
+        build(:answer)
+      end
+
+      ClimateControl.modify(INPUT: input, HISTORY: history) do
+        expect { Rake::Task[task_name].invoke }
+          .to output.to_stdout
+          .and not_change(Conversation, :count)
+          .and not_change(Question, :count)
+      end
+
+      expect(earlier_turns).to eq([
+        ["How do I tax a motorbike?", "You can tax a motorbike online."],
+        ["How much does it cost?", "It depends on the engine size."],
+      ])
+    end
+
+    it "raises an error if the the answer has an error status" do
+      ClimateControl.modify(INPUT: input) do
+        answer = build(:answer, status: :error_answer_service_error, error_message: "Oh no!")
+        allow(AnswerComposition::PipelineRunner).to receive(:call).and_return(answer)
+
+        expect { Rake::Task[task_name].invoke }
+          .to raise_error("Error occurred generating answer: Oh no!")
+      end
+    end
+  end
+
   describe "search_results_for_question" do
     let(:task_name) { "evaluation:search_results_for_question" }
     let(:input) { "Question" }
