@@ -1,5 +1,7 @@
 module AnswerComposition::Pipeline
   class StructuredAnswerComposer
+    include ClaudeResponses
+
     SUPPORTED_MODELS = %i[claude_sonnet_4_5].freeze
     DEFAULT_MODEL = :claude_sonnet_4_5
 
@@ -104,7 +106,7 @@ module AnswerComposition::Pipeline
     def build_metrics(start_time, response)
       {
         duration: Clock.monotonic_time - start_time,
-        llm_prompt_tokens: BedrockModels.claude_total_prompt_tokens(response[:usage]),
+        llm_prompt_tokens: claude_total_prompt_tokens(response[:usage]),
         llm_completion_tokens: response[:usage][:output_tokens],
         llm_cached_tokens: response[:usage][:cache_read_input_tokens],
         model: response[:model],

@@ -25,8 +25,4 @@ module BedrockModels
     # this region prefix.
     MODEL_IDS.values.map { it.sub(/^eu\./, "") }
   end
-
-  def self.claude_total_prompt_tokens(usage)
-    usage[:input_tokens].to_i + usage[:cache_read_input_tokens].to_i + usage[:cache_creation_input_tokens].to_i
-  end
 end
