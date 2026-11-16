@@ -20,6 +20,8 @@ class Answer < ApplicationRecord
       Please try asking something else.
     MESSAGE
     LLM_CANNOT_ANSWER_MESSAGE = "I’m having difficulty finding an answer on GOV.UK. If you rephrase your question, I’ll search again. Or you can ask about something else.".freeze
+    # TODO: There is a card in the backlog for Content Design to update this content.
+    LLM_REFUSED_MESSAGE = JAILBREAK_GUARDRAILS_FAILED_MESSAGE
     FORBIDDEN_TERMS_MESSAGE = ANSWER_GUARDRAILS_FAILED_MESSAGE
 
     def self.response_for_question_routing_label(label)
@@ -37,6 +39,7 @@ class Answer < ApplicationRecord
     guardrails_forbidden_terms
     guardrails_jailbreak
     guardrails_question_routing
+    unanswerable_llm_refused
   ].freeze
 
   STATUSES_EXCLUDED_FROM_TOPIC_ANALYSIS = %w[
@@ -92,6 +95,7 @@ class Answer < ApplicationRecord
          guardrails_jailbreak: "guardrails_jailbreak",
          guardrails_question_routing: "guardrails_question_routing",
          unanswerable_llm_cannot_answer: "unanswerable_llm_cannot_answer",
+         unanswerable_llm_refused: "unanswerable_llm_refused",
          unanswerable_no_govuk_content: "unanswerable_no_govuk_content",
          unanswerable_question_routing: "unanswerable_question_routing",
        },
