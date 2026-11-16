@@ -202,6 +202,29 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
       end
     end
 
+    context "when Claude refuses to route the question" do
+      before do
+        stub_claude_question_routing(question.message, tools:, stop_reason: :refusal)
+      end
+
+      it "aborts the pipeline with the refused status and message" do
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+
+        expect(context.answer).to have_attributes(
+          status: "unanswerable_llm_refused",
+          message: Answer::CannedResponses::LLM_REFUSED_MESSAGE,
+          question_routing_label: nil,
+        )
+      end
+
+      it "keeps the llm response and metrics" do
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+
+        expect(context.answer.llm_responses["question_routing"]).to include(stop_reason: :refusal)
+        expect(context.answer.metrics["question_routing"]).to include(llm_prompt_tokens: 30)
+      end
+    end
+
     context "when the tokens returned by Bedrock exceeds the limit" do
       before do
         stub_claude_question_routing(

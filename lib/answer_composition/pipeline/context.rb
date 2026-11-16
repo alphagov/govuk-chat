@@ -30,6 +30,14 @@ module AnswerComposition::Pipeline
       throw :abort
     end
 
+    def abort_pipeline_as_refused!(**answer_attrs)
+      abort_pipeline!(
+        message: Answer::CannedResponses::LLM_REFUSED_MESSAGE,
+        status: "unanswerable_llm_refused",
+        **answer_attrs,
+      )
+    end
+
     def aborted?
       @aborted
     end
