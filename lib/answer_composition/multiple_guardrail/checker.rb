@@ -1,5 +1,7 @@
 module AnswerComposition::MultipleGuardrail
   class Checker
+    include ClaudeResponses
+
     Result = Data.define(:triggered, :guardrails, :llm_response, :llm_guardrail_result,
                          :llm_prompt_tokens, :llm_completion_tokens, :llm_cached_tokens, :model) do
       def triggered_guardrails
@@ -40,7 +42,7 @@ module AnswerComposition::MultipleGuardrail
         },
       ))
 
-      llm_guardrail_result = JSON.parse(response.content.first.text)
+      llm_guardrail_result = JSON.parse(claude_first_text_content(response).text)
 
       Result.new(
         llm_response: response.to_h,

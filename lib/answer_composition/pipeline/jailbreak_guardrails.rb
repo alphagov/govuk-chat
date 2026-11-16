@@ -1,6 +1,8 @@
 module AnswerComposition
   module Pipeline
     class JailbreakGuardrails
+      include ClaudeResponses
+
       SUPPORTED_MODELS = %i[claude_haiku_4_5].freeze
       DEFAULT_MODEL = :claude_haiku_4_5
 
@@ -24,7 +26,7 @@ module AnswerComposition
           **inference_config,
         )
 
-        text_response = response[:content][0][:text]
+        text_response = claude_first_text_content(response).text
         jailbreak_guardrails_status = case text_response
                                       when pass_value
                                         :pass
