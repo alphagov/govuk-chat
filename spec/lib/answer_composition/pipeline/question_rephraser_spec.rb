@@ -35,6 +35,14 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser, :aws_credentials_
     expect(stub).to have_been_requested
   end
 
+  it "uses the text block when the response starts with a thinking block" do
+    stub_claude_question_rephrasing(question.message, rephrased, with_thinking_block: true)
+
+    described_class.call(context)
+
+    expect(context.question_message).to eq(rephrased)
+  end
+
   it "includes the message_history in the user prompt" do
     message_history = <<~HISTORY.strip
       user:

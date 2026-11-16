@@ -75,7 +75,7 @@ module AnswerComposition::Pipeline
     end
 
     def llm_classification_function
-      @llm_classification_function ||= claude_response[:content][0]
+      @llm_classification_function ||= claude_first_tool_use(claude_response)
     end
 
     def llm_classification_data

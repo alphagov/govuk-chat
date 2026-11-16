@@ -127,6 +127,15 @@ RSpec.describe AnswerComposition::Pipeline::StructuredAnswerComposer, :aws_crede
       end
     end
 
+    it "uses the tool use block when the response starts with a thinking block" do
+      stub_claude_structured_answer(question.message, answer, with_thinking_block: true)
+
+      described_class.call(context)
+
+      expect(context.answer.message.squish).to eq(answer)
+      expect(context.answer.status).to eq("answered")
+    end
+
     it "stores the LLM response" do
       stub_claude_structured_answer(question.message, answer)
 

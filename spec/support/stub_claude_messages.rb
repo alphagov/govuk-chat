@@ -7,6 +7,7 @@ module StubClaudeMessages
                                     system: nil,
                                     stop_reason: :end_turn,
                                     usage: {},
+                                    with_thinking_block: false,
                                     chat_options: {})
     history = if question_or_history.is_a?(String) || question_or_history.is_a?(Regexp)
                 array_including({ "role" => "user", "content" => question_or_history })
@@ -33,6 +34,8 @@ module StubClaudeMessages
       matchers[:system] = system
     end
 
+    content = [claude_messages_thinking_block, *content] if with_thinking_block
+
     response = claude_messages_response(
       content:,
       usage:,
@@ -58,6 +61,7 @@ module StubClaudeMessages
 
   def stub_claude_jailbreak_guardrails(input,
                                        response = "PassValue",
+                                       with_thinking_block: false,
                                        chat_options: { bedrock_model: AnswerComposition::Pipeline::JailbreakGuardrails::DEFAULT_MODEL })
     jailbreak_guardrails_config = Rails.configuration
                                        .govuk_chat_private
@@ -74,16 +78,19 @@ module StubClaudeMessages
     stub_claude_messages_response(
       input,
       content: [claude_messages_text_block(response)],
+      with_thinking_block:,
       chat_options: { max_tokens: model_config.fetch(:max_tokens) }.merge(chat_options),
     )
   end
 
   def stub_claude_question_rephrasing(original_question,
                                       rephrased_question,
+                                      with_thinking_block: false,
                                       chat_options: { bedrock_model: AnswerComposition::Pipeline::QuestionRephraser::DEFAULT_MODEL })
     stub_claude_messages_response(
       array_including({ "role" => "user", "content" => a_string_including(original_question) }),
       content: [claude_messages_text_block(rephrased_question)],
+      with_thinking_block:,
       chat_options: chat_options,
     )
   end
@@ -93,6 +100,7 @@ module StubClaudeMessages
                                    tool_name: "genuine_rag",
                                    tool_input: { "answer": "This is RAG.", confidence: 1.0 },
                                    stop_reason: :tool_use,
+                                   with_thinking_block: false,
                                    chat_options: { bedrock_model: AnswerComposition::Pipeline::QuestionRouter::DEFAULT_MODEL })
     chat_options = {
       tools:,
@@ -111,6 +119,7 @@ module StubClaudeMessages
       system:,
       stop_reason:,
       usage: { cache_read_input_tokens: 20 },
+      with_thinking_block:,
       chat_options:,
     )
   end
@@ -119,6 +128,7 @@ module StubClaudeMessages
                                     answer,
                                     sources_used: %w[link_1],
                                     answer_completeness: "complete",
+                                    with_thinking_block: false,
                                     chat_options: { bedrock_model: AnswerComposition::Pipeline::StructuredAnswerComposer::DEFAULT_MODEL })
     model = chat_options[:bedrock_model]
     tools = Rails.configuration
@@ -156,12 +166,14 @@ module StubClaudeMessages
       system:,
       stop_reason: :tool_use,
       usage: { cache_read_input_tokens: 20 },
+      with_thinking_block:,
       chat_options:,
     )
   end
 
   def stub_claude_output_guardrails(to_check,
                                     response = [].to_json,
+                                    with_thinking_block: false,
                                     chat_options: { bedrock_model: AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL })
     system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))
 
@@ -172,6 +184,7 @@ module StubClaudeMessages
       content: [claude_messages_text_block(response)],
       system:,
       usage: { cache_read_input_tokens: 20 },
+      with_thinking_block:,
       chat_options: {
         temperature: nil,
         max_tokens: AnswerComposition::MultipleGuardrail::Checker::MAX_TOKENS,
@@ -192,6 +205,14 @@ module StubClaudeMessages
     Anthropic::Models::TextBlock.new(
       type: :text,
       text:,
+    )
+  end
+
+  def claude_messages_thinking_block
+    Anthropic::Models::ThinkingBlock.new(
+      type: :thinking,
+      thinking: "",
+      signature: "thinking-signature",
     )
   end
 
