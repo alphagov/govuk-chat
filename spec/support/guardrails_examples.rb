@@ -38,6 +38,49 @@ module GuardrailsExamples
     end
   end
 
+  shared_examples "a refusing guardrail pipeline step" do |guardrail_name|
+    context "when Claude refuses to check the guardrails" do
+      let(:guardrail_response) { nil }
+      let(:llm_response) do
+        claude_messages_response(
+          content: [],
+          stop_reason: :refusal,
+          bedrock_model: AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL,
+        ).to_h
+      end
+
+      before do
+        allow(AnswerComposition::MultipleGuardrail::Checker)
+          .to receive(:call)
+          .and_raise(
+            AnswerComposition::MultipleGuardrail::Checker::RefusalError.new(
+              "Claude refused to check the guardrails",
+              llm_response,
+              nil,
+              13,
+              7,
+              10,
+              BedrockModels.model_id(AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL),
+            ),
+          )
+      end
+
+      it "aborts the pipeline with the refused status and message" do
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+        expect(context.answer).to have_attributes(
+          status: "unanswerable_llm_refused",
+          message: Answer::CannedResponses::LLM_REFUSED_MESSAGE,
+        )
+      end
+
+      it "assigns the llm response and metrics to the answer" do
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+        expect(context.answer.llm_responses[guardrail_name]).to eq(llm_response)
+        expect(context.answer.metrics[guardrail_name]).to include(llm_prompt_tokens: 13)
+      end
+    end
+  end
+
   shared_examples "an erroring guardrail pipeline step" do |guardrail_name, message|
     context "when a ResponseError occurs during the call" do
       let(:guardrail_response) { nil }

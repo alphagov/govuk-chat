@@ -54,4 +54,5 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRoutingGuardrails do
   end
 
   it_behaves_like "an erroring guardrail pipeline step", "question_routing_guardrails", Answer::CannedResponses::QUESTION_ROUTING_GUARDRAILS_FAILED_MESSAGE
+  it_behaves_like "a refusing guardrail pipeline step", "question_routing_guardrails"
 end

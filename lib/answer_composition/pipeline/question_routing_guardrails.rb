@@ -19,6 +19,8 @@ module AnswerComposition
           question_routing_guardrails_status: response.triggered ? :fail : :pass,
           metrics: { guardrail_name => build_metrics(start_time, response) },
         )
+      rescue MultipleGuardrail::Checker::RefusalError => e
+        abort_after_refusal(context, e, start_time)
       rescue MultipleGuardrail::ResponseError => e
         abort_after_response_error(context, e, start_time, Answer::CannedResponses::QUESTION_ROUTING_GUARDRAILS_FAILED_MESSAGE)
       end

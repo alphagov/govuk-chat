@@ -31,6 +31,13 @@ module AnswerComposition
         self.class.name.split("::").last.underscore
       end
 
+      def abort_after_refusal(context, error, start_time)
+        context.abort_pipeline_as_refused!(
+          metrics: { guardrail_name => build_metrics(start_time, error) },
+          llm_response: { guardrail_name => error.llm_response },
+        )
+      end
+
       def abort_after_response_error(context, error, start_time, message)
         context.abort_pipeline!(
           message:,
