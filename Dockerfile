@@ -14,7 +14,7 @@ COPY Gemfile* .ruby-version ./
 
 RUN --mount=type=bind,target=. \
   --mount=type=secret,id=BUNDLE_GITHUB__COM,env=BUNDLE_GITHUB__COM \
-  bundle install --frozen
+  BUNDLE_FROZEN=true bundle install
 
 COPY --link . .
 RUN bootsnap precompile --gemfile .
