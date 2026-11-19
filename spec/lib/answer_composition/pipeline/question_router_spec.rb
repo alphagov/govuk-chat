@@ -322,5 +322,82 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
           .to change(context, :aborted?).to(true)
       end
     end
+
+    context "when the model is Sonnet 5.5" do
+      let(:model_name) { :claude_sonnet_5_5 }
+      let(:output_schema) do
+        {
+          type: "object",
+          properties: {
+            classification: {
+              anyOf: tools.map do |tool|
+                {
+                  type: "object",
+                  description: tool[:description],
+                  properties: { label: { type: "string", const: tool[:name] } }.merge(tool[:input_schema][:properties]),
+                  required: %w[label] + tool[:input_schema][:required],
+                  additionalProperties: false,
+                }
+              end,
+            },
+          },
+          required: %w[classification],
+          additionalProperties: false,
+        }
+      end
+
+      around do |example|
+        ClimateControl.modify(BEDROCK_CLAUDE_QUESTION_ROUTER_MODEL: "claude_sonnet_5_5") { example.run }
+      end
+
+      it "requests a structured output with a schema branch per label instead of tools" do
+        request = stub_claude_question_routing(
+          question.message,
+          tool_name: "greetings",
+          tool_input: classification_response,
+          output_schema: output_schema.deep_stringify_keys,
+          chat_options: { bedrock_model: :claude_sonnet_5_5 },
+        )
+
+        described_class.call(context)
+
+        expect(request).to have_been_made
+        expect(a_request(:post, /bedrock-runtime/).with { |req| JSON.parse(req.body).key?("tools") })
+          .not_to have_been_made
+      end
+
+      it "assigns the label and confidence from the structured output" do
+        stub_claude_question_routing(
+          question.message,
+          tool_name: "genuine_rag",
+          tool_input: classification_response,
+          chat_options: { bedrock_model: :claude_sonnet_5_5 },
+        )
+
+        described_class.call(context)
+
+        expect(context.answer).to have_attributes(
+          question_routing_label: "genuine_rag",
+          question_routing_confidence_score: 0.85,
+        )
+      end
+
+      it "assigns the answer from the structured output when the label uses it" do
+        stub_claude_question_routing(
+          question.message,
+          tool_name: "unclear_intent",
+          tool_input: { "answer" => "Which tax do you mean?", "confidence" => 0.9 },
+          chat_options: { bedrock_model: :claude_sonnet_5_5 },
+        )
+
+        described_class.call(context)
+
+        expect(context.answer).to have_attributes(
+          message: "Which tax do you mean?",
+          status: "clarification",
+          question_routing_label: "unclear_intent",
+        )
+      end
+    end
   end
 end

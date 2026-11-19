@@ -75,15 +75,22 @@ module AnswerComposition::Pipeline
     end
 
     def question_routing_label
-      llm_classification_function[:name]
-    end
-
-    def llm_classification_function
-      @llm_classification_function ||= claude_first_tool_use(claude_response)
+      llm_classification[:label]
     end
 
     def llm_classification_data
-      llm_classification_function[:input]
+      llm_classification[:data]
+    end
+
+    def llm_classification
+      @llm_classification ||= if model_name == :claude_sonnet_4_5
+                                tool_use = claude_first_tool_use(claude_response)
+                                { label: tool_use[:name], data: tool_use[:input] }
+                              else
+                                output = JSON.parse(claude_first_text_content(claude_response).text, symbolize_names: true)
+                                classification = output[:classification]
+                                { label: classification[:label], data: classification.except(:label) }
+                              end
     end
 
     def anthropic_bedrock_client
@@ -99,7 +106,6 @@ module AnswerComposition::Pipeline
         ],
         model: model_id,
         messages:,
-        tools:,
         **inference_config,
       )
     end
@@ -109,18 +115,23 @@ module AnswerComposition::Pipeline
         {
           max_tokens: 500, # A small limit here removes the risk of the LLM returning the whole prompt verbatim
           temperature: 0.0,
+          tools:,
           tool_choice: { type: "any", disable_parallel_tool_use: true },
         }
       else
-        # Sonnet 5.5 rejects `temperature` and forced tool use, so the model
-        # chooses whether to call a tool. It also thinks unless told not to,
-        # and can't turn thinking off completely: `between_tools` is its
-        # lowest setting, and needs an effort of `high` or below.
+        # Sonnet 5.5 rejects `temperature` and forced tool use. Instead of a
+        # tool per label, we ask for a structured output with one schema
+        # branch per label, which the API makes the reply match. It also
+        # thinks unless told not to, and can't turn thinking off completely:
+        # `between_tools` is its lowest setting, and needs an effort of
+        # `high` or below.
         {
           max_tokens: 500,
-          tool_choice: { type: "auto", disable_parallel_tool_use: true },
           thinking: { type: "between_tools" },
-          output_config: { effort: "low" },
+          output_config: {
+            effort: "low",
+            format: { type: "json_schema", schema: output_schema },
+          },
         }
       end
     end
@@ -137,15 +148,7 @@ module AnswerComposition::Pipeline
 
     def tools
       prompt_config[:classifications].map do |classification|
-        properties = {
-          confidence: prompt_config[:confidence_property],
-        }
-        required = %w[confidence]
-
-        if classification[:properties].present?
-          required.concat(classification[:required])
-          properties.merge!(classification[:properties])
-        end
+        properties, required = classification_properties(classification)
 
         {
           name: classification[:name],
@@ -159,6 +162,48 @@ module AnswerComposition::Pipeline
           },
         }.compact
       end
+    end
+
+    # `anyOf` can't sit alongside `type` or `properties` in the same schema
+    # object, so the labels go in a `classification` property rather than
+    # at the top level.
+    def output_schema
+      {
+        type: "object",
+        properties: {
+          classification: {
+            anyOf: prompt_config[:classifications].map { output_schema_branch(it) },
+          },
+        },
+        required: %w[classification],
+        additionalProperties: false,
+      }
+    end
+
+    def output_schema_branch(classification)
+      properties, required = classification_properties(classification)
+
+      {
+        type: "object",
+        description: build_description(classification),
+        properties: { label: { type: "string", const: classification[:name] } }.merge(properties),
+        required: %w[label] + required,
+        additionalProperties: false,
+      }
+    end
+
+    def classification_properties(classification)
+      properties = {
+        confidence: prompt_config[:confidence_property],
+      }
+      required = %w[confidence]
+
+      if classification[:properties].present?
+        required.concat(classification[:required])
+        properties.merge!(classification[:properties])
+      end
+
+      [properties, required]
     end
 
     def build_description(classification)

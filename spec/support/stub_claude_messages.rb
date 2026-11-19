@@ -112,23 +112,34 @@ module StubClaudeMessages
                                    tools: an_instance_of(Array),
                                    tool_name: "genuine_rag",
                                    tool_input: { "answer": "This is RAG.", confidence: 1.0 },
-                                   stop_reason: :tool_use,
+                                   output_schema: a_hash_including("type" => "object"),
+                                   stop_reason: nil,
                                    with_thinking_block: false,
                                    chat_options: { bedrock_model: AnswerComposition::Pipeline::QuestionRouter::DEFAULT_MODEL })
-    tool_choice_type = chat_options[:bedrock_model] == :claude_sonnet_4_5 ? "any" : "auto"
-    chat_options = {
-      tools:,
-      tool_choice: { type: tool_choice_type, disable_parallel_tool_use: true },
-      max_tokens: 500,
-    }.merge(chat_options)
+    if chat_options[:bedrock_model] == :claude_sonnet_4_5
+      chat_options = {
+        tools:,
+        tool_choice: { type: "any", disable_parallel_tool_use: true },
+        max_tokens: 500,
+      }.merge(chat_options)
+      content = [claude_messages_tool_use_block(input: tool_input, name: tool_name)]
+      stop_reason ||= :tool_use
+    else
+      chat_options = {
+        max_tokens: 500,
+        output_config: a_hash_including(
+          "effort" => "low",
+          "format" => a_hash_including("type" => "json_schema", "schema" => output_schema),
+        ),
+      }.merge(chat_options)
+      classification = { "label" => tool_name }.merge(tool_input.stringify_keys)
+      content = [claude_messages_text_block({ classification: }.to_json)]
+      stop_reason ||= :end_turn
+    end
+
+    content = [] if stop_reason == :refusal
 
     system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))
-
-    content = if stop_reason == :refusal
-                []
-              else
-                [claude_messages_tool_use_block(input: tool_input, name: tool_name)]
-              end
 
     stub_claude_messages_response(
       question_or_history,
