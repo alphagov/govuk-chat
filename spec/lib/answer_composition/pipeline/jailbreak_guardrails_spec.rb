@@ -110,6 +110,28 @@ RSpec.describe AnswerComposition::Pipeline::JailbreakGuardrails, :aws_credential
     end
   end
 
+  context "when the model refuses to check the question" do
+    let!(:stub) { stub_claude_jailbreak_guardrails(input, nil, stop_reason: :refusal) }
+
+    it "aborts the pipeline as if the guardrails were triggered" do
+      expect {
+        described_class.call(context)
+      }.to throw_symbol(:abort)
+
+      expect(context.answer).to have_attributes(
+        status: "guardrails_jailbreak",
+        message: Answer::CannedResponses::JAILBREAK_GUARDRAILS_FAILED_MESSAGE,
+        jailbreak_guardrails_status: "fail",
+      )
+    end
+
+    it "assigns the llm response to the answer, keeping the refusal" do
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+
+      expect(context.answer.llm_responses["jailbreak_guardrails"]).to include(stop_reason: :refusal)
+    end
+  end
+
   context "when the LLM response is in an unexpected format" do
     let(:response) { "UnexpectedFormat" }
     let!(:stub) { stub_claude_jailbreak_guardrails(input, response) }

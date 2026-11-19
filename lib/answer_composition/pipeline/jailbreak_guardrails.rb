@@ -26,15 +26,7 @@ module AnswerComposition
           **inference_config,
         )
 
-        text_response = claude_first_text_content(response).text
-        jailbreak_guardrails_status = case text_response
-                                      when pass_value
-                                        :pass
-                                      when fail_value
-                                        :fail
-                                      else
-                                        :error
-                                      end
+        jailbreak_guardrails_status = guardrails_status(response)
 
         context.answer.assign_attributes(jailbreak_guardrails_status:)
         context.answer.assign_llm_response("jailbreak_guardrails", response.to_h)
@@ -58,6 +50,22 @@ module AnswerComposition
     private
 
       attr_reader :context, :model_id, :model_name
+
+      def guardrails_status(response)
+        # A refusal means the model's safety classifiers declined to check
+        # the question, so we treat it as a jailbreak attempt. The stored
+        # LLM response keeps the refusal stop_reason, to tell them apart.
+        return :fail if response.stop_reason == :refusal
+
+        case claude_first_text_content(response).text
+        when pass_value
+          :pass
+        when fail_value
+          :fail
+        else
+          :error
+        end
+      end
 
       def anthropic_bedrock_client
         @anthropic_bedrock_client ||= Anthropic::BedrockClient.new(

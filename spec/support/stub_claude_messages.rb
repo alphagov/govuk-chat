@@ -70,6 +70,7 @@ module StubClaudeMessages
 
   def stub_claude_jailbreak_guardrails(input,
                                        response = "PassValue",
+                                       stop_reason: :end_turn,
                                        with_thinking_block: false,
                                        chat_options: { bedrock_model: AnswerComposition::Pipeline::JailbreakGuardrails::DEFAULT_MODEL })
     jailbreak_guardrails_config = Rails.configuration
@@ -86,7 +87,8 @@ module StubClaudeMessages
 
     stub_claude_messages_response(
       input,
-      content: [claude_messages_text_block(response)],
+      content: response.nil? ? [] : [claude_messages_text_block(response)],
+      stop_reason:,
       with_thinking_block:,
       chat_options: { max_tokens: model_config.fetch(:max_tokens) }.merge(chat_options),
     )
