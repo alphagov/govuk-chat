@@ -789,7 +789,7 @@ components:
               triggered guardrails (e.g. jailbreak guardrails)
             - `unanswerable_*`: the question could not be answered
               (e.g. no relevant GOV.UK content found, question routed as
-              out of scope).
+              out of scope, or the LLM refused to answer).
             - `error_*`: a system error occurred during answer generation
               (e.g. LLM service failure, timeout, unparseable guardrails
               response). These are system reliability issues, not answer
@@ -810,6 +810,7 @@ components:
             - guardrails_jailbreak
             - guardrails_question_routing
             - unanswerable_llm_cannot_answer
+            - unanswerable_llm_refused
             - unanswerable_no_govuk_content
             - unanswerable_question_routing
         sources:

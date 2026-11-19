@@ -106,6 +106,27 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRephraser, :aws_credentials_
       .to eq(expected_llm_response)
   end
 
+  context "when Claude refuses to rephrase the question" do
+    let!(:stub) { stub_claude_question_rephrasing(question.message, rephrased, stop_reason: :refusal) }
+
+    it "aborts the pipeline with the refused status and message" do
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+
+      expect(context.answer).to have_attributes(
+        status: "unanswerable_llm_refused",
+        message: Answer::CannedResponses::LLM_REFUSED_MESSAGE,
+      )
+      expect(context.question_message).to eq(question.message)
+    end
+
+    it "keeps the llm response and metrics" do
+      expect { described_class.call(context) }.to throw_symbol(:abort)
+
+      expect(context.answer.llm_responses["question_rephrasing"]).to include(stop_reason: :refusal)
+      expect(context.answer.metrics["question_rephrasing"]).to include(llm_prompt_tokens: 10)
+    end
+  end
+
   context "when the question is the first in the conversation" do
     let(:question) { create(:question) }
     let(:context) { build(:answer_pipeline_context, question:) }

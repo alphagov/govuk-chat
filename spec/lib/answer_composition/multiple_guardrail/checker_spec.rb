@@ -150,6 +150,23 @@ RSpec.describe AnswerComposition::MultipleGuardrail::Checker, :aws_credentials_s
       expect(result.model).to eq(BedrockModels.model_id(model))
     end
 
+    context "when Claude refuses to check the guardrails" do
+      before { stub_claude_output_guardrails(input, stop_reason: :refusal) }
+
+      it "raises a RefusalError with the llm response and token usage" do
+        expect { described_class.call(input, llm_prompt_name) }
+          .to raise_error(AnswerComposition::MultipleGuardrail::Checker::RefusalError) { |error|
+            expect(error).to have_attributes(
+              llm_prompt_tokens: 10,
+              llm_completion_tokens: 20,
+              llm_cached_tokens: 20,
+              model: BedrockModels.model_id(model),
+            )
+            expect(error.llm_response).to include(stop_reason: :refusal)
+          }
+      end
+    end
+
     context "when the guardrail type is :question_routing_guardrails" do
       let(:llm_prompt_name) { :question_routing_guardrails }
 

@@ -21,6 +21,10 @@ unanswerable_llm_cannot_answer:
   label: "Unanswerable"
   description: "LLM couldn't answer the question"
   label_and_description: "Unanswerable - LLM couldn't answer the question"
+unanswerable_llm_refused:
+  label: "Unanswerable"
+  description: "LLM refused to answer the question"
+  label_and_description: "Unanswerable - LLM refused to answer the question"
 unanswerable_no_govuk_content:
   label: "Unanswerable"
   description: "no GOV.UK content found"

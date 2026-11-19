@@ -17,6 +17,8 @@ module AnswerComposition
           context.answer.assign_attributes(answer_guardrails_status: :pass)
           context.answer.assign_metrics(guardrail_name, build_metrics(start_time, response))
         end
+      rescue MultipleGuardrail::Checker::RefusalError => e
+        abort_after_refusal(context, e, start_time)
       rescue MultipleGuardrail::ResponseError => e
         abort_after_response_error(context, e, start_time, Answer::CannedResponses::ANSWER_GUARDRAILS_FAILED_MESSAGE)
       end

@@ -88,6 +88,21 @@ RSpec.describe AnswerComposition::Pipeline::Context do
     end
   end
 
+  describe "#abort_pipeline_as_refused!" do
+    it "aborts the pipeline with the refused status and message, and any other answer attributes" do
+      instance = described_class.new(build(:question))
+      metrics = { "question_routing" => { duration: 1.5 } }
+
+      expect { instance.abort_pipeline_as_refused!(metrics:) }.to throw_symbol(:abort)
+
+      expect(instance.answer).to have_attributes(
+        status: "unanswerable_llm_refused",
+        message: Answer::CannedResponses::LLM_REFUSED_MESSAGE,
+        metrics:,
+      )
+    end
+  end
+
   describe "#question_message=" do
     it "updates the question_message attribute" do
       instance = described_class.new(build(:question))

@@ -29,11 +29,14 @@ module AnswerComposition
         )
 
         context.answer.assign_llm_response("question_rephrasing", response.to_h)
+        metrics = { duration: Clock.monotonic_time - start_time }.merge(build_metrics(response))
+
+        if response.stop_reason == :refusal
+          context.abort_pipeline_as_refused!(metrics: { "question_rephrasing" => metrics })
+        end
+
         context.question_message = claude_first_text_content(response).text
-        context.answer.assign_metrics(
-          "question_rephrasing",
-          { duration: Clock.monotonic_time - start_time }.merge(build_metrics(response)),
-        )
+        context.answer.assign_metrics("question_rephrasing", metrics)
       end
 
     private

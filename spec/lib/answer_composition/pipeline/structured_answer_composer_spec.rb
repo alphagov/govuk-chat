@@ -247,5 +247,26 @@ RSpec.describe AnswerComposition::Pipeline::StructuredAnswerComposer, :aws_crede
         answer_completeness: "complete",
       }
     end
+
+    context "when Claude refuses to answer the question" do
+      before { stub_claude_structured_answer(question.message, answer, stop_reason: :refusal) }
+
+      it "aborts the pipeline with the refused status and message, and marks sources as unused" do
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+
+        expect(context.answer).to have_attributes(
+          status: "unanswerable_llm_refused",
+          message: Answer::CannedResponses::LLM_REFUSED_MESSAGE,
+        )
+        expect(context.answer.sources.map(&:used)).to all(be(false))
+      end
+
+      it "keeps the llm response and metrics" do
+        expect { described_class.call(context) }.to throw_symbol(:abort)
+
+        expect(context.answer.llm_responses["structured_answer"]["response"]).to include("stop_reason" => :refusal)
+        expect(context.answer.metrics["structured_answer"]).to include(llm_prompt_tokens: 30)
+      end
+    end
   end
 end

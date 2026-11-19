@@ -21,6 +21,10 @@ module AnswerComposition::Pipeline
       answer = context.answer
       answer.assign_llm_response("question_routing", claude_response.to_h)
 
+      if claude_response.stop_reason == :refusal
+        context.abort_pipeline_as_refused!(metrics: { "question_routing" => build_metrics(start_time) })
+      end
+
       if genuine_rag?
         answer.assign_attributes(
           question_routing_label:,
