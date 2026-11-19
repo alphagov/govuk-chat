@@ -1,11 +1,12 @@
 RSpec.describe BedrockModels do
   describe ".claude_total_prompt_tokens" do
     it "returns the total prompt tokens from usage" do
-      usage = {
+      usage = Anthropic::Models::Usage.new(
         input_tokens: 10,
+        output_tokens: 20,
         cache_read_input_tokens: 5,
-        cache_write_input_tokens: 2,
-      }
+        cache_creation_input_tokens: 2,
+      )
       expect(described_class.claude_total_prompt_tokens(usage)).to eq(17)
     end
 
@@ -18,7 +19,7 @@ RSpec.describe BedrockModels do
       usage = {
         input_tokens: nil,
         cache_read_input_tokens: nil,
-        cache_write_input_tokens: nil,
+        cache_creation_input_tokens: nil,
       }
       expect(described_class.claude_total_prompt_tokens(usage)).to eq(0)
     end
