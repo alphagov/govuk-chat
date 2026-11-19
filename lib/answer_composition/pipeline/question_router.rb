@@ -1,6 +1,8 @@
 module AnswerComposition::Pipeline
   class QuestionRouter
-    SUPPORTED_MODELS = %i[claude_sonnet_4_5].freeze
+    include ClaudeResponses
+
+    SUPPORTED_MODELS = %i[claude_sonnet_4_5 claude_sonnet_5_5].freeze
     DEFAULT_MODEL = :claude_sonnet_4_5
 
     def self.call(...) = new(...).call
@@ -73,7 +75,7 @@ module AnswerComposition::Pipeline
     end
 
     def llm_classification_function
-      @llm_classification_function ||= claude_response[:content][0]
+      @llm_classification_function ||= claude_first_tool_use(claude_response)
     end
 
     def llm_classification_data
@@ -94,16 +96,29 @@ module AnswerComposition::Pipeline
         model: model_id,
         messages:,
         tools:,
-        tool_choice: { type: "any", disable_parallel_tool_use: true },
         **inference_config,
       )
     end
 
     def inference_config
-      {
-        max_tokens: 500, # A small limit here removes the risk of the LLM returning the whole prompt verbatim
-        temperature: 0.0,
-      }
+      if model_name == :claude_sonnet_4_5
+        {
+          max_tokens: 500, # A small limit here removes the risk of the LLM returning the whole prompt verbatim
+          temperature: 0.0,
+          tool_choice: { type: "any", disable_parallel_tool_use: true },
+        }
+      else
+        # Sonnet 5.5 rejects `temperature` and forced tool use, so the model
+        # chooses whether to call a tool. It also thinks unless told not to,
+        # and can't turn thinking off completely: `between_tools` is its
+        # lowest setting, and needs an effort of `high` or below.
+        {
+          max_tokens: 500,
+          tool_choice: { type: "auto", disable_parallel_tool_use: true },
+          thinking: { type: "between_tools" },
+          output_config: { effort: "low" },
+        }
+      end
     end
 
     def messages
@@ -114,13 +129,6 @@ module AnswerComposition::Pipeline
 
     def prompt_config
       Prompts.config(:question_routing, model_name)
-    end
-
-    def tool_config
-      {
-        tools:,
-        tool_choice: { any: {} },
-      }
     end
 
     def tools
@@ -170,7 +178,7 @@ module AnswerComposition::Pipeline
     def build_metrics(start_time)
       {
         duration: Clock.monotonic_time - start_time,
-        llm_prompt_tokens: BedrockModels.claude_total_prompt_tokens(claude_response[:usage]),
+        llm_prompt_tokens: claude_total_prompt_tokens(claude_response[:usage]),
         llm_completion_tokens: claude_response[:usage][:output_tokens],
         llm_cached_tokens: claude_response[:usage][:cache_read_input_tokens],
         model: claude_response[:model],

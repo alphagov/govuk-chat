@@ -2,6 +2,8 @@ module BedrockModels
   MODEL_IDS = {
     claude_sonnet_4_5: "eu.anthropic.claude-sonnet-4-5-20250929-v1:0",
     claude_haiku_4_5: "eu.anthropic.claude-haiku-4-5-20251001-v1:0",
+    claude_sonnet_5_5: "eu.anthropic.claude-sonnet-5-5",
+    claude_haiku_5_5: "eu.anthropic.claude-haiku-5-5",
     titan_embed_v2: "amazon.titan-embed-text-v2:0",
     openai_gpt_oss_120b: "openai.gpt-oss-120b-1:0",
   }.freeze
@@ -24,9 +26,5 @@ module BedrockModels
     # inference for that model. But the Bedrock API returns the model names without
     # this region prefix.
     MODEL_IDS.values.map { it.sub(/^eu\./, "") }
-  end
-
-  def self.claude_total_prompt_tokens(usage)
-    usage[:input_tokens].to_i + usage[:cache_read_input_tokens].to_i + usage[:cache_creation_input_tokens].to_i
   end
 end

@@ -1,12 +1,15 @@
 module StubClaudeMessages
   CLAUDE_SONNET_4_5_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*eu.anthropic.claude-sonnet-4-5-20250929-v1:0.*?/invoke}
   CLAUDE_HAIKU_4_5_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*anthropic\.claude-haiku-4-5-20251001-v1:0.*?/invoke}
+  CLAUDE_SONNET_5_5_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*eu\.anthropic\.claude-sonnet-5-5/invoke}
+  CLAUDE_HAIKU_5_5_ENDPOINT_REGEX = %r{https://bedrock-runtime\..*\.amazonaws\.com/model/.*eu\.anthropic\.claude-haiku-5-5/invoke}
 
   def stub_claude_messages_response(question_or_history,
                                     content:,
                                     system: nil,
                                     stop_reason: :end_turn,
                                     usage: {},
+                                    with_thinking_block: false,
                                     chat_options: {})
     history = if question_or_history.is_a?(String) || question_or_history.is_a?(Regexp)
                 array_including({ "role" => "user", "content" => question_or_history })
@@ -15,7 +18,7 @@ module StubClaudeMessages
               end
 
     bedrock_model = chat_options.delete(:bedrock_model) || :claude_sonnet_4_5
-    chat_options = { temperature: 0.0, max_tokens: 4096 }.merge(chat_options).compact
+    chat_options = claude_default_chat_options(bedrock_model).merge(chat_options).compact
 
     matchers = {
       messages: history,
@@ -33,6 +36,8 @@ module StubClaudeMessages
       matchers[:system] = system
     end
 
+    content = [claude_messages_thinking_block, *content] if with_thinking_block
+
     response = claude_messages_response(
       content:,
       usage:,
@@ -45,10 +50,17 @@ module StubClaudeMessages
                        CLAUDE_SONNET_4_5_ENDPOINT_REGEX
                      when :claude_haiku_4_5
                        CLAUDE_HAIKU_4_5_ENDPOINT_REGEX
+                     when :claude_sonnet_5_5
+                       CLAUDE_SONNET_5_5_ENDPOINT_REGEX
+                     when :claude_haiku_5_5
+                       CLAUDE_HAIKU_5_5_ENDPOINT_REGEX
                      end
 
+    # The 5.5 models reject `temperature`, so check we don't send it at all.
+    sends_temperature_allowed = %i[claude_sonnet_4_5 claude_haiku_4_5].include?(bedrock_model)
+
     stub_request(:post, endpoint_regex)
-      .with(body: hash_including(matchers))
+      .with(body: hash_including(matchers)) { |request| sends_temperature_allowed || !JSON.parse(request.body).key?("temperature") }
       .to_return_json(
         status: 200,
         body: response,
@@ -58,6 +70,7 @@ module StubClaudeMessages
 
   def stub_claude_jailbreak_guardrails(input,
                                        response = "PassValue",
+                                       with_thinking_block: false,
                                        chat_options: { bedrock_model: AnswerComposition::Pipeline::JailbreakGuardrails::DEFAULT_MODEL })
     jailbreak_guardrails_config = Rails.configuration
                                        .govuk_chat_private
@@ -74,16 +87,19 @@ module StubClaudeMessages
     stub_claude_messages_response(
       input,
       content: [claude_messages_text_block(response)],
+      with_thinking_block:,
       chat_options: { max_tokens: model_config.fetch(:max_tokens) }.merge(chat_options),
     )
   end
 
   def stub_claude_question_rephrasing(original_question,
                                       rephrased_question,
+                                      with_thinking_block: false,
                                       chat_options: { bedrock_model: AnswerComposition::Pipeline::QuestionRephraser::DEFAULT_MODEL })
     stub_claude_messages_response(
       array_including({ "role" => "user", "content" => a_string_including(original_question) }),
       content: [claude_messages_text_block(rephrased_question)],
+      with_thinking_block:,
       chat_options: chat_options,
     )
   end
@@ -93,10 +109,12 @@ module StubClaudeMessages
                                    tool_name: "genuine_rag",
                                    tool_input: { "answer": "This is RAG.", confidence: 1.0 },
                                    stop_reason: :tool_use,
+                                   with_thinking_block: false,
                                    chat_options: { bedrock_model: AnswerComposition::Pipeline::QuestionRouter::DEFAULT_MODEL })
+    tool_choice_type = chat_options[:bedrock_model] == :claude_sonnet_4_5 ? "any" : "auto"
     chat_options = {
       tools:,
-      tool_choice: { type: "any", disable_parallel_tool_use: true },
+      tool_choice: { type: tool_choice_type, disable_parallel_tool_use: true },
       max_tokens: 500,
     }.merge(chat_options)
 
@@ -111,6 +129,7 @@ module StubClaudeMessages
       system:,
       stop_reason:,
       usage: { cache_read_input_tokens: 20 },
+      with_thinking_block:,
       chat_options:,
     )
   end
@@ -119,6 +138,7 @@ module StubClaudeMessages
                                     answer,
                                     sources_used: %w[link_1],
                                     answer_completeness: "complete",
+                                    with_thinking_block: false,
                                     chat_options: { bedrock_model: AnswerComposition::Pipeline::StructuredAnswerComposer::DEFAULT_MODEL })
     model = chat_options[:bedrock_model]
     tools = Rails.configuration
@@ -137,10 +157,25 @@ module StubClaudeMessages
         },
       )
 
-    chat_options = {
-      tools: [tools],
-      tool_choice: { type: "tool", name: "output_schema" },
-    }.merge(chat_options)
+    output = { answer:, sources_used:, answer_completeness: }
+
+    if model == :claude_sonnet_4_5
+      chat_options = {
+        tools: [tools],
+        tool_choice: { type: "tool", name: "output_schema" },
+      }.merge(chat_options)
+      content = [claude_messages_tool_use_block(input: output, name: "output_schema")]
+      stop_reason = :tool_use
+    else
+      chat_options = {
+        output_config: {
+          effort: "low",
+          format: { type: "json_schema", schema: tools[:input_schema] },
+        },
+      }.merge(chat_options)
+      content = [claude_messages_text_block(output.to_json)]
+      stop_reason = :end_turn
+    end
 
     system = array_including(
       { "type" => "text", "text" => "Static portion", "cache_control" => { "type" => "ephemeral" } },
@@ -149,34 +184,47 @@ module StubClaudeMessages
 
     stub_claude_messages_response(
       question_or_history,
-      content: [claude_messages_tool_use_block(
-        input: { answer:, sources_used:, answer_completeness: },
-        name: "output_schema",
-      )],
+      content:,
       system:,
-      stop_reason: :tool_use,
+      stop_reason:,
       usage: { cache_read_input_tokens: 20 },
+      with_thinking_block:,
       chat_options:,
     )
   end
 
   def stub_claude_output_guardrails(to_check,
                                     response = [].to_json,
+                                    with_thinking_block: false,
                                     chat_options: { bedrock_model: AnswerComposition::MultipleGuardrail::Checker::DEFAULT_MODEL })
     system = array_including(a_hash_including("cache_control" => { "type" => "ephemeral" }))
 
-    chat_options[:output_config] = a_hash_including("format" => a_hash_including("type" => "json_schema"))
+    output_config = { "format" => a_hash_including("type" => "json_schema") }
+    output_config["effort"] = "low" unless chat_options[:bedrock_model] == :claude_haiku_4_5
+    chat_options[:output_config] = a_hash_including(output_config)
 
     stub_claude_messages_response(
       array_including({ "role" => "user", "content" => a_string_including(to_check) }),
       content: [claude_messages_text_block(response)],
       system:,
       usage: { cache_read_input_tokens: 20 },
+      with_thinking_block:,
       chat_options: {
         temperature: nil,
         max_tokens: AnswerComposition::MultipleGuardrail::Checker::MAX_TOKENS,
       }.merge(chat_options),
     )
+  end
+
+  def claude_default_chat_options(bedrock_model)
+    case bedrock_model
+    when :claude_sonnet_4_5, :claude_haiku_4_5
+      { temperature: 0.0, max_tokens: 4096 }
+    when :claude_sonnet_5_5
+      { max_tokens: 4096, thinking: { type: "between_tools" }, output_config: { effort: "low" } }
+    when :claude_haiku_5_5
+      { max_tokens: 4096, thinking: { type: "disabled" }, output_config: { effort: "low" } }
+    end
   end
 
   def claude_messages_tool_use_block(input:, name:, id: "tool-use-id")
@@ -192,6 +240,14 @@ module StubClaudeMessages
     Anthropic::Models::TextBlock.new(
       type: :text,
       text:,
+    )
+  end
+
+  def claude_messages_thinking_block
+    Anthropic::Models::ThinkingBlock.new(
+      type: :thinking,
+      thinking: "",
+      signature: "thinking-signature",
     )
   end
 

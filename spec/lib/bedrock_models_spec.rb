@@ -1,30 +1,4 @@
 RSpec.describe BedrockModels do
-  describe ".claude_total_prompt_tokens" do
-    it "returns the total prompt tokens from usage" do
-      usage = Anthropic::Models::Usage.new(
-        input_tokens: 10,
-        output_tokens: 20,
-        cache_read_input_tokens: 5,
-        cache_creation_input_tokens: 2,
-      )
-      expect(described_class.claude_total_prompt_tokens(usage)).to eq(17)
-    end
-
-    it "returns 0 when no tokens are provided" do
-      usage = {}
-      expect(described_class.claude_total_prompt_tokens(usage)).to eq(0)
-    end
-
-    it "handles nil values gracefully" do
-      usage = {
-        input_tokens: nil,
-        cache_read_input_tokens: nil,
-        cache_creation_input_tokens: nil,
-      }
-      expect(described_class.claude_total_prompt_tokens(usage)).to eq(0)
-    end
-  end
-
   describe ".model_id" do
     it "returns the correct model ID for a given model name" do
       expect(described_class.model_id(:titan_embed_v2)).to eq("amazon.titan-embed-text-v2:0")
@@ -70,6 +44,8 @@ RSpec.describe BedrockModels do
       allow(described_class).to receive(:MODEL_IDS).and_return({
         claude_sonnet_4_5: "eu.anthropic.claude-sonnet-4-5-20250929-v1:0",
         claude_haiku_4_5: "eu.anthropic.claude-haiku-4-5-20251001-v1:0",
+        claude_sonnet_5_5: "eu.anthropic.claude-sonnet-5-5",
+        claude_haiku_5_5: "eu.anthropic.claude-haiku-5-5",
         titan_embed_v2: "amazon.titan-embed-text-v2:0",
         openai_gpt_oss_120b: "openai.gpt-oss-120b-1:0",
       })
@@ -78,6 +54,8 @@ RSpec.describe BedrockModels do
         "amazon.titan-embed-text-v2:0",
         "anthropic.claude-sonnet-4-5-20250929-v1:0",
         "anthropic.claude-haiku-4-5-20251001-v1:0",
+        "anthropic.claude-sonnet-5-5",
+        "anthropic.claude-haiku-5-5",
         "openai.gpt-oss-120b-1:0",
       )
     end

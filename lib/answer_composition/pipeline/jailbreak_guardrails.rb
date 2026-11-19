@@ -1,7 +1,9 @@
 module AnswerComposition
   module Pipeline
     class JailbreakGuardrails
-      SUPPORTED_MODELS = %i[claude_haiku_4_5].freeze
+      include ClaudeResponses
+
+      SUPPORTED_MODELS = %i[claude_haiku_4_5 claude_haiku_5_5].freeze
       DEFAULT_MODEL = :claude_haiku_4_5
 
       def self.call(...) = new(...).call
@@ -24,7 +26,7 @@ module AnswerComposition
           **inference_config,
         )
 
-        text_response = response[:content][0][:text]
+        text_response = claude_first_text_content(response).text
         jailbreak_guardrails_status = case text_response
                                       when pass_value
                                         :pass
@@ -80,10 +82,20 @@ module AnswerComposition
       end
 
       def inference_config
-        {
-          max_tokens: max_tokens,
-          temperature: 0.0,
-        }
+        if model_name == :claude_haiku_4_5
+          {
+            max_tokens: max_tokens,
+            temperature: 0.0,
+          }
+        else
+          # Haiku 5.5 rejects `temperature`, and thinks unless told not to.
+          # Turning thinking off needs an effort of `high` or below.
+          {
+            max_tokens: max_tokens,
+            thinking: { type: "disabled" },
+            output_config: { effort: "low" },
+          }
+        end
       end
 
       def messages

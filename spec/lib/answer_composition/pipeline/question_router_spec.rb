@@ -181,6 +181,27 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
       end
     end
 
+    context "when the response starts with a thinking block" do
+      before do
+        stub_claude_question_routing(
+          question.message,
+          tools:,
+          tool_name: "genuine_rag",
+          tool_input: classification_response,
+          with_thinking_block: true,
+        )
+      end
+
+      it "uses the tool use block" do
+        described_class.call(context)
+
+        expect(context.answer).to have_attributes(
+          question_routing_label: "genuine_rag",
+          question_routing_confidence_score: 0.85,
+        )
+      end
+    end
+
     context "when the tokens returned by Bedrock exceeds the limit" do
       before do
         stub_claude_question_routing(
