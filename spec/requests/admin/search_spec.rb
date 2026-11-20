@@ -61,11 +61,11 @@ RSpec.describe "Admin::SearchController", :aws_credentials_stubbed, :chunked_con
         it "renders a list of search results" do
           get admin_search_path, params: { search_text: }
 
-          expect(response.body).to have_selector("#used-results") do |result|
+          expect(response.body).to have_css("#used-results") do |result|
             expect(result).to have_link("Looking for this one")
-            expect(result).to have_selector("td", text: "Sub header")
+            expect(result).to have_css("td", text: "Sub header")
             # matching a score that is ~1.2
-            expect(result).to have_selector("td", text: /1.\d+/)
+            expect(result).to have_css("td", text: /1.\d+/)
           end
         end
 
@@ -91,12 +91,12 @@ RSpec.describe "Admin::SearchController", :aws_credentials_stubbed, :chunked_con
         it "renders a description for the results table" do
           get admin_search_path, params: { search_text: }
           expected_text = "1 result (max 5) over the weighted score threshold of 0.6"
-          expect(response.body).to have_selector("#used-results caption", text: expected_text)
+          expect(response.body).to have_css("#used-results caption", text: expected_text)
         end
 
         it "renders results that don't meet the threshold" do
           get admin_search_path, params: { search_text: }
-          expect(response.body).to have_selector("#near-miss-results") do |result|
+          expect(response.body).to have_css("#near-miss-results") do |result|
             expect(result).to have_link("Shouldn't find this")
           end
         end
@@ -104,7 +104,7 @@ RSpec.describe "Admin::SearchController", :aws_credentials_stubbed, :chunked_con
         it "renders a description for the rejected results table" do
           get admin_search_path, params: { search_text: }
           expected_text = "1 more result retrieved from the search index"
-          expect(response.body).to have_selector("#near-miss-results caption", text: expected_text)
+          expect(response.body).to have_css("#near-miss-results caption", text: expected_text)
         end
       end
 
@@ -120,7 +120,7 @@ RSpec.describe "Admin::SearchController", :aws_credentials_stubbed, :chunked_con
   private
 
     def render_search_box(value:)
-      have_selector("input[name='search_text'][value='#{value}']")
+      have_css("input[name='search_text'][value='#{value}']")
     end
   end
 end

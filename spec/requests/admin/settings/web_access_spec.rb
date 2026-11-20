@@ -10,7 +10,7 @@ RSpec.describe "Admin::Settings::WebAccessController" do
 
       expect(response).to have_http_status(:ok)
       expect(response.body)
-        .to have_selector(".govuk-heading-xl", text: "Edit web access")
+        .to have_css(".govuk-heading-xl", text: "Edit web access")
     end
   end
 
@@ -34,7 +34,7 @@ RSpec.describe "Admin::Settings::WebAccessController" do
             params: { web_access_form: { enabled: "true", author_comment: "a" * 256 } }
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to have_selector(".govuk-error-summary")
+      expect(response.body).to have_css(".govuk-error-summary")
     end
   end
 end

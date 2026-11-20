@@ -36,10 +36,10 @@ RSpec.describe "User toggles the sources dropdown" do
   end
 
   def then_i_cannot_see_the_source_links
-    expect(page).not_to have_link(@source_chunk_vat.title,
-                                  href: @source_chunk_vat.govuk_url)
-    expect(page).not_to have_link(@source_chunk_income_tax.title,
-                                  href: @source_chunk_income_tax.govuk_url)
+    expect(page).to have_no_link(@source_chunk_vat.title,
+                                 href: @source_chunk_vat.govuk_url)
+    expect(page).to have_no_link(@source_chunk_income_tax.title,
+                                 href: @source_chunk_income_tax.govuk_url)
   end
 
   def when_i_click_on_the_sources_dropdown

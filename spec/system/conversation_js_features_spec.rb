@@ -121,7 +121,7 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
 
   def then_i_see_the_first_question_was_accepted
     within(".js-new-conversation-messages-list") do
-      expect(page).to have_content(@first_question)
+      expect(page).to have_text(@first_question)
     end
   end
   alias_method :then_i_see_the_valid_question_was_accepted, :then_i_see_the_first_question_was_accepted
@@ -129,25 +129,25 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
 
   def then_i_see_an_answer_loading_message
     within(".js-new-conversation-messages-list") do
-      expect(page).to have_content("Generating your answer")
+      expect(page).to have_text("Generating your answer")
     end
   end
 
   def and_i_see_no_answer_loading_message
     within(".js-new-conversation-messages-list") do
-      expect(page).not_to have_content("Generating your answer")
+      expect(page).to have_no_text("Generating your answer")
     end
   end
 
   def then_i_see_a_question_loading_message
     within(".js-new-conversation-messages-list") do
-      expect(page).to have_content("Loading your question")
+      expect(page).to have_text("Loading your question")
     end
   end
 
   def then_i_see_no_question_loading_message
     within(".js-new-conversation-messages-list") do
-      expect(page).not_to have_content("Loading your question")
+      expect(page).to have_no_text("Loading your question")
     end
   end
 
@@ -162,7 +162,7 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
   alias_method :and_the_first_answer_is_generated, :when_the_first_answer_is_generated
 
   def then_i_can_see_the_first_answer
-    expect(page).to have_content(@first_answer)
+    expect(page).to have_text(@first_answer)
   end
 
   def when_i_enter_a_second_question
@@ -173,7 +173,7 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
 
   def then_i_see_the_second_question_was_accepted
     within(".js-new-conversation-messages-list") do
-      expect(page).to have_content(@second_question)
+      expect(page).to have_text(@second_question)
     end
   end
 
@@ -190,7 +190,7 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
   alias_method :and_the_second_answer_is_generated, :when_the_second_answer_is_generated
 
   def then_i_can_see_the_second_answer
-    expect(page).to have_content(@second_answer)
+    expect(page).to have_text(@second_answer)
   end
 
   def and_i_enter_an_empty_question
@@ -199,7 +199,7 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
   end
 
   def then_i_see_a_presence_validation_message
-    expect(page).to have_content(Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
+    expect(page).to have_text(Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
   end
 
   def and_i_enter_a_question_with_pii
@@ -208,7 +208,7 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
   end
 
   def then_i_see_a_pii_validation_message
-    expect(page).to have_content(/Personal data has been detected/)
+    expect(page).to have_text(/Personal data has been detected/)
   end
 
   def when_i_reload_the_page
@@ -226,18 +226,18 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
   end
 
   def then_i_see_a_character_count_warning
-    expect(page).to have_content("You have 50 characters remaining")
+    expect(page).to have_text("You have 50 characters remaining")
   end
 
   def then_i_see_a_character_count_error
-    expect(page).to have_content("You have 10 characters too many")
+    expect(page).to have_text("You have 10 characters too many")
   end
 
   def then_i_cant_see_the_clear_chat_link
     within(".app-c-header") do
       # This is link is visually hidden but doesn't register as visible: :hidden
       # to capybara so have to assert on CSS selector
-      expect(page).to have_selector(
+      expect(page).to have_css(
         "a.app-c-header__clear-chat.app-c-header__clear-chat--focusable-only",
         text: "Clear chat",
       )
@@ -246,7 +246,7 @@ RSpec.describe "Conversation JavaScript features", :aws_credentials_stubbed, :ch
 
   def and_i_can_see_the_clear_chat_link
     within(".app-c-header") do
-      expect(page).to have_selector(
+      expect(page).to have_css(
         "a.app-c-header__clear-chat:not(.app-c-header__clear-chat--focusable-only)",
         text: "Clear chat",
       )

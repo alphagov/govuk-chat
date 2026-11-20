@@ -35,7 +35,7 @@ RSpec.describe "Admin user searches and views chunks", :aws_credentials_stubbed,
   end
 
   def then_i_should_see_search_results
-    expect(page).to have_selector("a", text: "How to pay your tax")
+    expect(page).to have_css("a", text: "How to pay your tax")
   end
 
   def when_i_click_on_a_search_result
@@ -43,7 +43,7 @@ RSpec.describe "Admin user searches and views chunks", :aws_credentials_stubbed,
   end
 
   def then_i_see_details_of_the_chunk
-    expect(page).to have_content("Chunk details: How to pay your tax")
+    expect(page).to have_text("Chunk details: How to pay your tax")
   end
 
   def when_i_click_the_back_button
@@ -51,7 +51,7 @@ RSpec.describe "Admin user searches and views chunks", :aws_credentials_stubbed,
   end
 
   def then_the_search_page_has_the_correct_search_term
-    expect(page).to have_selector("input[name='search_text'][value='how to pay tax']")
-    expect(page).to have_selector("a", text: "How to pay your tax")
+    expect(page).to have_css("input[name='search_text'][value='how to pay tax']")
+    expect(page).to have_css("a", text: "How to pay your tax")
   end
 end

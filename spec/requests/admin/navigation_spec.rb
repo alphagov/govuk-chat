@@ -5,7 +5,7 @@ RSpec.describe "Navigation bar" do
       get admin_homepage_path
 
       expect(response.body)
-        .to have_selector(".govuk-service-navigation__item", text: "Settings")
+        .to have_css(".govuk-service-navigation__item", text: "Settings")
         .and have_link("Settings", href: admin_settings_path)
     end
 
@@ -13,7 +13,7 @@ RSpec.describe "Navigation bar" do
       login_as(create(:signon_user, :admin))
       get admin_homepage_path
       expect(response.body)
-        .not_to have_selector(".govuk-service-navigation__item", text: "Settings")
+        .to have_no_css(".govuk-service-navigation__item", text: "Settings")
     end
   end
 end

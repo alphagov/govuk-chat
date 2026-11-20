@@ -1,6 +1,7 @@
 module ExportableModelExamples
   shared_examples "exportable by start and end date" do
     let(:last_export) { 2.days.ago }
+
     before { create_record_lambda.call(last_export - 1.day) }
 
     it "returns records created since the last export time" do

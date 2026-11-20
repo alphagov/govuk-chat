@@ -27,9 +27,9 @@ RSpec.describe "Admin user views conversation history" do
   end
 
   def then_i_see_the_most_recent_questions
-    expect(page).to have_content(@question1.message)
-    expect(page).to have_content(@question2.message)
-    expect(page).to have_content(@question3.message)
+    expect(page).to have_text(@question1.message)
+    expect(page).to have_text(@question2.message)
+    expect(page).to have_text(@question3.message)
   end
 
   def when_i_click_to_view_a_question
@@ -37,7 +37,7 @@ RSpec.describe "Admin user views conversation history" do
   end
 
   def then_i_see_that_questions_answer
-    expect(page).to have_content(@question2.answer.message)
+    expect(page).to have_text(@question2.answer.message)
   end
 
   def when_i_click_to_view_conversation
@@ -45,8 +45,8 @@ RSpec.describe "Admin user views conversation history" do
   end
 
   def then_i_see_the_other_questions_for_this_conversation
-    expect(page).to have_content(@question1.message)
-    expect(page).to have_content(@question2.message)
-    expect(page).not_to have_content(@question3.message)
+    expect(page).to have_text(@question1.message)
+    expect(page).to have_text(@question2.message)
+    expect(page).to have_no_text(@question3.message)
   end
 end

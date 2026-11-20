@@ -29,13 +29,13 @@ RSpec.describe "Admin user updates settings" do
 
   def and_i_should_see_the_web_access_enabled_setting_is_enabled
     within("#web-access") do
-      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled Yes")
+      expect(page).to have_css(".govuk-summary-list__row", text: "Enabled Yes")
     end
   end
 
   def and_i_should_see_the_api_access_enabled_setting_is_enabled
     within("#api-access") do
-      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled Yes")
+      expect(page).to have_css(".govuk-summary-list__row", text: "Enabled Yes")
     end
   end
 
@@ -61,13 +61,13 @@ RSpec.describe "Admin user updates settings" do
 
   def then_i_see_that_web_access_is_disabled
     within("#web-access") do
-      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled No")
+      expect(page).to have_css(".govuk-summary-list__row", text: "Enabled No")
     end
   end
 
   def then_i_see_that_api_access_is_disabled
     within("#api-access") do
-      expect(page).to have_selector(".govuk-summary-list__row", text: "Enabled No")
+      expect(page).to have_css(".govuk-summary-list__row", text: "Enabled No")
     end
   end
 
@@ -77,8 +77,8 @@ RSpec.describe "Admin user updates settings" do
 
   def then_i_can_see_the_audits_for_my_changes
     expect(page)
-      .to have_content("Web access enabled set to false")
-      .and have_content("Reason for disabling web access")
-      .and have_content("API access enabled set to false")
+      .to have_text("Web access enabled set to false")
+      .and have_text("Reason for disabling web access")
+      .and have_text("API access enabled set to false")
   end
 end

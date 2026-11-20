@@ -5,10 +5,10 @@ RSpec.describe "components/_chat_introduction_title.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector(".app-c-chat-introduction-title")
-      .and have_selector(".app-c-chat-introduction-title__title", text: "Get quick answers from GOV.UK Chat")
-      .and have_selector(".app-c-chat-introduction-title__svg-container")
-      .and have_selector(".app-c-chat-introduction-title__svg")
+      .to have_css(".app-c-chat-introduction-title")
+      .and have_css(".app-c-chat-introduction-title__title", text: "Get quick answers from GOV.UK Chat")
+      .and have_css(".app-c-chat-introduction-title__svg-container")
+      .and have_css(".app-c-chat-introduction-title__svg")
   end
 
   context "when standfirst paragraphs are provided" do
@@ -21,7 +21,7 @@ RSpec.describe "components/_chat_introduction_title.html.erb" do
       })
 
       expect(rendered)
-        .to have_selector(".app-c-chat-introduction-title__lead-paragraph.govuk-body", text: "This is a standfirst paragraph")
+        .to have_css(".app-c-chat-introduction-title__lead-paragraph.govuk-body", text: "This is a standfirst paragraph")
     end
   end
 end

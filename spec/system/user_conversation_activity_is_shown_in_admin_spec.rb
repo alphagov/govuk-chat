@@ -56,11 +56,11 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
   end
 
   def then_i_see_the_answer
-    expect(page).to have_content(@answer)
+    expect(page).to have_text(@answer)
   end
 
   def and_i_dont_see_the_tagged_topics
-    expect(page).not_to have_content("Business")
+    expect(page).to have_no_text("Business")
   end
 
   def when_i_click_the_analysis_tab
@@ -69,21 +69,21 @@ RSpec.describe "Users interactions with chat are shown in admin area", :aws_cred
 
   def then_i_see_the_topics_have_been_tagged
     expect(page)
-      .to have_content("Business")
-      .and have_content("Benefits")
+      .to have_text("Business")
+      .and have_text("Benefits")
   end
 
   def and_i_see_the_request_types_have_been_tagged
     expect(page)
-      .to have_content("Factual lookup")
-      .and have_content("Do task")
+      .to have_text("Factual lookup")
+      .and have_text("Do task")
   end
 
   def and_i_dont_see_the_answer
-    expect(page).not_to have_content(@answer)
+    expect(page).to have_no_text(@answer)
   end
 
   def and_i_see_the_answer_relevancy_statistics
-    expect(page).to have_content(/Mean score.*1.0/)
+    expect(page).to have_text(/Mean score.*1.0/)
   end
 end

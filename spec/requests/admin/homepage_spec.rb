@@ -3,7 +3,7 @@ RSpec.describe "Admin::HomepageController" do
     it "renders successfully" do
       get admin_homepage_path
       expect(response).to have_http_status(:ok)
-      expect(response.body).to have_content("Browse questions")
+      expect(response.body).to have_text("Browse questions")
     end
 
     context "when api access is disabled" do
@@ -15,12 +15,12 @@ RSpec.describe "Admin::HomepageController" do
       it "renders a notice" do
         get admin_homepage_path
         expect(response.body)
-          .to have_selector(".gem-c-notice", text: /API access to chat is disabled/)
+          .to have_css(".gem-c-notice", text: /API access to chat is disabled/)
       end
 
       it "informs users to contact a developer to update the setting" do
         get admin_homepage_path
-        expect(response.body).to have_content("Please contact a developer to enable API access.")
+        expect(response.body).to have_text("Please contact a developer to enable API access.")
       end
 
       context "when the user has the admin-area-settings permission" do
@@ -28,7 +28,7 @@ RSpec.describe "Admin::HomepageController" do
           login_as(create(:signon_user, :admin_area_settings))
           get admin_homepage_path
           expect(response.body)
-            .to have_content("This can be changed in settings.")
+            .to have_text("This can be changed in settings.")
             .and have_link("settings", href: admin_settings_path)
         end
       end
