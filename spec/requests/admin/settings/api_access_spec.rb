@@ -10,7 +10,7 @@ RSpec.describe "Admin::Settings::ApiAccessController" do
 
       expect(response).to have_http_status(:ok)
       expect(response.body)
-        .to have_selector(".govuk-heading-xl", text: "Edit API access")
+        .to have_css(".govuk-heading-xl", text: "Edit API access")
     end
   end
 

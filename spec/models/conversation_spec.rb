@@ -148,8 +148,8 @@ RSpec.describe Conversation do
 
     it "returns true if there are older questions" do
       question = create(:question, :with_answer, conversation:, created_at: 2.days.ago)
-      create(:question, :with_answer,  conversation:, created_at: 3.days.ago)
-      create(:question, :with_answer,  conversation:, created_at: 1.day.ago)
+      create(:question, :with_answer, conversation:, created_at: 3.days.ago)
+      create(:question, :with_answer, conversation:, created_at: 1.day.ago)
 
       expect(conversation.active_answered_questions_before?(question.created_at)).to be(true)
     end
@@ -175,8 +175,8 @@ RSpec.describe Conversation do
 
     it "returns true if there are newer questions" do
       question = create(:question, :with_answer, conversation:, created_at: 2.days.ago)
-      create(:question, :with_answer, conversation:,  created_at: 3.days.ago)
-      create(:question, :with_answer, conversation:,  created_at: 1.day.ago)
+      create(:question, :with_answer, conversation:, created_at: 3.days.ago)
+      create(:question, :with_answer, conversation:, created_at: 1.day.ago)
 
       expect(conversation.active_answered_questions_after?(question.created_at)).to be(true)
     end

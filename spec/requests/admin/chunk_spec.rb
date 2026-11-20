@@ -20,7 +20,7 @@ RSpec.describe "Admin::ChunkController", :chunked_content_index do
     it "shows a readable chunk number with the number of chunks for this base_path" do
       get admin_chunk_path(id: chunk_id)
       expect(response.body)
-        .to have_selector(".govuk-summary-list", text: /Chunk number\s*1 of 2/)
+        .to have_css(".govuk-summary-list", text: /Chunk number\s*1 of 2/)
     end
 
     it "returns a 404 when requesting non-existent chunk" do
@@ -42,25 +42,25 @@ RSpec.describe "Admin::ChunkController", :chunked_content_index do
 
       it "hides the back link" do
         get admin_chunk_path(id: chunk_id, params: { back_link: })
-        expect(response.body).not_to have_selector(".govuk-back-link")
+        expect(response.body).to have_no_css(".govuk-back-link")
       end
     end
 
     context "when back_link is not provided in query params" do
       it "hides the back link" do
         get admin_chunk_path(id: chunk_id)
-        expect(response.body).not_to have_selector(".govuk-back-link")
+        expect(response.body).to have_no_css(".govuk-back-link")
       end
     end
 
   private
 
     def have_displayed_chunk(title)
-      have_selector(".govuk-summary-list", text: Regexp.new(title))
+      have_css(".govuk-summary-list", text: Regexp.new(title))
     end
 
     def render_back_link(back_link)
-      have_selector("a.govuk-back-link[href='#{back_link}']", text: "Back to results")
+      have_css("a.govuk-back-link[href='#{back_link}']", text: "Back to results")
     end
   end
 end

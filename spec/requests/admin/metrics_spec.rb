@@ -7,16 +7,16 @@ RSpec.describe "Admin::MetricsController" do
       get admin_metrics_path
       expect(response).to have_http_status(:ok)
       expect(response.body)
-        .to have_selector(".gem-c-secondary-navigation__list-item--current",
-                          text: "Last 24 hours")
+        .to have_css(".gem-c-secondary-navigation__list-item--current",
+                     text: "Last 24 hours")
     end
 
     it "accepts a parameter to render last 7 days" do
       get admin_metrics_path(period: "last_7_days")
       expect(response).to have_http_status(:ok)
       expect(response.body)
-        .to have_selector(".gem-c-secondary-navigation__list-item--current",
-                          text: "Last 7 days")
+        .to have_css(".gem-c-secondary-navigation__list-item--current",
+                     text: "Last 7 days")
     end
   end
 

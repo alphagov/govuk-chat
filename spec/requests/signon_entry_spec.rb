@@ -50,7 +50,7 @@ RSpec.describe "SignonEntryController" do
 
         expect(response).to have_http_status(:service_unavailable)
         expect(response.body)
-          .to have_content("GOV.UK Chat is not currently available")
+          .to have_text("GOV.UK Chat is not currently available")
       end
     end
   end

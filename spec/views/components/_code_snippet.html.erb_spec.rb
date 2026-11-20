@@ -5,7 +5,7 @@ RSpec.describe "components/_code_snippet.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector(
+      .to have_css(
         ".app-c-code-snippet .app-c-code-snippet__pre",
         text: "This should be in the the pre.",
       )

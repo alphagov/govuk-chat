@@ -35,12 +35,12 @@ RSpec.describe "User clears chat" do
   end
 
   def then_i_can_see_my_previous_questions_and_answer
-    expect(page).to have_content("Example question")
-    expect(page).to have_content("Example answer")
+    expect(page).to have_text("Example question")
+    expect(page).to have_text("Example answer")
   end
 
   def then_i_cannot_see_my_previous_questions_and_answer
-    expect(page).not_to have_content("Example question")
-    expect(page).not_to have_content("Example answer")
+    expect(page).to have_no_text("Example question")
+    expect(page).to have_no_text("Example answer")
   end
 end

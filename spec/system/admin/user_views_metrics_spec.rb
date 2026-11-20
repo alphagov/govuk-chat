@@ -44,23 +44,23 @@ RSpec.describe "Admin user views metrics", :js do
   def then_i_can_see_activity
     # We're relying on the rendering of a successful chart results in a canvas
     # element, unclear how to assert correct chart
-    expect(page).to have_selector("#questions canvas")
-    expect(page).to have_selector("#feedback canvas")
-    expect(page).to have_selector("#conversations canvas")
-    expect(page).to have_selector("#api-end-users canvas")
-    expect(page).to have_selector("#answers-with-unanswerable-status canvas")
-    expect(page).to have_selector("#answers-with-error-status canvas")
-    expect(page).to have_selector("#question-routing-labels canvas")
-    expect(page).to have_selector("#answer-guardrails-failures canvas")
-    expect(page).to have_selector("#question-routing-guardrails-failures canvas")
-    expect(page).to have_selector("#topics canvas")
-    expect(page).to have_selector("#request-types canvas")
-    expect(page).to have_selector("#answer-completeness canvas")
+    expect(page).to have_css("#questions canvas")
+    expect(page).to have_css("#feedback canvas")
+    expect(page).to have_css("#conversations canvas")
+    expect(page).to have_css("#api-end-users canvas")
+    expect(page).to have_css("#answers-with-unanswerable-status canvas")
+    expect(page).to have_css("#answers-with-error-status canvas")
+    expect(page).to have_css("#question-routing-labels canvas")
+    expect(page).to have_css("#answer-guardrails-failures canvas")
+    expect(page).to have_css("#question-routing-guardrails-failures canvas")
+    expect(page).to have_css("#topics canvas")
+    expect(page).to have_css("#request-types canvas")
+    expect(page).to have_css("#answer-completeness canvas")
   end
 
   def and_i_can_see_its_for_last_24_hours
-    expect(page).to have_selector(".gem-c-secondary-navigation__list-item--current",
-                                  text: "Last 24 hours")
+    expect(page).to have_css(".gem-c-secondary-navigation__list-item--current",
+                             text: "Last 24 hours")
   end
 
   def when_i_navigate_to_view_last_7_days
@@ -68,7 +68,7 @@ RSpec.describe "Admin user views metrics", :js do
   end
 
   def and_i_can_see_its_for_last_7_days
-    expect(page).to have_selector(".gem-c-secondary-navigation__list-item--current",
-                                  text: "Last 7 days")
+    expect(page).to have_css(".gem-c-secondary-navigation__list-item--current",
+                             text: "Last 7 days")
   end
 end

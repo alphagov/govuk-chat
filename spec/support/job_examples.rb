@@ -78,6 +78,7 @@ module JobExamples
 
   shared_examples "a job that retries on aws sdk errors" do |evaluation_class, answer_attributes = {}|
     let(:answer) { create(:answer, **answer_attributes) }
+
     errors = [
       Aws::Errors::ServiceError.new(nil, "error"),
       Seahorse::Client::NetworkingError.new(StandardError.new),

@@ -13,6 +13,7 @@ RSpec.describe AnswerComposition::Pipeline::QuestionRouter, :aws_credentials_stu
         )
       }
     end
+
     before { allow(AnswerComposition::Pipeline::Prompts).to receive(:config).and_call_original }
   end
 

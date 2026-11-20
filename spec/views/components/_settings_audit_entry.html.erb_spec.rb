@@ -6,11 +6,11 @@ RSpec.describe "components/_settings_audit_entry.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector(
+      .to have_css(
         ".app-c-settings-audit-entry .app-c-settings-audit-entry__action",
         text: "Added 10 instant access places",
       )
-      .and have_selector(
+      .and have_css(
         ".app-c-settings-audit-entry .app-c-settings-audit-entry__authored",
         text: "Changed at 11:00am on 1 January 2024 by unknown user",
       )
@@ -24,7 +24,7 @@ RSpec.describe "components/_settings_audit_entry.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector(
+      .to have_css(
         ".app-c-settings-audit-entry .app-c-settings-audit-entry__author_comment p.govuk-body",
         text: "We need more places.",
       )
@@ -38,7 +38,7 @@ RSpec.describe "components/_settings_audit_entry.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector(
+      .to have_css(
         ".app-c-settings-audit-entry .app-c-settings-audit-entry__author_comment",
         text: "<strong>I wondered if I could make this bold</strong>",
       )
@@ -52,7 +52,7 @@ RSpec.describe "components/_settings_audit_entry.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector(
+      .to have_css(
         ".app-c-settings-audit-entry .app-c-settings-audit-entry__authored",
         text: "Changed at 11:00am on 1 January 2024 by Test user",
       )

@@ -7,7 +7,7 @@ RSpec.describe "Admin::QuestionsController" do
       get admin_questions_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to have_selector(".govuk-table") do |match|
+      expect(response.body).to have_css(".govuk-table") do |match|
         expect(match.text).to match(/World hello.*Hello world/m)
       end
     end
@@ -16,7 +16,7 @@ RSpec.describe "Admin::QuestionsController" do
       get admin_questions_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to have_content("No questions found")
+      expect(response.body).to have_text("No questions found")
     end
 
     it "renders the sortable table headers correctly" do
@@ -27,8 +27,8 @@ RSpec.describe "Admin::QuestionsController" do
       expect(response.body)
         .to have_link("Question", href: admin_questions_path(sort: "message"))
         .and have_link("Created at", href: admin_questions_path(sort: "created_at"))
-        .and have_selector(".govuk-table__header--active .app-table__sort-link--descending", text: "Created at")
-        .and have_no_selector(".govuk-table__header--active", text: "Question")
+        .and have_css(".govuk-table__header--active .app-table__sort-link--descending", text: "Created at")
+        .and have_no_css(".govuk-table__header--active", text: "Question")
     end
 
     context "when there are more than 25 questions" do
@@ -41,8 +41,8 @@ RSpec.describe "Admin::QuestionsController" do
 
         expect(response.body)
           .to have_link("Next page", href: admin_questions_path(page: 2))
-          .and have_selector(".govuk-pagination__link-label", text: "2 of 2")
-        expect(response.body).not_to have_content("Previous page")
+          .and have_css(".govuk-pagination__link-label", text: "2 of 2")
+        expect(response.body).to have_no_text("Previous page")
       end
 
       it "paginates correctly on page 2" do
@@ -50,8 +50,8 @@ RSpec.describe "Admin::QuestionsController" do
 
         expect(response.body)
           .to have_link("Previous page", href: admin_questions_path)
-          .and have_selector(".govuk-pagination__link-label", text: "1 of 2")
-        expect(response.body).not_to have_content("Next page")
+          .and have_css(".govuk-pagination__link-label", text: "1 of 2")
+        expect(response.body).to have_no_text("Next page")
       end
     end
 
@@ -83,7 +83,7 @@ RSpec.describe "Admin::QuestionsController" do
         conversation = create(:conversation)
         get admin_questions_path(conversation_id: conversation.id)
 
-        expect(response.body.squish).to have_content("Filtering by conversation ID:   #{conversation.id}")
+        expect(response.body.squish).to have_text("Filtering by conversation ID:   #{conversation.id}")
       end
 
       it "renders the signon user's details when filtering by signon_user_id" do
@@ -92,7 +92,7 @@ RSpec.describe "Admin::QuestionsController" do
         get admin_questions_path(signon_user_id: signon_user.id)
 
         expect(response.body.squish)
-          .to have_content("Filtering by Signon user: #{signon_user.name}")
+          .to have_text("Filtering by Signon user: #{signon_user.name}")
       end
 
       it "renders the end user details when filtering by end_user_id" do
@@ -100,7 +100,7 @@ RSpec.describe "Admin::QuestionsController" do
         get admin_questions_path(end_user_id: "alice")
 
         expect(response.body.squish)
-          .to have_content('Filtering by end user: "alice"')
+          .to have_text('Filtering by end user: "alice"')
       end
 
       it "renders the conversation_session_id when filtering by conversation_session_id" do
@@ -108,7 +108,7 @@ RSpec.describe "Admin::QuestionsController" do
         get admin_questions_path(conversation_session_id: question.conversation_session_id)
 
         expect(response.body.squish)
-          .to have_content("Filtering by conversation session ID: #{question.conversation_session_id}")
+          .to have_text("Filtering by conversation session ID: #{question.conversation_session_id}")
       end
     end
 
@@ -123,8 +123,8 @@ RSpec.describe "Admin::QuestionsController" do
 
         get admin_questions_path(sort: "created_at")
 
-        expect(response.body).to have_selector(".govuk-table") do |match|
-          expect(match).to have_content(/Hello world.*World hello/m)
+        expect(response.body).to have_css(".govuk-table") do |match|
+          expect(match).to have_text(/Hello world.*World hello/m)
         end
       end
 
@@ -134,8 +134,8 @@ RSpec.describe "Admin::QuestionsController" do
         expect(response.body)
         .to have_link("Question", href: admin_questions_path(sort: "message"))
         .and have_link("Created at", href: admin_questions_path(sort: "-created_at"))
-        .and have_selector(".govuk-table__header--active .app-table__sort-link--ascending", text: "Created at")
-        .and have_no_selector(".govuk-table__header--active", text: "Question")
+        .and have_css(".govuk-table__header--active .app-table__sort-link--ascending", text: "Created at")
+        .and have_no_css(".govuk-table__header--active", text: "Question")
       end
 
       it "orders the documents correctly when the sort param is 'message'" do
@@ -144,8 +144,8 @@ RSpec.describe "Admin::QuestionsController" do
 
         get admin_questions_path(sort: "message")
 
-        expect(response.body).to have_selector(".govuk-table") do |match|
-          expect(match).to have_content(/Hello world.*World hello/m)
+        expect(response.body).to have_css(".govuk-table") do |match|
+          expect(match).to have_text(/Hello world.*World hello/m)
         end
       end
 
@@ -155,8 +155,8 @@ RSpec.describe "Admin::QuestionsController" do
         expect(response.body)
         .to have_link("Question", href: admin_questions_path(sort: "-message"))
         .and have_link("Created at", href: admin_questions_path(sort: "-created_at"))
-        .and have_selector(".govuk-table__header--active .app-table__sort-link--ascending", text: "Question")
-        .and have_no_selector(".govuk-table__header--active", text: "Created at")
+        .and have_css(".govuk-table__header--active .app-table__sort-link--ascending", text: "Question")
+        .and have_no_css(".govuk-table__header--active", text: "Created at")
       end
 
       it "orders the documents correctly when the sort param is '-message'" do
@@ -165,7 +165,7 @@ RSpec.describe "Admin::QuestionsController" do
 
         get admin_questions_path(sort: "-message")
 
-        expect(response.body).to have_selector(".govuk-table") do |match|
+        expect(response.body).to have_css(".govuk-table") do |match|
           expect(match.text).to match(/World hello.*Hello world/m)
         end
       end
@@ -176,8 +176,8 @@ RSpec.describe "Admin::QuestionsController" do
         expect(response.body)
         .to have_link("Question", href: admin_questions_path(sort: "message"))
         .and have_link("Created at", href: admin_questions_path(sort: "-created_at"))
-        .and have_selector(".govuk-table__header--active .app-table__sort-link--descending", text: "Question")
-        .and have_no_selector(".govuk-table__header--active", text: "Created at")
+        .and have_css(".govuk-table__header--active .app-table__sort-link--descending", text: "Question")
+        .and have_no_css(".govuk-table__header--active", text: "Created at")
       end
     end
   end
@@ -220,19 +220,19 @@ RSpec.describe "Admin::QuestionsController" do
           get admin_show_question_path(question)
 
           expect(response.body)
-            .to have_selector("#analysis-tab", text: title)
-            .and have_selector("#analysis-tab", text: /Mean score\s*0\.55/)
-            .and have_selector("#analysis-tab", text: /Successful run count\s*1/)
-            .and have_selector("#analysis-tab", text: /Failure run count\s*1/)
-            .and have_selector("#analysis-tab", text: /Errored run count\s*1/)
-            .and have_selector("#analysis-tab", text: /Run 1 status\s*Success/)
-            .and have_selector("#analysis-tab", text: /Run 1 score\s*0\.85/)
-            .and have_selector("#analysis-tab", text: /Run 1 reason\s*The answer was acceptable\./)
-            .and have_selector("#analysis-tab", text: /Run 2 status\s*Failure/)
-            .and have_selector("#analysis-tab", text: /Run 2 score\s*0\.25/)
-            .and have_selector("#analysis-tab", text: /Run 2 reason\s*The answer was not very good\./)
-            .and have_selector("#analysis-tab", text: /Run 3 status\s*Error/)
-            .and have_selector("#analysis-tab", text: /Run 3 error message\s*No statements found\./)
+            .to have_css("#analysis-tab", text: title)
+            .and have_css("#analysis-tab", text: /Mean score\s*0\.55/)
+            .and have_css("#analysis-tab", text: /Successful run count\s*1/)
+            .and have_css("#analysis-tab", text: /Failure run count\s*1/)
+            .and have_css("#analysis-tab", text: /Errored run count\s*1/)
+            .and have_css("#analysis-tab", text: /Run 1 status\s*Success/)
+            .and have_css("#analysis-tab", text: /Run 1 score\s*0\.85/)
+            .and have_css("#analysis-tab", text: /Run 1 reason\s*The answer was acceptable\./)
+            .and have_css("#analysis-tab", text: /Run 2 status\s*Failure/)
+            .and have_css("#analysis-tab", text: /Run 2 score\s*0\.25/)
+            .and have_css("#analysis-tab", text: /Run 2 reason\s*The answer was not very good\./)
+            .and have_css("#analysis-tab", text: /Run 3 status\s*Error/)
+            .and have_css("#analysis-tab", text: /Run 3 error message\s*No statements found\./)
         end
 
         it "renders the runs llm responses when present" do
@@ -245,10 +245,10 @@ RSpec.describe "Admin::QuestionsController" do
           get admin_show_question_path(question)
 
           expect(response.body.squish)
-            .to have_selector("#analysis-tab details", text: "Run 1")
-            .and have_content('{ "verdicts": [ { "verdict": "yes" } ] }')
-            .and have_content('{ "reason": [ "The answer was acceptable." ] }')
-          expect(response.body).not_to have_selector("#analysis-tab details", text: "Run 2")
+            .to have_css("#analysis-tab details", text: "Run 1")
+            .and have_text('{ "verdicts": [ { "verdict": "yes" } ] }')
+            .and have_text('{ "reason": [ "The answer was acceptable." ] }')
+          expect(response.body).to have_no_css("#analysis-tab details", text: "Run 2")
         end
 
         it "renders the runs metrics when present" do
@@ -261,12 +261,12 @@ RSpec.describe "Admin::QuestionsController" do
           get admin_show_question_path(question)
 
           expect(response.body.squish)
-            .to have_selector("#analysis-tab details", text: "Run 1")
-            .and have_content("Verdicts")
-            .and have_content(/duration.*1\.44445/)
-            .and have_content("Reason")
-            .and have_content(/duration.*1\.55556/)
-          expect(response.body).not_to have_selector("#analysis-tab details", text: "Run 2")
+            .to have_css("#analysis-tab details", text: "Run 1")
+            .and have_text("Verdicts")
+            .and have_text(/duration.*1\.44445/)
+            .and have_text("Reason")
+            .and have_text(/duration.*1\.55556/)
+          expect(response.body).to have_no_css("#analysis-tab details", text: "Run 2")
         end
 
         context "when all the runs have errored" do
@@ -274,7 +274,7 @@ RSpec.describe "Admin::QuestionsController" do
 
           it "doesn't render the mean score" do
             get admin_show_question_path(question)
-            expect(response.body).not_to have_content("Mean score")
+            expect(response.body).to have_no_text("Mean score")
           end
         end
 
@@ -283,7 +283,7 @@ RSpec.describe "Admin::QuestionsController" do
 
           it "doesn't render the llm responses" do
             get admin_show_question_path(question)
-            expect(response.body).not_to have_selector("#analysis-tab details", text: "LLM responses")
+            expect(response.body).to have_no_css("#analysis-tab details", text: "LLM responses")
           end
         end
 
@@ -292,7 +292,7 @@ RSpec.describe "Admin::QuestionsController" do
 
           it "doesn't render the metrics" do
             get admin_show_question_path(question)
-            expect(response.body).not_to have_selector("#analysis-tab details", text: "Metrics")
+            expect(response.body).to have_no_css("#analysis-tab details", text: "Metrics")
           end
         end
       end
@@ -308,16 +308,16 @@ RSpec.describe "Admin::QuestionsController" do
       get admin_show_question_path(question)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to have_content(question.message)
+      expect(response.body).to have_text(question.message)
     end
 
     it "renders a link to the search results page" do
       question = create(:question)
       get admin_show_question_path(question)
 
-      expect(response.body).to have_content("Show search results")
+      expect(response.body).to have_text("Show search results")
       href = admin_search_path(params: { search_text: question.message })
-      expect(response.body).to have_selector("a.govuk-link[href='#{href}']", text: question.message)
+      expect(response.body).to have_css("a.govuk-link[href='#{href}']", text: question.message)
     end
 
     it "renders a link to the search results with rephrased question" do
@@ -325,9 +325,9 @@ RSpec.describe "Admin::QuestionsController" do
       question.answer.update!(rephrased_question: "how do I pay self assessment")
       get admin_show_question_path(question)
 
-      expect(response.body).to have_content("Show search results")
+      expect(response.body).to have_text("Show search results")
       href = admin_search_path(params: { search_text: "how do I pay self assessment" })
-      expect(response.body).to have_selector("a.govuk-link[href='#{href}']", text: "how do I pay self assessment")
+      expect(response.body).to have_css("a.govuk-link[href='#{href}']", text: "how do I pay self assessment")
     end
 
     it "renders the details for an answer when present" do
@@ -336,7 +336,7 @@ RSpec.describe "Admin::QuestionsController" do
 
       get admin_show_question_path(question)
 
-      expect(response.body).to have_content(answer.message)
+      expect(response.body).to have_text(answer.message)
     end
 
     it "renders the sources for an answer when present" do
@@ -348,9 +348,9 @@ RSpec.describe "Admin::QuestionsController" do
       get admin_show_question_path(question)
 
       expect(response.body)
-        .to have_content("Used sources")
+        .to have_text("Used sources")
         .and have_link(used_source.title, href: used_source.govuk_url)
-        .and have_content("Unused sources")
+        .and have_text("Unused sources")
         .and have_link(unused_source.title, href: unused_source.govuk_url)
     end
 
@@ -365,17 +365,17 @@ RSpec.describe "Admin::QuestionsController" do
 
       get admin_show_question_path(question)
 
-      expect(response.body).to have_content("Metrics")
+      expect(response.body).to have_text("Metrics")
 
       expect(response.body.squish)
-        .to have_content("answer_composition")
-        .and have_content(/duration.*1\.55556/)
+        .to have_text("answer_composition")
+        .and have_text(/duration.*1\.55556/)
 
       expect(response.body.squish)
-        .to have_content("question_rephrasing")
-        .and have_content(/duration.*0\.55/)
-        .and have_content(/llm_prompt_tokens.*400/)
-        .and have_content(/llm_completion_tokens.*101/)
+        .to have_text("question_rephrasing")
+        .and have_text(/duration.*0\.55/)
+        .and have_text(/llm_prompt_tokens.*400/)
+        .and have_text(/llm_completion_tokens.*101/)
     end
 
     it "renders the answer LLM responses" do
@@ -392,19 +392,19 @@ RSpec.describe "Admin::QuestionsController" do
 
       get admin_show_question_path(question)
 
-      expect(response.body).to have_content("LLM responses")
+      expect(response.body).to have_text("LLM responses")
 
       expect(response.body.squish)
-        .to have_content("structured_answer")
-        .and have_content("tool_calls")
-        .and have_content('"id": "call_dqGpbb39drQDafLsjDLtnbGD"')
+        .to have_text("structured_answer")
+        .and have_text("tool_calls")
+        .and have_text('"id": "call_dqGpbb39drQDafLsjDLtnbGD"')
     end
 
     it "doesn't render the tabs component there is no analysis data" do
       question = create(:question, :with_answer)
       get admin_show_question_path(question)
 
-      expect(response.body).not_to have_content("govuk-tabs")
+      expect(response.body).to have_no_text("govuk-tabs")
     end
 
     context "when topics are present" do
@@ -437,9 +437,9 @@ RSpec.describe "Admin::QuestionsController" do
         get admin_show_question_path(question)
 
         expect(response.body)
-          .to have_content("Business")
-          .and have_content("Tax")
-          .and have_content(topics.status.humanize)
+          .to have_text("Business")
+          .and have_text("Tax")
+          .and have_text(topics.status.humanize)
       end
 
       it "renders the error message and error status when the topic analysis errored" do
@@ -451,44 +451,44 @@ RSpec.describe "Admin::QuestionsController" do
         get admin_show_question_path(question)
 
         expect(response.body)
-          .to have_content("Error")
-          .and have_content("An error occurred while analysing the topics.")
+          .to have_text("Error")
+          .and have_text("An error occurred while analysing the topics.")
       end
 
       it "renders the topic metrics" do
         get admin_show_question_path(question)
 
         expect(response.body.squish)
-          .to have_content("topic_tagger")
-          .and have_content(/duration.*1\.5/)
-          .and have_content(/llm_prompt_tokens.*30/)
-          .and have_content(/llm_completion_tokens.*20/)
-          .and have_content(/llm_cached_tokens.*20/)
-          .and have_content(/model.*#{BedrockModels.model_id(:openai_gpt_oss_120b)}/)
+          .to have_text("topic_tagger")
+          .and have_text(/duration.*1\.5/)
+          .and have_text(/llm_prompt_tokens.*30/)
+          .and have_text(/llm_completion_tokens.*20/)
+          .and have_text(/llm_cached_tokens.*20/)
+          .and have_text(/model.*#{BedrockModels.model_id(:openai_gpt_oss_120b)}/)
       end
 
       it "renders the topics LLM responses" do
         get admin_show_question_path(question)
 
         expect(response.body.squish)
-          .to have_content("topic_tagger")
-          .and have_content("tool_calls")
-          .and have_content('"id": "topic_tool_call"')
+          .to have_text("topic_tagger")
+          .and have_text("tool_calls")
+          .and have_text('"id": "topic_tool_call"')
       end
 
       it "renders the question details in the details tab" do
         get admin_show_question_path(question)
 
         expect(response.body)
-          .to have_selector("#details-tab", text: question.message)
+          .to have_css("#details-tab", text: question.message)
       end
 
       it "renders the topics in the analysis tab" do
         get admin_show_question_path(question)
 
         expect(response.body)
-         .to have_selector("#analysis-tab", text: topics.primary_topic.capitalize)
-         .and have_selector("#analysis-tab", text: topics.secondary_topic.capitalize)
+         .to have_css("#analysis-tab", text: topics.primary_topic.capitalize)
+         .and have_css("#analysis-tab", text: topics.secondary_topic.capitalize)
       end
     end
 
@@ -524,11 +524,11 @@ RSpec.describe "Admin::QuestionsController" do
         get admin_show_question_path(question)
 
         expect(response.body)
-          .to have_content("Factual lookup")
-          .and have_content("Do task")
-          .and have_content("0.9")
-          .and have_content("The user is asking for a specific figure.")
-          .and have_content(request_types.status.humanize)
+          .to have_text("Factual lookup")
+          .and have_text("Do task")
+          .and have_text("0.9")
+          .and have_text("The user is asking for a specific figure.")
+          .and have_text(request_types.status.humanize)
       end
 
       it "renders the error message and error status when the request type analysis errored" do
@@ -540,37 +540,37 @@ RSpec.describe "Admin::QuestionsController" do
         get admin_show_question_path(question)
 
         expect(response.body)
-          .to have_content("Error")
-          .and have_content("An error occurred while analysing the request types.")
+          .to have_text("Error")
+          .and have_text("An error occurred while analysing the request types.")
       end
 
       it "renders the request type metrics" do
         get admin_show_question_path(question)
 
         expect(response.body.squish)
-          .to have_content("request_type_tagger")
-          .and have_content(/duration.*1\.5/)
-          .and have_content(/llm_prompt_tokens.*30/)
-          .and have_content(/llm_completion_tokens.*20/)
-          .and have_content(/llm_cached_tokens.*20/)
-          .and have_content(/model.*#{BedrockModels.model_id(:openai_gpt_oss_120b)}/)
+          .to have_text("request_type_tagger")
+          .and have_text(/duration.*1\.5/)
+          .and have_text(/llm_prompt_tokens.*30/)
+          .and have_text(/llm_completion_tokens.*20/)
+          .and have_text(/llm_cached_tokens.*20/)
+          .and have_text(/model.*#{BedrockModels.model_id(:openai_gpt_oss_120b)}/)
       end
 
       it "renders the request types LLM responses" do
         get admin_show_question_path(question)
 
         expect(response.body.squish)
-          .to have_content("request_type_tagger")
-          .and have_content("tool_calls")
-          .and have_content('"id": "request_type_tool_call"')
+          .to have_text("request_type_tagger")
+          .and have_text("tool_calls")
+          .and have_text('"id": "request_type_tool_call"')
       end
 
       it "renders the request types in the analysis tab" do
         get admin_show_question_path(question)
 
         expect(response.body)
-         .to have_selector("#analysis-tab", text: request_types.primary_request_type.humanize)
-         .and have_selector("#analysis-tab", text: request_types.secondary_request_type.humanize)
+         .to have_css("#analysis-tab", text: request_types.primary_request_type.humanize)
+         .and have_css("#analysis-tab", text: request_types.secondary_request_type.humanize)
       end
     end
   end

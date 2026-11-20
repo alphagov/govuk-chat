@@ -137,8 +137,8 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_pending_question
-    expect(page).to have_content(@question1.message)
-    expect(page).not_to have_content(@question2.message)
+    expect(page).to have_text(@question1.message)
+    expect(page).to have_no_text(@question2.message)
   end
 
   def when_i_filter_on_the_success_status
@@ -147,8 +147,8 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_success_question
-    expect(page).to have_content(@question2.message)
-    expect(page).not_to have_content(@question1.message)
+    expect(page).to have_text(@question2.message)
+    expect(page).to have_no_text(@question1.message)
   end
 
   def when_i_clear_the_filters
@@ -157,28 +157,28 @@ RSpec.describe "Admin user filters questions" do
 
   def then_i_see_all_the_questions
     within(".govuk-table") do
-      expect(page).to have_content(/World.*Greetings world.*Hello world./)
+      expect(page).to have_text(/World.*Greetings world.*Hello world./)
     end
   end
 
   def then_i_see_that_signon_users_details_in_the_sidebar
-    expect(page).to have_content("Filtering by Signon user: #{@signon_user.name}")
+    expect(page).to have_text("Filtering by Signon user: #{@signon_user.name}")
   end
 
   def and_i_see_all_the_questions_for_that_user
     within(".govuk-table") do
-      expect(page).to have_content("Hello world")
-      expect(page).to have_content("Greetings world")
-      expect(page).not_to have_content("Goodbye")
+      expect(page).to have_text("Hello world")
+      expect(page).to have_text("Greetings world")
+      expect(page).to have_no_text("Goodbye")
     end
   end
   alias_method :and_i_see_all_the_questions_for_that_signon_user, :and_i_see_all_the_questions_for_that_user
 
   def then_i_see_the_filtered_questions_for_that_user
     within(".govuk-table") do
-      expect(page).to have_content("Greetings")
-      expect(page).not_to have_content("Hello")
-      expect(page).not_to have_content("Goodbye")
+      expect(page).to have_text("Greetings")
+      expect(page).to have_no_text("Hello")
+      expect(page).to have_no_text("Goodbye")
     end
   end
   alias_method :then_i_see_the_filtered_questions_for_that_signon_user, :then_i_see_the_filtered_questions_for_that_user
@@ -194,8 +194,8 @@ RSpec.describe "Admin user filters questions" do
 
   def then_i_see_the_question_from_the_first_conversation
     within(".govuk-table") do
-      expect(page).to have_content("Hello world")
-      expect(page).not_to have_content("Greetings world")
+      expect(page).to have_text("Hello world")
+      expect(page).to have_no_text("Greetings world")
     end
   end
 
@@ -205,7 +205,7 @@ RSpec.describe "Admin user filters questions" do
 
   def then_i_see_the_ordering_has_changed
     within(".govuk-table") do
-      expect(page).to have_content(/Hello world.*Greetings world.*World./)
+      expect(page).to have_text(/Hello world.*Greetings world.*World./)
     end
   end
 
@@ -221,9 +221,9 @@ RSpec.describe "Admin user filters questions" do
   alias_method :when_i_search_for_a_question_from_the_signon_user, :when_i_search_for_a_question_from_the_user
 
   def then_i_see_questions_related_to_my_search
-    expect(page).to have_content(@question1.message)
-    expect(page).not_to have_content(@question2.message)
-    expect(page).not_to have_content(@question3.message)
+    expect(page).to have_text(@question1.message)
+    expect(page).to have_no_text(@question2.message)
+    expect(page).to have_no_text(@question3.message)
   end
 
   def and_i_filter_on_questions_created_via_the_api
@@ -232,9 +232,9 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_question_created_via_the_api
-    expect(page).to have_content(@question3.message)
-    expect(page).not_to have_content(@question1.message)
-    expect(page).not_to have_content(@question2.message)
+    expect(page).to have_text(@question3.message)
+    expect(page).to have_no_text(@question1.message)
+    expect(page).to have_no_text(@question2.message)
   end
 
   def and_i_search_for_recent_questions
@@ -247,9 +247,9 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_recent_questions
-    expect(page).to have_content(@question2.message)
-    expect(page).to have_content(@question3.message)
-    expect(page).not_to have_content(@question1.message)
+    expect(page).to have_text(@question2.message)
+    expect(page).to have_text(@question3.message)
+    expect(page).to have_no_text(@question1.message)
   end
 
   def and_i_search_for_old_questions
@@ -262,9 +262,9 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_old_question
-    expect(page).to have_content(@question1.message)
-    expect(page).not_to have_content(@question2.message)
-    expect(page).not_to have_content(@question3.message)
+    expect(page).to have_text(@question1.message)
+    expect(page).to have_no_text(@question2.message)
+    expect(page).to have_no_text(@question3.message)
   end
 
   def and_i_filter_by_questions_with_a_specific_question_routing_label
@@ -273,9 +273,9 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_question_with_that_routing_label
-    expect(page).to have_content(@question2.message)
-    expect(page).not_to have_content(@question1.message)
-    expect(page).not_to have_content(@question3.message)
+    expect(page).to have_text(@question2.message)
+    expect(page).to have_no_text(@question1.message)
+    expect(page).to have_no_text(@question3.message)
   end
 
   def and_i_filter_by_questions_with_a_specific_primary_topic
@@ -284,9 +284,9 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_question_with_that_primary_topic
-    expect(page).to have_content(@question2.message)
-    expect(page).not_to have_content(@question1.message)
-    expect(page).not_to have_content(@question3.message)
+    expect(page).to have_text(@question2.message)
+    expect(page).to have_no_text(@question1.message)
+    expect(page).to have_no_text(@question3.message)
   end
 
   def and_i_filter_by_questions_with_a_specific_secondary_topic
@@ -295,9 +295,9 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_question_with_that_secondary_topic
-    expect(page).to have_content(@question3.message)
-    expect(page).not_to have_content(@question1.message)
-    expect(page).not_to have_content(@question2.message)
+    expect(page).to have_text(@question3.message)
+    expect(page).to have_no_text(@question1.message)
+    expect(page).to have_no_text(@question2.message)
   end
 
   def and_i_filter_by_questions_with_a_specific_primary_request_type
@@ -306,9 +306,9 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_question_with_that_primary_request_type
-    expect(page).to have_content(@question2.message)
-    expect(page).not_to have_content(@question1.message)
-    expect(page).not_to have_content(@question3.message)
+    expect(page).to have_text(@question2.message)
+    expect(page).to have_no_text(@question1.message)
+    expect(page).to have_no_text(@question3.message)
   end
 
   def and_i_filter_by_questions_with_a_specific_secondary_request_type
@@ -317,9 +317,9 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_question_with_that_secondary_request_type
-    expect(page).to have_content(@question3.message)
-    expect(page).not_to have_content(@question1.message)
-    expect(page).not_to have_content(@question2.message)
+    expect(page).to have_text(@question3.message)
+    expect(page).to have_no_text(@question1.message)
+    expect(page).to have_no_text(@question2.message)
   end
 
   def when_i_view_the_questions_conversation
@@ -337,9 +337,9 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_question_with_a_complete_answer
-    expect(page).to have_content(@question3.message)
-    expect(page).not_to have_content(@question1.message)
-    expect(page).not_to have_content(@question2.message)
+    expect(page).to have_text(@question3.message)
+    expect(page).to have_no_text(@question1.message)
+    expect(page).to have_no_text(@question2.message)
   end
 
   def when_i_filter_questions_by_partialy_complete_answers
@@ -348,9 +348,9 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_question_with_a_partially_complete_answer
-    expect(page).to have_content(@question2.message)
-    expect(page).not_to have_content(@question1.message)
-    expect(page).not_to have_content(@question3.message)
+    expect(page).to have_text(@question2.message)
+    expect(page).to have_no_text(@question1.message)
+    expect(page).to have_no_text(@question3.message)
   end
 
   def and_i_filter_questions_by_positive_feedback
@@ -359,8 +359,8 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_question_with_positive_feedback
-    expect(page).to have_content(@question2.message)
-    expect(page).not_to have_content(@question3.message)
+    expect(page).to have_text(@question2.message)
+    expect(page).to have_no_text(@question3.message)
   end
 
   def when_i_filter_questions_by_negative_feedback
@@ -369,8 +369,8 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_question_with_negative_feedback
-    expect(page).to have_content(@question3.message)
-    expect(page).not_to have_content(@question2.message)
+    expect(page).to have_text(@question3.message)
+    expect(page).to have_no_text(@question2.message)
   end
 
   def and_i_filter_questions_by_suggested_prompts
@@ -379,9 +379,9 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_suggested_prompt_question
-    expect(page).to have_content(@question2.message)
-    expect(page).not_to have_content(@question1.message)
-    expect(page).not_to have_content(@question3.message)
+    expect(page).to have_text(@question2.message)
+    expect(page).to have_no_text(@question1.message)
+    expect(page).to have_no_text(@question3.message)
   end
 
   def when_i_filter_questions_excluding_suggested_prompts
@@ -390,8 +390,8 @@ RSpec.describe "Admin user filters questions" do
   end
 
   def then_i_see_the_questions_that_are_not_suggested_prompts
-    expect(page).to have_content(@question1.message)
-    expect(page).to have_content(@question3.message)
-    expect(page).not_to have_content(@question2.message)
+    expect(page).to have_text(@question1.message)
+    expect(page).to have_text(@question3.message)
+    expect(page).to have_no_text(@question2.message)
   end
 end

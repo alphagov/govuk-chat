@@ -7,15 +7,15 @@ RSpec.describe "components/_question_form.html.erb" do
       value: "Value",
     })
 
-    expect(rendered).to have_selector('.app-c-question-form__form[action="/conversation"]') do |rendered_form|
+    expect(rendered).to have_css('.app-c-question-form__form[action="/conversation"]') do |rendered_form|
       expect(rendered_form)
-        .to have_selector(".app-c-question-form__label.govuk-visually-hidden", text: /Message/)
-        .and have_selector(".app-c-question-form__textarea[placeholder=Message]")
-        .and have_selector(".app-c-question-form__textarea[id=id][name=name]", text: "Value")
-        .and have_selector(".gem-c-hint", text: /Please limit your question/)
-        .and have_selector(".govuk-error-message[hidden]", visible: :hidden)
-        .and have_selector(".app-c-blue-button")
-      expect(rendered).not_to have_selector(".app-c-question-form__error-message")
+        .to have_css(".app-c-question-form__label.govuk-visually-hidden", text: /Message/)
+        .and have_css(".app-c-question-form__textarea[placeholder=Message]")
+        .and have_css(".app-c-question-form__textarea[id=id][name=name]", text: "Value")
+        .and have_css(".gem-c-hint", text: /Please limit your question/)
+        .and have_css(".govuk-error-message[hidden]", visible: :hidden)
+        .and have_css(".app-c-blue-button")
+      expect(rendered).to have_no_css(".app-c-question-form__error-message")
     end
   end
 
@@ -30,7 +30,7 @@ RSpec.describe "components/_question_form.html.erb" do
     presence_error_message = Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE.gsub("\'", "\\\\'")
 
     expect(rendered)
-      .to have_selector(".app-c-question-form[data-presence-error-message='#{presence_error_message}']")
+      .to have_css(".app-c-question-form[data-presence-error-message='#{presence_error_message}']")
   end
 
   it "renders error messages when there is a problem" do
@@ -46,8 +46,8 @@ RSpec.describe "components/_question_form.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector(".app-c-question-form .govuk-error-message:not([hidden])", text: /Error:\s+Error 1/)
-      .and have_selector(".app-c-question-form__error-message", text: /Error 1/)
-      .and have_selector(".app-c-question-form__textarea[aria-describedby~=id-error]")
+      .to have_css(".app-c-question-form .govuk-error-message:not([hidden])", text: /Error:\s+Error 1/)
+      .and have_css(".app-c-question-form__error-message", text: /Error 1/)
+      .and have_css(".app-c-question-form__textarea[aria-describedby~=id-error]")
   end
 end

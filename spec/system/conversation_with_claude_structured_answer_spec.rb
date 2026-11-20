@@ -31,7 +31,7 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
   end
 
   def then_i_see_the_answer_is_pending
-    expect(page).to have_content("GOV.UK Chat is generating an answer")
+    expect(page).to have_text("GOV.UK Chat is generating an answer")
   end
 
   def when_the_first_answer_is_generated
@@ -48,11 +48,11 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
   end
 
   def then_i_see_my_question_on_the_page
-    expect(page).to have_content(@first_question)
+    expect(page).to have_text(@first_question)
   end
 
   def and_i_can_see_the_first_answer
-    expect(page).to have_content(@first_answer)
+    expect(page).to have_text(@first_answer)
   end
 
   def when_i_enter_a_second_question
@@ -73,10 +73,10 @@ RSpec.describe "Conversation with Claude with a structured answer", :aws_credent
   end
 
   def then_i_see_my_second_question_on_the_page
-    expect(page).to have_content(@second_question)
+    expect(page).to have_text(@second_question)
   end
 
   def and_i_can_see_the_second_answer
-    expect(page).to have_content(@second_answer)
+    expect(page).to have_text(@second_answer)
   end
 end

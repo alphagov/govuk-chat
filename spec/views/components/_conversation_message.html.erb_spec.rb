@@ -11,9 +11,9 @@ RSpec.describe "components/_conversation_message.html.erb" do
     })
 
     expect(rendered)
-      .to have_selector('.app-c-conversation-message[data-track-category="track-category"]')
-      .and have_selector('.app-c-conversation-message[data-track-action="track-action"]')
-      .and have_selector('.app-c-conversation-message[data-track-label="track-label"]')
+      .to have_css('.app-c-conversation-message[data-track-category="track-category"]')
+      .and have_css('.app-c-conversation-message[data-track-action="track-action"]')
+      .and have_css('.app-c-conversation-message[data-track-label="track-label"]')
   end
 
   context "when is_question is true" do
@@ -24,10 +24,10 @@ RSpec.describe "components/_conversation_message.html.erb" do
         is_question: true,
       })
 
-      expect(rendered).to have_selector("li.app-c-conversation-message#question-1") do |rendered_question|
+      expect(rendered).to have_css("li.app-c-conversation-message#question-1") do |rendered_question|
         expect(rendered_question)
-          .to have_selector(".app-c-conversation-message__message .govuk-visually-hidden", text: "You")
-          .and have_selector(".app-c-conversation-message__body.app-c-conversation-message__body--user-message", text: "message 2")
+          .to have_css(".app-c-conversation-message__message .govuk-visually-hidden", text: "You")
+          .and have_css(".app-c-conversation-message__body.app-c-conversation-message__body--user-message", text: "message 2")
       end
     end
 
@@ -39,10 +39,10 @@ RSpec.describe "components/_conversation_message.html.erb" do
           is_loading: true,
         })
 
-        expect(rendered).to have_selector("li.app-c-conversation-message#loading-question") do |rendered_question|
+        expect(rendered).to have_css("li.app-c-conversation-message#loading-question") do |rendered_question|
           expect(rendered_question)
-            .to have_selector(".app-c-conversation-message__loading-text", text: "Loading your question")
-            .and have_selector(".app-c-conversation-message__loading-ellipsis", text: "...")
+            .to have_css(".app-c-conversation-message__loading-text", text: "Loading your question")
+            .and have_css(".app-c-conversation-message__loading-ellipsis", text: "...")
         end
       end
     end
@@ -55,11 +55,11 @@ RSpec.describe "components/_conversation_message.html.erb" do
         message: "message 3",
       })
 
-      expect(rendered).to have_selector("li.app-c-conversation-message#answer-2") do |rendered_answer|
+      expect(rendered).to have_css("li.app-c-conversation-message#answer-2") do |rendered_answer|
         expect(rendered_answer)
-          .to have_selector(".app-c-conversation-message__message .govuk-visually-hidden", text: "GOV.UK Chat")
-          .and have_selector(".app-c-conversation-message__answer .gem-c-govspeak", text: "message 3")
-          .and have_selector(".govuk-details", count: 0)
+          .to have_css(".app-c-conversation-message__message .govuk-visually-hidden", text: "GOV.UK Chat")
+          .and have_css(".app-c-conversation-message__answer .gem-c-govspeak", text: "message 3")
+          .and have_css(".govuk-details", count: 0)
       end
     end
 
@@ -91,7 +91,7 @@ RSpec.describe "components/_conversation_message.html.erb" do
       })
 
       expect(rendered)
-        .not_to have_selector(".app-c-conversation-message__answer .govuk-govspeak", text: "alert")
+        .to have_no_css(".app-c-conversation-message__answer .govuk-govspeak", text: "alert")
     end
 
     context "and is_loading is true" do
@@ -101,12 +101,12 @@ RSpec.describe "components/_conversation_message.html.erb" do
           is_loading: true,
         })
 
-        expect(rendered).to have_selector("li.app-c-conversation-message#loading-answer") do |rendered_question|
+        expect(rendered).to have_css("li.app-c-conversation-message#loading-answer") do |rendered_question|
           expect(rendered_question)
-            .to have_selector(".app-c-conversation-message__loading-icon-container")
-            .and have_selector(".app-c-conversation-message__loading-icon")
-            .and have_selector(".app-c-conversation-message__loading-text", text: "Generating your answer")
-            .and have_selector(".app-c-conversation-message__loading-ellipsis", text: "...")
+            .to have_css(".app-c-conversation-message__loading-icon-container")
+            .and have_css(".app-c-conversation-message__loading-icon")
+            .and have_css(".app-c-conversation-message__loading-text", text: "Generating your answer")
+            .and have_css(".app-c-conversation-message__loading-ellipsis", text: "...")
         end
       end
     end
@@ -120,11 +120,11 @@ RSpec.describe "components/_conversation_message.html.erb" do
         show_identifier: true,
       })
 
-      expect(rendered).to have_selector("li.app-c-conversation-message#answer-5") do |rendered_question|
+      expect(rendered).to have_css("li.app-c-conversation-message#answer-5") do |rendered_question|
         expect(rendered_question)
-          .to have_selector(".app-c-conversation-message__identifier", text: "GOV.UK Chat")
+          .to have_css(".app-c-conversation-message__identifier", text: "GOV.UK Chat")
         expect(rendered)
-          .not_to have_selector(".app-c-conversation-message__identifier .govuk-visually-hidden", text: "GOV.UK Chat")
+          .to have_no_css(".app-c-conversation-message__identifier .govuk-visually-hidden", text: "GOV.UK Chat")
       end
     end
   end
@@ -136,9 +136,9 @@ RSpec.describe "components/_conversation_message.html.erb" do
         message: "message 6",
       })
 
-      expect(rendered).to have_selector("li.app-c-conversation-message#answer-6") do |rendered_question|
+      expect(rendered).to have_css("li.app-c-conversation-message#answer-6") do |rendered_question|
         expect(rendered_question)
-          .to have_selector(".app-c-conversation-message__message .govuk-visually-hidden", text: "GOV.UK Chat")
+          .to have_css(".app-c-conversation-message__message .govuk-visually-hidden", text: "GOV.UK Chat")
       end
     end
   end

@@ -22,7 +22,7 @@ RSpec.describe "ConversationsController" do
         get show_conversation_path
 
         expect(response).to have_http_status(:success)
-        expect(response.body).to have_selector(
+        expect(response.body).to have_css(
           ".js-new-conversation-messages-list",
           text: "Hi 👋 I’m GOV.UK Chat.",
         )
@@ -38,7 +38,7 @@ RSpec.describe "ConversationsController" do
       it "renders a focusable only 'Clear chat' link" do
         get show_conversation_path
 
-        expect(response.body).to have_selector(
+        expect(response.body).to have_css(
           "a.app-c-header__clear-chat.app-c-header__clear-chat--focusable-only",
           text: "Clear chat",
         )
@@ -63,7 +63,7 @@ RSpec.describe "ConversationsController" do
         get show_conversation_path
 
         expect(response).to have_http_status(:success)
-        expect(response.body).to have_selector(
+        expect(response.body).to have_css(
           ".js-conversation-message-history-list",
           text: "Hi 👋 I’m GOV.UK Chat",
         )
@@ -72,7 +72,7 @@ RSpec.describe "ConversationsController" do
       it "renders a 'Clear chat' without the focusable only modifier link" do
         get show_conversation_path
 
-        expect(response.body).to have_selector(
+        expect(response.body).to have_css(
           "a.app-c-header__clear-chat:not(.app-c-header__clear-chat--focusable-only)",
           text: "Clear chat",
         )
@@ -87,8 +87,8 @@ RSpec.describe "ConversationsController" do
 
           expect(response).to have_http_status(:success)
           expect(response.body)
-            .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
-            .and have_selector("[data-pending-answer-url='#{answer_question_path(question)}']")
+            .to have_css("##{helpers.dom_id(question)}", text: /#{question.message}/)
+            .and have_css("[data-pending-answer-url='#{answer_question_path(question)}']")
         end
       end
 
@@ -103,8 +103,8 @@ RSpec.describe "ConversationsController" do
 
           expect(response).to have_http_status(:success)
           expect(response.body)
-            .to have_selector("##{helpers.dom_id(question)}", text: /#{question.message}/)
-            .and have_selector("##{helpers.dom_id(answer)} .gem-c-govspeak", text: answer.message)
+            .to have_css("##{helpers.dom_id(question)}", text: /#{question.message}/)
+            .and have_css("##{helpers.dom_id(answer)} .gem-c-govspeak", text: answer.message)
         end
       end
 
@@ -148,7 +148,7 @@ RSpec.describe "ConversationsController" do
           get show_conversation_path
 
           expect(response).to have_http_status(:success)
-          expect(response.body).to have_no_selector(".app-c-conversation-sources")
+          expect(response.body).to have_no_css(".app-c-conversation-sources")
         end
       end
 
@@ -185,7 +185,7 @@ RSpec.describe "ConversationsController" do
         expect(response).to have_http_status(:redirect)
         follow_redirect!
         expect(response.body)
-          .to have_selector("h1", text: "GOV.UK Chat is generating an answer")
+          .to have_css("h1", text: "GOV.UK Chat is generating an answer")
       end
 
       it "associates the signon user with the conversation" do
@@ -202,9 +202,9 @@ RSpec.describe "ConversationsController" do
           expect(response).to have_http_status(:unprocessable_content)
           expect(response.body)
             .to have_title(/^Error -/)
-            .and have_selector(".govuk-error-summary a[href='#create_question_user_question']",
-                               text: Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
-            .and have_selector(".app-c-question-form__label", text: "Message")
+            .and have_css(".govuk-error-summary a[href='#create_question_user_question']",
+                          text: Form::CreateQuestion::USER_QUESTION_PRESENCE_ERROR_MESSAGE)
+            .and have_css(".app-c-question-form__label", text: "Message")
         end
       end
 
@@ -221,7 +221,7 @@ RSpec.describe "ConversationsController" do
           expect(response).to have_http_status(:unprocessable_content)
           question = conversation.questions.last
           expect(response.body)
-            .to have_selector("[data-pending-answer-url='#{answer_question_path(question)}']")
+            .to have_css("[data-pending-answer-url='#{answer_question_path(question)}']")
         end
       end
 
@@ -302,7 +302,7 @@ RSpec.describe "ConversationsController" do
 
       follow_redirect!
       expect(response.body)
-        .to have_selector(".app-c-question-form__label", text: "Message")
+        .to have_css(".app-c-question-form__label", text: "Message")
     end
 
     it "renders the pending page when a question doesn't have an answer" do
@@ -311,9 +311,9 @@ RSpec.describe "ConversationsController" do
 
       expect(response).to have_http_status(:accepted)
       expect(response.body)
-        .to have_selector("h1", text: "GOV.UK Chat is generating an answer")
-        .and have_selector(".govuk-button[href='#{answer_question_path(question)}?refresh=true']",
-                           text: "Check if an answer has been generated")
+        .to have_css("h1", text: "GOV.UK Chat is generating an answer")
+        .and have_css(".govuk-button[href='#{answer_question_path(question)}?refresh=true']",
+                      text: "Check if an answer has been generated")
     end
 
     context "when the refresh query string is passed" do
@@ -323,8 +323,8 @@ RSpec.describe "ConversationsController" do
 
         expect(response).to have_http_status(:accepted)
         expect(response.body)
-          .to have_selector(".govuk-body",
-                            text: "Thanks for your patience. Check again to find out if your answer is ready.")
+          .to have_css(".govuk-body",
+                       text: "Thanks for your patience. Check again to find out if your answer is ready.")
       end
     end
 
@@ -399,7 +399,7 @@ RSpec.describe "ConversationsController" do
 
         expect(response).to have_http_status(:ok)
         expect(response.body)
-          .to have_selector("h1", text: "Do you want to clear your chat history?")
+          .to have_css("h1", text: "Do you want to clear your chat history?")
       end
     end
   end
@@ -422,7 +422,7 @@ RSpec.describe "ConversationsController" do
   end
 
   def render_create_question_form
-    have_selector(".app-c-question-form__label", text: "Message")
+    have_css(".app-c-question-form__label", text: "Message")
   end
 
   def expect_conversation_id_set_on_cookie(conversation)
