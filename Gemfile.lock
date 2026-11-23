@@ -282,14 +282,14 @@ GEM
       os (>= 0.9, < 2.0)
       pstore (~> 0.1)
       signet (>= 0.16, < 2.a)
-    govuk_app_config (10.0.0)
+    govuk_app_config (10.1.0)
       connection_pool (< 4)
       logstasher (>= 2.1, < 4.0)
       opentelemetry-exporter-otlp (>= 0.25, < 0.35)
       opentelemetry-instrumentation-all (>= 0.39.1, < 0.98.0)
       opentelemetry-sdk (~> 1.2)
       ostruct (~> 0.6)
-      plek (>= 4, < 6)
+      plek (>= 4, < 7)
       prometheus_exporter (~> 2.3)
       puma (>= 5.6, < 9.0)
       rack-proxy (>= 0.7, < 2.0)
@@ -644,7 +644,7 @@ GEM
     pg (1.7.0-arm64-darwin)
     pg (1.7.0-x86_64-darwin)
     pg (1.7.0-x86_64-linux)
-    plek (5.3.2)
+    plek (6.0.0)
     pp (0.6.4)
       prettyprint
     prettyprint (0.2.1)
@@ -665,7 +665,7 @@ GEM
     puma (8.1.2)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.2.8)
+    rack (3.2.9)
     rack-attack (6.8.0)
       rack (>= 1.0, < 4)
     rack-protection (4.2.1)
@@ -1062,7 +1062,7 @@ CHECKSUMS
   google-protobuf (4.36.2-x86_64-linux-gnu) sha256=d25a820873e423f1d209ae8c672a4a28b019e2429debd0901d26670a0b4e14db
   googleapis-common-protos-types (1.25.0) sha256=3eac7998e9e52f506d5a68d944284b8d2f6d65d744ab92a0cdd269198a009d15
   googleauth (1.17.7) sha256=9db21857ddbe055a8b0d44ddb75d4ceda97511167431e30121c77c25a9ce9fe5
-  govuk_app_config (10.0.0) sha256=1448c6e59c2a7fa3b8a9abd90efa1abf18654c0fa3afa5404aa1403e205d943e
+  govuk_app_config (10.1.0) sha256=5c9659bd7949382dda944e7e37b024fa4bc900fddb7de8eab0a1cb01f0509faa
   govuk_chat_private (0.0.1)
   govuk_message_queue_consumer (6.1.0) sha256=42e0be6caad19ccde78b6eba40ee9ea3af6e8c3b5a6d1543b5d077870f157b19
   govuk_personalisation (1.2.0) sha256=8496e9e30c433846b87547b63ec65c98a64dd92fcf1b46b45e300150a24430b1
@@ -1194,7 +1194,7 @@ CHECKSUMS
   pg (1.7.0-arm64-darwin) sha256=9fa895bbe28bdd579b83ccc80464c01d1015ea7549a7919134c9f8f10c060e4b
   pg (1.7.0-x86_64-darwin) sha256=7b726ba6eab8b143fb803d3b4173b0a3e4b0b032025032212f90d436785022db
   pg (1.7.0-x86_64-linux) sha256=d0a24f448b3c874c8b2658d4efbbbefce7315c228ede84f6f6f42089d1d704b6
-  plek (5.3.2) sha256=98bacbd22262e742910f29d766b65328a203eb35ba20f9876181dd76ce4c4420
+  plek (6.0.0) sha256=48a3e22b32892f5a30865262573886162ab664b4fb5db8b02043349754e7618d
   pp (0.6.4) sha256=dfcb0fce700c41456265922884f9fe195d7fbb0674a3578e6c0f69588e82b570
   prettyprint (0.2.1) sha256=d555d57ea6d7cf001d4774b693546a6bd88bec1e778ddffb5c60b68ceec4b7d4
   prism (1.9.0) sha256=7b530c6a9f92c24300014919c9dcbc055bf4cdf51ec30aed099b06cd6674ef85
@@ -1206,7 +1206,7 @@ CHECKSUMS
   public_suffix (7.0.5) sha256=1a8bb08f1bbea19228d3bed6e5ed908d1cb4f7c2726d18bd9cadf60bc676f623
   puma (8.1.2) sha256=3a6d9a34c9a4d0175eabd11b703939b5d43ebe08bc2534ac7dfd4df33a6ceedc
   racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f
-  rack (3.2.8) sha256=1fecc85e463ebc7a2a945fff829ffcd549babeb1556384796fad946c28dc4ec7
+  rack (3.2.9) sha256=8235c1d08f0c461bedcff4413bbeba888173e5b09e1332ae951c98f0ee460dcc
   rack-attack (6.8.0) sha256=f2499fdebf85bcc05573a22dff57d24305ac14ec2e4156cd3c28d47cafeeecf2
   rack-protection (4.2.1) sha256=cf6e2842df8c55f5e4d1a4be015e603e19e9bc3a7178bae58949ccbb58558bac
   rack-proxy (1.0.3) sha256=136482e77254550e8e52c7c5a3c02845e4c4573c228b300cd83559c5a08338ae
